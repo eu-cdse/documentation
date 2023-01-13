@@ -5,4 +5,4 @@ ___
 * [APIs](section1/APIs.md)
 * [Services](section1/Services.md)
 ___
-* [Page 3](section2/page3.md)
+* [FAQ](section2/FAQ.md)
