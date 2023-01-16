@@ -78,7 +78,7 @@
 details{
   background-color: #FFFFFF;
   color: #0a0a0a;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   border-radius: 5px;
 
 }
@@ -96,7 +96,7 @@ summary {
   justify-content: space-between;  
   transition: height 1s ease;
   box-shadow: rgba(0, 0, 0, 0.20) 0px 5px 15px;
-  margin:20px;
+  margin:15px;
   
 }
 
