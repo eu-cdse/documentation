@@ -181,7 +181,56 @@
         blockquote.warning {
             border-color: #ff9800;
         }
+        #roadmap {
+        font-family: Arial, Helvetica, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+        }
+
+        #roadmap td, #roadmap th {
+        border: 1px solid #ddd;
+        padding: 8px;
+        }
+
+        #roadmap tr:nth-child(even){background-color: #f2f2f2;}
+
+        #roadmap tr:hover {background-color: #ddd;}
+
+        #roadmap th {
+        padding-top: 12px;
+        padding-bottom: 12px;
+        text-align: left;
+        background-color: #04AA6D;
+        color: white;
+
+        top: 0;
+        }
+
     </style>
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<link href="http://getbootstrap.com/2.3.2/assets/css/bootstrap.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript">                                         
+$(document).ready(function() {
+    $('tr.header').each(function() {
+        toggleRowChildren($(this), 'header');
+});
+    $('tr.header').click(function () { 
+        toggleRowChildren($(this), 'header');
+    });
+    
+    function toggleRowChildren(parentRowElement, parentClass) {
+        var childClass = parentRowElement.attr('id');
+        $('tr.'+childClass, parentRowElement.parent()).fadeToggle('fast');
+        $('tr.'+childClass).each(function(){
+            if ($(this).hasClass(parentClass) && !$(this).hasClass('collapsed')) {
+                toggleRowChildren($(this), parentClass);
+            }
+        });
+        parentRowElement.toggleClass('collapsed');
+    }
+});
+</script> 
+
 </head>
 <body>
 <nav class="navbar">
@@ -221,6 +270,8 @@
                 '/section1/Data',
                 '/section1/APIs',
                 '/section1/Services',
+                // '/section1/Roadmap/DataTable',
+                '/section1/Roadmap/',
                 '/section2/page3',
 
             ]
