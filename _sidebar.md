@@ -2,9 +2,9 @@
 ___
 * [User registration and authentication](section1/Registration.md)
 * [Roadmap](section1/Roadmap.md)
-  * [Data](section1/RoadmapTable/DataTable.html)
+  * [Dataset](section1/RoadmapTable/DataTable.html)
   * [API](section1/RoadmapTable/APITable.html)
-  * [Applications](section1/RoadmapTable/AppTable.html)
+  * [Application](section1/RoadmapTable/AppTable.html)
 * [Data](section1/Data.md)
   *  [Sentinel 1](/section1/DataDescription/Sentinel1.md)
   *  [Sentinel 2](/section1/DataDescription/Sentinel2.md)
