@@ -1,6 +1,6 @@
 # Roadmap Overview
 
-### Sumamry
+### Summary
 |Timeline| Jan-23 | Apr-23 | Jul-23| Nov-23 
 |---|---|---|---|----|
 |1. | New Data Access portal  | Catalogue API: STAC, S3  | Full archive of Sentinel missions | Sentinel engineering and auxiliary data|
