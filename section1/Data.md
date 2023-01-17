@@ -4,7 +4,7 @@ This section provides an overview of the EO data available from Copernicus Data 
 
  
 
-*More information on EO data grayed out in the list below will be published when available*.
+<!-- *More information on EO data grayed out in the list below will be published when available*. -->
 
 ## Copernicus Mission
 
@@ -16,7 +16,7 @@ This section provides an overview of the EO data available from Copernicus Data 
 
 [Sentinel 5P](/section1/DataDescription/Sentinel5P.md) 
 
-<span style="opacity:0.30">
+<!-- <span style="opacity:0.30">
 Cloudless Mosaic
 
 Copernicus Contributing Mission 
@@ -47,5 +47,5 @@ CMEMS
 
 ## Complementary Open data
 ---
-## Commercial data
+## Commercial data -->
 </style>
