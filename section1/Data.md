@@ -4,7 +4,7 @@ This section provides an overview of the EO data available from Copernicus Data 
 
  
 
-*More information on EO data grayed out in the list below will be published soon*.
+*More information on EO data grayed out in the list below will be published when available*.
 
 ## Copernicus Mission
 
