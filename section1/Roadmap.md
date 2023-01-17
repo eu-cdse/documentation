@@ -21,4 +21,4 @@ A more details version updation of Copernicus Data Space Ecosystem can be found 
 
 * [Applications timeline overview](/section1/RoadmapTable/AppTable.html)
 
-* [test](/section1/RoadmapTable/testtablecolapse.html)
+
