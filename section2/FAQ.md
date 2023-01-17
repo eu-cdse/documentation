@@ -94,18 +94,8 @@
 
 ## Data
 
-<details>
-  <summary>You mentioned cloud native formats/interfaces. Will the data also be available in the original data formats (e.g., for data downloading)?</summary>
-    <div>
-    Yes, data will also be available in original data formats (i.e. .SAFE).
-    </div>
-</details>
-<details>
-  <summary>Are the data offered via Cloud Optimized Geotiffs (Also Level 1)?</summary>
-    <div>
-    Sentinel-1 GRD data will be available in COG format. Sentinel-2 will stay in JP2 for the moment, as it is a similarly performant cloud optimised format.
-    </div>
-</details>
+
+
 <details>
   <summary>With regard to cloud native formats/interfaces, will the data also be available in the original data formats (e.g. for data downloading)?</summary>
     <div>
@@ -151,12 +141,6 @@
 <hr>
 
 ## APIs
-<details>
-  <summary>Comparing with existing https://scihub.copernicus.eu/ what will be the other free services (other than stac/cog already described above) ? for exemple are WMS/WCS api provided for visualisation on GIS ?</summary>
-    <div>
-    Compared to existing SciHub, there will indeed be additional APIs - OGC interfaces (WMS, WMTS, WCS), OpenEO, Sentinel Hub API, S3, and others
-    </div>
-</details>
 <details>
   <summary>SNAP/gpt processing codes can be used in these online and cloud processing services?</summary>
     <div>
