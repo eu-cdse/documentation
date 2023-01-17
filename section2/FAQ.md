@@ -13,14 +13,15 @@
 
 ## Registration and authentication
 <details>
-  <summary>Something to do</summary>
+  <summary>Will both portals be somehow integrated to support/encourage the transfer of the users from "try basics for free towards paid subscriptions"?</summary>
     <div>
-    Something left to do
+    Yes, there will be a common user identity, which will allow registered users to seamlessly transfer between systems. This will also extend to other systems that will be added to the ecosystem in the future, assuming they will integrate it.
     </div>
 </details>
 <hr>
 
 ## Data
+
 <details>
   <summary>You mentioned cloud native formats/interfaces. Will the data also be available in the original data formats (e.g., for data downloading)?</summary>
     <div>
@@ -52,6 +53,52 @@
     Yes, there will be a common user identity, which will allow registered users to seamlessly transfer between systems. This will also extend to other systems that will be added to the ecosystem in the future, assuming they will integrate it.
     </div>
 </details>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
