@@ -2,7 +2,7 @@
 
 In case of any questions that cannot be found in this documentation section, users can submit a support request related to questions on the use of the Copernicus Data Space Ecosystem.
 
-Important to know is that only registered users can raise support questions. If you have an issue with registering, please [contact us](mailto://help-cdse-login@cloudferro.com?Subject=Subject%20Text&Body=Your%20comments)  directly.
+Important to know is that only registered users can raise support questions. If you have an issue with registering or you want to deregister, please [contact us](mailto://help-cdse-login@cloudferro.com?Subject=Subject%20Text&Body=Your%20comments)  directly.
 
 
 Please visit following [LINK](https://jira.cloudferro.com/servicedesk/customer/portal/55/user/login?destination=portal%2F55) to register your support questions.  
