@@ -1,5 +1,5 @@
 # Copernicus Data Space Ecosystem documentation portal
-Welcome to the documentation portal for the Copernicus Data Space Ecosystem.
+Welcome to the documentation portal for the [Copernicus Data Space Ecosystem](https://dataspace.copernicus.eu/#/).
 
 Copernicus Data Space Ecosystem represents an overall and comprehensive data ecosystem accessible via web portal, applications and APIs. The Copernicus Sata Space Ecosystem contains subsystems and will be growing over the coming years. The Copernicus Data Space Ecosystem provides the essential data and service offering for everyone to use, for commercial and non-commercial purposes. Third-party providers can build their services on top of the Copernicus Data Space Ecosystem, the first one of these being CREODIAS. In the future additional players (third party providers) will join the Copernicus Data Space Ecosystem and will be able to offer a variety of additional services (free and commercial) as members of the Copernicus Data Space Ecosystem.
 
