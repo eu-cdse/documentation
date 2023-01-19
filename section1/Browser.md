@@ -49,7 +49,7 @@ Here you can create a custom *R/G/B* composite or _Index_ (band ratio, normalize
 
 #### Comparing Visualizations
 
-To compare two (or more) visualizations you have to add them to the compare panel. You can add a visualization to the compare panel by clicking on the *Add to compare* button in each visualization layer *(see Fig. 4)*. When you have added all the layers you want to compare to the compare panel, you can switch to it by clicking on the compare icon ( ![c](compareicon.png) ). In the compare panel you can choose between a *Split* and an *Opacity* mode. With the *Split* mode you can compare two images side by side. With the *Opacity* mode you can compare two (or more) visualizations on top of each other.
+To compare two (or more) visualizations you have to add them to the compare panel. You can add a visualization to the compare panel by clicking on the *Add to compare* button in each visualization layer *(see Fig. 4)*. When you have added all the layers you want to compare to the compare panel, you can switch to it by clicking on the compare icon ( ![compare](../_images/icons/CompareIcon.png) ). In the compare panel you can choose between a *Split* and an *Opacity* mode. With the *Split* mode you can compare two images side by side. With the *Opacity* mode you can compare two (or more) visualizations on top of each other.
 
 <img src="../_images/AddIcon.png" width="350">
 
@@ -93,11 +93,11 @@ Fig. 7: *SEARCH* tab with L2A collection selected and map centered on Rome (Ital
 You will now see the first 50 search results for your search settings (Sentinel L2A data over Italy for a time range of 2 weeks) in the sidebar and on the map. To load the next 50 results, click on the _Load more_ button at the end of the list in the sidebar. You can view the metadata of a product in the sidebar or by selecting a product on the map. In both cases you can:
 
 * Directly view the basic metadata (preview image (available for most Sentinel-2 L1C, L2A, Sentinel-3 SLSTR and Sentinel-3 OLCI products), name, mission, instrument, acquisition time)
-* View the full metadata by clicking on the product info button ( ![c](InfoIcon.png)) in the results (full metadata)
+* View the full metadata by clicking on the product info button ( ![Info](../_images/icons/InfoIcon.png)) in the results (full metadata)
 
 ### How to download a Product
 
-When you have found a product (see How to find a Product) that you would like to download, you can do so by clicking click on the download icon ( ![d](DownloadIcon.png) ) for the desired product in the results (in the sidebar or in the results panel on the map after selecting a product). After you click the button, a progress bar will appear below the product to indicate the status of your download. If you have started a download by mistake, you can cancel it by clicking on the "x" below the download button.
+When you have found a product (see How to find a Product) that you would like to download, you can do so by clicking click on the download icon ( ![download](../_images/icons/DownloadIcon.png) ) for the desired product in the results (in the sidebar or in the results panel on the map after selecting a product). After you click the button, a progress bar will appear below the product to indicate the status of your download. If you have started a download by mistake, you can cancel it by clicking on the "x" below the download button.
 
 You can continue to use the app as normal while a product is being downloaded.
 
@@ -111,17 +111,17 @@ The Browser has several tools to help you better understand the data on the map 
 
 ### Area/Point of Interest
 
-Use the **Area of Interest (AOI)** tool to draw a rectangular or polygonal area of interest by clicking on the ![p](PolIcon.png) icon in the upper right corner of the browser. You can also upload a KML/KMZ, GPX, WKT (in EPSG:4326) or GEOJSON/JSON file to create an area of interest.
+Use the **Area of Interest (AOI)** tool to draw a rectangular or polygonal area of interest by clicking on the ![polygon](../_images/icons/PolygonIcon.png) icon in the upper right corner of the browser. You can also upload a KML/KMZ, GPX, WKT (in EPSG:4326) or GEOJSON/JSON file to create an area of interest.
 
-Use the ![l](location.png) icon to mark a location and re-center to the **Point if Interest(PoI)**
+Use the ![location](../_images/icons/Location.png) icon to mark a location and re-center to the **Point if Interest(PoI)**
 
 ### Measure
 
-You can use the **Measure** tool by clicking on the ![m](Measure.png) icon to get the distance and area measurements. To measure the distance between two points, simply click on the start and end points on the map, to measure the area, draw a polygon (areas can also be measured using the AOI drawing, as described in Area/Point of Interest).
+You can use the **Measure** tool by clicking on the ![measure](../_images/icons/MeasureIcon.png) icon to get the distance and area measurements. To measure the distance between two points, simply click on the start and end points on the map, to measure the area, draw a polygon (areas can also be measured using the AOI drawing, as described in Area/Point of Interest).
 
 ### Image Download
 
-There are three different download options. You can switch between the options using the tabs at the top of the pop-up window. Each option contains a preview of the data at the bottom. When you are satisfied with your download settings, you will find the ![d](DownloadIcon.png) button below the preview:
+There are three different download options. You can switch between the options using the tabs at the top of the pop-up window. Each option contains a preview of the data at the bottom. When you are satisfied with your download settings, you will find the ![Button](../_images/icons/DownloadButton.png) button below the preview:
 
 * **Basic**
   - You can use the *Show Captions* toggle switch to add data source, date, zoom scale and branding information to the exported images.
@@ -132,7 +132,7 @@ There are three different download options. You can switch between the options u
   - Choose between two image formats (JPG, PNG).
   - A preview of the image that will be downloaded is displayed under *Preview*. Previews are available only when you zoom in enough.
 * **Analytical**
-  - After preparing the data for download, click the ![d](DownloadIcon.png) button to download the image in JPG, PNG, KMZ or GeoTIFF format.
+  - After preparing the data for download, click the ![Button](../_images/icons/DownloadButton.png) button to download the image in JPG, PNG, KMZ or GeoTIFF format.
   - Choose between different image formats, resolutions and coordinate systems before downloading the image. You can also attach a logo.
   - In the Analytical panel, you can select multiple layers (Visualized/Raw) and download them all in a single ZIP file.
 - **High-res print**
@@ -140,7 +140,7 @@ There are three different download options. You can switch between the options u
 
 ### Timelapse
 
-- You can create a **Timelapse Animation** by clicking the ![t](TimeLapse.png) icon.
+- You can create a **Timelapse Animation** by clicking the ![lapse](../_images/icons/TimeLapse.png) icon.
 - Select the Area of Interest by zooming in or out. When you are satisfied with the scene, click on the play button in the middle of the screen for more options.
 - Select the time span in the upper left corner of the pop-up window. Alternatively, you can select only certain months in a year using the *filter by months* option. You can also select the interval between images. Click on *Search* to see all the results.
 - You can filter the images by two methods: Minimum tile coverage and Maximum Cloud coverage. You can select the percentage of cover for each of those filters by adjusting the slider.
@@ -149,4 +149,4 @@ There are three different download options. You can switch between the options u
 
 #### Histogram
 
-With the **Histogram** tool you can display statistical data (the distribution of values) for specific layers by clicking on the ![h](Histogram.png) icon. The histogram is calculated for the data within your AOI, if defined or otherwise for the whole screen. This tool currently only works for index layers (e.g., the NDVI).
+With the **Histogram** tool you can display statistical data (the distribution of values) for specific layers by clicking on the ![histogram](../_images/icons/HistIcon.png) icon. The histogram is calculated for the data within your AOI, if defined or otherwise for the whole screen. This tool currently only works for index layers (e.g., the NDVI).
