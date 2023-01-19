@@ -209,7 +209,7 @@
 <details>
   <summary>This December advertisement of DAS (https://medium.com/sentinel-hub/new-copernicus-data-access-service-to-support-the-ecosystem-for-earth-observation-412f829355a3) says that "For those interested in processing, there will be scalable cloud resources available, optimized for EO tasks". Does this refer to the current CreoDIAS resources, or something completely new that hasn't been addressed yet?</summary>
     <div>
-    Scalable cloud resources will be part of the commercial offering and can be obtained at <a href = "https://creodias.eu/-/status-power-state-and-dependences-in-billing-of-an-instances-vms-">CREODIAS</a> in first instance. ICT-wise, there will be two options, including Open Telekom Cloud.
+    Scalable cloud resources will be part of the commercial offering and can be obtained at <a href = "https://creodias.eu/">CREODIAS</a> in first instance. ICT-wise, there will be two options, including Open Telekom Cloud.
     </div>
 </details>
 <details>
