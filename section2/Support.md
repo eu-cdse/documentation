@@ -17,8 +17,8 @@ Once logged in you can raise a Request - **Technical Support**
 <img src="../_images/technical_support.png" width="550">
 
 And create it with appropriate Summary, Description and optionally Attachment
-![Helpdesk](../_images/summary.png)
-<!-- <img src="../_images/summary.png" width="350"> -->
+<!-- ![Helpdesk](../_images/summary.png) -->
+<img src="../_images/summary.png" width="550">
 
 Created request you can follow in Request -> My Request menu. 
 
