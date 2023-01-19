@@ -41,7 +41,7 @@ If you want to improve how the data is displayed on the map, you can modify the 
 
 To visualize different Sentinel-2 band combinations, either use one of the prepared options from the list of layers (e.g., NDVI for the Normalized Difference Vegetation Index using the Sentinel bands B4 and B8) or click *Custom* at the bottom of the layers list.
 
-<img src="../_images/VisualizeLatestInfo.png" width="350">
+<img src="../_images/Customlayer.png" width="350">
 
 Fig 3: *Custom* Layers option with *Composite Index and Custom* script highlighted
 
