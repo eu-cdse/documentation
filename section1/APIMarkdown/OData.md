@@ -204,7 +204,7 @@ Where Id is an Id of the product returned by the search query, e.g.:
 
 Only authorized users are allowed to download products
 
-<u>To get the token</u>:
+To get the token:
 
     KEYCLOAK\_TOKEN=$(curl -s --location --request POST 'https://identity.dataspace.copernicus.eu/auth/realms/\<BRAND\>/protocol/openid-connect/token' \
     --data-urlencode 'grant\_type=password' \
@@ -226,7 +226,7 @@ Where USER and PASSWORD are credentials to Your CloudFerro account in specific B
 | wekeo-elasticity | [https://identity.dataspace.copernicus.eu/auth/realms/wekeo-elasticity/protocol/openid-connect/token](https://identity.cloudferro.com/auth/realms/wekeo-elasticity) |
 | Eumetsat-elasticity | [https://identity.dataspace.copernicus.eu/auth/realms/Eumetsat-elasticity/protocol/openid-connect/token](https://identity.cloudferro.com/auth/realms/Eumetsat-elasticity) |
 
-<u>To download the product</u>:
+To download the product:
 
     curl -H "Authorization: Bearer $KEYLOAK\_TOKEN" 'https://datahub.creodias.eu/odata/v1/Products(060882f4-0a34-5f14-8e25-6876e4470b0d)/$value' --output /tmp/product.zip
 
