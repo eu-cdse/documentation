@@ -1,26 +1,26 @@
 * [Introduction](README.md)
-* [Roadmap](section1/Roadmap.md)
-  * [Data](section1/RoadmapTable/DataTable.html)
-  * [APIs](section1/RoadmapTable/APITable.html)
-  * [Applications](section1/RoadmapTable/AppTable.html)
+* [Roadmap](Roadmap.md)
+  * [Data](Roadmap/DataTable.html)
+  * [APIs](Roadmap/APITable.html)
+  * [Applications](Roadmap/AppTable.html)
 ___
-* [User registration and authentication](section1/Registration.md)
+* [User registration and authentication](Registration.md)
 
-* [Data](section1/Data.md)
-  *  [Sentinel 1](/section1/DataDescription/Sentinel1.md)
-  *  [Sentinel 2](/section1/DataDescription/Sentinel2.md)
-  *  [Sentinel 3](/section1/DataDescription/Sentinel3.md)
-  *  [Sentinel 5P](/section1/DataDescription/Sentinel5P.md)
+* [Data](Data.md)
+  *  [Sentinel 1](Data/Sentinel1.md)
+  *  [Sentinel 2](Data/Sentinel2.md)
+  *  [Sentinel 3](Data/Sentinel3.md)
+  *  [Sentinel 5P](Data/Sentinel5P.md)
 
-* [APIs](section1/APIs.md)
-  *  [OData](/section1/APIMarkdown/OData.md)
-  <!-- *  [OpenSearch (Resto)](/section1/APIs.md) -->
-  <!-- *  [STAC API](/section1/APIs.md) -->
-  <!-- *  [Sentinel Hub Catalog API](/section1/APIs.md) -->
-* [Applications](section1/Applications.md) 
-  * [Browser](section1/Browser.md)
+* [APIs](APIs.md)
+  *  [OData](APIs/OData.md)
+  *  [OpenSearch](/APIs/OpenSearch.md)
+  <!-- *  [STAC API](/APIs.md) -->
+  <!-- *  [Sentinel Hub Catalog API](APIs.md) -->
+* [Applications](Applications.md) 
+  * [Browser](Applications/Browser.md)
 ___
-* [Support](section2/Support.md)
-* [FAQ](section2/FAQ.md)
+* [Support](Support.md)
+* [FAQ](FAQ.md)
   
 

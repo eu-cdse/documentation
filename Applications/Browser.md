@@ -49,7 +49,7 @@ Here you can create a custom *R/G/B* composite or _Index_ (band ratio, normalize
 
 #### Comparing Visualizations
 
-To compare two (or more) visualizations you have to add them to the compare panel. You can add a visualization to the compare panel by clicking on the *Add to compare* button in each visualization layer *(see Fig. 4)*. When you have added all the layers you want to compare to the compare panel, you can switch to it by clicking on the compare icon ( ![compare](../_images/icons/CompareIcon.png) ). In the compare panel you can choose between a *Split* and an *Opacity* mode. With the *Split* mode you can compare two images side by side. With the *Opacity* mode you can compare two (or more) visualizations on top of each other.
+To compare two (or more) visualizations you must add them to the compare panel. You can add a visualization to the compare panel by clicking on the *Add to compare* button in each visualization layer *(see Fig. 4)*. When you have added all the layers you want to compare to the compare panel, you can switch to it by clicking on the compare icon ( ![compare](../_images/icons/CompareIcon.png) ). In the compare panel you can choose between a *Split* and an *Opacity* mode. With the *Split* mode you can compare two images side by side. With the *Opacity* mode you can compare two (or more) visualizations on top of each other.
 
 <img src="../_images/AddIcon.png" width="350">
 
@@ -81,12 +81,12 @@ Fig 6: *SEARCH* tab with different *Data Sources, Time range and Search* button
 To find products you can either use the keyword search (text input) or select one or more data sources using the checkboxes. To find products for a specific time range only, set the from/to date in the date input boxes. For example, let us find the latest Sentinel-2 L2A image over Italy for the beginning of 2023.
 
    1. Zoom in on Italy on the map with the scroll wheel of your mouse.
-   2. Select Sentinel-2 \> MSI (selected by default) \> L2A
+   2. Select Sentinel-2 \> MSI (selected by default) \> L2A.
    3. Set the Time Range to reflect two weeks (e.g., 2023-01-02, 2023-01-16)
 
 <img src="../_images/SearchResult.png" width="1024">
 
-Fig. 7: *SEARCH* tab with L2A collection selected and map centered on Rome (Italy)
+Fig. 7: *SEARCH* tab with L2A collection selected and map centred on Rome (Italy)
 
    4. Press the _Search_ button
 
@@ -107,13 +107,13 @@ Fig. 8: Product download (in progress) with Download product and cancel button h
 
 ## Tools
 
-The Browser has several tools to help you better understand the data on the map and prepare it for sharing with others. These tools can be found in the upper right corner of the Browser. They can help you select the Area of Interest, measure, download the image, create a timelapse if you want to observe the area over a longer period of time, or analyze the statistics of an index (e.g., the NDVI).
+The Browser has several tools to help you better understand the data on the map and prepare it for sharing with others. These tools can be found in the upper right corner of the Browser. They can help you select the Area of Interest, measure, download the image, create a timelapse if you want to observe the area over a longer period of time, or analyse the statistics of an index (e.g., the NDVI).
 
 ### Area/Point of Interest
 
 Use the **Area of Interest (AOI)** tool to draw a rectangular or polygonal area of interest by clicking on the ![polygon](../_images/icons/PolygonIcon.png) icon in the upper right corner of the browser. You can also upload a KML/KMZ, GPX, WKT (in EPSG:4326) or GEOJSON/JSON file to create an area of interest.
 
-Use the ![location](../_images/icons/Location.png) icon to mark a location and re-center to the **Point if Interest(PoI)**
+Use the ![location](../_images/icons/Location.png) icon to mark a location and re-centre to the **Point of Interest(PoI)**
 
 ### Measure
 

@@ -20,16 +20,16 @@ Consecutive filters within *filter* option should be separated with *and* or *or
 <u>Performance note</u>:
 
 To accelerate the query performance it is recommended to limit the query by acquisition dates e.g.:
-
+```
 ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-21T00:00:00.000Z
-
+```
 ## Filter option
 
 ### Query by name
 
 To search for a specific product by its exact name:
 
-[https://datahub.creodias.eu/odata/v1/Products?$filter=Name eq 'S1A\_IW\_GRDH\_1SDV\_20141031T161924\_20141031T161949\_003076\_003856\_634E.SAFE](https://datahub.creodias.eu/odata/v1/Products?$filter=Name%20eq%20%27S1A\_IW\_GRDH\_1SDV\_20141031T161924\_20141031T161949\_003076\_003856\_634E.SAFE)
+[https://datahub.creodias.eu/odata/v1/Products?$filter=Name eq 'S1A\_IW\_GRDH\_1SDV\_20141031T161924\_20141031T161949\_003076\_003856\_634E.SAFE'](https://datahub.creodias.eu/odata/v1/Products?$filter=Name%20eq%20%27S1A\_IW\_GRDH\_1SDV\_20141031T161924\_20141031T161949\_003076\_003856\_634E.SAFE')
 
 To search for products containing "S1A" in their names:
 
@@ -46,16 +46,16 @@ In case a user desires to search for multiple products by name in one query, POS
 [https://datahub.creodias.eu/odata/v1/Products/OData.CSC.FilterList](https://datahub.creodias.eu/odata/v1/Products/OData.CSC.FilterList)
 
 **Request body**:
-
-    {
-    "FilterProducts":
+```
+{
+  "FilterProducts":
     [
-    {"Name": "S1A\_IW\_GRDH\_1SDV\_20141031T161924\_20141031T161949\_003076\_003856\_634E.SAFE"},
-    {"Name": "S3B\_SL\_1\_RBT\_\_\_\_20190116T050535\_20190116T050835\_20190117T125958\_0179\_021\_048\_0000\_LN2\_O\_NT\_003.SEN3"},
-    {"Name": "xxxxxxxx.06.tar"}
+     {"Name": "S1A\_IW\_GRDH\_1SDV\_20141031T161924\_20141031T161949\_003076\_003856\_634E.SAFE"},
+     {"Name": "S3B\_SL\_1\_RBT\_\_\_\_20190116T050535\_20190116T050835\_20190117T125958\_0179\_021\_048\_0000\_LN2\_O\_NT\_003.SEN3"},
+     {"Name": "xxxxxxxx.06.tar"}
     ]
-    }
-
+ }
+```
 Two results are returned, as there is no product named xxxxxxxx.06.tar.
 
 ### Query Collection of Products
@@ -110,9 +110,9 @@ To search for products intersecting the specified point:
 ### Query by attributes
 
 To search for products by attributes it is necessary to build a filter with the following structure:
-
-    Attributes/OData.CSC.ValueTypeAttribute/any(att:att/Name eq '[Attribute.Name]' and att/OData.CSC.ValueTypeAttribute/Value eq '[Attribute.Value]')
-
+```
+Attributes/OData.CSC.ValueTypeAttribute/any(att:att/Name eq '[Attribute.Name]' and att/OData.CSC.ValueTypeAttribute/Value eq '[Attribute.Value]')
+```
 where
 
 - *ValueTypeAttribute* can take the following values:
@@ -168,8 +168,9 @@ To skip a specific number of results:
  The default value is set to 0.
 
 Whenever a query results in more products than 20 (default top value), the API provides a nextLink at the bottom of the page:
-
-    "@OData.nextLink": 
+```
+"@OData.nextLink": 
+```
 [http://datahub.creodias.eu/odata/v1/Products?$filter=contains(Name,'S1A\_EW\_GRD')+and+ContentDate/Start+gt+2022-05-03T00:00:00.000Z+and+ContentDate/Start+lt+2022-05-03T12:00:00.000Z&$skip=20](https://datahub.creodias.eu/odata/v1/Products?$filter=contains(Name,%27S1A\_EW\_GRD%27)+and+ContentDate/Start+gt+2022-05-03T00:00:00.000Z+and+ContentDate/Start+lt+2022-05-03T12:00:00.000Z&$skip=20)
 
 The acceptable arguments for this option: *Integer \<0,10000\>*
@@ -205,17 +206,17 @@ Where Id is an Id of the product returned by the search query, e.g.:
 Only authorized users are allowed to download products
 
 To get the token:
-
-    KEYCLOAK\_TOKEN=$(curl -s --location --request POST 'https://identity.dataspace.copernicus.eu/auth/realms/\<BRAND\>/protocol/openid-connect/token' \
+```
+KEYCLOAK\_TOKEN=$(curl -s --location --request POST 'https://identity.dataspace.copernicus.eu/auth/realms/\<BRAND\>/protocol/openid-connect/token' \
     --data-urlencode 'grant\_type=password' \
     --data-urlencode 'username=\<USER\>' \
     --data-urlencode 'password=\<PASSWORD\>' \
     --data-urlencode 'client\_id=CLOUDFERRO\_PUBLIC'|jq .access\_token|tr -d '"')
-
+```
 or
-
-    ' -d 'password=' -d 'grant\_type=password' 'https://identity.dataspace.copernicus.eu/auth/realms//protocol/openid-connect/token' | python -m json.tool | grep "access\_token" | awk -F\" '{print $4}')]]\>
-
+```    
+'-d 'password=' -d 'grant\_type=password' 'https://identity.dataspace.copernicus.eu/auth/realms//protocol/openid-connect/token' | python -m json.tool | grep "access\_token" | awk -F\" '{print $4}')]]\>
+```
 Where USER and PASSWORD are credentials to Your CloudFerro account in specific BRAND. Brand names are listed below with API from which You can get your token.
 
 | **Brand names** | **API** |
@@ -227,9 +228,10 @@ Where USER and PASSWORD are credentials to Your CloudFerro account in specific B
 | Eumetsat-elasticity | [https://identity.dataspace.copernicus.eu/auth/realms/Eumetsat-elasticity/protocol/openid-connect/token](https://identity.cloudferro.com/auth/realms/Eumetsat-elasticity) |
 
 To download the product:
-
-    curl -H "Authorization: Bearer $KEYLOAK\_TOKEN" 'https://datahub.creodias.eu/odata/v1/Products(060882f4-0a34-5f14-8e25-6876e4470b0d)/$value' --output /tmp/product.zip
-
+```
+curl -H "Authorization: Bearer $KEYLOAK\_TOKEN" 'https://datahub.creodias.eu/odata/v1/Products(060882f4-0a34-5f14-8e25-6876e4470b0d)/$value' --output /tmp/product.zip
+```
 or
-
-    wget  --header "Authorization: Bearer $KEYCLOAK\_TOKEN" 'http://datahub.creodias.eu/odata/v1/Products(db0c8ef3-8ec0-5185-a537-812dad3c58f8)/$value' -O example\_odata.zip
+```
+wget  --header "Authorization: Bearer $KEYCLOAK\_TOKEN" 'http://datahub.creodias.eu/odata/v1/Products(db0c8ef3-8ec0-5185-a537-812dad3c58f8)/$value' -O example\_odata.zip
+```
