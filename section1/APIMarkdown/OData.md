@@ -1,8 +1,8 @@
-# Data catalogue API with Odata interface
+# Data catalogue API with OData interface
 
 ## Query structure
 
-As a general note, Odata query consistst of elements which in this documentation are called "options". Interface supports the following search options:
+As a general note, OData query consistst of elements which in this documentation are called "options". Interface supports the following search options:
 
 * filter
 * orderby
@@ -169,7 +169,7 @@ To skip a specific number of results:
 
 Whenever a query results in more products than 20 (default top value), the API provides a nextLink at the bottom of the page:
 
-    "@odata.nextLink": 
+    "@OData.nextLink": 
     "http://datahub.creodias.eu/odata/v1/Products?$filter=contains(Name,'S1A\_EW\_GRD')+and+ContentDate/Start+gt+2022-05-03T00:00:00.000Z+and+ContentDate/Start+lt+2022-05-03T12:00:00.000Z&$skip=20"
 
 The acceptable arguments for this option: *Integer \<0,10000\>*
