@@ -9,16 +9,16 @@
 |4. |Browser| On-demand production API  | Processing API: extended Sentinel Hub APIs, OpenEO  |   |
 | 5.|Catalogue APIs: OData and OpenSearch |   | Jupyter Lab    |      |
 |6.|  |  | Marketplace | -->
-![Roadmap Summary](./../_images/RoadmapSummary.png)
+![Roadmap Summary](/_images/RoadmapSummary.png)
 
 ### Detailed
 
 A more details version updation of Copernicus Data Space Ecosystem can be found under following specific headings.
 
-* [Data timeline overview](/section1/RoadmapTable/DataTable.html)
+* [Data timeline overview](/Roadmap/DataTable.html)
 
-* [APIs timeline overview](/section1/RoadmapTable/APITable.html)
+* [APIs timeline overview](/Roadmap/APITable.html)
 
-* [Applications timeline overview](/section1/RoadmapTable/AppTable.html)
+* [Applications timeline overview](/Roadmap/AppTable.html)
 
 

@@ -11,13 +11,13 @@
 <details>
   <summary>Comparing with existing legacy Copernicus Data Hub, what will be the other free services other than stac/cog already described above?</summary>
     <div>
-    Compared to existing Copernicus Data Hub, there will indeed be additional APIs - OGC interfaces (WMS, WMTS, WCS), OpenEO, Sentinel Hub API, S3, and others. Please refer to the <a href="#/section1/Roadmap">Roadmap</a> for more info on the timing of these interfaces.
+    Compared to existing Copernicus Data Hub, there will indeed be additional APIs - OGC interfaces (WMS, WMTS, WCS), OpenEO, Sentinel Hub API, S3, and others. Please refer to the <a href="#/Roadmap">Roadmap</a> for more info on the timing of these interfaces.
     </div>
 </details>
 <details>
   <summary>Is there an end user document available online that describes the specific data products available and specific services?</summary>
     <div>
-    The user level document describing the details for every service and dataset can be found <a href="#/section1/Browser">here</a>(LINK WILL LATER BE UPDATED).
+    The user level document describing the details for every service and dataset can be found <a href="#/Applications/Browser">here</a>(LINK WILL LATER BE UPDATED).
     </div>
 </details>
 <details>
@@ -38,7 +38,7 @@
 <details>
   <summary>What data will be offered online and what is the timeline for the following months?</summary>
     <div>
-    For the details on the data offer and timing, we would like to refer to the <a href="#/section1/Roadmap">Roadmap</a>
+    For the details on the data offer and timing, we would like to refer to the <a href="#/Roadmap">Roadmap</a>
     </div>
 </details>
 <details>
@@ -68,7 +68,7 @@
 <details>
   <summary>Is it possible to download a subset of data corresponding to an AOI, instead of the whole image?</summary>
     <div>
-    Yes, you will be able to download a subset of data, either using S3 interface, or dedicated APIs, i.e. Sentinel Hub, OpenEO when they become available. See <a href="#/section1/Roadmap">Roadmap</a> section of the documentation.
+    Yes, you will be able to download a subset of data, either using S3 interface, or dedicated APIs, i.e. Sentinel Hub, OpenEO when they become available. See <a href="#/Roadmap">Roadmap</a> section of the documentation.
     </div>
 </details>
 <details>
@@ -92,7 +92,7 @@
 <details>
   <summary>Can we download the data acquired by all Sentinel missions (1, 2, 3, 5P, 6) and the other satellites (ex., Meteosat) via the new interface? Some missions are not managed by ESA, but by EUMETSAT for example.</summary>
     <div>
-    Initialy data up to L2 products will be available.  The <a href="#/section1/Roadmap">Roadmap</a> shows how the Copernicus Data Space Ecosystem will be continously upgraded and how more data become available.
+    Initialy data up to L2 products will be available.  The <a href="#/Roadmap">Roadmap</a> shows how the Copernicus Data Space Ecosystem will be continously upgraded and how more data become available.
     </div>
 </details>
 <details>
@@ -104,7 +104,7 @@
 <details>
   <summary>Will the new interface offer EO ready-to-use products or just L0 and L1 data?</summary>
     <div>
-    Up to L2 products will be available. The <a href="#/section1/Roadmap">Roadmap</a> shows how the Copernicus Data Space Ecosystem will be continously upgraded and how more data become available.
+    Up to L2 products will be available. The <a href="#/Roadmap">Roadmap</a> shows how the Copernicus Data Space Ecosystem will be continously upgraded and how more data become available.
     </div>
 </details>
 
@@ -170,7 +170,7 @@
 <details>
   <summary>Will LTA process be discontinued when all archived data become online?</summary>
     <div>
-    There will still be services available for so called “deferred data access” :  data collections that are not commonly used. That said, all most relevant collections will be available on-line.  The <a href="#/section1/Roadmap">Roadmap</a> shows how the Copernicus Data Space Ecosystem will be continously upgraded and how more data become available.
+    There will still be services available for so called “deferred data access” :  data collections that are not commonly used. That said, all most relevant collections will be available on-line.  The <a href="#/Roadmap">Roadmap</a> shows how the Copernicus Data Space Ecosystem will be continously upgraded and how more data become available.
     </div>
 </details>
 <details>
