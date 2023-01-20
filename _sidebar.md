@@ -14,7 +14,7 @@ ___
 
 * [APIs](APIs.md)
   *  [OData](APIs/OData.md)
-  <!-- *  [OpenSearch (Resto)](/APIs.md) -->
+  *  [OpenSearch](/APIs/OpenSearch.md)
   <!-- *  [STAC API](/APIs.md) -->
   <!-- *  [Sentinel Hub Catalog API](APIs.md) -->
 * [Applications](Applications.md) 

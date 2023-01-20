@@ -1,6 +1,6 @@
-# Roadmap Overview
+# Roadmap 
 
-### Summary
+## Overview
 <!-- |Timeline| Jan-23 | Apr-23 | Jul-23| Nov-23 
 |---|---|---|---|----|
 |1. | New Data Access portal  | Catalogue API: STAC, S3  | Full archive of Sentinel missions | Sentinel engineering and auxiliary data|
@@ -11,9 +11,9 @@
 |6.|  |  | Marketplace | -->
 ![Roadmap Summary](/_images/RoadmapSummary.png)
 
-### Detailed
+## Details
 
-A more details version updation of Copernicus Data Space Ecosystem can be found under following specific headings.
+More detailed information on the timelines for Copernicus Data Space Ecosystem data, APIs and Application updates can be found here:
 
 * [Data timeline overview](/Roadmap/DataTable.html)
 
