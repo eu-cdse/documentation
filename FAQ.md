@@ -9,7 +9,7 @@
     </div>
 </details>
 <details>
-  <summary>Comparing with existing legacy Copernicus Data Hub, what will be the other free services other than stac/cog already described above?</summary>
+  <summary>Comparing with existing legacy Copernicus Data Hub, what will be the other free services other than stac/cog?</summary>
     <div>
     Compared to existing Copernicus Data Hub, there will indeed be additional APIs - OGC interfaces (WMS, WMTS, WCS), OpenEO, Sentinel Hub API, S3, and others. Please refer to the <a href="#/Roadmap">Roadmap</a> for more info on the timing of these interfaces.
     </div>
@@ -23,7 +23,7 @@
 <details>
   <summary>How long is the project timescale in total ?</summary>
     <div>
-   The time scale of the project is 6 years with an optional extension up to 10 years.
+   The time scale of the project is 6 years (ie. to the end of 2028) with an optional extension up to 10 years (ie. 2032).
     </div>
 </details>
 <details>
@@ -195,7 +195,7 @@
     </div>
 </details>
 <details>
-  <summary>Which distribution channels will be available for high-throughput data access? I assume the public side (database.copernicus.eu) has a bandwidth limitation. Or does the public side have user tiers, or is high-throughput data transfer (such as https://creodias.eu/remote-transfer-for-eodata) only a paid service?</summary>
+  <summary>Which distribution channels will be available for high-throughput data access? I assume the public side (dataspase.copernicus.eu) has a bandwidth limitation. Or does the public side have user tiers, or is high-throughput data transfer (such as https://creodias.eu/remote-transfer-for-eodata) only a paid service?</summary>
     <div>
     All distribution options (i.e. OData, S3, Sentinel Hub,..) will be constrained with user quotas, which includes both bandwidth limitation, as well as monthly limits.
     </div>
