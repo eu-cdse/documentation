@@ -12,7 +12,7 @@ All queries may be executed as simple HTTP-Get calls, by typing the query in web
 
 The queries produce results in JSON format. Base url:
 
-[http://datahub.creodias.eu/resto/api/collections/search.json?](http://datahub.creodias.eu/resto/api/collections/search.json?)
+[http://catalogue.dataspace.copernicus.eu/resto/api/collections/search.json?](http://catalogue.dataspace.copernicus.eu/resto/api/collections/search.json?)
 
 Most queries are case-sensitive.
 
@@ -20,11 +20,11 @@ Most queries are case-sensitive.
 
 The data are organized in so-called collections, corresponding to various satellites. A query may search for data in all collections, or in one particular collection only. If only one satellite is in the field of interest, the second approach is faster and more efficient, than filtering the general query. For example, to find 10 most recent Sentinel-2 products with cloud cover below 10%, the query should look like:
 ```
-$ wget -O - "http://datahub.creodias.eu/resto/api/collections/Sentinel2/search.json?cloudCover=[0,10]&startDate=2022-06-11&completionDate=2022-06-22&maxRecords=10"
+$ wget -O - "http://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=[0,10]&startDate=2022-06-11&completionDate=2022-06-22&maxRecords=10"
 ```
 while if the collection field is missing in the URL, the products from all the satellites are returned:
 ```
-$ wget -O - "https://datahub.creodias.eu/resto/api/collections/search.json?cloudCover=[0,10]&startDate=2022-06-11&completionDate=2022-06-22&maxRecords=10"
+$ wget -O - "https://catalogue.dataspace.copernicus.eu/resto/api/collections/search.json?cloudCover=[0,10]&startDate=2022-06-11&completionDate=2022-06-22&maxRecords=10"
 ```
 As for today the following collections are defined and may be used:
 
@@ -66,11 +66,11 @@ each of them may be accompanied by
 
 For example the query
 
-[http://datahub.creodias.eu/resto/api/collections/Sentinel2/search.json?startDate=2021-07-01&completionDate=2021-07-31&sortParam=startDate&maxRecords=20](http://datahub.creodias.eu/resto/api/collections/Sentinel2/search.json?startDate=2016-07-01&completionDate=2016-07-31&sortParam=cloudCover&maxRecords=20)
+[http://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?startDate=2021-07-01&completionDate=2021-07-31&sortParam=startDate&maxRecords=20](http://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?startDate=2016-07-01&completionDate=2016-07-31&sortParam=cloudCover&maxRecords=20)
 
 will return 20 products from July 2021, while the next query would return the next 20:
 
-[http://datahub.creodias.eu/resto/api/collections/Sentinel2/search.json?startDate=2021-07-01&completionDate=2021-07-31&sortParam=startDate&maxRecords=20&page=2](http://datahub.creodias.eu/resto/api/collections/Sentinel2/search.json?startDate=2021-07-01&completionDate=2021-07-31&sortParam=startDate&maxRecords=20&page=2)
+[http://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?startDate=2021-07-01&completionDate=2021-07-31&sortParam=startDate&maxRecords=20&page=2](http://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?startDate=2021-07-01&completionDate=2021-07-31&sortParam=startDate&maxRecords=20&page=2)
 
 ### Formal queries
 
@@ -78,7 +78,7 @@ The formal query is invoked as a sequence of sub phrases, separated by &. The re
 
 The example of formal query - about cloudless (cloud cover lower or equal to 10%) products for a specific location:
 
-[https://datahub.creodias.eu/resto/api/collections/Sentinel2/search.json?cloudCover=[0,10]&startDate=2021-06-21&completionDate=2021-09-22&lon=21.01&lat=52.22](https://datahub.creodias.eu/resto/api/collections/Sentinel2/search.json?cloudCover=%5B0,10%5D&startDate=2021-06-21&completionDate=2021-09-22&lon=21.01&lat=52.22)
+[https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=[0,10]&startDate=2021-06-21&completionDate=2021-09-22&lon=21.01&lat=52.22](https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=%5B0,10%5D&startDate=2021-06-21&completionDate=2021-09-22&lon=21.01&lat=52.22)
 
 The queries are in form **param=value or param=[minvalue,maxvalue**]. Most of the parameters are common for all collections, but some are specific for some them (e.g. **cloudCover** applies to optical satellites, but polarisation applies to radar ones), or just single one.
 
@@ -128,7 +128,7 @@ Some additional parameters are strictly satellite-specific, e.g. polarisation, w
 
 For every satellite (collection) its set of query-able parameters may be obtained by a query like:
 
-[https://datahub.creodias.eu/resto/api/collections/Sentinel1/describe.xml](https://datahub.creodias.eu/resto/api/collections/Sentinel1/describe.xml)
+[https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel1/describe.xml](https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel1/describe.xml)
 
 The resulting XML file provides full list of the parameters for the collection, with their very brief descriptions.
 
