@@ -12,31 +12,32 @@ The [Sentinel-3 PDGS](https://sentinels.copernicus.eu/web/sentinel/missions/sent
 
 The Sentinel-3 synergy products replicate the attributes and quality of standard 1 km SPOT Vegetation products through innovative spectral remapping and co-location techniques.
 
-Starting in January 2020, additional Sentinel 3 products are outputted and provided to users. These new products provide information about fires and Gas flares detected over both land and ocean, and information about Aerosol characteristics over both land and ocean.
+The table below indicates for each type of user level product, the format in which the data will be available, the access type (IAD or DAD), the spatial and temporal extent of the offer and from when the data will be available in the Copernicus Data Space Ecosystem. 
+The data offer will gradually extend starting from January 2023.
 
 
 ## Data Offer
 |Product Type| File Description| Data Access Type | Spatial Extent | Temporal Extent | More Information | Available from |
 |------------ | ---------------------- | ---------------------- | ------------ | ------------ | ------------| -----------|
-|OLCI Level-1 NTC (Non Time Critical) | unpacked | IAD (Immediately available data) | World | 03/2016 - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-3/data-products/olci)| 01/2023|
-|OLCI Level-1 NTC | packed | DAD (Deferred available data) | World | 02/2016 - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-3/data-products/olci)| 07/2023|
-|OLCI Level-1 NRT (Near Real Time) | unpacked | IAD | World | 02/2022 - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-3/data-products/olci)| 01/2023|
-|OLCI Level-2 NTC | unpacked | IAD | World | 03/2016 - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-3/data-products/olci)| 01/2023|
-|OLCI Level-2 NRT | unpacked | IAD | World | 02/2022 - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-3/data-products/olci)| 01/2023|
-|OLCI Level-0 | packed | DAD | World | 02/2016 - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-3/data-products/olci)| 07/2023|
-|SLSTR Level-1 NTC | unpacked | IAD | World | 03/2016 - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-3/data-products/slstr)| 01/2023|
-|SLSTR Level-1 NRT  | unpacked | IAD | World | 02/2022 - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-3/data-products/slstr)| 01/2023|
-|SLSTR Level-2 NTC | unpacked | IAD | World | 03/2016 - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-3/data-products/slstr)| 01/2023|
-|SLSTR Level-2 NRT | unpacked | IAD | World | 02/2022 - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-3/data-products/slstr)| 01/2023|
-|SLSTR Level-0 | packed | DAD | World | 02/2016 - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-3/data-products/slstr)| 07/2023|
-|SRAL Level-1 NTC | unpacked | IAD | World | 03/2016 - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-3/data-products/altimetry)| 01/2023|
-|SRAL Level-1 STC (Short Time Critical) | unpacked | IAD | World | Last Month | [Details](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-3/data-products/altimetry)| 01/2023|
-|SRAL Level-1 NRT | unpacked | IAD | World | 02/2022 - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-3/data-products/altimetry)| 01/2023|
-|SRAL Level-2 NTC | unpacked | IAD | World | 03/2016 - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-3/data-products/altimetry)| 01/2023|
-|SRAL Level-2 NRT | unpacked | IAD | World | 02/2022 - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-3/data-products/altimetry)| 01/2023|
-|SRAL Level-0 | packed | DAD | World | 02/2016 - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-3/data-products/altimetry)| 07/2023|
-|SYN Level-1 NTC | unpacked | IAD | World | 03/2016 - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-3/data-products/synergy)| 01/2023|
-|SYN Level-1 NRT | unpacked | IAD | World | 02/2022 - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-3/data-products/synergy)| 01/2023|
-|SYN Level-2 NTC | unpacked | IAD | World | 03/2016 - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-3/data-products/synergy)| 01/2023|
-|SYN Level-2 NRT | unpacked | IAD | World | 02/2022 - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-3/data-products/synergy)| 01/2023|
-|SYN Level-0 | packed | DAD | World | 02/2016 - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-3/data-products/synergy)| 07/2023|
+|OLCI Level-1 NTC (Non Time Critical) | unpacked | IAD (Immediately available data) | World | Mar-16 - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-3/data-products/olci)| Jan-23|
+|OLCI Level-1 NTC | packed | DAD (Deferred available data) | World | Feb-16 - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-3/data-products/olci)| Jul-23|
+|OLCI Level-1 NRT (Near Real Time) | unpacked | IAD | World | Feb-22 - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-3/data-products/olci)| Jan-23|
+|OLCI Level-2 NTC | unpacked | IAD | World | Mar-16 - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-3/data-products/olci)| Jan-23|
+|OLCI Level-2 NRT | unpacked | IAD | World | Feb-22 - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-3/data-products/olci)| Jan-23|
+|OLCI Level-0 | packed | DAD | World | Feb-16 - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-3/data-products/olci)| Jul-23|
+|SLSTR Level-1 NTC | unpacked | IAD | World | Mar-16 - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-3/data-products/slstr)| Jan-23|
+|SLSTR Level-1 NRT  | unpacked | IAD | World | Feb-22 - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-3/data-products/slstr)| Jan-23|
+|SLSTR Level-2 NTC | unpacked | IAD | World | Mar-16 - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-3/data-products/slstr)| Jan-23|
+|SLSTR Level-2 NRT | unpacked | IAD | World | Feb-22 - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-3/data-products/slstr)| Jan-23|
+|SLSTR Level-0 | packed | DAD | World | Feb-16 - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-3/data-products/slstr)| Jul-23|
+|SRAL Level-1 NTC | unpacked | IAD | World | Mar-16 - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-3/data-products/altimetry)| Jan-23|
+|SRAL Level-1 STC (Short Time Critical) | unpacked | IAD | World | Last Month | [Details](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-3/data-products/altimetry)| Jan-23|
+|SRAL Level-1 NRT | unpacked | IAD | World | Feb-22 - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-3/data-products/altimetry)| Jan-23|
+|SRAL Level-2 NTC | unpacked | IAD | World | Mar-16 - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-3/data-products/altimetry)| Jan-23|
+|SRAL Level-2 NRT | unpacked | IAD | World | Feb-22 - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-3/data-products/altimetry)| Jan-23|
+|SRAL Level-0 | packed | DAD | World | Feb-16 - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-3/data-products/altimetry)| Jul-23|
+|SYN Level-1 NTC | unpacked | IAD | World | Mar-16 - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-3/data-products/synergy)| Jan-23|
+|SYN Level-1 NRT | unpacked | IAD | World | Feb-22 - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-3/data-products/synergy)| Jan-23|
+|SYN Level-2 NTC | unpacked | IAD | World | Mar-16 - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-3/data-products/synergy)| Jan-23|
+|SYN Level-2 NRT | unpacked | IAD | World | Feb-22 - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-3/data-products/synergy)| Jan-23|
+|SYN Level-0 | packed | DAD | World | Feb-16 - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-3/data-products/synergy)| Jul-23|

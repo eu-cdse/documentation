@@ -14,13 +14,15 @@ Level-0 products are Time-ordered, raw satellite telemetry without temporal over
 Level-1B products are geo-located and radiometrically corrected top of the atmosphere Earth radiances in all spectral bands, as well as solar irradiances.
 Level-2 products are geolocated total columns of ozone, sulfur dioxide, nitrogen dioxide, carbon monoxide, formaldehyde and methane; geolocated tropospheric columns of ozone; geolocated vertical profiles of ozone and geolocated cloud and aerosol information (e.g. absorbing aerosol index and aerosol layer height).
 
+The table below indicates for each type of user level product, the format in which the data will be available, the access type (IAD or DAD), the spatial and temporal extent of the offer and from when the data will be available in the Copernicus Data Space Ecosystem. 
+The data offer will gradually extend starting from January 2023.
 
 ## Data Offer
 |Product Type| File Description| Data Access Type | Spatial Extent | Temporal Extent | More Information | Available from |
 |------------ | ---------------------- | ---------------------- | ------------ | ------------ | ------------| -----------|
-|Level-1B NTC (Non Time Critical) | unpacked | IAD (Immediately available data) | World | 04/2018 - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/technical-guides/sentinel-5p/products-algorithms)| 01/2023|
-|Level-1B NTC | packed | DAD (Deferred available data) | World | 04/2018 - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/technical-guides/sentinel-5p/products-algorithms)| 07/2023|
-|Level-2 NTC | unpacked | IAD | World | 04/2018 - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/technical-guides/sentinel-5p/products-algorithms)| 01/2023|
-|Level-2 NTC | packed | DAD | World | 04/2018 - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/technical-guides/sentinel-5p/products-algorithms)| 07/2023|
-|Level-2 NRT(Near real Time) | unpacked | IAD | World | 1 month retention time | [Details](https://sentinels.copernicus.eu/web/sentinel/technical-guides/sentinel-5p/products-algorithms)| 01/2023|
-|Level-0 | packed | DAD | World | 04/2018 - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/technical-guides/sentinel-5p/products-algorithms)| 07/2023|
+|Level-1B NTC (Non Time Critical) | unpacked | IAD (Immediately available data) | World | Apr-18 - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/technical-guides/sentinel-5p/products-algorithms)| Jan-23|
+|Level-1B NTC | packed | DAD (Deferred available data) | World | Apr-18 - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/technical-guides/sentinel-5p/products-algorithms)| Jul-23|
+|Level-2 NTC | unpacked | IAD | World | Apr-18 - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/technical-guides/sentinel-5p/products-algorithms)| Jan-23|
+|Level-2 NTC | packed | DAD | World | Apr-18 - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/technical-guides/sentinel-5p/products-algorithms)| Jul-23|
+|Level-2 NRT(Near real Time) | unpacked | IAD | World | 1 month retention time | [Details](https://sentinels.copernicus.eu/web/sentinel/technical-guides/sentinel-5p/products-algorithms)| Jan-23|
+|Level-0 | packed | DAD | World | Apr-18 - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/technical-guides/sentinel-5p/products-algorithms)| Jul-23|

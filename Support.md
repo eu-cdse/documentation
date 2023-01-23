@@ -1,11 +1,11 @@
 # Service Desk
 
-In case of any questions that cannot be found in this documentation section, users can submit a support request related to questions on the use of the Copernicus Data Space Ecosystem. This article shows you how to do it.
+In case of any questions that cannot be found in this documentation section, users can ask for support related to questions on the use of the Copernicus Data Space Ecosystem. This article shows you how to do it.
 
 ## Prerequisites
 
-Important to know is that only users with a Copernicus Data Space Ecosystem account can raise support questions. 
-If you don't have it yet, you can register it [here](https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/auth?client_id=cdse-public&redirect_uri=https%3A%2F%2Fdataspace.copernicus.eu&response_type=code&scope=openid).
+Important to know is that only users with a Copernicus Data Space Ecosystem account can ask for support. 
+If you don't have one yet, you can register [here](https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/auth?client_id=cdse-public&redirect_uri=https%3A%2F%2Fdataspace.copernicus.eu&response_type=code&scope=openid).
 If you have an issue with registering or you want to deregister, please [contact us](mailto://help-cdse-login@cloudferro.com?Subject=Subject%20Text&Body=Your%20comments) directly.
 
 ## Step 1: Sign in to CloudFerro JIRA
@@ -38,7 +38,7 @@ The form used to create tickets should now appear:
 
 Provide a short summary of the ticket in the text field Summary.
 Describe your problem in detail in the text field Description.
-You can also add upload attachments like screenshots in the Attachments section.
+You can also add upload attachments such as screenshots in the Attachments section.
 Once you’ve finished, click Create.
 Your ticket should now be submitted:
 
@@ -75,6 +75,6 @@ You should now see your ticket:
 <img src="../_images/support_request_mytickets.png" width="500">
 
 
-This system is the initial setup of the support desk of the Copernicus Data Space Ecosystem. From April 2023 onwards, we will provide much more integrated support functionalities like answer suggestions and a user forum.
+This system is the initial setup of the support desk of the Copernicus Data Space Ecosystem. From April 2023 onwards, we will provide much more integrated support functionalities such as answer suggestions and a user forum.
 
 
