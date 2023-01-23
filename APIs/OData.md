@@ -46,7 +46,7 @@ In case a user desires to search for multiple products by name in one query, POS
 [https://datahub.creodias.eu/odata/v1/Products/OData.CSC.FilterList](https://datahub.creodias.eu/odata/v1/Products/OData.CSC.FilterList)
 
 **Request body**:
-```
+```Json
 {
   "FilterProducts":
     [
@@ -206,15 +206,15 @@ Where Id is an Id of the product returned by the search query, e.g.:
 Only authorized users are allowed to download products
 
 To get the token:
-```
-KEYCLOAK\_TOKEN=$(curl -s --location --request POST 'https://identity.dataspace.copernicus.eu/auth/realms/\<BRAND\>/protocol/openid-connect/token' \
+```bash
+KEYCLOAK\_TOKEN=$(curl -s --location --request POST ''https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token'  \
     --data-urlencode 'grant\_type=password' \
     --data-urlencode 'username=\<USER\>' \
     --data-urlencode 'password=\<PASSWORD\>' \
     --data-urlencode 'client\_id=CLOUDFERRO\_PUBLIC'|jq .access\_token|tr -d '"')
 ```
 or
-```    
+```bash   
 '-d 'password=' -d 'grant\_type=password' 'https://identity.dataspace.copernicus.eu/auth/realms//protocol/openid-connect/token' | python -m json.tool | grep "access\_token" | awk -F\" '{print $4}')]]\>
 ```
 Where USER and PASSWORD are credentials to Your CloudFerro account in specific BRAND. Brand names are listed below with API from which You can get your token.
@@ -228,10 +228,10 @@ Where USER and PASSWORD are credentials to Your CloudFerro account in specific B
 | Eumetsat-elasticity | [https://identity.dataspace.copernicus.eu/auth/realms/Eumetsat-elasticity/protocol/openid-connect/token](https://identity.cloudferro.com/auth/realms/Eumetsat-elasticity) |
 
 To download the product:
-```
+```bash
 curl -H "Authorization: Bearer $KEYLOAK\_TOKEN" 'https://datahub.creodias.eu/odata/v1/Products(060882f4-0a34-5f14-8e25-6876e4470b0d)/$value' --output /tmp/product.zip
 ```
 or
-```
+```bash
 wget  --header "Authorization: Bearer $KEYCLOAK\_TOKEN" 'http://datahub.creodias.eu/odata/v1/Products(db0c8ef3-8ec0-5185-a537-812dad3c58f8)/$value' -O example\_odata.zip
 ```
