@@ -31,3 +31,5 @@ When you open an email you need to click "Verify email address".
 ![Email](./_images/VerifyEmail.png)
 
 Now you can log in with your credentials (providing Email and Password).
+
+If you have an issue with registering or you want to deregister, please [contact us](mailto://help-cdse-login@cloudferro.com?Subject=Subject%20Text&Body=Your%20comments) directly.
