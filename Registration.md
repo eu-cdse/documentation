@@ -14,7 +14,7 @@ You will now get the Copernicus Data Space Ecosystems login form. Click "here" i
 <!-- ![Login](./_images/AccessPage.png) -->
 <img src="./_images/AccessPage.png" width="400">
 
-You will now get the Copernicus Data Space Ecosystems registration form. Fill in all required fields (all expect User Sector and Affiliation), you can fill in optional fields and then click "Register".
+You will now get the Copernicus Data Space Ecosystems registration form. Fill in all required fields (all expect Thematic activity and Purpose of use), you can fill in optional fields, next you have to accept terms and conditions and you can accept other consents (they are optional) and then click "Register".
 
 <!-- ![Register](./_images/Register.png) -->
 <img src="./_images/Register.png" width="300">
