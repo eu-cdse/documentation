@@ -150,7 +150,7 @@
 <details>
   <summary>If I'm having troubles with registering, what can I do?</summary>
     <div>
-    Please e-mail the help-cdse-login@cloudferro.com address for direct support on this matter.
+    Please e-mail the help-cdse-login@dataspace.copernicus.eu address for direct support on this matter.
     </div>
 </details>
 
