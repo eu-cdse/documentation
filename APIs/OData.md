@@ -29,7 +29,7 @@ ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-2
 
 To search for a specific product by its exact name:
 
-[https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Name eq 'S1A\_IW\_GRDH\_1SDV\_20141031T161924\_20141031T161949\_003076\_003856\_634E.SAFE'](https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Name%20eq%20%27S1A\_IW\_GRDH\_1SDV\_20141031T161924\_20141031T161949\_003076\_003856\_634E.SAFE')
+[https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Name eq 'S1A_IW_GRDH_1SDV_20141031T161924_20141031T161949_003076_003856_634E.SAFE'](https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Name%20eq%20%27S1A_IW_GRDH_1SDV_20141031T161924_20141031T161949_003076_003856_634E.SAFE')
 
 To search for products containing "S1A" in their names:
 
@@ -50,8 +50,8 @@ In case a user desires to search for multiple products by name in one query, POS
 {
   "FilterProducts":
     [
-     {"Name": "S1A\_IW\_GRDH\_1SDV\_20141031T161924\_20141031T161949\_003076\_003856\_634E.SAFE"},
-     {"Name": "S3B\_SL\_1\_RBT\_\_\_\_20190116T050535\_20190116T050835\_20190117T125958\_0179\_021\_048\_0000\_LN2\_O\_NT\_003.SEN3"},
+     {"Name": "S1A_IW_GRDH_1SDV_20141031T161924_20141031T161949_003076_003856_634E.SAFE"},
+     {"Name": "S3B_SL_1_RBT____20190116T050535_20190116T050835_20190117T125958_0179_021_048_0000_LN2_O_NT_003.SEN3"},
      {"Name": "xxxxxxxx.06.tar"}
     ]
  }
@@ -139,7 +139,7 @@ Orderby option can be used to order the products in an ascending (asc) or descen
 
 To order products by ContentDate/Start in a descending direction:
 
-[https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,'S1A\_EW\_GRD') and ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-03T03:00:00.000Z&$orderby=ContentDate/Start desc](https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A\_EW\_GRD%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T03:00:00.000Z&$orderby=ContentDate/Start%20desc)
+[https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,'S1A_EW_GRD') and ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-03T03:00:00.000Z&$orderby=ContentDate/Start desc](https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A_EW_GRD%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T03:00:00.000Z&$orderby=ContentDate/Start%20desc)
 
 By default, if orderby option is not used, the results are not ordered. If orderby option is used, additional orderby by id is also used, so that the results are fully ordered and no products are lost while paginating through the results.
 
@@ -151,7 +151,7 @@ Top option specifies the maximum number of items returned from a query.
 
 To limit the number of results:
 
-[https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A\_EW\_GRD%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T12:00:00.000Z&$top=100](https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A\_EW\_GRD%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T12:00:00.000Z&$top=100)
+[https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A_EW_GRD%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T12:00:00.000Z&$top=100](https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A_EW_GRD%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T12:00:00.000Z&$top=100)
 
  The default value is set to 20.
 
@@ -163,7 +163,7 @@ Skip option can be used to skip a specific number of results. Exemplary applicat
 
 To skip a specific number of results:
 
-[https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A\_EW\_GRD%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T12:00:00.000Z&$skip=23](https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A\_EW\_GRD%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T12:00:00.000Z&$skip=23)
+[https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A_EW_GRD%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T12:00:00.000Z&$skip=23](https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A_EW_GRD%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T12:00:00.000Z&$skip=23)
 
  The default value is set to 0.
 
@@ -171,7 +171,7 @@ Whenever a query results in more products than 20 (default top value), the API p
 ```
 "@OData.nextLink": 
 ```
-[http://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,'S1A\_EW\_GRD')+and+ContentDate/Start+gt+2022-05-03T00:00:00.000Z+and+ContentDate/Start+lt+2022-05-03T12:00:00.000Z&$skip=20](https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A\_EW\_GRD%27)+and+ContentDate/Start+gt+2022-05-03T00:00:00.000Z+and+ContentDate/Start+lt+2022-05-03T12:00:00.000Z&$skip=20)
+[http://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,'S1A_EW_GRD')+and+ContentDate/Start+gt+2022-05-03T00:00:00.000Z+and+ContentDate/Start+lt+2022-05-03T12:00:00.000Z&$skip=20](https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A_EW_GRD%27)+and+ContentDate/Start+gt+2022-05-03T00:00:00.000Z+and+ContentDate/Start+lt+2022-05-03T12:00:00.000Z&$skip=20)
 
 The acceptable arguments for this option: *Integer \<0,10000\>*
 
@@ -181,7 +181,7 @@ Count option enables users to get the exact number of products matching the quer
 
 To get the exact number of products for a given query:
 
-[https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A\_EW\_GRD%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T12:00:00.000Z&$count=True](https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A\_EW\_GRD%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T12:00:00.000Z&$count=True)
+[https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A_EW_GRD%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T12:00:00.000Z&$count=True](https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A_EW_GRD%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T12:00:00.000Z&$count=True)
 
  The acceptable arguments for this option: *True, true, 1, False, false, 0*.
 
@@ -191,7 +191,7 @@ Expand option enables users to see full metadata of each returned result.
 
 To see the metadata of the results:
 
-[https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A\_EW\_GRD%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T12:00:00.000Z&$expand=Attributes](https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A\_EW\_GRD%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T12:00:00.000Z&$expand=Attributes)
+[https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A_EW_GRD%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T12:00:00.000Z&$expand=Attributes](https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A_EW_GRD%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T12:00:00.000Z&$expand=Attributes)
 
  The acceptable arguments for this option: *Attributes*
 
@@ -207,15 +207,15 @@ Only authorized users are allowed to download products
 
 To get the token:
 ```bash
-KEYCLOAK\_TOKEN=$(curl -s --location --request POST ''https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token'  \
-    --data-urlencode 'grant\_type=password' \
-    --data-urlencode 'username=\<USER\>' \
-    --data-urlencode 'password=\<PASSWORD\>' \
-    --data-urlencode 'client\_id=cdse-public')
+KEYCLOAK_TOKEN=$(curl -s --location --request POST ''https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token'  \
+    --data-urlencode 'grant_type=password' \
+    --data-urlencode 'username=<USER>' \
+    --data-urlencode 'password=<PASSWORD>' \
+    --data-urlencode 'client_id=cdse-public')
 ```
 or
 ```bash   
-'-d 'password=' -d 'grant\_type=password' 'https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token' | python -m json.tool | grep "access\_token" | awk -F\" '{print $4}')]]\>
+'-d 'password=' -d 'grant_type=password' 'https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token' | python -m json.tool | grep "access_token" | awk -F\" '{print $4}')]]>
 ```
 <!--Where USER and PASSWORD are credentials to Your CloudFerro account in specific BRAND. Brand names are listed below with API from which You can get your token.
 
