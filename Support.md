@@ -1,6 +1,6 @@
 # Service Desk
 
-In case of any questions that cannot be found in this documentation section, users can ask for support related to questions on the use of the Copernicus Data Space Ecosystem. This article shows you how to do it.
+If the documentation portal does not provide the solution to your questions related to the use of the Copernicus Data Space Ecosystem, this page describes how to ask for support. 
 
 ## Prerequisites
 
