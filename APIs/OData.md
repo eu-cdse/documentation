@@ -211,7 +211,7 @@ KEYCLOAK\_TOKEN=$(curl -s --location --request POST ''https://identity.dataspace
     --data-urlencode 'grant\_type=password' \
     --data-urlencode 'username=\<USER\>' \
     --data-urlencode 'password=\<PASSWORD\>' \
-    --data-urlencode 'client\_id=CLOUDFERRO\_PUBLIC'|jq .access\_token|tr -d '"')
+    --data-urlencode 'client\_id=cdse-public')
 ```
 or
 ```bash   
