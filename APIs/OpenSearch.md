@@ -134,7 +134,8 @@ The resulting XML file provides full list of the parameters for the collection, 
 
 ## Order API Documentation
 
+<!-- Following lines are removed at request from Natalia Sobieska mail to BartBomans dd27.01.2023 16:43
 For comprehensive Order API description you can visit these pages:
-<!--[**https://finder.creodias.eu/api/docs/**](https://finder.creodias.eu/api/docs/)-->
+was already in comment -- [**https://finder.creodias.eu/api/docs/**](https://finder.creodias.eu/api/docs/) --
 
-[**EO Data Ordering API2 Manual**](https://creodias.eu/-/comletiondatestartdate-and-in-finder-api-v2?)
+[**EO Data Ordering API2 Manual**](https://creodias.eu/-/comletiondatestartdate-and-in-finder-api-v2?) -->
