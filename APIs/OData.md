@@ -197,21 +197,18 @@ To see the metadata of the results:
 
 ## Product Download
 
-To download products:
+For downloading products you need an authorization token as only authorized users are allowed to download data products.
 
-Where Id is an Id of the product returned by the search query, e.g.:
 
-[https://catalogue.dataspace.copernicus.eu/odata/v1/Products(a6212de3-f2e4-58c2-840b-7f42c3c8c612)/$value](https://catalogue.dataspace.copernicus.eu/odata/v1/Products(a6212de3-f2e4-58c2-840b-7f42c3c8c612)/$value)
-
-Only authorized users are allowed to download products
-
-To get the token:
+To get the token you can use the following scripts:
 ```bash
-KEYCLOAK_TOKEN=$(curl -s --location --request POST ''https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token'  \
-    --data-urlencode 'grant_type=password' \
-    --data-urlencode 'username=<USER>' \
-    --data-urlencode 'password=<PASSWORD>' \
-    --data-urlencode 'client_id=cdse-public')
+
+curl -s -X POST "https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token" \
+    -H "Content-Type: application/x-www-form-urlencoded" \
+    -d "username=<LOGIN>" \
+    -d 'password=<PASSWORD>' \
+    -d 'grant_type=password' \
+    -d 'client_id=cdse-public'|jq .access_token|tr -d '"'
 ```
 or
 ```bash   
@@ -230,11 +227,14 @@ or
 
 <br>
 
-To download the product:
+Once you have your token, you require a product Id which can be found in the response of the products search: [https://catalogue.dataspace.copernicus.eu/odata/v1/Products](https://catalogue.dataspace.copernicus.eu/odata/v1/Products)
+
+
+Finally, you can download the product using this script:
 ```bash
-curl -H "Authorization: Bearer $KEYLOAK\_TOKEN" 'https://catalogue.dataspace.copernicus.eu/odata/v1/Products(060882f4-0a34-5f14-8e25-6876e4470b0d)/$value' --output /tmp/product.zip
+curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" 'https://catalogue.dataspace.copernicus.eu/odata/v1/Products(060882f4-0a34-5f14-8e25-6876e4470b0d)/$value' --output /tmp/product.zip
 ```
 or
 ```bash
-wget  --header "Authorization: Bearer $KEYCLOAK\_TOKEN" 'http://catalogue.dataspace.copernicus.eu/odata/v1/Products(db0c8ef3-8ec0-5185-a537-812dad3c58f8)/$value' -O example\_odata.zip
+wget  --header "Authorization: Bearer $KEYCLOAK_TOKEN" 'http://catalogue.dataspace.copernicus.eu/odata/v1/Products(db0c8ef3-8ec0-5185-a537-812dad3c58f8)/$value' -O example_odata.zip
 ```
