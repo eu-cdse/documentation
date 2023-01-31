@@ -66,6 +66,7 @@ More information about the campaign on the dedicated [webpage](https://sentinels
 |Product Type| File Description| Data Access Type | Spatial Extent | Temporal Extent | More Information | Available from |
 |------------ | ---------------------- | ---------------------- | ------------ | ------------ | ------------| -----------|
 |L1B(*) | EUP | IAD | World | Last 2 weeks | [Details](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-2/data-products)| Oct-23|
+|L1B(*) | EUP | DAD | World | Full archive | [Details](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-2/data-products)| Oct-23|
 
 (*) Access restrictions may apply.
 
