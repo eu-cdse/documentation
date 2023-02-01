@@ -157,7 +157,7 @@ To limit the number of results:
 
 The acceptable arguments for this option: _Integer \<0,1000\>_
 
-## Skip option 
+## Skip option
 
 Skip option can be used to skip a specific number of results. Exemplary application of this option would be paginating through the results, however for performance reasons, we recommend limiting queries with small time intervals as a substitute of using skip in a more generic query.
 
@@ -169,7 +169,7 @@ To skip a specific number of results:
 
 Whenever a query results in more products than 20 (default top value), the API provides a nextLink at the bottom of the page:
 ```
-"@OData.nextLink": 
+"@OData.nextLink":
 ```
 [http://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,'S1A_EW_GRD')+and+ContentDate/Start+gt+2022-05-03T00:00:00.000Z+and+ContentDate/Start+lt+2022-05-03T12:00:00.000Z&$skip=20](https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A_EW_GRD%27)+and+ContentDate/Start+gt+2022-05-03T00:00:00.000Z+and+ContentDate/Start+lt+2022-05-03T12:00:00.000Z&$skip=20)
 
@@ -201,19 +201,34 @@ For downloading products you need an authorization token as only authorized user
 
 
 To get the token you can use the following scripts:
-```bash
 
-curl -s -X POST "https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token" \
-    -H "Content-Type: application/x-www-form-urlencoded" \
-    -d "username=<LOGIN>" \
-    -d 'password=<PASSWORD>' \
-    -d 'grant_type=password' \
-    -d 'client_id=cdse-public'|jq .access_token|tr -d '"'
+```bash
+curl --location --request POST 'https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token' \
+  --header 'Content-Type: application/x-www-form-urlencoded' \
+  --data-urlencode 'grant_type=password' \
+  --data-urlencode 'username=<LOGIN>' \
+  --data-urlencode 'password=<PASSWORD>' \
+  --data-urlencode 'client_id=cdse-public'
 ```
+
 or
-```bash   
+```bash
 '-d 'password=' -d 'grant_type=password' 'https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token' | python -m json.tool | grep "access_token" | awk -F\" '{print $4}')]]>
 ```
+
+Along with the Access Token you will be returned a Refresh Token, the latter is used to generate a new Access Token without the need to specify Username or Password, this helps to make requests less vulnerable to your credentials being exposed.
+
+To re-generate the Access Token from the Refresh Token it can be done with the following request:
+
+```bash
+curl --location --request POST 'https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token' \
+  --header 'Content-Type: application/x-www-form-urlencoded' \
+  --data-urlencode 'grant_type=refresh_token' \
+  --data-urlencode 'refresh_token=<REFRESH_TOKEN>' \
+  --data-urlencode 'client_id=cdse-public'
+```
+
+
 <!--Where USER and PASSWORD are credentials to Your CloudFerro account in specific BRAND. Brand names are listed below with API from which You can get your token.
 
 | **Brand names** | **API** |
