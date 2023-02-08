@@ -6,8 +6,8 @@ The Browser is a web browser application that allows you to easily search, visua
 
 Currently you need a free account to use the Browser. To register for a free account, click [here](https://identity.cloudferro.com/auth/realms/CDSE/protocol/openid-connect/auth?client_id=sh-5f8b630b-b083-49ed-b340-b8f01ecb81c4&redirect_uri=https%3A%2F%2Fdataspace.copernicus.eu%2Fbrowser%2FoauthCallback.html&response_type=token&state=) to the browser. A new window will open where you can click on **New user? Click [here](https://identity.cloudferro.com/auth/realms/CDSE/login-actions/registration?client_id=sh-5f8b630b-b083-49ed-b340-b8f01ecb81c4&tab_id=kuySlol9oac) to create an account and access the data**. Once you have created the account, you will automatically be logged in to the Browser. Remember to save your login credentials for the next time you want to log in to the Browser.
 
-![Start Screen](../_images/StartScreen.png)
-Fig 1: Browser start screen
+![Browser start screen](../_images/StartScreen.png){#fig-startscreen}
+
 
 The Browser window is divided into three parts:
 
@@ -29,7 +29,9 @@ Let's try to visualize the latest Sentinel-2 L2A imagery over Italy.
 2. In the sidebar, a maximum cloud coverage of 30% and the product type Sentinel-2 L2A are already preselected. To visualize the latest available data with cloud coverage below 30% click on the *Show latest date* button.
 <!-- ![Visualize](../_images/VisualizeLatestInfo.png) -->
 
-    <img src="../_images/VisualizeLatestInfo.png" width="350">
+    ![VISUALIZE tab with *show latest date button* and *Sentinel-2 L2A* collection highlighted](../_images/VisualizeLatestInfo.png){#fig-2 width=350}
+
+
 
     Fig 2: VISUALIZE tab with *show latest date button* and *Sentinel-2 L2A* collection highlighted
 

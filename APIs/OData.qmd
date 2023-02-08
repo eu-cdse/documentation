@@ -1,3 +1,11 @@
+---
+title: "odata demo"
+format:
+  html:
+    code-fold: true
+jupyter: python3
+---
+
 # Data catalogue API with OData interface
 
 ## Query structure
@@ -15,7 +23,7 @@ Search options should always be preceded with *$* and consecutive options should
 
 Consecutive filters within *filter* option should be separated with *and* or *or*. *Not* operator can also be used e.g.:
 
-[https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=not contains(Name,'S2') and ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-03T00:10:00.000Z&$orderby=ContentDate/Start&$top=100](https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=not%20contains(Name,%27S2%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T00:10:00.000Z&$orderby=ContentDate/Start&$top=100)
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=not contains(Name,'S2') and ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-03T00:10:00.000Z&$orderby=ContentDate/Start&$top=100`](<https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=not%20contains(Name,%27S2%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T00:10:00.000Z&$orderby=ContentDate/Start&$top=100>)
 
 <u>Performance note</u>:
 
@@ -33,7 +41,21 @@ To search for a specific product by its exact name:
 
 To search for products containing "S1A" in their names:
 
-[https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,'S1A') and ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-21T00:00:00.000Z](https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-21T00:00:00.000Z)
+::: {.panel-tabset}
+
+# HTTP Request
+
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,'S1A') and ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-21T00:00:00.000Z`](https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-21T00:00:00.000Z)
+
+# Python
+```{python}
+import requests
+import pandas as pd
+json = requests.get("https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,'S1A') and ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-21T00:00:00.000Z").json()
+pd.DataFrame.from_dict(json['value']).head(3)
+```
+
+:::
 
 Alternatively to *contains*, *endswith* and *startswith* can be used, to search for products ending or starting with provided string.
 
@@ -43,7 +65,7 @@ In case a user desires to search for multiple products by name in one query, POS
 
 **POST**
 
-[https://catalogue.dataspace.copernicus.eu/odata/v1/Products/OData.CSC.FilterList](https://catalogue.dataspace.copernicus.eu/odata/v1/Products/OData.CSC.FilterList)
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/Products/OData.CSC.FilterList`](https://catalogue.dataspace.copernicus.eu/odata/v1/Products/OData.CSC.FilterList)
 
 **Request body**:
 ```Json
@@ -62,7 +84,7 @@ Two results are returned, as there is no product named xxxxxxxx.06.tar.
 
 To search for products within a specific collection:
 
-[https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name eq 'SENTINEL-2' and ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-03T00:11:00.000Z](https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name%20eq%20%27SENTINEL-2%27%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T00:11:00.000Z)
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name eq 'SENTINEL-2' and ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-03T00:11:00.000Z`](https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name%20eq%20%27SENTINEL-2%27%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T00:11:00.000Z)
 
 The following collections are currently available:
 
@@ -75,7 +97,7 @@ The following collections are currently available:
 
 To search for products published between two dates:
 
-[https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=PublicationDate gt 2019-05-15T00:00:00.000Z and PublicationDate lt 2019-05-16T00:00:00.000Z](https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=PublicationDate%20gt%202019-05-15T00:00:00.000Z%20and%20PublicationDate%20lt%202019-05-16T00:00:00.000Z)
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=PublicationDate gt 2019-05-15T00:00:00.000Z and PublicationDate lt 2019-05-16T00:00:00.000Z`](https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=PublicationDate%20gt%202019-05-15T00:00:00.000Z%20and%20PublicationDate%20lt%202019-05-16T00:00:00.000Z)
 
 To define inclusive interval *ge* and *le* parameters can be used:
 
@@ -235,6 +257,6 @@ Finally, you can download the product using this script:
 curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" 'https://catalogue.dataspace.copernicus.eu/odata/v1/Products(060882f4-0a34-5f14-8e25-6876e4470b0d)/$value' --output /tmp/product.zip
 ```
 or
-```bash
-wget  --header "Authorization: Bearer $KEYCLOAK_TOKEN" 'http://catalogue.dataspace.copernicus.eu/odata/v1/Products(db0c8ef3-8ec0-5185-a537-812dad3c58f8)/$value' -O example_odata.zip
+```{python}
+!wget  --header "Authorization: Bearer $KEYCLOAK_TOKEN" 'http://catalogue.dataspace.copernicus.eu/odata/v1/Products(db0c8ef3-8ec0-5185-a537-812dad3c58f8)/$value' -O example_odata.zip
 ```
