@@ -97,6 +97,14 @@ The common set of parameters are:
 
 **box** - region of interest, defined as the rectangle with given (west,south,east,north) values
 
+box is defined this way
+
+&box=west,south,east,north
+
+example
+
+box=-10,-11,10,11
+
 ### Volatile features
 
 Some terrain-like feature masks are not permanent but describing a single scene only. The most commonly used such feature is cloudiness, or cloudCover, which is defined for most of the products coming from optical sensors. For example:
