@@ -90,9 +90,9 @@
     </div>
 </details>
 <details>
-  <summary>Can we download the data acquired by all Sentinel missions (1, 2, 3, 5P, 6) and the other satellites (ex., Meteosat) via the new interface? Some missions are not managed by ESA, but by EUMETSAT for example.</summary>
+  <summary>Can we download the data acquired by all Sentinel missions (1, 2, 3, 5P, 6) and the other satellites (e.g. Meteosat) via the new interface? Some missions are not managed by ESA, but by EUMETSAT for example.</summary>
     <div>
-    Initialy data up to L2 products will be available.  The <a href="#/Roadmap">Roadmap</a> shows how the Copernicus Data Space Ecosystem will be continously upgraded and how more data become available.
+    Initialy Sentinel 1, Sentinel 2, Sentinel 3 and Sentinel 5P data up to L2 products will be available. Sentinel 6 data and data from Meteosat are currently not in the roadmap of the project. However access to Copernicus Contributing Missions CORE Datasets, Digital Elevation Models, data from Copernicus Services and additional data sets such as Landsat and ENVISAT and Belgian Collaborative Ground Segment hosted data are planned in the future. The <a href="#/Roadmap/DataTable.html">Data Roadmap</a> shows how the Copernicus Data Space Ecosystem will be continously upgraded and how more data will become available.
     </div>
 </details>
 <details>
