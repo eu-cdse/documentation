@@ -1,6 +1,5 @@
-* [Introduction](Home.md)
-* [Service description and evolution roadmap](ServiceDescriptionRoadmap.md)
-* [Roadmap](Roadmap.md)
+* [Welcome](Home.md)
+* [Service description and evolution roadmap](Roadmap.md)
   * [Data](Roadmap/DataTable.html)
   * [APIs](Roadmap/APITable.html)
   * [Applications](Roadmap/AppTable.html)
@@ -21,7 +20,7 @@ ___
 * [Applications](Applications.md) 
   * [Browser](Applications/Browser.md)
 ___
-* [Support](Support.md)
 * [FAQ](FAQ.md)
+* [Support](Support.md)
   
 

@@ -54,9 +54,9 @@ More information about the campaign on the dedicated [webpage](https://sentinels
 |Product Type| File Description| Data Access Type | Spatial Extent | Temporal Extent | More Information | Available from |
 |------------ | ---------------------- | ---------------------- | ------------ | ------------ | ------------| -----------|
 |L1C | packed or unpacked | IAD (Immediately available data) | World | Jul-15 - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-2/data-products)| Jan-23|
-|L2A | packed or unpacked (original ESA product) | IAD | Europe | Mar-17 | [Details](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-2/data-products)| Jan-23|
-|L2A | packed or unpacked (original ESA product) | IAD | RoW (World with exception of Europe) | Oct-21 - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-2/data-products)| Jan-23|
-|L2A | packed (original ESA products) | DAD (Deffered available data) | World | Mar-17 - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-2/data-products)| Jul-23|
+|L2A | packed or unpacked (original ESA product) | IAD | Europe | Jul-15 - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-2/data-products)| Jan-23|
+|L2A | packed or unpacked (original ESA product) | IAD | RoW (World with exception of Europe) | Jul-15 - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-2/data-products)| Jan-23|
+|L2A | packed (original ESA products) | DAD (Deferred available data) | World | Jul-15 - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-2/data-products)| Jul-23|
 |L0(*) | packed | DAD | World | Jul-15 - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-2/data-products)| Jul-23|
 
 (*) Access restrictions may apply.
