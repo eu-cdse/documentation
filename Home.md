@@ -1,4 +1,4 @@
-# Welcome to the [ Copernicus Data Space Ecosystem](https://dataspace.copernicus.eu/#/) documentation portal.
+# Welcome to the [ Copernicus Data Space Ecosystem](https://dataspace.copernicus.eu/#/) documentation portal
 <br>
 Here you can explore our detailed documentation and learn more about the available data, APIs and applications.
 
