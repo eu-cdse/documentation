@@ -1,6 +1,20 @@
-# Copernicus Data Space Ecosystem documentation portal
-Welcome to the documentation portal for the [Copernicus Data Space Ecosystem](https://dataspace.copernicus.eu/#/).
+# Welcome to the [ Copernicus Data Space Ecosystem](https://dataspace.copernicus.eu/#/) documentation portal.
+<br>
+Here you can explore our detailed documentation and learn more about the available data, APIs and applications.
 
-Copernicus Data Space Ecosystem represents an overall and comprehensive data ecosystem accessible via web portal, applications and APIs. The Copernicus Data Space Ecosystem contains subsystems and will be growing over the coming years. The Copernicus Data Space Ecosystem provides the essential data and service offering for everyone to use, for commercial and non-commercial purposes. Third-party providers can build their services on top of the Copernicus Data Space Ecosystem, the first one of these being CREODIAS. In the future additional players (third party providers) will join the Copernicus Data Space Ecosystem and will be able to offer a variety of additional services (free and commercial) as members of the Copernicus Data Space Ecosystem.
+The ecosystem will be continuously upgraded over the upcoming months, see the timelines in the [evolution roadmap](/Roadmap.md). Our documentation will be updated accordingly.
 
-The services envisioned address a comprehensive set of use-cases - from curious beginners in the EO space, researchers processing data on their laptops or running cloud-native workflows, companies building added value services or their data scientists building machine learning models on the global scale, as well as governmental bodies, who want to access or share EO data and related socio-economic information. The Copernicus Data Space Ecosystem will include all the supportive elements required to use the services - from helpdesk, billing, tutorials to proactive campaigns to push for increase of uptake. All user feedback is welcome to help improving the service and making the Copernicus Data Space Ecosystem a valuable ecosystem for all participants.
+<br>
+
+In this documentation, you can find more information on:
+
+* [Data](/Data.md) providing you with details about the available Earth Observation data and products.
+
+* [APIs](/APIs.md) helping you to find the right interfaces to access catalogs, list collections and process data.
+
+* [Applications](/Applications.md) reducing your efforts to search, visualize, modify and download images in an easy and user-friendly way.
+<br>
+
+Quick answers can be found in our [FAQ](/FAQ.md).
+
+If you have questions that are not answered on this portal, please contact our [Support](/Support.md).
