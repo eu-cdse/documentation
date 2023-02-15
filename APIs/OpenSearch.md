@@ -97,13 +97,15 @@ The common set of parameters are:
 
 **box** - region of interest, defined as the rectangle with given (west,south,east,north) values
 
-box is defined this way
+box is defined this way: &box=west,south,east,north
 
-&box=west,south,east,north
+For example the query
 
-example
+[https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=[0,10]&startDate=2022-06-11&completionDate=2022-06-22&maxRecords=10&box=-1,1,-1,1](https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=[0,10]&startDate=2022-06-11&completionDate=2022-06-22&maxRecords=10&box=-1,1,-1,1)
 
-box=-10,-11,10,11
+or
+
+[https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=[0,10]&startDate=2022-06-11&completionDate=2022-06-22&maxRecords=10&box=-21,23,-24,15](https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=[0,10]&startDate=2022-06-11&completionDate=2022-06-22&maxRecords=10&box=-21,23,-24,15)
 
 ### Volatile features
 
