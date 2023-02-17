@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.335">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Copernicus Dataspace Ecosystem Docs – sentinel2</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-search-results"></div>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+
+<section id="sentinel-2" class="level1">
+<h1>Sentinel 2</h1>
+<section id="description" class="level2">
+<h2 class="anchored" data-anchor-id="description">Description</h2>
+<p>The <a href="https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-2">Copernicus Sentinel-2 mission</a> comprises a land monitoring constellation of two polar-orbiting satellites placed in the same sun-synchronous orbit, phased at 180° to each other. It aims at monitoring variability in land surface conditions, and its wide swath width (290 km) and high revisit time (10 days at the equator with one satellite, and 5 days with 2 satellites under cloud-free conditions which results in 2-3 days at mid-latitudes) will support monitoring of Earth’s surface changes.</p>
+<p>The <a href="https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-2/data-products">Sentinel-2 products</a> are a compilation of elementary granules of fixed size, along with a single orbit. A granule is the minimum indivisible partition of a product (containing all possible spectral bands).</p>
+<p>For Level-1C and Level-2A, the granules, also called tiles, are 100x100 km2 ortho-images in UTM/WGS84 projection. <a href="https://sentinels.copernicus.eu/documents/247904/1955685/S2A_OPER_GIP_TILPAR_MPC__20151209T095117_V20150622T000000_21000101T000000_B00.kml/ec05e22c-a2bc-4a13-9e84-02d5257b09a8">Download</a> the Sentinel-2 tiling grid kml.</p>
+<p>The UTM (Universal Transverse Mercator) system divides the Earth’s surface into 60 zones. Each UTM zone has a vertical width of 6° of longitude and horizontal width of 8° of latitude.</p>
+
+<!-- ### Attention:
+Until the complete set of currently reprocessed data for S2 L2A will be come available (ca. July 2023) the following shall be considered with respects to S2 L2A data:<br>
+**All Sentinel-2 L2A products newer than December 1st, 2021 stored in the Copernicus Data Space Ecosystem repository are produced by the Copernicus Ground Segment.**<br>
+The products from period between January 1st 2020 and November 31st 2021 are mix of products from the ground segment and generated by CREODIAS using the sen2cor processor.
+These products slightly differ from the products generated by the Copernicus Ground Segment and are not visualized in the Browser. The products are compatible and can be downloaded for further processing or analysis. <br>
+
+The products generated by CREODIAS using sen2cor are indicated by "N9999" identifying the processing baseline.<br>
+*Example:<br>
+Original ESA product: S2B_MSIL2A_20220518T073609_**N0400**_R092_T38SMA_20220518T093719.SAFE 
+
+Product generated by CREODIAS: S2A_MSIL2A_20210905T143731_**N9999**_R096_T20QQD_20221112T112946.SAFE 
+More information on the sen2cor and difference in the processing chain can be found [here](https://step.esa.int/main/snap-supported-plugins/sen2cor/sen2cor-v2-11/).
+
+In addition: IAD access to the new Collection-1 for the Sentinel-2 Level-2A products generated by the ESA Copernicus Ground Segment for all Sentinel-2 data will be available gradually as part of the Sentinel-2 reprocessing campaign.   
+
+<br>
+The table below indicates for each type of user level product, the format in which the data will be available, the access type (IAD or DAD), the spatial and temporal extent of the offer and from when the data will be available in the Copernicus Data Space Ecosystem. 
+The data offer will gradually extend starting from January 2023. -->
+<p><strong>Note</strong>: The initial offer as from 01/2023 includes IAD access to the original Sentinel-2 Level-2A products generated by the ESA Copernicus Ground Segment for data acquired since December 2021.</p>
+<p>For Sentinel-2 data acquired before December 2021 :<br> the initial offer in IAD includes Sentinel-2 Level-2A products generated by ESA Copernicus Ground Segment and also Level-2A products generated by the CREODIAS using the Sentinel-2 Toolbox – identified by baseline 99.99 (“N9999” included in the product ID). <br> These products slightly differ from the products generated by the ESA Copernicus Ground Segment and are not visualized in the Browser. The products are compatible and can be downloaded for further processing or analysis.</p>
+<p>In addition: IAD access to the new Collection-1 for the Sentinel-2 Level-2A products generated by the ESA Copernicus Ground Segment for all Sentinel-2 data will be available gradually as part of the Sentinel-2 reprocessing campaign.<br>
+More information about the campaign on the dedicated <a href="https://sentinels.copernicus.eu/web/sentinel/technical-guides/sentinel-2-msi/copernicus-sentinel-2-collection-1-availability-status">webpage</a></p>
+</section>
+<section id="data-offer" class="level2">
+<h2 class="anchored" data-anchor-id="data-offer">Data Offer</h2>
+<section id="already-available-from-january-2023" class="level3">
+<h3 class="anchored" data-anchor-id="already-available-from-january-2023">Already available (from January 2023)</h3>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Product Type</th>
+<th>File Description</th>
+<th>Data Access Type</th>
+<th>Spatial Extent</th>
+<th>Temporal Extent</th>
+<th>More Information</th>
+<th>Available from</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>L1C</td>
+<td>packed or unpacked</td>
+<td>IAD (Immediately available data)</td>
+<td>World</td>
+<td>Jul-15 - Present</td>
+<td><a href="https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-2/data-products">Details</a></td>
+<td>Jan-23</td>
+</tr>
+<tr class="even">
+<td>L2A(*)</td>
+<td>packed or unpacked (original ESA product)</td>
+<td>IAD</td>
+<td>Europe</td>
+<td>Mar-17</td>
+<td><a href="https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-2/data-products">Details</a></td>
+<td>Jan-23</td>
+</tr>
+<tr class="odd">
+<td>L2A</td>
+<td>packed or unpacked (original ESA product)</td>
+<td>IAD</td>
+<td>RoW (World with exception of Europe)</td>
+<td>Dec-21 - Present</td>
+<td><a href="https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-2/data-products">Details</a></td>
+<td>Jan-23</td>
+</tr>
+</tbody>
+</table>
+<p>(*) For period 01/2020 – 11/2021 the data repository holds original ESA products and products generated using Sentinel-2 Toolbox (sen2cor). See note above.</p>
+</section>
+<section id="available-from-july-2023" class="level3">
+<h3 class="anchored" data-anchor-id="available-from-july-2023">Available from July 2023</h3>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Product Type</th>
+<th>File Description</th>
+<th>Data Access Type</th>
+<th>Spatial Extent</th>
+<th>Temporal Extent</th>
+<th>More Information</th>
+<th>Available from</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>L1C</td>
+<td>packed or unpacked</td>
+<td>IAD (Immediately available data)</td>
+<td>World</td>
+<td>Jul-15 - Present</td>
+<td><a href="https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-2/data-products">Details</a></td>
+<td>Jan-23</td>
+</tr>
+<tr class="even">
+<td>L2A</td>
+<td>packed or unpacked (original ESA product)</td>
+<td>IAD</td>
+<td>Europe</td>
+<td>Mar-17</td>
+<td><a href="https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-2/data-products">Details</a></td>
+<td>Jan-23</td>
+</tr>
+<tr class="odd">
+<td>L2A</td>
+<td>packed or unpacked (original ESA product)</td>
+<td>IAD</td>
+<td>RoW (World with exception of Europe)</td>
+<td>Oct-21 - Present</td>
+<td><a href="https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-2/data-products">Details</a></td>
+<td>Jan-23</td>
+</tr>
+<tr class="even">
+<td>L2A</td>
+<td>packed (original ESA products)</td>
+<td>DAD (Deffered available data)</td>
+<td>World</td>
+<td>Mar-17 - Present</td>
+<td><a href="https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-2/data-products">Details</a></td>
+<td>Jul-23</td>
+</tr>
+<tr class="odd">
+<td>L0(*)</td>
+<td>packed</td>
+<td>DAD</td>
+<td>World</td>
+<td>Jul-15 - Present</td>
+<td><a href="https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-2/data-products">Details</a></td>
+<td>Jul-23</td>
+</tr>
+</tbody>
+</table>
+<p>(*) Access restrictions may apply.</p>
+</section>
+<section id="additionally-available-from-october-2023" class="level3">
+<h3 class="anchored" data-anchor-id="additionally-available-from-october-2023">Additionally available from October 2023</h3>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Product Type</th>
+<th>File Description</th>
+<th>Data Access Type</th>
+<th>Spatial Extent</th>
+<th>Temporal Extent</th>
+<th>More Information</th>
+<th>Available from</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>L1B(*)</td>
+<td>EUP</td>
+<td>IAD</td>
+<td>World</td>
+<td>Last 2 weeks</td>
+<td><a href="https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-2/data-products">Details</a></td>
+<td>Oct-23</td>
+</tr>
+<tr class="even">
+<td>L1B(*)</td>
+<td>EUP</td>
+<td>DAD</td>
+<td>World</td>
+<td>Full archive</td>
+<td><a href="https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-2/data-products">Details</a></td>
+<td>Oct-23</td>
+</tr>
+</tbody>
+</table>
+<p>(*) Access restrictions may apply.</p>
+<!--|Product Type| File Description| Data Access Type | Spatial Extent | Temporal Extent | More Information | Available from |
+|------------ | ---------------------- | ---------------------- | ------------ | ------------ | ------------| -----------|
+|L1C | packed | IAD (Immediately available data) | World | Last 1 month | [Details](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-2/data-products)| Jan-23|
+|L1C | unpacked | IAD | World | Jul-15 - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-2/data-products)| Jan-23|
+|L1C | packed | DAD (Deferred available data) | World | Jul-15 - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-2/data-products)| Jul-23|
+|L2A | packed | IAD | World | Last 1 month | [Details](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-2/data-products)| Jan-23|
+|L2A | unpacked (original ESA products) | IAD | Europe? World? | Jul-xx - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-2/data-products)| Jan-23|
+|L2A | unpacked | IAD | Europe | Jul-15 - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-2/data-products)| Jan-23|
+|L2A | unpacked | IAD | RoW (World with exception of Europe) | Oct-21 - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-2/data-products)| Jan-23|
+|L2A | unpacked (original ESA products) | IAD | World | Jul-15 - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-2/data-products)| Jul-23|
+|L0(*) | packed | DAD | World | Jul-15 - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-2/data-products)| Jul-23|
+|L1B(*) | EUP | IAD | World | Last 2 weeks | [Details](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-2/data-products)| Oct-23|
+
+(*) Access restrictions may apply.-->
+
+
+</section>
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
