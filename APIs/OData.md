@@ -2,7 +2,7 @@
 
 ## Query structure
 
-As a general note, OData query consistst of elements which in this documentation are called "options". Interface supports the following search options:
+As a general note, OData query consists of elements which in this documentation are called "options". Interface supports the following search options:
 
 * filter
 * orderby
