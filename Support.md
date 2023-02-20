@@ -6,7 +6,7 @@ If the documentation portal does not provide the solution to your questions rela
 
 Important to know is that only users with a Copernicus Data Space Ecosystem account can ask for support. 
 If you don't have one yet, you can register [here](https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/auth?client_id=cdse-public&redirect_uri=https%3A%2F%2Fdataspace.copernicus.eu&response_type=code&scope=openid).
-If you have an issue with registering or you want to deregister, please [contact us](mailto://help-cdse-login@dataspace.copernicus.eu?Subject=Subject%20Text&Body=Your%20comments) directly.
+If you have an issue with registering or you want to deregister, please [contact us](mailto://help-login@dataspace.copernicus.eu?Subject=Subject%20Text&Body=Your%20comments) directly.
 
 ## Step 1: Sign in to CloudFerro JIRA
 
