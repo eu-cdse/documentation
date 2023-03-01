@@ -1,15 +1,20 @@
-name: Merge main branch into preview: 
+name: Merge main branch into preview
+on:
   pull_request:
-    branches: [quartov2]
-    types: [closed]jobs:
+      branches: [quartov2]
+      types: [closed]
+jobs:
   merge-main-back-to-preview:
     if: github.event.pull_request.merged == true
     timeout-minutes: 2
-    runs-on: ubuntu-latest    steps:
-    - uses: actions/checkout@v2    - name: Set Git config
+    runs-on: ubuntu-latest    
+    steps:
+    - uses: actions/checkout@v2    
+    - name: Set Git config
       run: |
           git config --local user.email "actions@github.com"
-          git config --local user.name "Github Actions"    - name: Merge main back to preview
+          git config --local user.name "Github Actions"    
+    - name: Merge main back to preview
       run: |
           git fetch --unshallow
           git checkout preview
