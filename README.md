@@ -13,7 +13,7 @@ All pull requests are automatically merged into the preview branch, which will a
 All pull requests should be reviewed for both content and language
 
 # Previewing
-Rendering of preview branch is available at: eu-cdse.github.io
+Rendering of preview branch is available at: https://eu-cdse.github.io/documentation/Home.html
 
 # Automated merges
 Github actions are set up to automatically merge pull requests into preview and commits to the main branch.
