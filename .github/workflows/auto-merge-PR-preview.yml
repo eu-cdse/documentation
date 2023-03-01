@@ -1,0 +1,22 @@
+name: Merge PR branch into preview: 
+  pull_request:
+    branches: [quartov2]
+    types: [opened]
+jobs:
+  merge-PR-to-preview:
+    timeout-minutes: 2
+    runs-on: ubuntu-latest    
+    
+    steps:
+    - uses: actions/checkout@v2    
+    - name: Set Git config
+      run: |
+          git config --local user.email "actions@github.com"
+          git config --local user.name "Github Actions"    
+    - name: Merge main back to preview
+      run: |
+          git fetch --unshallow
+          git checkout preview
+          git pull
+          git merge --no-ff ${GITHUB_REF##*/} -m "Auto-merge ${GITHUB_REF##*/} to preview"
+          git push
