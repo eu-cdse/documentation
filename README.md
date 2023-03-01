@@ -4,6 +4,7 @@ This repo contains the source code for the [docsify](https://docsify.js.org/#/) 
 Branches:
 quartov2: main branch for the next release
 main: current main, for immediate fixes to documentation
+preview: branch for previewing quarto rendering of pull requests
 
 # Guidelines for editors
 
