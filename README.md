@@ -11,3 +11,7 @@ preview: branch for previewing quarto rendering of pull requests
 All changes are made via pull requests, directly on the 'quartov2' branch.
 All pull requests are automatically merged into the preview branch, which will automatically be rendered.
 All pull requests should be reviewed for both content and language
+
+# Automated merges
+Github actions are set up to automatically merge pull requests into preview and commits to the main branch.
+In case of a conflict, automatic merge can fail and manual resolution may be needed.
