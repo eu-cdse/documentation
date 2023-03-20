@@ -1,5 +1,6 @@
 # OpenSearch
 
+OpenSearch is an open-source software suite for search, analytics, and observability applications. It can be employed as a complete solution or integrated with open-source tools.
 ## Using OpenSearch interface to query Data Catalogue
 
 Due to the fact that offset is not a recommended form of searching repository pages, we had to implement limit to a maximum of 200k.

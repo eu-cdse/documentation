@@ -8,6 +8,7 @@ jupyter: python3
 
 # Data catalogue API with OData interface
 
+OData (Open Data Protocol) is a standard that specifies a variety of best practices for creating and using REST APIs. OData makes it possible to build REST-based data services that let Web clients publish and edit resources that are recognized by Uniform Resource Locators (URLs) and described in a data model using straightforward HTTP messages.
 ## Query structure
 
 As a general note, OData query consists of elements which in this documentation are called "options". Interface supports the following search options:
@@ -234,8 +235,12 @@ curl --location --request POST 'https://identity.dataspace.copernicus.eu/auth/re
 ```
 
 or
+<!-- Following bash has been replaced by the new bash for ticket DAS-333
 ```bash
 '-d 'password=' -d 'grant_type=password' 'https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token' | python -m json.tool | grep "access_token" | awk -F\" '{print $4}')]]>
+``` -->
+```bash
+curl -d 'client_id=cdse-public' -d 'username=<LOGIN>' -d 'password=<PASSWORD>' -d 'grant_type=password' 'https://identity.cloudferro.com/auth/realms/CDSE/protocol/openid-connect/token' | python -m json.tool | grep "access_token" | awk -F\" '{print $4}'
 ```
 
 Along with the Access Token you will be returned a Refresh Token, the latter is used to generate a new Access Token without the need to specify Username or Password, this helps to make requests less vulnerable to your credentials being exposed.
