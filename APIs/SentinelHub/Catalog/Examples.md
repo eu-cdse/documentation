@@ -25,7 +25,8 @@ Catalog API Entry page with link to other catalog API endpoints and
 available collections.
 
 ``` python
-response = requests.get('https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/')
+url = "https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/"
+response = requests.get(url)
 ```
 
 ### List collections
@@ -35,10 +36,8 @@ specific collections and collections available to users through BYOC,
 Batch or Third Party Data Import functionalities.
 
 ``` python
-headers = {
-}
-
-response = requests.get('https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/collections', headers=headers)
+url = "https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/collections"
+response = requests.get(url)
 ```
 
 ### Sentinel 2 L1C collection
@@ -46,13 +45,8 @@ response = requests.get('https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0
 List single collection, in this case Sentinel 2 L1C collection.
 
 ``` python
-headers = {
-}
-
-response = requests.get(
-    'https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/collections/sentinel-2-l1c/',
-    headers=headers,
-)
+url = "https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/collections/sentinel-2-l1c/"
+response = requests.get(url)
 ```
 
 ### Simple GET search
@@ -62,13 +56,15 @@ The only query parameters that can be specified in this simpler version
 are: `bbox`, `datetime`, `collections`, `limit` and `next`.
 
 ``` python
-headers = {
+query = {
+    "bbox": "13,45,14,46",
+    "datetime": "2019-12-10T00:00:00Z/2019-12-11T00:00:00Z",
+    "collections": "sentinel-1-grd",
+    "limit": 5,
 }
 
-response = requests.get(
-    'https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search?bbox=13,45,14,46&limit=5&collections=sentinel-1-grd&datetime=2019-12-10T00:00:00Z/2019-12-11T00:00:00Z',
-    headers=headers,
-)
+url = "https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search"
+response = requests.get(url, query=query)
 ```
 
 ### Simple POST search
@@ -78,25 +74,15 @@ parameters need to be specified as `json` formatted body and sent to
 server like:
 
 ``` python
-headers = {
-    'Content-Type': 'application/json',
+data = {
+    "bbox": [13, 45, 14, 46],
+    "datetime": "2019-12-10T00:00:00Z/2019-12-10T23:59:59Z",
+    "collections": ["sentinel-1-grd"],
+    "limit": 5,
 }
 
-json_data = {
-    'bbox': [
-        13,
-        45,
-        14,
-        46,
-    ],
-    'datetime': '2019-12-10T00:00:00Z/2019-12-10T23:59:59Z',
-    'collections': [
-        'sentinel-1-grd',
-    ],
-    'limit': 5,
-}
-
-response = requests.post('https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search', headers=headers, json=json_data)
+url = "https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search"
+response = requests.post(url, json=data)
 ```
 
 ### Simple POST search with pagination
@@ -105,26 +91,16 @@ response = requests.post('https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.
 of results.
 
 ``` python
-headers = {
-    'Content-Type': 'application/json',
+data = {
+    "bbox": [13, 45, 14, 46],
+    "datetime": "2019-12-10T00:00:00Z/2019-12-10T23:59:59Z",
+    "collections": ["sentinel-1-grd"],
+    "limit": 5,
+    "next": 5,
 }
 
-json_data = {
-    'bbox': [
-        13,
-        45,
-        14,
-        46,
-    ],
-    'datetime': '2019-12-10T00:00:00Z/2019-12-10T23:59:59Z',
-    'collections': [
-        'sentinel-1-grd',
-    ],
-    'limit': 5,
-    'next': 5,
-}
-
-response = requests.post('https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search', headers=headers, json=json_data)
+url = "https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search"
+response = requests.post(url, json=data)
 ```
 
 ### Search with GeoJSON
@@ -134,26 +110,21 @@ can be any type of GeoJSON object (Point, LineString, Polygon,
 MultiPoint, MultiPolygon).
 
 ``` python
-headers = {
-    'Content-Type': 'application/json',
-}
-
-json_data = {
-    'datetime': '2019-12-10T00:00:00Z/2019-12-11T00:00:00Z',
-    'collections': [
-        'sentinel-1-grd',
-    ],
-    'limit': 5,
-    'intersects': {
-        'type': 'Point',
-        'coordinates': [
+data = {
+    "datetime": "2019-12-10T00:00:00Z/2019-12-11T00:00:00Z",
+    "collections": ["sentinel-1-grd"],
+    "limit": 5,
+    "intersects": {
+        "type": "Point",
+        "coordinates": [
             13,
             45,
         ],
     },
 }
 
-response = requests.post('https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search', headers=headers, json=json_data)
+url = "https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search"
+response = requests.post(url, json=data)
 ```
 
 ### Search with Filter
@@ -162,26 +133,16 @@ response = requests.post('https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.
 subset of data.
 
 ``` python
-headers = {
-    'Content-Type': 'application/json',
+data = {
+    "bbox": [13, 45, 14, 46],
+    "datetime": "2019-12-10T00:00:00Z/2019-12-11T00:00:00Z",
+    "collections": ["sentinel-1-grd"],
+    "limit": 5,
+    "filter": "sat:orbit_state='ascending'",
 }
 
-json_data = {
-    'bbox': [
-        13,
-        45,
-        14,
-        46,
-    ],
-    'datetime': '2019-12-10T00:00:00Z/2019-12-11T00:00:00Z',
-    'collections': [
-        'sentinel-1-grd',
-    ],
-    'limit': 5,
-    'filter': "sat:orbit_state='ascending'",
-}
-
-response = requests.post('https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search', headers=headers, json=json_data)
+url = "https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search"
+response = requests.post(url, json=data)
 ```
 
 ### Get Filter parameters for collection
@@ -189,13 +150,8 @@ response = requests.post('https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.
 List all available filter parameters represented as JSON Schema.
 
 ``` python
-headers = {
-}
-
-response = requests.get(
-    'https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/collections/sentinel-1-grd/queryables',
-    headers=headers,
-)
+url = "https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/collections/sentinel-1-grd/queryables"
+response = requests.get(url)
 ```
 
 ### Search with Fields: No fields
@@ -205,25 +161,15 @@ collections. By default, all available item properties are included in
 the response.
 
 ``` python
-headers = {
-    'Content-Type': 'application/json',
+data = {
+    "bbox": [13, 45, 14, 46],
+    "datetime": "2019-12-10T00:00:00Z/2019-12-11T00:00:00Z",
+    "collections": ["sentinel-2-l1c"],
+    "limit": 1,
 }
 
-json_data = {
-    'bbox': [
-        13,
-        45,
-        14,
-        46,
-    ],
-    'datetime': '2019-12-10T00:00:00Z/2019-12-11T00:00:00Z',
-    'collections': [
-        'sentinel-2-l1c',
-    ],
-    'limit': 1,
-}
-
-response = requests.post('https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search', headers=headers, json=json_data)
+url = "https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search"
+response = requests.post(url, json=data)
 ```
 
 ### Search with Fields: Empty fields
@@ -233,26 +179,16 @@ response = requests.post('https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.
 `id`, `type`, `geometry`, `bbox`, `links`, `assets`.
 
 ``` python
-headers = {
-    'Content-Type': 'application/json',
+data = {
+    "bbox": [13, 45, 14, 46],
+    "datetime": "2019-12-10T00:00:00Z/2019-12-11T00:00:00Z",
+    "collections": ["sentinel-2-l1c"],
+    "limit": 1,
+    "fields": {},
 }
 
-json_data = {
-    'bbox': [
-        13,
-        45,
-        14,
-        46,
-    ],
-    'datetime': '2019-12-10T00:00:00Z/2019-12-11T00:00:00Z',
-    'collections': [
-        'sentinel-2-l1c',
-    ],
-    'limit': 1,
-    'fields': {},
-}
-
-response = requests.post('https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search', headers=headers, json=json_data)
+url = "https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search"
+response = requests.post(url, json=data)
 ```
 
 ### Search with Fields: Include
@@ -261,30 +197,16 @@ By specifying additional attributes in the `include` list, those
 attributes are added to the output along with the default ones.
 
 ``` python
-headers = {
-    'Content-Type': 'application/json',
+data = {
+    "bbox": [13, 45, 14, 46],
+    "datetime": "2019-12-10T00:00:00Z/2019-12-11T00:00:00Z",
+    "collections": ["sentinel-2-l1c"],
+    "limit": 1,
+    "fields": {"include": ["properties.gsd"]},
 }
 
-json_data = {
-    'bbox': [
-        13,
-        45,
-        14,
-        46,
-    ],
-    'datetime': '2019-12-10T00:00:00Z/2019-12-11T00:00:00Z',
-    'collections': [
-        'sentinel-2-l1c',
-    ],
-    'limit': 1,
-    'fields': {
-        'include': [
-            'properties.gsd',
-        ],
-    },
-}
-
-response = requests.post('https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search', headers=headers, json=json_data)
+url = "https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search"
+response = requests.post(url, json=data)
 ```
 
 ### Search with Fields: Exclude
@@ -293,30 +215,18 @@ response = requests.post('https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.
 output.
 
 ``` python
-headers = {
-    'Content-Type': 'application/json',
-}
-
-json_data = {
-    'bbox': [
-        13,
-        45,
-        14,
-        46,
-    ],
-    'datetime': '2019-12-10T00:00:00Z/2019-12-11T00:00:00Z',
-    'collections': [
-        'sentinel-2-l1c',
-    ],
-    'limit': 1,
-    'fields': {
-        'exclude': [
-            'properties.datetime',
-        ],
+data = {
+    "bbox": [13, 45, 14, 46],
+    "datetime": "2019-12-10T00:00:00Z/2019-12-11T00:00:00Z",
+    "collections": ["sentinel-2-l1c"],
+    "limit": 1,
+    "fields": {
+        "exclude": ["properties.datetime"]
     },
 }
 
-response = requests.post('https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search', headers=headers, json=json_data)
+url = "https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search"
+response = requests.post(url, json=data)
 ```
 
 ### Search with distinct
@@ -326,51 +236,31 @@ available inside the specified query. For example specifying `date` as
 an option will return a list of dates where data is available.
 
 ``` python
-headers = {
-    'Content-Type': 'application/json',
+data = {
+    "bbox": [13, 45, 14, 46],
+    "datetime": "2019-12-01T00:00:00Z/2020-01-01T00:00:00Z",
+    "collections": ["sentinel-1-grd"],
+    "limit": 100,
+    "distinct": "date",
 }
 
-json_data = {
-    'bbox': [
-        13,
-        45,
-        14,
-        46,
-    ],
-    'datetime': '2019-12-01T00:00:00Z/2020-01-01T00:00:00Z',
-    'collections': [
-        'sentinel-1-grd',
-    ],
-    'limit': 100,
-    'distinct': 'date',
-}
-
-response = requests.post('https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search', headers=headers, json=json_data)
+url = "https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search"
+response = requests.post(url, json=data)
 ```
 
 Or see different Sentinel 1 instrument modes used.
 
 ``` python
-headers = {
-    'Content-Type': 'application/json',
+data = {
+    "bbox": [13, 45, 14, 46],
+    "datetime": "2019-12-01T00:00:00Z/2020-01-01T00:00:00Z",
+    "collections": ["sentinel-1-grd"],
+    "limit": 100,
+    "distinct": "sar:instrument_mode",
 }
 
-json_data = {
-    'bbox': [
-        13,
-        45,
-        14,
-        46,
-    ],
-    'datetime': '2019-12-01T00:00:00Z/2020-01-01T00:00:00Z',
-    'collections': [
-        'sentinel-1-grd',
-    ],
-    'limit': 100,
-    'distinct': 'sar:instrument_mode',
-}
-
-response = requests.post('https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search', headers=headers, json=json_data)
+url = "https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search"
+response = requests.post(url, json=data)
 ```
 
 ### Search on BYOC/BATCH collections
@@ -384,35 +274,27 @@ batch). Remember that you will have to use the appropriate deployment
 endpoint depending on where your collection is hosted.
 
 ``` python
-headers = {
-    'Content-Type': 'application/json',
+data = {
+    "bbox": [13, 45, 14, 46],
+    "datetime": "2019-12-10T00:00:00Z/2019-12-10T23:59:59Z",
+    "collections": ["byoc-<byoc-collection-id>"],
+    "limit": 5,
 }
 
-json_data = {
-    'bbox': [
-        13,
-        45,
-        14,
-        46,
-    ],
-    'datetime': '2019-12-10T00:00:00Z/2019-12-10T23:59:59Z',
-    'collections': [
-        'byoc-<byoc-collection-id>',
-    ],
-    'limit': 5,
-}
-
-response = requests.post('https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search', headers=headers, json=json_data)
+url = "https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search"
+response = requests.post(url, json=data)
 ```
 
 Or using GET simple search endpoint:
 
 ``` python
-headers = {
+query = {
+    "bbox": "13,45,14,46",
+    "datetime": "2019-12-10T00:00:00Z/2019-12-11T00:00:00Z",
+    "collections": "batch-<batch-collection-id>",
+    "limit": 5,
 }
 
-response = requests.get(
-    'https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search?bbox=13,45,14,46&limit=5&collections=batch-<batch-collection-id>&datetime=2019-12-10T00:00:00Z/2019-12-11T00:00:00Z',
-    headers=headers,
-)
+url = "https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search"
+response = requests.get(url, query=query)
 ```
