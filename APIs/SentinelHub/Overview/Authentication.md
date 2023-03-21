@@ -56,13 +56,13 @@ below.
 
 Token Endpoint - for requesting tokens
 
-``` sh
+``` default
 https://sh.dataspace.copernicus.eu/oauth/token
 ```
 
 Token info endpoint
 
-``` sh
+``` default
 https://sh.dataspace.copernicus.eu/oauth/tokeninfo
 ```
 

@@ -6,7 +6,7 @@ To request data using any of the request below, you will need to replace
 the string `<your access token>` with your Sentinel Hub access token.
 Sentinel Hub access token will look something like this:
 
-``` sh
+``` default
 ayJhbGciOiJSUzI1NiJ9.ayJzdWIiOiI0MmYwODZjCy1kMzI3LTRlOTMtYWMxNS00ODAwOGFiZjI0YjIiLCJhdWQiOiJlY2I1MGM1Zi1i
 MWM1LTQ3ZTgtYWE4NC0zZTU4NzJlM2I2MTEiLCJqdGkiOiI5MzYxMWE4ODEyNTM4Y2M0MmU0NDJjYjUyMTY0YmJlNyIsImV4cCI6MTU1N
 TQyMzk3MiwibmFtZSI6ImFuamEudnJlY2tvQHNpbmVyZ2lzZS5jb20iLCJlbWFpbCI6ImFuamEudnJlY2tvQHNpbmVyZ2lzZS5jb20iLC
