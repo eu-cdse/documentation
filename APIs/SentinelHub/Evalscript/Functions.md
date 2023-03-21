@@ -238,7 +238,7 @@ dynamic range while keeping most of the interval of interest linear.
 Useful, for example, for true color, with a maxValue of 0.4 to still
 keep some detail in clouds.
 
-![HighlightCompressVisualizer_graph](img/HighlightCompressVisualizerGraph.png "Piecewise linear function which compresses highlights")
+![Piecewise linear function which compresses highlights](img/HighlightCompressVisualizerGraph.png "Piecewise linear function which compresses highlights")
 
 #### Parameters
 
