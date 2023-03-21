@@ -5,8 +5,8 @@ title: Evalscript (custom script)
 An evalscript (or \"custom script\") is a piece of Javascript code which
 defines how the satellite data shall be processed by Sentinel Hub and
 what values the service shall return. It is a required part of any
-[process](/APIs/SentinelHub/Process.md), [batch processing]() or [OGC
-request]().
+[process](/APIs/SentinelHub/Process.md), [batch processing](/api/batch/)
+or [OGC request](/api/ogc/).
 
 Evalscripts can use any JavaScript function or language structures,
 along with certain [utility
