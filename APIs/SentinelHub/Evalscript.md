@@ -5,17 +5,18 @@ title: Evalscript (custom script)
 An evalscript (or \"custom script\") is a piece of Javascript code which
 defines how the satellite data shall be processed by Sentinel Hub and
 what values the service shall return. It is a required part of any
-[process](/api/process/), [batch processing](/api/batch/) or [OGC
-request](/api/ogc/).
+[process](/APIs/SentinelHub/Process.md), [batch processing]() or [OGC
+request]().
 
 Evalscripts can use any JavaScript function or language structures,
-along with certain [utility functions](/evalscript/functions/) we
-provide for your convenience. For running evalscripts we use the [Chrome
+along with certain [utility
+functions](/APIs/SentinelHub/Evalscript/Functions.md) we provide for
+your convenience. For running evalscripts we use the [Chrome
 V8](https://v8.dev/) JavaScript engine.
 
-In the [Evalscript V3](/evalscript/v3/) section you will find a
-technical documentation with detailed explanations of parameters and
-functions you can use in your evalscripts.
+In the [Evalscript V3](/APIs/SentinelHub/Evalscript/V3.md) section you
+will find a technical documentation with detailed explanations of
+parameters and functions you can use in your evalscripts.
 
 ### Examples
 
@@ -28,7 +29,8 @@ Repository](https://custom-scripts.sentinel-hub.com/).
     scripts
     tutorial](https://www.sentinel-hub.com/explore/education/custom-scripts-tutorial/)
 -   A webinar on writing evalscripts for beginners: [Custom
-    Scripts](https://youtu.be/cgAH2beNYoU), September 28, 2020
+    Scripts](https://www.youtube.com/watch?v=cgAH2beNYoU), September 28,
+    2020
 -   A webinar on multi-temporal scripts and data fusion: [Multi-temporal
     Scripts and Data
     Fusion](https://www.youtube.com/watch?v=kbw3OyYkbA4), March 3, 2021
