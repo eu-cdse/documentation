@@ -10,8 +10,8 @@ pixel fully transparent, while the maximum value makes it fully opaque
 (not transparent).
 
 *Note: maximum value depends on sampleType as described
-[above](/Evalscript/V3.md#sampletype): 1 in case of AUTO or FLOAT32, 255
-in case of UINT8, and 65535 in case of UINT16.*
+[above](/APIs/SentinelHub/Evalscript/V3.md#sampletype): 1 in case of
+AUTO or FLOAT32, 255 in case of UINT8, and 65535 in case of UINT16.*
 
 An alternative approach of marking pixels is to use a background color,
 or to combine transparency and background color. Note that the JPEG
@@ -269,7 +269,8 @@ documentation](/data/airbus/pleiades/). Note that no-data pixels don\'t
 need this scaling. To return an image in UINT16 format, we need to
 additionally multiply the values by 65535 to bring them to 16-bit range
 and this also applies to no-data values. Learn more on sampleType
-formats and conversions [here](/Evalscript/V3.md#sampletype).
+formats and conversions
+[here](/APIs/SentinelHub/Evalscript/V3.md#sampletype).
 
 ``` javascript
 //VERSION=3
