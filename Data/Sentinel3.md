@@ -1,5 +1,19 @@
 # Sentinel 3
 
+[![Sentinel-3 in browser](https://img.shields.io/badge/-Browser-blue
+"Explore Sentinel-3 in the browser")
+](https://sentinelshare.page.link/NPph)
+[![User guide](https://img.shields.io/badge/-User_guide-green
+"User guide")
+](https://sentinels.copernicus.eu/web/sentinel/user-guides/sentinel-2-msi)
+[![Catalog API](https://img.shields.io/badge/-Catalog_API-orange
+"Catalog API")
+](http://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=[0,10]&startDate=2022-06-11&completionDate=2022-06-22&maxRecords=10)
+
+![Resolution](https://img.shields.io/badge/resolution-10m-green?style=flat-square)
+![Revisit](https://img.shields.io/badge/revisit-5--daily-green?style=flat-square)
+![Revisit](https://img.shields.io/badge/Start--date-2015-green?style=flat-square)
+
 
 ## Description
 [SENTINEL-3](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-3) is an European Earth Observation satellite mission developed to support Copernicus ocean, land, atmospheric, emergency, security and cryospheric applications.
@@ -8,10 +22,18 @@ The main objective of the SENTINEL-3 mission is to measure sea surface topograph
 
 
 The table below indicates for each type of user level product, the access type (IAD or DAD), the spatial and temporal extent of the offer and from when the data will be available in the Copernicus Data Space Ecosystem. 
-The table includes as well an overview of the planned Sentinel engineering data availability.  
+The table includes as well an overview of the planned Sentinel engineering data availability.
+
+## Collections
+
 
 
 ## Data Offer
+
+### Full Archive - immediate access
+
+### Full Archive - Deferred access
+
 
 |Product Type| File Description| Data Access Type | Spatial Extent | Temporal Extent | More Information | Available from |
 |------------ | ---------------------- | ---------------------- | ------------ | ------------ | ------------| -----------|
