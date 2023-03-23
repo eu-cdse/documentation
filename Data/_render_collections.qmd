@@ -6,7 +6,6 @@ meta = None
 with open("./collections.json") as f:
     meta = json.load(f)["collections"]
 
-
 meta = [ c for c in meta if mission in c["id"] ]
 
 from IPython.display import display, Markdown, Latex
@@ -16,20 +15,43 @@ text = ''
 dummy_thumb = "https://www.esa.int/var/esa/storage/images/esa_multimedia/images/2015/06/northwest_italy_and_southern_france/15492215-1-eng-GB/Northwest_Italy_and_southern_France_pillars.jpg"
 
 def imgtothumb(src):
-    thumb =  f"""<img align="right" width="120" height="120" src={src}>"""
+    thumb =  f"""<img align="right" width="150" height="150" src={src}>"""
     return thumb
+
+
+from tabulate import tabulate
+
+a = len(meta[0]['summaries']['eo:bands'])
+t = []
+for i in range(0,a):
+    try:
+        band = meta[0]['summaries']['eo:bands'][i]['name']       
+    except:
+        band = ' '
+    try:
+        c_name = meta[0]['summaries']['eo:bands'][i]['common_name']
+    except:
+        c_name = ''
+    t.append([band,c_name])
+    
+
 
 for c in meta:
 
     title = c["title"]
     gsd = c["gsd"]
     datatype = c["type"]
+    # insert thumbnail
     try:
         thumb_url = c["assets"]["thumbnail"]["href"]
-        bands = c["cube:dimensions"]["bands"]["values"]
     except:
         thumb_url = dummy_thumb
-        bands = "No band details available"
+
+    # include band details
+    try: 
+        bands = c["cube:dimensions"]["bands"]["values"]
+    except:
+        bands = " "
 
     def find_link(rel=None,href_contains=None, title_contains=None):
         results = [ l["href"] for l in c.get("links",[]) if (rel is None or l["rel"]==rel) and (href_contains==None or href_contains in l["href"]) and (title_contains==None or title_contains in l["title"]) ]
@@ -77,17 +99,18 @@ for c in meta:
 {userguide} 
 {opensearch}
 
-{gsd} {datatype} 
+{gsd}{datatype} 
 
 
 **Overview**
 
 {c["description"]}
-{bands}
-
 
 """
 
-
 display(Markdown(text))
+display(Markdown(tabulate(
+  t, 
+  headers=["Band Name", "Common Name"]
+)))
 ```
