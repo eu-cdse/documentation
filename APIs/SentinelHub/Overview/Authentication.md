@@ -74,14 +74,8 @@ The following cURL request will return an access token, just make sure
 to replace `<your client id>` with your client ID and
 `<your client secret>` with your client secret:
 
-``` python
-headers = {
-    'content-type': 'application/x-www-form-urlencoded',
-}
-
-data = 'grant_type=client_credentials&client_id=<your client id>&client_secret=%3Cyour+client+secret%3E'
-
-response = requests.post('https://sh.dataspace.copernicus.eu/oauth/token', headers=headers, data=data)
+``` bash
+curl --request POST --url https://sh.dataspace.copernicus.eu/oauth/token --header "content-type: application/x-www-form-urlencoded" --data "grant_type=client_credentials&client_id=<your client id>" --data-urlencode "client_secret=<your client secret>"
 ```
 
 #### Postman
