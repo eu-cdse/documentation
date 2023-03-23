@@ -1,0 +1,1146 @@
+---
+title: Examples for S2L1C
+---
+
+To request data using any of the request below, you will need to replace
+the string `<your access token>` with your Sentinel Hub access token.
+Sentinel Hub access token will look something like this:
+
+``` default
+ayJhbGciOiJSUzI1NiJ9.ayJzdWIiOiI0MmYwODZjCy1kMzI3LTRlOTMtYWMxNS00ODAwOGFiZjI0YjIiLCJhdWQiOiJlY2I1MGM1Zi1i
+MWM1LTQ3ZTgtYWE4NC0zZTU4NzJlM2I2MTEiLCJqdGkiOiI5MzYxMWE4ODEyNTM4Y2M0MmU0NDJjYjUyMTY0YmJlNyIsImV4cCI6MTU1N
+TQyMzk3MiwibmFtZSI6ImFuamEudnJlY2tvQHNpbmVyZ2lzZS5jb20iLCJlbWFpbCI6ImFuamEudnJlY2tvQHNpbmVyZ2lzZS5jb20iLC
+JzaWQiOiIzZjVjZDVkNS04MjRiLTQ3ZjYtODgwNy0wNDMyNWY4ODQxZmQifQ.U7FPOy_2jlEOFxXSjyN5KEdBROna3-Dyec0feShIbUOY
+1p9lEXdNaMmR5euiINi2RXDayX9Kr47CuSTsvq1zHFvZs1YgkFr1iH6kDuX-t_-wfWpqu5oPjoPVKZ4Rj0Ms_dxAUTQFTXR0rlbLuO-KS
+gnaeLVb5iiv_qY3Ctq2XKdIRcFRQLFziFcP4yZJl-NZMlwzsiiwjakcpYpI5jSYAdU2hpZLHRzceseeZt5YfZOe5Px1kZXro9Nd0L2GPC
+-qzOXw_V1saMGFa2ov8qV6Dvk92iv2SDDdGhOdII_JOf8XkK4E3g2z0EEFdWhG9F4Iky4ukNsqBPgE8LRb31s0hg
+```
+
+and can be obtained as described in the [Authentication
+chapter](/APIs/SentinelHub/Overview/Authentication.md).
+
+### True Color
+
+``` python
+evalscript = """
+//VERSION=3
+function setup() {
+  return {
+    input: ["B02", "B03", "B04"],
+    output: {
+      bands: 3,
+      sampleType: "AUTO", // default value - scales the output values from [0,1] to [0,255].
+    },
+  }
+}
+
+function evaluatePixel(sample) {
+  return [2.5 * sample.B04, 2.5 * sample.B03, 2.5 * sample.B02]
+}
+"""
+
+request = {
+    "input": {
+        "bounds": {
+            "properties": {
+                "crs": "http://www.opengis.net/def/crs/OGC/1.3/CRS84"
+            },
+            "bbox": [
+                13.822174072265625,
+                45.85080395917834,
+                14.55963134765625,
+                46.29191774991382,
+            ],
+        },
+        "data": [
+            {
+                "type": "sentinel-2-l1c",
+                "dataFilter": {
+                    "timeRange": {
+                        "from": "2018-10-01T00:00:00Z",
+                        "to": "2018-12-31T00:00:00Z",
+                    }
+                },
+            }
+        ],
+    },
+    "output": {
+        "width": 512,
+        "height": 512,
+    },
+    "evalscript": evalscript,
+}
+
+url = "https://sh.dataspace.copernicus.eu/api/v1/process"
+response = requests.post(url, json=request)
+```
+
+### True Color (EPSG 32633)
+
+``` python
+evalscript = """
+//VERSION=3
+function setup() {
+  return {
+    input: ["B02", "B03", "B04"],
+    output: { bands: 3 },
+  }
+}
+
+function evaluatePixel(sample) {
+  return [2.5 * sample.B04, 2.5 * sample.B03, 2.5 * sample.B02]
+}
+"""
+
+request = {
+    "input": {
+        "bounds": {
+            "properties": {
+                "crs": "http://www.opengis.net/def/crs/EPSG/0/32633"
+            },
+            "bbox": [
+                408553.58,
+                5078145.48,
+                466081.02,
+                5126576.61,
+            ],
+        },
+        "data": [
+            {
+                "type": "sentinel-2-l1c",
+                "dataFilter": {
+                    "timeRange": {
+                        "from": "2018-10-01T00:00:00Z",
+                        "to": "2018-12-31T00:00:00Z",
+                    }
+                },
+            }
+        ],
+    },
+    "output": {
+        "width": 512,
+        "height": 512,
+    },
+    "evalscript": evalscript,
+}
+
+url = "https://sh.dataspace.copernicus.eu/api/v1/process"
+response = requests.post(url, json=request)
+```
+
+### True Color, resolution (EPSG 32633)
+
+``` python
+evalscript = """
+//VERSION=3
+function setup() {
+  return {
+    input: ["B02", "B03", "B04"],
+    output: { bands: 3 },
+  }
+}
+
+function evaluatePixel(sample) {
+  return [2.5 * sample.B04, 2.5 * sample.B03, 2.5 * sample.B02]
+}
+"""
+
+request = {
+    "input": {
+        "bounds": {
+            "properties": {
+                "crs": "http://www.opengis.net/def/crs/EPSG/0/32633"
+            },
+            "bbox": [
+                408553.58,
+                5078145.48,
+                466081.02,
+                5126576.61,
+            ],
+        },
+        "data": [
+            {
+                "type": "sentinel-2-l1c",
+                "dataFilter": {
+                    "timeRange": {
+                        "from": "2018-10-01T00:00:00Z",
+                        "to": "2018-12-31T00:00:00Z",
+                    }
+                },
+            }
+        ],
+    },
+    "output": {
+        "resx": 100,
+        "resy": 100,
+    },
+    "evalscript": evalscript,
+}
+
+url = "https://sh.dataspace.copernicus.eu/api/v1/process"
+response = requests.post(url, json=request)
+```
+
+### True Color, multi-band GeoTIff
+
+``` python
+evalscript = """
+//VERSION=3
+function setup() {
+  return {
+    input: ["B02", "B03", "B04"],
+    output: { bands: 3 },
+  }
+}
+
+function evaluatePixel(sample) {
+  return [2.5 * sample.B04, 2.5 * sample.B03, 2.5 * sample.B02]
+}
+"""
+
+request = {
+    "input": {
+        "bounds": {
+            "properties": {
+                "crs": "http://www.opengis.net/def/crs/OGC/1.3/CRS84"
+            },
+            "bbox": [
+                13.822174072265625,
+                45.85080395917834,
+                14.55963134765625,
+                46.29191774991382,
+            ],
+        },
+        "data": [
+            {
+                "type": "sentinel-2-l1c",
+                "dataFilter": {
+                    "timeRange": {
+                        "from": "2018-10-01T00:00:00Z",
+                        "to": "2018-12-31T00:00:00Z",
+                    }
+                },
+            }
+        ],
+    },
+    "output": {
+        "width": 512,
+        "height": 512,
+    },
+    "evalscript": evalscript,
+}
+
+url = "https://sh.dataspace.copernicus.eu/api/v1/process"
+response = requests.post(url, json=request, headers={"Accept": "image/tiff"})
+```
+
+### True Color, preview mode
+
+``` python
+evalscript = """
+//VERSION=3
+function setup() {
+  return {
+    input: ["B02", "B03", "B04"],
+    output: { bands: 3 },
+  }
+}
+
+function evaluatePixel(sample) {
+  return [2.5 * sample.B04, 2.5 * sample.B03, 2.5 * sample.B02]
+}
+"""
+
+request = {
+    "input": {
+        "bounds": {
+            "properties": {
+                "crs": "http://www.opengis.net/def/crs/OGC/1.3/CRS84"
+            },
+            "bbox": [
+                13.822174072265625,
+                45.85080395917834,
+                18.55963134765625,
+                48.29191774991382,
+            ],
+        },
+        "data": [
+            {
+                "type": "sentinel-2-l1c",
+                "dataFilter": {
+                    "timeRange": {
+                        "from": "2018-10-11T00:00:00Z",
+                        "to": "2018-11-18T00:00:00Z",
+                    },
+                    "previewMode": "PREVIEW",
+                },
+            }
+        ],
+    },
+    "output": {
+        "width": 512,
+        "height": 512,
+        "responses": [
+            {
+                "identifier": "default",
+                "format": {"type": "image/png"},
+            }
+        ],
+    },
+    "evalscript": evalscript,
+}
+
+url = "https://sh.dataspace.copernicus.eu/api/v1/process"
+response = requests.post(url, json=request)
+```
+
+### True Color, mosaicking with leastRecent
+
+``` python
+evalscript = """
+//VERSION=3
+function setup() {
+  return {
+    input: ["B02", "B03", "B04"],
+    output: { bands: 3 },
+  }
+}
+
+function evaluatePixel(sample) {
+  return [2.5 * sample.B04, 2.5 * sample.B03, 2.5 * sample.B02]
+}
+"""
+
+request = {
+    "input": {
+        "bounds": {
+            "properties": {
+                "crs": "http://www.opengis.net/def/crs/OGC/1.3/CRS84"
+            },
+            "bbox": [
+                13.822174072265625,
+                45.85080395917834,
+                14.55963134765625,
+                46.29191774991382,
+            ],
+        },
+        "data": [
+            {
+                "type": "sentinel-2-l1c",
+                "dataFilter": {
+                    "timeRange": {
+                        "from": "2018-10-11T00:00:00Z",
+                        "to": "2018-11-18T00:00:00Z",
+                    },
+                    "mosaickingOrder": "leastRecent",
+                },
+            }
+        ],
+    },
+    "output": {
+        "width": 512,
+        "height": 512,
+        "responses": [
+            {
+                "identifier": "default",
+                "format": {"type": "image/png"},
+            }
+        ],
+    },
+    "evalscript": evalscript,
+}
+
+url = "https://sh.dataspace.copernicus.eu/api/v1/process"
+response = requests.post(url, json=request)
+```
+
+### True color and metadata (multi-part response GeoTIFF and json)
+
+``` python
+evalscript = """
+//VERSION=3
+function setup() {
+  return {
+    input: ["B02", "B03", "B04"],
+    mosaicking: Mosaicking.ORBIT,
+    output: { id: "default", bands: 3 },
+  }
+}
+
+function updateOutputMetadata(scenes, inputMetadata, outputMetadata) {
+  outputMetadata.userData = { scenes: scenes.orbits }
+}
+
+function evaluatePixel(samples) {
+  return [2.5 * samples[0].B04, 2.5 * samples[0].B03, 2.5 * samples[0].B02]
+}
+"""
+
+request = {
+    "input": {
+        "bounds": {
+            "bbox": [
+                13.822174072265625,
+                45.85080395917834,
+                14.55963134765625,
+                46.29191774991382,
+            ]
+        },
+        "data": [
+            {
+                "type": "sentinel-2-l1c",
+                "dataFilter": {
+                    "timeRange": {
+                        "from": "2018-12-27T00:00:00Z",
+                        "to": "2018-12-27T23:59:59Z",
+                    }
+                },
+            }
+        ],
+    },
+    "output": {
+        "width": 512,
+        "height": 512,
+        "responses": [
+            {
+                "identifier": "default",
+                "format": {"type": "image/tiff"},
+            },
+            {
+                "identifier": "userdata",
+                "format": {
+                    "type": "application/json"
+                },
+            },
+        ],
+    },
+    "evalscript": evalscript,
+}
+
+url = "https://sh.dataspace.copernicus.eu/api/v1/process"
+response = requests.post(url, json=request, headers={"Accept": "application/tar"})
+```
+
+### True color multi-part-reponse (different formats and SampleType)
+
+``` python
+evalscript = """
+//VERSION=3
+function setup() {
+  return {
+    input: [
+      {
+        bands: ["B04", "B03", "B02"],
+        units: "REFLECTANCE", // default units
+      },
+    ],
+    output: [
+      {
+        id: "default",
+        bands: 3,
+        sampleType: "AUTO", // default  - scales the output values from input values [0,1] to [0,255].
+      },
+      {
+        id: "true_color_8bit",
+        bands: 3,
+        sampleType: "UINT8", //floating point values are automatically rounded to the nearest integer by the service.
+      },
+      {
+        id: "true_color_16bit",
+        bands: 3,
+        sampleType: "UINT16", //floating point values are automatically rounded to the nearest integer by the service.
+      },
+      {
+        id: "true_color_32float",
+        bands: 3,
+        sampleType: "FLOAT32",
+      },
+    ],
+  }
+}
+
+function evaluatePixel(sample) {
+  return {
+    // output band values are scaled from [0,1] to [0,255]. Multiply by 2.5 to increase brightness
+    default: [2.5 * sample.B04, 2.5 * sample.B03, 2.5 * sample.B02],
+
+    // Multiply input reflectance values by 2.5 to increase brighness and by 255 to return the band values clamped to [0, 255] unsigned 8 bit range.
+    true_color_8bit: [
+      2.5 * sample.B04 * 255,
+      2.5 * sample.B03 * 255,
+      2.5 * sample.B02 * 255,
+    ],
+
+    // Multiply input reflectance values by 2.5 to increase brightness and by 65535 to return the band values clamped to [0, 65535] unsigned 16 bit range.
+    true_color_16bit: [
+      2.5 * sample.B04 * 65535,
+      2.5 * sample.B03 * 65535,
+      2.5 * sample.B02 * 65535,
+    ],
+
+    // Returns band reflectance.
+    true_color_32float: [sample.B04, sample.B03, sample.B02],
+  }
+}
+"""
+
+request = {
+    "input": {
+        "bounds": {
+            "properties": {
+                "crs": "http://www.opengis.net/def/crs/OGC/1.3/CRS84"
+            },
+            "bbox": [
+                12.206251,
+                41.627351,
+                12.594042,
+                41.856879,
+            ],
+        },
+        "data": [
+            {
+                "type": "sentinel-2-l1c",
+                "dataFilter": {
+                    "timeRange": {
+                        "from": "2018-06-01T00:00:00Z",
+                        "to": "2018-08-31T00:00:00Z",
+                    }
+                },
+            }
+        ],
+    },
+    "output": {
+        "width": 512,
+        "height": 512,
+        "responses": [
+            {
+                "identifier": "default",
+                "format": {"type": "image/jpeg"},
+            },
+            {
+                "identifier": "true_color_8bit",
+                "format": {"type": "image/png"},
+            },
+            {
+                "identifier": "true_color_16bit",
+                "format": {"type": "image/tiff"},
+            },
+            {
+                "identifier": "true_color_32float",
+                "format": {"type": "image/tiff"},
+            },
+        ],
+    },
+    "evalscript": evalscript,
+}
+
+url = "https://sh.dataspace.copernicus.eu/api/v1/process"
+response = requests.post(url, json=request, headers={"Accept": "application/tar"})
+```
+
+### NDVI as jpeg image with bounds given as polygon
+
+``` python
+evalscript = """
+//VERSION=3
+function setup() {
+  return {
+    input: [
+      {
+        bands: ["B04", "B08"],
+      },
+    ],
+    output: {
+      id: "default",
+      bands: 3,
+    },
+  }
+}
+
+function evaluatePixel(sample) {
+  let ndvi = (sample.B08 - sample.B04) / (sample.B08 + sample.B04)
+
+  if (ndvi < -0.5) return [0.05, 0.05, 0.05]
+  else if (ndvi < -0.2) return [0.75, 0.75, 0.75]
+  else if (ndvi < -0.1) return [0.86, 0.86, 0.86]
+  else if (ndvi < 0) return [0.92, 0.92, 0.92]
+  else if (ndvi < 0.025) return [1, 0.98, 0.8]
+  else if (ndvi < 0.05) return [0.93, 0.91, 0.71]
+  else if (ndvi < 0.075) return [0.87, 0.85, 0.61]
+  else if (ndvi < 0.1) return [0.8, 0.78, 0.51]
+  else if (ndvi < 0.125) return [0.74, 0.72, 0.42]
+  else if (ndvi < 0.15) return [0.69, 0.76, 0.38]
+  else if (ndvi < 0.175) return [0.64, 0.8, 0.35]
+  else if (ndvi < 0.2) return [0.57, 0.75, 0.32]
+  else if (ndvi < 0.25) return [0.5, 0.7, 0.28]
+  else if (ndvi < 0.3) return [0.44, 0.64, 0.25]
+  else if (ndvi < 0.35) return [0.38, 0.59, 0.21]
+  else if (ndvi < 0.4) return [0.31, 0.54, 0.18]
+  else if (ndvi < 0.45) return [0.25, 0.49, 0.14]
+  else if (ndvi < 0.5) return [0.19, 0.43, 0.11]
+  else if (ndvi < 0.55) return [0.13, 0.38, 0.07]
+  else if (ndvi < 0.6) return [0.06, 0.33, 0.04]
+  else return [0, 0.27, 0]
+}
+"""
+
+request = {
+    "input": {
+        "bounds": {
+            "properties": {
+                "crs": "http://www.opengis.net/def/crs/OGC/1.3/CRS84"
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -94.04798984527588,
+                            41.7930725281021,
+                        ],
+                        [
+                            -94.04803276062012,
+                            41.805773608962866,
+                        ],
+                        [
+                            -94.06738758087158,
+                            41.805901566741305,
+                        ],
+                        [
+                            -94.06734466552734,
+                            41.7967199475024,
+                        ],
+                        [
+                            -94.06223773956299,
+                            41.79144072064381,
+                        ],
+                        [
+                            -94.0504789352417,
+                            41.791376727347966,
+                        ],
+                        [
+                            -94.05039310455322,
+                            41.7930725281021,
+                        ],
+                        [
+                            -94.04798984527588,
+                            41.7930725281021,
+                        ],
+                    ]
+                ],
+            },
+        },
+        "data": [
+            {
+                "type": "sentinel-2-l1c",
+                "dataFilter": {
+                    "timeRange": {
+                        "from": "2018-10-01T00:00:00Z",
+                        "to": "2018-12-20T00:00:00Z",
+                    }
+                },
+            }
+        ],
+    },
+    "output": {
+        "width": 512,
+        "height": 512,
+        "responses": [
+            {
+                "identifier": "default",
+                "format": {
+                    "type": "image/jpeg",
+                    "quality": 80,
+                },
+            }
+        ],
+    },
+    "evalscript": evalscript,
+}
+
+url = "https://sh.dataspace.copernicus.eu/api/v1/process"
+response = requests.post(url, json=request)
+```
+
+### Exact NDVI values using a floating point GeoTIFF
+
+``` python
+evalscript = """
+//VERSION=3
+function setup() {
+  return {
+    input: [
+      {
+        bands: ["B04", "B08"],
+        units: "REFLECTANCE",
+      },
+    ],
+    output: {
+      id: "default",
+      bands: 1,
+      sampleType: SampleType.FLOAT32,
+    },
+  }
+}
+
+function evaluatePixel(sample) {
+  let ndvi = (sample.B08 - sample.B04) / (sample.B08 + sample.B04)
+  return [ndvi]
+}
+"""
+
+request = {
+    "input": {
+        "bounds": {
+            "properties": {
+                "crs": "http://www.opengis.net/def/crs/OGC/1.3/CRS84"
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -94.04798984527588,
+                            41.7930725281021,
+                        ],
+                        [
+                            -94.04803276062012,
+                            41.805773608962866,
+                        ],
+                        [
+                            -94.06738758087158,
+                            41.805901566741305,
+                        ],
+                        [
+                            -94.06734466552734,
+                            41.7967199475024,
+                        ],
+                        [
+                            -94.06223773956299,
+                            41.79144072064381,
+                        ],
+                        [
+                            -94.0504789352417,
+                            41.791376727347966,
+                        ],
+                        [
+                            -94.05039310455322,
+                            41.7930725281021,
+                        ],
+                        [
+                            -94.04798984527588,
+                            41.7930725281021,
+                        ],
+                    ]
+                ],
+            },
+        },
+        "data": [
+            {
+                "type": "sentinel-2-l1c",
+                "dataFilter": {
+                    "timeRange": {
+                        "from": "2018-10-01T00:00:00Z",
+                        "to": "2018-12-20T00:00:00Z",
+                    }
+                },
+                "processing": {
+                    "harmonizeValues": "true"
+                },
+            }
+        ],
+    },
+    "output": {
+        "width": 512,
+        "height": 512,
+        "responses": [
+            {
+                "identifier": "default",
+                "format": {"type": "image/tiff"},
+            }
+        ],
+    },
+    "evalscript": evalscript,
+}
+
+url = "https://sh.dataspace.copernicus.eu/api/v1/process"
+response = requests.post(url, json=request)
+```
+
+### NDVI values as INT16 raster
+
+``` python
+evalscript = """
+//VERSION=3
+function setup() {
+  return {
+    input: [
+      {
+        bands: ["B04", "B08"],
+        units: "REFLECTANCE",
+      },
+    ],
+    output: {
+      id: "default",
+      bands: 1,
+      sampleType: SampleType.INT16, //floating point values are automatically rounded to the nearest integer by the service.
+    },
+  }
+}
+
+function evaluatePixel(sample) {
+  let ndvi = (sample.B08 - sample.B04) / (sample.B08 + sample.B04)
+  // Return NDVI multiplied by 10000 as integers to save processing units. To obtain NDVI values, simply divide the resulting pixel values by 10000.
+  return [ndvi * 10000]
+}
+"""
+
+request = {
+    "input": {
+        "bounds": {
+            "properties": {
+                "crs": "http://www.opengis.net/def/crs/OGC/1.3/CRS84"
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -94.04798984527588,
+                            41.7930725281021,
+                        ],
+                        [
+                            -94.04803276062012,
+                            41.805773608962866,
+                        ],
+                        [
+                            -94.06738758087158,
+                            41.805901566741305,
+                        ],
+                        [
+                            -94.06734466552734,
+                            41.7967199475024,
+                        ],
+                        [
+                            -94.06223773956299,
+                            41.79144072064381,
+                        ],
+                        [
+                            -94.0504789352417,
+                            41.791376727347966,
+                        ],
+                        [
+                            -94.05039310455322,
+                            41.7930725281021,
+                        ],
+                        [
+                            -94.04798984527588,
+                            41.7930725281021,
+                        ],
+                    ]
+                ],
+            },
+        },
+        "data": [
+            {
+                "type": "sentinel-2-l1c",
+                "dataFilter": {
+                    "timeRange": {
+                        "from": "2018-10-01T00:00:00Z",
+                        "to": "2018-12-20T00:00:00Z",
+                    }
+                },
+                "processing": {
+                    "harmonizeValues": "true"
+                },
+            }
+        ],
+    },
+    "output": {
+        "width": 512,
+        "height": 512,
+        "responses": [
+            {
+                "identifier": "default",
+                "format": {"type": "image/tiff"},
+            }
+        ],
+    },
+    "evalscript": evalscript,
+}
+
+url = "https://sh.dataspace.copernicus.eu/api/v1/process"
+response = requests.post(url, json=request)
+```
+
+### NDVI image and value (multi-part response png and GeoTIFF)
+
+``` python
+evalscript = """
+//VERSION=3
+function setup() {
+  return {
+    input: [
+      {
+        bands: ["B04", "B08"],
+      },
+    ],
+    output: [
+      {
+        id: "default",
+        bands: 1,
+        sampleType: SampleType.FLOAT32,
+      },
+      {
+        id: "ndvi_image",
+        bands: 3,
+        sampleType: SampleType.AUTO,
+      },
+    ],
+  }
+}
+
+function evaluatePixel(sample) {
+  let ndvi = (sample.B08 - sample.B04) / (sample.B08 + sample.B04)
+
+  if (ndvi < -0.5) image = [0.05, 0.05, 0.05]
+  else if (ndvi < -0.2) image = [0.75, 0.75, 0.75]
+  else if (ndvi < -0.1) image = [0.86, 0.86, 0.86]
+  else if (ndvi < 0) image = [0.92, 0.92, 0.92]
+  else if (ndvi < 0.025) image = [1, 0.98, 0.8]
+  else if (ndvi < 0.05) image = [0.93, 0.91, 0.71]
+  else if (ndvi < 0.075) image = [0.87, 0.85, 0.61]
+  else if (ndvi < 0.1) image = [0.8, 0.78, 0.51]
+  else if (ndvi < 0.125) image = [0.74, 0.72, 0.42]
+  else if (ndvi < 0.15) image = [0.69, 0.76, 0.38]
+  else if (ndvi < 0.175) image = [0.64, 0.8, 0.35]
+  else if (ndvi < 0.2) image = [0.57, 0.75, 0.32]
+  else if (ndvi < 0.25) image = [0.5, 0.7, 0.28]
+  else if (ndvi < 0.3) image = [0.44, 0.64, 0.25]
+  else if (ndvi < 0.35) image = [0.38, 0.59, 0.21]
+  else if (ndvi < 0.4) image = [0.31, 0.54, 0.18]
+  else if (ndvi < 0.45) image = [0.25, 0.49, 0.14]
+  else if (ndvi < 0.5) image = [0.19, 0.43, 0.11]
+  else if (ndvi < 0.55) image = [0.13, 0.38, 0.07]
+  else if (ndvi < 0.6) image = [0.06, 0.33, 0.04]
+  else image = [0, 0.27, 0]
+
+  return {
+    default: [ndvi],
+    ndvi_image: image,
+  }
+}
+"""
+
+request = {
+    "input": {
+        "bounds": {
+            "properties": {
+                "crs": "http://www.opengis.net/def/crs/OGC/1.3/CRS84"
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -94.04798984527588,
+                            41.7930725281021,
+                        ],
+                        [
+                            -94.04803276062012,
+                            41.805773608962866,
+                        ],
+                        [
+                            -94.06738758087158,
+                            41.805901566741305,
+                        ],
+                        [
+                            -94.06734466552734,
+                            41.7967199475024,
+                        ],
+                        [
+                            -94.06223773956299,
+                            41.79144072064381,
+                        ],
+                        [
+                            -94.0504789352417,
+                            41.791376727347966,
+                        ],
+                        [
+                            -94.05039310455322,
+                            41.7930725281021,
+                        ],
+                        [
+                            -94.04798984527588,
+                            41.7930725281021,
+                        ],
+                    ]
+                ],
+            },
+        },
+        "data": [
+            {
+                "type": "sentinel-2-l1c",
+                "dataFilter": {
+                    "timeRange": {
+                        "from": "2018-10-01T00:00:00Z",
+                        "to": "2018-12-20T00:00:00Z",
+                    }
+                },
+            }
+        ],
+    },
+    "output": {
+        "width": 512,
+        "height": 512,
+        "responses": [
+            {
+                "identifier": "ndvi_image",
+                "format": {"type": "image/png"},
+            },
+            {
+                "identifier": "default",
+                "format": {"type": "image/tiff"},
+            },
+        ],
+    },
+    "evalscript": evalscript,
+}
+
+url = "https://sh.dataspace.copernicus.eu/api/v1/process"
+response = requests.post(url, json=request, headers={"Accept": "application/tar"})
+```
+
+### All S2L1C raw bands, original data (no harmonization)
+
+Learn about harmonization [here](/Data/Sentinel2.md#harmonize-values).
+
+``` python
+evalscript = """
+//VERSION=3
+function setup() {
+  return {
+    input: [
+      {
+        bands: [
+          "B01",
+          "B02",
+          "B03",
+          "B04",
+          "B05",
+          "B06",
+          "B07",
+          "B08",
+          "B8A",
+          "B09",
+          "B10",
+          "B11",
+          "B12",
+        ],
+        units: "DN",
+      },
+    ],
+    output: {
+      id: "default",
+      bands: 13,
+      sampleType: SampleType.UINT16,
+    },
+  }
+}
+
+function evaluatePixel(sample) {
+  return [
+    sample.B01,
+    sample.B02,
+    sample.B03,
+    sample.B04,
+    sample.B05,
+    sample.B06,
+    sample.B07,
+    sample.B08,
+    sample.B8A,
+    sample.B09,
+    sample.B10,
+    sample.B11,
+    sample.B12,
+  ]
+}
+"""
+
+request = {
+    "input": {
+        "bounds": {
+            "properties": {
+                "crs": "http://www.opengis.net/def/crs/OGC/1.3/CRS84"
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -94.04798984527588,
+                            41.7930725281021,
+                        ],
+                        [
+                            -94.04803276062012,
+                            41.805773608962866,
+                        ],
+                        [
+                            -94.06738758087158,
+                            41.805901566741305,
+                        ],
+                        [
+                            -94.06734466552734,
+                            41.7967199475024,
+                        ],
+                        [
+                            -94.06223773956299,
+                            41.79144072064381,
+                        ],
+                        [
+                            -94.0504789352417,
+                            41.791376727347966,
+                        ],
+                        [
+                            -94.05039310455322,
+                            41.7930725281021,
+                        ],
+                        [
+                            -94.04798984527588,
+                            41.7930725281021,
+                        ],
+                    ]
+                ],
+            },
+        },
+        "data": [
+            {
+                "type": "sentinel-2-l1c",
+                "dataFilter": {
+                    "timeRange": {
+                        "from": "2018-10-01T00:00:00Z",
+                        "to": "2018-12-20T00:00:00Z",
+                    }
+                },
+                "processing": {
+                    "harmonizeValues": "false"
+                },
+            }
+        ],
+    },
+    "output": {
+        "width": 512,
+        "height": 512,
+        "responses": [
+            {
+                "identifier": "default",
+                "format": {"type": "image/tiff"},
+            }
+        ],
+    },
+    "evalscript": evalscript,
+}
+
+url = "https://sh.dataspace.copernicus.eu/api/v1/process"
+response = requests.post(url, json=request)
+```
