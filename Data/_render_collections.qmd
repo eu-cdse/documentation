@@ -8,7 +8,7 @@ with open("./collections.json") as f:
 
 meta = [ c for c in meta if mission in c["id"] ]
 
-from IPython.display import display, Markdown, Latex
+from IPython.display import display, Markdown, Latex,HTML
 
 text = ''
 
@@ -17,30 +17,16 @@ dummy_thumb = "https://www.esa.int/var/esa/storage/images/esa_multimedia/images/
 def imgtothumb(src):
     thumb =  f"""<img align="right" width="150" height="150" src={src}>"""
     return thumb
-
+   
 
 from tabulate import tabulate
-
-# a = len(meta[0]['summaries']['eo:bands'])
-# t = []
-# for i in range(0,a):
-#     try:
-#         band = meta[0]['summaries']['eo:bands'][i]['name']       
-#     except:
-#         band = ' '
-#     try:
-#         c_name = meta[0]['summaries']['eo:bands'][i]['common_name']
-#     except:
-#         c_name = ''
-#     t.append([band,c_name])
-    
-
 
 for c in meta:
 
     title = c["title"]
     gsd = c["gsd"]
     datatype = c["type"]
+
     # insert thumbnail
     try:
         thumb_url = c["assets"]["thumbnail"]["href"]
@@ -84,11 +70,18 @@ for c in meta:
     links = { l["rel"] + l.get("title",""):l["href"] for l in c.get("links",[])}
     userguide = find_link(rel="about",title_contains="User")
     opensearch = find_link(rel="opensearch")
+    datacollection = find_link(rel="about",title_contains="collection")
 
     if userguide is not None:
         userguide = f"""[![User guide](https://img.shields.io/badge/-User_guide-green"User guide")]({userguide})"""
     else:
         userguide = ""
+
+    if datacollection is not None:
+        datacollection = f"""You can find a detailed description about the collection in this [link]({datacollection})"""
+    else:
+        datacollection = ""
+
 
     if gsd is not None:
         gsd = f"""![Resolution](https://img.shields.io/badge/resolution-{gsd}m-green?style=flat-square)
@@ -125,6 +118,11 @@ for c in meta:
 **Overview**
 
 {c["description"]}
+
+{datacollection}
+
+**Spectral Bands**
+
 {table}
 """
 
