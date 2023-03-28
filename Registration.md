@@ -4,7 +4,7 @@ This section provides information on how to register and authenticate on the Cop
 
 ## Step 1: Registration
 
-Go to [website](https://dataspace.copernicus.eu/) and click "login" in the top right corner.
+Go to [website](https://dataspace.copernicus.eu/){target="_blank"} and click "login" in the top right corner.
 
 <!-- ![Welcome](./_images/Welcome.png) -->
 <img src="./_images/Welcome.png" width="700">

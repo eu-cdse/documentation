@@ -1,0 +1,127 @@
+
+```{python}
+import json
+
+meta = None
+with open("./collections.json") as f:
+    meta = json.load(f)["collections"]
+
+meta = [ c for c in meta if mission in c["id"] ]
+
+from IPython.display import display, Markdown, Latex,HTML
+
+text = ''
+
+dummy_thumb = "https://www.esa.int/var/esa/storage/images/esa_multimedia/images/2015/06/northwest_italy_and_southern_france/15492215-1-eng-GB/Northwest_Italy_and_southern_France_pillars.jpg"
+
+def imgtothumb(src):
+    thumb =  f"""<img align="right" width="150" height="150" src={src}>"""
+    return thumb
+   
+
+from tabulate import tabulate
+
+for c in meta:
+
+    title = c["title"]
+    gsd = c["gsd"]
+    datatype = c["type"]
+
+    # insert thumbnail
+    try:
+        thumb_url = c["assets"]["thumbnail"]["href"]
+    except:
+        thumb_url = dummy_thumb
+
+    # include band details
+    try: 
+        band_num = len(c['summaries']['eo:bands'])
+        t = []
+        for i in range(0,band_num):
+            try:
+                band = c['summaries']['eo:bands'][i]['name'] 
+            except:
+                band = " "
+            try:
+                c_name = c['summaries']['eo:bands'][i]['common_name']
+            except:
+                c_name = ''
+            try:
+                b_gsd = c['summaries']['eo:bands'][i]['gsd']
+            except:
+                b_gsd = ''
+            try:
+                b_wavelength = c['summaries']['eo:bands'][i]['wavelength_nm']
+            except:
+                b_wavelength = ''
+            t.append([band,c_name,b_gsd,b_wavelength])
+        table = tabulate(t,headers=["Band Name", "Common Name", "GSD", "Wavelength"])
+    except:
+        table = " "
+
+
+    def find_link(rel=None,href_contains=None, title_contains=None):
+        results = [ l["href"] for l in c.get("links",[]) if (rel is None or l["rel"]==rel) and (href_contains==None or href_contains in l["href"]) and (title_contains==None or title_contains in l["title"]) ]
+        if len(results) == 0:
+            return None
+        else:
+            return results[0]
+
+    links = { l["rel"] + l.get("title",""):l["href"] for l in c.get("links",[])}
+    userguide = find_link(rel="about",title_contains="User")
+    opensearch = find_link(rel="opensearch")
+    datacollection = find_link(rel="about",title_contains="collection")
+
+    if userguide is not None:
+        userguide = f"""[![User guide](https://img.shields.io/badge/-User_guide-green"User guide")]({userguide})"""
+    else:
+        userguide = ""
+
+    if datacollection is not None:
+        datacollection = f"""You can find a detailed description about the collection in this [link]({datacollection})"""
+    else:
+        datacollection = ""
+
+
+    if gsd is not None:
+        gsd = f"""![Resolution](https://img.shields.io/badge/resolution-{gsd}m-green?style=flat-square)
+![Revisit](https://img.shields.io/badge/revisit-5--daily-green?style=flat-square)  
+"""
+    else:
+        gsd = ""
+
+    if "ARD" in datatype:
+        datatype = f"""![](https://img.shields.io/badge/{datatype}-success) """
+    elif "Unprojected" in datatype:
+        datatype = f"""![](https://img.shields.io/badge/{datatype}-important) """
+    else:
+        datatype = ""
+
+    if opensearch is not None:
+        opensearch = f"""[![Catalog API](https://img.shields.io/badge/-Catalog_API-orange
+"Catalog API")
+]({opensearch})"""
+    else:
+        opensearch = ""
+    text = text + f"""
+
+## {title} 
+
+{imgtothumb(thumb_url)}
+
+{userguide} 
+{opensearch}
+
+{gsd}{datatype} 
+
+
+**Overview**
+
+{c["description"]}
+
+{datacollection}
+
+"""
+
+display(Markdown(text))
+```
