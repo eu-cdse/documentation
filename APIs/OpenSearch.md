@@ -1,6 +1,7 @@
 # OpenSearch
 
 OpenSearch is an open-source software suite for search, analytics, and observability applications. It can be employed as a complete solution or integrated with open-source tools.
+
 ## Using OpenSearch interface to query Data Catalogue
 
 Due to the fact that offset is not a recommended form of searching repository pages, we had to implement limit to a maximum of 200k.
@@ -13,7 +14,7 @@ All queries may be executed as simple HTTP-Get calls, by typing the query in web
 
 The queries produce results in JSON format. Base url:
 
-[http://catalogue.dataspace.copernicus.eu/resto/api/collections/search.json?](http://catalogue.dataspace.copernicus.eu/resto/api/collections/search.json?)
+[http://catalogue.dataspace.copernicus.eu/resto/api/collections/search.json?](http://catalogue.dataspace.copernicus.eu/resto/api/collections/search.json?){target="_blank"}
 
 Most queries are case-sensitive.
 
@@ -67,11 +68,11 @@ each of them may be accompanied by
 
 For example the query
 
-[http://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?startDate=2021-07-01&completionDate=2021-07-31&sortParam=startDate&maxRecords=20](http://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?startDate=2016-07-01&completionDate=2016-07-31&sortParam=cloudCover&maxRecords=20)
+[http://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?startDate=2021-07-01&completionDate=2021-07-31&sortParam=startDate&maxRecords=20](http://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?startDate=2016-07-01&completionDate=2016-07-31&sortParam=cloudCover&maxRecords=20){target="_blank"}
 
 will return 20 products from July 2021, while the next query would return the next 20:
 
-[http://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?startDate=2021-07-01&completionDate=2021-07-31&sortParam=startDate&maxRecords=20&page=2](http://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?startDate=2021-07-01&completionDate=2021-07-31&sortParam=startDate&maxRecords=20&page=2)
+[http://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?startDate=2021-07-01&completionDate=2021-07-31&sortParam=startDate&maxRecords=20&page=2](http://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?startDate=2021-07-01&completionDate=2021-07-31&sortParam=startDate&maxRecords=20&page=2){target="_blank"}
 
 ### Formal queries
 
@@ -79,7 +80,7 @@ The formal query is invoked as a sequence of sub phrases, separated by &. The re
 
 The example of formal query - about cloudless (cloud cover lower or equal to 10%) products for a specific location:
 
-[https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=[0,10]&startDate=2021-06-21&completionDate=2021-09-22&lon=21.01&lat=52.22](https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=%5B0,10%5D&startDate=2021-06-21&completionDate=2021-09-22&lon=21.01&lat=52.22)
+[https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=[0,10]&startDate=2021-06-21&completionDate=2021-09-22&lon=21.01&lat=52.22](https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=%5B0,10%5D&startDate=2021-06-21&completionDate=2021-09-22&lon=21.01&lat=52.22){target="_blank"}
 
 The queries are in form **param=value or param=[minvalue,maxvalue**]. Most of the parameters are common for all collections, but some are specific for some them (e.g. **cloudCover** applies to optical satellites, but polarisation applies to radar ones), or just single one.
 
@@ -102,11 +103,11 @@ box is defined this way: &box=west,south,east,north
 
 For example the query
 
-[https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=[0,10]&startDate=2022-06-11&completionDate=2022-06-22&maxRecords=10&box=-1,1,-1,1](https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=[0,10]&startDate=2022-06-11&completionDate=2022-06-22&maxRecords=10&box=-1,1,-1,1)
+[https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=[0,10]&startDate=2022-06-11&completionDate=2022-06-22&maxRecords=10&box=-1,1,-1,1](https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=[0,10]&startDate=2022-06-11&completionDate=2022-06-22&maxRecords=10&box=-1,1,-1,1){target="_blank"}
 
 or
 
-[https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=[0,10]&startDate=2022-06-11&completionDate=2022-06-22&maxRecords=10&box=-21,23,-24,15](https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=[0,10]&startDate=2022-06-11&completionDate=2022-06-22&maxRecords=10&box=-21,23,-24,15)
+[https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=[0,10]&startDate=2022-06-11&completionDate=2022-06-22&maxRecords=10&box=-21,23,-24,15](https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=[0,10]&startDate=2022-06-11&completionDate=2022-06-22&maxRecords=10&box=-21,23,-24,15){target="_blank"}
 
 ### Volatile features
 
@@ -139,7 +140,7 @@ Some additional parameters are strictly satellite-specific, e.g. polarisation, w
 
 For every satellite (collection) its set of query-able parameters may be obtained by a query like:
 
-[https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel1/describe.xml](https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel1/describe.xml)
+[https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel1/describe.xml](https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel1/describe.xml){target="_blank"}
 
 The resulting XML file provides full list of the parameters for the collection, with their very brief descriptions.
 
