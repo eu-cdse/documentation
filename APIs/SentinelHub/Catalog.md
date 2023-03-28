@@ -16,25 +16,15 @@ coordinate reference system of the values is WGS84 longitude/latitude),
 available on 10th December 2019.
 
 ``` python
-headers = {
-    'Content-Type': 'application/json',
+data = {
+    "bbox": [13, 45, 14, 46],
+    "datetime": "2019-12-10T00:00:00Z/2019-12-10T23:59:59Z",
+    "collections": ["sentinel-1-grd"],
+    "limit": 5,
 }
 
-json_data = {
-    'bbox': [
-        13,
-        45,
-        14,
-        46,
-    ],
-    'datetime': '2019-12-10T00:00:00Z/2019-12-10T23:59:59Z',
-    'collections': [
-        'sentinel-1-grd',
-    ],
-    'limit': 5,
-}
-
-response = requests.post('https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search', headers=headers, json=json_data)
+url = "https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search"
+response = requests.post(url, json=data)
 ```
 
 ## Authentication
@@ -66,26 +56,16 @@ needs to include the `next` attribute with its value in the query, like
 so:
 
 ``` python
-headers = {
-    'Content-Type': 'application/json',
+data = {
+    "bbox": [13, 45, 14, 46],
+    "datetime": "2019-12-10T00:00:00Z/2019-12-10T23:59:59Z",
+    "collections": ["sentinel-1-grd"],
+    "limit": 5,
+    "next": 5,
 }
 
-json_data = {
-    'bbox': [
-        13,
-        45,
-        14,
-        46,
-    ],
-    'datetime': '2019-12-10T00:00:00Z/2019-12-10T23:59:59Z',
-    'collections': [
-        'sentinel-1-grd',
-    ],
-    'limit': 5,
-    'next': 5,
-}
-
-response = requests.post('https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search', headers=headers, json=json_data)
+url = "https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search"
+response = requests.post(url, json=data)
 ```
 
 The response now includes the next page of items; in this case there is

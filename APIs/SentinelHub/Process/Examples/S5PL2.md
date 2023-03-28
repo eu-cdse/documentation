@@ -1,0 +1,958 @@
+---
+title: Examples for S5PL2
+---
+
+To request data using any of the request below, you will need to replace
+the string `<your access token>` with your Sentinel Hub access token.
+Sentinel Hub access token will look something like this:
+
+``` default
+ayJhbGciOiJSUzI1NiJ9.ayJzdWIiOiI0MmYwODZjCy1kMzI3LTRlOTMtYWMxNS00ODAwOGFiZjI0YjIiLCJhdWQiOiJlY2I1MGM1Zi1i
+MWM1LTQ3ZTgtYWE4NC0zZTU4NzJlM2I2MTEiLCJqdGkiOiI5MzYxMWE4ODEyNTM4Y2M0MmU0NDJjYjUyMTY0YmJlNyIsImV4cCI6MTU1N
+TQyMzk3MiwibmFtZSI6ImFuamEudnJlY2tvQHNpbmVyZ2lzZS5jb20iLCJlbWFpbCI6ImFuamEudnJlY2tvQHNpbmVyZ2lzZS5jb20iLC
+JzaWQiOiIzZjVjZDVkNS04MjRiLTQ3ZjYtODgwNy0wNDMyNWY4ODQxZmQifQ.U7FPOy_2jlEOFxXSjyN5KEdBROna3-Dyec0feShIbUOY
+1p9lEXdNaMmR5euiINi2RXDayX9Kr47CuSTsvq1zHFvZs1YgkFr1iH6kDuX-t_-wfWpqu5oPjoPVKZ4Rj0Ms_dxAUTQFTXR0rlbLuO-KS
+gnaeLVb5iiv_qY3Ctq2XKdIRcFRQLFziFcP4yZJl-NZMlwzsiiwjakcpYpI5jSYAdU2hpZLHRzceseeZt5YfZOe5Px1kZXro9Nd0L2GPC
+-qzOXw_V1saMGFa2ov8qV6Dvk92iv2SDDdGhOdII_JOf8XkK4E3g2z0EEFdWhG9F4Iky4ukNsqBPgE8LRb31s0hg
+```
+
+and can be obtained as described in the [Authentication
+chapter](/APIs/SentinelHub/Overview/Authentication.md).
+
+### Carbon Monoxide, CO (RGB visualization and transparency with dataMask)
+
+``` python
+evalscript = """
+//VERSION=3
+function setup() {
+  return {
+    input: ["CO", "dataMask"],
+    output: { bands: 4 },
+  }
+}
+
+const minVal = 0.0
+const maxVal = 0.1
+const diff = maxVal - minVal
+
+const rainbowColors = [
+  [minVal, [0, 0, 0.5]],
+  [minVal + 0.125 * diff, [0, 0, 1]],
+  [minVal + 0.375 * diff, [0, 1, 1]],
+  [minVal + 0.625 * diff, [1, 1, 0]],
+  [minVal + 0.875 * diff, [1, 0, 0]],
+  [maxVal, [0.5, 0, 0]],
+]
+
+const viz = new ColorRampVisualizer(rainbowColors)
+
+function evaluatePixel(sample) {
+  var rgba = viz.process(sample.CO)
+  rgba.push(sample.dataMask)
+  return rgba
+}
+"""
+
+request = {
+    "input": {
+        "bounds": {
+            "properties": {
+                "crs": "http://www.opengis.net/def/crs/OGC/1.3/CRS84"
+            },
+            "bbox": [
+                13,
+                45,
+                15,
+                47,
+            ],
+        },
+        "data": [
+            {
+                "type": "sentinel-5p-l2",
+                "dataFilter": {
+                    "timeRange": {
+                        "from": "2018-12-28T00:00:00Z",
+                        "to": "2018-12-31T00:00:00Z",
+                    }
+                },
+            }
+        ],
+    },
+    "output": {
+        "width": 512,
+        "height": 512,
+    },
+    "evalscript": evalscript,
+}
+
+url = "https://sh.dataspace.copernicus.eu/api/v1/process"
+response = requests.post(url, json=request)
+```
+
+### Nitrogen Dioxide, NO2 (NRTI timeliness, RGB visualization and transparency with dataMask)
+
+``` python
+evalscript = """
+//VERSION=3
+function setup() {
+  return {
+    input: ["NO2", "dataMask"],
+    output: { bands: 4 },
+  }
+}
+
+const minVal = 0.0
+const maxVal = 0.0001
+const diff = maxVal - minVal
+
+const rainbowColors = [
+  [minVal, [0, 0, 0.5]],
+  [minVal + 0.125 * diff, [0, 0, 1]],
+  [minVal + 0.375 * diff, [0, 1, 1]],
+  [minVal + 0.625 * diff, [1, 1, 0]],
+  [minVal + 0.875 * diff, [1, 0, 0]],
+  [maxVal, [0.5, 0, 0]],
+]
+
+const viz = new ColorRampVisualizer(rainbowColors)
+
+function evaluatePixel(sample) {
+  var rgba = viz.process(sample.NO2)
+  rgba.push(sample.dataMask)
+  return rgba
+}
+"""
+
+request = {
+    "input": {
+        "bounds": {
+            "properties": {
+                "crs": "http://www.opengis.net/def/crs/OGC/1.3/CRS84"
+            },
+            "bbox": [
+                13,
+                45,
+                15,
+                47,
+            ],
+        },
+        "data": [
+            {
+                "type": "sentinel-5p-l2",
+                "dataFilter": {
+                    "timeRange": {
+                        "from": "2018-12-30T00:00:00Z",
+                        "to": "2018-12-31T00:00:00Z",
+                    },
+                    "timeliness": "NRTI",
+                },
+            }
+        ],
+    },
+    "output": {
+        "width": 512,
+        "height": 512,
+    },
+    "evalscript": evalscript,
+}
+
+url = "https://sh.dataspace.copernicus.eu/api/v1/process"
+response = requests.post(url, json=request)
+```
+
+### Formaldehyde, HCHO (float32 format, specific value for no data, GeoTIFF)
+
+``` python
+evalscript = """
+//VERSION=3
+function setup() {
+  return {
+    input: ["HCHO", "dataMask"],
+    output: { bands: 1, sampleType: "FLOAT32" },
+  }
+}
+
+function evaluatePixel(sample) {
+  if (sample.dataMask == 1) {
+    return [sample.HCHO]
+  } else {
+    return [-9999]
+  }
+}
+"""
+
+request = {
+    "input": {
+        "bounds": {
+            "properties": {
+                "crs": "http://www.opengis.net/def/crs/OGC/1.3/CRS84"
+            },
+            "bbox": [
+                13,
+                45,
+                15,
+                47,
+            ],
+        },
+        "data": [
+            {
+                "type": "sentinel-5p-l2",
+                "dataFilter": {
+                    "timeRange": {
+                        "from": "2018-12-30T00:00:00Z",
+                        "to": "2018-12-31T00:00:00Z",
+                    }
+                },
+            }
+        ],
+    },
+    "output": {
+        "width": 512,
+        "height": 512,
+    },
+    "evalscript": evalscript,
+}
+
+url = "https://sh.dataspace.copernicus.eu/api/v1/process"
+response = requests.post(url, json=request, headers={"Accept": "image/tiff"})
+```
+
+### Ozone, O3 (RPRO timeliness, streched values and dataMask)
+
+``` python
+evalscript = """
+//VERSION=3
+function setup() {
+  return {
+    input: ["O3", "dataMask"],
+    output: { bands: 2 },
+  }
+}
+
+function evaluatePixel(sample, scene) {
+  var maxVal = 0.36
+  return [sample.O3 / maxVal, sample.dataMask]
+}
+"""
+
+request = {
+    "input": {
+        "bounds": {
+            "properties": {
+                "crs": "http://www.opengis.net/def/crs/OGC/1.3/CRS84"
+            },
+            "bbox": [
+                13,
+                45,
+                15,
+                47,
+            ],
+        },
+        "data": [
+            {
+                "type": "sentinel-5p-l2",
+                "dataFilter": {
+                    "timeRange": {
+                        "from": "2019-04-22T00:00:00Z",
+                        "to": "2019-04-23T00:00:00Z",
+                    },
+                    "timeliness": "RPRO",
+                },
+            }
+        ],
+    },
+    "output": {
+        "width": 512,
+        "height": 512,
+    },
+    "evalscript": evalscript,
+}
+
+url = "https://sh.dataspace.copernicus.eu/api/v1/process"
+response = requests.post(url, json=request)
+```
+
+### Sulfur Dioxide, SO2 (minQa=20 applied, streched values)
+
+``` python
+evalscript = """
+//VERSION=3
+function setup() {
+  return {
+    input: ["SO2", "dataMask"],
+    output: { bands: 2 },
+  }
+}
+
+function evaluatePixel(sample, scene) {
+  var maxVal = 0.01
+  return [sample.SO2 / maxVal, sample.dataMask]
+}
+"""
+
+request = {
+    "input": {
+        "bounds": {
+            "properties": {
+                "crs": "http://www.opengis.net/def/crs/OGC/1.3/CRS84"
+            },
+            "bbox": [
+                13,
+                45,
+                15,
+                47,
+            ],
+        },
+        "data": [
+            {
+                "type": "sentinel-5p-l2",
+                "dataFilter": {
+                    "timeRange": {
+                        "from": "2018-12-30T00:00:00Z",
+                        "to": "2018-12-31T00:00:00Z",
+                    }
+                },
+                "processing": {"minQa": 20},
+            }
+        ],
+    },
+    "output": {
+        "width": 512,
+        "height": 512,
+    },
+    "evalscript": evalscript,
+}
+
+url = "https://sh.dataspace.copernicus.eu/api/v1/process"
+response = requests.post(url, json=request)
+```
+
+### Methane, CH4
+
+``` python
+evalscript = """
+//VERSION=3
+function setup() {
+  return {
+    input: ["CH4", "dataMask"],
+    output: { bands: 4 },
+  }
+}
+
+const minVal = 1600.0
+const maxVal = 2000.0
+const diff = maxVal - minVal
+
+const rainbowColors = [
+  [minVal, [0, 0, 0.5]],
+  [minVal + 0.125 * diff, [0, 0, 1]],
+  [minVal + 0.375 * diff, [0, 1, 1]],
+  [minVal + 0.625 * diff, [1, 1, 0]],
+  [minVal + 0.875 * diff, [1, 0, 0]],
+  [maxVal, [0.5, 0, 0]],
+]
+
+const viz = new ColorRampVisualizer(rainbowColors)
+
+function evaluatePixel(sample) {
+  var rgba = viz.process(sample.CH4)
+  rgba.push(sample.dataMask)
+  return rgba
+}
+"""
+
+request = {
+    "input": {
+        "bounds": {
+            "properties": {
+                "crs": "http://www.opengis.net/def/crs/OGC/1.3/CRS84"
+            },
+            "bbox": [
+                10,
+                20,
+                15,
+                25,
+            ],
+        },
+        "data": [
+            {
+                "type": "sentinel-5p-l2",
+                "dataFilter": {
+                    "timeRange": {
+                        "from": "2018-12-28T00:00:00Z",
+                        "to": "2018-12-31T00:00:00Z",
+                    }
+                },
+            }
+        ],
+    },
+    "output": {
+        "width": 512,
+        "height": 512,
+    },
+    "evalscript": evalscript,
+}
+
+url = "https://sh.dataspace.copernicus.eu/api/v1/process"
+response = requests.post(url, json=request)
+```
+
+### AER AI 340 and 380
+
+``` python
+evalscript = """
+//VERSION=3
+function setup() {
+  return {
+    input: ["AER_AI_340_380", "dataMask"],
+    output: { bands: 4 },
+  }
+}
+
+const minVal = -1.0
+const maxVal = 5.0
+const diff = maxVal - minVal
+
+const rainbowColors = [
+  [minVal, [0, 0, 0.5]],
+  [minVal + 0.125 * diff, [0, 0, 1]],
+  [minVal + 0.375 * diff, [0, 1, 1]],
+  [minVal + 0.625 * diff, [1, 1, 0]],
+  [minVal + 0.875 * diff, [1, 0, 0]],
+  [maxVal, [0.5, 0, 0]],
+]
+
+const viz = new ColorRampVisualizer(rainbowColors)
+
+function evaluatePixel(sample) {
+  var rgba = viz.process(sample.AER_AI_340_380)
+  rgba.push(sample.dataMask)
+  return rgba
+}
+"""
+
+request = {
+    "input": {
+        "bounds": {
+            "properties": {
+                "crs": "http://www.opengis.net/def/crs/OGC/1.3/CRS84"
+            },
+            "bbox": [
+                13,
+                45,
+                15,
+                47,
+            ],
+        },
+        "data": [
+            {
+                "type": "sentinel-5p-l2",
+                "dataFilter": {
+                    "timeRange": {
+                        "from": "2018-12-28T00:00:00Z",
+                        "to": "2018-12-31T00:00:00Z",
+                    }
+                },
+            }
+        ],
+    },
+    "output": {
+        "width": 512,
+        "height": 512,
+    },
+    "evalscript": evalscript,
+}
+
+url = "https://sh.dataspace.copernicus.eu/api/v1/process"
+response = requests.post(url, json=request)
+```
+
+### AER AI 354 and 388
+
+``` python
+evalscript = """
+//VERSION=3
+function setup() {
+  return {
+    input: ["AER_AI_354_388", "dataMask"],
+    output: { bands: 4 },
+  }
+}
+
+const minVal = -1.0
+const maxVal = 5.0
+const diff = maxVal - minVal
+
+const rainbowColors = [
+  [minVal, [0, 0, 0.5]],
+  [minVal + 0.125 * diff, [0, 0, 1]],
+  [minVal + 0.375 * diff, [0, 1, 1]],
+  [minVal + 0.625 * diff, [1, 1, 0]],
+  [minVal + 0.875 * diff, [1, 0, 0]],
+  [maxVal, [0.5, 0, 0]],
+]
+
+const viz = new ColorRampVisualizer(rainbowColors)
+
+function evaluatePixel(sample) {
+  var rgba = viz.process(sample.AER_AI_354_388)
+  rgba.push(sample.dataMask)
+  return rgba
+}
+"""
+
+request = {
+    "input": {
+        "bounds": {
+            "properties": {
+                "crs": "http://www.opengis.net/def/crs/OGC/1.3/CRS84"
+            },
+            "bbox": [
+                13,
+                45,
+                15,
+                47,
+            ],
+        },
+        "data": [
+            {
+                "type": "sentinel-5p-l2",
+                "dataFilter": {
+                    "timeRange": {
+                        "from": "2018-12-28T00:00:00Z",
+                        "to": "2018-12-31T00:00:00Z",
+                    }
+                },
+            }
+        ],
+    },
+    "output": {
+        "width": 512,
+        "height": 512,
+    },
+    "evalscript": evalscript,
+}
+
+url = "https://sh.dataspace.copernicus.eu/api/v1/process"
+response = requests.post(url, json=request)
+```
+
+### Cloud base height
+
+``` python
+evalscript = """
+//VERSION=3
+function setup() {
+  return {
+    input: ["CLOUD_BASE_HEIGHT", "dataMask"],
+    output: { bands: 4 },
+  }
+}
+
+const minVal = 0
+const maxVal = 20000.0
+const diff = maxVal - minVal
+
+const rainbowColors = [
+  [minVal, [0, 0, 0.5]],
+  [minVal + 0.125 * diff, [0, 0, 1]],
+  [minVal + 0.375 * diff, [0, 1, 1]],
+  [minVal + 0.625 * diff, [1, 1, 0]],
+  [minVal + 0.875 * diff, [1, 0, 0]],
+  [maxVal, [0.5, 0, 0]],
+]
+
+const viz = new ColorRampVisualizer(rainbowColors)
+
+function evaluatePixel(sample) {
+  var rgba = viz.process(sample.CLOUD_BASE_HEIGHT)
+  rgba.push(sample.dataMask)
+  return rgba
+}
+"""
+
+request = {
+    "input": {
+        "bounds": {
+            "properties": {
+                "crs": "http://www.opengis.net/def/crs/OGC/1.3/CRS84"
+            },
+            "bbox": [
+                13,
+                45,
+                15,
+                47,
+            ],
+        },
+        "data": [
+            {
+                "type": "sentinel-5p-l2",
+                "dataFilter": {
+                    "timeRange": {
+                        "from": "2018-12-28T00:00:00Z",
+                        "to": "2018-12-31T00:00:00Z",
+                    }
+                },
+            }
+        ],
+    },
+    "output": {
+        "width": 512,
+        "height": 512,
+    },
+    "evalscript": evalscript,
+}
+
+url = "https://sh.dataspace.copernicus.eu/api/v1/process"
+response = requests.post(url, json=request)
+```
+
+### Cloud base pressure
+
+``` python
+evalscript = """
+//VERSION=3
+function setup() {
+  return {
+    input: ["CLOUD_BASE_PRESSURE", "dataMask"],
+    output: { bands: 4 },
+  }
+}
+
+const minVal = 10000.0
+const maxVal = 110000.0
+const diff = maxVal - minVal
+
+const rainbowColors = [
+  [minVal, [0, 0, 0.5]],
+  [minVal + 0.125 * diff, [0, 0, 1]],
+  [minVal + 0.375 * diff, [0, 1, 1]],
+  [minVal + 0.625 * diff, [1, 1, 0]],
+  [minVal + 0.875 * diff, [1, 0, 0]],
+  [maxVal, [0.5, 0, 0]],
+]
+
+const viz = new ColorRampVisualizer(rainbowColors)
+
+function evaluatePixel(sample) {
+  var rgba = viz.process(sample.CLOUD_BASE_PRESSURE)
+  rgba.push(sample.dataMask)
+  return rgba
+}
+"""
+
+request = {
+    "input": {
+        "bounds": {
+            "properties": {
+                "crs": "http://www.opengis.net/def/crs/OGC/1.3/CRS84"
+            },
+            "bbox": [
+                13,
+                45,
+                15,
+                47,
+            ],
+        },
+        "data": [
+            {
+                "type": "sentinel-5p-l2",
+                "dataFilter": {
+                    "timeRange": {
+                        "from": "2018-12-28T00:00:00Z",
+                        "to": "2018-12-31T00:00:00Z",
+                    }
+                },
+            }
+        ],
+    },
+    "output": {
+        "width": 512,
+        "height": 512,
+    },
+    "evalscript": evalscript,
+}
+
+url = "https://sh.dataspace.copernicus.eu/api/v1/process"
+response = requests.post(url, json=request)
+```
+
+### Effective radiometric cloud fraction
+
+``` python
+evalscript = """
+//VERSION=3
+function setup() {
+  return {
+    input: ["CLOUD_FRACTION", "dataMask"],
+    output: { bands: 4 },
+  }
+}
+
+const minVal = 0.0
+const maxVal = 1.0
+const diff = maxVal - minVal
+
+const rainbowColors = [
+  [minVal, [0, 0, 0.5]],
+  [minVal + 0.125 * diff, [0, 0, 1]],
+  [minVal + 0.375 * diff, [0, 1, 1]],
+  [minVal + 0.625 * diff, [1, 1, 0]],
+  [minVal + 0.875 * diff, [1, 0, 0]],
+  [maxVal, [0.5, 0, 0]],
+]
+
+const viz = new ColorRampVisualizer(rainbowColors)
+
+function evaluatePixel(sample) {
+  var rgba = viz.process(sample.CLOUD_FRACTION)
+  rgba.push(sample.dataMask)
+  return rgba
+}
+"""
+
+request = {
+    "input": {
+        "bounds": {
+            "properties": {
+                "crs": "http://www.opengis.net/def/crs/OGC/1.3/CRS84"
+            },
+            "bbox": [
+                13,
+                45,
+                15,
+                47,
+            ],
+        },
+        "data": [
+            {
+                "type": "sentinel-5p-l2",
+                "dataFilter": {
+                    "timeRange": {
+                        "from": "2018-12-28T00:00:00Z",
+                        "to": "2018-12-31T00:00:00Z",
+                    }
+                },
+            }
+        ],
+    },
+    "output": {
+        "width": 512,
+        "height": 512,
+    },
+    "evalscript": evalscript,
+}
+
+url = "https://sh.dataspace.copernicus.eu/api/v1/process"
+response = requests.post(url, json=request)
+```
+
+### Cloud optical thickness
+
+``` python
+evalscript = """
+//VERSION=3
+function setup() {
+  return {
+    input: ["CLOUD_OPTICAL_THICKNESS", "dataMask"],
+    output: { bands: 4 },
+  }
+}
+
+const minVal = 0.0
+const maxVal = 250.0
+const diff = maxVal - minVal
+
+const rainbowColors = [
+  [minVal, [0, 0, 0.5]],
+  [minVal + 0.125 * diff, [0, 0, 1]],
+  [minVal + 0.375 * diff, [0, 1, 1]],
+  [minVal + 0.625 * diff, [1, 1, 0]],
+  [minVal + 0.875 * diff, [1, 0, 0]],
+  [maxVal, [0.5, 0, 0]],
+]
+
+const viz = new ColorRampVisualizer(rainbowColors)
+
+function evaluatePixel(sample) {
+  var rgba = viz.process(sample.CLOUD_OPTICAL_THICKNESS)
+  rgba.push(sample.dataMask)
+  return rgba
+}
+"""
+
+request = {
+    "input": {
+        "bounds": {
+            "properties": {
+                "crs": "http://www.opengis.net/def/crs/OGC/1.3/CRS84"
+            },
+            "bbox": [
+                13,
+                45,
+                15,
+                47,
+            ],
+        },
+        "data": [
+            {
+                "type": "sentinel-5p-l2",
+                "dataFilter": {
+                    "timeRange": {
+                        "from": "2018-12-28T00:00:00Z",
+                        "to": "2018-12-31T00:00:00Z",
+                    }
+                },
+            }
+        ],
+    },
+    "output": {
+        "width": 512,
+        "height": 512,
+    },
+    "evalscript": evalscript,
+}
+
+url = "https://sh.dataspace.copernicus.eu/api/v1/process"
+response = requests.post(url, json=request)
+```
+
+### Cloud top height
+
+``` python
+evalscript = """
+//VERSION=3
+function setup() {
+  return {
+    input: ["CLOUD_TOP_HEIGHT", "dataMask"],
+    output: { bands: 4 },
+  }
+}
+
+const minVal = 0.0
+const maxVal = 20000.0
+const diff = maxVal - minVal
+
+const rainbowColors = [
+  [minVal, [0, 0, 0.5]],
+  [minVal + 0.125 * diff, [0, 0, 1]],
+  [minVal + 0.375 * diff, [0, 1, 1]],
+  [minVal + 0.625 * diff, [1, 1, 0]],
+  [minVal + 0.875 * diff, [1, 0, 0]],
+  [maxVal, [0.5, 0, 0]],
+]
+
+const viz = new ColorRampVisualizer(rainbowColors)
+
+function evaluatePixel(sample) {
+  var rgba = viz.process(sample.CLOUD_TOP_HEIGHT)
+  rgba.push(sample.dataMask)
+  return rgba
+}
+"""
+
+request = {
+    "input": {
+        "bounds": {
+            "properties": {
+                "crs": "http://www.opengis.net/def/crs/OGC/1.3/CRS84"
+            },
+            "bbox": [
+                13,
+                45,
+                15,
+                47,
+            ],
+        },
+        "data": [
+            {
+                "type": "sentinel-5p-l2",
+                "dataFilter": {
+                    "timeRange": {
+                        "from": "2018-12-28T00:00:00Z",
+                        "to": "2018-12-31T00:00:00Z",
+                    }
+                },
+            }
+        ],
+    },
+    "output": {
+        "width": 512,
+        "height": 512,
+    },
+    "evalscript": evalscript,
+}
+
+url = "https://sh.dataspace.copernicus.eu/api/v1/process"
+response = requests.post(url, json=request)
+```
+
+### Cloud top pressure
+
+``` python
+evalscript = """
+//VERSION=3
+function setup() {
+  return {
+    input: ["CLOUD_TOP_PRESSURE", "dataMask"],
+    output: { bands: 4 },
+  }
+}
+
+const minVal = 10000.0
+const maxVal = 110000.0
+const diff = maxVal - minVal
+
+const rainbowColors = [
+  [minVal, [0, 0, 0.5]],
+  [minVal + 0.125 * diff, [0, 0, 1]],
+  [minVal + 0.375 * diff, [0, 1, 1]],
+  [minVal + 0.625 * diff, [1, 1, 0]],
+  [minVal + 0.875 * diff, [1, 0, 0]],
+  [maxVal, [0.5, 0, 0]],
+]
+
+const viz = new ColorRampVisualizer(rainbowColors)
+
+function evaluatePixel(sample) {
+  var rgba = viz.process(sample.CLOUD_TOP_PRESSURE)
+  rgba.push(sample.dataMask)
+  return rgba
+}
+"""
+
+request = {
+    "input": {
+        "bounds": {
+            "properties": {
+                "crs": "http://www.opengis.net/def/crs/OGC/1.3/CRS84"
+            },
+            "bbox": [
+                13,
+                45,
+                15,
+                47,
+            ],
+        },
+        "data": [
+            {
+                "type": "sentinel-5p-l2",
+                "dataFilter": {
+                    "timeRange": {
+                        "from": "2018-12-28T00:00:00Z",
+                        "to": "2018-12-31T00:00:00Z",
+                    }
+                },
+            }
+        ],
+    },
+    "output": {
+        "width": 512,
+        "height": 512,
+    },
+    "evalscript": evalscript,
+}
+
+url = "https://sh.dataspace.copernicus.eu/api/v1/process"
+response = requests.post(url, json=request)
+```
