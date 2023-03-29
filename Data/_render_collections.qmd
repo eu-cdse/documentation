@@ -17,7 +17,10 @@ dummy_thumb = "https://www.esa.int/var/esa/storage/images/esa_multimedia/images/
 def imgtothumb(src):
     thumb =  f"""<div style="text-align: right;"><figure><img width="150" height="150" src={src}><figcaption align="center">{databrowser}</figcaption></figure></div>"""    
     return thumb
-   
+def thumbblock(src,userguide, opensearch, gsd, datatype):
+    thumb =  f"""<div class="row" style="display: flex; justify-content: space-around"><div class="column" style="margin-left:1%; margin-right:auto;" >{userguide} {opensearch}<br> <br>{gsd}<br>{datatype}</div><div class="column" style="margin-right:10%; margin-left:auto; text-align: right;"><figure><img width="150" height="150" src={src}><figcaption align="center">{databrowser}</figcaption></figure></div></div>"""   
+    return thumb
+
 for c in meta:
 
     title = c["title"]
@@ -55,7 +58,7 @@ for c in meta:
         datacollection = ""
 
     if databrowser is not None:
-        databrowser = f"""[![](https://img.shields.io/badge/-View in browser-lightgrey)]({databrowser})"""
+        databrowser = f"""<a href="{databrowser}"><img src="https://img.shields.io/badge/-View in browser-lightgrey" height="25" /></a>"""
     else:
         databrowser = ""
 
@@ -81,13 +84,12 @@ for c in meta:
         opensearch = ""
     text = text + f"""
 
+
+
 ## {title} 
 
-{userguide} 
-{opensearch}
 
-{gsd}{datatype} 
-{imgtothumb(thumb_url)}
+{thumbblock(thumb_url,userguide,opensearch,gsd,datatype)}
 
 **Overview** 
 {c["description"]}
@@ -97,4 +99,5 @@ for c in meta:
 """
 
 display(Markdown(text))
+
 ```
