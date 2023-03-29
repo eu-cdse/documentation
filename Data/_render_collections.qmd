@@ -19,8 +19,6 @@ def imgtothumb(src):
     return thumb
    
 
-from tabulate import tabulate
-
 for c in meta:
 
     title = c["title"]
@@ -32,33 +30,6 @@ for c in meta:
         thumb_url = c["assets"]["thumbnail"]["href"]
     except:
         thumb_url = dummy_thumb
-
-    # include band details
-    try: 
-        band_num = len(c['summaries']['eo:bands'])
-        t = []
-        for i in range(0,band_num):
-            try:
-                band = c['summaries']['eo:bands'][i]['name'] 
-            except:
-                band = " "
-            try:
-                c_name = c['summaries']['eo:bands'][i]['common_name']
-            except:
-                c_name = ''
-            try:
-                b_gsd = c['summaries']['eo:bands'][i]['gsd']
-            except:
-                b_gsd = ''
-            try:
-                b_wavelength = c['summaries']['eo:bands'][i]['wavelength_nm']
-            except:
-                b_wavelength = ''
-            t.append([band,c_name,b_gsd,b_wavelength])
-        table = tabulate(t,headers=["Band Name", "Common Name", "GSD", "Wavelength"])
-    except:
-        table = " "
-
 
     def find_link(rel=None,href_contains=None, title_contains=None):
         results = [ l["href"] for l in c.get("links",[]) if (rel is None or l["rel"]==rel) and (href_contains==None or href_contains in l["href"]) and (title_contains==None or title_contains in l["title"]) ]
