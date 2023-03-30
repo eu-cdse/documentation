@@ -20,7 +20,8 @@ dummy_thumb = "https://www.esa.int/var/esa/storage/images/esa_multimedia/images/
 def thumbblock(src,userguide, opensearch, gsd, datatype):
     thumb =  f"""<div class="row" style="display: flex; justify-content: space-around"><div class="column" style="margin-left:1%; margin-right:auto;" >{userguide} {opensearch}<br />&nbsp;<br />{gsd}<br />{datatype}</div><div class="column" style="margin-right:10%; margin-left:auto; text-align: right;"><figure><img width="150" height="150" src={src}><figcaption align="center">{databrowser}</figcaption></figure></div></div>"""   
     return thumb
-   
+
+
 
 for c in meta:
 
@@ -28,18 +29,46 @@ for c in meta:
     gsd = c["gsd"]
     datatype = c["type"]
 
-    # insert thumbnail
-    try:
-        thumb_url = c["assets"]["thumbnail"]["href"]
-    except:
-        thumb_url = dummy_thumb
-
+    
     def find_link(rel=None,href_contains=None, title_contains=None):
         results = [ l["href"] for l in c.get("links",[]) if (rel is None or l["rel"]==rel) and (href_contains==None or href_contains in l["href"]) and (title_contains==None or title_contains in l["title"]) ]
         if len(results) == 0:
             return None
         else:
             return results[0]
+
+    # insert thumbnail
+    try:
+        thumb_url = c["assets"]["thumbnail"]["href"]
+    except:
+        thumb_url = dummy_thumb
+
+    # include band details
+    try: 
+        band_num = len(c['summaries']['eo:bands'])
+        t = []
+        for i in range(0,band_num):
+            try:
+                band = c['summaries']['eo:bands'][i]['name'] 
+            except:
+                band = " "
+            try:
+                c_name = c['summaries']['eo:bands'][i]['common_name']
+            except:
+                c_name = ''
+            try:
+                b_gsd = c['summaries']['eo:bands'][i]['gsd']
+            except:
+                b_gsd = ''
+            try:
+                b_wavelength = c['summaries']['eo:bands'][i]['wavelength_nm']
+            except:
+                b_wavelength = ''
+            t.append([band,c_name,b_gsd,b_wavelength])
+        table = tabulate(t,headers=["Band Name", "Common Name", "GSD", "Wavelength"])
+        # table = f"""{tabletitle}<br>{table}"""
+    except:
+        table = " "
 
     links = { l["rel"] + l.get("title",""):l["href"] for l in c.get("links",[])}
     userguide = find_link(rel="about",title_contains="User")
@@ -94,6 +123,8 @@ for c in meta:
 {c["description"]}
 
 {datacollection}
+
+{table}
 
 """
 
