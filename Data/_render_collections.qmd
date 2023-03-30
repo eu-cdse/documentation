@@ -15,11 +15,9 @@ text = ''
 dummy_thumb = "https://www.esa.int/var/esa/storage/images/esa_multimedia/images/2015/06/northwest_italy_and_southern_france/15492215-1-eng-GB/Northwest_Italy_and_southern_France_pillars.jpg"
 
 def imgtothumb(src):
-    thumb =  f"""<div style="text-align: right;"><figure><img width="150" height="150" src={src}><figcaption align="center">{databrowser}</figcaption></figure></div>"""    
+    thumb =  f"""<img align="right" width="150" height="150" src={src}>"""
     return thumb
-def thumbblock(src,userguide, opensearch, gsd, datatype):
-    thumb =  f"""<div class="row" style="display: flex; justify-content: space-around"><div class="column" style="margin-left:1%; margin-right:auto;" >{userguide} {opensearch}<br />&nbsp;<br />{gsd}<br />{datatype}</div><div class="column" style="margin-right:10%; margin-left:auto; text-align: right;"><figure><img width="150" height="150" src={src}><figcaption align="center">{databrowser}</figcaption></figure></div></div>"""   
-    return thumb
+   
 
 for c in meta:
 
@@ -33,7 +31,6 @@ for c in meta:
     except:
         thumb_url = dummy_thumb
 
-
     def find_link(rel=None,href_contains=None, title_contains=None):
         results = [ l["href"] for l in c.get("links",[]) if (rel is None or l["rel"]==rel) and (href_contains==None or href_contains in l["href"]) and (title_contains==None or title_contains in l["title"]) ]
         if len(results) == 0:
@@ -45,7 +42,6 @@ for c in meta:
     userguide = find_link(rel="about",title_contains="User")
     opensearch = find_link(rel="opensearch")
     datacollection = find_link(rel="about",title_contains="collection")
-    databrowser = find_link(rel="browser",title_contains="Data-Browser")
 
     if userguide is not None:
         userguide = f"""[![User guide](https://img.shields.io/badge/-User_guide-green"User guide")]({userguide})"""
@@ -57,10 +53,6 @@ for c in meta:
     else:
         datacollection = ""
 
-    if databrowser is not None:
-        databrowser = f"""<a href="{databrowser}"><img src="https://img.shields.io/badge/-View in browser-lightgrey" height="25" /></a>"""
-    else:
-        databrowser = ""
 
     if gsd is not None:
         gsd = f"""![Resolution](https://img.shields.io/badge/resolution-{gsd}m-green?style=flat-square)
@@ -84,14 +76,17 @@ for c in meta:
         opensearch = ""
     text = text + f"""
 
-
-
 ## {title} 
 
+{imgtothumb(thumb_url)}
 
-{thumbblock(thumb_url,userguide,opensearch,gsd,datatype)}
+{userguide} 
+{opensearch}
 
-**Overview** 
+{gsd}{datatype} 
+
+
+**Overview**
 
 {c["description"]}
 
@@ -100,5 +95,4 @@ for c in meta:
 """
 
 display(Markdown(text))
-
 ```
