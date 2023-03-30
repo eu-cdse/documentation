@@ -30,12 +30,13 @@ jobs:
           cache: 'pip'
       - run: pip install jupyter
       - run: pip install -r requirements.txt
+      
 
+      - name: Render and Publish  
+      - run: |
+          quarto render --output-dir _site
+          git checkout --orphan docportal
+          git checkout main -- _site
+          git commit -m 'ci: rebuild website' || echo "No changes to commit"
+          git push origin || echo "No changes to commit"  
 
-
-      - name: Publish to Documentation portal (and render)
-        uses: quarto-dev/quarto-actions/publish@v2
-        with:
-          target: docportal
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # this secret is always available for github actions
