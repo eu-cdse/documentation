@@ -21,12 +21,12 @@ def togglescript():
     return script
 
 def thumbblock(src,userguide, opensearch, gsd, datatype):
-    thumb =  f"""<div class="row" style="display: flex; justify-content: space-around"><div class="column" style="margin-left:1%; margin-right:auto;" >{userguide} {opensearch}<br />&nbsp;<br />{gsd}<br />{datatype}</div><div class="column" style="margin-right:10%; margin-left:auto; text-align: right;"><figure><img width="150" height="150" src={src}><figcaption align="center">{databrowser}</figcaption></figure></div></div>"""   
+    thumb =  f"""<div class="row" style="display: flex; justify-content: space-around"><div class="column"><div class="badge-row">{userguide} {opensearch}</div><div class="badge-row gutter">{gsd}</div><div class="badge-row">{datatype}</div></div><div class="column" style="margin-right:10%; margin-left:auto; text-align: right;"><figure><img width="150" height="150" src={src}><figcaption align="center">{databrowser}</figcaption></figure></div></div>"""
     return thumb
 
 
 def detailblock(ID,xy,time,stacurl,src):
-    bandinfo = f"""<button onclick="toggleContent('{ID}')" class="expand-collapse">Further details about the data collection</button><div id="{ID}" style="display:none;"><div>{xy}</div><div>{time}</div><div>{stacurl}</div><div>{src}</div></div>"""
+    bandinfo = f"""<button onclick="toggleContent('{ID}')" class="expand-collapse">Further details about the data collection</button><div class="expand-content" id="{ID}" style="display:none;"><div>{xy}</div><div>{time}</div><div>{stacurl}</div><div>{src}</div></div>"""
     return bandinfo
 
 
@@ -63,7 +63,7 @@ for c in meta:
 
         for item in stac_extension:
             if item.startswith('http'):
-                stac_url = f'<strong><u>Stac Extension:</u></strong>  <a href="{item}">{item}</a>'
+                stac_url = f'<h5>Stac Extension</h5>  <a href="{item}">{item}</a>'
                 break  # exit the loop once you've found the link        
     except:
         stac_url = ""
@@ -72,9 +72,9 @@ for c in meta:
     try:
         extent = c["extent"]
         spatial = extent['spatial']['bbox'][0]
-        spatial = f'<strong><u>Spatial Extent:</u></strong> {spatial}'
+        spatial = f'<h5>Spatial Extent</h5> {spatial}'
         temporal = extent['temporal']['interval'][0]
-        temporal = f'<strong><u>Temporal Interval:</u></strong> {temporal}'
+        temporal = f'<h5>Temporal Interval</h5> {temporal}'
     except:
         spatial = ""
         temporal = ""
@@ -106,7 +106,7 @@ for c in meta:
         table = tabulate(t,headers=["Band Name", "Common Name", "GSD", "Wavelength"], tablefmt='html', floatfmt=".20f")
         # Set the minimum width of each column to 100 pixels
         table = table.replace("<table>", '<table style="min-width: 550px;">')
-        table = f"""<u><strong>{tabletitle}</strong></u><br>{table}"""
+        table = f"""<h5>{tabletitle}</h5>{table}"""
     except:
         table = " "
 
@@ -132,8 +132,8 @@ for c in meta:
         databrowser = ""
 
     if gsd is not None:
-        gsd = f"""![Resolution](https://img.shields.io/badge/resolution-{gsd}m-green?style=flat-square)
-![Revisit](https://img.shields.io/badge/revisit-5--daily-green?style=flat-square)  
+        gsd = f"""<div><img src="https://img.shields.io/badge/resolution-{gsd}m-green" />
+<img src="https://img.shields.io/badge/revisit-5--daily-green"/></div>
 """
     else:
         gsd = ""
