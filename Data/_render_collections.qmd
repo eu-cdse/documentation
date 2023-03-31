@@ -11,18 +11,22 @@ meta = [ c for c in meta if mission in c["id"] ]
 from IPython.display import display, Markdown, Latex,HTML
 from tabulate import tabulate
 
-
 text = ''
+
 
 dummy_thumb = "https://www.esa.int/var/esa/storage/images/esa_multimedia/images/2015/06/northwest_italy_and_southern_france/15492215-1-eng-GB/Northwest_Italy_and_southern_France_pillars.jpg"
 
+def togglescript():
+    script = f"""<script>function toggleContent(id){{var x = document.getElementById(id);if (x.style.display === "none"){{x.style.display = "block";}} else {{x.style.display = "none";}}}}</script>"""
+    return script
 
 def thumbblock(src,userguide, opensearch, gsd, datatype):
-    thumb =  f"""<div class="row" style="display: flex; justify-content: space-around"><div class="column" style="margin-left:1%; margin-right:auto;" >{userguide} {opensearch}<br />&nbsp;<br />{gsd}<br />{datatype}</div><div class="column" style="margin-right:10%; margin-left:auto; text-align: right;"><figure><img width="150" height="150" src={src}><figcaption align="center">{databrowser}</figcaption></figure></div></div>"""   
+    thumb =  f"""<div class="row" style="display: flex; justify-content: space-around"><div class="column"><div class="badge-row">{userguide} {opensearch}</div><div class="badge-row gutter">{gsd}</div><div class="badge-row">{datatype}</div></div><div class="column" style="margin-right:10%; margin-left:auto; text-align: right;"><figure><img width="150" height="150" src={src}><figcaption align="center">{databrowser}</figcaption></figure></div></div>"""
     return thumb
 
-def detailblock(xy,time,stacurl,src):
-    bandinfo = f"""<div class="accordian"><input type="checkbox" id="trigger"/><label for="trigger">Further details about the data collection</label><div>{xy}</div><div>{time}</div><div>{stacurl}</div><div>{src}</div></div>"""
+
+def detailblock(ID,xy,time,stacurl,src):
+    bandinfo = f"""<button onclick="toggleContent('{ID}')" class="expand-collapse">Further details about the data collection</button><div class="expand-content" id="{ID}" style="display:none;"><div>{xy}</div><div>{time}</div><div>{stacurl}</div><div>{src}</div></div>"""
     return bandinfo
 
 
@@ -47,6 +51,11 @@ for c in meta:
     except:
         thumb_url = dummy_thumb
 
+    try:
+        collectionID = c["id"]
+    except:
+        collectionID = ""
+
     # search stac extention
     try:
         stac_extension = c["stac_extensions"]
@@ -54,7 +63,7 @@ for c in meta:
 
         for item in stac_extension:
             if item.startswith('http'):
-                stac_url = f'<strong><u>Stac Extension:</u></strong>  <a href="{item}">{item}</a>'
+                stac_url = f'<h5>Stac Extension</h5>  <a href="{item}">{item}</a>'
                 break  # exit the loop once you've found the link        
     except:
         stac_url = ""
@@ -63,9 +72,9 @@ for c in meta:
     try:
         extent = c["extent"]
         spatial = extent['spatial']['bbox'][0]
-        spatial = f'<strong><u>Spatial Extent:</u></strong> {spatial}'
+        spatial = f'<h5>Spatial Extent</h5> {spatial}'
         temporal = extent['temporal']['interval'][0]
-        temporal = f'<strong><u>Temporal Interval:</u></strong> {temporal}'
+        temporal = f'<h5>Temporal Interval</h5> {temporal}'
     except:
         spatial = ""
         temporal = ""
@@ -96,8 +105,8 @@ for c in meta:
             t.append([band,c_name,b_gsd,b_wavelength])
         table = tabulate(t,headers=["Band Name", "Common Name", "GSD", "Wavelength"], tablefmt='html', floatfmt=".20f")
         # Set the minimum width of each column to 100 pixels
-        table = table.replace("<table>", '<table style="min-width: 550px;">')
-        table = f"""<u><strong>{tabletitle}</strong></u><br>{table}"""
+        table = table.replace("<table>", '<table class="table">')
+        table = f"""<h5>{tabletitle}</h5>{table}"""
     except:
         table = " "
 
@@ -108,7 +117,7 @@ for c in meta:
     databrowser = find_link(rel="browser",title_contains="Data-Browser")
 
     if userguide is not None:
-        userguide = f"""[![User guide](https://img.shields.io/badge/-User_guide-green"User guide")]({userguide})"""
+        userguide = f"""[![User guide](https://img.shields.io/badge/-User_guide-77cc09)]({userguide})"""
     else:
         userguide = ""
 
@@ -118,27 +127,26 @@ for c in meta:
         datacollection = ""
 
     if databrowser is not None:
-        databrowser = f"""<a href="{databrowser}"><img src="https://img.shields.io/badge/-View in browser-lightgrey" height="25" /></a>"""
+        databrowser = f"""<a class="clickable" href="{databrowser}" target="_blank">View in browser</a>"""
     else:
         databrowser = ""
 
     if gsd is not None:
-        gsd = f"""![Resolution](https://img.shields.io/badge/resolution-{gsd}m-green?style=flat-square)
-![Revisit](https://img.shields.io/badge/revisit-5--daily-green?style=flat-square)  
+        gsd = f"""<div><img src="https://img.shields.io/badge/resolution-{gsd}m-0A4393" />
+<img src="https://img.shields.io/badge/revisit-5--daily-0A4393"/></div>
 """
     else:
         gsd = ""
 
     if "ARD" in datatype:
-        datatype = f"""![](https://img.shields.io/badge/{datatype}-success) """
+        datatype = f"""![](https://img.shields.io/badge/{datatype}-77cc09) """
     elif "Unprojected" in datatype:
         datatype = f"""![](https://img.shields.io/badge/{datatype}-important) """
     else:
         datatype = ""
 
     if opensearch is not None:
-        opensearch = f"""[![Catalog API](https://img.shields.io/badge/-Catalog_API-orange
-"Catalog API")
+        opensearch = f"""[![Catalog API](https://img.shields.io/badge/-Catalog_API-77cc09?style=flat)
 ]({opensearch})"""
     else:
         opensearch = ""
@@ -149,17 +157,19 @@ for c in meta:
 {thumbblock(thumb_url,userguide,opensearch,gsd,datatype)}
 
 
-**Overview**
+<h4>Overview</h4>
 
 {c["description"]}
 
 {datacollection}
 
 
-{detailblock(spatial,temporal,stac_url,table)}
+{detailblock(collectionID,spatial,temporal,stac_url,table)}
 
 
 """
+text = text + togglescript()
 
 display(Markdown(text))
+
 ```
