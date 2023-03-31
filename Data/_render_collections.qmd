@@ -11,19 +11,22 @@ meta = [ c for c in meta if mission in c["id"] ]
 from IPython.display import display, Markdown, Latex,HTML
 from tabulate import tabulate
 
-
 text = ''
+
 
 dummy_thumb = "https://www.esa.int/var/esa/storage/images/esa_multimedia/images/2015/06/northwest_italy_and_southern_france/15492215-1-eng-GB/Northwest_Italy_and_southern_France_pillars.jpg"
 
+def togglescript():
+    script = f"""<script>function toggleContent(id){{var x = document.getElementById(id);if (x.style.display === "none"){{x.style.display = "block";}} else {{x.style.display = "none";}}}}</script>"""
+    return script
 
 def thumbblock(src,userguide, opensearch, gsd, datatype):
     thumb =  f"""<div class="row" style="display: flex; justify-content: space-around"><div class="column" style="margin-left:1%; margin-right:auto;" >{userguide} {opensearch}<br />&nbsp;<br />{gsd}<br />{datatype}</div><div class="column" style="margin-right:10%; margin-left:auto; text-align: right;"><figure><img width="150" height="150" src={src}><figcaption align="center">{databrowser}</figcaption></figure></div></div>"""   
     return thumb
 
-def detailblock(xy,time,stacurl,src):
-    bandinfo = f"""<button onclick="toggleContent()" class="expand-collapse">Further details about the data collection</button><div id="myDIV" style="display:none;"><div id="myDIV">{xy}</div><div id="myDIV">{time}</div><div id="myDIV">{stacurl}</div><div id="myDIV">{src}</div></div></div><script>function toggleContent(){{var x = document.getElementById("myDIV");if (x.style.display === "none") {{x.style.display = "block";}} else {{x.style.display = "none";}}
-}}</script>"""
+
+def detailblock(ID,xy,time,stacurl,src):
+    bandinfo = f"""<button onclick="toggleContent('{ID}')" class="expand-collapse">Further details about the data collection</button><div id="{ID}" style="display:none;"><div>{xy}</div><div>{time}</div><div>{stacurl}</div><div>{src}</div></div>"""
     return bandinfo
 
 
@@ -47,6 +50,11 @@ for c in meta:
         thumb_url = c["assets"]["thumbnail"]["href"]
     except:
         thumb_url = dummy_thumb
+
+    try:
+        collectionID = c["id"]
+    except:
+        collectionID = ""
 
     # search stac extention
     try:
@@ -157,10 +165,12 @@ for c in meta:
 {datacollection}
 
 
-{detailblock(spatial,temporal,stac_url,table)}
+{detailblock(collectionID,spatial,temporal,stac_url,table)}
 
 
 """
+text = text + togglescript()
 
 display(Markdown(text))
+
 ```
