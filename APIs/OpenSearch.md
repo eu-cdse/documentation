@@ -1,6 +1,9 @@
-# OpenSearch
+# OpenSearch Catalog web service
 
-The OpenSearch standard aims to provide an easy way to query a repository containing Earth Observation data and to enable repository syndication.
+The OpenSearch catalogue allows you to search through Copernicus data using a standardized web service. The [OpenSearch specification](https://github.com/dewitt/opensearch/blob/master/opensearch-1-1-draft-6.md) can be consulted for technical details of the standard. This web service returns results as GeoJSON feature collections. Each feature in the collection represents an earth observation 'product', with references to where the actual data can be found.
+
+We remark that this version does not implement the OGC Opensearch standard, and a migration from other API's named OpenSearch may require significant modifications. It mainly offers compatibility for existing users of a similar API on the CreoDIAS and Wekeo platforms, and with client side tools and workflows that have implemented support for this API. For new users looking for a more standardized API, a [STAC](https://stacspec.org) alternative is being developed.  
+
 ## Using OpenSearch interface to query Data Catalogue
 
 Due to the fact that offset is not a recommended form of searching repository pages, we had to implement limit to a maximum of 200k.
@@ -151,6 +154,7 @@ For comprehensive Order API description you can visit these pages:
 was already in comment -- [**https://finder.creodias.eu/api/docs/**](https://finder.creodias.eu/api/docs/) --
 
 [**EO Data Ordering API2 Manual**](https://creodias.eu/-/comletiondatestartdate-and-in-finder-api-v2?) -->
+
 
 ## Product Download
 
