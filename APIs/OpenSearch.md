@@ -151,3 +151,66 @@ For comprehensive Order API description you can visit these pages:
 was already in comment -- [**https://finder.creodias.eu/api/docs/**](https://finder.creodias.eu/api/docs/) --
 
 [**EO Data Ordering API2 Manual**](https://creodias.eu/-/comletiondatestartdate-and-in-finder-api-v2?) -->
+
+## Product Download
+
+For downloading products you need an authorization token as only authorized users are allowed to download data products.
+
+
+To get the token you can use the following scripts:
+
+```bash
+curl --location --request POST 'https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token' \
+  --header 'Content-Type: application/x-www-form-urlencoded' \
+  --data-urlencode 'grant_type=password' \
+  --data-urlencode 'username=<LOGIN>' \
+  --data-urlencode 'password=<PASSWORD>' \
+  --data-urlencode 'client_id=cdse-public'
+```
+
+or
+<!-- Following bash has been replaced by the new bash for ticket DAS-333
+```bash
+'-d 'password=' -d 'grant_type=password' 'https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token' | python -m json.tool | grep "access_token" | awk -F\" '{print $4}')]]>
+``` -->
+```bash
+curl -d 'client_id=cdse-public' -d 'username=<LOGIN>' -d 'password=<PASSWORD>' -d 'grant_type=password' 'https://identity.cloudferro.com/auth/realms/CDSE/protocol/openid-connect/token' | python -m json.tool | grep "access_token" | awk -F\" '{print $4}'
+```
+
+Along with the Access Token you will be returned a Refresh Token, the latter is used to generate a new Access Token without the need to specify Username or Password, this helps to make requests less vulnerable to your credentials being exposed.
+
+To re-generate the Access Token from the Refresh Token it can be done with the following request:
+
+```bash
+curl --location --request POST 'https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token' \
+  --header 'Content-Type: application/x-www-form-urlencoded' \
+  --data-urlencode 'grant_type=refresh_token' \
+  --data-urlencode 'refresh_token=<REFRESH_TOKEN>' \
+  --data-urlencode 'client_id=cdse-public'
+```
+
+
+<!--Where USER and PASSWORD are credentials to Your CloudFerro account in specific BRAND. Brand names are listed below with API from which You can get your token.
+
+| **Brand names** | **API** |
+| --- | --- |
+| dias | [https://identity.dataspace.copernicus.eu/auth/realms/dias/protocol/openid-connect/token](https://identity.cloudferro.com/auth/realms/dias) |
+| Creodias-new | [https://identity.dataspace.copernicus.eu/auth/realms/Creodias-new/protocol/openid-connect/token](https://identity.cloudferro.com/auth/realms/Creodias-new) |
+| CODE-DE-EL | [https://identity.dataspace.copernicus.eu/auth/realms/CODE-DE-EL/protocol/openid-connect/token](https://identity.cloudferro.com/auth/realms/CODE-DE-EL) |
+| wekeo-elasticity | [https://identity.dataspace.copernicus.eu/auth/realms/wekeo-elasticity/protocol/openid-connect/token](https://identity.cloudferro.com/auth/realms/wekeo-elasticity) |
+| Eumetsat-elasticity | [https://identity.dataspace.copernicus.eu/auth/realms/Eumetsat-elasticity/protocol/openid-connect/token](https://identity.cloudferro.com/auth/realms/Eumetsat-elasticity) | -->
+
+
+<br>
+
+Once you have your token, you require a product Id which can be found in the response of the products search.
+
+
+Finally, you can download the product using this script:
+```bash
+curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" 'https://catalogue.dataspace.copernicus.eu/odata/v1/Products(060882f4-0a34-5f14-8e25-6876e4470b0d)/$value' --output /tmp/product.zip
+```
+or
+```bash
+wget  --header "Authorization: Bearer $KEYCLOAK_TOKEN" 'http://catalogue.dataspace.copernicus.eu/odata/v1/Products(db0c8ef3-8ec0-5185-a537-812dad3c58f8)/$value' -O example_odata.zip
+```
