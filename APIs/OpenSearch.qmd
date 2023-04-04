@@ -26,6 +26,7 @@ The queries produce results in JSON format. Base url:
 
 # HTTP Request
 [http://catalogue.dataspace.copernicus.eu/resto/api/collections/search.json?](http://catalogue.dataspace.copernicus.eu/resto/api/collections/search.json?){target="_blank"}
+:::
 
 Most queries are case-sensitive.
 
@@ -35,6 +36,7 @@ The data are organized in so-called collections, corresponding to various satell
 
 ::: {.panel-tabset}
 
+# CLI
 ```{bash}
 $ wget -O - "http://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=[0,10]&startDate=2022-06-11&completionDate=2022-06-22&maxRecords=10"
 ```
@@ -42,9 +44,14 @@ $ wget -O - "http://catalogue.dataspace.copernicus.eu/resto/api/collections/Sent
 
 while if the collection field is missing in the URL, the products from all the satellites are returned:
 
+::: {.panel-tabset}
+
+# CLI
 ```{bash}
 $ wget -O - "https://catalogue.dataspace.copernicus.eu/resto/api/collections/search.json?cloudCover=[0,10]&startDate=2022-06-11&completionDate=2022-06-22&maxRecords=10"
 ```
+:::
+
 As for today the following collections are defined and may be used:
 
 **Sentinel1 or SENTINEL-1**
@@ -93,7 +100,11 @@ For example the query
 
 will return 20 products from July 2021, while the next query would return the next 20:
 
+::: {.panel-tabset}
+
+# HTTP Request
 [http://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?startDate=2021-07-01&completionDate=2021-07-31&sortParam=startDate&maxRecords=20&page=2](http://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?startDate=2021-07-01&completionDate=2021-07-31&sortParam=startDate&maxRecords=20&page=2){target="_blank"}
+:::
 
 ### Formal queries
 
@@ -101,7 +112,11 @@ The formal query is invoked as a sequence of sub phrases, separated by &. The re
 
 The example of formal query - about cloudless (cloud cover lower or equal to 10%) products for a specific location:
 
+::: {.panel-tabset}
+
+# HTTP Request
 [https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=[0,10]&startDate=2021-06-21&completionDate=2021-09-22&lon=21.01&lat=52.22](https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=%5B0,10%5D&startDate=2021-06-21&completionDate=2021-09-22&lon=21.01&lat=52.22){target="_blank"}
+:::
 
 The queries are in form **param=value or param=[minvalue,maxvalue**]. Most of the parameters are common for all collections, but some are specific for some them (e.g. **cloudCover** applies to optical satellites, but polarisation applies to radar ones), or just single one.
 
@@ -124,11 +139,20 @@ box is defined this way: &box=west,south,east,north
 
 For example the query
 
+::: {.panel-tabset}
+
+# HTTP Request
 [https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=[0,10]&startDate=2022-06-11&completionDate=2022-06-22&maxRecords=10&box=-1,1,-1,1](https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=[0,10]&startDate=2022-06-11&completionDate=2022-06-22&maxRecords=10&box=-1,1,-1,1){target="_blank"}
+:::
 
 or
 
+::: {.panel-tabset}
+
+# HTTP Request
+
 [https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=[0,10]&startDate=2022-06-11&completionDate=2022-06-22&maxRecords=10&box=-21,23,-24,15](https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=[0,10]&startDate=2022-06-11&completionDate=2022-06-22&maxRecords=10&box=-21,23,-24,15){target="_blank"}
+:::
 
 ### Volatile features
 
@@ -161,7 +185,13 @@ Some additional parameters are strictly satellite-specific, e.g. polarisation, w
 
 For every satellite (collection) its set of query-able parameters may be obtained by a query like:
 
+::: {.panel-tabset}
+
+# HTTP Request
+
 [https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel1/describe.xml](https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel1/describe.xml){target="_blank"}
+
+:::
 
 The resulting XML file provides full list of the parameters for the collection, with their very brief descriptions.
 
@@ -181,6 +211,10 @@ For downloading products you need an authorization token as only authorized user
 
 To get the token you can use the following scripts:
 
+::: {.panel-tabset}
+
+# CLI
+
 ```bash
 curl --location --request POST 'https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token' \
   --header 'Content-Type: application/x-www-form-urlencoded' \
@@ -189,19 +223,30 @@ curl --location --request POST 'https://identity.dataspace.copernicus.eu/auth/re
   --data-urlencode 'password=<PASSWORD>' \
   --data-urlencode 'client_id=cdse-public'
 ```
+:::
 
 or
 <!-- Following bash has been replaced by the new bash for ticket DAS-333
 ```bash
 '-d 'password=' -d 'grant_type=password' 'https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token' | python -m json.tool | grep "access_token" | awk -F\" '{print $4}')]]>
 ``` -->
+
+::: {.panel-tabset}
+
+# CLI
+
 ```bash
 curl -d 'client_id=cdse-public' -d 'username=<LOGIN>' -d 'password=<PASSWORD>' -d 'grant_type=password' 'https://identity.cloudferro.com/auth/realms/CDSE/protocol/openid-connect/token' | python -m json.tool | grep "access_token" | awk -F\" '{print $4}'
 ```
+:::
 
 Along with the Access Token you will be returned a Refresh Token, the latter is used to generate a new Access Token without the need to specify Username or Password, this helps to make requests less vulnerable to your credentials being exposed.
 
 To re-generate the Access Token from the Refresh Token it can be done with the following request:
+
+::: {.panel-tabset}
+
+# CLI
 
 ```bash
 curl --location --request POST 'https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token' \
@@ -210,7 +255,7 @@ curl --location --request POST 'https://identity.dataspace.copernicus.eu/auth/re
   --data-urlencode 'refresh_token=<REFRESH_TOKEN>' \
   --data-urlencode 'client_id=cdse-public'
 ```
-
+:::
 
 <!--Where USER and PASSWORD are credentials to Your CloudFerro account in specific BRAND. Brand names are listed below with API from which You can get your token.
 
@@ -229,10 +274,21 @@ Once you have your token, you require a product Id which can be found in the res
 
 
 Finally, you can download the product using this script:
+
+::: {.panel-tabset}
+
+# CLI
+
 ```bash
 curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" 'https://catalogue.dataspace.copernicus.eu/odata/v1/Products(060882f4-0a34-5f14-8e25-6876e4470b0d)/$value' --output /tmp/product.zip
 ```
+:::
 or
+
+::: {.panel-tabset}
+
+# CLI
 ```bash
 wget  --header "Authorization: Bearer $KEYCLOAK_TOKEN" 'http://catalogue.dataspace.copernicus.eu/odata/v1/Products(db0c8ef3-8ec0-5185-a537-812dad3c58f8)/$value' -O example_odata.zip
 ```
+:::
