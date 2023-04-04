@@ -1,5 +1,9 @@
 ---
-title: Catalog API
+title: "Catalog API"
+format:
+  html:
+    code-fold: true
+jupyter: python3
 ---
 
 Sentinel Hub Catalog API (or shortly \"Catalog\") is an API implementing
@@ -15,7 +19,11 @@ Simple search request for Sentinel-1 GRD with a bounding box (the
 coordinate reference system of the values is WGS84 longitude/latitude),
 available on 10th December 2019.
 
-``` python
+::: {.panel-tabset}
+
+# Python
+```{python}
+import requests
 data = {
     "bbox": [13, 45, 14, 46],
     "datetime": "2019-12-10T00:00:00Z/2019-12-10T23:59:59Z",
@@ -27,6 +35,9 @@ url = "https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search"
 response = requests.post(url, json=data)
 ```
 
+:::
+
+
 ## Authentication
 
 Authentication for the Catalog API works completely the same as
@@ -37,6 +48,8 @@ chapter](/APIs/SentinelHub/Overview/Authentication.md).
 
 Executing the request specified above returns search context fields at
 the end of the response, looking like this:
+
+
 
 ``` json
 {
@@ -55,7 +68,11 @@ default value is `10`). To query the next page of items, our request
 needs to include the `next` attribute with its value in the query, like
 so:
 
+::: {.panel-tabset}
+
+# Python
 ``` python
+import requests
 data = {
     "bbox": [13, 45, 14, 46],
     "datetime": "2019-12-10T00:00:00Z/2019-12-10T23:59:59Z",
@@ -67,6 +84,7 @@ data = {
 url = "https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search"
 response = requests.post(url, json=data)
 ```
+:::
 
 The response now includes the next page of items; in this case there is
 no `next` token in `context`, meaning no more items exist for this
