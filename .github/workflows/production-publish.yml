@@ -29,17 +29,10 @@ jobs:
           cache: 'pip'
       - run: pip install jupyter
       - run: pip install -r requirements.txt
-      
+      - name: Render
+        run: quarto render --output-dir _build
+      - name: Commit
+        run: git subtree push --prefix _build origin docportal
 
-#      - name: Render
-#        run: quarto render --output-dir _build
-#      - name: Commit
-#        run: git subtree push --prefix _build origin docportal
-      - name: Publish to Documentation Portal
-        uses: quarto-dev/quarto-actions/publish@v2
-        with:
-          target: docportal
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # this secret is always available for github actions
       
 
