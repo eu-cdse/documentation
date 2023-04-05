@@ -5,7 +5,7 @@ If you don't find answer to your questions in the documentation portal, this pag
 ## Prerequisites
 
 Important to know is that only users with a Copernicus Data Space Ecosystem account can ask for support. 
-If you don't have one yet, you can register [here](https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/auth?client_id=cdse-public&redirect_uri=https%3A%2F%2Fdataspace.copernicus.eu&response_type=code&scope=openid).
+If you don't have one yet, you can register [here](https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/auth?client_id=cdse-public&redirect_uri=https%3A%2F%2Fdataspace.copernicus.eu&response_type=code&scope=openid){target="_blank"}.
 If you have an issue with registering or you want to deregister, please [contact us](mailto://help-login@dataspace.copernicus.eu?Subject=Subject%20Text&Body=Your%20comments) directly.
 
 ## Step 1: Navigate to the Help center

@@ -4,8 +4,8 @@ This section provides an overview of the EO data available from Copernicus Data 
 The data offer will gradually extend starting from January 2023 
 
 ## Copernicus Mission
-### [Sentinel 1](/Data/Sentinel1.md)
-### [Sentinel 2](/Data/Sentinel2.md) 
+### [Sentinel 1](/Data/Sentinel1.qmd)
+### [Sentinel 2](/Data/Sentinel2.qmd) 
 ### [Sentinel 3](/Data/Sentinel3.md)
 ### [Sentinel 5P](/Data/Sentinel5P.md)
  
