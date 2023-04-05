@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>COPERNICUS DATA SPACE ECOSYSTEM DOCUMENTATION PORTAL - OData</title>
+<title>DOCUMENTATION PORTAL - OData</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -127,7 +127,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 
 
-<link rel="stylesheet" href="../custom.scss">
+<link rel="stylesheet" href="../custom.css">
 </head>
 
 <body class="nav-sidebar floating nav-fixed">
@@ -142,7 +142,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <img src="../_images/logos/combinedLogo.svg" alt="" class="navbar-logo">
     </a>
     <a class="navbar-brand" href="../index.html">
-    <span class="navbar-title">COPERNICUS DATA SPACE ECOSYSTEM DOCUMENTATION PORTAL</span>
+    <span class="navbar-title">DOCUMENTATION PORTAL</span>
     </a>
   </div>
       </div> <!-- /container-fluid -->
@@ -478,34 +478,150 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul>
 <p>Search options should always be preceded with <em>$</em> and consecutive options should be separated with <em>&amp;</em>.</p>
 <p>Consecutive filters within <em>filter</em> option should be separated with <em>and</em> or <em>or</em>. <em>Not</em> operator can also be used e.g.:</p>
+<div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" aria-current="page">HTTP Request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">Python</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
 <p><a href="https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=not%20contains(Name,%27S2%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T00:10:00.000Z&amp;$orderby=ContentDate/Start&amp;$top=100" target="_blank"><code>https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=not contains(Name,'S2') and ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-03T00:10:00.000Z&amp;$orderby=ContentDate/Start&amp;$top=100</code></a></p>
-<p><u>Performance note</u>:</p>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<div class="cell" data-execution_count="2">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(<span class="st">"https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=not contains(Name,'S2') and ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-03T00:10:00.000Z&amp;$orderby=ContentDate/Start&amp;$top=100"</span>).json()</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame.from_dict(json[<span class="st">'value'</span>]).head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="2">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>@odata.mediaContentType</th>
+      <th>Id</th>
+      <th>Name</th>
+      <th>ContentType</th>
+      <th>ContentLength</th>
+      <th>OriginDate</th>
+      <th>PublicationDate</th>
+      <th>ModificationDate</th>
+      <th>Online</th>
+      <th>EvictionDate</th>
+      <th>S3Path</th>
+      <th>Checksum</th>
+      <th>ContentDate</th>
+      <th>Footprint</th>
+      <th>GeoFootprint</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>application/octet-stream</td>
+      <td>c6d30f04-e179-582e-82bb-bf8057a8247a</td>
+      <td>S3B_SL_2_WST____20220503T000015_20220503T00031...</td>
+      <td>application/octet-stream</td>
+      <td>0</td>
+      <td>2022-05-03T01:38:51.200Z</td>
+      <td>2022-05-03T02:43:42.265Z</td>
+      <td>2022-05-03T02:43:42.265Z</td>
+      <td>True</td>
+      <td></td>
+      <td>/eodata/Sentinel-3/SLSTR/SL_2_WST/2022/05/03/S...</td>
+      <td>[]</td>
+      <td>{'Start': '2022-05-03T00:00:15.373Z', 'End': '...</td>
+      <td>geography'SRID=4326;POLYGON ((-29.4495 -39.747...</td>
+      <td>{'type': 'Polygon', 'coordinates': [[[-29.4495...</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>application/octet-stream</td>
+      <td>6f77dc3e-c918-5b42-911a-e8213eab8929</td>
+      <td>S3A_SL_1_RBT____20220503T000040_20220503T00034...</td>
+      <td>application/octet-stream</td>
+      <td>0</td>
+      <td>2022-05-03T02:05:26.929Z</td>
+      <td>2022-05-03T02:06:52.439Z</td>
+      <td>2022-05-03T02:06:52.439Z</td>
+      <td>True</td>
+      <td></td>
+      <td>/eodata/Sentinel-3/SLSTR/SL_1_RBT/2022/05/03/S...</td>
+      <td>[]</td>
+      <td>{'Start': '2022-05-03T00:00:39.649Z', 'End': '...</td>
+      <td>geography'SRID=4326;POLYGON ((140.111 -0.07485...</td>
+      <td>{'type': 'Polygon', 'coordinates': [[[140.111,...</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>application/octet-stream</td>
+      <td>7f265639-547d-5826-93a5-a1be345add24</td>
+      <td>S3A_SL_2_WST____20220503T000040_20220503T00034...</td>
+      <td>application/octet-stream</td>
+      <td>0</td>
+      <td>2022-05-03T02:29:00.617Z</td>
+      <td>2022-05-03T03:38:18.142Z</td>
+      <td>2022-05-03T03:38:18.142Z</td>
+      <td>True</td>
+      <td></td>
+      <td>/eodata/Sentinel-3/SLSTR/SL_2_WST/2022/05/03/S...</td>
+      <td>[]</td>
+      <td>{'Start': '2022-05-03T00:00:39.649Z', 'End': '...</td>
+      <td>geography'SRID=4326;POLYGON ((140.111 -0.07485...</td>
+      <td>{'type': 'Polygon', 'coordinates': [[[140.111,...</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
 <p>To accelerate the query performance it is recommended to limit the query by acquisition dates e.g.:</p>
-<pre><code>ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-21T00:00:00.000Z</code></pre>
+<p>ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-21T00:00:00.000Z</p>
+</div>
+</div>
 </section>
 <section id="filter-option" class="level2">
 <h2 class="anchored" data-anchor-id="filter-option">Filter option</h2>
 <section id="query-by-name" class="level3">
 <h3 class="anchored" data-anchor-id="query-by-name">Query by name</h3>
 <p>To search for a specific product by its exact name:</p>
+<div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">HTTP Request</a></li></ul>
+<div class="tab-content">
+<div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
 <p><a href="https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Name%20eq%20%27S1A_IW_GRDH_1SDV_20141031T161924_20141031T161949_003076_003856_634E.SAFE'" target="_blank"><code>https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Name eq 'S1A_IW_GRDH_1SDV_20141031T161924_20141031T161949_003076_003856_634E.SAFE'</code></a></p>
+</div>
+</div>
+</div>
 <p>To search for products containing “S1A” in their names:</p>
 <div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" aria-current="page">HTTP Request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">Python</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true">HTTP Request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false">Python</a></li></ul>
 <div class="tab-content">
-<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
 <p><a href="https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-21T00:00:00.000Z" target="_blank"><code>https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,'S1A') and ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-21T00:00:00.000Z</code></a></p>
 </div>
-<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
-<div class="cell" data-execution_count="1">
+<div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
+<div class="cell" data-execution_count="3">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> requests</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(<span class="st">"https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,'S1A') and ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-21T00:00:00.000Z"</span>).json()</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>pd.DataFrame.from_dict(json[<span class="st">'value'</span>]).head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(<span class="st">"https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,'S1A') and ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-21T00:00:00.000Z"</span>).json()</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame.from_dict(json[<span class="st">'value'</span>]).head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="1">
+<div class="cell-output cell-output-display" data-execution_count="3">
 
 <div>
 
@@ -601,20 +717,120 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p><strong>POST</strong></p>
 <p><a href="https://catalogue.dataspace.copernicus.eu/odata/v1/Products/OData.CSC.FilterList" target="_blank"><code>https://catalogue.dataspace.copernicus.eu/odata/v1/Products/OData.CSC.FilterList</code></a></p>
 <p><strong>Request body</strong>:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"FilterProducts"</span><span class="fu">:</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>     <span class="fu">{</span><span class="dt">"Name"</span><span class="fu">:</span> <span class="st">"S1A_IW_GRDH_1SDV_20141031T161924_20141031T161949_003076_003856_634E.SAFE"</span><span class="fu">}</span><span class="ot">,</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>     <span class="fu">{</span><span class="dt">"Name"</span><span class="fu">:</span> <span class="st">"S3B_SL_1_RBT____20190116T050535_20190116T050835_20190117T125958_0179_021_048_0000_LN2_O_NT_003.SEN3"</span><span class="fu">}</span><span class="ot">,</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>     <span class="fu">{</span><span class="dt">"Name"</span><span class="fu">:</span> <span class="st">"xxxxxxxx.06.tar"</span><span class="fu">}</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a> <span class="fu">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<pre class="{json}"><code>{
+  "FilterProducts":
+    [
+     {"Name": "S1A_IW_GRDH_1SDV_20141031T161924_20141031T161949_003076_003856_634E.SAFE"},
+     {"Name": "S3B_SL_1_RBT____20190116T050535_20190116T050835_20190117T125958_0179_021_048_0000_LN2_O_NT_003.SEN3"},
+     {"Name": "xxxxxxxx.06.tar"}
+    ]
+ }</code></pre>
 <p>Two results are returned, as there is no product named xxxxxxxx.06.tar.</p>
 </section>
 <section id="query-collection-of-products" class="level3">
 <h3 class="anchored" data-anchor-id="query-collection-of-products">Query Collection of Products</h3>
 <p>To search for products within a specific collection:</p>
+<div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true">HTTP Request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false">Python</a></li></ul>
+<div class="tab-content">
+<div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
 <p><a href="https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name%20eq%20%27SENTINEL-2%27%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T00:11:00.000Z" target="_blank"><code>https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name eq 'SENTINEL-2' and ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-03T00:11:00.000Z</code></a></p>
+</div>
+<div id="tabset-4-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
+<div class="cell" data-execution_count="4">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(<span class="st">"https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name eq 'SENTINEL-2' and ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-03T00:11:00.000Z"</span>).json()</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame.from_dict(json[<span class="st">'value'</span>]).head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="4">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>@odata.mediaContentType</th>
+      <th>Id</th>
+      <th>Name</th>
+      <th>ContentType</th>
+      <th>ContentLength</th>
+      <th>OriginDate</th>
+      <th>PublicationDate</th>
+      <th>ModificationDate</th>
+      <th>Online</th>
+      <th>EvictionDate</th>
+      <th>S3Path</th>
+      <th>Checksum</th>
+      <th>ContentDate</th>
+      <th>Footprint</th>
+      <th>GeoFootprint</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>application/octet-stream</td>
+      <td>7e0f9557-d537-56bb-90a1-9b4a746f0f55</td>
+      <td>S2B_MSIL2A_20220503T000139_N0400_R016_T08XMQ_2...</td>
+      <td>application/octet-stream</td>
+      <td>0</td>
+      <td>2022-05-03T03:11:09.519Z</td>
+      <td>2022-05-03T03:15:23.316Z</td>
+      <td>2022-05-03T03:15:23.316Z</td>
+      <td>True</td>
+      <td></td>
+      <td>/eodata/Sentinel-2/MSI/L2A/2022/05/03/S2B_MSIL...</td>
+      <td>[]</td>
+      <td>{'Start': '2022-05-03T00:01:39.024Z', 'End': '...</td>
+      <td>geography'SRID=4326;POLYGON ((-138.24152 80.05...</td>
+      <td>{'type': 'Polygon', 'coordinates': [[[-138.241...</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>application/octet-stream</td>
+      <td>716d55e7-ee2a-5985-afed-4ca073864ca9</td>
+      <td>S2B_MSIL2A_20220503T000139_N0400_R016_T08XNQ_2...</td>
+      <td>application/octet-stream</td>
+      <td>0</td>
+      <td>2022-05-03T02:55:20.511Z</td>
+      <td>2022-05-03T02:59:59.363Z</td>
+      <td>2022-05-03T02:59:59.363Z</td>
+      <td>True</td>
+      <td></td>
+      <td>/eodata/Sentinel-2/MSI/L2A/2022/05/03/S2B_MSIL...</td>
+      <td>[]</td>
+      <td>{'Start': '2022-05-03T00:01:39.024Z', 'End': '...</td>
+      <td>geography'SRID=4326;POLYGON ((-135.00116 81.06...</td>
+      <td>{'type': 'Polygon', 'coordinates': [[[-135.001...</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>application/octet-stream</td>
+      <td>4ed5b9df-f559-51cf-8564-2f45e886d58a</td>
+      <td>S2B_MSIL2A_20220503T000139_N0400_R016_T07XDK_2...</td>
+      <td>application/octet-stream</td>
+      <td>0</td>
+      <td>2022-05-03T02:58:50.682Z</td>
+      <td>2022-05-03T03:02:27.353Z</td>
+      <td>2022-05-03T03:02:27.353Z</td>
+      <td>True</td>
+      <td></td>
+      <td>/eodata/Sentinel-2/MSI/L2A/2022/05/03/S2B_MSIL...</td>
+      <td>[]</td>
+      <td>{'Start': '2022-05-03T00:01:39.024Z', 'End': '...</td>
+      <td>geography'SRID=4326;POLYGON ((-140.45053 80.82...</td>
+      <td>{'type': 'Polygon', 'coordinates': [[[-140.450...</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
 <p>The following collections are currently available:</p>
 <ul>
 <li>SENTINEL-1</li>
@@ -626,23 +842,623 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <section id="query-by-publication-date" class="level3">
 <h3 class="anchored" data-anchor-id="query-by-publication-date">Query by Publication Date</h3>
 <p>To search for products published between two dates:</p>
+<div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-5-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-1" role="tab" aria-controls="tabset-5-1" aria-selected="true">HTTP Request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-2" role="tab" aria-controls="tabset-5-2" aria-selected="false">Python</a></li></ul>
+<div class="tab-content">
+<div id="tabset-5-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-5-1-tab">
 <p><a href="https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=PublicationDate%20gt%202019-05-15T00:00:00.000Z%20and%20PublicationDate%20lt%202019-05-16T00:00:00.000Z" target="_blank"><code>https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=PublicationDate gt 2019-05-15T00:00:00.000Z and PublicationDate lt 2019-05-16T00:00:00.000Z</code></a></p>
+</div>
+<div id="tabset-5-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-2-tab">
+<div class="cell" data-execution_count="5">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(<span class="st">"https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=PublicationDate gt 2019-05-15T00:00:00.000Z and PublicationDate lt 2019-05-16T00:00:00.000Z"</span>).json()</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame.from_dict(json[<span class="st">'value'</span>]).head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="5">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>@odata.mediaContentType</th>
+      <th>Id</th>
+      <th>Name</th>
+      <th>ContentType</th>
+      <th>ContentLength</th>
+      <th>OriginDate</th>
+      <th>PublicationDate</th>
+      <th>ModificationDate</th>
+      <th>Online</th>
+      <th>EvictionDate</th>
+      <th>S3Path</th>
+      <th>Checksum</th>
+      <th>ContentDate</th>
+      <th>Footprint</th>
+      <th>GeoFootprint</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>application/octet-stream</td>
+      <td>d04a4c2a-30e3-51a6-9706-d3dcf07a1ce6</td>
+      <td>S3A_SL_1_RBT____20160429T140836_20160429T14113...</td>
+      <td>application/octet-stream</td>
+      <td>0</td>
+      <td>2019-03-20T18:25:19.702Z</td>
+      <td>2019-05-15T00:01:01.985Z</td>
+      <td>2019-05-15T00:01:01.985Z</td>
+      <td>True</td>
+      <td></td>
+      <td>/eodata/Sentinel-3/SLSTR/SL_1_RBT/2016/04/29/S...</td>
+      <td>[]</td>
+      <td>{'Start': '2016-04-29T14:08:35.710Z', 'End': '...</td>
+      <td>geography'SRID=4326;POLYGON ((146.907 -55.5281...</td>
+      <td>{'type': 'Polygon', 'coordinates': [[[146.907,...</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>application/octet-stream</td>
+      <td>989fd7a2-c67e-55be-ae63-5b911b600878</td>
+      <td>S3A_SL_1_RBT____20160427T120458_20160427T12075...</td>
+      <td>application/octet-stream</td>
+      <td>0</td>
+      <td>2019-03-20T18:11:16.405Z</td>
+      <td>2019-05-15T00:01:02.227Z</td>
+      <td>2019-05-15T00:01:02.227Z</td>
+      <td>True</td>
+      <td></td>
+      <td>/eodata/Sentinel-3/SLSTR/SL_1_RBT/2016/04/27/S...</td>
+      <td>[]</td>
+      <td>{'Start': '2016-04-27T12:04:58.305Z', 'End': '...</td>
+      <td>geography'SRID=4326;POLYGON ((153.039 33.665, ...</td>
+      <td>{'type': 'Polygon', 'coordinates': [[[153.039,...</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>application/octet-stream</td>
+      <td>d34281f0-85bd-508a-a3fc-a9bb09d98f79</td>
+      <td>S3A_SL_1_RBT____20160426T154708_20160426T15500...</td>
+      <td>application/octet-stream</td>
+      <td>0</td>
+      <td>2019-03-20T20:54:18.034Z</td>
+      <td>2019-05-15T00:01:03.031Z</td>
+      <td>2019-05-15T00:01:03.031Z</td>
+      <td>True</td>
+      <td></td>
+      <td>/eodata/Sentinel-3/SLSTR/SL_1_RBT/2016/04/26/S...</td>
+      <td>[]</td>
+      <td>{'Start': '2016-04-26T15:47:07.654Z', 'End': '...</td>
+      <td>geography'SRID=4326;POLYGON ((99.745 12.6377, ...</td>
+      <td>{'type': 'Polygon', 'coordinates': [[[99.745, ...</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
 <p>To define inclusive interval <em>ge</em> and <em>le</em> parameters can be used:</p>
+<div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-6-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-1" role="tab" aria-controls="tabset-6-1" aria-selected="true">HTTP Request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-2" role="tab" aria-controls="tabset-6-2" aria-selected="false">Python</a></li></ul>
+<div class="tab-content">
+<div id="tabset-6-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-6-1-tab">
 <p><a href="https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=PublicationDate%20ge%202019-05-15T00:00:00.000Z%20and%20PublicationDate%20le%202019-05-16T00:00:00.000Z" target="_blank"><code>https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=PublicationDate ge 2019-05-15T00:00:00.000Z and PublicationDate le 2019-05-16T00:00:00.000Z</code></a></p>
+</div>
+<div id="tabset-6-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-2-tab">
+<div class="cell" data-execution_count="6">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(<span class="st">"https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=PublicationDate ge 2019-05-15T00:00:00.000Z and PublicationDate le 2019-05-16T00:00:00.000Z"</span>).json()</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame.from_dict(json[<span class="st">'value'</span>]).head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="6">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>@odata.mediaContentType</th>
+      <th>Id</th>
+      <th>Name</th>
+      <th>ContentType</th>
+      <th>ContentLength</th>
+      <th>OriginDate</th>
+      <th>PublicationDate</th>
+      <th>ModificationDate</th>
+      <th>Online</th>
+      <th>EvictionDate</th>
+      <th>S3Path</th>
+      <th>Checksum</th>
+      <th>ContentDate</th>
+      <th>Footprint</th>
+      <th>GeoFootprint</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>application/octet-stream</td>
+      <td>d04a4c2a-30e3-51a6-9706-d3dcf07a1ce6</td>
+      <td>S3A_SL_1_RBT____20160429T140836_20160429T14113...</td>
+      <td>application/octet-stream</td>
+      <td>0</td>
+      <td>2019-03-20T18:25:19.702Z</td>
+      <td>2019-05-15T00:01:01.985Z</td>
+      <td>2019-05-15T00:01:01.985Z</td>
+      <td>True</td>
+      <td></td>
+      <td>/eodata/Sentinel-3/SLSTR/SL_1_RBT/2016/04/29/S...</td>
+      <td>[]</td>
+      <td>{'Start': '2016-04-29T14:08:35.710Z', 'End': '...</td>
+      <td>geography'SRID=4326;POLYGON ((146.907 -55.5281...</td>
+      <td>{'type': 'Polygon', 'coordinates': [[[146.907,...</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>application/octet-stream</td>
+      <td>989fd7a2-c67e-55be-ae63-5b911b600878</td>
+      <td>S3A_SL_1_RBT____20160427T120458_20160427T12075...</td>
+      <td>application/octet-stream</td>
+      <td>0</td>
+      <td>2019-03-20T18:11:16.405Z</td>
+      <td>2019-05-15T00:01:02.227Z</td>
+      <td>2019-05-15T00:01:02.227Z</td>
+      <td>True</td>
+      <td></td>
+      <td>/eodata/Sentinel-3/SLSTR/SL_1_RBT/2016/04/27/S...</td>
+      <td>[]</td>
+      <td>{'Start': '2016-04-27T12:04:58.305Z', 'End': '...</td>
+      <td>geography'SRID=4326;POLYGON ((153.039 33.665, ...</td>
+      <td>{'type': 'Polygon', 'coordinates': [[[153.039,...</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>application/octet-stream</td>
+      <td>d34281f0-85bd-508a-a3fc-a9bb09d98f79</td>
+      <td>S3A_SL_1_RBT____20160426T154708_20160426T15500...</td>
+      <td>application/octet-stream</td>
+      <td>0</td>
+      <td>2019-03-20T20:54:18.034Z</td>
+      <td>2019-05-15T00:01:03.031Z</td>
+      <td>2019-05-15T00:01:03.031Z</td>
+      <td>True</td>
+      <td></td>
+      <td>/eodata/Sentinel-3/SLSTR/SL_1_RBT/2016/04/26/S...</td>
+      <td>[]</td>
+      <td>{'Start': '2016-04-26T15:47:07.654Z', 'End': '...</td>
+      <td>geography'SRID=4326;POLYGON ((99.745 12.6377, ...</td>
+      <td>{'type': 'Polygon', 'coordinates': [[[99.745, ...</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
 </section>
 <section id="query-by-sensing-date" class="level3">
 <h3 class="anchored" data-anchor-id="query-by-sensing-date">Query by Sensing Date</h3>
 <p>To search for products acquired between two dates:</p>
+<div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-7-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-1" role="tab" aria-controls="tabset-7-1" aria-selected="true">HTTP Request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-2" role="tab" aria-controls="tabset-7-2" aria-selected="false">Python</a></li></ul>
+<div class="tab-content">
+<div id="tabset-7-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-7-1-tab">
 <p><a href="https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=ContentDate/Start%20gt%202019-05-15T00:00:00.000Z%20and%20ContentDate/Start%20lt%202019-05-16T00:00:00.000Z" target="_blank"><code>https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=ContentDate/Start gt 2019-05-15T00:00:00.000Z and ContentDate/Start lt 2019-05-16T00:00:00.000Z</code></a></p>
+</div>
+<div id="tabset-7-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-2-tab">
+<div class="cell" data-execution_count="7">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(<span class="st">"https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=ContentDate/Start gt 2019-05-15T00:00:00.000Z and ContentDate/Start lt 2019-05-16T00:00:00.000Z"</span>).json()</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame.from_dict(json[<span class="st">'value'</span>]).head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="7">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>@odata.mediaContentType</th>
+      <th>Id</th>
+      <th>Name</th>
+      <th>ContentType</th>
+      <th>ContentLength</th>
+      <th>OriginDate</th>
+      <th>PublicationDate</th>
+      <th>ModificationDate</th>
+      <th>Online</th>
+      <th>EvictionDate</th>
+      <th>S3Path</th>
+      <th>Checksum</th>
+      <th>ContentDate</th>
+      <th>Footprint</th>
+      <th>GeoFootprint</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>application/octet-stream</td>
+      <td>b76d70b2-7dd0-5b10-8727-a5979d828f57</td>
+      <td>S1B_IW_RAW__0SDV_20190515T000001_20190515T0000...</td>
+      <td>application/octet-stream</td>
+      <td>0</td>
+      <td>2019-05-15T04:38:19.893Z</td>
+      <td>2019-05-15T04:45:10.989Z</td>
+      <td>2019-05-15T04:45:10.989Z</td>
+      <td>False</td>
+      <td></td>
+      <td>/eodata/Sentinel-1/SAR/RAW/2019/05/15/S1B_IW_R...</td>
+      <td>[]</td>
+      <td>{'Start': '2019-05-15T00:00:01.539Z', 'End': '...</td>
+      <td>geography'SRID=4326;POLYGON ((95.0159 66.2881,...</td>
+      <td>{'type': 'Polygon', 'coordinates': [[[95.0159,...</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>application/octet-stream</td>
+      <td>8bf7e312-2ea0-5288-abdb-01b1da9cc26b</td>
+      <td>S1B_IW_SLC__1SDV_20190515T000004_20190515T0000...</td>
+      <td>application/octet-stream</td>
+      <td>0</td>
+      <td>2019-05-15T00:00:04.000Z</td>
+      <td>2019-05-15T05:39:50.376Z</td>
+      <td>2019-05-15T05:39:50.376Z</td>
+      <td>False</td>
+      <td></td>
+      <td>/eodata/Sentinel-1/SAR/SLC/2019/05/15/S1B_IW_S...</td>
+      <td>[]</td>
+      <td>{'Start': '2019-05-15T00:00:04.536Z', 'End': '...</td>
+      <td>geography'SRID=4326;POLYGON ((99.446007 64.201...</td>
+      <td>{'type': 'Polygon', 'coordinates': [[[99.44600...</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>application/octet-stream</td>
+      <td>4e4fddce-ad73-5b6c-94fc-04f721d96f94</td>
+      <td>S1B_IW_GRDH_1SDV_20190515T000005_20190515T0000...</td>
+      <td>application/octet-stream</td>
+      <td>0</td>
+      <td>2019-05-15T04:57:32.023Z</td>
+      <td>2019-05-15T05:10:44.189Z</td>
+      <td>2019-05-15T05:10:44.189Z</td>
+      <td>True</td>
+      <td></td>
+      <td>/eodata/Sentinel-1/SAR/GRD/2019/05/15/S1B_IW_G...</td>
+      <td>[]</td>
+      <td>{'Start': '2019-05-15T00:00:05.238Z', 'End': '...</td>
+      <td>geography'SRID=4326;POLYGON ((99.487076 64.276...</td>
+      <td>{'type': 'Polygon', 'coordinates': [[[99.48707...</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
 <p>Usually, there are two parameters describing the ContentDate (Acquisition Dates) for a product - Start and End. Depending on what the user is looking for, these parameters can be mixed, e.g.,:</p>
+<div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-8-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-1" role="tab" aria-controls="tabset-8-1" aria-selected="true">HTTP Request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-8-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-2" role="tab" aria-controls="tabset-8-2" aria-selected="false">Python</a></li></ul>
+<div class="tab-content">
+<div id="tabset-8-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-8-1-tab">
 <p><a href="https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=ContentDate/Start%20gt%202019-05-15T00:00:00.000Z%20and%20ContentDate/End%20lt%202019-05-15T00:05:00.000Z" target="_blank"><code>https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=ContentDate/Start gt 2019-05-15T00:00:00.000Z and ContentDate/End lt 2019-05-15T00:05:00.000Z</code></a></p>
+</div>
+<div id="tabset-8-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-8-2-tab">
+<div class="cell" data-execution_count="8">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(<span class="st">"https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=ContentDate/Start gt 2019-05-15T00:00:00.000Z and ContentDate/End lt 2019-05-15T00:05:00.000Z"</span>).json()</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame.from_dict(json[<span class="st">'value'</span>]).head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="8">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>@odata.mediaContentType</th>
+      <th>Id</th>
+      <th>Name</th>
+      <th>ContentType</th>
+      <th>ContentLength</th>
+      <th>OriginDate</th>
+      <th>PublicationDate</th>
+      <th>ModificationDate</th>
+      <th>Online</th>
+      <th>EvictionDate</th>
+      <th>S3Path</th>
+      <th>Checksum</th>
+      <th>ContentDate</th>
+      <th>Footprint</th>
+      <th>GeoFootprint</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>application/octet-stream</td>
+      <td>7a73feba-1e23-505f-ac78-6207c4675c57</td>
+      <td>S3A_SY_2_SYN____20190515T000114_20190515T00041...</td>
+      <td>application/octet-stream</td>
+      <td>0</td>
+      <td>2019-05-16T11:37:52.511Z</td>
+      <td>2019-05-16T11:41:57.277Z</td>
+      <td>2019-05-16T11:41:57.277Z</td>
+      <td>True</td>
+      <td></td>
+      <td>/eodata/Sentinel-3/SYNERGY/SY_2_SYN___/2019/05...</td>
+      <td>[]</td>
+      <td>{'Start': '2019-05-15T00:01:13.802Z', 'End': '...</td>
+      <td>geography'SRID=4326;POLYGON ((141.591 10.4037,...</td>
+      <td>{'type': 'Polygon', 'coordinates': [[[141.591,...</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>application/octet-stream</td>
+      <td>2e7d9c5d-e088-5248-80be-0c8453ce6556</td>
+      <td>S3A_OL_2_WFR____20190515T000114_20190515T00041...</td>
+      <td>application/octet-stream</td>
+      <td>0</td>
+      <td>2019-05-16T10:54:52.642Z</td>
+      <td>2019-05-16T10:59:49.013Z</td>
+      <td>2019-05-16T10:59:49.013Z</td>
+      <td>True</td>
+      <td></td>
+      <td>/eodata/Sentinel-3/OLCI/OL_2_WFR/2019/05/15/S3...</td>
+      <td>[]</td>
+      <td>{'Start': '2019-05-15T00:01:13.801Z', 'End': '...</td>
+      <td>geography'SRID=4326;POLYGON ((141.591 10.4037,...</td>
+      <td>{'type': 'Polygon', 'coordinates': [[[141.591,...</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>application/octet-stream</td>
+      <td>7ddcd572-0a58-5b4b-b968-21fc1b2b086c</td>
+      <td>S3A_OL_2_LFR____20190515T000114_20190515T00041...</td>
+      <td>application/octet-stream</td>
+      <td>0</td>
+      <td>2019-05-16T04:01:28.238Z</td>
+      <td>2019-05-16T04:03:49.321Z</td>
+      <td>2019-05-16T04:03:49.321Z</td>
+      <td>True</td>
+      <td></td>
+      <td>/eodata/Sentinel-3/OLCI/OL_2_LFR/2019/05/15/S3...</td>
+      <td>[]</td>
+      <td>{'Start': '2019-05-15T00:01:13.801Z', 'End': '...</td>
+      <td>geography'SRID=4326;POLYGON ((141.591 10.4037,...</td>
+      <td>{'type': 'Polygon', 'coordinates': [[[141.591,...</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
 </section>
 <section id="query-by-geographic-criteria" class="level3">
 <h3 class="anchored" data-anchor-id="query-by-geographic-criteria">Query by Geographic Criteria</h3>
 <p>To search for products intersecting the specified polygon:</p>
+<div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-9-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-9-1" role="tab" aria-controls="tabset-9-1" aria-selected="true">HTTP Request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-9-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-9-2" role="tab" aria-controls="tabset-9-2" aria-selected="false">Python</a></li></ul>
+<div class="tab-content">
+<div id="tabset-9-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-9-1-tab">
 <p><a href="https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=OData.CSC.Intersects(area=geography%27SRID=4326;POLYGON((12.655118166047592%2047.44667197521409,21.39065656328509%2048.347694733853245,28.334291357162826%2041.877123516783655,17.47086198383573%2040.35854475076158,12.655118166047592%2047.44667197521409))%27)%20and%20ContentDate/Start%20gt%202022-05-20T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-21T00:00:00.000Z" target="_blank"><code>https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=OData.CSC.Intersects(area=geography'SRID=4326;POLYGON((12.655118166047592 47.44667197521409,21.39065656328509 48.347694733853245,28.334291357162826 41.877123516783655,17.47086198383573 40.35854475076158,12.655118166047592 47.44667197521409))') and ContentDate/Start gt 2022-05-20T00:00:00.000Z and ContentDate/Start lt 2022-05-21T00:00:00.000Z</code></a></p>
+</div>
+<div id="tabset-9-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-9-2-tab">
+<div class="cell" data-execution_count="9">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(<span class="st">"https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=OData.CSC.Intersects(area=geography'SRID=4326;POLYGON((12.655118166047592 47.44667197521409,21.39065656328509 48.347694733853245,28.334291357162826 41.877123516783655,17.47086198383573 40.35854475076158,12.655118166047592 47.44667197521409))') and ContentDate/Start gt 2022-05-20T00:00:00.000Z and ContentDate/Start lt 2022-05-21T00:00:00.000Z"</span>).json()</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame.from_dict(json[<span class="st">'value'</span>]).head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="9">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>@odata.mediaContentType</th>
+      <th>Id</th>
+      <th>Name</th>
+      <th>ContentType</th>
+      <th>ContentLength</th>
+      <th>OriginDate</th>
+      <th>PublicationDate</th>
+      <th>ModificationDate</th>
+      <th>Online</th>
+      <th>EvictionDate</th>
+      <th>S3Path</th>
+      <th>Checksum</th>
+      <th>ContentDate</th>
+      <th>Footprint</th>
+      <th>GeoFootprint</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>application/octet-stream</td>
+      <td>8fc3f946-f617-5536-ba3a-1363547cbb04</td>
+      <td>S2B_MSIL2A_20220520T100029_N0400_R122_T33UXP_2...</td>
+      <td>application/octet-stream</td>
+      <td>0</td>
+      <td>2022-05-20T16:14:30.866Z</td>
+      <td>2022-05-20T16:20:08.549Z</td>
+      <td>2022-05-20T16:20:08.549Z</td>
+      <td>True</td>
+      <td></td>
+      <td>/eodata/Sentinel-2/MSI/L2A/2022/05/20/S2B_MSIL...</td>
+      <td>[]</td>
+      <td>{'Start': '2022-05-20T10:00:29.025Z', 'End': '...</td>
+      <td>geography'SRID=4326;POLYGON ((17.629592462837 ...</td>
+      <td>{'type': 'Polygon', 'coordinates': [[[17.62959...</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>application/octet-stream</td>
+      <td>0d3b8cf1-01fb-5f7e-820a-1d5442875575</td>
+      <td>LC08_L1TP_180031_20220520_20220520_02_RT</td>
+      <td>application/octet-stream</td>
+      <td>0</td>
+      <td>2022-05-20T08:45:20.510Z</td>
+      <td>2022-05-22T08:08:13.816Z</td>
+      <td>2022-05-22T08:08:13.816Z</td>
+      <td>True</td>
+      <td></td>
+      <td>/eodata/Landsat-8/OLI_TIRS/L1TP/2022/05/20/LC0...</td>
+      <td>[]</td>
+      <td>{'Start': '2022-05-20T08:45:20.510Z', 'End': '...</td>
+      <td>geography'SRID=4326;POLYGON ((27.73522 42.821,...</td>
+      <td>{'type': 'Polygon', 'coordinates': [[[27.73522...</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>application/octet-stream</td>
+      <td>d3b5fbd9-9ffd-579b-b327-4de3e8502591</td>
+      <td>LC08_L2SP_180031_20220520_20220525_02_T1</td>
+      <td>application/octet-stream</td>
+      <td>0</td>
+      <td>2022-05-20T08:45:20.510Z</td>
+      <td>2022-05-27T12:43:58.553Z</td>
+      <td>2022-05-27T12:43:58.553Z</td>
+      <td>True</td>
+      <td></td>
+      <td>/eodata/Landsat-8/OLI_TIRS/L2SP/2022/05/20/LC0...</td>
+      <td>[]</td>
+      <td>{'Start': '2022-05-20T08:45:20.510Z', 'End': '...</td>
+      <td>geography'SRID=4326;POLYGON ((27.73522 42.821,...</td>
+      <td>{'type': 'Polygon', 'coordinates': [[[27.73522...</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
 <p>To search for products intersecting the specified point:</p>
+<div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-10-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-10-1" role="tab" aria-controls="tabset-10-1" aria-selected="true">HTTP Request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-10-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-10-2" role="tab" aria-controls="tabset-10-2" aria-selected="false">Python</a></li></ul>
+<div class="tab-content">
+<div id="tabset-10-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-10-1-tab">
 <p><a href="https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=OData.CSC.Intersects(area=geography%27SRID=4326;POINT(-0.5319577002158441%2028.65487836189358)%27)" target="_blank"><code>https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=OData.CSC.Intersects(area=geography%27SRID=4326;POINT(-0.5319577002158441%2028.65487836189358)%27)</code></a></p>
+</div>
+<div id="tabset-10-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-10-2-tab">
+<div class="cell" data-execution_count="10">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(<span class="st">"https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=OData.CSC.Intersects(area=geography%27SRID=4326;POINT(-0.5319577002158441%2028.65487836189358)%27)"</span>).json()</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame.from_dict(json[<span class="st">'value'</span>]).head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="10">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>@odata.mediaContentType</th>
+      <th>Id</th>
+      <th>Name</th>
+      <th>ContentType</th>
+      <th>ContentLength</th>
+      <th>OriginDate</th>
+      <th>PublicationDate</th>
+      <th>ModificationDate</th>
+      <th>Online</th>
+      <th>EvictionDate</th>
+      <th>S3Path</th>
+      <th>Checksum</th>
+      <th>ContentDate</th>
+      <th>Footprint</th>
+      <th>GeoFootprint</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>application/octet-stream</td>
+      <td>c20361b1-20ff-5f92-be57-83df002735b0</td>
+      <td>LS05_RFUI_TM__GTC_1P_20000107T100851_20000107T...</td>
+      <td>application/octet-stream</td>
+      <td>0</td>
+      <td>2018-04-01T00:00:00.000Z</td>
+      <td>2016-08-09T17:02:50.663Z</td>
+      <td>2016-08-09T17:02:50.663Z</td>
+      <td>True</td>
+      <td></td>
+      <td>/eodata/Landsat-5/TM/L1T/2000/01/07/LS05_RFUI_...</td>
+      <td>[]</td>
+      <td>{'Start': '2000-01-07T10:09:05.659Z', 'End': '...</td>
+      <td>geography'SRID=4326;POLYGON ((-2.1248689 29.81...</td>
+      <td>{'type': 'Polygon', 'coordinates': [[[-2.12486...</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>application/octet-stream</td>
+      <td>60fd8936-f49d-5ad0-ba6c-e3e17439b16a</td>
+      <td>LS05_RFUI_TM__GTC_1P_20000123T100827_20000123T...</td>
+      <td>application/octet-stream</td>
+      <td>0</td>
+      <td>2018-04-01T00:00:00.000Z</td>
+      <td>2016-08-10T04:51:01.385Z</td>
+      <td>2016-08-10T04:51:01.385Z</td>
+      <td>True</td>
+      <td></td>
+      <td>/eodata/Landsat-5/TM/L1T/2000/01/23/LS05_RFUI_...</td>
+      <td>[]</td>
+      <td>{'Start': '2000-01-23T10:08:41.680Z', 'End': '...</td>
+      <td>geography'SRID=4326;POLYGON ((-2.12169 29.8179...</td>
+      <td>{'type': 'Polygon', 'coordinates': [[[-2.12169...</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>application/octet-stream</td>
+      <td>b1cdb9ea-1329-5731-b84f-f17a5439c18e</td>
+      <td>LS07_RMPS_ETM_GTC_1P_20000131T102635_20000131T...</td>
+      <td>application/octet-stream</td>
+      <td>0</td>
+      <td>2018-04-01T00:00:00.000Z</td>
+      <td>2016-09-12T13:42:39.616Z</td>
+      <td>2016-09-12T13:42:39.616Z</td>
+      <td>True</td>
+      <td></td>
+      <td>/eodata/Landsat-7/ETM/GTC_1P/2000/01/31/LS07_R...</td>
+      <td>[]</td>
+      <td>{'Start': '2000-01-31T10:26:50.164Z', 'End': '...</td>
+      <td>geography'SRID=4326;POLYGON ((-2.0083637 29.80...</td>
+      <td>{'type': 'Polygon', 'coordinates': [[[-2.00836...</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
 <p><u>Disclaimers</u>:</p>
 <ol type="1">
 <li>MULTIPOLYGON is currently not supported.</li>
@@ -653,7 +1469,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <section id="query-by-attributes" class="level3">
 <h3 class="anchored" data-anchor-id="query-by-attributes">Query by attributes</h3>
 <p>To search for products by attributes it is necessary to build a filter with the following structure:</p>
-<pre><code>Attributes/OData.CSC.ValueTypeAttribute/any(att:att/Name eq '[Attribute.Name]' and att/OData.CSC.ValueTypeAttribute/Value eq '[Attribute.Value]')</code></pre>
+<p>Attributes/OData.CSC.ValueTypeAttribute/any(att:att/Name eq ‘[Attribute.Name]’ and att/OData.CSC.ValueTypeAttribute/Value eq ‘[Attribute.Value]’)</p>
 <p>where</p>
 <ul>
 <li><em>ValueTypeAttribute</em> can take the following values:
@@ -668,15 +1484,315 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><em>[Attribute.Value]</em> is the specific value that the user is searching for</li>
 </ul>
 <p>To get products with CloudCover&lt;40% between two dates:</p>
+<div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-11-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-11-1" role="tab" aria-controls="tabset-11-1" aria-selected="true">HTTP Request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-11-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-11-2" role="tab" aria-controls="tabset-11-2" aria-selected="false">Python</a></li></ul>
+<div class="tab-content">
+<div id="tabset-11-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-11-1-tab">
 <p><a href="https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Attributes/OData.CSC.DoubleAttribute/any(att:att/Name%20eq%20%27cloudCover%27%20and%20att/OData.CSC.DoubleAttribute/Value%20le%2040.00)%20and%20ContentDate/Start%20gt%202022-01-01T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-01-03T00:00:00.000Z&amp;$top=10" target="_blank"><code>https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Attributes/OData.CSC.DoubleAttribute/any(att:att/Name eq 'cloudCover' and att/OData.CSC.DoubleAttribute/Value le 40.00) and ContentDate/Start gt 2022-01-01T00:00:00.000Z and ContentDate/Start lt 2022-01-03T00:00:00.000Z&amp;$top=10</code></a></p>
+</div>
+<div id="tabset-11-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-11-2-tab">
+<div class="cell" data-execution_count="11">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(<span class="st">"https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Attributes/OData.CSC.DoubleAttribute/any(att:att/Name eq 'cloudCover' and att/OData.CSC.DoubleAttribute/Value le 40.00) and ContentDate/Start gt 2022-01-01T00:00:00.000Z and ContentDate/Start lt 2022-01-03T00:00:00.000Z&amp;$top=10"</span>).json()</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame.from_dict(json[<span class="st">'value'</span>]).head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="11">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>@odata.mediaContentType</th>
+      <th>Id</th>
+      <th>Name</th>
+      <th>ContentType</th>
+      <th>ContentLength</th>
+      <th>OriginDate</th>
+      <th>PublicationDate</th>
+      <th>ModificationDate</th>
+      <th>Online</th>
+      <th>EvictionDate</th>
+      <th>S3Path</th>
+      <th>Checksum</th>
+      <th>ContentDate</th>
+      <th>Footprint</th>
+      <th>GeoFootprint</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>application/octet-stream</td>
+      <td>edece129-74a0-57b5-90b9-ee5081945f19</td>
+      <td>S2B_MSIL1C_20220102T011539_N0301_R002_T48DXF_2...</td>
+      <td>application/octet-stream</td>
+      <td>0</td>
+      <td>2022-01-02T02:59:50.095Z</td>
+      <td>2022-01-02T03:03:41.851Z</td>
+      <td>2022-01-02T03:03:41.851Z</td>
+      <td>True</td>
+      <td></td>
+      <td>/eodata/Sentinel-2/MSI/L1C/2022/01/02/S2B_MSIL...</td>
+      <td>[]</td>
+      <td>{'Start': '2022-01-02T01:15:39.024Z', 'End': '...</td>
+      <td>geography'SRID=4326;POLYGON ((107.77849864119 ...</td>
+      <td>{'type': 'Polygon', 'coordinates': [[[107.7784...</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>application/octet-stream</td>
+      <td>3d0f3447-4b75-5115-8132-7047eab6ca22</td>
+      <td>S2B_MSIL1C_20220101T000459_N0301_R130_T48CWU_2...</td>
+      <td>application/octet-stream</td>
+      <td>0</td>
+      <td>2022-01-01T01:45:48.687Z</td>
+      <td>2022-01-01T01:47:21.168Z</td>
+      <td>2022-01-01T01:47:21.168Z</td>
+      <td>True</td>
+      <td></td>
+      <td>/eodata/Sentinel-2/MSI/L1C/2022/01/01/S2B_MSIL...</td>
+      <td>[]</td>
+      <td>{'Start': '2022-01-01T00:04:59.024Z', 'End': '...</td>
+      <td>geography'SRID=4326;POLYGON ((109.65985459329 ...</td>
+      <td>{'type': 'Polygon', 'coordinates': [[[109.6598...</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>application/octet-stream</td>
+      <td>4f052032-cec7-59bb-90e4-de31e5281bea</td>
+      <td>S2B_MSIL1C_20220102T011539_N0301_R002_T49DEB_2...</td>
+      <td>application/octet-stream</td>
+      <td>0</td>
+      <td>2022-01-02T03:00:18.422Z</td>
+      <td>2022-01-02T03:05:57.329Z</td>
+      <td>2022-01-02T03:05:57.329Z</td>
+      <td>True</td>
+      <td></td>
+      <td>/eodata/Sentinel-2/MSI/L1C/2022/01/02/S2B_MSIL...</td>
+      <td>[]</td>
+      <td>{'Start': '2022-01-02T01:15:39.024Z', 'End': '...</td>
+      <td>geography'SRID=4326;POLYGON ((110.99946824095 ...</td>
+      <td>{'type': 'Polygon', 'coordinates': [[[110.9994...</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
 <p>To get products with cloudCover&lt; 10% and productType=S2MSI2A and ASCENDING orbitDirection between two dates:</p>
+<div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-12-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-12-1" role="tab" aria-controls="tabset-12-1" aria-selected="true">HTTP Request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-12-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-12-2" role="tab" aria-controls="tabset-12-2" aria-selected="false">Python</a></li></ul>
+<div class="tab-content">
+<div id="tabset-12-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-12-1-tab">
 <p><a href="https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Attributes/OData.CSC.DoubleAttribute/any(att:att/Name%20eq%20%27cloudCover%27%20and%20att/OData.CSC.DoubleAttribute/Value%20lt%2010.00)%20and%20Attributes/OData.CSC.StringAttribute/any(att:att/Name%20eq%20%27productType%27%20and%20att/OData.CSC.StringAttribute/Value%20eq%20%27S2MSI2A%27)%20and%20Attributes/OData.CSC.StringAttribute/any(att:att/Name%20eq%20%27orbitDirection%27%20and%20att/OData.CSC.StringAttribute/Value%20eq%20%27ASCENDING%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T04:00:00.000Z&amp;$top=10" target="_blank"><code>https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Attributes/OData.CSC.DoubleAttribute/any(att:att/Name eq 'cloudCover' and att/OData.CSC.DoubleAttribute/Value lt 10.00) and Attributes/OData.CSC.StringAttribute/any(att:att/Name eq 'productType' and att/OData.CSC.StringAttribute/Value eq 'S2MSI2A') and Attributes/OData.CSC.StringAttribute/any(att:att/Name eq 'orbitDirection' and att/OData.CSC.StringAttribute/Value eq 'ASCENDING') and ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-03T04:00:00.000Z&amp;$top=10</code></a></p>
+</div>
+<div id="tabset-12-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-12-2-tab">
+<div class="cell" data-execution_count="12">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(<span class="st">"https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Attributes/OData.CSC.DoubleAttribute/any(att:att/Name eq 'cloudCover' and att/OData.CSC.DoubleAttribute/Value lt 10.00) and Attributes/OData.CSC.StringAttribute/any(att:att/Name eq 'productType' and att/OData.CSC.StringAttribute/Value eq 'S2MSI2A') and Attributes/OData.CSC.StringAttribute/any(att:att/Name eq 'orbitDirection' and att/OData.CSC.StringAttribute/Value eq 'ASCENDING') and ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-03T04:00:00.000Z&amp;$top=10"</span>).json()</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame.from_dict(json[<span class="st">'value'</span>]).head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="12">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>@odata.mediaContentType</th>
+      <th>Id</th>
+      <th>Name</th>
+      <th>ContentType</th>
+      <th>ContentLength</th>
+      <th>OriginDate</th>
+      <th>PublicationDate</th>
+      <th>ModificationDate</th>
+      <th>Online</th>
+      <th>EvictionDate</th>
+      <th>S3Path</th>
+      <th>Checksum</th>
+      <th>ContentDate</th>
+      <th>Footprint</th>
+      <th>GeoFootprint</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>application/octet-stream</td>
+      <td>7e0f9557-d537-56bb-90a1-9b4a746f0f55</td>
+      <td>S2B_MSIL2A_20220503T000139_N0400_R016_T08XMQ_2...</td>
+      <td>application/octet-stream</td>
+      <td>0</td>
+      <td>2022-05-03T03:11:09.519Z</td>
+      <td>2022-05-03T03:15:23.316Z</td>
+      <td>2022-05-03T03:15:23.316Z</td>
+      <td>True</td>
+      <td></td>
+      <td>/eodata/Sentinel-2/MSI/L2A/2022/05/03/S2B_MSIL...</td>
+      <td>[]</td>
+      <td>{'Start': '2022-05-03T00:01:39.024Z', 'End': '...</td>
+      <td>geography'SRID=4326;POLYGON ((-138.24152 80.05...</td>
+      <td>{'type': 'Polygon', 'coordinates': [[[-138.241...</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>application/octet-stream</td>
+      <td>716d55e7-ee2a-5985-afed-4ca073864ca9</td>
+      <td>S2B_MSIL2A_20220503T000139_N0400_R016_T08XNQ_2...</td>
+      <td>application/octet-stream</td>
+      <td>0</td>
+      <td>2022-05-03T02:55:20.511Z</td>
+      <td>2022-05-03T02:59:59.363Z</td>
+      <td>2022-05-03T02:59:59.363Z</td>
+      <td>True</td>
+      <td></td>
+      <td>/eodata/Sentinel-2/MSI/L2A/2022/05/03/S2B_MSIL...</td>
+      <td>[]</td>
+      <td>{'Start': '2022-05-03T00:01:39.024Z', 'End': '...</td>
+      <td>geography'SRID=4326;POLYGON ((-135.00116 81.06...</td>
+      <td>{'type': 'Polygon', 'coordinates': [[[-135.001...</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>application/octet-stream</td>
+      <td>2b9fe2f4-b9d3-5a5d-99b9-96a1ed74ad8a</td>
+      <td>S2B_MSIL2A_20220503T000139_N0400_R016_T09XWK_2...</td>
+      <td>application/octet-stream</td>
+      <td>0</td>
+      <td>2022-05-03T02:57:10.940Z</td>
+      <td>2022-05-03T03:01:57.496Z</td>
+      <td>2022-05-03T03:01:57.496Z</td>
+      <td>True</td>
+      <td></td>
+      <td>/eodata/Sentinel-2/MSI/L2A/2022/05/03/S2B_MSIL...</td>
+      <td>[]</td>
+      <td>{'Start': '2022-05-03T00:01:39.024Z', 'End': '...</td>
+      <td>geography'SRID=4326;POLYGON ((-129.00116 81.06...</td>
+      <td>{'type': 'Polygon', 'coordinates': [[[-129.001...</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
 </section>
 <section id="orderby-option" class="level3">
 <h3 class="anchored" data-anchor-id="orderby-option">Orderby option</h3>
 <p>Orderby option can be used to order the products in an ascending (asc) or descending (desc) direction. If asc or desc not specified, then the resources will be ordered in ascending order.</p>
 <p>To order products by ContentDate/Start in a descending direction:</p>
+<div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-13-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-13-1" role="tab" aria-controls="tabset-13-1" aria-selected="true">HTTP Request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-13-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-13-2" role="tab" aria-controls="tabset-13-2" aria-selected="false">Python</a></li></ul>
+<div class="tab-content">
+<div id="tabset-13-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-13-1-tab">
 <p><a href="https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A_EW_GRD%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T03:00:00.000Z&amp;$orderby=ContentDate/Start%20desc" target="_blank"><code>https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,'S1A_EW_GRD') and ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-03T03:00:00.000Z&amp;$orderby=ContentDate/Start desc</code></a></p>
+</div>
+<div id="tabset-13-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-13-2-tab">
+<div class="cell" data-execution_count="13">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(<span class="st">"https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,'S1A_EW_GRD') and ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-03T03:00:00.000Z&amp;$orderby=ContentDate/Start desc"</span>).json()</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame.from_dict(json[<span class="st">'value'</span>]).head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="13">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>@odata.mediaContentType</th>
+      <th>Id</th>
+      <th>Name</th>
+      <th>ContentType</th>
+      <th>ContentLength</th>
+      <th>OriginDate</th>
+      <th>PublicationDate</th>
+      <th>ModificationDate</th>
+      <th>Online</th>
+      <th>EvictionDate</th>
+      <th>S3Path</th>
+      <th>Checksum</th>
+      <th>ContentDate</th>
+      <th>Footprint</th>
+      <th>GeoFootprint</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>application/octet-stream</td>
+      <td>6928b379-4f9a-5473-a12a-7e7e4b83f776</td>
+      <td>S1A_EW_GRDM_1SSH_20220503T024410_20220503T0244...</td>
+      <td>application/octet-stream</td>
+      <td>0</td>
+      <td>2022-05-03T04:06:31.762Z</td>
+      <td>2022-05-03T04:11:15.919Z</td>
+      <td>2022-05-03T04:11:15.919Z</td>
+      <td>True</td>
+      <td></td>
+      <td>/eodata/Sentinel-1/SAR/GRD/2022/05/03/S1A_EW_G...</td>
+      <td>[]</td>
+      <td>{'Start': '2022-05-03T02:44:10.981Z', 'End': '...</td>
+      <td>geography'SRID=4326;POLYGON ((-105.464699 -67....</td>
+      <td>{'type': 'Polygon', 'coordinates': [[[-105.464...</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>application/octet-stream</td>
+      <td>e55d5348-e8a5-5fcc-834f-919c60020ecc</td>
+      <td>S1A_EW_GRDM_1SSH_20220503T024410_20220503T0244...</td>
+      <td>application/octet-stream</td>
+      <td>0</td>
+      <td>2018-04-01T00:00:00.000Z</td>
+      <td>2022-05-03T04:13:58.370Z</td>
+      <td>2022-05-03T04:13:58.370Z</td>
+      <td>True</td>
+      <td></td>
+      <td>/eodata/Sentinel-1-COG/SAR/GRD-COG/2022/05/03/...</td>
+      <td>[]</td>
+      <td>{'Start': '2022-05-03T02:44:10.981Z', 'End': '...</td>
+      <td>geography'SRID=4326;POLYGON ((-105.464699 -67....</td>
+      <td>{'type': 'Polygon', 'coordinates': [[[-105.464...</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>application/octet-stream</td>
+      <td>4824ead5-b35c-5b83-80fa-71219c069e1c</td>
+      <td>S1A_EW_GRDM_1SSH_20220503T024310_20220503T0244...</td>
+      <td>application/octet-stream</td>
+      <td>0</td>
+      <td>2022-05-03T04:08:32.562Z</td>
+      <td>2022-05-03T04:12:58.333Z</td>
+      <td>2022-05-03T04:12:58.333Z</td>
+      <td>True</td>
+      <td></td>
+      <td>/eodata/Sentinel-1/SAR/GRD/2022/05/03/S1A_EW_G...</td>
+      <td>[]</td>
+      <td>{'Start': '2022-05-03T02:43:10.982Z', 'End': '...</td>
+      <td>geography'SRID=4326;POLYGON ((-103.097984 -68....</td>
+      <td>{'type': 'Polygon', 'coordinates': [[[-103.097...</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
 <p>By default, if orderby option is not used, the results are not ordered. If orderby option is used, additional orderby by id is also used, so that the results are fully ordered and no products are lost while paginating through the results.</p>
 <p>The acceptable arguments for this option: <em>ContentDate/Start</em>, <em>ContentDate/End, PublicationDate, ModificationDate</em>, in directions: <em>asc, desc</em>.</p>
 </section>
@@ -684,7 +1800,107 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h3 class="anchored" data-anchor-id="top-option">Top option</h3>
 <p>Top option specifies the maximum number of items returned from a query.</p>
 <p>To limit the number of results:</p>
+<div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-14-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-14-1" role="tab" aria-controls="tabset-14-1" aria-selected="true">HTTP Request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-14-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-14-2" role="tab" aria-controls="tabset-14-2" aria-selected="false">Python</a></li></ul>
+<div class="tab-content">
+<div id="tabset-14-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-14-1-tab">
 <p><a href="https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A_EW_GRD%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T12:00:00.000Z&amp;$top=100" target="_blank"><code>https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A_EW_GRD%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T12:00:00.000Z&amp;$top=100</code></a></p>
+</div>
+<div id="tabset-14-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-14-2-tab">
+<div class="cell" data-execution_count="14">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(<span class="st">"https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A_EW_GRD%27)%20and%20ContentDate/Start</span><span class="sc">%20g</span><span class="st">t%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T12:00:00.000Z&amp;$top=100"</span>).json()</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame.from_dict(json[<span class="st">'value'</span>]).head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="14">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>@odata.mediaContentType</th>
+      <th>Id</th>
+      <th>Name</th>
+      <th>ContentType</th>
+      <th>ContentLength</th>
+      <th>OriginDate</th>
+      <th>PublicationDate</th>
+      <th>ModificationDate</th>
+      <th>Online</th>
+      <th>EvictionDate</th>
+      <th>S3Path</th>
+      <th>Checksum</th>
+      <th>ContentDate</th>
+      <th>Footprint</th>
+      <th>GeoFootprint</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>application/octet-stream</td>
+      <td>fe37ae5f-153b-511c-89b9-dcc059c86489</td>
+      <td>S1A_EW_GRDM_1SDH_20220503T033034_20220503T0331...</td>
+      <td>application/octet-stream</td>
+      <td>0</td>
+      <td>2022-05-03T04:04:31.386Z</td>
+      <td>2022-05-03T04:09:06.656Z</td>
+      <td>2022-05-03T04:09:06.656Z</td>
+      <td>True</td>
+      <td></td>
+      <td>/eodata/Sentinel-1/SAR/GRD/2022/05/03/S1A_EW_G...</td>
+      <td>[]</td>
+      <td>{'Start': '2022-05-03T03:30:34.272Z', 'End': '...</td>
+      <td>geography'SRID=4326;POLYGON ((64.757805 76.819...</td>
+      <td>{'type': 'Polygon', 'coordinates': [[[64.75780...</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>application/octet-stream</td>
+      <td>3b46f46b-4862-5587-89cb-9c52a9cc106a</td>
+      <td>S1A_EW_GRDM_1SDH_20220503T051020_20220503T0511...</td>
+      <td>application/octet-stream</td>
+      <td>0</td>
+      <td>2022-05-03T06:04:33.053Z</td>
+      <td>2022-05-03T06:09:16.561Z</td>
+      <td>2022-05-03T06:09:16.561Z</td>
+      <td>True</td>
+      <td></td>
+      <td>/eodata/Sentinel-1/SAR/GRD/2022/05/03/S1A_EW_G...</td>
+      <td>[]</td>
+      <td>{'Start': '2022-05-03T05:10:20.362Z', 'End': '...</td>
+      <td>geography'SRID=4326;POLYGON ((34.926594 74.394...</td>
+      <td>{'type': 'Polygon', 'coordinates': [[[34.92659...</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>application/octet-stream</td>
+      <td>d1402094-d440-570c-9f55-07ffdd2fae19</td>
+      <td>S1A_EW_GRDM_1SDH_20220503T064800_20220503T0649...</td>
+      <td>application/octet-stream</td>
+      <td>0</td>
+      <td>2022-05-03T08:54:32.861Z</td>
+      <td>2022-05-03T08:59:36.441Z</td>
+      <td>2022-05-03T08:59:36.441Z</td>
+      <td>True</td>
+      <td></td>
+      <td>/eodata/Sentinel-1/SAR/GRD/2022/05/03/S1A_EW_G...</td>
+      <td>[]</td>
+      <td>{'Start': '2022-05-03T06:48:00.855Z', 'End': '...</td>
+      <td>geography'SRID=4326;POLYGON ((15.664783 76.959...</td>
+      <td>{'type': 'Polygon', 'coordinates': [[[15.66478...</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
 <p>The default value is set to 20.</p>
 <p>The acceptable arguments for this option: <em>Integer &lt;0,1000&gt;</em></p>
 </section>
@@ -693,49 +1909,459 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2 class="anchored" data-anchor-id="skip-option">Skip option</h2>
 <p>Skip option can be used to skip a specific number of results. Exemplary application of this option would be paginating through the results, however for performance reasons, we recommend limiting queries with small time intervals as a substitute of using skip in a more generic query.</p>
 <p>To skip a specific number of results:</p>
+<div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-15-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-15-1" role="tab" aria-controls="tabset-15-1" aria-selected="true">HTTP Request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-15-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-15-2" role="tab" aria-controls="tabset-15-2" aria-selected="false">Python</a></li></ul>
+<div class="tab-content">
+<div id="tabset-15-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-15-1-tab">
 <p><a href="https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A_EW_GRD%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T12:00:00.000Z&amp;$skip=23" target="_blank"><code>https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A_EW_GRD%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T12:00:00.000Z&amp;$skip=23</code></a></p>
+</div>
+<div id="tabset-15-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-15-2-tab">
+<div class="cell" data-execution_count="15">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(<span class="st">"https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A_EW_GRD%27)%20and%20ContentDate/Start</span><span class="sc">%20g</span><span class="st">t%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T12:00:00.000Z&amp;$skip=23"</span>).json()</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame.from_dict(json[<span class="st">'value'</span>]).head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="15">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>@odata.mediaContentType</th>
+      <th>Id</th>
+      <th>Name</th>
+      <th>ContentType</th>
+      <th>ContentLength</th>
+      <th>OriginDate</th>
+      <th>PublicationDate</th>
+      <th>ModificationDate</th>
+      <th>Online</th>
+      <th>EvictionDate</th>
+      <th>S3Path</th>
+      <th>Checksum</th>
+      <th>ContentDate</th>
+      <th>Footprint</th>
+      <th>GeoFootprint</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>application/octet-stream</td>
+      <td>3d3e3909-efbd-5d81-9249-ffc54614b426</td>
+      <td>S1A_EW_GRDM_1SSH_20220503T090548_20220503T0906...</td>
+      <td>application/octet-stream</td>
+      <td>0</td>
+      <td>2018-04-01T00:00:00.000Z</td>
+      <td>2022-05-03T10:50:38.216Z</td>
+      <td>2022-05-03T10:50:38.216Z</td>
+      <td>True</td>
+      <td></td>
+      <td>/eodata/Sentinel-1-COG/SAR/GRD-COG/2022/05/03/...</td>
+      <td>[]</td>
+      <td>{'Start': '2022-05-03T09:05:48.232Z', 'End': '...</td>
+      <td>geography'SRID=4326;POLYGON ((-66.559258 -62.3...</td>
+      <td>{'type': 'Polygon', 'coordinates': [[[-66.5592...</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>application/octet-stream</td>
+      <td>0353ef2c-8fa0-5b09-9273-77c04cd96a89</td>
+      <td>S1A_EW_GRDM_1SDH_20220503T100731_20220503T1007...</td>
+      <td>application/octet-stream</td>
+      <td>0</td>
+      <td>2018-04-01T00:00:00.000Z</td>
+      <td>2022-05-03T11:24:18.275Z</td>
+      <td>2022-05-03T11:24:18.275Z</td>
+      <td>True</td>
+      <td></td>
+      <td>/eodata/Sentinel-1-COG/SAR/GRD-COG/2022/05/03/...</td>
+      <td>[]</td>
+      <td>{'Start': '2022-05-03T10:07:31.988Z', 'End': '...</td>
+      <td>geography'SRID=4326;POLYGON ((-42.265507 72.51...</td>
+      <td>{'type': 'Polygon', 'coordinates': [[[-42.2655...</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>application/octet-stream</td>
+      <td>4069750c-fb4e-52ae-a003-532393a98833</td>
+      <td>S1A_EW_GRDM_1SDH_20220503T091926_20220503T0919...</td>
+      <td>application/octet-stream</td>
+      <td>0</td>
+      <td>2018-04-01T00:00:00.000Z</td>
+      <td>2022-05-03T11:46:52.205Z</td>
+      <td>2022-05-03T11:46:52.205Z</td>
+      <td>True</td>
+      <td></td>
+      <td>/eodata/Sentinel-1-COG/SAR/GRD-COG/2022/05/03/...</td>
+      <td>[]</td>
+      <td>{'Start': '2022-05-03T09:19:26.008Z', 'End': '...</td>
+      <td>geography'SRID=4326;POLYGON ((155.72142 -67.21...</td>
+      <td>{'type': 'Polygon', 'coordinates': [[[155.7214...</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
 <p>The default value is set to 0.</p>
 <p>Whenever a query results in more products than 20 (default top value), the API provides a nextLink at the bottom of the page:</p>
 <pre><code>"@OData.nextLink":</code></pre>
+<div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-16-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-16-1" role="tab" aria-controls="tabset-16-1" aria-selected="true">HTTP Request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-16-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-16-2" role="tab" aria-controls="tabset-16-2" aria-selected="false">Python</a></li></ul>
+<div class="tab-content">
+<div id="tabset-16-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-16-1-tab">
 <p><a href="https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A_EW_GRD%27)+and+ContentDate/Start+gt+2022-05-03T00:00:00.000Z+and+ContentDate/Start+lt+2022-05-03T12:00:00.000Z&amp;$skip=20" target="_blank"><code>http://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,'S1A_EW_GRD')+and+ContentDate/Start+gt+2022-05-03T00:00:00.000Z+and+ContentDate/Start+lt+2022-05-03T12:00:00.000Z&amp;$skip=20</code></a></p>
+</div>
+<div id="tabset-16-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-16-2-tab">
+<div class="cell" data-execution_count="16">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(<span class="st">"http://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,'S1A_EW_GRD')+and+ContentDate/Start+gt+2022-05-03T00:00:00.000Z+and+ContentDate/Start+lt+2022-05-03T12:00:00.000Z&amp;$skip=20"</span>).json()</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame.from_dict(json[<span class="st">'value'</span>]).head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="16">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>@odata.mediaContentType</th>
+      <th>Id</th>
+      <th>Name</th>
+      <th>ContentType</th>
+      <th>ContentLength</th>
+      <th>OriginDate</th>
+      <th>PublicationDate</th>
+      <th>ModificationDate</th>
+      <th>Online</th>
+      <th>EvictionDate</th>
+      <th>S3Path</th>
+      <th>Checksum</th>
+      <th>ContentDate</th>
+      <th>Footprint</th>
+      <th>GeoFootprint</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>application/octet-stream</td>
+      <td>016c57c4-668d-51d6-b180-a5b962497047</td>
+      <td>S1A_EW_GRDM_1SSH_20220503T073204_20220503T0732...</td>
+      <td>application/octet-stream</td>
+      <td>0</td>
+      <td>2018-04-01T00:00:00.000Z</td>
+      <td>2022-05-03T09:18:02.901Z</td>
+      <td>2022-05-03T09:18:02.901Z</td>
+      <td>True</td>
+      <td></td>
+      <td>/eodata/Sentinel-1-COG/SAR/GRD-COG/2022/05/03/...</td>
+      <td>[]</td>
+      <td>{'Start': '2022-05-03T07:32:04.753Z', 'End': '...</td>
+      <td>geography'SRID=4326;POLYGON ((-70.900345 -76.6...</td>
+      <td>{'type': 'Polygon', 'coordinates': [[[-70.9003...</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>application/octet-stream</td>
+      <td>c7722448-3495-5dc7-837b-25e0738e4b1a</td>
+      <td>S1A_EW_GRDM_1SSH_20220503T072904_20220503T0730...</td>
+      <td>application/octet-stream</td>
+      <td>0</td>
+      <td>2018-04-01T00:00:00.000Z</td>
+      <td>2022-05-03T09:22:47.517Z</td>
+      <td>2022-05-03T09:22:47.517Z</td>
+      <td>True</td>
+      <td></td>
+      <td>/eodata/Sentinel-1-COG/SAR/GRD-COG/2022/05/03/...</td>
+      <td>[]</td>
+      <td>{'Start': '2022-05-03T07:29:04.753Z', 'End': '...</td>
+      <td>geography'SRID=4326;POLYGON ((-49.421703 -68.7...</td>
+      <td>{'type': 'Polygon', 'coordinates': [[[-49.4217...</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>application/octet-stream</td>
+      <td>f593c4d5-0f63-5a76-8479-a65fce67cbbb</td>
+      <td>S1A_EW_GRDM_1SSH_20220503T090752_20220503T0908...</td>
+      <td>application/octet-stream</td>
+      <td>0</td>
+      <td>2018-04-01T00:00:00.000Z</td>
+      <td>2022-05-03T10:46:23.756Z</td>
+      <td>2022-05-03T10:46:23.756Z</td>
+      <td>True</td>
+      <td></td>
+      <td>/eodata/Sentinel-1-COG/SAR/GRD-COG/2022/05/03/...</td>
+      <td>[]</td>
+      <td>{'Start': '2022-05-03T09:07:52.513Z', 'End': '...</td>
+      <td>geography'SRID=4326;POLYGON ((-71.201134 -66.6...</td>
+      <td>{'type': 'Polygon', 'coordinates': [[[-71.2011...</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
 <p>The acceptable arguments for this option: <em>Integer &lt;0,10000&gt;</em></p>
 </section>
 <section id="count-option" class="level2">
 <h2 class="anchored" data-anchor-id="count-option">Count option</h2>
 <p>Count option enables users to get the exact number of products matching the query. This option is disabled by default to accelerate the query performance.</p>
 <p>To get the exact number of products for a given query:</p>
+<div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-17-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-17-1" role="tab" aria-controls="tabset-17-1" aria-selected="true">HTTP Request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-17-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-17-2" role="tab" aria-controls="tabset-17-2" aria-selected="false">Python</a></li></ul>
+<div class="tab-content">
+<div id="tabset-17-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-17-1-tab">
 <p><a href="https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A_EW_GRD%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T12:00:00.000Z&amp;$count=True" target="_blank"><code>https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A_EW_GRD%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T12:00:00.000Z&amp;$count=True</code></a></p>
+</div>
+<div id="tabset-17-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-17-2-tab">
+<div class="cell" data-execution_count="17">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(<span class="st">"https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A_EW_GRD%27)%20and%20ContentDate/Start</span><span class="sc">%20g</span><span class="st">t%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T12:00:00.000Z&amp;$count=True"</span>).json()</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame.from_dict(json[<span class="st">'value'</span>]).head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="17">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>@odata.mediaContentType</th>
+      <th>Id</th>
+      <th>Name</th>
+      <th>ContentType</th>
+      <th>ContentLength</th>
+      <th>OriginDate</th>
+      <th>PublicationDate</th>
+      <th>ModificationDate</th>
+      <th>Online</th>
+      <th>EvictionDate</th>
+      <th>S3Path</th>
+      <th>Checksum</th>
+      <th>ContentDate</th>
+      <th>Footprint</th>
+      <th>GeoFootprint</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>application/octet-stream</td>
+      <td>fe37ae5f-153b-511c-89b9-dcc059c86489</td>
+      <td>S1A_EW_GRDM_1SDH_20220503T033034_20220503T0331...</td>
+      <td>application/octet-stream</td>
+      <td>0</td>
+      <td>2022-05-03T04:04:31.386Z</td>
+      <td>2022-05-03T04:09:06.656Z</td>
+      <td>2022-05-03T04:09:06.656Z</td>
+      <td>True</td>
+      <td></td>
+      <td>/eodata/Sentinel-1/SAR/GRD/2022/05/03/S1A_EW_G...</td>
+      <td>[]</td>
+      <td>{'Start': '2022-05-03T03:30:34.272Z', 'End': '...</td>
+      <td>geography'SRID=4326;POLYGON ((64.757805 76.819...</td>
+      <td>{'type': 'Polygon', 'coordinates': [[[64.75780...</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>application/octet-stream</td>
+      <td>3b46f46b-4862-5587-89cb-9c52a9cc106a</td>
+      <td>S1A_EW_GRDM_1SDH_20220503T051020_20220503T0511...</td>
+      <td>application/octet-stream</td>
+      <td>0</td>
+      <td>2022-05-03T06:04:33.053Z</td>
+      <td>2022-05-03T06:09:16.561Z</td>
+      <td>2022-05-03T06:09:16.561Z</td>
+      <td>True</td>
+      <td></td>
+      <td>/eodata/Sentinel-1/SAR/GRD/2022/05/03/S1A_EW_G...</td>
+      <td>[]</td>
+      <td>{'Start': '2022-05-03T05:10:20.362Z', 'End': '...</td>
+      <td>geography'SRID=4326;POLYGON ((34.926594 74.394...</td>
+      <td>{'type': 'Polygon', 'coordinates': [[[34.92659...</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>application/octet-stream</td>
+      <td>d1402094-d440-570c-9f55-07ffdd2fae19</td>
+      <td>S1A_EW_GRDM_1SDH_20220503T064800_20220503T0649...</td>
+      <td>application/octet-stream</td>
+      <td>0</td>
+      <td>2022-05-03T08:54:32.861Z</td>
+      <td>2022-05-03T08:59:36.441Z</td>
+      <td>2022-05-03T08:59:36.441Z</td>
+      <td>True</td>
+      <td></td>
+      <td>/eodata/Sentinel-1/SAR/GRD/2022/05/03/S1A_EW_G...</td>
+      <td>[]</td>
+      <td>{'Start': '2022-05-03T06:48:00.855Z', 'End': '...</td>
+      <td>geography'SRID=4326;POLYGON ((15.664783 76.959...</td>
+      <td>{'type': 'Polygon', 'coordinates': [[[15.66478...</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
 <p>The acceptable arguments for this option: <em>True, true, 1, False, false, 0</em>.</p>
 </section>
 <section id="expand-option" class="level2">
 <h2 class="anchored" data-anchor-id="expand-option">Expand option</h2>
 <p>Expand option enables users to see full metadata of each returned result.</p>
 <p>To see the metadata of the results:</p>
+<div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-18-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-18-1" role="tab" aria-controls="tabset-18-1" aria-selected="true">HTTP Request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-18-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-18-2" role="tab" aria-controls="tabset-18-2" aria-selected="false">Python</a></li></ul>
+<div class="tab-content">
+<div id="tabset-18-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-18-1-tab">
 <p><a href="https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A_EW_GRD%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T12:00:00.000Z&amp;$expand=Attributes" target="_blank"><code>https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A_EW_GRD%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T12:00:00.000Z&amp;$expand=Attributes</code></a></p>
+</div>
+<div id="tabset-18-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-18-2-tab">
+<div class="cell" data-execution_count="18">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(<span class="st">"https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A_EW_GRD%27)%20and%20ContentDate/Start</span><span class="sc">%20g</span><span class="st">t%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T12:00:00.000Z&amp;$expand=Attributes"</span>).json()</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame.from_dict(json[<span class="st">'value'</span>]).head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="18">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>@odata.mediaContentType</th>
+      <th>Id</th>
+      <th>Name</th>
+      <th>ContentType</th>
+      <th>ContentLength</th>
+      <th>OriginDate</th>
+      <th>PublicationDate</th>
+      <th>ModificationDate</th>
+      <th>Online</th>
+      <th>EvictionDate</th>
+      <th>S3Path</th>
+      <th>Checksum</th>
+      <th>ContentDate</th>
+      <th>Footprint</th>
+      <th>GeoFootprint</th>
+      <th>Attributes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>application/octet-stream</td>
+      <td>fe37ae5f-153b-511c-89b9-dcc059c86489</td>
+      <td>S1A_EW_GRDM_1SDH_20220503T033034_20220503T0331...</td>
+      <td>application/octet-stream</td>
+      <td>0</td>
+      <td>2022-05-03T04:04:31.386Z</td>
+      <td>2022-05-03T04:09:06.656Z</td>
+      <td>2022-05-03T04:09:06.656Z</td>
+      <td>True</td>
+      <td></td>
+      <td>/eodata/Sentinel-1/SAR/GRD/2022/05/03/S1A_EW_G...</td>
+      <td>[]</td>
+      <td>{'Start': '2022-05-03T03:30:34.272Z', 'End': '...</td>
+      <td>geography'SRID=4326;POLYGON ((64.757805 76.819...</td>
+      <td>{'type': 'Polygon', 'coordinates': [[[64.75780...</td>
+      <td>[{'@odata.type': '#OData.CSC.StringAttribute',...</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>application/octet-stream</td>
+      <td>3b46f46b-4862-5587-89cb-9c52a9cc106a</td>
+      <td>S1A_EW_GRDM_1SDH_20220503T051020_20220503T0511...</td>
+      <td>application/octet-stream</td>
+      <td>0</td>
+      <td>2022-05-03T06:04:33.053Z</td>
+      <td>2022-05-03T06:09:16.561Z</td>
+      <td>2022-05-03T06:09:16.561Z</td>
+      <td>True</td>
+      <td></td>
+      <td>/eodata/Sentinel-1/SAR/GRD/2022/05/03/S1A_EW_G...</td>
+      <td>[]</td>
+      <td>{'Start': '2022-05-03T05:10:20.362Z', 'End': '...</td>
+      <td>geography'SRID=4326;POLYGON ((34.926594 74.394...</td>
+      <td>{'type': 'Polygon', 'coordinates': [[[34.92659...</td>
+      <td>[{'@odata.type': '#OData.CSC.StringAttribute',...</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>application/octet-stream</td>
+      <td>d1402094-d440-570c-9f55-07ffdd2fae19</td>
+      <td>S1A_EW_GRDM_1SDH_20220503T064800_20220503T0649...</td>
+      <td>application/octet-stream</td>
+      <td>0</td>
+      <td>2022-05-03T08:54:32.861Z</td>
+      <td>2022-05-03T08:59:36.441Z</td>
+      <td>2022-05-03T08:59:36.441Z</td>
+      <td>True</td>
+      <td></td>
+      <td>/eodata/Sentinel-1/SAR/GRD/2022/05/03/S1A_EW_G...</td>
+      <td>[]</td>
+      <td>{'Start': '2022-05-03T06:48:00.855Z', 'End': '...</td>
+      <td>geography'SRID=4326;POLYGON ((15.664783 76.959...</td>
+      <td>{'type': 'Polygon', 'coordinates': [[[15.66478...</td>
+      <td>[{'@odata.type': '#OData.CSC.StringAttribute',...</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
 <p>The acceptable arguments for this option: <em>Attributes</em></p>
 </section>
 <section id="product-download" class="level2">
 <h2 class="anchored" data-anchor-id="product-download">Product Download</h2>
 <p>For downloading products you need an authorization token as only authorized users are allowed to download data products.</p>
 <p>To get the token you can use the following scripts:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">--location</span> <span class="at">--request</span> POST <span class="st">'https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token'</span> <span class="dt">\</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">--header</span> <span class="st">'Content-Type: application/x-www-form-urlencoded'</span> <span class="dt">\</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">--data-urlencode</span> <span class="st">'grant_type=password'</span> <span class="dt">\</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--data-urlencode</span> <span class="st">'username=&lt;LOGIN&gt;'</span> <span class="dt">\</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">--data-urlencode</span> <span class="st">'password=&lt;PASSWORD&gt;'</span> <span class="dt">\</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">--data-urlencode</span> <span class="st">'client_id=cdse-public'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="panel-tabset">
+<pre class="{bash}"><code>curl --location --request POST 'https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token' \
+  --header 'Content-Type: application/x-www-form-urlencoded' \
+  --data-urlencode 'grant_type=password' \
+  --data-urlencode 'username=&lt;LOGIN&gt;' \
+  --data-urlencode 'password=&lt;PASSWORD&gt;' \
+  --data-urlencode 'client_id=cdse-public'</code></pre>
+</div>
 <p>or <!-- Following bash has been replaced by the new bash for ticket DAS-333
 ```bash
 '-d 'password=' -d 'grant_type=password' 'https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token' | python -m json.tool | grep "access_token" | awk -F\" '{print $4}')]]>
 ``` --></p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-d</span> <span class="st">'client_id=cdse-public'</span> <span class="at">-d</span> <span class="st">'username=&lt;LOGIN&gt;'</span> <span class="at">-d</span> <span class="st">'password=&lt;PASSWORD&gt;'</span> <span class="at">-d</span> <span class="st">'grant_type=password'</span> <span class="st">'https://identity.cloudferro.com/auth/realms/CDSE/protocol/openid-connect/token'</span> <span class="kw">|</span> <span class="ex">python</span> <span class="at">-m</span> json.tool <span class="kw">|</span> <span class="fu">grep</span> <span class="st">"access_token"</span> <span class="kw">|</span> <span class="fu">awk</span> <span class="at">-F\"</span> <span class="st">'{print $4}'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="panel-tabset">
+<pre class="{bash}"><code>curl -d 'client_id=cdse-public' -d 'username=&lt;LOGIN&gt;' -d 'password=&lt;PASSWORD&gt;' -d 'grant_type=password' 'https://identity.cloudferro.com/auth/realms/CDSE/protocol/openid-connect/token' | python -m json.tool | grep "access_token" | awk -F\" '{print $4}'</code></pre>
+</div>
 <p>Along with the Access Token you will be returned a Refresh Token, the latter is used to generate a new Access Token without the need to specify Username or Password, this helps to make requests less vulnerable to your credentials being exposed.</p>
 <p>To re-generate the Access Token from the Refresh Token it can be done with the following request:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">--location</span> <span class="at">--request</span> POST <span class="st">'https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token'</span> <span class="dt">\</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">--header</span> <span class="st">'Content-Type: application/x-www-form-urlencoded'</span> <span class="dt">\</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">--data-urlencode</span> <span class="st">'grant_type=refresh_token'</span> <span class="dt">\</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--data-urlencode</span> <span class="st">'refresh_token=&lt;REFRESH_TOKEN&gt;'</span> <span class="dt">\</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">--data-urlencode</span> <span class="st">'client_id=cdse-public'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="panel-tabset">
+<pre class="{bash}"><code>curl --location --request POST 'https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token' \
+  --header 'Content-Type: application/x-www-form-urlencoded' \
+  --data-urlencode 'grant_type=refresh_token' \
+  --data-urlencode 'refresh_token=&lt;REFRESH_TOKEN&gt;' \
+  --data-urlencode 'client_id=cdse-public'</code></pre>
+</div>
 <!--Where USER and PASSWORD are credentials to Your CloudFerro account in specific BRAND. Brand names are listed below with API from which You can get your token.
 
 | **Brand names** | **API** |
@@ -748,39 +2374,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p><br></p>
 <p>Once you have your token, you require a product Id which can be found in the response of the products search: <a href="https://catalogue.dataspace.copernicus.eu/odata/v1/Products" target="_blank"><code>https://catalogue.dataspace.copernicus.eu/odata/v1/Products</code></a></p>
 <p>Finally, you can download the product using this script:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-H</span> <span class="st">"Authorization: Bearer </span><span class="va">$KEYCLOAK_TOKEN</span><span class="st">"</span> <span class="st">'https://catalogue.dataspace.copernicus.eu/odata/v1/Products(060882f4-0a34-5f14-8e25-6876e4470b0d)/$value'</span> <span class="at">--output</span> /tmp/product.zip</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="panel-tabset">
+<pre class="{bash}"><code>curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" 'https://catalogue.dataspace.copernicus.eu/odata/v1/Products(060882f4-0a34-5f14-8e25-6876e4470b0d)/$value' --output /tmp/product.zip</code></pre>
+</div>
 <p>or</p>
-<div class="cell" data-execution_count="2">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>wget  <span class="op">--</span>header <span class="st">"Authorization: Bearer $KEYCLOAK_TOKEN"</span> <span class="st">'http://catalogue.dataspace.copernicus.eu/odata/v1/Products(db0c8ef3-8ec0-5185-a537-812dad3c58f8)/$value'</span> <span class="op">-</span>O example_odata.<span class="bu">zip</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>--2023-03-31 16:50:54--  http://catalogue.dataspace.copernicus.eu/odata/v1/Products(db0c8ef3-8ec0-5185-a537-812dad3c58f8)/$value
-Resolving catalogue.dataspace.copernicus.eu (catalogue.dataspace.copernicus.eu)... 64.225.133.92
-Connecting to catalogue.dataspace.copernicus.eu (catalogue.dataspace.copernicus.eu)|64.225.133.92|:80... </code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>connected.
-HTTP request sent, awaiting response... </code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>308 Permanent Redirect
-Location: https://catalogue.dataspace.copernicus.eu/odata/v1/Products(db0c8ef3-8ec0-5185-a537-812dad3c58f8)/$value [following]
---2023-03-31 16:50:54--  https://catalogue.dataspace.copernicus.eu/odata/v1/Products(db0c8ef3-8ec0-5185-a537-812dad3c58f8)/$value
-Connecting to catalogue.dataspace.copernicus.eu (catalogue.dataspace.copernicus.eu)|64.225.133.92|:443... </code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>connected.</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>HTTP request sent, awaiting response... </code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>401 UNAUTHORIZED
-
-Username/Password Authentication Failed.</code></pre>
-</div>
+<div class="panel-tabset">
+<pre class="{bash}"><code>!wget  --header "Authorization: Bearer $KEYCLOAK_TOKEN" 'http://catalogue.dataspace.copernicus.eu/odata/v1/Products(db0c8ef3-8ec0-5185-a537-812dad3c58f8)/$value' -O example_odata.zip</code></pre>
 </div>
 
 
