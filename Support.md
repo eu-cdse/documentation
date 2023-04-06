@@ -38,7 +38,7 @@ Enter the subject.
 
 Describe your problem in detail in the field Description.
 
-You can also add upload attachments such as screenshots in the Attachments section.
+You can also upload attachments such as screenshots in the Attachments section.
 
 Once you’ve finished, click SUBMIT.
 
