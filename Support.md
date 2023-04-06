@@ -12,7 +12,7 @@ If you have an issue with registering or you want to deregister, please [contact
 
 Navigate to the following [website](https://helpcenter.dataspace.copernicus.eu/hc/en-gb).
 
-In case you're not logged in, click on SIGN IN.
+In case you're not logged in, click on LOGIN.
 
 <img src="_images/help_center_sign_in.png" width="550">
 
