@@ -28,7 +28,7 @@ Once you have logged in you should see this window, click SUBMIT A REQUEST.
 
 <img src="_images/help_center_submit_request.png" width="550">
 
-The form used to create tickets should now appear:
+The form used to create tickets should now appear.
 
 <img src="_images/help_center_request_form.png" width="550">
 
@@ -58,7 +58,7 @@ You will now see all your requests.
 
 <img src="_images/help_center_your_requests_list.png" width="550">
 
-If you can’t see your request here, make sure that the option Any status from the first drop-down menu is selected.
+If you can’t see your request here, make sure that Status "Any" is selected from the drop-down.
 
 You should now see your request.
 
