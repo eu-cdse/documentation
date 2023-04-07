@@ -5,7 +5,7 @@ This section gives an overview on the APIs provided by Copernicus Data Space Eco
 ## Catalogue APIs
 
 #### [OData](APIs/OData.qmd)
-#### [OpenSearch](APIs/OpenSearch.md)
+#### [OpenSearch](APIs/OpenSearch.qmd)
 
 #### [Sentinel Hub](APIs/SentinelHub.md)
   <!-- *  [OpenSearch (Resto)](/APIs.md) -->
