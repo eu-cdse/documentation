@@ -17,7 +17,7 @@ Sets the color from a discrete color map.
 #### Parameters
 
 -   `valColPairs`
-    **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array){target="_blank"}\<\[[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number),
+    **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array){target="_blank"}\<\[[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"},
     [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"}\]\>** 
 
 #### Examples
