@@ -1,0 +1,44 @@
+on:
+  push:
+    branches: publish  
+
+name: Publish to portal
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      contents: write
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+      - name: Set Git config
+        run: |
+          git config --local user.email "actions@github.com"
+          git config --local user.name "Github Actions"
+      - name: Create git subtree
+        run: git subtree add --prefix _build origin docportal-prod
+      - name: Set up Quarto
+        uses: quarto-dev/quarto-actions/setup@v2
+        with:
+          # To install LaTeX to build PDF book 
+          tinytex: true 
+          # uncomment below and fill to pin a version
+          # version: SPECIFIC-QUARTO-VERSION-HERE
+      
+      # add software dependencies here
+      - name: Install Python and Dependencies
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+      - run: pip install jupyter
+      - run: pip install -r requirements.txt
+      - name: Render
+        run: quarto render --output-dir _build
+      - name: Commit
+        run: git add _build && git commit -m "build - production deploy" && git subtree push --prefix _build origin docportal-prod
+
+      
+

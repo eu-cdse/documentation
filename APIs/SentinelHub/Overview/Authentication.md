@@ -9,10 +9,10 @@ forever for a multitude of reasons, but you can get new ones and when
 they expire from the Sentinel-Hub OAuth2 server at the token endpoint
 listed below. But first, if you do not have one already, you need to
 register an OAuth Client in your [account
-settings](https://apps.sentinel-hub.com/dashboard/#/account/settings).
+settings](https://apps.sentinel-hub.com/dashboard/#/account/settings){target="_blank"}.
 This is so the server can expect you to make such token requests. If you
 do not have a Sentinel-Hub account, you can sign up for a [free trial
-account](https://www.sentinel-hub.com/create_account).
+account](https://www.sentinel-hub.com/create_account){target="_blank"}.
 
 #### How to use tokens
 
@@ -27,8 +27,8 @@ are rate limited, so if you are getting an HTTP 429 error, that means
 you are requesting too many tokens.
 
 Tokens are JSON Web Tokens (JWT), more information about them
-[here](https://en.wikipedia.org/wiki/JSON_Web_Token) or
-[here](https://datatracker.ietf.org/doc/html/rfc7519).
+[here](https://en.wikipedia.org/wiki/JSON_Web_Token){target="_blank"} or
+[here](https://datatracker.ietf.org/doc/html/rfc7519){target="_blank"}.
 
 ### Registering OAuth client
 
@@ -47,8 +47,8 @@ are now ready to request tokens.
 
 To request tokens the easiest way is to have some software which
 understands OAuth2 and can make the proper request. For example, REST
-clients like [Postman](https://www.getpostman.com/) and
-[Insomnia](https://insomnia.rest/) have support for OAuth2 Client
+clients like [Postman](https://www.getpostman.com/){target="_blank"} and
+[Insomnia](https://insomnia.rest/){target="_blank"} have support for OAuth2 Client
 credentials already included. See the Token Request Examples section
 below.
 
@@ -89,12 +89,12 @@ Client. `Scope` can be blank. Keep `Client Authentication` as
 `Send As Basic Auth Header`. Click `Request Token`. You should get a new
 one immediately. To use this token to authorize your request, click
 `Use Token`. For more information see the Postman [authorization
-documentation](https://learning.getpostman.com/docs/postman/sending_api_requests/authorization/#oauth-20)
+documentation](https://learning.getpostman.com/docs/postman/sending_api_requests/authorization/#oauth-20){target="_blank"}
 
 #### Python
 
 In python the
-[requests-oauthlib](https://github.com/requests/requests-oauthlib)
+[requests-oauthlib](https://github.com/requests/requests-oauthlib){target="_blank"}
 library can handle the retrieval of access tokens using your OAuth
 Client configuration.
 
@@ -136,7 +136,7 @@ oauth.register_compliance_hook("access_token_response", sentinelhub_compliance_h
 
 #### Javascript
 
-Example using [axios](https://github.com/axios/axios).
+Example using [axios](https://github.com/axios/axios){target="_blank"}.
 
 ``` javascript
 import axios from "axios"
