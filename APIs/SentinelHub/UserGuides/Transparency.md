@@ -42,7 +42,7 @@ function evaluatePixel(samples, scenes) {
 ```
 
 [Examine in EO
-Browser](https://apps.sentinel-hub.com/eo-browser/?lat=45.7097&lng=13.4258&zoom=10&time=2020-03-19&preset=CUSTOM&datasource=Sentinel-2%20L2A&layers=B01,B02,B03&evalscript=Ly9WRVJTSU9OPTMKZnVuY3Rpb24gc2V0dXAgKCkgewoJcmV0dXJuewoJCWlucHV0OlsiQjA0IiwgIkIwMyIsICJCMDIiLCAiZGF0YU1hc2siXSwKCQlvdXRwdXQ6e2JhbmRzOiA0fQoJfQkJCn0KCgpmdW5jdGlvbiBldmFsdWF0ZVBpeGVsKHNhbXBsZXMsc2NlbmVzKSB7ICAKCiAgCiAgcmV0dXJuIFtzYW1wbGVzLkIwNCozLjUsIHNhbXBsZXMuQjAzKjMuNSwgc2FtcGxlcy5CMDIqMy41LCBzYW1wbGVzLmRhdGFNYXNrXQp9)
+Browser](https://apps.sentinel-hub.com/eo-browser/?lat=45.7097&lng=13.4258&zoom=10&time=2020-03-19&preset=CUSTOM&datasource=Sentinel-2%20L2A&layers=B01,B02,B03&evalscript=Ly9WRVJTSU9OPTMKZnVuY3Rpb24gc2V0dXAgKCkgewoJcmV0dXJuewoJCWlucHV0OlsiQjA0IiwgIkIwMyIsICJCMDIiLCAiZGF0YU1hc2siXSwKCQlvdXRwdXQ6e2JhbmRzOiA0fQoJfQkJCn0KCgpmdW5jdGlvbiBldmFsdWF0ZVBpeGVsKHNhbXBsZXMsc2NlbmVzKSB7ICAKCiAgCiAgcmV0dXJuIFtzYW1wbGVzLkIwNCozLjUsIHNhbXBsZXMuQjAzKjMuNSwgc2FtcGxlcy5CMDIqMy41LCBzYW1wbGVzLmRhdGFNYXNrXQp9){target="_blank"}
 
 ### Transparent data pixels
 
@@ -50,7 +50,7 @@ To use some other condition for turning pixels transparent, simply
 return the condition in the fourth channel, while also outputting four
 bands in the `function setup()`. In the example below, we are returning
 the Sentinel-2 L1C [NDVI
-index](https://custom-scripts.sentinel-hub.com/sentinel-2/ndvi/) larger
+index](https://custom-scripts.sentinel-hub.com/sentinel-2/ndvi/){target="_blank"} larger
 than 0.6 as transparent. We also leave the no-data pixels
 non-transparent and thus do not need to use the the `dataMask` input
 band.
@@ -69,7 +69,7 @@ function evaluatePixel(samples, scenes) {
 }
 ```
 
-[Examine in EO Browser](https://tinyurl.com/y98vmqjd)
+[Examine in EO Browser](https://tinyurl.com/y98vmqjd){target="_blank"}
 
 **Transparency with other sampleTypes**
 
@@ -96,7 +96,7 @@ function evaluatePixel(samples, scenes) {
 ### Both data pixels and no-data pixels transparent
 
 In the following example, we have returned Sentinel-3 OLCI pixels with
-[OTCI index](https://custom-scripts.sentinel-hub.com/sentinel-3/otci/)
+[OTCI index](https://custom-scripts.sentinel-hub.com/sentinel-3/otci/){target="_blank"}
 values larger than 1 as transparent, rendering most marine pixels
 transparent. Additionally, we have also multiplied the condition for the
 transparent pixels with data in the fourth channel with `dataMask`,
@@ -116,7 +116,7 @@ function evaluatePixel(samples, scenes) {
 }
 ```
 
-[Examine in EO Browser](https://tinyurl.com/y7dskybg)
+[Examine in EO Browser](https://tinyurl.com/y7dskybg){target="_blank"}
 
 ### Background color for no-data pixels
 
@@ -144,7 +144,7 @@ function evaluatePixel(samples, scenes) {
 }
 ```
 
-[Examine in EO Browser](https://tinyurl.com/y92f4zoo)
+[Examine in EO Browser](https://tinyurl.com/y92f4zoo){target="_blank"}
 
 ### Background color for no-data pixels with transparency for data pixels
 
@@ -174,7 +174,7 @@ function evaluatePixel(samples, scenes) {
 }
 ```
 
-[Examine in EO Browser](https://tinyurl.com/yaa839uq)
+[Examine in EO Browser](https://tinyurl.com/yaa839uq){target="_blank"}
 
 ### Switching between transparency and background color with multiple conditions
 
@@ -182,7 +182,7 @@ The easy way to control which parts are transparent is to use either 1
 (not transparent) or 0 (transparent) in the fourth channel. In the
 example using Landsat 8 below, we have separated the pixel evaluation
 into 3 parts: the first \'if\' statement includes all the [NDMI
-index](https://www.usgs.gov/land-resources/nli/landsat/normalized-difference-moisture-index)
+index](https://www.usgs.gov/land-resources/nli/landsat/normalized-difference-moisture-index){target="_blank"}
 \> 0.5 pixels, the second \'if\' statement includes the no-data pixels
 (those with the value 0 in the `dataMask` band). The final `return`
 produces true color bands for all the other pixels. Currently, all of
@@ -207,7 +207,7 @@ function evaluatePixel(samples, scenes) {
 }
 ```
 
-[Examine in EO Browser](https://tinyurl.com/yb3xmelp)
+[Examine in EO Browser](https://tinyurl.com/yb3xmelp){target="_blank"}
 
 We can turn any one of them instantly transparent by changing 1 in the
 fourth channel to 0. In the example below, we left the NDMI \> 0.5
@@ -233,7 +233,7 @@ function evaluatePixel(samples, scenes) {
 }
 ```
 
-[Examine in EO Browser](https://tinyurl.com/y9lywgwh)
+[Examine in EO Browser](https://tinyurl.com/y9lywgwh){target="_blank"}
 
 ### Transparency with commercial Planet data
 
