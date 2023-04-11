@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Documentation - OpenSearch</title>
+<title>Documentation - OpenSearch Catalog web service</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -83,7 +83,7 @@ ul.task-list li input[type="checkbox"] {
     </nav>
   <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
     <div class="container-fluid d-flex justify-content-between">
-      <h1 class="quarto-secondary-nav-title">OpenSearch</h1>
+      <h1 class="quarto-secondary-nav-title">OpenSearch Catalog web service</h1>
       <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
         <i class="bi bi-chevron-right"></i>
       </button>
@@ -357,13 +357,16 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#general-rules" id="toc-general-rules" class="nav-link active" data-scroll-target="#general-rules">General Rules</a></li>
+  <li><a href="#using-opensearch-interface-to-query-data-catalogue" id="toc-using-opensearch-interface-to-query-data-catalogue" class="nav-link active" data-scroll-target="#using-opensearch-interface-to-query-data-catalogue">Using OpenSearch interface to query Data Catalogue</a>
+  <ul>
+  <li><a href="#general-rules" id="toc-general-rules" class="nav-link" data-scroll-target="#general-rules">General Rules</a></li>
   <li><a href="#collections" id="toc-collections" class="nav-link" data-scroll-target="#collections">Collections</a></li>
   <li><a href="#output-sorting-and-limiting" id="toc-output-sorting-and-limiting" class="nav-link" data-scroll-target="#output-sorting-and-limiting">Output sorting and limiting</a></li>
   <li><a href="#formal-queries" id="toc-formal-queries" class="nav-link" data-scroll-target="#formal-queries">Formal queries</a></li>
   <li><a href="#geography-and-time-frame" id="toc-geography-and-time-frame" class="nav-link" data-scroll-target="#geography-and-time-frame">Geography and time-frame</a></li>
   <li><a href="#volatile-features" id="toc-volatile-features" class="nav-link" data-scroll-target="#volatile-features">Volatile features</a></li>
   <li><a href="#satellite-features" id="toc-satellite-features" class="nav-link" data-scroll-target="#satellite-features">Satellite features</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -372,7 +375,7 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title d-none d-lg-block">OpenSearch</h1>
+<h1 class="title d-none d-lg-block">OpenSearch Catalog web service</h1>
 </div>
 
 
@@ -387,21 +390,45 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
-<p>The OpenSearch standard aims to provide an easy way to query a repository containing Earth Observation data and to enable repository syndication. ## Using OpenSearch interface to query Data Catalogue</p>
+<p>The OpenSearch catalogue allows you to search through Copernicus data using a standardized web service. The <a href="https://github.com/dewitt/opensearch/blob/master/opensearch-1-1-draft-6.md" target="_blank">OpenSearch specification</a> can be consulted for technical details of the standard. This web service returns results as GeoJSON feature collections. Each feature in the collection represents an earth observation ‘product’, with references to where the actual data can be found.</p>
+<p>We remark that this version does not implement the OGC Opensearch standard, and a migration from other API’s named OpenSearch may require significant modifications. It mainly offers compatibility for existing users of a similar API on the CreoDIAS and Wekeo platforms, and with client side tools and workflows that have implemented support for this API. For new users looking for a more standardized API, a <a href="https://stacspec.org" target="_blank">STAC</a> alternative is being developed.</p>
+<section id="using-opensearch-interface-to-query-data-catalogue" class="level2">
+<h2 class="anchored" data-anchor-id="using-opensearch-interface-to-query-data-catalogue">Using OpenSearch interface to query Data Catalogue</h2>
 <p>Due to the fact that offset is not a recommended form of searching repository pages, we had to implement limit to a maximum of 200k. The requests over the limit will be rejected with the code 400. We encourage you to limit your inquiries by geographic or temporal area.</p>
 <p>All queries may be executed as simple HTTP-Get calls, by typing the query in web browser address line, by using any HTTP client, e.g.&nbsp;curl or wget, or from inside of users’ program. The database is accessible free and anonymously (open for anonymous access for everyone, no authorization is used) It may be accessed both from the internal network (virtual machines in Creodias) and from outside, e.g.&nbsp;your home computer. Note, that the actual EO data themselves are restricted to authorized users, only the Data Catalogue is open.</p>
 <section id="general-rules" class="level3">
 <h3 class="anchored" data-anchor-id="general-rules">General Rules</h3>
 <p>The queries produce results in JSON format. Base url:</p>
-<p><a href="http://catalogue.dataspace.copernicus.eu/resto/api/collections/search.json?">http://catalogue.dataspace.copernicus.eu/resto/api/collections/search.json?</a></p>
+<div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" aria-current="page">HTTP Request</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<p><a href="http://catalogue.dataspace.copernicus.eu/resto/api/collections/search.json?" target="_blank">http://catalogue.dataspace.copernicus.eu/resto/api/collections/search.json?</a></p>
+</div>
+</div>
+</div>
 <p>Most queries are case-sensitive.</p>
 </section>
 <section id="collections" class="level3">
 <h3 class="anchored" data-anchor-id="collections">Collections</h3>
 <p>The data are organized in so-called collections, corresponding to various satellites. A query may search for data in all collections, or in one particular collection only. If only one satellite is in the field of interest, the second approach is faster and more efficient, than filtering the general query. For example, to find 10 most recent Sentinel-2 products with cloud cover below 10%, the query should look like:</p>
-<pre><code>$ wget -O - "http://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=[0,10]&amp;startDate=2022-06-11&amp;completionDate=2022-06-22&amp;maxRecords=10"</code></pre>
+<div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">CLI</a></li></ul>
+<div class="tab-content">
+<div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
+<pre class="{bash}"><code>$ wget -O - "http://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=[0,10]&amp;startDate=2022-06-11&amp;completionDate=2022-06-22&amp;maxRecords=10"</code></pre>
+</div>
+</div>
+</div>
 <p>while if the collection field is missing in the URL, the products from all the satellites are returned:</p>
-<pre><code>$ wget -O - "https://catalogue.dataspace.copernicus.eu/resto/api/collections/search.json?cloudCover=[0,10]&amp;startDate=2022-06-11&amp;completionDate=2022-06-22&amp;maxRecords=10"</code></pre>
+<div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true">CLI</a></li></ul>
+<div class="tab-content">
+<div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
+<pre class="{bash}"><code>$ wget -O - "https://catalogue.dataspace.copernicus.eu/resto/api/collections/search.json?cloudCover=[0,10]&amp;startDate=2022-06-11&amp;completionDate=2022-06-22&amp;maxRecords=10"</code></pre>
+</div>
+</div>
+</div>
 <p>As for today the following collections are defined and may be used:</p>
 <p><strong>Sentinel1 or SENTINEL-1</strong></p>
 <p><strong>Sentinel2 or SENTINEL-2</strong></p>
@@ -424,15 +451,36 @@ ul.task-list li input[type="checkbox"] {
 <p>each of them may be accompanied by</p>
 <p><strong>sortOrder=ascending or sortOrder=descending</strong></p>
 <p>For example the query</p>
-<p><a href="http://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?startDate=2016-07-01&amp;completionDate=2016-07-31&amp;sortParam=cloudCover&amp;maxRecords=20">http://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?startDate=2021-07-01&amp;completionDate=2021-07-31&amp;sortParam=startDate&amp;maxRecords=20</a></p>
+<div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true">HTTP Request</a></li></ul>
+<div class="tab-content">
+<div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
+<p><a href="http://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?startDate=2016-07-01&amp;completionDate=2016-07-31&amp;sortParam=cloudCover&amp;maxRecords=20" target="_blank">http://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?startDate=2021-07-01&amp;completionDate=2021-07-31&amp;sortParam=startDate&amp;maxRecords=20</a></p>
+</div>
+</div>
+</div>
 <p>will return 20 products from July 2021, while the next query would return the next 20:</p>
-<p><a href="http://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?startDate=2021-07-01&amp;completionDate=2021-07-31&amp;sortParam=startDate&amp;maxRecords=20&amp;page=2">http://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?startDate=2021-07-01&amp;completionDate=2021-07-31&amp;sortParam=startDate&amp;maxRecords=20&amp;page=2</a></p>
+<div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-5-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-1" role="tab" aria-controls="tabset-5-1" aria-selected="true">HTTP Request</a></li></ul>
+<div class="tab-content">
+<div id="tabset-5-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-5-1-tab">
+<p><a href="http://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?startDate=2021-07-01&amp;completionDate=2021-07-31&amp;sortParam=startDate&amp;maxRecords=20&amp;page=2" target="_blank">http://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?startDate=2021-07-01&amp;completionDate=2021-07-31&amp;sortParam=startDate&amp;maxRecords=20&amp;page=2</a></p>
+</div>
+</div>
+</div>
 </section>
 <section id="formal-queries" class="level3">
 <h3 class="anchored" data-anchor-id="formal-queries">Formal queries</h3>
 <p>The formal query is invoked as a sequence of sub phrases, separated by &amp;. The result is a conjunction of all sub phrases. It is impossible to use an alternative in the question. The query must be specified as a formal query.</p>
 <p>The example of formal query - about cloudless (cloud cover lower or equal to 10%) products for a specific location:</p>
-<p><a href="https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=%5B0,10%5D&amp;startDate=2021-06-21&amp;completionDate=2021-09-22&amp;lon=21.01&amp;lat=52.22">https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=[0,10]&amp;startDate=2021-06-21&amp;completionDate=2021-09-22&amp;lon=21.01&amp;lat=52.22</a></p>
+<div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-6-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-1" role="tab" aria-controls="tabset-6-1" aria-selected="true">HTTP Request</a></li></ul>
+<div class="tab-content">
+<div id="tabset-6-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-6-1-tab">
+<p><a href="https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=%5B0,10%5D&amp;startDate=2021-06-21&amp;completionDate=2021-09-22&amp;lon=21.01&amp;lat=52.22" target="_blank">https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=[0,10]&amp;startDate=2021-06-21&amp;completionDate=2021-09-22&amp;lon=21.01&amp;lat=52.22</a></p>
+</div>
+</div>
+</div>
 <p>The queries are in form <strong>param=value or param=[minvalue,maxvalue**]. Most of the parameters are common for all collections, but some are specific for some them (e.g.&nbsp;</strong>cloudCover** applies to optical satellites, but polarisation applies to radar ones), or just single one.</p>
 </section>
 <section id="geography-and-time-frame" class="level3">
@@ -445,9 +493,23 @@ ul.task-list li input[type="checkbox"] {
 <p><strong>box</strong> - region of interest, defined as the rectangle with given (west,south,east,north) values</p>
 <p>box is defined this way: &amp;box=west,south,east,north</p>
 <p>For example the query</p>
-<p><a href="https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=%5B0,10%5D&amp;startDate=2022-06-11&amp;completionDate=2022-06-22&amp;maxRecords=10&amp;box=-1,1,-1,1">https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=[0,10]&amp;startDate=2022-06-11&amp;completionDate=2022-06-22&amp;maxRecords=10&amp;box=-1,1,-1,1</a></p>
+<div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-7-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-1" role="tab" aria-controls="tabset-7-1" aria-selected="true">HTTP Request</a></li></ul>
+<div class="tab-content">
+<div id="tabset-7-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-7-1-tab">
+<p><a href="https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=%5B0,10%5D&amp;startDate=2022-06-11&amp;completionDate=2022-06-22&amp;maxRecords=10&amp;box=-1,1,-1,1" target="_blank">https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=[0,10]&amp;startDate=2022-06-11&amp;completionDate=2022-06-22&amp;maxRecords=10&amp;box=-1,1,-1,1</a></p>
+</div>
+</div>
+</div>
 <p>or</p>
-<p><a href="https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=%5B0,10%5D&amp;startDate=2022-06-11&amp;completionDate=2022-06-22&amp;maxRecords=10&amp;box=-21,23,-24,15">https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=[0,10]&amp;startDate=2022-06-11&amp;completionDate=2022-06-22&amp;maxRecords=10&amp;box=-21,23,-24,15</a></p>
+<div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-8-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-1" role="tab" aria-controls="tabset-8-1" aria-selected="true">HTTP Request</a></li></ul>
+<div class="tab-content">
+<div id="tabset-8-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-8-1-tab">
+<p><a href="https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=%5B0,10%5D&amp;startDate=2022-06-11&amp;completionDate=2022-06-22&amp;maxRecords=10&amp;box=-21,23,-24,15" target="_blank">https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=[0,10]&amp;startDate=2022-06-11&amp;completionDate=2022-06-22&amp;maxRecords=10&amp;box=-21,23,-24,15</a></p>
+</div>
+</div>
+</div>
 </section>
 <section id="volatile-features" class="level3">
 <h3 class="anchored" data-anchor-id="volatile-features">Volatile features</h3>
@@ -470,7 +532,14 @@ ul.task-list li input[type="checkbox"] {
 </ul>
 <p>Some additional parameters are strictly satellite-specific, e.g.&nbsp;polarisation, which is defined only for Sentinel-1</p>
 <p>For every satellite (collection) its set of query-able parameters may be obtained by a query like:</p>
-<p><a href="https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel1/describe.xml">https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel1/describe.xml</a></p>
+<div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-9-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-9-1" role="tab" aria-controls="tabset-9-1" aria-selected="true">HTTP Request</a></li></ul>
+<div class="tab-content">
+<div id="tabset-9-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-9-1-tab">
+<p><a href="https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel1/describe.xml" target="_blank">https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel1/describe.xml</a></p>
+</div>
+</div>
+</div>
 <p>The resulting XML file provides full list of the parameters for the collection, with their very brief descriptions.</p>
 <!-- Following lines are removed at request from Natalia Sobieska mail to BartBomans dd27.01.2023 16:43
 ## Order API Documentation
@@ -482,6 +551,7 @@ was already in comment -- [**https://finder.creodias.eu/api/docs/**](https://fin
 [**EO Data Ordering API2 Manual**](https://creodias.eu/-/comletiondatestartdate-and-in-finder-api-v2?) -->
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
