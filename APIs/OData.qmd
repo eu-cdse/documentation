@@ -14,6 +14,13 @@ import pandas as pd
 ```
 
 <!-- # Data catalogue API with OData interface -->
+```{python}
+#| echo: false
+
+#import packages
+import requests
+import pandas as pd
+```
 
 OData (Open Data Protocol) is a standard that specifies a variety of best practices for creating and using REST APIs. OData makes it possible to build REST-based data services that let Web clients publish and edit resources that are recognized by Uniform Resource Locators (URLs) and described in a data model using straightforward HTTP messages.
 
@@ -46,11 +53,10 @@ pd.DataFrame.from_dict(json['value']).head(3)
 
 :::
 
-<u>Performance note</u>:
+
+::: {.callout-note} 
 
 To accelerate the query performance it is recommended to limit the query by acquisition dates e.g.:
-
-::: {.callout-note}
 
 ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-21T00:00:00.000Z
 
@@ -96,7 +102,7 @@ In case a user desires to search for multiple products by name in one query, POS
 [`https://catalogue.dataspace.copernicus.eu/odata/v1/Products/OData.CSC.FilterList`](https://catalogue.dataspace.copernicus.eu/odata/v1/Products/OData.CSC.FilterList){target="_blank"}
 
 **Request body**:
-```Json
+```{json}
 {
   "FilterProducts":
     [
@@ -245,7 +251,7 @@ pd.DataFrame.from_dict(json['value']).head(3)
 
 To search for products by attributes it is necessary to build a filter with the following structure:
 
-::: {.callout-note}
+
 
  Attributes/OData.CSC.ValueTypeAttribute/any(att:att/Name eq '[Attribute.Name]' and att/OData.CSC.ValueTypeAttribute/Value eq '[Attribute.Value]')
 
@@ -260,7 +266,6 @@ where
 - *eq* before *[Attribute.Value]* can be substituted with le, lt, ge, gt in case of *Integer, Double* or *DateTimeOffset* Attributes
 - *[Attribute.Value]* is the specific value that the user is searching for
 
-:::
 
 To get products with CloudCover\<40% between two dates:
 
@@ -438,7 +443,7 @@ To get the token you can use the following scripts:
 
 ::: {.panel-tabset}
 
-```
+```{bash}
 curl --location --request POST 'https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token' \
   --header 'Content-Type: application/x-www-form-urlencoded' \
   --data-urlencode 'grant_type=password' \
@@ -456,19 +461,18 @@ or
 
 ::: {.panel-tabset}
 
-```
-
+```{bash}
 curl -d 'client_id=cdse-public' -d 'username=<LOGIN>' -d 'password=<PASSWORD>' -d 'grant_type=password' 'https://identity.cloudferro.com/auth/realms/CDSE/protocol/openid-connect/token' | python -m json.tool | grep "access_token" | awk -F\" '{print $4}'
-
 ```
 :::
+
 Along with the Access Token you will be returned a Refresh Token, the latter is used to generate a new Access Token without the need to specify Username or Password, this helps to make requests less vulnerable to your credentials being exposed.
 
 To re-generate the Access Token from the Refresh Token it can be done with the following request:
 
 ::: {.panel-tabset}
 
-```
+```{bash}
 curl --location --request POST 'https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token' \
   --header 'Content-Type: application/x-www-form-urlencoded' \
   --data-urlencode 'grant_type=refresh_token' \
@@ -496,7 +500,8 @@ Once you have your token, you require a product Id which can be found in the res
 Finally, you can download the product using this script:
 
 ::: {.panel-tabset}
-```
+
+```{bash}
 curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" 'https://catalogue.dataspace.copernicus.eu/odata/v1/Products(060882f4-0a34-5f14-8e25-6876e4470b0d)/$value' --output /tmp/product.zip
 ```
 :::
@@ -505,7 +510,7 @@ or
 
 ::: {.panel-tabset}
 
-```
+```{bash}
 !wget  --header "Authorization: Bearer $KEYCLOAK_TOKEN" 'http://catalogue.dataspace.copernicus.eu/odata/v1/Products(db0c8ef3-8ec0-5185-a537-812dad3c58f8)/$value' -O example_odata.zip
 ```
 
