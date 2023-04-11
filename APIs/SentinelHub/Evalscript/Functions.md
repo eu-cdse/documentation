@@ -17,8 +17,8 @@ Sets the color from a discrete color map.
 #### Parameters
 
 -   `valColPairs`
-    **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<\[[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number),
-    [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)\]\>** 
+    **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array){target="_blank"}\<\[[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number),
+    [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"}\]\>** 
 
 #### Examples
 
@@ -43,12 +43,12 @@ Returns interpolated color for value.
 ##### Parameters
 
 -   `val`
-    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
+    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"}** 
 
 Returns
-**\[[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number),
-[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number),
-[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)\]**
+**\[[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"},
+[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"},
+[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"}\]**
 normalized RGB triplet.
 
 #### createDefaultColorMap
@@ -80,13 +80,13 @@ Interpolates a color based on interval.
 #### Parameters
 
 -   `valColPairs`
-    **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<\[[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number),
-    [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)\]\>** 
+    **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array){target="_blank"}\<\[[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number),
+    [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"}\]\>** 
 -   `minVal`
-    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**
+    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"}**
     (optional, default `0.0`)
 -   `maxVal`
-    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**
+    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"}**
     (optional, default `1.0`)
 
 #### process
@@ -96,12 +96,12 @@ Returns interpolated color for value.
 ##### Parameters
 
 -   `val`
-    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
+    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"}** 
 
 Returns
-**\[[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number),
-[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number),
-[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)\]**
+**\[[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"},
+[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"},
+[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"}\]**
 normalized RGB triplet.
 
 #### createRedTemperature
@@ -112,10 +112,10 @@ Creates ColorGradientVisualizer with valColPairs
 ##### Parameters
 
 -   `minVal`
-    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**
+    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"}**
     min value of interval
 -   `maxVal`
-    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**
+    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"}**
     max value of interval
 
 ##### Examples
@@ -139,10 +139,10 @@ Creates ColorGradientVisualizer with valColPairs
 ##### Parameters
 
 -   `minVal`
-    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**
+    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"}**
     min value of interval
 -   `maxVal`
-    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**
+    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"}**
     max value of interval
 
 ##### Examples
@@ -165,10 +165,10 @@ Creates ColorGradientVisualizer with valColPairs [blueRed](#bluered)
 ##### Parameters
 
 -   `minVal`
-    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**
+    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"}**
     min value of interval
 -   `maxVal`
-    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**
+    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"}**
     max value of interval
 
 ##### Examples
@@ -191,8 +191,8 @@ Interpolates a color based on the given color ramps.
 #### Parameters
 
 -   `ramps`
-    **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<\[[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number),
-    [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)\]\>**
+    **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array){target="_blank"}\<\[[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number),
+    [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"}\]\>**
     Array of color ramps, which are defined as a pair of numbers - the
     ramp start and the ramp starting color.
 
@@ -219,12 +219,12 @@ Returns interpolated color for value.
 ##### Parameters
 
 -   `value`
-    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
+    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"}** 
 
 Returns
-**\[[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number),
-[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number),
-[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)\]**
+**\[[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"},
+[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"},
+[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"}\]**
 normalized RGB triplet.
 
 ### HighlightCompressVisualizer
@@ -243,11 +243,11 @@ keep some detail in clouds.
 #### Parameters
 
 -   `minValue`
-    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**
+    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"}**
     the value which will be mapped to 0. All values smaller than
     minValue will also be mapped to 0. (optional, default `0.0`)
 -   `maxValue`
-    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**
+    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"}**
     the value which controls the position of the boundary point between
     both linear functions. It will be mapped to approx. 0.9259, while
     values greater than or equal to (2\*maxValue - minValue) will be
@@ -277,14 +277,14 @@ Returns mapped value.
 ##### Parameters
 
 -   `val`
-    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**
+    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"}**
     the input value to be mapped.
 -   `i`
-    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**
+    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"}**
     the index of val. This is EO Browser specific.
 
 Returns
-**\[[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)\]**
+**\[[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"}\]**
 mapped value.
 
 ## Helper functions
@@ -298,7 +298,7 @@ Transforms a color as integer into RGB triplet.
 #### Parameters
 
 -   `color`
-    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**
+    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"}**
     as integer
 
 #### Examples
@@ -310,9 +310,9 @@ int2rgb(65537);  // returns [ 1, 0, 1 ]
 ```
 
 Returns
-**\[[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number),
-[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number),
-[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)\]** 
+**\[[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"},
+[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"},
+[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"}\]** 
 
 ### rgb2int
 
@@ -322,9 +322,9 @@ into integer.
 #### Parameters
 
 -   `color`
-    **\[[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number),
-    [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number),
-    [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)\]**
+    **\[[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"},
+    [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"},
+    [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"}\]**
     as RGB triplet
 
 #### Examples
@@ -336,7 +336,7 @@ rgb2int([1, 0, 1]);    // returns 65537
 ```
 
 Returns
-**[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
+**[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"}** 
 
 ### combine
 
@@ -345,13 +345,13 @@ Combines two colors.
 #### Parameters
 
 -   `color1`
-    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**
+    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"}**
     The first color defined as an array of values.
 -   `color2`
-    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**
+    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"}**
     The second color defined as an array of values.
 -   `alpha`
-    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**
+    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"}**
     A share of the first color defined as a floating point between 0 and
     1.
 
@@ -364,7 +364,7 @@ combine([100, 0, 0], [0, 100, 0], 0.5); // returns [ 50, 50, 0 ]
 ```
 
 Returns
-**[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**
+**[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"}**
 The combined color defined as an array of values.
 
 ### index
@@ -374,10 +374,10 @@ Calculate difference divided by sum
 #### Parameters
 
 -   `x`
-    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**
+    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"}**
     first value
 -   `y`
-    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**
+    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"}**
     second value
 
 #### Examples
@@ -388,7 +388,7 @@ index(0.5, -0.5); //returns 0.0
 ```
 
 Returns
-**[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**
+**[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"}**
 `(x - y) / (x + y)`, if sum is 0 returns 0
 
 ### inverse
@@ -398,7 +398,7 @@ Calculate inverse value
 #### Parameters
 
 -   `x`
-    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**
+    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"}**
     value
 
 #### Examples
@@ -410,7 +410,7 @@ inverse(0); // returns 1.7976931348623157E308
 ```
 
 Returns
-**[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**
+**[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"}**
 inverse of value of x (`1 / x`), if x is 0 returns
 [JAVA_DOUBLE_MAX_VAL](#java_double_max_val)
 
@@ -431,10 +431,10 @@ defines the following mapping:
 #### Parameters
 
 -   `value`
-    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**
+    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"}**
     input value
 -   `intervals`
-    **\[[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)\]**
+    **\[[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"}\]**
     array of numbers in ascending order defining intervals
 -   `values`
     **\[[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)\]**
@@ -451,7 +451,7 @@ valueMap(50); // returns 50
 ```
 
 Returns
-**[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
+**[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"}** 
 
 ### valueInterpolate
 
@@ -474,15 +474,15 @@ defines the following mapping:
 #### Parameters
 
 -   `value`
-    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**
+    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"}**
     input value
 -   `intervals`
-    **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)\>**
+    **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array){target="_blank"}\<[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)\>**
     array of numbers in ascending order defining intervals
 -   `values`
-    **([Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)\>
+    **([Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array){target="_blank"}\<[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)\>
     \|
-    [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)\>\>)**
+    [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array){target="_blank"}\<[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array){target="_blank"}\<[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"}\>\>)**
     output interval for the given value/interval of the intervals array
 
 #### Examples
@@ -503,9 +503,9 @@ valueInterpolate(0.1, [0, 0.2, 0.4, 0.6, 0.8, 1], [
 ```
 
 Returns
-**([number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)
+**([number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"}
 \|
-[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)\>)** 
+[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array){target="_blank"}\<[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"}\>)** 
 
 ## Constants
 
@@ -516,7 +516,7 @@ Returns
 ```
 
 Type:
-[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)
+[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"}
 
 ### blueRed
 
@@ -532,8 +532,8 @@ const blueRed = [
 ```
 
 Type:
-[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<\[[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number),
-[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)\]\>
+[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array){target="_blank"}\<\[[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number),
+[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"}\]\>
 
 ### redTemperature
 
@@ -548,8 +548,8 @@ const redTemperature = [
 ```
 
 Type:
-[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<\[[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number),
-[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)\]\>
+[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array){target="_blank"}\<\[[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"},
+[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"}\]\>
 
 ### greenWhite
 
@@ -563,29 +563,29 @@ const greenWhite = [
 ```
 
 Type:
-[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<\[[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number),
-[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)\]\>
+[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array){target="_blank"}\<\[[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"},
+[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"}\]\>
 
 ## colorBlend
 
 ### Parameters
 
 -   `value`
-    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**
+    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"}**
     input value
 -   `limits`
-    **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)\>**
+    **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array){target="_blank"}\<[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"}\>**
     array of numbers in ascending order defining intervals
 -   `colors`
-    **([Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)\>
+    **([Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array){target="_blank"}\<[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"}\>
     \|
-    [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)\>\>)**
+    [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array){target="_blank"}\<[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array){target="_blank"}\<[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"}\>\>)**
     output interval for the given value/interval of the intervals array
 
 Returns
-**([number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)
+**([number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"}
 \|
-[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)\>)** 
+[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array){target="_blank"}\<[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"}\>)** 
 
 **Meta**
 
@@ -603,45 +603,45 @@ exists:
 -   3 = "High" = High confidence.
 
 Type:
-[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)
+[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object){target="_blank"}
 
 ### Properties
 
 -   `fill`
-    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**
+    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"}**
     0 for image data, 1 for fill data
 -   `dilatedCloud`
-    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**
+    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"}**
     0 for cloud is not dilated or no cloud, 1 for cloud dilation
 -   `cirrus`
-    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**
+    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"}**
     0 for no confidence level or low confidence, 1 for high confidence
     cirrus
 -   `cloud`
-    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**
+    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"}**
     0 for cloud confidence is not high, 1 for high confidence cloud
 -   `cloudShadow`
-    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**
+    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"}**
     0 for cloud shadow confidence is not high, 1 for high confidence
     cloud shadow
 -   `snow`
-    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**
+    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"}**
     0 for snow/ice confidence is not high, 1 for high confidence snow
     cover
 -   `clear`
-    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**
+    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"}**
     0 if cloud or dilated cloud, or else 1
 -   `water`
-    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**
+    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"}**
     0 for land or cloud, 1 for water
 -   `cloudConfidence`
-    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
+    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"}** 
 -   `cloudShadowConfidence`
-    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
+    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"}** 
 -   `snowIceConfidence`
-    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
+    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"}** 
 -   `cirrusConfidence`
-    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
+    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number){target="_blank"}** 
 
 ## decodeL8C2Qa
 
@@ -681,7 +681,7 @@ Unpacks bit-packed Sentinel 3 OLCI Quality Flags values.
 -   `value` **integer** QUALITY_FLAGS band DN value (32-bit value)
 
 Returns
-**[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**
+**[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object){target="_blank"}**
 An object containing the following keys with either 0 or 1 values: land,
 coastline, fresh_inland_water, tidal_region, bright, straylight_risk,
 invalid, cosmetic, duplicated, sun_glint_risk, dubious, saturatedBxy
