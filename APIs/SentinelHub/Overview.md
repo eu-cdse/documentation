@@ -11,5 +11,5 @@ rendered images, statistical analysis and much more.
 The Sentinel Hub API is annotated via OpenAPI. You can browse reference
 docs here:
 
--   [Web preview](https://docs.sentinel-hub.com/api/latest/reference/)
--   [YAML](https://docs.sentinel-hub.com/api/latest/reference/openapi.v1.yaml)
+-   [Web preview](https://docs.sentinel-hub.com/api/latest/reference/){target="_blank"}
+-   [YAML](https://docs.sentinel-hub.com/api/latest/reference/openapi.v1.yaml){target="_blank"}

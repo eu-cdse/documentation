@@ -21,7 +21,7 @@ You will now get the Copernicus Data Space Ecosystems registration form. Fill in
 
 ## Step 2: E-mail verification
 
-When you register, you will be asked to verify your email address. You should receive a verification email. If you don't have it click "Click here" in the bottom.
+When you register, you will be asked to verify your email address. You should receive a verification email.
 
 <!-- ![Verify](./_images/Verify.png) -->
 <img src="./_images/Verify.png" width="400">
