@@ -1,0 +1,187 @@
+---
+title: Statistical API
+---
+
+The Statistical API (or shortly \"Stats API\") enables you to get
+statistics calculated based on satellite imagery without having to
+download images. In your Statistical API request, you can specify your
+area of interest, time period, evalscript and which statistical measures
+should be calculated. The requested statistics are returned in the API
+response. Using Statistical API you can [calculate the percentage of
+cloudy pixels for a given area of interest and time
+period](/APIs/SentinelHub/Statistical/Examples.qmd#percentage-of-cloudy-pixels-for-selected-area-of-interest),
+or [calculate mean, standard deviation, and histogram of band values for
+a parcel in a given time
+period](/APIs/SentinelHub/Statistical/Examples.qmd#statistics-histogram-and-percentiles-for-one-single-band-output).
+Find more examples [here](/APIs/SentinelHub/Statistical/Examples.qmd).
+
+To familiarise yourself with the Statistical API, we recommend checking
+the [Requests
+builder](https://apps.sentinel-hub.com/requests-builder/?enable-statistics&set-url=https://services.sentinel-hub.com/){target="_blank"},
+our [API
+reference](https://docs.sentinel-hub.com/api/latest/reference/#tag/statistical){target="_blank"}
+and our [Statistical API
+webinar](https://www.youtube.com/watch?v=4JviobxqTO8){target="_blank"}.
+
+## General approach
+
+Based on parameters specified by users in requests (e.g. area of
+interest, time range, evalscript) the Statistical API processes
+satellite data in a similar way as Processing API. Instead of returning
+images, it calculates requested statistics and returns the results in a
+json format.
+
+## Statistical API and evalscript
+
+All general rules for building
+[evalscripts](/APIs/SentinelHub/Evalscript.qmd) apply. However, there
+are some specifics when using evalscripts with the Statistical API:
+
+-   The `evaluatePixel()` function **must**, in addition to other
+    output, always return also `dataMask` output. This output defines
+    which pixels are excluded from calculations. For more details and an
+    example, see
+    [here](/APIs/SentinelHub/Statistical.qmd#exclude-pixels-from-calculations-datamask-output).
+-   The default value of `sampleType` is `FLOAT32`.
+-   The `output.bands` parameter in the `setup()` function can be an
+    array. This makes it possible to specify custom names for the output
+    bands and different output `dataMask` for different outputs, see
+    this
+    [example](/APIs/SentinelHub/Statistical/Examples.qmd#multiple-outputs-with-different-datamasks-multi-band-output-with-custom-bands-names-and-different-histogram-types).
+
+## API\'s features
+
+### Split requested timeRange into multiple time intervals
+
+The Statistical API supports requesting statistics for multiple time
+intervals with only one request. For example, requesting the
+`aggregationInterval` and `timeRange` as:
+
+``` json
+...
+"timeRange": {
+    "from": "2020-06-01T00:00:00Z",
+    "to": "2020-07-31T00:00:00Z"
+    },
+"aggregationInterval": {
+    "of": "P10D"
+}
+...
+```
+
+returns the requested statistics calculated for multiple 10-day
+intervals, see this
+[example](/APIs/SentinelHub/Statistical/Examples.qmd#statistics-for-one-single-band-output-for-two-months-with-10-days-aggregation-period).
+The aggregation intervals should be at least one day long (e.g. \"P5D\",
+\"P30D\"). You can only use period OR time designator not both.
+
+If a `timeRange` is not divisible by an `aggregationInterval`, the last
+(\"not full\") time interval will be dismissed by default (`SKIP`
+option). The user can instead set the `lastIntervalBehavior` to
+`SHORTEN` (shortens the last interval so that it ends at the end of the
+provided time range) or `EXTEND` (extends the last interval over the end
+of the provided time range so that all the intervals are of equal
+duration).
+
+Note that the data is mosaicked for each of the time intervals (as
+defined with the `mosaicking` parameter in an evalscript) before the
+statistics are calculated. To calculate statistics over time (for
+example, the maximum NDVI value in a month), you should set mosaicking
+to ORBIT or TILE and calculate the required value in an evalscript, see
+this
+[example](/APIs/SentinelHub/Statistical/Examples.qmd#statistics-of-maximum-monthly-ndvi-for-a-parcel-in-2020).
+If you use mosaicking SIMPLE, one **mosaicked** output for each time
+interval is a basis for calculating statistics.
+
+### Histogram
+
+Requesting histograms is optional. A variety of histogram customisations
+are available. Users can specify:
+
+-   number of bins `nBins` or
+-   width of bins `binWidth`or
+-   arbitrary `bins`.
+
+[This
+example](/APIs/SentinelHub/Statistical/Examples.qmd#multiple-outputs-with-different-datamasks-multi-band-output-with-custom-bands-names-and-different-histogram-types)
+demonstrates all three options.
+
+### Percentile calculations
+
+It is possible to get values for any percentile. For example, to get
+values for 33%, 75%, and 90% percentile, add the \"percentiles\"
+parameter to your requests as:
+
+``` json
+...
+{
+  "percentiles": {
+    "k": [33, 75, 90]
+  }
+}
+...
+```
+
+See also this
+[example](/APIs/SentinelHub/Statistical/Examples.qmd#statistics-histogram-and-percentiles-for-one-single-band-output).
+
+### Exclude pixels from calculations (dataMask output)
+
+It is possible to exclude certain pixels from the calculation of the
+statistics. The most common use cases are excluding no data and cloudy
+pixels.
+
+With the Statistical API, this is achieved by defining a special output
+called \"dataMask\". This output should have value \"0\" assigned for
+the pixels that should be excluded from the calculations, and a value of
+\"1\" elsewhere. The values of the \"dataMask\" output are defined by
+the user in an evalscript. An illustrative example is excluding water
+pixels from statistics of NDVI, see this
+[example](/APIs/SentinelHub/Statistical/Examples.qmd#statistics-of-maximum-monthly-ndvi-for-a-parcel-in-2020).
+
+Note that the Statistical API does not automatically exclude the no data
+pixels from calculating the statistics. We recommend that you always
+exclude those unless there is a good reason not to. This is especially
+important when you are requesting statistics for a polygon, as it will
+ensure that pixels outside of the polygon (and inside of the bounding
+box) are excluded. To exclude no data pixels you need to pass input
+`dataMask` band to the `dataMask` output, e.g.:
+
+``` default
+function evaluatePixel(samples) {
+    return {
+        ...,
+        dataMask: [samples.dataMask]
+        }
+}
+```
+
+All evalscripts in the examples
+[here](/APIs/SentinelHub/Statistical/Examples.qmd) exclude no data
+pixels.
+
+### Multiple outputs and multi bands outputs
+
+Statistics can be requested for multiple outputs. This is useful when we
+need to use different dataMasks or different sampleTypes for each
+output. Additionally, each output can have multiple bands. It is
+possible to request different statistics for each band and for each
+output. [This
+example](/APIs/SentinelHub/Statistical/Examples.qmd#multiple-outputs-with-different-datamasks-multi-band-output-with-custom-bands-names-and-different-histogram-types)
+demonstrates how to do all this.
+
+### Examples
+
+[Examples of Statistical
+API](/APIs/SentinelHub/Statistical/Examples.qmd)
+
+### Tutorials and Other Related Materials
+
+-   To get you started, we created a detailed beginner [webinar on
+    statistical
+    API](https://www.youtube.com/watch?v=4JviobxqTO8){target="_blank"},
+    where you can learn how to get statistics for your data, how to
+    manipulate the evalscript to return several outputs, each with its
+    own statistical information, how to make use of powerful
+    aggregations, exclude pixels from the calculation, make custom
+    histograms and visualize your statistics in Python.

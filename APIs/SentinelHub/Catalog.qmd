@@ -1,14 +1,11 @@
 ---
-title: "Catalog API"
-format:
-  html:
-    code-fold: true
-jupyter: python3
+title: Catalog API
 ---
 
 Sentinel Hub Catalog API (or shortly \"Catalog\") is an API implementing
-the [STAC Specification](https://stacspec.org/){target="_blank"}, describing geospatial
-information about different data used with Sentinel Hub.
+the [STAC Specification](https://stacspec.org/){target="_blank"},
+describing geospatial information about different data used with
+Sentinel Hub.
 
 ## API Reference
 
@@ -19,11 +16,7 @@ Simple search request for Sentinel-1 GRD with a bounding box (the
 coordinate reference system of the values is WGS84 longitude/latitude),
 available on 10th December 2019.
 
-::: {.panel-tabset}
-
-# Python
 ``` python
-import requests
 data = {
     "bbox": [13, 45, 14, 46],
     "datetime": "2019-12-10T00:00:00Z/2019-12-10T23:59:59Z",
@@ -34,21 +27,17 @@ data = {
 url = "https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search"
 response = requests.post(url, json=data)
 ```
-:::
-
 
 ## Authentication
 
 Authentication for the Catalog API works completely the same as
 authentication for other Sentinel Hub services, see [Authentication
-chapter](/APIs/SentinelHub/Overview/Authentication.md){target="_blank"}.
+chapter](/APIs/SentinelHub/Overview/Authentication.qmd).
 
 ## Pagination
 
 Executing the request specified above returns search context fields at
 the end of the response, looking like this:
-
-
 
 ``` json
 {
@@ -67,11 +56,7 @@ default value is `10`). To query the next page of items, our request
 needs to include the `next` attribute with its value in the query, like
 so:
 
-::: {.panel-tabset}
-
-# Python
 ``` python
-import requests
 data = {
     "bbox": [13, 45, 14, 46],
     "datetime": "2019-12-10T00:00:00Z/2019-12-10T23:59:59Z",
@@ -83,7 +68,6 @@ data = {
 url = "https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search"
 response = requests.post(url, json=data)
 ```
-:::
 
 The response now includes the next page of items; in this case there is
 no `next` token in `context`, meaning no more items exist for this
@@ -129,7 +113,7 @@ The available operators are `eq`, `neq`, `lt`, `lte`, `gt`, `gte`,
 operator. Be careful - different collections have different properties
 for the query filter available. The information describing this is
 available inside the documentation for each specific collection (ex.
-[Sentinel-1 GRD](/Data/Sentinel1.md#filter-extension)){target="_blank"}.
+[Sentinel-1 GRD](/Data/Sentinel1.qmd#filter-extension)).
 
 ### Fields
 
@@ -191,6 +175,4 @@ Syntax for `distinct` attribute is:
 As with the `filter` attribute, `distinct` is also a collection limited
 to some specific properties. Information describing these properties can
 be found inside each collection\'s documentation (ex. [Sentinel-1
-GRD](/Data/Sentinel1.md#distinct-extension)).
-
-
+GRD](/Data/Sentinel1.qmd#distinct-extension)).

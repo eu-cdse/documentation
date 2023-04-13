@@ -1,0 +1,87 @@
+---
+title: Output Formats
+---
+
+## Output Image Formats
+
+For the requests that provide image output, Sentinel-2 **WMS/WMTS/WCS**
+services can generate these output formats:
+
+-   **image/png** - lossless image format for 1 (grayscale) or 3 (RGB)
+    components
+-   **image/jpeg** - lossy image format for 1 (grayscale) or 3 (RGB)
+    components, without alpha channel. The quality can be controlled via
+    the \"**QUALITY**\" URL parameter.
+-   **image/tiff** - lossless image format for any number of the
+    components.
+
+[Find out more on how the values are reflected in the
+output.](https://www.sentinel-hub.com/faq/#how-are-values-calculated-within-sentinel-hub-and-how-are-they-returned-output){target="_blank"}
+
+### Example requests for image formats:
+
+To generate the output as jpeg, use the following example. Please
+replace `<INSTANCE_ID>` with your own.
+
+``` default
+https://sh.dataspace.copernicus.eu/ogc/wms/<INSTANCE_ID>?SERVICE=WMS&REQUEST=GetMap&SHOWLOGO=false&VERSION=1.3.0&LAYERS=NDVI&MAXCC=20&WIDTH=640&HEIGHT=640&CRS=EPSG:4326&BBOX=46.697956,16.223885,46.699840,16.2276628&FORMAT=image/jpeg
+```
+
+![](img/vector_output_01.png)
+
+## Output Vector Formats
+
+For the requests that provide vector output, Sentinel-2 **WMS/WMTS/WCS**
+services can generate these output formats:
+
+-   **application/x-esri-shape** - zip containing shape files
+-   **application/json** - GeoJSON file
+
+Both formats are returning polygons in vector format only in case when
+the image does not consists of more than 10 different values. Therefore,
+this formats only work with custom script layers.
+
+### Example requests for vector formats:
+
+To generate the output as GeoJSON file, follow the example below.
+Replace `<INSTANCE_ID>` with your own.
+
+``` default
+https://sh.dataspace.copernicus.eu/ogc/wms/<INSTANCE_ID>?SERVICE=WMS&REQUEST=GetMap&SHOWLOGO=false&VERSION=1.3.0&LAYERS=NDVI&MAXCC=20&WIDTH=640&HEIGHT=640&CRS=EPSG:4326&BBOX=46.697956,16.223885,46.699840,16.2276628&FORMAT=application/json
+```
+
+``` json
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "COLOR_HEX": "FFFFFF",
+        "ID": 0
+      },
+      "geometry": {
+        "type": "MultiPolygon",
+        "crs": {
+            "type": "name",
+            "properties": {
+                "name": "urn:ogc:def:crs:OGC::CRS84"
+            }
+        },
+        "coordinates": [[[
+            [16.225567302, 46.698948044],
+            [16.225567302, 46.6989451],
+            [16.225561399, 46.6989451],
+            [16.225561399, 46.698942156],
+            ...
+        ]]]
+      }
+    },
+    ...
+  ]
+}
+```
+
+To generate the output as x-esri-shape, replace the FORMAT with
+`application/x-esri-shape`, which will enable you to get the zip
+containing shape files.

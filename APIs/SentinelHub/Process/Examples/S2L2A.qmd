@@ -1,5 +1,5 @@
 ---
-title: Examples for S2L1C
+title: Examples for S2L2A
 ---
 
 To request data using any of the request below, you will need to replace
@@ -17,7 +17,7 @@ gnaeLVb5iiv_qY3Ctq2XKdIRcFRQLFziFcP4yZJl-NZMlwzsiiwjakcpYpI5jSYAdU2hpZLHRzceseeZ
 ```
 
 and can be obtained as described in the [Authentication
-chapter](/APIs/SentinelHub/Overview/Authentication.md).
+chapter](/APIs/SentinelHub/Overview/Authentication.qmd).
 
 ### True Color
 
@@ -42,9 +42,7 @@ function evaluatePixel(sample) {
 request = {
     "input": {
         "bounds": {
-            "properties": {
-                "crs": "http://www.opengis.net/def/crs/OGC/1.3/CRS84"
-            },
+            "properties": {"crs": "http://www.opengis.net/def/crs/OGC/1.3/CRS84"},
             "bbox": [
                 13.822174072265625,
                 45.85080395917834,
@@ -54,7 +52,7 @@ request = {
         },
         "data": [
             {
-                "type": "sentinel-2-l1c",
+                "type": "sentinel-2-l2a",
                 "dataFilter": {
                     "timeRange": {
                         "from": "2018-10-01T00:00:00Z",
@@ -95,9 +93,7 @@ function evaluatePixel(sample) {
 request = {
     "input": {
         "bounds": {
-            "properties": {
-                "crs": "http://www.opengis.net/def/crs/EPSG/0/32633"
-            },
+            "properties": {"crs": "http://www.opengis.net/def/crs/EPSG/0/32633"},
             "bbox": [
                 408553.58,
                 5078145.48,
@@ -107,7 +103,7 @@ request = {
         },
         "data": [
             {
-                "type": "sentinel-2-l1c",
+                "type": "sentinel-2-l2a",
                 "dataFilter": {
                     "timeRange": {
                         "from": "2018-10-01T00:00:00Z",
@@ -148,9 +144,7 @@ function evaluatePixel(sample) {
 request = {
     "input": {
         "bounds": {
-            "properties": {
-                "crs": "http://www.opengis.net/def/crs/EPSG/0/32633"
-            },
+            "properties": {"crs": "http://www.opengis.net/def/crs/EPSG/0/32633"},
             "bbox": [
                 408553.58,
                 5078145.48,
@@ -160,7 +154,7 @@ request = {
         },
         "data": [
             {
-                "type": "sentinel-2-l1c",
+                "type": "sentinel-2-l2a",
                 "dataFilter": {
                     "timeRange": {
                         "from": "2018-10-01T00:00:00Z",
@@ -201,9 +195,7 @@ function evaluatePixel(sample) {
 request = {
     "input": {
         "bounds": {
-            "properties": {
-                "crs": "http://www.opengis.net/def/crs/OGC/1.3/CRS84"
-            },
+            "properties": {"crs": "http://www.opengis.net/def/crs/OGC/1.3/CRS84"},
             "bbox": [
                 13.822174072265625,
                 45.85080395917834,
@@ -213,7 +205,7 @@ request = {
         },
         "data": [
             {
-                "type": "sentinel-2-l1c",
+                "type": "sentinel-2-l2a",
                 "dataFilter": {
                     "timeRange": {
                         "from": "2018-10-01T00:00:00Z",
@@ -234,89 +226,31 @@ url = "https://sh.dataspace.copernicus.eu/api/v1/process"
 response = requests.post(url, json=request, headers={"Accept": "image/tiff"})
 ```
 
-### True Color, preview mode
+### True Color, cloudy pixels masked out
 
 ``` python
 evalscript = """
 //VERSION=3
 function setup() {
   return {
-    input: ["B02", "B03", "B04"],
+    input: ["B02", "B03", "B04", "SCL"],
     output: { bands: 3 },
   }
 }
 
 function evaluatePixel(sample) {
-  return [2.5 * sample.B04, 2.5 * sample.B03, 2.5 * sample.B02]
+  if ([8, 9, 10].includes(sample.SCL)) {
+    return [1, 0, 0]
+  } else {
+    return [2.5 * sample.B04, 2.5 * sample.B03, 2.5 * sample.B02]
+  }
 }
 """
 
 request = {
     "input": {
         "bounds": {
-            "properties": {
-                "crs": "http://www.opengis.net/def/crs/OGC/1.3/CRS84"
-            },
-            "bbox": [
-                13.822174072265625,
-                45.85080395917834,
-                18.55963134765625,
-                48.29191774991382,
-            ],
-        },
-        "data": [
-            {
-                "type": "sentinel-2-l1c",
-                "dataFilter": {
-                    "timeRange": {
-                        "from": "2018-10-11T00:00:00Z",
-                        "to": "2018-11-18T00:00:00Z",
-                    },
-                    "previewMode": "PREVIEW",
-                },
-            }
-        ],
-    },
-    "output": {
-        "width": 512,
-        "height": 512,
-        "responses": [
-            {
-                "identifier": "default",
-                "format": {"type": "image/png"},
-            }
-        ],
-    },
-    "evalscript": evalscript,
-}
-
-url = "https://sh.dataspace.copernicus.eu/api/v1/process"
-response = requests.post(url, json=request)
-```
-
-### True Color, mosaicking with leastRecent
-
-``` python
-evalscript = """
-//VERSION=3
-function setup() {
-  return {
-    input: ["B02", "B03", "B04"],
-    output: { bands: 3 },
-  }
-}
-
-function evaluatePixel(sample) {
-  return [2.5 * sample.B04, 2.5 * sample.B03, 2.5 * sample.B02]
-}
-"""
-
-request = {
-    "input": {
-        "bounds": {
-            "properties": {
-                "crs": "http://www.opengis.net/def/crs/OGC/1.3/CRS84"
-            },
+            "properties": {"crs": "http://www.opengis.net/def/crs/OGC/1.3/CRS84"},
             "bbox": [
                 13.822174072265625,
                 45.85080395917834,
@@ -326,13 +260,12 @@ request = {
         },
         "data": [
             {
-                "type": "sentinel-2-l1c",
+                "type": "sentinel-2-l2a",
                 "dataFilter": {
                     "timeRange": {
                         "from": "2018-10-11T00:00:00Z",
                         "to": "2018-11-18T00:00:00Z",
-                    },
-                    "mosaickingOrder": "leastRecent",
+                    }
                 },
             }
         ],
@@ -388,7 +321,7 @@ request = {
         },
         "data": [
             {
-                "type": "sentinel-2-l1c",
+                "type": "sentinel-2-l2a",
                 "dataFilter": {
                     "timeRange": {
                         "from": "2018-12-27T00:00:00Z",
@@ -399,18 +332,16 @@ request = {
         ],
     },
     "output": {
-        "width": 512,
-        "height": 512,
+        "width": 200,
+        "height": 100,
         "responses": [
             {
                 "identifier": "default",
-                "format": {"type": "image/tiff"},
+                "format": {"type": "image/png"},
             },
             {
                 "identifier": "userdata",
-                "format": {
-                    "type": "application/json"
-                },
+                "format": {"type": "application/json"},
             },
         ],
     },
@@ -487,9 +418,7 @@ function evaluatePixel(sample) {
 request = {
     "input": {
         "bounds": {
-            "properties": {
-                "crs": "http://www.opengis.net/def/crs/OGC/1.3/CRS84"
-            },
+            "properties": {"crs": "http://www.opengis.net/def/crs/OGC/1.3/CRS84"},
             "bbox": [
                 12.206251,
                 41.627351,
@@ -499,7 +428,7 @@ request = {
         },
         "data": [
             {
-                "type": "sentinel-2-l1c",
+                "type": "sentinel-2-l2a",
                 "dataFilter": {
                     "timeRange": {
                         "from": "2018-06-01T00:00:00Z",
@@ -587,9 +516,7 @@ function evaluatePixel(sample) {
 request = {
     "input": {
         "bounds": {
-            "properties": {
-                "crs": "http://www.opengis.net/def/crs/OGC/1.3/CRS84"
-            },
+            "properties": {"crs": "http://www.opengis.net/def/crs/OGC/1.3/CRS84"},
             "geometry": {
                 "type": "Polygon",
                 "coordinates": [
@@ -632,7 +559,7 @@ request = {
         },
         "data": [
             {
-                "type": "sentinel-2-l1c",
+                "type": "sentinel-2-l2a",
                 "dataFilter": {
                     "timeRange": {
                         "from": "2018-10-01T00:00:00Z",
@@ -692,9 +619,7 @@ function evaluatePixel(sample) {
 request = {
     "input": {
         "bounds": {
-            "properties": {
-                "crs": "http://www.opengis.net/def/crs/OGC/1.3/CRS84"
-            },
+            "properties": {"crs": "http://www.opengis.net/def/crs/OGC/1.3/CRS84"},
             "geometry": {
                 "type": "Polygon",
                 "coordinates": [
@@ -737,16 +662,14 @@ request = {
         },
         "data": [
             {
-                "type": "sentinel-2-l1c",
+                "type": "sentinel-2-l2a",
                 "dataFilter": {
                     "timeRange": {
                         "from": "2018-10-01T00:00:00Z",
                         "to": "2018-12-20T00:00:00Z",
                     }
                 },
-                "processing": {
-                    "harmonizeValues": "true"
-                },
+                "processing": {"harmonizeValues": "true"},
             }
         ],
     },
@@ -798,9 +721,7 @@ function evaluatePixel(sample) {
 request = {
     "input": {
         "bounds": {
-            "properties": {
-                "crs": "http://www.opengis.net/def/crs/OGC/1.3/CRS84"
-            },
+            "properties": {"crs": "http://www.opengis.net/def/crs/OGC/1.3/CRS84"},
             "geometry": {
                 "type": "Polygon",
                 "coordinates": [
@@ -843,16 +764,14 @@ request = {
         },
         "data": [
             {
-                "type": "sentinel-2-l1c",
+                "type": "sentinel-2-l2a",
                 "dataFilter": {
                     "timeRange": {
                         "from": "2018-10-01T00:00:00Z",
                         "to": "2018-12-20T00:00:00Z",
                     }
                 },
-                "processing": {
-                    "harmonizeValues": "true"
-                },
+                "processing": {"harmonizeValues": "true"},
             }
         ],
     },
@@ -935,9 +854,7 @@ function evaluatePixel(sample) {
 request = {
     "input": {
         "bounds": {
-            "properties": {
-                "crs": "http://www.opengis.net/def/crs/OGC/1.3/CRS84"
-            },
+            "properties": {"crs": "http://www.opengis.net/def/crs/OGC/1.3/CRS84"},
             "geometry": {
                 "type": "Polygon",
                 "coordinates": [
@@ -980,7 +897,7 @@ request = {
         },
         "data": [
             {
-                "type": "sentinel-2-l1c",
+                "type": "sentinel-2-l2a",
                 "dataFilter": {
                     "timeRange": {
                         "from": "2018-10-01T00:00:00Z",
@@ -1011,9 +928,9 @@ url = "https://sh.dataspace.copernicus.eu/api/v1/process"
 response = requests.post(url, json=request, headers={"Accept": "application/tar"})
 ```
 
-### All S2L1C raw bands, original data (no harmonization)
+### All S2L2A raw bands, original data (no harmonization)
 
-Learn about harmonization [here](/Data/Sentinel2.md#harmonize-values).
+Learn about harmonization [here](/Data/Sentinel2.qmd#harmonize-values).
 
 ``` python
 evalscript = """
@@ -1033,7 +950,6 @@ function setup() {
           "B08",
           "B8A",
           "B09",
-          "B10",
           "B11",
           "B12",
         ],
@@ -1042,7 +958,7 @@ function setup() {
     ],
     output: {
       id: "default",
-      bands: 13,
+      bands: 12,
       sampleType: SampleType.UINT16,
     },
   }
@@ -1060,7 +976,6 @@ function evaluatePixel(sample) {
     sample.B08,
     sample.B8A,
     sample.B09,
-    sample.B10,
     sample.B11,
     sample.B12,
   ]
@@ -1070,9 +985,7 @@ function evaluatePixel(sample) {
 request = {
     "input": {
         "bounds": {
-            "properties": {
-                "crs": "http://www.opengis.net/def/crs/OGC/1.3/CRS84"
-            },
+            "properties": {"crs": "http://www.opengis.net/def/crs/OGC/1.3/CRS84"},
             "geometry": {
                 "type": "Polygon",
                 "coordinates": [
@@ -1115,16 +1028,14 @@ request = {
         },
         "data": [
             {
-                "type": "sentinel-2-l1c",
+                "type": "sentinel-2-l2a",
                 "dataFilter": {
                     "timeRange": {
                         "from": "2018-10-01T00:00:00Z",
                         "to": "2018-12-20T00:00:00Z",
                     }
                 },
-                "processing": {
-                    "harmonizeValues": "false"
-                },
+                "processing": {"harmonizeValues": "false"},
             }
         ],
     },
@@ -1143,4 +1054,139 @@ request = {
 
 url = "https://sh.dataspace.copernicus.eu/api/v1/process"
 response = requests.post(url, json=request)
+```
+
+### Other S2L2A specific data (Aerosol Optical Thickness, Scene Classification, Snow and Cloud probabilities, Sun and View angles)
+
+``` python
+evalscript = """
+//VERSION=3
+function setup() {
+  return {
+    input: [
+      {
+        bands: [
+          "B02",
+          "B03",
+          "B04",
+          "AOT",
+          "SCL",
+          "SNW",
+          "CLD",
+          "sunAzimuthAngles",
+          "sunZenithAngles",
+          "viewAzimuthMean",
+          "viewZenithMean",
+        ],
+      },
+    ],
+    output: [
+      { id: "TrueColor", bands: 3, sampleType: SampleType.FLOAT32 },
+      { id: "AOT", bands: 1, sampleType: SampleType.UINT16 },
+      { id: "SCL", bands: 1, sampleType: SampleType.UINT8 },
+      { id: "SNW", bands: 1, sampleType: SampleType.UINT8 },
+      { id: "CLD", bands: 1, sampleType: SampleType.UINT8 },
+      { id: "SAA", bands: 1, sampleType: SampleType.FLOAT32 },
+      { id: "SZA", bands: 1, sampleType: SampleType.FLOAT32 },
+      { id: "VAM", bands: 1, sampleType: SampleType.FLOAT32 },
+      { id: "VZM", bands: 1, sampleType: SampleType.FLOAT32 },
+    ],
+  }
+}
+
+function evaluatePixel(sample) {
+  var truecolor = [sample.B04, sample.B03, sample.B02]
+  var aot = [sample.AOT]
+  var scl = [sample.SCL]
+  var snw = [sample.SNW]
+  var cld = [sample.CLD]
+  var saa = [sample.sunAzimuthAngles]
+  var sza = [sample.sunZenithAngles]
+  var vam = [sample.viewAzimuthMean]
+  var vzm = [sample.viewZenithMean]
+
+  return {
+    TrueColor: truecolor,
+    AOT: aot,
+    SCL: scl,
+    SNW: snw,
+    CLD: cld,
+    SAA: saa,
+    SZA: sza,
+    VAM: vam,
+    VZM: vzm,
+  }
+}
+"""
+
+request = {
+    "input": {
+        "bounds": {
+            "properties": {"crs": "http://www.opengis.net/def/crs/OGC/1.3/CRS84"},
+            "bbox": [
+                13.822174072265625,
+                45.85080395917834,
+                14.55963134765625,
+                46.29191774991382,
+            ],
+        },
+        "data": [
+            {
+                "type": "sentinel-2-l2a",
+                "dataFilter": {
+                    "timeRange": {
+                        "from": "2019-02-01T00:00:00Z",
+                        "to": "2019-03-22T00:00:00Z",
+                    }
+                },
+            }
+        ],
+    },
+    "output": {
+        "width": 512,
+        "height": 512,
+        "responses": [
+            {
+                "identifier": "TrueColor",
+                "format": {"type": "image/tiff"},
+            },
+            {
+                "identifier": "AOT",
+                "format": {"type": "image/tiff"},
+            },
+            {
+                "identifier": "SCL",
+                "format": {"type": "image/tiff"},
+            },
+            {
+                "identifier": "SNW",
+                "format": {"type": "image/tiff"},
+            },
+            {
+                "identifier": "CLD",
+                "format": {"type": "image/tiff"},
+            },
+            {
+                "identifier": "SAA",
+                "format": {"type": "image/tiff"},
+            },
+            {
+                "identifier": "SZA",
+                "format": {"type": "image/tiff"},
+            },
+            {
+                "identifier": "VAM",
+                "format": {"type": "image/tiff"},
+            },
+            {
+                "identifier": "VZM",
+                "format": {"type": "image/tiff"},
+            },
+        ],
+    },
+    "evalscript": evalscript,
+}
+
+url = "https://sh.dataspace.copernicus.eu/api/v1/process"
+response = requests.post(url, json=request, headers={"Accept": "application/tar"})
 ```
