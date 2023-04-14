@@ -1,0 +1,37 @@
+---
+title: Time series
+---
+
+## Working with time series
+
+Processing API uses a `timeRange` parameter, where a user can select
+from-to dates. When such a request is ran, only one image is returned.
+`timeRange` is used to specify the scenes that are going to be
+considered for mosaicking (for example all the scenes from April 1 to
+June 1). Which one will be chosen for the output depends on the
+mosaicking type and order specified. If the user specified `SIMPLE`
+mosaicking order to be `mostRecent`, the first image considered for
+mosaicking would be the most recent image available from April 1 to
+June 1. If a user selected a mosaicking type `TILE`, and requested
+second samples (`sample[1]`), the samples of the second available scene
+in the specified time range would be returned. Learn more about
+mosaicking [here](/APIs/SentinelHub/Evalscript/V3.qmd#mosaicking) and
+mosaicking orders [here](/Data/Sentinel2.qmd#mosaickingorder).
+
+If you would like to return all the scenes in a given time range, the
+recommended approach is to first search for all the available scenes
+using our [Catalog service API](/APIs/SentinelHub/Catalog.qmd), which
+you can use to view detailed geospatial information, such as the
+acquisition date and time, for each of the available scenes of your
+specified BBOX, collection and time range. You can control your Catalog
+search by specifying fields, limits and other properties. See the
+[Catalog API examples](/APIs/SentinelHub/Catalog/Examples.qmd) to learn
+how to do so. It\'s also possible to search the available scenes using
+the [OGC WFS request](/APIs/SentinelHub/OGC/WFS.qmd), which might be a
+bit easier to use, but gives you much less search control. See a WFS
+request example [here](/APIs/SentinelHub/OGC/Examples.qmd).
+
+When you have a list of the available scenes, you can then request each
+by using a separate Processing API call. To do so, limit time-range to
+only allow for the desired time frame, which matches the acquisition
+time of your scene.

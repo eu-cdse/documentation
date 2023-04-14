@@ -35,13 +35,13 @@ This function is required as it sets up the input and output settings.
 ### Specifics
 
 Setup needs to return a javascript
-[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)
+[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object){target="_blank"}
 with the following properties:
 
 -   `input` - an
-    [array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)
+    [array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array){target="_blank"}
     of
-    [strings](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)
+    [strings](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String){target="_blank"}
     representing band names or an array of [input
     objects](#input-object-properties).
 -   `output` - a single [output](#output-object-properties) object or an
@@ -100,12 +100,14 @@ use, for example, set: `mosaicking: "SIMPLE"`.
     defined by the datasource.
     `<!-- TODO: please add an example for what a scene is, or better yet, define SCENE somewhere and link there whenever it is mentioned -->`{=html}
 
-*Note: ORBIT mosaicking currently does not work exactly as described but
+::: callout-note
+ORBIT mosaicking currently does not work exactly as described but
 generates a single scene for each day containing satellite data. For
 most requests this should not be an issue, however high latitude regions
 may have more than one acquisition per day. For these consider using
 TILE mosaicking if getting all available data is paramount. This will be
-corrected in future releases.*
+corrected in future releases.
+:::
 
 #### SampleType
 
@@ -225,36 +227,33 @@ function evaluatePixel(samples, scenes, inputMetadata, customData, outputMetadat
 The first two parameters can be objects or arrays depending on requested
 [mosaicking](#mosaicking) as explained below. They are additionally
 changed for data fusion requests, which is documented separately
-[here](/data/data-fusion/). The remaining parameters are always objects.
+[here](). The remaining parameters are always objects.
 
 #### samples
 
 -   When mosaicking is `SIMPLE`:
     -   `samples` - an
-        [object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)
+        [object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object){target="_blank"}
         containing the band values of the single mosaicked sample, in
         the specified units, as its
-        [properties](https://developer.mozilla.org/docs/Web/JavaScript/Guide/Working_with_Objects#Objects_and_properties).
+        [properties](https://developer.mozilla.org/docs/Web/JavaScript/Guide/Working_with_Objects#Objects_and_properties){target="_blank"}.
         The property names equal the names of all the [input
         bands](#input-object-properties), pixel values of a band can be
         accessed as e.g. `samples.B02`.
 
-*NOTE: When using mosaicking `SIMPLE` we usually call this parameter
-`sample` in our examples to emphasize that it is an object and not an
-array.*
+::: callout-note
+When using mosaicking `SIMPLE` we usually call this parameter `sample`
+in our examples to emphasize that it is an object and not an array.
+:::
 
 -   When mosaicking is `TILE` or `ORBIT`:
     -   `samples` - an
-        [array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)
-        of samples as defined in the `SIMPLE` case. None\*, one or
+        [array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array){target="_blank"}
+        of samples as defined in the `SIMPLE` case. None[^1], one or
         multiple samples can therefore be present depending on how many
         orbits/tiles there are for the selected time range and area of
         interest. Pixel values of a band can be accessed for each sample
         as an item of the array, e.g. `samples[0].B02`.
-
-\**NOTE: In case `samples` is an empty array, calling `samples[0].B02`
-will raise an error and it is up to users to handle this in their
-evalscript.*
 
 #### scenes
 
@@ -296,7 +295,7 @@ evalscript.*
         `scenes.tiles[0].cloudCoverage`. Which properties are available
         for each `tiles` element depends on requested data and is
         documented in the \"Scenes Object\" chapter for each data
-        collection, e.g. [here](/Data/Sentinel2.md#scenes-object) for
+        collection, e.g. [here](/Data/Sentinel2.qmd#scenes-object) for
         Sentinel-2 L1C. All possible properties are:
         -   `date` (string) - ISO date and time in
             \"YYYY-MM-DDTHH:MM:SSZ\" format. It represents a date when
@@ -343,8 +342,8 @@ Sentinel Hub. Its properties are:
 -   `normalizationFactor` - the factor used by Sentinel Hub to convert
     digital numbers (DN) to reflectance using
     `REFLECTANCE = DN * normalizationFactor`. This is useful when
-    requesting bands for which both [units]() - DN and REFLECTANCE - are
-    supported.
+    requesting bands for which both [units](#input-object-properties) -
+    DN and REFLECTANCE - are supported.
 
 #### customData
 
@@ -360,8 +359,9 @@ thresholds or ids of original tiles used for processing. It contains:
     that can contain any data. This can be pushed to the API response by
     adding a `userdata` identified output response object to your API
     request (see
-    [this](https://docs.sentinel-hub.com/api/latest/reference/#operation/process)
-    for details or an example [here](/Data/Sentinel2.md#scenes-object)).
+    [this](https://docs.sentinel-hub.com/api/latest/reference/#operation/process){target="_blank"}
+    for details or an example
+    [here](/Data/Sentinel2.qmd#true-color-and-metadata-multi-part-response-geotiff-and-json)).
 
 ### Returns
 
@@ -538,15 +538,17 @@ function updateOutputMetadata(scenes, inputMetadata, outputMetadata)
 
 See description of parameters in the \"evaluatePixel function\" chapter:
 
--   `scenes` - [scenes](/APIs/SentinelHub/Evalscript/V3.md#scenes)
+-   `scenes` - [scenes](/APIs/SentinelHub/Evalscript/V3.qmd#scenes)
 -   `inputMetadata` -
-    [inputMetadata](/APIs/SentinelHub/Evalscript/V3.md#inputmetadata)
+    [inputMetadata](/APIs/SentinelHub/Evalscript/V3.qmd#inputmetadata)
 -   `outputMetadata` -
-    [outputMetadata](/APIs/SentinelHub/Evalscript/V3.md#outputmetadata)
+    [outputMetadata](/APIs/SentinelHub/Evalscript/V3.qmd#outputmetadata)
 
 ## preProcessScenes function (optional)
 
-*NOTE: This function shall be used instead of `filterScenes` function.*
+::: callout-note
+This function shall be used instead of `filterScenes` function.
+:::
 
 This function is optional, and if present is called at the beginning of
 the script evaluation before the actual satellite data is processed. Use
@@ -579,14 +581,14 @@ depending on which mosaicking option is selected.
         of the request, representing the end of the search interval
     -   `scenes.orbits` - corresponds to `scenes.orbits` as described
         for `evalautePixel` function and mosaicking `ORBIT`
-        [here](/APIs/SentinelHub/Evalscript/V3.md#scenes) but it
+        [here](/APIs/SentinelHub/Evalscript/V3.qmd#scenes) but it
         doesn\'t contain `tiles`.
 
 -   If mosaicking is TILE, `collections` contains:
 
     -   `scenes.tiles` - corresponds to `scenes.tiles` as described for
         `evalautePixel` function and mosaicking `TILE`
-        [here](/APIs/SentinelHub/Evalscript/V3.md#scenes).
+        [here](/APIs/SentinelHub/Evalscript/V3.qmd#scenes).
 
 ### Returns
 
@@ -611,7 +613,7 @@ In this example, we use `preProcessScenes` function to select images
 acquired on two particular dates within the requested `timeRange`. This
 example was taken (and adopted) from the evalscript for delineation of
 [burned
-areas](https://github.com/sentinel-hub/custom-scripts/blob/11b967f8c8ea10211160e53f43be7fa9b7805c3d/sentinel-2/burned_area/script.js),
+areas](https://github.com/sentinel-hub/custom-scripts/blob/11b967f8c8ea10211160e53f43be7fa9b7805c3d/sentinel-2/burned_area/script.js){target="_blank"},
 based on the comparison of Sentinel-2 images acquired before (i.e. on
 \"2017-05-15\") and after (i.e. on \"2017-06-24\") the event.
 
@@ -692,7 +694,7 @@ The `3*31*24*3600*1000` represents the 3 months converted to
 milliseconds. This is needed, so that a 3-month time span can be
 compared to `scene.dateFrom` and `collections.to`, which are all
 returned as milliseconds since 1970-1-1 by the [`getTime()`
-function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getTime).
+function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getTime){target="_blank"}.
 *Note: The result is the same as if the `timeRange.from` parameter in
 the body of the request is set to 3 months prior to the `timeRange.to`.*
 
@@ -745,147 +747,6 @@ function preProcessScenes (collections) {
 }
 ```
 
-## filterScenes function (optional, deprecated)
-
-*NOTE: `filterScenes` function is now deprecated, as it does not work
-for [data fusion](/data/data-fusion/) requests. It still works (and will
-keep working) as documented below but we recommend using
-`preProcessScenes` function instead.*
-
-This function is optional, and if present is called at the beginning of
-the script evaluation before the actual satellite data is processed. Use
-it when [mosaicking](#mosaicking) is set to `ORBIT` or `TILE`. It
-provides additional filtering functionality for scenes, after the
-constraints set in the request parameters are already applied. This is
-useful, for example, to reduce the number of scenes needed, thereby
-reducing processing time and the number of processing units for the
-request.
-
-### Parameters
-
-These are the full parameters of the `filterScenes` function:
-
-``` javascript
-function filterScenes(availableScenes, inputMetadata)
-```
-
--   `availableScenes` - an array of objects where each of them
-    represents one available scene for a given request. Each object has
-    two properties:
-    -   `date` (type Date) \-- the date and time of the scene
--   `inputMetadata` - an object with properties:
-    -   `from` (type Date) \-- the value given as `timeRange.from` in
-        the body of the request, representing the start of the search
-        interval
-    -   `to` (type Date) \-- the value given as `timeRange.to` in the
-        body of the request, representing the end of the search interval
-    -   `scenes` \-- the array equal to `availableScenes`
-
-### Returns
-
-The `filterScenes` function must return an array of objects of the same
-type as contained in an `availableScenes` array. Most often, a sub-set
-of the `availableScenes` array will be returned:
-
-``` javascript
-function filterScenes(availableScenes, inputMetadata){
-    return availableScenes.filter(function (scene) {
-        return scene.date.getTime() < new Date("2019-02-01T00:00:00Z")
-    });
-}
-```
-
-### Examples
-
-#### Filter scenes by particular days
-
-In this example, we use `filterScenes` function to select images
-acquired on two particular dates within the requested `timeRange`. This
-example was taken (and adopted) from the evalscript for delineation of
-[burned
-areas](https://github.com/sentinel-hub/custom-scripts/blob/11b967f8c8ea10211160e53f43be7fa9b7805c3d/sentinel-2/burned_area/script.js),
-based on the comparison of Sentinel-2 images acquired before (i.e. on
-\"2017-05-15\") and after (i.e. on \"2017-06-24\") the event.
-
-``` javascript
-function filterScenes (availableScenes, inputMetadata) {
-    var allowedDates = ["2017-05-15", "2017-06-24"]; //before and after Knysna fires
-    return availableScenes.filter(function (scene) {
-        var sceneDateStr = scene.date.toISOString().split("T")[0]; //converting date and time to string and rounding to day precision
-        return allowedDates.includes(sceneDateStr);
-    });
-}
-```
-
-#### Filter scenes by time interval
-
-Here, we filter out (= remove) all the scenes acquired between the two
-selected dates, which both fall within the requested time range.
-
-``` javascript
-function filterScenes(availableScenes, inputMetadata) {
-    return availableScenes.filter(function (scene) {
-        return (scene.date.getTime() < new Date("2019-01-31T00:00:00Z")) ||
-               (scene.date.getTime() >= new Date("2019-06-01T00:00:00Z"))
-    });
-}
-```
-
-Combining this with the `timeRange` set in the body of the request as:
-
-``` json
-{
-   "from": "2019-01-01T00:00:00Z",
-   "to": "2019-06-30T23:59:59Z"
-}
-```
-
-we end up only with scenes acquired in January and June 2019. In the
-`evaluatePixel` function, we could then e.g., calculate the average NDVI
-index for each of the months and compare them.
-
-#### Specify the number of months taken into account
-
-Values of `timeRange.from` and `timeRange.to` parameters as given in the
-request, are available in the `filterScenes` function as
-`iputMetadata.to` and `inputMetadata.from`, respectively. These can be
-used to e.g. filter out scenes acquired more than 3 months before the
-given `to` date and time:
-
-``` javascript
-function filterScenes (availableScenes, inputMetadata) {
-    return availableScenes.filter(function (scene) {
-        return scene.date.getTime()>=(inputMetadata.to.getTime()-3*31*24*3600*1000);
-    });
-}
-```
-
-The `3*31*24*3600*1000` represents the 3 months converted to
-milliseconds. This is needed, so that a 3-month time span can be
-compared to `scene.date` and `inputMetadata.to`, which are all returned
-as milliseconds since 1970-1-1 by the [`getTime()`
-function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getTime).
-*Note: The result is the same as if the `timeRange.from` parameter in
-the body of the request is set to 3 months prior to the `timeRange.to`.*
-
-#### Select one image per month
-
-In this example, we filter the available scenes, so that only the first
-scene acquired in each month is sent to the `evaluatePixel` function:
-
-``` javascript
-function filterScenes(availableScenes, inputMetadata){
-    availableScenes.sort((s1, s2) => s1.date - s2.date); // sort the scenes by dates in ascending order
-    previousSceneMonth = availableScenes[0].date.getMonth()-1
-    return availableScenes.filter(function (scene) {
-        if (scene.date.getMonth() != previousSceneMonth ){
-            previousSceneMonth=scene.date.getMonth();
-            return true;
-        } else return false;
-    });
-}
-```
-
 ## OGC services specifics
 
 There are some specifics when using evalscript V3 with WMS, WTS, WCS
@@ -896,10 +757,14 @@ services:
     with each request and it is not possible to request metadata in JSON
     format.
 -   TRANSPARENCY and BGCOLOR parameters are ignored. You can use
-    [`dataMask`](/APIs/SentinelHub/UserGuides/Datamask.md) band in
+    [`dataMask`](/APIs/SentinelHub/UserGuides/Datamask.qmd) band in
     evalscript V3 to handle transparency, as described
-    [here](/APIs/SentinelHub/UserGuides/Transparency.md).
+    [here](/APIs/SentinelHub/UserGuides/Transparency.qmd).
 -   Bit depth, which is given as the part of a `FORMAT` parameter (e.g.
     `FORMAT=image/tiff;depth=8`) is ignored. You can use
     [`sampleType`](#sampletype) in evalscript V3 to request the bit
     depth of your choice.
+
+[^1]: In case `samples` is an empty array, calling `samples[0].B02` will
+    raise an error and it is up to users to handle this in their
+    evalscript.
