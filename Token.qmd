@@ -1,0 +1,88 @@
+---
+title: Copernicus Data Space Ecosystem Token Generation
+---
+
+This documentation section explains how to generate a KeyCloak token for Copernicus Data Space Ecosystem.
+
+## By query with cURL
+
+CURL is a tool to send data to the server using several protocols such as HTTP.
+
+*On Linux*:
+
+In this example, the output is being filtered by grep and awk commands to obtain a token. In the Linux operating system it's being seen as environmental variable **KEYCLOAK_TOKEN**.
+
+::: {.panel-tabset}
+
+# cURL
+
+``` {bash}
+export KEYCLOAK_TOKEN=$(curl -d 'client_id=cdse-public' \
+                    -d "username=<username>" \
+                    -d "password=<password>" \
+                    -d 'grant_type=password' \
+                    'https://identity.cloudferro.com/auth/realms/CDSE/protocol/openid-connect/token' | \
+                    python3 -m json.tool | grep "access_token" | awk -F\" '{print $4}')
+
+```
+:::
+
+You can use following command to print the token:
+
+```{bash}
+printenv KEYCLOAK_TOKEN
+```
+
+*On Windows*:
+
+::: {.panel-tabset}
+
+# cURL
+
+``` {bash}
+curl -s -X POST https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token -H "Content-Type: application/x-www-form-urlencoded" -d "username=<username>" -d "password=<password>" -d "grant_type=password" -d "client_id=cdse-public"
+
+```
+:::
+
+<u>For commands to work you need to replace “\<username\>” and “\<password\>” with your Copernicus Data Space Ecosystem login credentials </u>
+
+## By Python script
+
+::: {.panel-tabset}
+
+# Python
+
+``` {python}
+#| eval: false
+import json
+import requests
+def get_keycloak(username: str, password: str) -> str:
+    data = {
+        "client_id": "cdse-public",
+        "username": username,
+        "password": password,
+        "grant_type": "password",
+        }
+    try:
+        r = requests.post("https://identity.cloudferro.com/auth/realms/CDSE/protocol/openid-connect/token",
+        data=data,
+        )
+        r.raise_for_status()
+    except Exception as e:
+        raise Exception(
+            f"Keycloak token creation failed. Reponse from the server was: {r.json()}"
+            )
+    return r.json()["access_token"]
+        
+
+keycloak_token = get_keycloak("USERNAME", "PASSWORD*")
+
+```
+:::
+
+Please replace the USERNAME and PASSWORD text in the last line of the script with your Copernicus Data Space Ecosystemlogin credentials.
+
+That concludes the tutorial on how to generate Keycloak token forCopernicus Data Space Ecosystem.
+
+In case you have any questions, please contact our [support](https://jira.cloudferro.com/servicedesk/customer/portal).
