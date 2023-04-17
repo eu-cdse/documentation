@@ -2,22 +2,10 @@
 title: Catalog API examples
 ---
 
-To request data using any of the request below, you will need to replace
-the string `<your access token>` with your Sentinel Hub access token.
-Sentinel Hub access token will look something like this:
-
-``` default
-ayJhbGciOiJSUzI1NiJ9.ayJzdWIiOiI0MmYwODZjCy1kMzI3LTRlOTMtYWMxNS00ODAwOGFiZjI0YjIiLCJhdWQiOiJlY2I1MGM1Zi1i
-MWM1LTQ3ZTgtYWE4NC0zZTU4NzJlM2I2MTEiLCJqdGkiOiI5MzYxMWE4ODEyNTM4Y2M0MmU0NDJjYjUyMTY0YmJlNyIsImV4cCI6MTU1N
-TQyMzk3MiwibmFtZSI6ImFuamEudnJlY2tvQHNpbmVyZ2lzZS5jb20iLCJlbWFpbCI6ImFuamEudnJlY2tvQHNpbmVyZ2lzZS5jb20iLC
-JzaWQiOiIzZjVjZDVkNS04MjRiLTQ3ZjYtODgwNy0wNDMyNWY4ODQxZmQifQ.U7FPOy_2jlEOFxXSjyN5KEdBROna3-Dyec0feShIbUOY
-1p9lEXdNaMmR5euiINi2RXDayX9Kr47CuSTsvq1zHFvZs1YgkFr1iH6kDuX-t_-wfWpqu5oPjoPVKZ4Rj0Ms_dxAUTQFTXR0rlbLuO-KS
-gnaeLVb5iiv_qY3Ctq2XKdIRcFRQLFziFcP4yZJl-NZMlwzsiiwjakcpYpI5jSYAdU2hpZLHRzceseeZt5YfZOe5Px1kZXro9Nd0L2GPC
--qzOXw_V1saMGFa2ov8qV6Dvk92iv2SDDdGhOdII_JOf8XkK4E3g2z0EEFdWhG9F4Iky4ukNsqBPgE8LRb31s0hg
-```
-
-and can be obtained as described in the [Authentication
-chapter](/APIs/SentinelHub/Overview/Authentication.qmd).
+The requests below are written in python. To execute them you need to
+create an OAuth client as is explained
+[here](/APIs/SentinelHub/Overview/Authentication.qmd#python). It is
+named `oauth` in these examples.
 
 ### Catalog API Entry page
 
@@ -26,7 +14,7 @@ available collections.
 
 ``` python
 url = "https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/"
-response = requests.get(url)
+response = oauth.get(url)
 ```
 
 ### List collections
@@ -37,7 +25,7 @@ Batch or Third Party Data Import functionalities.
 
 ``` python
 url = "https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/collections"
-response = requests.get(url)
+response = oauth.get(url)
 ```
 
 ### Sentinel 2 L1C collection
@@ -46,7 +34,7 @@ List single collection, in this case Sentinel 2 L1C collection.
 
 ``` python
 url = "https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/collections/sentinel-2-l1c/"
-response = requests.get(url)
+response = oauth.get(url)
 ```
 
 ### Simple GET search
@@ -64,7 +52,7 @@ query = {
 }
 
 url = "https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search"
-response = requests.get(url, params=query)
+response = oauth.get(url, params=query)
 ```
 
 ### Simple POST search
@@ -82,7 +70,7 @@ data = {
 }
 
 url = "https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search"
-response = requests.post(url, json=data)
+response = oauth.post(url, json=data)
 ```
 
 ### Simple POST search with pagination
@@ -100,7 +88,7 @@ data = {
 }
 
 url = "https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search"
-response = requests.post(url, json=data)
+response = oauth.post(url, json=data)
 ```
 
 ### Search with GeoJSON
@@ -124,7 +112,7 @@ data = {
 }
 
 url = "https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search"
-response = requests.post(url, json=data)
+response = oauth.post(url, json=data)
 ```
 
 ### Search with Filter
@@ -142,7 +130,7 @@ data = {
 }
 
 url = "https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search"
-response = requests.post(url, json=data)
+response = oauth.post(url, json=data)
 ```
 
 ### Get Filter parameters for collection
@@ -151,7 +139,7 @@ List all available filter parameters represented as JSON Schema.
 
 ``` python
 url = "https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/collections/sentinel-1-grd/queryables"
-response = requests.get(url)
+response = oauth.get(url)
 ```
 
 ### Search with Fields: No fields
@@ -169,7 +157,7 @@ data = {
 }
 
 url = "https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search"
-response = requests.post(url, json=data)
+response = oauth.post(url, json=data)
 ```
 
 ### Search with Fields: Empty fields
@@ -188,7 +176,7 @@ data = {
 }
 
 url = "https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search"
-response = requests.post(url, json=data)
+response = oauth.post(url, json=data)
 ```
 
 ### Search with Fields: Include
@@ -206,7 +194,7 @@ data = {
 }
 
 url = "https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search"
-response = requests.post(url, json=data)
+response = oauth.post(url, json=data)
 ```
 
 ### Search with Fields: Exclude
@@ -224,7 +212,7 @@ data = {
 }
 
 url = "https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search"
-response = requests.post(url, json=data)
+response = oauth.post(url, json=data)
 ```
 
 ### Search with distinct
@@ -243,7 +231,7 @@ data = {
 }
 
 url = "https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search"
-response = requests.post(url, json=data)
+response = oauth.post(url, json=data)
 ```
 
 Or see different Sentinel 1 instrument modes used.
@@ -258,7 +246,7 @@ data = {
 }
 
 url = "https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search"
-response = requests.post(url, json=data)
+response = oauth.post(url, json=data)
 ```
 
 ### Search on BYOC/BATCH collections
@@ -280,7 +268,7 @@ data = {
 }
 
 url = "https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search"
-response = requests.post(url, json=data)
+response = oauth.post(url, json=data)
 ```
 
 Or using GET simple search endpoint:
@@ -294,5 +282,5 @@ query = {
 }
 
 url = "https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search"
-response = requests.get(url, params=query)
+response = oauth.get(url, params=query)
 ```
