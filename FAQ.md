@@ -155,7 +155,7 @@
 <details>
   <summary>If I'm having troubles with registering, what can I do?</summary>
     <p>
-    Please e-mail the <a href="mailto:help-cdse-login@dataspace.copernicus.eu">help-cdse-login@dataspace.copernicus.eu</a> address for direct support on this matter.
+    Please e-mail the <a href="mailto:help-login@dataspace.copernicus.eu">help-login@dataspace.copernicus.eu</a> address for direct support on this matter.
      </p>
 </details>
 
