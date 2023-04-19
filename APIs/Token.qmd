@@ -2,7 +2,7 @@
 title: Copernicus Data Space Ecosystem Token Generation
 ---
 
-This part of the documentation covers two methods on how to generate Keycloak token for Copernicus Data Space Ecosystem. This token can be then used to download products from the CDSE catalogues by using CMD on Windows or Linux terminal.
+In order to download products from CDSE catalogue using OData and OpenSearch API user are required to have an Keycloak token. This token can be generated in both Linux and Window OS using either cURL or python script.
 
 ## By query with cURL
 
@@ -21,7 +21,7 @@ export KEYCLOAK_TOKEN=$(curl -d 'client_id=cdse-public' \
                     -d "username=<username>" \
                     -d "password=<password>" \
                     -d 'grant_type=password' \
-                    'https://identity.cloudferro.com/auth/realms/CDSE/protocol/openid-connect/token' | \
+                    'https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token' | \
                     python3 -m json.tool | grep "access_token" | awk -F\" '{print $4}')
 
 ```
@@ -65,7 +65,7 @@ def get_keycloak(username: str, password: str) -> str:
         "grant_type": "password",
         }
     try:
-        r = requests.post("https://identity.cloudferro.com/auth/realms/CDSE/protocol/openid-connect/token",
+        r = requests.post("https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token",
         data=data,
         )
         r.raise_for_status()
@@ -83,6 +83,5 @@ keycloak_token = get_keycloak("USERNAME", "PASSWORD")
 
 Please replace the USERNAME and PASSWORD text in the last line of the script with your Copernicus Data Space Ecosystem login credentials.
 
-That concludes the tutorial on how to generate Keycloak token for Copernicus Data Space Ecosystem.
 
 In case you have any questions, please contact our [support](https://helpcenter.dataspace.copernicus.eu/hc/en-gb).
