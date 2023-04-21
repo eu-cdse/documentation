@@ -47,7 +47,7 @@
 <details>
   <summary>Is there a page that indicates anomalies with the datasets?</summary>
     <p>
-    A dashboard where any user can find planned and unplanned anomalies per Sentinel satellite is under construction and should be availabe in a short timeframe.
+    A dashboard where any user can find planned and unplanned anomalies per Sentinel satellite is available in this <a href="https://operations.dashboard.copernicus.eu/index" target="_blank">link</a>
      </p>
 </details>
 <details>
