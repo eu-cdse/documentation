@@ -584,16 +584,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <section id="oauth2-endpoints" class="level3">
 <h3 class="anchored" data-anchor-id="oauth2-endpoints">OAuth2 Endpoints</h3>
 <p>Token Endpoint - for requesting tokens</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>https://sh.dataspace.copernicus.eu/oauth/token</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Token info endpoint</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>https://sh.dataspace.copernicus.eu/oauth/tokeninfo</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>https://identity.cloudferro.com/auth/realms/CDSE/protocol/openid-connect/token</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="token-request-examples" class="level3">
 <h3 class="anchored" data-anchor-id="token-request-examples">Token Request Examples</h3>
 <section id="curl" class="level4">
 <h4 class="anchored" data-anchor-id="curl">cURL</h4>
 <p>The following cURL request will return an access token, just make sure to replace <code>&lt;your client id&gt;</code> with your client ID and <code>&lt;your client secret&gt;</code> with your client secret:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">--request</span> POST <span class="at">--url</span> https://sh.dataspace.copernicus.eu/oauth/token <span class="at">--header</span> <span class="st">"content-type: application/x-www-form-urlencoded"</span> <span class="at">--data</span> <span class="st">"grant_type=client_credentials&amp;client_id=&lt;your client id&gt;"</span> <span class="at">--data-urlencode</span> <span class="st">"client_secret=&lt;your client secret&gt;"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">--request</span> POST <span class="at">--url</span> https://identity.cloudferro.com/auth/realms/CDSE/protocol/openid-connect/token <span class="at">--header</span> <span class="st">"content-type: application/x-www-form-urlencoded"</span> <span class="at">--data</span> <span class="st">"grant_type=client_credentials&amp;client_id=&lt;your client id&gt;"</span> <span class="at">--data-urlencode</span> <span class="st">"client_secret=&lt;your client secret&gt;"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="postman" class="level4">
 <h4 class="anchored" data-anchor-id="postman">Postman</h4>
@@ -602,61 +600,61 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <section id="python" class="level4">
 <h4 class="anchored" data-anchor-id="python">Python</h4>
 <p>In python the <a href="https://github.com/requests/requests-oauthlib" target="_blank">requests-oauthlib</a> library can handle the retrieval of access tokens using your OAuth Client configuration.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> oauthlib.oauth2 <span class="im">import</span> BackendApplicationClient</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> requests_oauthlib <span class="im">import</span> OAuth2Session</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Your client credentials</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>client_id <span class="op">=</span> <span class="st">'&lt;client_id&gt;'</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>client_secret <span class="op">=</span> <span class="st">'&lt;secret&gt;'</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a session</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>client <span class="op">=</span> BackendApplicationClient(client_id<span class="op">=</span>client_id)</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>oauth <span class="op">=</span> OAuth2Session(client<span class="op">=</span>client)</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Get token for the session</span></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>token <span class="op">=</span> oauth.fetch_token(token_url<span class="op">=</span><span class="st">'https://sh.dataspace.copernicus.eu/oauth/token'</span>,</span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>                          client_secret<span class="op">=</span>client_secret)</span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="co"># All requests using this session will have an access token automatically added</span></span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>resp <span class="op">=</span> oauth.get(<span class="st">"https://sh.dataspace.copernicus.eu/oauth/tokeninfo"</span>)</span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(resp.content)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> oauthlib.oauth2 <span class="im">import</span> BackendApplicationClient</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> requests_oauthlib <span class="im">import</span> OAuth2Session</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Your client credentials</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>client_id <span class="op">=</span> <span class="st">'&lt;client_id&gt;'</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>client_secret <span class="op">=</span> <span class="st">'&lt;secret&gt;'</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a session</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>client <span class="op">=</span> BackendApplicationClient(client_id<span class="op">=</span>client_id)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>oauth <span class="op">=</span> OAuth2Session(client<span class="op">=</span>client)</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Get token for the session</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>token <span class="op">=</span> oauth.fetch_token(token_url<span class="op">=</span><span class="st">'https://identity.cloudferro.com/auth/realms/CDSE/protocol/openid-connect/token'</span>,</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>                          client_secret<span class="op">=</span>client_secret)</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="co"># All requests using this session will have an access token automatically added</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>resp <span class="op">=</span> oauth.get(<span class="st">"..."</span>)</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(resp.content)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p><code>requests-oauthlib</code> doesn't check for status before checking if the response is ok. In case there's a server error, the user can receive an incorrect error, which falsely makes it seem as if the issue is on client side. Library's compliance hooks will prevent the invalid status response from being ignored, returning the correct error. To use them, add the following code:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> sentinelhub_compliance_hook(response):</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    response.raise_for_status()</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> response</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>oauth.register_compliance_hook(<span class="st">"access_token_response"</span>, sentinelhub_compliance_hook)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> sentinelhub_compliance_hook(response):</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    response.raise_for_status()</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> response</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>oauth.register_compliance_hook(<span class="st">"access_token_response"</span>, sentinelhub_compliance_hook)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="javascript" class="level4">
 <h4 class="anchored" data-anchor-id="javascript">Javascript</h4>
 <p>Example using <a href="https://github.com/axios/axios" target="_blank">axios</a>.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode javascript code-with-copy"><code class="sourceCode javascript"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> axios <span class="im">from</span> <span class="st">"axios"</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> qs <span class="im">from</span> <span class="st">"qs"</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> client_id <span class="op">=</span> <span class="st">"&lt;client_id&gt;"</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> client_secret <span class="op">=</span> <span class="st">"&lt;secret&gt;"</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> instance <span class="op">=</span> axios<span class="op">.</span><span class="fu">create</span>({</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">baseURL</span><span class="op">:</span> <span class="st">"https://sh.dataspace.copernicus.eu"</span></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> config <span class="op">=</span> {</span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  <span class="dt">headers</span><span class="op">:</span> {</span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Content-Type'</span><span class="op">:</span> <span class="st">'application/x-www-form-urlencoded;charset=utf-8'</span></span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> body <span class="op">=</span> qs<span class="op">.</span><span class="fu">stringify</span>({</span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>  client_id<span class="op">,</span></span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>  client_secret<span class="op">,</span></span>
-<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>  <span class="dt">grant_type</span><span class="op">:</span> <span class="st">"client_credentials"</span></span>
-<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a><span class="co">// All requests using this instance will have an access token automatically added</span></span>
-<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>instance<span class="op">.</span><span class="fu">post</span>(<span class="st">"/oauth/token"</span><span class="op">,</span> body<span class="op">,</span> config)<span class="op">.</span><span class="fu">then</span>(resp <span class="kw">=&gt;</span> {</span>
-<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>  <span class="bu">Object</span><span class="op">.</span><span class="fu">assign</span>(instance<span class="op">.</span><span class="at">defaults</span><span class="op">,</span> {<span class="dt">headers</span><span class="op">:</span> {<span class="dt">authorization</span><span class="op">:</span> <span class="vs">`Bearer </span><span class="sc">${</span>resp<span class="op">.</span><span class="at">data</span><span class="op">.</span><span class="at">access_token</span><span class="sc">}</span><span class="vs">`</span>}})</span>
-<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode javascript code-with-copy"><code class="sourceCode javascript"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> axios <span class="im">from</span> <span class="st">"axios"</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> qs <span class="im">from</span> <span class="st">"qs"</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> client_id <span class="op">=</span> <span class="st">"&lt;client_id&gt;"</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> client_secret <span class="op">=</span> <span class="st">"&lt;secret&gt;"</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> instance <span class="op">=</span> axios<span class="op">.</span><span class="fu">create</span>({</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">baseURL</span><span class="op">:</span> <span class="st">"https://sh.dataspace.copernicus.eu"</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> config <span class="op">=</span> {</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  <span class="dt">headers</span><span class="op">:</span> {</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Content-Type'</span><span class="op">:</span> <span class="st">'application/x-www-form-urlencoded;charset=utf-8'</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> body <span class="op">=</span> qs<span class="op">.</span><span class="fu">stringify</span>({</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>  client_id<span class="op">,</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>  client_secret<span class="op">,</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>  <span class="dt">grant_type</span><span class="op">:</span> <span class="st">"client_credentials"</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a><span class="co">// All requests using this instance will have an access token automatically added</span></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>instance<span class="op">.</span><span class="fu">post</span>(<span class="st">"https://identity.cloudferro.com/auth/realms/CDSE/protocol/openid-connect/token"</span><span class="op">,</span> body<span class="op">,</span> config)<span class="op">.</span><span class="fu">then</span>(resp <span class="kw">=&gt;</span> {</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>  <span class="bu">Object</span><span class="op">.</span><span class="fu">assign</span>(instance<span class="op">.</span><span class="at">defaults</span><span class="op">,</span> {<span class="dt">headers</span><span class="op">:</span> {<span class="dt">authorization</span><span class="op">:</span> <span class="vs">`Bearer </span><span class="sc">${</span>resp<span class="op">.</span><span class="at">data</span><span class="op">.</span><span class="at">access_token</span><span class="sc">}</span><span class="vs">`</span>}})</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 
 </section>
