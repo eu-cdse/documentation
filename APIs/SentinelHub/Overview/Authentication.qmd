@@ -55,13 +55,7 @@ Examples section below.
 Token Endpoint - for requesting tokens
 
 ``` default
-https://sh.dataspace.copernicus.eu/oauth/token
-```
-
-Token info endpoint
-
-``` default
-https://sh.dataspace.copernicus.eu/oauth/tokeninfo
+https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token
 ```
 
 ### Token Request Examples
@@ -73,7 +67,7 @@ to replace `<your client id>` with your client ID and
 `<your client secret>` with your client secret:
 
 ``` bash
-curl --request POST --url https://sh.dataspace.copernicus.eu/oauth/token --header "content-type: application/x-www-form-urlencoded" --data "grant_type=client_credentials&client_id=<your client id>" --data-urlencode "client_secret=<your client secret>"
+curl --request POST --url https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token --header "content-type: application/x-www-form-urlencoded" --data "grant_type=client_credentials&client_id=<your client id>" --data-urlencode "client_secret=<your client secret>"
 ```
 
 #### Postman
@@ -109,11 +103,11 @@ client = BackendApplicationClient(client_id=client_id)
 oauth = OAuth2Session(client=client)
 
 # Get token for the session
-token = oauth.fetch_token(token_url='https://sh.dataspace.copernicus.eu/oauth/token',
+token = oauth.fetch_token(token_url='https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token',
                           client_secret=client_secret)
 
 # All requests using this session will have an access token automatically added
-resp = oauth.get("https://sh.dataspace.copernicus.eu/oauth/tokeninfo")
+resp = oauth.get("...")
 print(resp.content)
 ```
 
@@ -161,7 +155,7 @@ const body = qs.stringify({
 
 
 // All requests using this instance will have an access token automatically added
-instance.post("/oauth/token", body, config).then(resp => {
+instance.post("https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token", body, config).then(resp => {
   Object.assign(instance.defaults, {headers: {authorization: `Bearer ${resp.data.access_token}`}})
 })
 ```
