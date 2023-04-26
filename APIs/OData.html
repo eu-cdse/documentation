@@ -1374,16 +1374,16 @@ Note
 <tr class="odd">
 <td data-quarto-table-cell-role="th">2</td>
 <td>application/octet-stream</td>
-<td>2e7d9c5d-e088-5248-80be-0c8453ce6556</td>
-<td>S3A_OL_2_WFR____20190515T000114_20190515T00041...</td>
+<td>937995e4-d37b-5c5c-bedc-531e5266f90e</td>
+<td>S3A_OL_1_EFR____20190515T000114_20190515T00041...</td>
 <td>application/octet-stream</td>
 <td>0</td>
-<td>2019-05-16T10:54:52.642Z</td>
-<td>2019-05-16T10:59:49.013Z</td>
-<td>2019-05-16T10:59:49.013Z</td>
+<td>2019-05-16T03:51:27.421Z</td>
+<td>2019-05-16T03:59:41.341Z</td>
+<td>2019-05-16T03:59:41.341Z</td>
 <td>True</td>
 <td></td>
-<td>/eodata/Sentinel-3/OLCI/OL_2_WFR/2019/05/15/S3...</td>
+<td>/eodata/Sentinel-3/OLCI/OL_1_EFR/2019/05/15/S3...</td>
 <td>[]</td>
 <td>{'Start': '2019-05-15T00:01:13.801Z', 'End': '...</td>
 <td>geography'SRID=4326;POLYGON ((141.591 10.4037,...</td>
@@ -2495,9 +2495,16 @@ Note
 <p>For downloading products you need an authorization token as only authorized users are allowed to download data products.</p>
 <p>To get the token you can use the following scripts:</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-19-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-19-1" role="tab" aria-controls="tabset-19-1" aria-selected="true">cURL</a></li></ul>
 <div class="tab-content">
-
+<div id="tabset-19-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-19-1-tab">
+<pre><code>curl --location --request POST 'https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token' \
+  --header 'Content-Type: application/x-www-form-urlencoded' \
+  --data-urlencode 'grant_type=password' \
+  --data-urlencode 'username=&lt;LOGIN&gt;' \
+  --data-urlencode 'password=&lt;PASSWORD&gt;' \
+  --data-urlencode 'client_id=cdse-public'</code></pre>
+</div>
 </div>
 </div>
 <p>or <!-- Following bash has been replaced by the new bash for ticket DAS-333
@@ -2505,17 +2512,25 @@ Note
 '-d 'password=' -d 'grant_type=password' 'https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token' | python -m json.tool | grep "access_token" | awk -F\" '{print $4}')]]>
 ``` --></p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-20-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-20-1" role="tab" aria-controls="tabset-20-1" aria-selected="true">cURL</a></li></ul>
 <div class="tab-content">
-
+<div id="tabset-20-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-20-1-tab">
+<pre><code>curl -d 'client_id=cdse-public' -d 'username=&lt;LOGIN&gt;' -d 'password=&lt;PASSWORD&gt;' -d 'grant_type=password' 'https://identity.cloudferro.com/auth/realms/CDSE/protocol/openid-connect/token' | python -m json.tool | grep "access_token" | awk -F\" '{print $4}'</code></pre>
+</div>
 </div>
 </div>
 <p>Along with the Access Token you will be returned a Refresh Token, the latter is used to generate a new Access Token without the need to specify Username or Password, this helps to make requests less vulnerable to your credentials being exposed.</p>
 <p>To re-generate the Access Token from the Refresh Token it can be done with the following request:</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-21-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-21-1" role="tab" aria-controls="tabset-21-1" aria-selected="true">cURL</a></li></ul>
 <div class="tab-content">
-
+<div id="tabset-21-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-21-1-tab">
+<pre><code>curl --location --request POST 'https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token' \
+  --header 'Content-Type: application/x-www-form-urlencoded' \
+  --data-urlencode 'grant_type=refresh_token' \
+  --data-urlencode 'refresh_token=&lt;REFRESH_TOKEN&gt;' \
+  --data-urlencode 'client_id=cdse-public'</code></pre>
+</div>
 </div>
 </div>
 <!--Where USER and PASSWORD are credentials to Your CloudFerro account in specific BRAND. Brand names are listed below with API from which You can get your token.
@@ -2531,19 +2546,22 @@ Note
 <p>Once you have your token, you require a product Id which can be found in the response of the products search: <a href="https://catalogue.dataspace.copernicus.eu/odata/v1/Products" target="_blank"><code>https://catalogue.dataspace.copernicus.eu/odata/v1/Products</code></a></p>
 <p>Finally, you can download the product using this script:</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-22-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-22-1" role="tab" aria-controls="tabset-22-1" aria-selected="true">cURL</a></li></ul>
 <div class="tab-content">
-
+<div id="tabset-22-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-22-1-tab">
+<pre><code>curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" 'https://catalogue.dataspace.copernicus.eu/odata/v1/Products(060882f4-0a34-5f14-8e25-6876e4470b0d)/$value' --output /tmp/product.zip</code></pre>
+</div>
 </div>
 </div>
 <p>or</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-23-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-23-1" role="tab" aria-controls="tabset-23-1" aria-selected="true">Wget</a></li></ul>
 <div class="tab-content">
-
+<div id="tabset-23-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-23-1-tab">
+<pre><code>!wget  --header "Authorization: Bearer $KEYCLOAK_TOKEN" 'http://catalogue.dataspace.copernicus.eu/odata/v1/Products(db0c8ef3-8ec0-5185-a537-812dad3c58f8)/$value' -O example_odata.zip</code></pre>
 </div>
 </div>
-<p>hi</p>
+</div>
 
 
 </section>
