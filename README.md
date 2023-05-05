@@ -17,10 +17,10 @@ Once the PR is reviewed and merged, the hotfix changes are automatically merged 
 All other changes are made via a PR on the `staging` branch.
 After reviewing and merging the PR, the changes are automatically pushed to the `staging`
 
-# PR commits
+## PR commits
 Commits within PR are automatically built and rendered to a custom link on the GitHub Pages. 
 After a successfull build of the commits, GitHub Actions will post a new comment with a link to custom documentation portal.
 
-# Automated merges
+## Automated merges
 GitHub Actions are set up to automatically merge pull requests into the corresponding branches.
 In case of a conflict, automatic merge can fail and manual resolution may be needed.
