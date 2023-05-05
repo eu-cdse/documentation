@@ -18,7 +18,8 @@ All other changes are made via a PR on the `staging` branch.
 After reviewing and merging the PR, the changes are automatically pushed to the `staging`
 
 # PR commits
-Commits within PR are automatically merged to the `preview` branch.
+Commits within PR are automatically built and rendered to a custom link on the GitHub Pages. 
+After a successfull build of the commits, GitHub Actions will post a new comment with a link to custom documentation portal.
 
 # Automated merges
 GitHub Actions are set up to automatically merge pull requests into the corresponding branches.
