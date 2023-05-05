@@ -6,7 +6,6 @@ This repo contains the source code for the [docsify](https://docsify.js.org/#/) 
 |---------| --- |-----|
 | staging | Branch that contains the next release of the documentation portal | https://documentation-staging.dataspace.copernicus.eu/    |
 | publish | Branch that contains the current release of the documentation potal | https://documentation.dataspace.copernicus.eu/ |
-| preview | Branch for previewing the code inside of a PR | https://eu-cdse.github.io/documentation/Home.html |
 
 # Guidelines for editors
 
