@@ -1,0 +1,155 @@
+---
+title: Processing Unit definition
+---
+
+*⚠ Costs marked with \*\* are not yet applied. These will come in effect
+by June 1st 2023.*
+
+## General data processing - applicable to Process API, OGC API, Statistical API
+
+Each request costs a proportional amount of processing unit(s),
+depending on what data and processing is requested. One processing unit
+(PU) is defined as a request for:
+
+-   an output (image) size of 512 x 512 pixels,
+-   3 collection input bands,
+-   one data `sample` per pixel (see
+    [sample](/APIs/SentinelHub/Evalscript/V3.qmd#parameters)),
+-   an output (image) format not exceeding 16 bits per pixel,
+-   without additional processing (e.g. orthorectification) applied,
+
+In addition to this:
+
+-   Minimal cost of a request is
+    -   0.005 PU for Process API and OGC API,
+    -   0.01 PU for Statistical API.
+-   The number of remaining processing units is reduced only when a
+    request successfully executes, i.e. when the response code is `2XX`.
+
+\"Multiplication factors\" are used to calculate how many processing
+units are required for each request. The definition of 1 processing unit
+and the calculation rules are summarized in the following tables:
+
+  Parameter/API            Quantity for 1 PU                            Rules for multiplication factors
+  ------------------------ -------------------------------------------- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Area of interest         512 x 512 px                                 The multiplication factor is calculated by dividing requested input size (BBOX) by 512 x 512 (pixel size depends on the user-defined resolution of the request execution).`<br/>`{=html} `<br/>`{=html} The minimum value of this multiplication factor is 0.01. This corresponds to an area of 0.25 km\^2 for Sentinel-2 data at 10 m spatial resolution.
+  Number of input bands    3                                            The multiplication factor is calculated by dividing the requested number of input bands by 3.`<br/>`{=html} `<br/>`{=html}An exception is requesting `dataMask` which is not counted, unless it is the only band included.
+  Output format            8 bit or 16 bit`<br/>`{=html} TIFF/JPG/PNG   Requesting 32 bit float TIFF will result in a multiplication factor of 2 due to larger memory consumption and data traffic.`<br/>`{=html} `<br/>`{=html} Requesting application/octet-stream will result in a multiplication factor of 1.4 due to additional integration costs *(This is used for integration with external tools such as xcube.)*.
+  Number of data samples   1                                            The multiplication factor equals the number of data samples per pixel.
+  \*\* Data fusion         N/A                                          \*\* The multiplication is only applied when data fusion is used.`<br/>`{=html} Multiplication factor is calculated as a sum of all collections within the same endpoint location and twice the sum of all remote collections, i.e. `count(local_collections) + 2x count(remote_collections)`.`<br/>`{=html}`<br/>`{=html} Example: data fusion request executed on services.sentinel-hub.com endpoint, which includes Sentinel-2 L1C, Sentinel-2 L2A and Landsat-9 would have a multiplication factor of 4 (1 + 1 + 2).
+
+## Sentinel-1 data processing - applicable to Process API, OGC API, Statistical API
+
+In addition to General data processing rules defined above, the
+following optional multiplicators apply as well:
+
+  Parameter/API                         Quantity for 1 PU   Rules for multiplication factors
+  ------------------------------------- ------------------- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  \*\* Orthorectification               N/A                 \*\* Requesting orthorectification will result in a multiplication factor of 2 due to additional processing requirements .
+  \*\* Radiometric Terrain Correction   N/A                 \*\* Requesting radiometric terrain correction will result in a multiplication factor of 2.5 due to additional processing requirements. The orthorectification factor is not additionally applied as it is a prerequisite.
+  \*\* Speckle Filtering                N/A                 \*\* Requesting speckle filtering will result in a multiplication factor of 2 due to additional processing requirements.
+
+## Data querying - applicable to Catalog API, OGC WFS
+
+Each request costs a proportional amount of processing unit(s) depending
+on what data and processing is requested. One processing unit (PU) is
+defined as a request for:
+
+-   area of 1000 x 1000 km
+-   time period up to one month
+
+In addition to this:
+
+-   Minimal cost of a request is 0.01 PU.
+-   Maximal cost of a request is 1 PU.
+-   The number of remaining processing units is reduced only when a
+    request successfully executes, i.e. when the response code is 2XX.
+
+  Parameter/API      Quantity for 1 PU   Rules for multiplication factors
+  ------------------ ------------------- ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Area of interest   1 000 000 km2       The multiplication factor is calculated by dividing requested input area of interest (BBOX) by 1 000 000.`<br/>`{=html}The minimum value of this multiplication factor is 0.01. This corresponds to an area of 10 000 km2
+  Time period        1 month             The multiplication factor is calculated by ceiling requested time period in months.
+
+## Batch Processing API
+
+\"General data processing\" and \"Sentinel-1 data processing\" rules
+apply with the following exceptions:
+
+-   \*\* Minimal cost of a request is 100 PU.
+-   Processing with batch processing API will result in a multiplication
+    factor of 1/3. Thus, three times more data can be processed
+    comparing to process API for the same amount of PUs.
+-   \*\* When data is delivered to a bucket in other region within the
+    same system (i.e. CDAS, AWS) there is additional cost of 0.03 PU per
+    MB of data.
+
+## Asynchronous Processing API
+
+\"General data processing\" and \"Sentinel-1 data processing\" rules
+apply with the following exceptions:
+
+-   Minimal cost of a request is 10 PU.
+-   \*\* When data is delivered to a bucket in other region within the
+    same system (i.e. CDAS, AWS) there is an additional cost of 0.03 PU
+    per MB of data.
+
+## Batch Statistical API
+
+\"General data processing\" and \"Sentinel-1 data processing\" rules
+apply with the following exceptions:
+
+-   Minimal cost of a request is 100 PU.
+-   \*\* When data is delivered to a bucket in other region within the
+    same system (i.e. CDAS, AWS) there is an additional cost of 0.03 PU
+    per MB of data.
+
+## Third party data order - applicable to Third Party Data Import API
+
+-   \*\* Each search request costs 1 PU.
+-   \*\* Each thumbnail request costs 1 PU.
+-   \*\* Each created order/subscription costs 5 PU.
+-   \*\* Each processed order delivery costs 5 PU.
+-   \*\* Each processed subscription delivery costs 2 PU.
+
+## Data ingestion - applicable to Bring your own COG API and Zarr API
+
+-   Each request to BYOC or Zarr API costs 1 PU.
+-   Usage of your BYOC and Zarr collections is billed the same as usage
+    of public collections.
+
+## Request cost calculation examples
+
+### Sentinel-1 change detection
+
+An example of calculation of processing units for a Sentinel-1 change
+detection request (e.g. comparison of two time slices) is presented in
+the table below.
+
+  Parameter                      Quantity         Multiplication factor         Details
+  ------------------------------ ---------------- ----------------------------- -----------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Output size (width x height)   1024 x 1024 px   x 4                           The requested output size is 1024 x 1024 px which is 4 times larger than the output size for one PU (512 x 512 px). Hence the multiplication factor is 4.
+  Number of input bands          4                x 4/3                         4 input bands are requested, which is 4/3 times more than 3 input bands, which are included in one PU. The multiplication factor is thus 4/3.
+  Output format                  32-bit float     x 2                           The requested 32 bit float TIFF has a multiplication factor of 2.
+  Number of data samples         2                x 2                           2 data samples (one for each time slice) were requested for each pixel. Thus the multiplication factor is 2.
+  Orthorectification             Yes              x 2                           Ortorectification is requested, which results in a multiplication factor of 2.
+                                 **Total**        **42.667 processing units**   To calculate the number of processing units for this request multiply all the individual multiplication factors:`<br/>`{=html} 4 x 4/3 x 2 x 2 x 2 = **42.667**
+
+::: callout-note
+Statistical API is also a multi-temporal request. The same rules for
+calculating multiplication factors apply.
+:::
+
+### NDVI calculation for a parcel
+
+An example of calculation of processing units of NDVI value over a 4
+hectare large parcel at 10 m spatial resolution is presented in the
+table below.
+
+  Parameter                      Quantity      Multiplication factor         Details
+  ------------------------------ ------------- ----------------------------- -----------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Output size (width x height)   20 x 20 px    x 0.01                        The requested output size is 20 x 20 px which is smaller than the minimum area, thus the multiplication factor is 0.01.
+  Number of input bands          2             x 2/3                         2 input bands are requested, thus the multiplication factor is 2/3.
+  Output format                  16-bit tiff   x 1                           The same as in the definition of one processing unit, thus the multiplication factor is 1.
+  Number of data samples         1             x 1                           The same as in the definition of one processing unit, thus the multiplication factor is 1.
+  Orthorectification             No            x 1                           The same as in the definition of one processing unit, thus the multiplication factor is 1.
+                                 **Total**     **0.0067 processing units**   To calculate the number of processing units for this request multiply all the individual multiplication factors: `<br/>`{=html} 0.01 x 2/3 x 1 x 1 = **0.0067**

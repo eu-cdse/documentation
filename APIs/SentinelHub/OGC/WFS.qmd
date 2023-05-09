@@ -1,0 +1,99 @@
+---
+title: Web Feature Service
+---
+
+## WFS Request
+
+The Sentinel Hub WFS (Web Feature Service) service conforms to the [WFS
+standard](https://www.ogc.org/standard/wfs/){target="_blank"}. It
+provides access to the geometric (vector) metadata about the available
+data collection tiles. As with the WMS service, WFS is also only
+available via a user-preconfigured custom server instance URL.
+
+See our OGC API
+[Webinar](https://www.youtube.com/watch?v=CBIlTOl2po4){target="_blank"},
+which will guide you through different OGC services, including WFS, help
+you understand the structure, show you how to run the requests in
+different environments and how they can be integrated with QGIS, ArcGIS
+and web applications.
+
+The base URL for the WFS service:
+
+``` default
+https://sh.dataspace.copernicus.eu/ogc/wfs/<INSTANCE_ID>
+```
+
+The service supports many vector formats, including GML, XML, JSON and
+also raw HTML and plain text. Check `GetCapabilities` for a list of all
+supported formats. It supports WFS version 2.0.0.
+
+## WFS URL Parameters
+
+**Standard common WFS URL parameters** (parameter names are case
+insensitive):
+
+  WFS parameter   Info
+  --------------- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  SERVICE         Required, must be \"WFS\".
+  VERSION         WFS version standard. Optional, default: \"2.0.0\". Supported values: \"2.0.0\".
+  REQUEST         What is requested, valid values: `DescribeFeatureType`, `GetFeature` or `GetCapabilities`. Required.
+  TIME            (when REQUEST = `GetTile`) The time range for which to return the results. The result is based on all scenes between the specified times conforming to the cloud coverage criteria and stacked based on priority setting - e.g. most recent on top. It is written as two time values in ISO8601 format separated by a slash, for example: `TIME=2016-01-01T09:02:44Z/2016-02-01T11:00:00Z`. Reduced accuracy times, where parts of the time string are omitted, are also supported. For example, `TIME=2016-07-15/2016-07-15` will be interpreted as \"TIME=2016-07-15T00:00:00Z/2016-07-15T23:59:59Z\" and `TIME=2016-07/2016-08` will be interpreted as \"TIME=2016-07-01T00:00:00Z/2016-08-31T23:59:59Z\" `<br/>`{=html} Optional, default: none (the last valid image is returned). `<br/>`{=html}`<br/>`{=html} Note: Requesting a single value for TIME parameter is deprecated. Sentinel Hub interpreted it as a time interval \[given time - 6 months, given time\]. For vast majority of cases this resulted in unnecessary long processing time thus we strongly encourage you to always use the smallest possible time range instead.
+
+In addition to the standard WFS URL parameters, the WFS service also
+supports many custom URL parameters. See [Custom service URL
+parameters](/APIs/SentinelHub/OGC/AdditionalRequestParameters.qmd) for
+details.
+
+**Standard `GetFeature` request URL parameters:**
+
+  WFS parameter    Info
+  ---------------- -------------------------------------------------------------------------------------------------------------
+  TYPENAMES        More information found [below](/APIs/SentinelHub/OGC/WFS.qmd#typenames).
+  MAXFEATURES      The maximum number of features to be returned by a single request. Default value: 100. Valid range: 0..100.
+  BBOX             The bounding box area for which to return the features.
+  SRSNAME          The CRS in which the BBOX is specified.
+  FEATURE_OFFSET   Offset controls the starting point within the returned features.
+  OUTPUTFORMAT     The MIME format of the returned features.
+
+**Standard `DescribeFeatureType` request URL parameters:**
+
+  WFS parameter   Info
+  --------------- --------------------------------------------------------------------------
+  TYPENAMES       More information found [below](/APIs/SentinelHub/OGC/WFS.qmd#typenames).
+  OUTPUTFORMAT    The MIME format of the returned features.
+
+### Typenames
+
+  Data collection                        TYPENAMES for AWS services
+  -------------------------------------- ----------------------------
+  SENTINEL-2 L1C                         DSS1
+  SENTINEL-2 L2A                         DSS2
+  SENTINEL-1 IW                          DSS3
+  SENTINEL-1 EW                          DSS3
+  SENTINEL-1 EW SH                       DSS3
+  SENTINEL 3 OLCI                        DSS8
+  SENTINEL 3 SLSTR                       DSS9
+  SENTINEL 5P                            DSS7
+  LANDSAT 8 L1 (from Collection 2)[^1]   DSS12
+  LANDSAT 8 L2 (from Collection 2)       DSS13
+  LANDSAT 4-5 TM Level 1                 DSS15
+  LANDSAT 4-5 TM Level 2                 DSS16
+  LANDSAT 7 ETM Level 1                  DSS17
+  LANDSAT 7 ETM Level 2                  DSS18
+  LANDSAT 1-5 MSS Level 1                DSS14
+  Harmonized Landsat Sentinel            DSS21
+  LANDSAT 7[^2]                          /
+  LANDSAT 5[^3]                          /
+  MODIS                                  DSS5
+  ENVISAT MERIS                          /
+  BYOC                                   byoc-\<collectionId\>
+  BATCH                                  batch-\<collectionId\>
+
+[^1]: Note that Landsat 8 Level 1 from collection 1, known as L8L1C with
+    a typename DSS6, has been deprecated and removed
+
+[^2]: Note that Landsat 5 is a different collection than the Landsat
+    4-5TM. The former is only supported in OGC, while the
+
+[^3]: Note that Landsat 5 is a different collection than the Landsat
+    4-5TM. The former is only supported in OGC, while the

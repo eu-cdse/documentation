@@ -1,80 +1,64 @@
-# Service Desk
+# Support
 
-If the documentation portal does not provide the solution to your questions related to the use of the Copernicus Data Space Ecosystem, this page describes how to ask for support. 
+If you don't find answer to your questions in the documentation portal, this page describes how to ask for support. 
 
 ## Prerequisites
 
 Important to know is that only users with a Copernicus Data Space Ecosystem account can ask for support. 
-If you don't have one yet, you can register [here](https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/auth?client_id=cdse-public&redirect_uri=https%3A%2F%2Fdataspace.copernicus.eu&response_type=code&scope=openid).
+If you don't have one yet, you can register [here](https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/auth?client_id=cdse-public&redirect_uri=https%3A%2F%2Fdataspace.copernicus.eu&response_type=code&scope=openid){target="_blank"}.
 If you have an issue with registering or you want to deregister, please [contact us](mailto://help-login@dataspace.copernicus.eu?Subject=Subject%20Text&Body=Your%20comments) directly.
 
-## Step 1: Sign in to CloudFerro JIRA
+## Step 1: Navigate to the Help center
 
-Navigate to the following [website](https://jira.cloudferro.com/servicedesk/customer/portal/55). You should see the following form:
+Navigate to the following [website](https://helpcenter.dataspace.copernicus.eu/hc/en-gb).
 
-<!-- ![Log in](../_images/support_v3.png ) -->
-<img src="../_images/support_v3.png" width="350">
+In case you're not logged in, click on LOGIN.
 
-In the section Use OAuth Login click Copernicus Data Space Ecosystems. 
-You will now get the Copernicus Data Space Ecosystems login form:
+<img src="_images/help_center_sign_in.png" width="550">
 
-<!-- ![Landing page](../_images/support_login.png) -->
-<img src="../_images/support_login.png" width="550">
+You will now get the Copernicus Data Space Ecosystems login form.
 
-Enter the username and e-mail to your account and click LOG IN.
+<img src="_images/support_login.png" width="400">
 
-## Step 2: Submit the ticket
+Enter your credentials and click LOG IN.
 
-Once you have logged in you should see this window:
+## Step 2: Submit a request
 
-<!-- ![Landing page](../_images/logos.png) -->
-<img src="../_images/support_ticket_1.png" width="550">
+Once you have logged in you should see this window, click SUBMIT A REQUEST.
 
-Click Technical support.
-The form used to create tickets should now appear:
+<img src="_images/help_center_submit_request.png" width="550">
 
-<!-- ![Landing page](../_images/logos.png) -->
-<img src="../_images/support_ticket_2.png" width="550">
+The form used to create tickets should now appear.
 
-Provide a short summary of the ticket in the text field Summary.
-Describe your problem in detail in the text field Description.
-You can also add upload attachments such as screenshots in the Attachments section.
-Once you’ve finished, click Create.
-Your ticket should now be submitted:
+<img src="_images/help_center_request_form.png" width="550">
 
-<!-- ![Landing page](../_images/logos.png) -->
-<img src="../_images/support_ticket_3.png" width="550">
+From the dropdown select what the question is about.
 
-You can see its status here. You can also post additional comments and replies.
+Enter the subject.
 
-## Accessing the submitted tickets
+Describe your problem in detail in the field Description.
 
-After logging in (as described in Step 1), you can see the status of your tickets. Click the Requests button in the upper right corner of the website:
+You can also upload attachments such as screenshots in the Attachments section.
 
-<!-- ![Landing page](../_images/logos.png) -->
-<img src="../_images/support_request.png" width="150">
+Once you’ve finished, click SUBMIT.
 
-You will now see the following menu:
+Your ticket should now be submitted.
 
-<!-- ![Landing page](../_images/logos.png) -->
-<img src="../_images/support_request_menu.png" width="250">
+<img src="_images/help_center_submitted_request.png" width="550">
 
-Click My requests or All requests depending on your needs. You should now see the place in which you can access your tickets:
+You can see its status here. You can also post additional comments and attachments.
 
-<!-- ![Landing page](../_images/logos.png) -->
-<img src="../_images/support_requests_list.png" width="500">
+## Accessing your submitted requests
 
-If you can’t see your ticket here, make sure that the option Any status from the first drop-down menu is selected:
+After logging in (as described in Step 1), you can see the status of your requests under your account. Select Requests from the drop-down.
 
-<!-- ![Landing page](../_images/logos.png) -->
-<img src="../_images/support_request_anystatus.png" width="400">
+<img src="_images/help_center_your_requests.png" width="150">
 
-You should now see your ticket:
+You will now see all your requests.
 
-<!-- ![Landing page](../_images/logos.png) -->
-<img src="../_images/support_request_mytickets.png" width="500">
+<img src="_images/help_center_your_requests_list.png" width="550">
 
+If you can’t see your request here, make sure that Status "Any" is selected from the drop-down.
 
-This system is the initial setup of the support desk of the Copernicus Data Space Ecosystem. From April 2023 onwards, we will provide much more integrated support functionalities such as answer suggestions and a user forum.
-
+You should now see your request.
 

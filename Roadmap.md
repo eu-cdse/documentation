@@ -3,7 +3,6 @@
 
 The [Service description and evolution document](/_docs/CDSE-SDE-TSY_Service%20Description%20and%20Evolution.pdf ':ignore') provides a comprehensive view of all data products and services available in the frame of the Copernicus Data Space Ecosystem, both the “Copernicus Free Services” as well as the services operated by third parties. 
 
-
 ## Roadmap
 <!-- |Timeline| Jan-23 | Apr-23 | Jul-23| Nov-23 
 |---|---|---|---|----|
@@ -19,10 +18,10 @@ The [Service description and evolution document](/_docs/CDSE-SDE-TSY_Service%20D
 
 More detailed information on the timelines for Copernicus Data Space Ecosystem data, APIs and Application updates can be found here:
 
-* [Data timeline overview](/Roadmap/DataTable.html)
+* [Data timeline overview](/Roadmap/DataTable.qmd)
 
-* [APIs timeline overview](/Roadmap/APITable.html)
+* [APIs timeline overview](/Roadmap/APITable.qmd)
 
-* [Applications timeline overview](/Roadmap/AppTable.html)
+* [Applications timeline overview](/Roadmap/AppTable.qmd)
 
 

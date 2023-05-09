@@ -1,0 +1,728 @@
+---
+title: Examples for S3OLCI
+---
+
+The requests below are written in python. To execute them you need to
+create an OAuth client as is explained
+[here](/APIs/SentinelHub/Overview/Authentication.qmd#python). It is
+named `oauth` in these examples.
+
+### True Color
+
+``` python
+evalscript = """
+//VERSION=3
+function setup() {
+  return {
+    input: ["B08", "B06", "B04"],
+    output: {
+      bands: 3,
+      sampleType: "AUTO", // default value - scales the output values from [0,1] to [0,255].
+    },
+  }
+}
+
+function evaluatePixel(sample) {
+  return [2.5 * sample.B08, 2.5 * sample.B06, 2.5 * sample.B04]
+}
+"""
+
+request = {
+    "input": {
+        "bounds": {
+            "properties": {"crs": "http://www.opengis.net/def/crs/OGC/1.3/CRS84"},
+            "bbox": [
+                8.3333,
+                41.3149,
+                9.7009,
+                43.0568,
+            ],
+        },
+        "data": [
+            {
+                "type": "sentinel-3-olci",
+                "dataFilter": {
+                    "timeRange": {
+                        "from": "2020-04-04T00:00:00Z",
+                        "to": "2020-04-05T00:00:00Z",
+                    }
+                },
+            }
+        ],
+    },
+    "output": {
+        "width": 512,
+        "height": 512,
+        "responses": [{"format": {"type": "image/png"}}],
+    },
+    "evalscript": evalscript,
+}
+
+url = "https://sh.dataspace.copernicus.eu/api/v1/process"
+response = oauth.post(url, json=request)
+```
+
+### True Color (EPSG 32632)
+
+``` python
+evalscript = """
+//VERSION=3
+function setup() {
+  return {
+    input: ["B08", "B06", "B04"],
+    output: {
+      bands: 3,
+      sampleType: "AUTO", // default value - scales the data from 0-255.
+    },
+  }
+}
+
+function evaluatePixel(sample) {
+  return [2.5 * sample.B08, 2.5 * sample.B06, 2.5 * sample.B04]
+}
+"""
+
+request = {
+    "input": {
+        "bounds": {
+            "properties": {"crs": "http://www.opengis.net/def/crs/EPSG/0/32632"},
+            "bbox": [
+                444170,
+                4574059,
+                557052,
+                4767386,
+            ],
+        },
+        "data": [
+            {
+                "type": "sentinel-3-olci",
+                "dataFilter": {
+                    "timeRange": {
+                        "from": "2020-04-04T00:00:00Z",
+                        "to": "2020-04-05T00:00:00Z",
+                    }
+                },
+            }
+        ],
+    },
+    "output": {
+        "width": 512,
+        "height": 512,
+        "responses": [{"format": {"type": "image/png"}}],
+    },
+    "evalscript": evalscript,
+}
+
+url = "https://sh.dataspace.copernicus.eu/api/v1/process"
+response = oauth.post(url, json=request)
+```
+
+### True Color, resolution (EPSG 32632)
+
+``` python
+evalscript = """
+//VERSION=3
+function setup() {
+  return {
+    input: ["B08", "B06", "B04"],
+    output: {
+      bands: 3,
+      sampleType: "AUTO", // default value - scales the output values from [0,1] to [0,255].
+    },
+  }
+}
+
+function evaluatePixel(sample) {
+  return [2.5 * sample.B08, 2.5 * sample.B06, 2.5 * sample.B04]
+}
+"""
+
+request = {
+    "input": {
+        "bounds": {
+            "properties": {"crs": "http://www.opengis.net/def/crs/EPSG/0/32632"},
+            "bbox": [
+                444170,
+                4574059,
+                557052,
+                4767386,
+            ],
+        },
+        "data": [
+            {
+                "type": "sentinel-3-olci",
+                "dataFilter": {
+                    "timeRange": {
+                        "from": "2020-04-04T00:00:00Z",
+                        "to": "2020-04-05T00:00:00Z",
+                    },
+                    "processing": {"upsampling": "BILINEAR"},
+                },
+            }
+        ],
+    },
+    "output": {
+        "resx": 150,
+        "resy": 150,
+        "responses": [{"format": {"type": "image/png"}}],
+    },
+    "evalscript": evalscript,
+}
+
+url = "https://sh.dataspace.copernicus.eu/api/v1/process"
+response = oauth.post(url, json=request)
+```
+
+### True Color, multi-band GeoTiff
+
+``` python
+evalscript = """
+//VERSION=3
+function setup() {
+  return {
+    input: [
+      {
+        bands: ["B04", "B06", "B08"],
+        units: "REFLECTANCE", // default value
+      },
+    ],
+    output: {
+      bands: 3,
+      sampleType: "UINT16", //floating point values are automatically rounded to the nearest integer by the service.
+    },
+  }
+}
+
+function evaluatePixel(sample) {
+  // Return reflectance multiplied by 10000 as integers to save processing units.
+  // To obtain reflectance values, simply divide the result pixel values by 10000.
+  return [10000 * sample.B08, 10000 * sample.B06, 10000 * sample.B04]
+}
+"""
+
+request = {
+    "input": {
+        "bounds": {
+            "properties": {"crs": "http://www.opengis.net/def/crs/OGC/1.3/CRS84"},
+            "bbox": [
+                8.3333,
+                41.3149,
+                9.7009,
+                43.0568,
+            ],
+        },
+        "data": [
+            {
+                "type": "sentinel-3-olci",
+                "dataFilter": {
+                    "timeRange": {
+                        "from": "2020-04-04T00:00:00Z",
+                        "to": "2020-04-05T00:00:00Z",
+                    }
+                },
+            }
+        ],
+    },
+    "output": {
+        "width": 512,
+        "height": 512,
+        "responses": [{"format": {"type": "image/tiff"}}],
+    },
+    "evalscript": evalscript,
+}
+
+url = "https://sh.dataspace.copernicus.eu/api/v1/process"
+response = oauth.post(url, json=request, headers={"Accept": "image/tiff"})
+```
+
+### True color and metadata (multi-part response GeoTIFF and json)
+
+``` python
+evalscript = """
+//VERSION=3
+function setup() {
+  return {
+    input: [
+      {
+        bands: ["B04", "B06", "B08"],
+        units: "REFLECTANCE",
+      },
+    ],
+    mosaicking: Mosaicking.SIMPLE,
+    output: {
+      id: "default",
+      bands: 3,
+      sampleType: "UINT16", //floating point values are automatically rounded to the nearest integer by the service.
+    },
+  }
+}
+
+function updateOutputMetadata(scenes, inputMetadata, outputMetadata) {
+  outputMetadata.userData = { scenes: scenes.tiles }
+}
+
+function evaluatePixel(samples) {
+  // Return reflectance multiplied by 10000 as integers to save processing units.
+  // To obtain reflectance values, simply divide the result pixel values by 10000.
+  return [10000 * samples.B08, 10000 * samples.B06, 10000 * samples.B04]
+}
+"""
+
+request = {
+    "input": {
+        "bounds": {
+            "properties": {"crs": "http://www.opengis.net/def/crs/OGC/1.3/CRS84"},
+            "bbox": [
+                8.3333,
+                41.3149,
+                9.7009,
+                43.0568,
+            ],
+        },
+        "data": [
+            {
+                "type": "sentinel-3-olci",
+                "dataFilter": {
+                    "timeRange": {
+                        "from": "2020-04-04T00:00:00Z",
+                        "to": "2020-04-05T00:00:00Z",
+                    }
+                },
+            }
+        ],
+    },
+    "output": {
+        "width": 512,
+        "height": 512,
+        "responses": [
+            {
+                "identifier": "default",
+                "format": {"type": "image/tiff"},
+            },
+            {
+                "identifier": "userdata",
+                "format": {"type": "application/json"},
+            },
+        ],
+    },
+    "evalscript": evalscript,
+}
+
+url = "https://sh.dataspace.copernicus.eu/api/v1/process"
+response = oauth.post(url, json=request, headers={"Accept": "application/tar"})
+```
+
+### OTCI as jpeg image with bounds given as polygon
+
+``` python
+evalscript = """
+//VERSION=3
+function setup() {
+  return {
+    input: [
+      {
+        bands: ["B10", "B11", "B12"],
+      },
+    ],
+    output: {
+      id: "default",
+      bands: 3,
+      sampleType: "AUTO",
+    },
+  }
+}
+
+// Create a new visualiser to represent data
+var cm = new ColorMapVisualizer([
+  [0, [0, 0, 0.5]],
+  [1, [0, 0.3, 0.8]],
+  [1.8, [1, 0.2, 0.2]],
+  [2.5, [1, 0.9, 0]],
+  [4, [0, 0.8, 0.1]],
+  [4.5, [0, 0.6, 0.2]],
+  [5, [1, 1, 1]],
+])
+
+function evaluatePixel(sample) {
+  let OTCI = (sample.B12 - sample.B11) / (sample.B11 - sample.B10)
+  return cm.process(OTCI)
+}
+"""
+
+request = {
+    "input": {
+        "bounds": {
+            "properties": {"crs": "http://www.opengis.net/def/crs/OGC/1.3/CRS84"},
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            8.80279541015625,
+                            42.494377798972465,
+                        ],
+                        [
+                            8.6956787109375,
+                            42.370720143531976,
+                        ],
+                        [
+                            8.7890625,
+                            42.238685347536496,
+                        ],
+                        [
+                            8.60504150390625,
+                            42.20614200929954,
+                        ],
+                        [
+                            8.70391845703125,
+                            42.15322331239858,
+                        ],
+                        [
+                            8.83575439453125,
+                            41.97991089691236,
+                        ],
+                        [
+                            8.81378173828125,
+                            41.797935707842974,
+                        ],
+                        [
+                            8.9208984375,
+                            41.777456667491066,
+                        ],
+                        [
+                            8.94012451171875,
+                            41.68316883525891,
+                        ],
+                        [
+                            9.0472412109375,
+                            41.52297326747377,
+                        ],
+                        [
+                            9.35760498046875,
+                            41.70777900286713,
+                        ],
+                        [
+                            9.33013916015625,
+                            42.06764572379527,
+                        ],
+                        [
+                            9.48394775390625,
+                            42.261049162113856,
+                        ],
+                        [
+                            9.47021484375,
+                            42.51462626746592,
+                        ],
+                        [
+                            9.33837890625,
+                            42.62385465855651,
+                        ],
+                        [
+                            9.1900634765625,
+                            42.6844544397102,
+                        ],
+                        [
+                            8.80279541015625,
+                            42.494377798972465,
+                        ],
+                    ]
+                ],
+            },
+        },
+        "data": [
+            {
+                "type": "sentinel-3-olci",
+                "dataFilter": {
+                    "timeRange": {
+                        "from": "2020-04-04T00:00:00Z",
+                        "to": "2020-04-05T00:00:00Z",
+                    }
+                },
+            }
+        ],
+    },
+    "output": {
+        "width": 512,
+        "height": 512,
+        "responses": [
+            {
+                "identifier": "default",
+                "format": {
+                    "type": "image/jpeg",
+                    "quality": 90,
+                },
+            }
+        ],
+    },
+    "evalscript": evalscript,
+}
+
+url = "https://sh.dataspace.copernicus.eu/api/v1/process"
+response = oauth.post(url, json=request)
+```
+
+### OTCI image and value (multi-part response png and GeoTIFF containing floats)
+
+``` python
+evalscript = """
+//VERSION=3
+function setup() {
+  return {
+    input: [
+      {
+        bands: ["B10", "B11", "B12"],
+      },
+    ],
+    output: [
+      {
+        id: "default",
+        bands: 1,
+        sampleType: "FLOAT32",
+      },
+      {
+        id: "otci_image",
+        bands: 3,
+        sampleType: "AUTO",
+      },
+    ],
+  }
+}
+
+// Create a new visualiser to represent data
+var cm = new ColorMapVisualizer([
+  [0, [0, 0, 0.5]],
+  [1, [0, 0.3, 0.8]],
+  [1.8, [1, 0.2, 0.2]],
+  [2.5, [1, 0.9, 0]],
+  [4, [0, 0.8, 0.1]],
+  [4.5, [0, 0.6, 0.2]],
+  [5, [1, 1, 1]],
+])
+
+function evaluatePixel(sample) {
+  let OTCI = (sample.B12 - sample.B11) / (sample.B11 - sample.B10)
+  return {
+    default: [OTCI],
+    otci_image: cm.process(OTCI),
+  }
+}
+"""
+
+request = {
+    "input": {
+        "bounds": {
+            "properties": {"crs": "http://www.opengis.net/def/crs/OGC/1.3/CRS84"},
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            8.80279541015625,
+                            42.494377798972465,
+                        ],
+                        [
+                            8.6956787109375,
+                            42.370720143531976,
+                        ],
+                        [
+                            8.7890625,
+                            42.238685347536496,
+                        ],
+                        [
+                            8.60504150390625,
+                            42.20614200929954,
+                        ],
+                        [
+                            8.70391845703125,
+                            42.15322331239858,
+                        ],
+                        [
+                            8.83575439453125,
+                            41.97991089691236,
+                        ],
+                        [
+                            8.81378173828125,
+                            41.797935707842974,
+                        ],
+                        [
+                            8.9208984375,
+                            41.777456667491066,
+                        ],
+                        [
+                            8.94012451171875,
+                            41.68316883525891,
+                        ],
+                        [
+                            9.0472412109375,
+                            41.52297326747377,
+                        ],
+                        [
+                            9.35760498046875,
+                            41.70777900286713,
+                        ],
+                        [
+                            9.33013916015625,
+                            42.06764572379527,
+                        ],
+                        [
+                            9.48394775390625,
+                            42.261049162113856,
+                        ],
+                        [
+                            9.47021484375,
+                            42.51462626746592,
+                        ],
+                        [
+                            9.33837890625,
+                            42.62385465855651,
+                        ],
+                        [
+                            9.1900634765625,
+                            42.6844544397102,
+                        ],
+                        [
+                            8.80279541015625,
+                            42.494377798972465,
+                        ],
+                    ]
+                ],
+            },
+        },
+        "data": [
+            {
+                "type": "sentinel-3-olci",
+                "dataFilter": {
+                    "timeRange": {
+                        "from": "2020-04-04T00:00:00Z",
+                        "to": "2020-04-05T00:00:00Z",
+                    }
+                },
+            }
+        ],
+    },
+    "output": {
+        "width": 512,
+        "height": 512,
+        "responses": [
+            {
+                "identifier": "otci_image",
+                "format": {"type": "image/png"},
+            },
+            {
+                "identifier": "default",
+                "format": {"type": "image/tiff"},
+            },
+        ],
+    },
+    "evalscript": evalscript,
+}
+
+url = "https://sh.dataspace.copernicus.eu/api/v1/process"
+response = oauth.post(url, json=request, headers={"Accept": "application/tar"})
+```
+
+### All S3OLCI reflectance bands as a GeoTIFF (EPSG 32632)
+
+``` python
+evalscript = """
+//VERSION=3
+function setup() {
+  return {
+    input: [
+      {
+        bands: [
+          "B01",
+          "B02",
+          "B03",
+          "B04",
+          "B05",
+          "B06",
+          "B07",
+          "B08",
+          "B09",
+          "B10",
+          "B11",
+          "B12",
+          "B13",
+          "B14",
+          "B15",
+          "B16",
+          "B17",
+          "B18",
+          "B19",
+          "B20",
+          "B21",
+        ],
+        units: "REFLECTANCE",
+      },
+    ],
+    output: {
+      bands: 21,
+      sampleType: "UINT16", //floating point values are automatically rounded to the nearest integer by the service.
+    },
+  }
+}
+
+function evaluatePixel(sample) {
+  // Return reflectance multiplied by 10000 as integers to save processing units.
+  // To obtain reflectance values, simply divide the result pixel values by 10000.
+  return [
+    10000 * sample.B01,
+    10000 * sample.B02,
+    10000 * sample.B03,
+    10000 * sample.B04,
+    10000 * sample.B05,
+    10000 * sample.B06,
+    10000 * sample.B07,
+    10000 * sample.B08,
+    10000 * sample.B09,
+    10000 * sample.B10,
+    10000 * sample.B11,
+    10000 * sample.B12,
+    10000 * sample.B13,
+    10000 * sample.B14,
+    10000 * sample.B15,
+    10000 * sample.B16,
+    10000 * sample.B17,
+    10000 * sample.B18,
+    10000 * sample.B19,
+    10000 * sample.B20,
+    10000 * sample.B21,
+  ]
+}
+"""
+
+request = {
+    "input": {
+        "bounds": {
+            "properties": {"crs": "http://www.opengis.net/def/crs/EPSG/0/32632"},
+            "bbox": [
+                444170,
+                4574059,
+                557052,
+                4767386,
+            ],
+        },
+        "data": [
+            {
+                "type": "sentinel-3-olci",
+                "dataFilter": {
+                    "timeRange": {
+                        "from": "2020-04-04T00:00:00Z",
+                        "to": "2020-04-05T00:00:00Z",
+                    }
+                },
+            }
+        ],
+    },
+    "output": {
+        "resx": 300,
+        "resy": 300,
+        "responses": [{"format": {"type": "image/tiff"}}],
+    },
+    "evalscript": evalscript,
+}
+
+url = "https://sh.dataspace.copernicus.eu/api/v1/process"
+response = oauth.post(url, json=request, headers={"Accept": "image/tiff"})
+```

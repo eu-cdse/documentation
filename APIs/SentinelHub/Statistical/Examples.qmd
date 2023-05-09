@@ -1,0 +1,1430 @@
+---
+title: Examples of Statistical API
+---
+
+The requests below are written in Python. To execute them you need to
+create an OAuth client as is explained
+[here](/APIs/SentinelHub/Overview/Authentication.qmd#python). It is
+named `oauth` in these examples. Jupyter notebook with all examples can
+be downloaded [here]().
+
+### Statistics for one single-band output on a given day
+
+``` python
+evalscript = """
+//VERSION=3
+function setup() {
+  return {
+    input: [{
+      bands: [
+        "B04",
+        "dataMask"
+      ]
+    }],
+    output: [
+      {
+        id: "output_B04",
+        bands: 1,
+        sampleType: "FLOAT32"
+      },
+      {
+        id: "dataMask",
+        bands: 1
+      }]
+  }
+}
+function evaluatePixel(samples) {
+    return {
+        output_B04: [samples.B04],
+        dataMask: [samples.dataMask]
+        }
+}
+"""
+
+stats_request = {
+  "input": {
+    "bounds": {
+      "bbox": [414315, 4958219, 414859, 4958819],
+    "properties": {
+        "crs": "http://www.opengis.net/def/crs/EPSG/0/32633"
+        }
+    },
+    "data": [
+      {
+        "type": "sentinel-2-l2a",
+        "dataFilter": {
+            "mosaickingOrder": "leastRecent"
+        },
+      }
+    ]
+  },
+  "aggregation": {
+    "timeRange": {
+            "from": "2020-07-04T00:00:00Z",
+            "to": "2020-07-05T00:00:00Z"
+      },
+    "aggregationInterval": {
+        "of": "P1D"
+    },
+    "evalscript": evalscript,
+    "resx": 10,
+    "resy": 10
+  }
+}
+
+headers = {
+  'Content-Type': 'application/json',
+  'Accept': 'application/json'
+}
+
+url = "https://sh.dataspace.copernicus.eu/api/v1/statistics"
+response = oauth.request("POST", url=url , headers=headers, json=stats_request)
+sh_statistics = response.json()
+sh_statistics
+```
+
+``` default
+{'data': [{'interval': {'from': '2020-07-04T00:00:00Z',
+    'to': '2020-07-05T00:00:00Z'},
+   'outputs': {'output_B04': {'bands': {'B0': {'stats': {'min': 0.07970000058412552,
+        'max': 0.30959999561309814,
+        'mean': 0.11471141986778864,
+        'stDev': 0.034298170449733226,
+        'sampleCount': 3240,
+        'noDataCount': 0}}}}}}],
+ 'status': 'OK'}
+```
+
+### Statistics, histogram and percentiles for one single-band output
+
+``` python
+evalscript = """
+//VERSION=3
+function setup() {
+  return {
+    input: [{
+      bands: [
+        "B04",
+        "dataMask"
+      ]
+    }],
+    output: [
+      {
+        id: "output_B04",
+        bands: 1,
+        sampleType: "FLOAT32"
+      },
+      {
+        id: "dataMask",
+        bands: 1
+      }]
+  }
+}
+function evaluatePixel(samples) {
+    return {
+        output_B04: [samples.B04],
+        dataMask: [samples.dataMask]
+        }
+}
+"""
+
+stats_request = {
+  "input": {
+    "bounds": {
+      "bbox": [414315, 4958219, 414859, 4958819],
+    "properties": {
+        "crs": "http://www.opengis.net/def/crs/EPSG/0/32633"
+        }
+    },
+    "data": [
+      {
+        "type": "sentinel-2-l2a",
+        "dataFilter": {
+            "mosaickingOrder": "leastRecent"
+        },
+      }
+    ]
+  },
+  "aggregation": {
+    "timeRange": {
+            "from": "2020-07-04T00:00:00Z",
+            "to": "2020-07-05T00:00:00Z"
+      },
+    "aggregationInterval": {
+        "of": "P1D"
+    },
+    "evalscript": evalscript,
+    "resx": 10,
+    "resy": 10
+  },
+  "calculations": {
+    "default": {
+      "histograms": {
+        "default": {
+          "nBins": 5,
+          "lowEdge": 0.0,
+          "highEdge": 0.3
+        }
+      },
+      "statistics": {
+        "default": {
+          "percentiles": {
+            "k": [ 33, 50, 75, 90 ]
+          }
+        }
+      }
+    }
+  }
+}
+
+headers = {
+  'Content-Type': 'application/json',
+  'Accept': 'application/json'
+}
+
+url = "https://sh.dataspace.copernicus.eu/api/v1/statistics"
+
+response = oauth.request("POST", url=url , headers=headers, json=stats_request)
+sh_statistics = response.json()
+sh_statistics
+```
+
+``` default
+{'data': [{'interval': {'from': '2020-07-04T00:00:00Z',
+    'to': '2020-07-05T00:00:00Z'},
+   'outputs': {'output_B04': {'bands': {'B0': {'stats': {'min': 0.07970000058412552,
+        'max': 0.30959999561309814,
+        'mean': 0.11471141986778864,
+        'stDev': 0.034298170449733226,
+        'sampleCount': 3240,
+        'noDataCount': 0,
+        'percentiles': {'33.0': 0.09709999710321426,
+         '50.0': 0.10360000282526016,
+         '75.0': 0.11940000206232071,
+         '90.0': 0.16040000319480896}},
+       'histogram': {'bins': [{'lowEdge': 0.0, 'highEdge': 0.06, 'count': 0},
+         {'lowEdge': 0.06, 'highEdge': 0.12, 'count': 2458},
+         {'lowEdge': 0.12, 'highEdge': 0.18, 'count': 558},
+         {'lowEdge': 0.18, 'highEdge': 0.24, 'count': 177},
+         {'lowEdge': 0.24, 'highEdge': 0.3, 'count': 44}],
+        'overflowCount': 3,
+        'underflowCount': 0}}}}}}],
+ 'status': 'OK'}
+```
+
+### Statistics for one single-band output for two months with 10 days aggregation period
+
+``` python
+evalscript = """
+//VERSION=3
+function setup() {
+  return {
+    input: [{
+      bands: [
+        "B04",
+        "dataMask"
+      ]
+    }],
+    output: [
+      {
+        id: "output_B04",
+        bands: 1,
+        sampleType: "FLOAT32"
+      },
+      {
+        id: "dataMask",
+        bands: 1
+      }]
+  }
+}
+function evaluatePixel(samples) {
+    return {
+        output_B04: [samples.B04],
+        dataMask: [samples.dataMask]
+        }
+}
+"""
+
+stats_request = {
+  "input": {
+   "bounds": {
+      "bbox": [414315, 4958219, 414859, 4958819],
+    "properties": {
+        "crs": "http://www.opengis.net/def/crs/EPSG/0/32633"
+        }
+    },
+    "data": [
+      {
+        "type": "sentinel-2-l2a",
+        "dataFilter": {
+            "mosaickingOrder": "leastRecent"
+        }
+      }
+    ]
+  },
+  "aggregation": {
+    "timeRange": {
+            "from": "2020-06-01T00:00:00Z",
+            "to": "2020-07-31T00:00:00Z"
+      },
+    "aggregationInterval": {
+        "of": "P10D"
+    },
+    "evalscript": evalscript,
+    "resx": 10,
+    "resy": 10
+  }
+}
+headers = {
+  'Content-Type': 'application/json',
+  'Accept': 'application/json'
+}
+url = "https://sh.dataspace.copernicus.eu/api/v1/statistics"
+
+response = oauth.request("POST", url=url , headers=headers, json=stats_request)
+sh_statistics = response.json()
+sh_statistics
+```
+
+``` default
+{'data': [{'interval': {'from': '2020-06-01T00:00:00Z',
+    'to': '2020-06-11T00:00:00Z'},
+   'outputs': {'output_B04': {'bands': {'B0': {'stats': {'min': 0.7892000079154968,
+        'max': 0.8303999900817871,
+        'mean': 0.804223583473102,
+        'stDev': 0.0067066009561434865,
+        'sampleCount': 3240,
+        'noDataCount': 0}}}}}},
+  {'interval': {'from': '2020-06-11T00:00:00Z', 'to': '2020-06-21T00:00:00Z'},
+   'outputs': {'output_B04': {'bands': {'B0': {'stats': {'min': 0.016300000250339508,
+        'max': 0.5956000089645386,
+        'mean': 0.06240126554233315,
+        'stDev': 0.06266500670629409,
+        'sampleCount': 3240,
+        'noDataCount': 0}}}}}},
+  {'interval': {'from': '2020-06-21T00:00:00Z', 'to': '2020-07-01T00:00:00Z'},
+   'outputs': {'output_B04': {'bands': {'B0': {'stats': {'min': 0.026000000536441803,
+        'max': 0.43799999356269836,
+        'mean': 0.06872379640174772,
+        'stDev': 0.056520330692016944,
+        'sampleCount': 3240,
+        'noDataCount': 0}}}}}},
+  {'interval': {'from': '2020-07-01T00:00:00Z', 'to': '2020-07-11T00:00:00Z'},
+   'outputs': {'output_B04': {'bands': {'B0': {'stats': {'min': 0.07970000058412552,
+        'max': 0.30959999561309814,
+        'mean': 0.11471141986778864,
+        'stDev': 0.034298170449733226,
+        'sampleCount': 3240,
+        'noDataCount': 0}}}}}},
+  {'interval': {'from': '2020-07-11T00:00:00Z', 'to': '2020-07-21T00:00:00Z'},
+   'outputs': {'output_B04': {'bands': {'B0': {'stats': {'min': 0.017400000244379044,
+        'max': 0.4187999963760376,
+        'mean': 0.062194598779473156,
+        'stDev': 0.06317700445712106,
+        'sampleCount': 3240,
+        'noDataCount': 0}}}}}},
+  {'interval': {'from': '2020-07-21T00:00:00Z', 'to': '2020-07-31T00:00:00Z'},
+   'outputs': {'output_B04': {'bands': {'B0': {'stats': {'min': 0.13920000195503235,
+        'max': 0.4927999973297119,
+        'mean': 0.3146395680115182,
+        'stDev': 0.054700527707146035,
+        'sampleCount': 3240,
+        'noDataCount': 0}}}}}}],
+ 'status': 'OK'}
+```
+
+### Percentage of cloudy pixels for selected area of interest
+
+``` python
+evalscript = """
+//VERSION=3
+function setup() {
+  return {
+    input: [{
+      bands: [
+        "CLM",
+        "dataMask"
+      ]
+    }],
+    output: [
+      {
+        id: "data",
+        bands: 1
+      },
+      {
+        id: "dataMask",
+        bands: 1
+      }]
+  }
+}
+function evaluatePixel(samples) {
+    return {
+        data: [samples.CLM],
+        dataMask: [samples.dataMask]
+        }
+}
+"""
+
+stats_request = {
+  "input": {
+   "bounds": {
+      "bbox": [
+          413307.629466,
+          4957434.513693,
+          415152.151806,
+          4958814.807431
+        ],
+    "properties": {
+        "crs": "http://www.opengis.net/def/crs/EPSG/0/32633"
+        }
+    },
+    "data": [
+      {
+        "type": "sentinel-2-l2a",
+        "dataFilter": {
+            "mosaickingOrder": "leastRecent"
+        }
+      }
+    ]
+  },
+  "aggregation": {
+    "timeRange": {
+            "from": "2020-11-01T00:00:00Z",
+            "to": "2020-12-31T00:00:00Z"
+      },
+    "aggregationInterval": {
+        "of": "P1D"
+    },
+    "evalscript": evalscript,
+    "resx": 10,
+    "resy": 10
+  }
+}
+
+headers = {
+  'Content-Type': 'application/json',
+   'Accept': 'application/json'
+}
+
+url = "https://sh.dataspace.copernicus.eu/api/v1/statistics"
+response = oauth.request("POST", url=url, headers=headers, json=stats_request)
+sh_statistics = response.json()
+sh_statistics
+```
+
+``` default
+{'data': [{'interval': {'from': '2020-11-01T00:00:00Z',
+    'to': '2020-11-02T00:00:00Z'},
+   'outputs': {'data': {'bands': {'B0': {'stats': {'min': 1.0,
+        'max': 1.0,
+        'mean': 1.0,
+        'stDev': 0.0,
+        'sampleCount': 25392,
+        'noDataCount': 0}}}}}},
+  {'interval': {'from': '2020-11-06T00:00:00Z', 'to': '2020-11-07T00:00:00Z'},
+   'outputs': {'data': {'bands': {'B0': {'stats': {'min': 0.0,
+        'max': 0.0,
+        'mean': 0.0,
+        'stDev': 0.0,
+        'sampleCount': 25392,
+        'noDataCount': 0}}}}}},
+  {'interval': {'from': '2020-11-11T00:00:00Z', 'to': '2020-11-12T00:00:00Z'},
+   'outputs': {'data': {'bands': {'B0': {'stats': {'min': 0.0,
+        'max': 0.0,
+        'mean': 0.0,
+        'stDev': 0.0,
+        'sampleCount': 25392,
+        'noDataCount': 0}}}}}},
+  {'interval': {'from': '2020-11-21T00:00:00Z', 'to': '2020-11-22T00:00:00Z'},
+   'outputs': {'data': {'bands': {'B0': {'stats': {'min': 0.0,
+        'max': 0.0,
+        'mean': 0.0,
+        'stDev': 0.0,
+        'sampleCount': 25392,
+        'noDataCount': 0}}}}}},
+  {'interval': {'from': '2020-11-26T00:00:00Z', 'to': '2020-11-27T00:00:00Z'},
+   'outputs': {'data': {'bands': {'B0': {'stats': {'min': 0.0,
+        'max': 1.0,
+        'mean': 0.31253938248267044,
+        'stDev': 0.46352833449533853,
+        'sampleCount': 25392,
+        'noDataCount': 0}}}}}},
+  {'interval': {'from': '2020-12-01T00:00:00Z', 'to': '2020-12-02T00:00:00Z'},
+   'outputs': {'data': {'bands': {'B0': {'stats': {'min': 0.0,
+        'max': 1.0,
+        'mean': 0.2800882167611853,
+        'stDev': 0.44904210002261963,
+        'sampleCount': 25392,
+        'noDataCount': 0}}}}}},
+  {'interval': {'from': '2020-12-06T00:00:00Z', 'to': '2020-12-07T00:00:00Z'},
+   'outputs': {'data': {'bands': {'B0': {'stats': {'min': 1.0,
+        'max': 1.0,
+        'mean': 1.0,
+        'stDev': 0.0,
+        'sampleCount': 25392,
+        'noDataCount': 0}}}}}},
+  {'interval': {'from': '2020-12-11T00:00:00Z', 'to': '2020-12-12T00:00:00Z'},
+   'outputs': {'data': {'bands': {'B0': {'stats': {'min': 0.0,
+        'max': 1.0,
+        'mean': 0.9844439193446739,
+        'stDev': 0.12375010711094206,
+        'sampleCount': 25392,
+        'noDataCount': 0}}}}}},
+  {'interval': {'from': '2020-12-16T00:00:00Z', 'to': '2020-12-17T00:00:00Z'},
+   'outputs': {'data': {'bands': {'B0': {'stats': {'min': 1.0,
+        'max': 1.0,
+        'mean': 1.0,
+        'stDev': 0.0,
+        'sampleCount': 25392,
+        'noDataCount': 0}}}}}},
+  {'interval': {'from': '2020-12-21T00:00:00Z', 'to': '2020-12-22T00:00:00Z'},
+   'outputs': {'data': {'bands': {'B0': {'stats': {'min': 1.0,
+        'max': 1.0,
+        'mean': 1.0,
+        'stDev': 0.0,
+        'sampleCount': 25392,
+        'noDataCount': 0}}}}}},
+  {'interval': {'from': '2020-12-26T00:00:00Z', 'to': '2020-12-27T00:00:00Z'},
+   'outputs': {'data': {'bands': {'B0': {'stats': {'min': 0.0,
+        'max': 1.0,
+        'mean': 0.1512287334593577,
+        'stDev': 0.35827168969322143,
+        'sampleCount': 25392,
+        'noDataCount': 0}}}}}}],
+ 'status': 'OK'}
+```
+
+``` python
+dates_without_clouds = [(data["interval"], int(100 * data["outputs"]["data"]['bands']['B0']['stats']['mean']) ) for data in sh_statistics["data"]]
+
+for item in dates_without_clouds:
+    print( item )
+```
+
+``` default
+({'from': '2020-11-01T00:00:00Z', 'to': '2020-11-02T00:00:00Z'}, 100)
+({'from': '2020-11-06T00:00:00Z', 'to': '2020-11-07T00:00:00Z'}, 0)
+({'from': '2020-11-11T00:00:00Z', 'to': '2020-11-12T00:00:00Z'}, 0)
+({'from': '2020-11-21T00:00:00Z', 'to': '2020-11-22T00:00:00Z'}, 0)
+({'from': '2020-11-26T00:00:00Z', 'to': '2020-11-27T00:00:00Z'}, 31)
+({'from': '2020-12-01T00:00:00Z', 'to': '2020-12-02T00:00:00Z'}, 28)
+({'from': '2020-12-06T00:00:00Z', 'to': '2020-12-07T00:00:00Z'}, 100)
+({'from': '2020-12-11T00:00:00Z', 'to': '2020-12-12T00:00:00Z'}, 98)
+({'from': '2020-12-16T00:00:00Z', 'to': '2020-12-17T00:00:00Z'}, 100)
+({'from': '2020-12-21T00:00:00Z', 'to': '2020-12-22T00:00:00Z'}, 100)
+({'from': '2020-12-26T00:00:00Z', 'to': '2020-12-27T00:00:00Z'}, 15)
+```
+
+### Basic statistics of NDVI with water pixels excluded (custom output dataMask)
+
+``` python
+evalscript = """
+//VERSION=3
+function setup() {
+  return {
+    input: [{
+      bands: [
+        "B04",
+        "B08",
+        "SCL",
+        "dataMask"
+      ]
+    }],
+    output: [
+      {
+        id: "data",
+        bands: 1
+      },
+      {
+        id: "dataMask",
+        bands: 1
+      }]
+  }
+}
+
+function evaluatePixel(samples) {
+    let ndvi = (samples.B08 - samples.B04)/(samples.B08 + samples.B04)
+    
+    var validNDVIMask = 1
+    if (samples.B08 + samples.B04 == 0 ){
+        validNDVIMask = 0
+    }
+    
+    var noWaterMask = 1
+    if (samples.SCL == 6 ){
+        noWaterMask = 0
+    }
+
+    return {
+        data: [ndvi],
+        // Exclude nodata pixels, pixels where ndvi is not defined and water pixels from statistics:
+        dataMask: [samples.dataMask * validNDVIMask * noWaterMask]
+    }
+}
+"""
+
+
+stats_request = {
+  "input": {
+   "bounds": {
+      "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                458085.878866,
+                5097236.833044
+              ],
+              [
+                457813.834156,
+                5096808.351383
+              ],
+              [
+                457979.897062,
+                5096313.767184
+              ],
+              [
+                458146.639373,
+                5096405.411294
+              ],
+              [
+                458085.878866,
+                5097236.833044
+              ]
+            ]
+          ]
+        },
+    "properties": {
+        "crs": "http://www.opengis.net/def/crs/EPSG/0/32633"
+        }
+    },
+    "data": [
+      {
+        "type": "sentinel-2-l2a",
+        "dataFilter": {
+            "mosaickingOrder": "leastCC"
+        }
+      }
+    ]
+  },
+  "aggregation": {
+    "timeRange": {
+        "from": "2020-01-01T00:00:00Z",
+        "to": "2020-12-31T00:00:00Z"
+      },
+    "aggregationInterval": {
+        "of": "P30D"
+    },
+    "evalscript": evalscript,
+    "resx": 10,
+    "resy": 10
+  }
+}
+
+headers = {
+  'Content-Type': 'application/json',
+  'Accept': 'application/json'
+}
+
+url = "https://sh.dataspace.copernicus.eu/api/v1/statistics"
+
+response = oauth.request("POST", url=url, headers=headers, json=stats_request)
+sh_statistics = response.json()
+sh_statistics
+```
+
+``` default
+{'data': [{'interval': {'from': '2020-01-01T00:00:00Z',
+    'to': '2020-01-31T00:00:00Z'},
+   'outputs': {'data': {'bands': {'B0': {'stats': {'min': 0.24306687712669373,
+        'max': 0.6244725584983826,
+        'mean': 0.4123224201824293,
+        'stDev': 0.055874589607421886,
+        'sampleCount': 3036,
+        'noDataCount': 1192}}}}}},
+  {'interval': {'from': '2020-01-31T00:00:00Z', 'to': '2020-03-01T00:00:00Z'},
+   'outputs': {'data': {'bands': {'B0': {'stats': {'min': 0.2451941967010498,
+        'max': 0.4233206510543823,
+        'mean': 0.3160828609431641,
+        'stDev': 0.0280772593636271,
+        'sampleCount': 3036,
+        'noDataCount': 1192}}}}}},
+  {'interval': {'from': '2020-03-01T00:00:00Z', 'to': '2020-03-31T00:00:00Z'},
+   'outputs': {'data': {'bands': {'B0': {'stats': {'min': 0.4236144721508026,
+        'max': 0.8021259307861328,
+        'mean': 0.5844831434836089,
+        'stDev': 0.05766820795482124,
+        'sampleCount': 3036,
+        'noDataCount': 1192}}}}}},
+  {'interval': {'from': '2020-03-31T00:00:00Z', 'to': '2020-04-30T00:00:00Z'},
+   'outputs': {'data': {'bands': {'B0': {'stats': {'min': 0.4647541046142578,
+        'max': 0.8266128897666931,
+        'mean': 0.6615912824901472,
+        'stDev': 0.05539347152437238,
+        'sampleCount': 3036,
+        'noDataCount': 1192}}}}}},
+  {'interval': {'from': '2020-04-30T00:00:00Z', 'to': '2020-05-30T00:00:00Z'},
+   'outputs': {'data': {'bands': {'B0': {'stats': {'min': 0.1761743128299713,
+        'max': 0.870899498462677,
+        'mean': 0.6880682412526884,
+        'stDev': 0.18833356676740057,
+        'sampleCount': 3036,
+        'noDataCount': 1192}}}}}},
+  {'interval': {'from': '2020-05-30T00:00:00Z', 'to': '2020-06-29T00:00:00Z'},
+   'outputs': {'data': {'bands': {'B0': {'stats': {'min': 0.6883189082145691,
+        'max': 0.8775584697723389,
+        'mean': 0.8230951517303176,
+        'stDev': 0.026851310273968688,
+        'sampleCount': 3036,
+        'noDataCount': 1192}}}}}},
+  {'interval': {'from': '2020-06-29T00:00:00Z', 'to': '2020-07-29T00:00:00Z'},
+   'outputs': {'data': {'bands': {'B0': {'stats': {'min': 0.8124191164970398,
+        'max': 0.9270430207252502,
+        'mean': 0.8977047195274247,
+        'stDev': 0.01321883825220214,
+        'sampleCount': 3036,
+        'noDataCount': 1192}}}}}},
+  {'interval': {'from': '2020-07-29T00:00:00Z', 'to': '2020-08-28T00:00:00Z'},
+   'outputs': {'data': {'bands': {'B0': {'stats': {'min': 0.750795304775238,
+        'max': 0.8925060033798218,
+        'mean': 0.8437445996058478,
+        'stDev': 0.017705930134783242,
+        'sampleCount': 3036,
+        'noDataCount': 1192}}}}}},
+  {'interval': {'from': '2020-08-28T00:00:00Z', 'to': '2020-09-27T00:00:00Z'},
+   'outputs': {'data': {'bands': {'B0': {'stats': {'min': 0.7094070315361023,
+        'max': 0.8823529481887817,
+        'mean': 0.8138526516467535,
+        'stDev': 0.020639924263070358,
+        'sampleCount': 3036,
+        'noDataCount': 1192}}}}}},
+  {'interval': {'from': '2020-09-27T00:00:00Z', 'to': '2020-10-27T00:00:00Z'},
+   'outputs': {'data': {'bands': {'B0': {'stats': {'min': 0.6416097283363342,
+        'max': 0.8256189227104187,
+        'mean': 0.7368144742384923,
+        'stDev': 0.02884084473079313,
+        'sampleCount': 3036,
+        'noDataCount': 1192}}}}}},
+  {'interval': {'from': '2020-10-27T00:00:00Z', 'to': '2020-11-26T00:00:00Z'},
+   'outputs': {'data': {'bands': {'B0': {'stats': {'min': 0.5131579041481018,
+        'max': 0.9108409285545349,
+        'mean': 0.6912739742345253,
+        'stDev': 0.06273793790576106,
+        'sampleCount': 3036,
+        'noDataCount': 1192}}}}}},
+  {'interval': {'from': '2020-11-26T00:00:00Z', 'to': '2020-12-26T00:00:00Z'},
+   'outputs': {'data': {'bands': {'B0': {'stats': {'min': -0.01446416787803173,
+        'max': 0.015364916995167732,
+        'mean': 0.0018048733875211391,
+        'stDev': 0.004322122712106793,
+        'sampleCount': 3036,
+        'noDataCount': 1192}}}}}}],
+ 'status': 'OK'}
+```
+
+### Statistics of maximum monthly NDVI for a parcel in 2020
+
+``` python
+evalscript = """
+//VERSION=3
+function setup() {
+  return {
+    input: [{
+      bands: [
+        "B04",
+        "B08",
+        "SCL",
+        "dataMask"
+      ]
+    }],
+    mosaicking: "ORBIT",
+    output: [
+      {
+        id: "data",
+        bands: ["monthly_max_ndvi"]
+      },
+      {
+        id: "dataMask",
+        bands: 1
+      }]
+  }
+}
+
+function evaluatePixel(samples) {
+    var max = 0;
+    var hasData = 0;
+    for (var i=0;i<samples.length;i++) {
+      if (samples[i].dataMask == 1 && samples[i].SCL != 6 && samples[i].B04+samples[i].B08 != 0 ){
+        hasData = 1
+        var ndvi = (samples[i].B08 - samples[i].B04)/(samples[i].B08 + samples[i].B04);
+        max = ndvi > max ? ndvi:max;
+      }
+    }
+    
+    return {
+        data: [max],
+        dataMask: [hasData]
+    }
+}
+"""
+
+stats_request = {
+  "input": {
+   "bounds": {
+      "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                458085.878866,
+                5097236.833044
+              ],
+              [
+                457813.834156,
+                5096808.351383
+              ],
+              [
+                457979.897062,
+                5096313.767184
+              ],
+              [
+                458146.639373,
+                5096405.411294
+              ],
+              [
+                458085.878866,
+                5097236.833044
+              ]
+            ]
+          ]
+        },
+    "properties": {
+        "crs": "http://www.opengis.net/def/crs/EPSG/0/32633"
+        }
+    },
+    "data": [
+      {
+        "type": "sentinel-2-l2a",
+        "dataFilter": {
+            "mosaickingOrder": "leastCC"
+        }
+      }
+    ]
+  },
+  "aggregation": {
+    "timeRange": {
+            "from": "2020-01-01T00:00:00Z",
+            "to": "2021-01-01T00:00:00Z"
+      },
+    "aggregationInterval": {
+        "of": "P1M"
+    },
+    "evalscript": evalscript,
+    "resx": 10,
+    "resy": 10
+  }
+}
+
+headers = {
+  'Content-Type': 'application/json',
+   'Accept': 'application/json'
+}
+
+url = "https://sh.dataspace.copernicus.eu/api/v1/statistics"
+
+response = oauth.request("POST", url=url, headers=headers, json=stats_request)
+sh_statistics = response.json()
+sh_statistics
+```
+
+``` default
+{'data': [{'interval': {'from': '2020-01-01T00:00:00Z',
+    'to': '2020-02-01T00:00:00Z'},
+   'outputs': {'data': {'bands': {'monthly_max_ndvi': {'stats': {'min': 0.4755639135837555,
+        'max': 0.881286084651947,
+        'mean': 0.6396090604381046,
+        'stDev': 0.06844923487502963,
+        'sampleCount': 3036,
+        'noDataCount': 1192}}}}}},
+  {'interval': {'from': '2020-02-01T00:00:00Z', 'to': '2020-03-01T00:00:00Z'},
+   'outputs': {'data': {'bands': {'monthly_max_ndvi': {'stats': {'min': 0.3580246865749359,
+        'max': 0.8721038103103638,
+        'mean': 0.5956351390500386,
+        'stDev': 0.07367438999713516,
+        'sampleCount': 3036,
+        'noDataCount': 1192}}}}}},
+  {'interval': {'from': '2020-03-01T00:00:00Z', 'to': '2020-04-01T00:00:00Z'},
+   'outputs': {'data': {'bands': {'monthly_max_ndvi': {'stats': {'min': 0.4486735761165619,
+        'max': 0.8021259307861328,
+        'mean': 0.5871563556072766,
+        'stDev': 0.057052289003643133,
+        'sampleCount': 3036,
+        'noDataCount': 1192}}}}}},
+  {'interval': {'from': '2020-04-01T00:00:00Z', 'to': '2020-05-01T00:00:00Z'},
+   'outputs': {'data': {'bands': {'monthly_max_ndvi': {'stats': {'min': 0.7103235721588135,
+        'max': 0.9151291251182556,
+        'mean': 0.8202670164519443,
+        'stDev': 0.029936259510749567,
+        'sampleCount': 3036,
+        'noDataCount': 1192}}}}}},
+  {'interval': {'from': '2020-05-01T00:00:00Z', 'to': '2020-06-01T00:00:00Z'},
+   'outputs': {'data': {'bands': {'monthly_max_ndvi': {'stats': {'min': 0.7955418825149536,
+        'max': 0.9187881350517273,
+        'mean': 0.8889340774162204,
+        'stDev': 0.013139359632348635,
+        'sampleCount': 3036,
+        'noDataCount': 1192}}}}}},
+  {'interval': {'from': '2020-06-01T00:00:00Z', 'to': '2020-07-01T00:00:00Z'},
+   'outputs': {'data': {'bands': {'monthly_max_ndvi': {'stats': {'min': 0.6883189082145691,
+        'max': 0.8775584697723389,
+        'mean': 0.8258738168990016,
+        'stDev': 0.025802682912912194,
+        'sampleCount': 3036,
+        'noDataCount': 1192}}}}}},
+  {'interval': {'from': '2020-07-01T00:00:00Z', 'to': '2020-08-01T00:00:00Z'},
+   'outputs': {'data': {'bands': {'monthly_max_ndvi': {'stats': {'min': 0.8329545259475708,
+        'max': 0.9370484948158264,
+        'mean': 0.9037947789513383,
+        'stDev': 0.01278601507445675,
+        'sampleCount': 3036,
+        'noDataCount': 1192}}}}}},
+  {'interval': {'from': '2020-08-01T00:00:00Z', 'to': '2020-09-01T00:00:00Z'},
+   'outputs': {'data': {'bands': {'monthly_max_ndvi': {'stats': {'min': 0.750795304775238,
+        'max': 0.8925060033798218,
+        'mean': 0.843880225772972,
+        'stDev': 0.017580399946741675,
+        'sampleCount': 3036,
+        'noDataCount': 1192}}}}}},
+  {'interval': {'from': '2020-09-01T00:00:00Z', 'to': '2020-10-01T00:00:00Z'},
+   'outputs': {'data': {'bands': {'monthly_max_ndvi': {'stats': {'min': 0.7121148109436035,
+        'max': 0.8823529481887817,
+        'mean': 0.8138710224835326,
+        'stDev': 0.02056652680651673,
+        'sampleCount': 3036,
+        'noDataCount': 1192}}}}}},
+  {'interval': {'from': '2020-10-01T00:00:00Z', 'to': '2020-11-01T00:00:00Z'},
+   'outputs': {'data': {'bands': {'monthly_max_ndvi': {'stats': {'min': 0.6416097283363342,
+        'max': 0.8256189227104187,
+        'mean': 0.7368144742384923,
+        'stDev': 0.02884084473079313,
+        'sampleCount': 3036,
+        'noDataCount': 1192}}}}}},
+  {'interval': {'from': '2020-11-01T00:00:00Z', 'to': '2020-12-01T00:00:00Z'},
+   'outputs': {'data': {'bands': {'monthly_max_ndvi': {'stats': {'min': 0.5424679517745972,
+        'max': 0.9108409285545349,
+        'mean': 0.7069293897671695,
+        'stDev': 0.05380689467103403,
+        'sampleCount': 3036,
+        'noDataCount': 1192}}}}}},
+  {'interval': {'from': '2020-12-01T00:00:00Z', 'to': '2021-01-01T00:00:00Z'},
+   'outputs': {'data': {'bands': {'monthly_max_ndvi': {'stats': {'min': 0.0683102235198021,
+        'max': 0.23551543056964874,
+        'mean': 0.1444664227123698,
+        'stDev': 0.027443079533455306,
+        'sampleCount': 3036,
+        'noDataCount': 1192}}}}}}],
+ 'status': 'OK'}
+```
+
+### Multiple outputs with different dataMasks, multi-band output with custom bands\' names and different histogram types
+
+``` python
+evalscript = """
+//VERSION=3
+function setup() {
+  return {
+    input: [{
+      bands: [
+        "B04",
+        "B08",
+        "SCL",
+        "dataMask"
+      ]
+    }],
+    output: [
+      {
+        id: "output_my_bands",
+        bands: ["only_band_B04", "only_band_B08"],
+        sampleType: "FLOAT32"
+      },
+      {
+        id: "output_my_indices",
+        bands: 1,
+        sampleType: "FLOAT32"
+      },
+      {
+        id: "output_scl",
+        bands: 1,
+        sampleType: "UINT8"
+      },
+      {
+        id: "dataMask",
+        bands: ["output_my_bands", "output_my_indices"]
+      }]
+  }
+}
+function evaluatePixel(samples) {
+    let ndvi = (samples.B08 - samples.B04)/(samples.B08 + samples.B04)
+    
+    var validNDVIMask = 1
+    if (samples.B08 + samples.B04 == 0 ){
+        validNDVIMask = 0
+    }
+    
+    var noWaterMask = 1
+    if (samples.SCL == 6 ){
+        noWaterMask = 0
+    }
+    
+    return {
+        output_my_bands: [samples.B04, samples.B08],
+        output_my_indices: [ndvi],
+        output_scl: [samples.SCL],
+        dataMask: [samples.dataMask, samples.dataMask * noWaterMask * validNDVIMask]
+    }
+}
+"""
+
+stats_request = {
+  "input": {
+   "bounds": {
+      "bbox": [414315, 4958219, 414859, 4958819],
+      "properties": {
+        "crs": "http://www.opengis.net/def/crs/EPSG/0/32633"
+      }
+    },
+    "data": [
+      {
+        "type": "sentinel-2-l2a",
+        "dataFilter": {
+            "mosaickingOrder": "leastRecent"
+        }
+      }
+    ]
+  },
+  "aggregation": {
+    "timeRange": {
+            "from": "2020-07-01T00:00:00Z",
+            "to": "2020-07-15T00:00:00Z"
+      },
+    "aggregationInterval": {
+        "of": "P5D"
+    },
+    "evalscript": evalscript,
+    "resx": 20,
+    "resy": 20
+  },
+  "calculations": {
+    "output_my_bands": {
+      "histograms": {
+        "only_band_B08": {
+          "nBins": 3,
+          "lowEdge": 0.0,
+          "highEdge": 0.3
+        }
+      },
+      "statistics": {
+        "only_band_B04": {
+          "percentiles": {
+            "k": [33, 66,100],
+          }
+        }
+      }
+    },    
+    "output_scl": {
+      "histograms": {
+        "default": {
+          "bins": [0,1,2,3,4,5,6,7,8,9,10,11]
+        }
+      }
+    },
+    "default": {
+      "histograms": {
+        "default": {
+          "binWidth": 0.05,
+          "lowEdge": 0.0
+        }
+      }
+    }
+  }
+}
+
+headers = {
+  'Content-Type': 'application/json',
+  'Accept': 'application/json'
+}
+
+url = "https://sh.dataspace.copernicus.eu/api/v1/statistics"
+
+response = oauth.request("POST", url=url , headers=headers, json=stats_request)
+sh_statistics = response.json()
+sh_statistics
+```
+
+``` default
+{'data': [{'interval': {'from': '2020-07-01T00:00:00Z',
+    'to': '2020-07-06T00:00:00Z'},
+   'outputs': {'output_my_bands': {'bands': {'only_band_B04': {'stats': {'min': 0.0803999975323677,
+        'max': 0.2939999997615814,
+        'mean': 0.11451061716602186,
+        'stDev': 0.032769790113614555,
+        'sampleCount': 810,
+        'noDataCount': 0,
+        'percentiles': {'33.0': 0.09719999879598618,
+         '66.0': 0.11169999837875366,
+         '100.0': 0.2939999997615814}}},
+      'only_band_B08': {'stats': {'min': 0.0860000029206276,
+        'max': 0.34290000796318054,
+        'mean': 0.16518679009175594,
+        'stDev': 0.07128630441809644,
+        'sampleCount': 810,
+        'noDataCount': 0},
+       'histogram': {'bins': [{'lowEdge': 0.0,
+          'highEdge': 0.09999999999999999,
+          'count': 199},
+         {'lowEdge': 0.09999999999999999,
+          'highEdge': 0.19999999999999998,
+          'count': 270},
+         {'lowEdge': 0.19999999999999998, 'highEdge': 0.3, 'count': 332}],
+        'overflowCount': 9,
+        'underflowCount': 0}}}},
+    'output_scl': {'bands': {'B0': {'stats': {'min': 8.0,
+        'max': 10.0,
+        'mean': 9.75432098765432,
+        'stDev': 0.6555648554361158,
+        'sampleCount': 810,
+        'noDataCount': 0},
+       'histogram': {'bins': [{'lowEdge': 0, 'highEdge': 1, 'count': 0},
+         {'lowEdge': 1, 'highEdge': 2, 'count': 0},
+         {'lowEdge': 2, 'highEdge': 3, 'count': 0},
+         {'lowEdge': 3, 'highEdge': 4, 'count': 0},
+         {'lowEdge': 4, 'highEdge': 5, 'count': 0},
+         {'lowEdge': 5, 'highEdge': 6, 'count': 0},
+         {'lowEdge': 6, 'highEdge': 7, 'count': 0},
+         {'lowEdge': 7, 'highEdge': 8, 'count': 0},
+         {'lowEdge': 8, 'highEdge': 9, 'count': 99},
+         {'lowEdge': 9, 'highEdge': 10, 'count': 1},
+         {'lowEdge': 10, 'highEdge': 11, 'count': 710}],
+        'overflowCount': 0,
+        'underflowCount': 0}}}},
+    'output_my_indices': {'bands': {'B0': {'stats': {'min': -0.04050104320049286,
+        'max': 0.5338308215141296,
+        'mean': 0.14599402473584097,
+        'stDev': 0.15671216615792566,
+        'sampleCount': 810,
+        'noDataCount': 0},
+       'histogram': {'bins': [{'lowEdge': 0.0, 'highEdge': 0.05, 'count': 340},
+         {'lowEdge': 0.05, 'highEdge': 0.1, 'count': 71},
+         {'lowEdge': 0.1, 'highEdge': 0.15000000000000002, 'count': 50},
+         {'lowEdge': 0.15000000000000002, 'highEdge': 0.2, 'count': 26},
+         {'lowEdge': 0.2, 'highEdge': 0.25, 'count': 23},
+         {'lowEdge': 0.25, 'highEdge': 0.30000000000000004, 'count': 33},
+         {'lowEdge': 0.30000000000000004,
+          'highEdge': 0.35000000000000003,
+          'count': 64},
+         {'lowEdge': 0.35000000000000003, 'highEdge': 0.4, 'count': 81},
+         {'lowEdge': 0.4, 'highEdge': 0.45, 'count': 53},
+         {'lowEdge': 0.45, 'highEdge': 0.5, 'count': 6},
+         {'lowEdge': 0.5, 'highEdge': 0.55, 'count': 9}],
+        'overflowCount': 0,
+        'underflowCount': 54}}}}}},
+  {'interval': {'from': '2020-07-06T00:00:00Z', 'to': '2020-07-11T00:00:00Z'},
+   'outputs': {'output_my_bands': {'bands': {'only_band_B04': {'stats': {'min': 0.007499999832361937,
+        'max': 0.3788999915122986,
+        'mean': 0.05566148159990979,
+        'stDev': 0.060176196853468686,
+        'sampleCount': 810,
+        'noDataCount': 0,
+        'percentiles': {'33.0': 0.022700000554323196,
+         '66.0': 0.04439999908208847,
+         '100.0': 0.3788999915122986}}},
+      'only_band_B08': {'stats': {'min': 0.006500000134110451,
+        'max': 0.46369999647140503,
+        'mean': 0.12869839533864502,
+        'stDev': 0.1266643048401008,
+        'sampleCount': 810,
+        'noDataCount': 0},
+       'histogram': {'bins': [{'lowEdge': 0.0,
+          'highEdge': 0.09999999999999999,
+          'count': 450},
+         {'lowEdge': 0.09999999999999999,
+          'highEdge': 0.19999999999999998,
+          'count': 27},
+         {'lowEdge': 0.19999999999999998, 'highEdge': 0.3, 'count': 254}],
+        'overflowCount': 79,
+        'underflowCount': 0}}}},
+    'output_scl': {'bands': {'B0': {'stats': {'min': 2.0,
+        'max': 9.0,
+        'mean': 5.1716049382715985,
+        'stDev': 1.09834157450977,
+        'sampleCount': 810,
+        'noDataCount': 0},
+       'histogram': {'bins': [{'lowEdge': 0, 'highEdge': 1, 'count': 0},
+         {'lowEdge': 1, 'highEdge': 2, 'count': 0},
+         {'lowEdge': 2, 'highEdge': 3, 'count': 29},
+         {'lowEdge': 3, 'highEdge': 4, 'count': 0},
+         {'lowEdge': 4, 'highEdge': 5, 'count': 235},
+         {'lowEdge': 5, 'highEdge': 6, 'count': 103},
+         {'lowEdge': 6, 'highEdge': 7, 'count': 428},
+         {'lowEdge': 7, 'highEdge': 8, 'count': 13},
+         {'lowEdge': 8, 'highEdge': 9, 'count': 1},
+         {'lowEdge': 9, 'highEdge': 10, 'count': 1},
+         {'lowEdge': 10, 'highEdge': 11, 'count': 0}],
+        'overflowCount': 0,
+        'underflowCount': 0}}}},
+    'output_my_indices': {'bands': {'B0': {'stats': {'min': -0.18976545333862305,
+        'max': 0.858506441116333,
+        'mean': 0.47965881587323095,
+        'stDev': 0.25189343011256504,
+        'sampleCount': 810,
+        'noDataCount': 428},
+       'histogram': {'bins': [{'lowEdge': 0.0, 'highEdge': 0.05, 'count': 3},
+         {'lowEdge': 0.05, 'highEdge': 0.1, 'count': 3},
+         {'lowEdge': 0.1, 'highEdge': 0.15000000000000002, 'count': 15},
+         {'lowEdge': 0.15000000000000002, 'highEdge': 0.2, 'count': 36},
+         {'lowEdge': 0.2, 'highEdge': 0.25, 'count': 28},
+         {'lowEdge': 0.25, 'highEdge': 0.30000000000000004, 'count': 20},
+         {'lowEdge': 0.30000000000000004,
+          'highEdge': 0.35000000000000003,
+          'count': 17},
+         {'lowEdge': 0.35000000000000003, 'highEdge': 0.4, 'count': 6},
+         {'lowEdge': 0.4, 'highEdge': 0.45, 'count': 9},
+         {'lowEdge': 0.45, 'highEdge': 0.5, 'count': 24},
+         {'lowEdge': 0.5, 'highEdge': 0.55, 'count': 22},
+         {'lowEdge': 0.55, 'highEdge': 0.6000000000000001, 'count': 18},
+         {'lowEdge': 0.6000000000000001, 'highEdge': 0.65, 'count': 32},
+         {'lowEdge': 0.65, 'highEdge': 0.7000000000000001, 'count': 46},
+         {'lowEdge': 0.7000000000000001, 'highEdge': 0.75, 'count': 37},
+         {'lowEdge': 0.75, 'highEdge': 0.8, 'count': 29},
+         {'lowEdge': 0.8, 'highEdge': 0.8500000000000001, 'count': 21},
+         {'lowEdge': 0.8500000000000001, 'highEdge': 0.9, 'count': 2}],
+        'overflowCount': 0,
+        'underflowCount': 14}}}}}}],
+ 'status': 'OK'}
+```
+
+### Statistics for Sentinel-1
+
+``` python
+evalscript = """
+//VERSION=3
+function setup() {
+  return {
+    input: [{
+      bands: [
+        "VV",
+        "dataMask"
+      ]
+    }],
+    output: [
+      {
+        id: "output_VV",
+        bands: 1,
+        sampleType: "FLOAT32"
+      },
+      {
+        id: "dataMask",
+        bands: 1
+      }]
+  }
+}
+function evaluatePixel(samples) {
+    return {
+        output_VV: [samples.VV],
+        dataMask: [samples.dataMask]
+        }
+}
+"""
+
+stats_request = {
+  "input": {
+    "bounds": {
+      "bbox": [414315, 4958219, 414859, 4958819],
+    "properties": {
+        "crs": "http://www.opengis.net/def/crs/EPSG/0/32633"
+        }
+    },
+    "data": [
+      {
+        "type": "sentinel-1-grd",
+        "dataFilter": {
+        }
+      }
+    ]
+  },
+  "aggregation": {
+    "timeRange": {
+            "from": "2020-07-01T00:00:00Z",
+            "to": "2020-07-10T00:00:00Z"
+      },
+    "aggregationInterval": {
+        "of": "P5D"
+    },
+    "evalscript": evalscript,
+    "resx": 10,
+    "resy": 10
+  }
+}
+headers = {
+  'Content-Type': 'application/json',
+  'Accept': 'application/json'
+}
+url = "https://sh.dataspace.copernicus.eu/api/v1/statistics"
+response = oauth.request("POST", url=url , headers=headers, json=stats_request)
+sh_statistics = response.json()
+sh_statistics
+```
+
+``` default
+{'data': [{'interval': {'from': '2020-07-01T00:00:00Z',
+    'to': '2020-07-06T00:00:00Z'},
+   'outputs': {'output_VV': {'bands': {'B0': {'stats': {'min': 0.0,
+        'max': 0.4447733759880066,
+        'mean': 0.046840328479290934,
+        'stDev': 0.05487441687888816,
+        'sampleCount': 3240,
+        'noDataCount': 0}}}}}}],
+ 'status': 'OK'}
+```
+
+### Statistics of NDVI using Sentinel-2 L2A as the source of NDVI and Sentinel-1 GRD VV channel as the mask of water bodies
+
+``` python
+evalscript = """
+//VERSION=3
+function setup() {
+  return {
+    input: [
+      // Specify input bands using the "id" of datasource set in the payload under data parameter
+      {datasource: "s2", bands: ["B04", "B08", "dataMask"]},
+      {datasource: "s1", bands: ["VV", "dataMask"]}
+    ],
+    output: [
+      {
+        id: "ndvi",
+        bands: 1
+      },
+      {
+        id: "dataMask",
+        bands: 1
+      }],
+    mosaicking: "SIMPLE"
+  };
+}
+
+function evaluatePixel(samples) {
+  let ndvi = (samples.s2[0].B08 - samples.s2[0].B04) / (samples.s2[0].B08+samples.s2[0].B04);
+  
+  // Create a mask for invalid ndvi value
+  let validNDVIMask = 1;
+  if (!isFinite(ndvi)) {
+    validNDVIMask = 0;
+  }
+  
+  // Create a mask for water
+  // The threshold comes from the result of exploring river flooding during the winter of 2020/21 on the River Severn in the United Kingdom 
+  // (https://medium.com/euro-data-cube/exploring-time-and-space-a-guide-to-accessing-analysing-and-visualising-data-in-the-euro-data-e4a46f2bb55b)
+  let noWaterMask = 1;
+  if (toDB(samples.s1[0].VV) <= -20) {
+    noWaterMask = 0;
+  }
+  return {
+      ndvi: [ndvi],
+      // Combine all the masks
+      dataMask: [samples.s2[0].dataMask * samples.s1[0].dataMask * validNDVIMask * noWaterMask]
+  };
+}
+
+function toDB(input){
+  return 10 * Math.log(input)/Math.LN10;
+}
+"""
+stats_request = {
+  "input": {
+    "bounds": {
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [16.72617,47.713689],
+            [16.72617,47.655444],
+            [16.816292,47.655444],
+            [16.816292,47.713689],
+            [16.72617,47.713689]
+          ]
+        ]
+      }
+    },
+    "data": [
+      {
+        "dataFilter": {},
+        "id": "s2",
+        "type": "sentinel-2-l2a"
+      },
+      {
+        "dataFilter": {
+          "resolution": "HIGH",
+          "acquisitionMode": "IW",
+          "polarization": "DV"
+        },
+        "processing": {
+          "backCoeff": "GAMMA0_TERRAIN",
+          "orthorectify": "true",
+          "demInstance": "MAPZEN",
+          "speckleFilter": {
+            "type": "LEE",
+            "windowSizeX": 5,
+            "windowSizeY": 5
+          }
+        },
+        "id": "s1",
+        "type": "sentinel-1-grd"
+      }
+    ]
+  },
+  "aggregation": {
+    "timeRange": {
+      "from": "2021-08-08T00:00:00Z",
+      "to": "2021-08-11T23:59:59Z"
+    },
+    "aggregationInterval": {
+      "of": "P1D"
+    },
+    "resx": 0.00009,
+    "resy": 0.00009,
+    "evalscript": evalscript
+  },
+  "calculations": {
+    "default": {}
+  }
+}
+
+headers = {
+  'Content-Type': 'application/json',
+  'Accept': 'application/json'
+}
+
+url = "https://sh.dataspace.copernicus.eu/api/v1/statistics"
+response = oauth.request("POST", url=url, headers=headers, json=stats_request)
+sh_statistics = response.json()
+sh_statistics
+```
+
+``` default
+{'data': [{'interval': {'from': '2021-08-08T00:00:00Z',
+    'to': '2021-08-09T00:00:00Z'},
+   'outputs': {'ndvi': {'bands': {'B0': {'stats': {'min': -0.6206604838371277,
+        'max': 0.8291770815849304,
+        'mean': 0.22080027097811286,
+        'stDev': 0.22071344421516914,
+        'sampleCount': 647647,
+        'noDataCount': 144372}}}}}},
+  {'interval': {'from': '2021-08-10T00:00:00Z', 'to': '2021-08-11T00:00:00Z'},
+   'outputs': {'ndvi': {'bands': {'B0': {'stats': {'min': -0.6909090876579285,
+        'max': 0.8982226252555847,
+        'mean': 0.6302106131139007,
+        'stDev': 0.28749024291873476,
+        'sampleCount': 647647,
+        'noDataCount': 220350}}}}}}],
+ 'status': 'OK'}
+```

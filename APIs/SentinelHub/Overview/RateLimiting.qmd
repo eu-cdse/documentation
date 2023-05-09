@@ -1,0 +1,138 @@
+---
+title: Rate limiting
+---
+
+In order to ensure the stability of the system and to guarantee good
+performance for all users we have to protect it against deliberate
+attacks or runaway scripts. Every request which reaches our system will
+therefore go through a rate limiting filter. As long as the agreed upon
+rate limiting policies are conformed to, responses by our services shall
+be delivered in timely fashion. On the other hand, requests which
+violate any of the agreed upon policies will be responded to with a HTTP
+429 response.
+
+We are able to adjust rate limit policies for each individual user so do
+contact our Support for specific requirements.
+
+### Rate limiting policy
+
+A rate limiting policy defines either how many [processing
+units](/APIs/SentinelHub/Overview/ProcessingUnit.qmd) or HTTP requests
+can be used per given time period or in total. Both processing units and
+requests are rate limited and the level of rate limiting depends on your
+account (see [pricing
+plans](https://www.sentinel-hub.com/pricing/){target="_blank"}).
+
+An API is usually protected by **multiple rate limiting policies**. For
+example, Processing API has both a processing unit and request rate
+limiting policies. To conform to the rate limiter, all rate limiting
+policies have to be satisfied. For example, lets say you have a policy
+of 100 requests per minute and a policy of 100 processing units per
+minute. By issuing 100 requests from each every request is valued at 2
+processing units in one minute, only 50 requests will pass, all others
+will fail with HTTP status 429. Even though you have a limit of 100
+requests per minute, 50 requests would violate the 100 processing units
+per minute policy and thus be rate limited.
+
+**Unused processing units and requests do not accumulate**. If you have
+a rate limit policy with 100 request per minute and you don\'t consume
+any request for a longer period you are still able to do just 100
+requests within the next minute.
+
+### Rate limiting ramp up
+
+For all [SH
+subscriptions](https://www.sentinel-hub.com/pricing/){target="_blank"},
+the rate limiting is configured also on a \"per minute\" basis (i.e. 600
+requests per minute and 1000 processing units per minute for the
+Enterprise S subscription). For optimal performance, it is best to
+spread this number of requests over a whole minute, i.e. to send one
+request every 0.1 seconds. As we understand that this might be difficult
+to do, we allow some variation from this optimum. However, if you will
+burst the full number of requests at once, some of them will be rate
+limited. For such requests, we recommend that you simply resend them -
+the process should reach the optimal level in a few minutes.
+
+### Response Headers
+
+All requests going through rate limiting include headers to allow for
+programmatic adaption to Rate Limiting:
+
+-   `Retry-After`: Time in milliseconds until the next request is
+    available.
+
+#### Example:
+
+##### Response code and message
+
+``` default
+{
+  "status": 429,
+  "reason": "Too Many Requests",
+  "message": "You have exceeded your rate limit",
+  "code": "RATE_LIMIT_EXCEEDED"
+}
+```
+
+##### Response header
+
+``` default
+{
+  "Date": "Tue, 16 Aug 2022 13:15:02 GMT",
+  "retry-after": "3398",
+  ...
+}
+```
+
+The HTTP status code in this example is `429` meaning that the request
+was rate limited. The value of the `Retry-After` header is `3398`, which
+means that next request will be available in 3398 ms.
+
+### Try it out
+
+We have set up a test user with two very restrictive rate limiting
+policies:
+
+-   10 requests per minute and
+-   10 processing units per minute
+
+You can use its instance (for OGC requests) or Oauth client credentials
+(for API requests) to test how our rate limiting works and for
+integration purposes.
+
+An example of a **WMS request** using the test user\'s instance:
+
+> [[https://services.sentinel-hub.com/ogc/wms/7702fda8-f583-4ae0-a581-1b34e7a6d350](https://services.sentinel-hub.com/ogc/wms/7702fda8-f583-4ae0-a581-1b34e7a6d350){target="_blank"}?](https://services.sentinel-hub.com/ogc/wms/7702fda8-f583-4ae0-a581-1b34e7a6d350?service=WMS&request=GetMap&layers=TRUE-COLOR&&format=image%2Fjpeg&version=1.1.1&width=512&height=512&srs=EPSG%3A3857&bbox=1878516.407136492,6095394.383573096,1888300.3467569945,6105178.3231936){target="_blank"}
+
+The test user\'s Oauth client credentials below can be used to get an
+[access token](/APIs/SentinelHub/Overview/Authentication.qmd), which can
+then be included in header of a **`process` API requests** (for examples
+of requests see [here]()):
+
+> Client id: fa02a066-fc80-4cb4-af26-aae0af26cbf1 Client secret:
+> rate_limit_secret
+
+Note that many people may be using it at the same moment so there is a
+chance that it will be over the limit more or less all the time. Its
+purpose is to evaluate response headers anyway.
+
+### Tips to Avoid Being Rate Limited
+
+#### Caching
+
+Store API responses that you expect to use a lot. For example, don't
+call same requests on every page load but try to store responses in
+local storage.
+
+#### Request only what you need
+
+Be defensive in fetching and try to request only the data that you
+actually need.
+
+#### Exponential backoff
+
+When your limits have been exceeded, we recommend implementing retries
+with a [exponential
+backoff](https://en.wikipedia.org/wiki/Exponential_backoff){target="_blank"}.
+An exponential backoff means that you wait for exponentially longer
+intervals between each retry of a single failing request.

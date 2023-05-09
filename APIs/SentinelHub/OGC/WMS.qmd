@@ -1,0 +1,108 @@
+---
+title: Web Mapping Service
+---
+
+## WMS Request
+
+The Sentinel Hub WMS service conforms to the [WMS
+standard](http://www.opengeospatial.org/standards/wms){target="_blank"}.
+It not only provides access to raw satellite data but also to processed
+products such as true color imagery and NDVI. Access to the service is
+done via a custom server instance URL which will be provided to you upon
+registration.
+
+See our OGC API
+[Webinar](https://www.youtube.com/watch?v=CBIlTOl2po4){target="_blank"},
+which will guide you through different OGC services, including WMS, help
+you understand the structure, show you how to run the requests in
+different environments and how it can be integrated with QGIS, ArcGIS
+and web applications.
+
+It is possible to obtain multiple separate instances (which act as
+separate WMS services) each with their own configuration and list of
+layers which will likely be useful to advanced users.
+
+The base URL for the WMS service:
+
+``` default
+https://sh.dataspace.copernicus.eu/ogc/wms/<INSTANCE_ID>
+```
+
+For example, a `GetCapabilities` request can be done by changing the
+`<INSTANCE_ID>` to your provided instance ID and opening the following
+URL:
+
+``` default
+https://sh.dataspace.copernicus.eu/ogc/wms/<INSTANCE_ID>?REQUEST=GetCapabilities
+```
+
+Some of the most common provided products:
+
+-   `TRUE_COLOR` - a brightened RGB image
+-   `FALSE_COLOR` - uses near-infrared instead of the blue band
+-   `NDVI` - Normalized Difference Vegetation Index
+-   `EVI` - Enhanced Vegetation Index
+
+[List](https://custom-scripts.sentinel-hub.com/){target="_blank"} of all
+available products.
+
+The service supports standard WMS requests: `GetMap`, `GetCapabilities`,
+`GetFeatureInfo`, and also some [custom
+requests](/APIs/SentinelHub/OGC/AdditionalRequestParameters.qmd).
+Supported WMS versions are 1.1.1 and 1.3.0.
+
+If you want to force a specific output format (e.g. float 32 or uint 16)
+set `sampleType` in your evalscript as explained
+[here](/APIs/SentinelHub/Evalscript/V3.qmd#sampletype). Use `dataMask`
+band in your evalscript as explained
+[here](/APIs/SentinelHub/UserGuides/Transparency.qmd) to make pixels
+transparent.
+
+For a list of supported coordinate reference systems check the
+`GetCapabilities` result.
+
+## WMS URL Parameters
+
+**Standard common WMS URL parameters** (parameter names are case
+insensitive, values are case sensitive):
+
+  WMS parameter   Info
+  --------------- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  SERVICE         Required, must be \"WMS\".
+  VERSION         WMS version standard. Optional, default: \"1.3.0\". Supported values: \"1.1.1\" and \"1.3.0\".
+  REQUEST         What is requested, valid values: `GetMap`, `GetFeatureInfo`, `GetCapabilities` or a custom request\'s name. Required.
+  TIME            (when REQUEST = `GetTile`) The time range for which to return the results. The result is based on all scenes between the specified times conforming to the cloud coverage criteria and stacked based on priority setting - e.g. most recent on top. It is written as two time values in ISO8601 format separated by a slash, for example: `TIME=2016-01-01T09:02:44Z/2016-02-01T11:00:00Z`. Reduced accuracy times, where parts of the time string are omitted, are also supported. For example, `TIME=2016-07-15/2016-07-15` will be interpreted as \"TIME=2016-07-15T00:00:00Z/2016-07-15T23:59:59Z\" and `TIME=2016-07/2016-08` will be interpreted as \"TIME=2016-07-01T00:00:00Z/2016-08-31T23:59:59Z\" `<br/>`{=html} Optional, default: none (the last valid image is returned). `<br/>`{=html}`<br/>`{=html} Note: Requesting a single value for TIME parameter is deprecated. Sentinel Hub interpreted it as a time interval \[given time - 6 months, given time\]. For vast majority of cases this resulted in unnecessary long processing time thus we strongly encourage you to always use the smallest possible time range instead.
+
+In addition to the standard WMS URL parameters, the WMS service also
+supports many custom URL parameters. See [Custom service URL
+parameters](/APIs/SentinelHub/OGC/AdditionalRequestParameters.qmd) for
+details.
+
+**Standard `GetMap` request URL parameters:**
+
+  WMS parameter   Info
+  --------------- ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  BBOX            Specifies the bounding box of the requested image. Coordinates must be in the specified coordinate reference system. The four coordinates representing the top-left and bottom-right of the bounding box must be separated by commas. Required. Example: BBOX=-13152499,4038942,-13115771,4020692
+  CRS             (when VERSION 1.3.0 or higher) the coordinate reference system in which the BBOX is specified and in which to return the image. Optional, default: \"EPSG:3857\". For a list of available CRSs see the `GetCapabilities` result.
+  SRS             (when VERSION 1.1.1 or lower) the coordinate reference system in which the BBOX is specified and in which to return the image. Optional, default: \"EPSG:3857\". For a list of available CRSs see the `GetCapabilities` result.
+  FORMAT          The returned image format. Optional, default: \"image/png\", other options: \"image/jpeg\", \"image/tiff\". [Detailed information about supported values.](/APIs/SentinelHub/OGC/OutputFormats.qmd)
+  WIDTH           Returned image width in pixels. Required, unless RESX is used. If WIDTH is used, HEIGHT is also required.
+  HEIGHT          Returned image height in pixels. Required, unless RESY is used. If HEIGHT is used, WIDTH is also required.
+  RESX            Returned horizontal image resolution in UTM units (if m is added, e.g. 10m, in metrical units). (optional instead of WIDTH). If used, RESY is also required.
+  RESY            Returned vertical image resolution in UTM units (if m is added, e.g. 10m, in metrical units). (optional instead of HEIGHT). If used, RESX is also required.
+  LAYERS          The preconfigured layer (image) to be returned. You must specify exactly one layer and optionally add additional overlays. Required. Example: LAYERS=TRUE_COLOR,OUTLINE
+  EXCEPTIONS      The exception format. Optional, default: \"XML\". Supported values: \"XML\", \"INIMAGE\", \"BLANK\" (all three for version \>= 1.3.0), \"application/vnd.ogc.se_xml\", \"application/vnd.ogc.se_inimage\", \"application/vnd.ogc.se_blank\" (all three for version \< 1.3.0).
+
+**Standard `GetFeatureInfo` request URL parameters:**
+
+  WMS parameter   Info
+  --------------- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  BBOX            Specifies the bounding box of the area which contains the queried point. Coordinates are in the specified CRS/SRS. Four coordinates representing the top-left and bottom-right of the bounding box must be separated by comma. Required. Example: BBOX=-13152499,4038942,-13115771,4020692
+  CRS             (when VERSION 1.3.0 or higher) the coordinate reference system in which the BBOX is specified. Optional, default: \"EPSG:3857\". For a list of available CRSs see the `GetCapabilities` result.
+  SRS             (when VERSION 1.1.1 or lower) the coordinate reference system in which the BBOX is specified. Optional, default: \"EPSG:3857\". For a list of available CRSs see the `GetCapabilities` result.
+  WIDTH           The image-space width containing the queried point, in pixels. Required.
+  HEIGHT          The image-space height containing the queried point, in pixels. Required.
+  INFO_FORMAT     The output format of the feature info content. Check GetCapabilities for a list of supported formats.
+  RESY            The layers for which the feature info is requested.
+  I and J         (when VERSION 1.3.0 or higher) The X and Y coordinates in the output image space in pixels of the feature queried.
+  X and Y         (when VERSION 1.1.1 or lower) The X and Y coordinates in the output image space in pixels of the feature queried.

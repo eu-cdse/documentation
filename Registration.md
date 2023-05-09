@@ -4,7 +4,7 @@ This section provides information on how to register and authenticate on the Cop
 
 ## Step 1: Registration
 
-Go to [website](https://dataspace.copernicus.eu/) and click "login" in the top right corner.
+Go to [website](https://dataspace.copernicus.eu/){target="_blank"} and click "login" in the top right corner.
 
 <!-- ![Welcome](./_images/Welcome.png) -->
 <img src="./_images/Welcome.png" width="700">
@@ -21,7 +21,7 @@ You will now get the Copernicus Data Space Ecosystems registration form. Fill in
 
 ## Step 2: E-mail verification
 
-When you register, you will be asked to verify your email address. You should receive a verification email. If you don't have it click "Click here" in the bottom.
+When you register, you will be asked to verify your email address. You should receive a verification email.
 
 <!-- ![Verify](./_images/Verify.png) -->
 <img src="./_images/Verify.png" width="400">
