@@ -18,10 +18,10 @@ The [Service description and evolution document](/_docs/CDSE-SDE-TSY_Service%20D
 
 More detailed information on the timelines for Copernicus Data Space Ecosystem data, APIs and Application updates can be found here:
 
-* [Data timeline overview](/Roadmap/DataTable.html)
+* [Data timeline overview](/Roadmap/DataTable.qmd)
 
-* [APIs timeline overview](/Roadmap/APITable.html)
+* [APIs timeline overview](/Roadmap/APITable.qmd)
 
-* [Applications timeline overview](/Roadmap/AppTable.html)
+* [Applications timeline overview](/Roadmap/AppTable.qmd)
 
 
