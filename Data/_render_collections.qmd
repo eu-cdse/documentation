@@ -1,62 +1,46 @@
 
 ```{python}
+# import necessary packages
 import json
+from IPython.display import display, Markdown, Latex,HTML
+from tabulate import tabulate
+```
+
+```{python}
+#load the collection
 
 meta = None
 with open("./collections.json") as f:
     meta = json.load(f)["collections"]
 
-meta = [ c for c in meta if mission in c["id"] ]
+meta = [ c for c in meta if mission in c["mission"] ]
 
-from IPython.display import display, Markdown, Latex,HTML
-from tabulate import tabulate
+```
 
-text = ''
-
-
+```{python}
+# fetch thumbnail 
 dummy_thumb = "https://www.esa.int/var/esa/storage/images/esa_multimedia/images/2015/06/northwest_italy_and_southern_france/15492215-1-eng-GB/Northwest_Italy_and_southern_France_pillars.jpg"
 
-def togglescript():
-    script = f"""<script>function toggleContent(id){{var x = document.getElementById(id);if (x.style.display === "none"){{x.style.display = "block";}} else {{x.style.display = "none";}}}}</script>"""
-    return script
+def get_thumbnail(c):
+    try:
+        thumb_url = c["assets"]["thumbnail"]["href"]
+    except:
+        thumb_url = dummy_thumb
+    return thumb_url
+
+```
+
+```{python}
+# thumbnail block 
 
 def thumbblock(src,userguide, opensearch, gsd, datatype):
     thumb =  f"""<div class="row" style="display: flex; justify-content: space-around"><div class="column"><div class="badge-row">{userguide} {opensearch}</div><div class="badge-row gutter">{gsd}</div><div class="badge-row">{datatype}</div></div><div class="column" style="margin-right:10%; margin-left:auto; text-align: right;"><figure><img width="150" height="150" src={src}><figcaption align="center">{databrowser}</figcaption></figure></div></div>"""
     return thumb
 
+```
 
-def detailblock(ID,xy,time,stacurl,src):
-    bandinfo = f"""<button onclick="toggleContent('{ID}')" class="expand-collapse">Further details about the data collection</button><div class="expand-content" id="{ID}" style="display:none;"><div>{xy}</div><div>{time}</div><div>{stacurl}</div><div>{src}</div></div>"""
-    return bandinfo
-
-
-for c in meta:
-
-    title = c["title"]
-    gsd = c["gsd"]
-    datatype = c["type"]
-    tabletitle = "Spectral Bands"
-
-    
-    def find_link(rel=None,href_contains=None, title_contains=None):
-        results = [ l["href"] for l in c.get("links",[]) if (rel is None or l["rel"]==rel) and (href_contains==None or href_contains in l["href"]) and (title_contains==None or title_contains in l["title"]) ]
-        if len(results) == 0:
-            return None
-        else:
-            return results[0]
-
-    # insert thumbnail
-    try:
-        thumb_url = c["assets"]["thumbnail"]["href"]
-    except:
-        thumb_url = dummy_thumb
-
-    try:
-        collectionID = c["id"]
-    except:
-        collectionID = ""
-
-    # search stac extention
+```{python}
+def get_stac(c):
     try:
         stac_extension = c["stac_extensions"]
         link = None  # initialize link variable to None
@@ -67,8 +51,42 @@ for c in meta:
                 break  # exit the loop once you've found the link        
     except:
         stac_url = ""
+    return stac_url
+```
 
-    # get extents
+```{python}
+# function to toggle detail block
+
+def togglescript():
+    script = f"""<script>function toggleContent(id){{var x = document.getElementById(id);if (x.style.display === "none"){{x.style.display = "block";}} else {{x.style.display = "none";}}}}</script>"""
+    return script
+
+```
+
+```{python}
+# include detail block
+
+def detailblock(ID,xy,time,stacurl,src):
+    bandinfo = f"""<button onclick="toggleContent('{ID}')" class="expand-collapse">Further details about the data collection</button><div class="expand-content" id="{ID}" style="display:none;"><div>{xy}</div><div>{time}</div><div>{stacurl}</div><div>{src}</div></div>"""
+    return bandinfo
+
+```
+
+```{python}
+# function to search for links
+
+def find_link(rel=None,href_contains=None, title_contains=None):
+    results = [ l["href"] for l in c.get("links",[]) if (rel is None or l["rel"]==rel) and (href_contains==None or href_contains in l["href"]) and (title_contains==None or title_contains in l["title"]) ]
+    if len(results) == 0:
+        return None
+    else:
+        return results[0]
+
+```
+
+```{python}
+# get extension detail
+def get_extent(c):
     try:
         extent = c["extent"]
         spatial = extent['spatial']['bbox'][0]
@@ -78,10 +96,12 @@ for c in meta:
     except:
         spatial = ""
         temporal = ""
+    return spatial,temporal
+```
 
-
-
-    # include band details
+```{python}
+def get_bandtable(c):
+    tabletitle = "Spectral Bands"
     try: 
         band_num = len(c['summaries']['eo:bands'])
         t = []
@@ -109,7 +129,80 @@ for c in meta:
         table = f"""<h5>{tabletitle}</h5>{table}"""
     except:
         table = " "
+    return table
+```
 
+```{python}
+# product details 
+
+def product_detailblock(ID,about,logo1,logo2,NR_spa,NT_spa):
+    product_info = f"""<button onclick="toggleContent('{ID}')" class="expand-collapse">{ID}</button><div class="expand-content" id="{ID}" style="display:none;"><div>{logo1}{NR_spa}<br>{logo2}{NT_spa}</div><div>{about}</div></div><br>"""
+    return product_info
+
+```
+
+
+```{python}
+# for loop to display the content
+newline="\n"
+text = ''
+levelids=[]
+for c in meta:
+
+    title = c["title"]
+    try:
+        gsd = c["gsd"] 
+    except:
+        gsd = ""
+    try:
+        datatype = c["type"] 
+    except:
+        datatype = ""
+        
+    try:
+        collectionID = c["id"]
+    except:
+        collectionID = ""
+
+    try:
+        for i in c["data_product"]:
+            LevelID = c["data_product"][i]["Level_ID"]
+            About = c["data_product"][i]["description"]
+            levelids.append((LevelID,About))
+    except:
+        LevelID = ""
+        About = ""
+
+    # try:
+    #     if "NRT" in product_type:
+    #         type_logo = f"""![](https://img.shields.io/badge/{product_type}-77cc09) """
+    #     elif "NTC" in datatype:
+    #         type_logo = f"""![](https://img.shields.io/badge/{product_type}-important) """
+    #     elif "STC" in datatype:
+    #         type_logo = f"""![](https://img.shields.io/badge/{product_type}-important) """
+    #     else:
+    #         type_logo = ""
+    # except:
+    #     type_logo = ""
+
+    NRT_logo = f"""![](https://img.shields.io/badge/NRT-informational)"""
+    NR_spa = f"""![](https://img.shields.io/badge/Gloabl-Past%201Year-informational)"""
+    NTC_logo = f"""![](https://img.shields.io/badge/NTC-green) """
+    NT_spa = f"""![](https://img.shields.io/badge/Gloabl-March%202016--Present-green)"""
+
+
+    # insert thumbnail
+    thumb_url = get_thumbnail(c)
+
+    # search stac extention
+    stac_url = get_stac(c)
+
+    # get extents
+    spatial , temporal = get_extent(c)
+
+    # include spectral band table
+    table = get_bandtable(c)
+    
     links = { l["rel"] + l.get("title",""):l["href"] for l in c.get("links",[])}
     userguide = find_link(rel="about",title_contains="User")
     opensearch = find_link(rel="opensearch")
@@ -150,24 +243,31 @@ for c in meta:
 ]({opensearch})"""
     else:
         opensearch = ""
+
     text = text + f"""
 
-## {title} 
+## {title}
 
 {thumbblock(thumb_url,userguide,opensearch,gsd,datatype)}
 
-
-<h4>Overview</h4>
+#### Overview
 
 {c["description"]}
 
 {datacollection}
 
 
+#### Data Products
+
+{newline.join(product_detailblock(levels[0], levels[1], NRT_logo,NTC_logo,NR_spa,NT_spa) for levels in levelids)}
+
 {detailblock(collectionID,spatial,temporal,stac_url,table)}
 
-
 """
+
+```
+
+```{python}
 text = text + togglescript()
 
 display(Markdown(text))
