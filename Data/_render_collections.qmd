@@ -1,4 +1,3 @@
-
 ```{python}
 # import necessary packages
 import json
@@ -25,7 +24,7 @@ def get_thumbnail(c):
     try:
         thumb_url = c["assets"]["thumbnail"]["href"]
     except:
-        thumb_url = dummy_thumb
+        thumb_url = ""
     return thumb_url
 
 ```
@@ -33,10 +32,24 @@ def get_thumbnail(c):
 ```{python}
 # thumbnail block 
 
-def thumbblock(src,userguide, opensearch, gsd, datatype):
-    thumb =  f"""<div class="row" style="display: flex; justify-content: space-around"><div class="column"><div class="badge-row">{userguide} {opensearch}</div><div class="badge-row gutter">{gsd}</div><div class="badge-row">{datatype}</div></div><div class="column" style="margin-right:10%; margin-left:auto; text-align: right;"><figure><img width="150" height="150" src={src}><figcaption align="center">{databrowser}</figcaption></figure></div></div>"""
+def thumbblock(src,userguide, opensearch, gsd,revisit_time, datatype):
+    if src:
+        thumb =  f"""<div class="row" style="display: flex; justify-content: space-around"><div class="column"><div class="badge-row">{userguide} {opensearch}</div><div class="badge-row gutter">{gsd}{revisit_time}</div><div class="badge-row">{datatype}</div></div><div class="column" style="margin-right:10%; margin-left:auto; text-align: right;"><figure><img width="165" height="150" src={src}><figcaption align="center">{databrowser}</figcaption></figure></div></div>"""
+    else:
+        thumb =  f"""<div class="row" style="display: flex; justify-content: space-around"><div class="column"><div class="badge-row">{userguide}{opensearch}</div><div class="badge-row gutter">{gsd}{revisit_time}</div><div class="badge-row">{datatype}</div></div><div class="column" style="margin-right:10%; margin-left:auto; text-align: right;"></div></div>"""
     return thumb
 
+```
+
+```{python}
+def necessary_links(c):
+    stac = get_stac(c)
+    wmts = get_wmts()
+    if stac:
+        link_block =f"""<h5>Useful Links</h5><li>{stac}</li><li>{wmts}</li>"""
+    else:
+        link_block = ""
+    return link_block
 ```
 
 ```{python}
@@ -47,11 +60,22 @@ def get_stac(c):
 
         for item in stac_extension:
             if item.startswith('http'):
-                stac_url = f'<h5>Stac Extension</h5>  <a href="{item}" target="_blank">{item}</a>'
+                stac_url = f"""STAC: <a href="{item}" target="_blank">{item}</a>"""
                 break  # exit the loop once you've found the link        
     except:
         stac_url = ""
     return stac_url
+```
+```{python}
+def get_wmts():
+    url = ""
+    try:
+        wmts = find_link(rel="wmts",title_contains="Web Map Tile Service")
+        if wmts is not None:
+            url = f"""WMTS:  <a href="{wmts}" target="_blank">{wmts}</a>""" 
+    except:
+        url = ""
+    return url
 ```
 
 ```{python}
@@ -66,8 +90,12 @@ def togglescript():
 ```{python}
 # include detail block
 
-def detailblock(ID,xy,time,stacurl,src):
-    bandinfo = f"""<button onclick="toggleContent('{ID}')" class="expand-collapse">Further details about the data collection</button><div class="expand-content" id="{ID}" style="display:none;"><div>{xy}</div><div>{time}</div><div>{stacurl}</div><div>{src}</div></div>"""
+def detailblock(ID,xy,time,table,link_block):
+    
+    if any(val for val in (xy, time, table, link_block) if not val.isspace() and val != ""):
+        bandinfo = f"""<button onclick="toggleContent('{ID}')" class="expand-collapse">Further details about the data collection</button><div class="expand-content" id="{ID}" style="display:none;"><div class="row" style="display: flex; justify-content: space-around"><div class="column">{xy}</div><div class="column">{time}</div></div><div>{table}</div><div>{link_block}</div></div>"""
+    else:
+        bandinfo = ""
     return bandinfo
 
 ```
@@ -89,9 +117,9 @@ def find_link(rel=None,href_contains=None, title_contains=None):
 def get_extent(c):
     try:
         extent = c["extent"]
-        spatial = extent['spatial']['bbox'][0]
+        spatial = extent['spatial']['bbox']
         spatial = f'<h5>Spatial Extent</h5> {spatial}'
-        temporal = extent['temporal']['interval'][0]
+        temporal = extent['temporal']['interval']
         temporal = f'<h5>Temporal Interval</h5> {temporal}'
     except:
         spatial = ""
@@ -123,7 +151,7 @@ def get_bandtable(c):
             except:
                 b_wavelength = ''
             t.append([band,c_name,b_gsd,b_wavelength])
-        table = tabulate(t,headers=["Band Name", "Common Name", "GSD", "Center Wavelength"], tablefmt='html', floatfmt=".20f")
+        table = tabulate(t,headers=["Band Name", "Common Name", "GSD", "Center Wavelength"], tablefmt='html', floatfmt=".4f",stralign="center",numalign="center")
         # Set the minimum width of each column to 100 pixels
         table = table.replace("<table>", '<table class="table">')
         table = f"""<h5>{tabletitle}</h5>{table}"""
@@ -133,27 +161,63 @@ def get_bandtable(c):
 ```
 
 ```{python}
-# product details 
-
-def product_detailblock(ID,about,logo1,logo2,NR_spa,NT_spa):
-    product_info = f"""<button onclick="toggleContent('{ID}')" class="expand-collapse">{ID}</button><div class="expand-content" id="{ID}" style="display:none;"><div>{logo1}{NR_spa}<br>{logo2}{NT_spa}</div><div>{about}</div></div><br>"""
-    return product_info
-
+def get_availablity(c):
+    tabletitle = "Offered Data"
+    try: 
+        data_offer = len(c['summaries']['DataAvailability'])
+        t = []
+        note = ""
+        for i in range(0,data_offer):
+            try:
+                Status = c['summaries']['DataAvailability'][i]['Archive_status']
+            except:
+                Status = 'no data'
+            try:
+                Access = c['summaries']['DataAvailability'][i]['Access_type']
+            except:
+                Access = 'no data'
+            try:
+                Spatial = c['summaries']['DataAvailability'][i]['Spatial']
+            except:
+                Spatial = 'no data'
+            try:
+                Temporal = c['summaries']['DataAvailability'][i]['Temporal']
+            except:
+                Temporal = 'no data'
+            try:
+                From = c['summaries']['DataAvailability'][i]['Availabilty']
+            except:
+                From = 'no data'
+            try:
+                footnotes = c['summaries']['DataAvailability'][i]['Note']
+            except:
+                footnotes = ''
+            t.append([Status,Access,Spatial,Temporal,From])
+            note += footnotes
+        table = tabulate(t,headers=["Archive Status","Access Type","Spatial Extent","Temporal Extent","Availability"], tablefmt='html', floatfmt=".4f",stralign="center",numalign="center")
+        # Set the minimum width of each column to 100 pixels
+        table = table.replace("<table>", '<table class="table">')
+        table = f"""<h5>{tabletitle}</h5>{table}{note}"""
+    except:
+        table = " "
+    return table
 ```
-
 
 ```{python}
 # for loop to display the content
-newline="\n"
 text = ''
-levelids=[]
+
 for c in meta:
 
     title = c["title"]
     try:
-        gsd = c["gsd"] 
+        resolution = c["gsd"] 
     except:
-        gsd = ""
+        resolution = ""
+    try:
+        revisit = c["revisit"] 
+    except:
+        revisit = ""
     try:
         datatype = c["type"] 
     except:
@@ -173,63 +237,46 @@ for c in meta:
         LevelID = ""
         About = ""
 
-    # try:
-    #     if "NRT" in product_type:
-    #         type_logo = f"""![](https://img.shields.io/badge/{product_type}-77cc09) """
-    #     elif "NTC" in datatype:
-    #         type_logo = f"""![](https://img.shields.io/badge/{product_type}-important) """
-    #     elif "STC" in datatype:
-    #         type_logo = f"""![](https://img.shields.io/badge/{product_type}-important) """
-    #     else:
-    #         type_logo = ""
-    # except:
-    #     type_logo = ""
-
-    NRT_logo = f"""![](https://img.shields.io/badge/NRT-informational)"""
-    NR_spa = f"""![](https://img.shields.io/badge/Gloabl-Past%201Year-informational)"""
-    NTC_logo = f"""![](https://img.shields.io/badge/NTC-green) """
-    NT_spa = f"""![](https://img.shields.io/badge/Gloabl-March%202016--Present-green)"""
-
-
     # insert thumbnail
     thumb_url = get_thumbnail(c)
 
-    # search stac extention
-    stac_url = get_stac(c)
+    # get necessary links
+    link_block = necessary_links(c)
 
     # get extents
     spatial , temporal = get_extent(c)
 
     # include spectral band table
     table = get_bandtable(c)
+
+    # include offer table
+    offer = get_availablity(c)
     
     links = { l["rel"] + l.get("title",""):l["href"] for l in c.get("links",[])}
     userguide = find_link(rel="about",title_contains="User")
     opensearch = find_link(rel="opensearch")
-    datacollection = find_link(rel="about",title_contains="collection")
     databrowser = find_link(rel="browser",title_contains="Data-Browser")
 
     if userguide is not None:
-        userguide = f"""[![User guide](https://img.shields.io/badge/-User_guide-77cc09)]({userguide})"""
+        userguide = f"""[![User guide](https://img.shields.io/badge/-User_guide-77cc09)]({userguide}){{target='_blank'}}"""
     else:
         userguide = ""
 
-    if datacollection is not None:
-        datacollection = f"""You can find a detailed description about the collection in this [link]({datacollection})"""
-    else:
-        datacollection = ""
 
     if databrowser is not None:
         databrowser = f"""<a class="clickable" href="{databrowser}" target="_blank">View in browser</a>"""
     else:
         databrowser = ""
 
-    if gsd is not None:
-        gsd = f"""<div><img src="https://img.shields.io/badge/resolution-{gsd}m-0A4393" />
-<img src="https://img.shields.io/badge/revisit-5--daily-0A4393"/></div>
-"""
+    if resolution is not None and  resolution != "":
+        gsd = f"""<img src="https://img.shields.io/badge/resolution-{resolution}m-0A4393" />"""
     else:
         gsd = ""
+
+    if revisit is not None and  revisit != "":
+        revisit_time = f"""<img src="https://img.shields.io/badge/revisit-{revisit}--daily-0A4393"/>"""
+    else:
+        revisit_time = ""
 
     if "ARD" in datatype:
         datatype = f"""![](https://img.shields.io/badge/{datatype}-77cc09) """
@@ -240,7 +287,7 @@ for c in meta:
 
     if opensearch is not None:
         opensearch = f"""[![Catalog API](https://img.shields.io/badge/-Catalog_API-77cc09?style=flat)
-]({opensearch})"""
+]({opensearch}){{target='_blank'}}"""
     else:
         opensearch = ""
 
@@ -248,20 +295,16 @@ for c in meta:
 
 ## {title}
 
-{thumbblock(thumb_url,userguide,opensearch,gsd,datatype)}
+{thumbblock(thumb_url,userguide,opensearch,gsd,revisit_time,datatype)}
 
 #### Overview
 
 {c["description"]}
 
-{datacollection}
+{offer}
 
+{detailblock(collectionID,spatial,temporal,table,link_block)}
 
-#### Data Products
-
-{newline.join(product_detailblock(levels[0], levels[1], NRT_logo,NTC_logo,NR_spa,NT_spa) for levels in levelids)}
-
-{detailblock(collectionID,spatial,temporal,stac_url,table)}
 
 """
 
