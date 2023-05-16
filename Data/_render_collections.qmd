@@ -119,10 +119,12 @@ def get_extent(c):
         extent = c["extent"]
         spatial = extent['spatial']['bbox']
         spatial = f'<h5>Spatial Extent</h5> {spatial}'
+    except:
+        spatial = ""
+    try:
         temporal = extent['temporal']['interval']
         temporal = f'<h5>Temporal Interval</h5> {temporal}'
     except:
-        spatial = ""
         temporal = ""
     return spatial,temporal
 ```
@@ -151,7 +153,7 @@ def get_bandtable(c):
             except:
                 b_wavelength = ''
             t.append([band,c_name,b_gsd,b_wavelength])
-        table = tabulate(t,headers=["Band Name", "Common Name", "GSD", "Center Wavelength"], tablefmt='html', floatfmt=".4f",stralign="center",numalign="center")
+        table = tabulate(t,headers=["Band Name", "Common Name", "GSD(m)", "Center Wavelength(μm)"], tablefmt='html', floatfmt=".4f",stralign="center",numalign="center")
         # Set the minimum width of each column to 100 pixels
         table = table.replace("<table>", '<table class="table">')
         table = f"""<h5>{tabletitle}</h5>{table}"""
