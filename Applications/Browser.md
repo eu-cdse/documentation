@@ -218,6 +218,6 @@ Fig 14: Browser timelapse tool with settings highlighted
 
 With the **Histogram** tool you can display statistical data (the distribution of values) for specific layers by clicking on the ![histogram](../_images/icons/HistIcon.png) icon. The histogram is calculated for the data within your AOI, if defined or otherwise for the whole screen. This tool currently only works for index layers (e.g., the NDVI).
 
-<img src="../_images/Timelapse.png" width="450">
+<img src="../_images/Hist.png" width="550">
 
 Fig. 15: Example of a distribution plot of NDVI values
