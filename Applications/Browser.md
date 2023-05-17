@@ -29,7 +29,7 @@ Let's try to visualize the latest Sentinel-2 L2A imagery over Italy.
 2. In the sidebar, a maximum cloud coverage of 30% and the product type Sentinel-2 L2A are already preselected. To visualize the latest available data with cloud coverage below 30% click on the *Show latest date* button.
 <!-- ![Visualize](../_images/VisualizeLatestInfo.png) -->
 
-    ![VISUALIZE tab with *show latest date button* and *Sentinel-2 L2A* collection highlighted](../_images/VisualizeLatestInfo.png){#fig-2 width=350}
+    ![VisualizeTab](../_images/VisualizeLatestInfo.png){#fig-2 width=350}
 
 
 
