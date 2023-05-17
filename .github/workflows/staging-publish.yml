@@ -1,8 +1,8 @@
-name: Publish to production portal
+name: Publish to staging portal
 on:
   push:
-    branches: publish
-concurrency: production-publish
+    branches: staging
+concurrency: staging-publish
 jobs:
   build-deploy:
     runs-on: ubuntu-latest
@@ -17,7 +17,7 @@ jobs:
           git config --local user.email "actions@github.com"
           git config --local user.name "Github Actions"
       - name: Create git subtree
-        run: git subtree add --prefix _build origin docportal-prod
+        run: git subtree add --prefix _build origin docportal-staging
       - name: Set up Quarto
         uses: quarto-dev/quarto-actions/setup@v2
         with:
@@ -37,7 +37,7 @@ jobs:
       - name: Render
         run: quarto render --output-dir _build
       - name: Commit
-        run: git add _build && git commit -m "build - production deploy" && git subtree push --prefix _build origin docportal-prod
+        run: git add _build && git commit -m "build - staging deploy" && git subtree push --prefix _build origin docportal-staging
 
       
 

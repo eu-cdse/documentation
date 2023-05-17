@@ -13,20 +13,20 @@
 <details>
   <summary>Comparing with existing legacy Copernicus Data Hub, what will be the other free services other than stac/cog?</summary>
     <p>
-    Compared to existing Copernicus Data Hub, there will indeed be additional APIs - OGC interfaces (WMS, WMTS, WCS), OpenEO, Sentinel Hub API, S3, and others. Please refer to the <a href="#/Roadmap">Roadmap</a> for more info on the timing of these interfaces.
+    Compared to existing Copernicus Data Hub, there will indeed be additional APIs - OGC interfaces (WMS, WMTS, WCS), OpenEO, Sentinel Hub API, S3, and others. Please refer to the <a href="Roadmap.md">Roadmap</a> for more info on the timing of these interfaces.
     </p>
 </details>
 
 <details>
   <summary>Is there an end user document available online that describes the specific data products available and specific services?</summary>
     <p>
-    The user level document describing the details for every service and dataset can be found <a href="#/Applications/Browser">here</a>(LINK WILL LATER BE UPDATED).
+    The user level details for every service and dataset will be provided in this documentation. With every service and dataset embedded into the ecosystem, this documentation will be updated accordingly.
      </p>
 </details>
 <details>
   <summary>How long is the project timescale in total ?</summary>
     <p>
-   The time scale of the project is 6 years (ie. to the end of 2028) with an optional extension up to 10 years (ie. 2032).
+   The time scale of the project is 6 years (i.e., to the end of 2028) with an optional extension up to 10 years (i.e., 2032).
      </p>
 </details>
 <details>
@@ -41,7 +41,7 @@
 <details>
   <summary>What data will be offered online and what is the timeline for the following months?</summary>
     <p>
-    For the details on the data offer and timing, we would like to refer to the <a href="#/Roadmap">Roadmap</a>
+    For the details on the data offer and timing, we would like to refer to the <a href="Roadmap.md">Roadmap</a>
      </p>
 </details>
 <details>
@@ -71,7 +71,7 @@
 <details>
   <summary>Is it possible to download a subset of data corresponding to an AOI, instead of the whole image?</summary>
     <p>
-    Yes, you will be able to download a subset of data, either using S3 interface, or dedicated APIs, i.e. Sentinel Hub, OpenEO when they become available. See <a href="#/Roadmap">Roadmap</a> section of the documentation.
+    Yes, you will be able to download a subset of data, either using S3 interface, or dedicated APIs, i.e. Sentinel Hub, OpenEO when they become available. See <a href="Roadmap.md">Roadmap</a> section of the documentation.
      </p>
 </details>
 <details>
@@ -95,7 +95,7 @@
 <details>
   <summary>Can we download the data acquired by all Sentinel missions (1, 2, 3, 5P, 6) and the other satellites (e.g. Meteosat) via the new interface? Some missions are not managed by ESA, but by EUMETSAT for example.</summary>
     <p>
-    Initialy Sentinel 1, Sentinel 2, Sentinel 3 and Sentinel 5P data up to L2 products will be available. Sentinel 6 data and data from Meteosat are currently not in the roadmap of the project. However access to Copernicus Contributing Missions CORE Datasets, Digital Elevation Models, data from Copernicus Services and additional data sets such as Landsat and ENVISAT and Belgian Collaborative Ground Segment hosted data are planned in the future. The <a href="#/Roadmap/DataTable.html">Data Roadmap</a> shows how the Copernicus Data Space Ecosystem will be continously upgraded and how more data will become available.
+    Initialy Sentinel 1, Sentinel 2, Sentinel 3 and Sentinel 5P data up to L2 products will be available. Sentinel 6 data and data from Meteosat are currently not in the roadmap of the project. However access to Copernicus Contributing Missions CORE Datasets, Digital Elevation Models, data from Copernicus Services and additional data sets such as Landsat and ENVISAT and Belgian Collaborative Ground Segment hosted data are planned in the future. The <a href="https://documentation.dataspace.copernicus.eu/Roadmap/DataTable.html">Data Roadmap</a> shows how the Copernicus Data Space Ecosystem will be continously upgraded and how more data will become available.
      </p>
 </details>
 <details>
@@ -107,7 +107,7 @@
 <details>
   <summary>Will the new interface offer EO ready-to-use products or just L0 and L1 data?</summary>
     <p>
-    Up to L2 products will be available. The <a href="#/Roadmap">Roadmap</a> shows how the Copernicus Data Space Ecosystem will be continously upgraded and how more data become available.
+    Up to L2 products will be available. The <a href="Roadmap.md">Roadmap</a> shows how the Copernicus Data Space Ecosystem will be continously upgraded and how more data become available.
      </p>
 </details>
 
@@ -176,7 +176,7 @@
 <details>
   <summary>Will LTA process be discontinued when all archived data become online?</summary>
     <p>
-    There will still be services available for so called “deferred data access” :  data collections that are not commonly used. That said, all most relevant collections will be available on-line.  The <a href="#/Roadmap">Roadmap</a> shows how the Copernicus Data Space Ecosystem will be continously upgraded and how more data become available.
+    There will still be services available for so called “deferred data access” :  data collections that are not commonly used. That said, all most relevant collections will be available on-line.  The <a href="Roadmap.md">Roadmap</a> shows how the Copernicus Data Space Ecosystem will be continously upgraded and how more data become available.
      </p>
 </details>
 <details>
@@ -201,7 +201,7 @@
      </p>
 </details>
 <details>
-  <summary>Which distribution channels will be available for high-throughput data access? I assume the public side (dataspase.copernicus.eu) has a bandwidth limitation. Or does the public side have user tiers, or is high-throughput data transfer (such as https://creodias.eu/remote-transfer-for-eodata) only a paid service?</summary>
+  <summary>Which distribution channels will be available for high-throughput data access? I assume the public side (dataspase.copernicus.eu) has a bandwidth limitation. Or does the public side have user tiers, or is high-throughput data transfer (such as https://creodias.eu/remote-transfer-for-eodata ) only a paid service?</summary>
     <p>
     All distribution options (i.e. OData, S3, Sentinel Hub,..) will be constrained with user quotas, which includes both bandwidth limitation, as well as monthly limits.
      </p>
@@ -214,7 +214,7 @@
 </details>
 <details>
   <summary><span>
-  This December advertisement of <a href="https://medium.com/sentinel-hub/new-copernicus-data-access-service-to-support-the-ecosystem-for-earth-observation-412f829355a3">DAS</a> says that "For those interested in processing, there will be scalable cloud resources available, optimized for EO tasks". Does this refer to the current CreoDIAS resources, or something completely new that hasn't been addressed yet?
+  This December advertisement of <a href="https://medium.com/sentinel-hub/new-copernicus-data-access-service-to-support-the-ecosystem-for-earth-observation-412f829355a3 " target="_blank">DAS</a> says that "For those interested in processing, there will be scalable cloud resources available, optimized for EO tasks". Does this refer to the current CreoDIAS resources, or something completely new that hasn't been addressed yet?
   </span>
   </summary>
     <p>
