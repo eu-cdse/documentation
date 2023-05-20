@@ -14,11 +14,11 @@ Navigate to the following [website](https://helpcenter.dataspace.copernicus.eu/h
 
 In case you're not logged in, click on LOGIN.
 
-<img src="_images/help_center_sign_in.png" width="550">
+<img src="_images/support/help_center_sign_in.png" width="550">
 
 You will now get the Copernicus Data Space Ecosystems login form.
 
-<img src="_images/support_login.png" width="400">
+<img src="_images/support/support_login.png" width="400">
 
 Enter your credentials and click LOG IN.
 
@@ -26,11 +26,11 @@ Enter your credentials and click LOG IN.
 
 Once you have logged in you should see this window, click SUBMIT A REQUEST.
 
-<img src="_images/help_center_submit_request.png" width="550">
+<img src="_images/support/help_center_submit_request.png" width="550">
 
 The form used to create tickets should now appear.
 
-<img src="_images/help_center_request_form.png" width="550">
+<img src="_images/support/help_center_request_form.png" width="550">
 
 From the dropdown select what the question is about.
 
@@ -44,7 +44,7 @@ Once you’ve finished, click SUBMIT.
 
 Your ticket should now be submitted.
 
-<img src="_images/help_center_submitted_request.png" width="550">
+<img src="_images/support/help_center_submitted_request.png" width="550">
 
 You can see its status here. You can also post additional comments and attachments.
 
@@ -52,11 +52,11 @@ You can see its status here. You can also post additional comments and attachmen
 
 After logging in (as described in Step 1), you can see the status of your requests under your account. Select Requests from the drop-down.
 
-<img src="_images/help_center_your_requests.png" width="150">
+<img src="_images/support/help_center_your_requests.png" width="150">
 
 You will now see all your requests.
 
-<img src="_images/help_center_your_requests_list.png" width="550">
+<img src="_images/support/help_center_your_requests_list.png" width="550">
 
 If you can’t see your request here, make sure that Status "Any" is selected from the drop-down.
 
