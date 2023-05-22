@@ -9,6 +9,53 @@ format:
 
 # Python
 
+In the code snippets above we did not need to log in
+since we just queried publicly available back-end information.
+However, to run non-trivial processing queries one has to authenticate
+so that permissions, resource usage, etc. can be managed properly.
+
+Depending on the back-end, there might be two different approaches to authenticate. 
+You need to inform yourself at your back-end provider of choice, which authentication approach you have to carry out. 
+You can also have a look at the [openEO Hub](https://hub.openeo.org/){target="_blank"} to see the available authentication types of the back-ends.
+For Google Earth Engine, only [Basic Authentication](#basic-authentication){target="_blank"} is supported at the moment.
+
+A detailed description of why and how to use the authentication methods is on the [official documentation](https://open-eo.github.io/openeo-python-client/auth.html#authentication-and-account-management){target="_blank"}.
+
+### OpenID Connect Authentication
+The OIDC ([OpenID Connect](https://openid.net/connect/){target="_blank"}) authentication can be used to authenticate via an external service given a client ID.
+The following code snippet shows how to log in via OIDC authentication:
+
+```python
+print("Authenticate with OIDC authentication")
+connection.authenticate_oidc()
+```
+
+Calling this method opens your system web browser, with which you can authenticate yourself on the back-end authentication system. 
+After that the website will give you the instructions to go back to the python client, where your connection has logged your account in. 
+This means that every call that comes after that via the connection variable is executed by your user account.
+
+### Basic Authentication
+
+The Basic authentication method is a common way of authenticate HTTP requests given username and password.
+
+::: {.callout-note} 
+
+warning
+
+The preferred authentication method is OpenID Connect due to better security mechanisms implemented in the OpenID Connect protocol.
+If possible, use OpenID Connect instead of HTTP Basic authentication. 
+
+::: 
+
+The following code snippet shows how to log in via Basic authentication:
+```python
+print("Authenticate with Basic authentication")
+connection.authenticate_oidc()
+```
+After successfully calling the [`authenticate_basic`](https://open-eo.github.io/openeo-python-client/api.html#openeo.rest.connection.Connection.authenticate_basic) method, you are logged into the back-end with your account. 
+
+This means, that every call that comes after that via the connection variable is executed by your user account.
+
 # JavaScript
 
 # R
