@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -59,6 +93,9 @@ ul.task-list li input[type="checkbox"] {
     "search-submit-button-title": "Submit"
   }
 }</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 <meta name="zd-site-verification" content="xj9koofr1crilmoclgxsjd">
 <script type="text/javascript">
 
@@ -233,6 +270,18 @@ ul.task-list li input[type="checkbox"] {
   <div class="sidebar-item-container"> 
   <a href="../APIs/STAC.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">STAC product catalog</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../APIs/S3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">S3 Access</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../APIs/Traceability.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Traceability API</span></a>
   </div>
 </li>
           <li class="sidebar-item sidebar-item-section">
@@ -543,7 +592,7 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#satellite-features" id="toc-satellite-features" class="nav-link" data-scroll-target="#satellite-features">Satellite features</a></li>
   </ul></li>
   </ul>
-</nav>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/eu-cdse/documentation/issues" class="toc-action">Report an issue</a></p></div></div></nav>
     </div>
 <!-- main -->
 <main class="content column-body" id="quarto-document-content">
@@ -565,33 +614,95 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
-<p>The OpenSearch catalogue allows you to search through Copernicus data using a standardized web service. The <a href="https://github.com/dewitt/opensearch/blob/master/opensearch-1-1-draft-6.md" target="_blank">OpenSearch specification</a> can be consulted for technical details of the standard. This web service returns results as GeoJSON feature collections. Each feature in the collection represents an earth observation ‘product’, with references to where the actual data can be found.</p>
-<p>We remark that this version does not implement the OGC Opensearch standard, and a migration from other API’s named OpenSearch may require significant modifications. It mainly offers compatibility for existing users of a similar API on the CreoDIAS and Wekeo platforms, and with client side tools and workflows that have implemented support for this API. For new users looking for a more standardized API, a <a href="https://stacspec.org" target="_blank">STAC</a> alternative is being developed.</p>
+<p>The OpenSearch catalogue allows you to search through Copernicus data using a standardized web service. The <a href="https://github.com/dewitt/opensearch/blob/master/opensearch-1-1-draft-6.md" target="_blank">OpenSearch specification</a> can be consulted for technical details of the standard. This web service returns results as GeoJSON feature collections. Each feature in the collection represents an earth observation ‘product’, referencing where the actual data can be found.</p>
+<p>We remark that this version does not implement the OGC OpenSearch standards, and a migration from other API’s named OpenSearch may require significant modifications. It mainly offers compatibility for existing users of a similar API on the CreoDIAS and Wekeo platforms and with client-side tools and workflows that have implemented support for this API. For new users looking for a more standardized API, a <a href="https://stacspec.org" target="_blank">STAC</a> alternative is being developed.</p>
 <section id="using-opensearch-interface-to-query-data-catalogue" class="level2">
 <h2 class="anchored" data-anchor-id="using-opensearch-interface-to-query-data-catalogue">Using OpenSearch interface to query Data Catalogue</h2>
-<p>Due to the fact that offset is not a recommended form of searching repository pages, we had to implement limit to a maximum of 200k. The requests over the limit will be rejected with the code 400. We encourage you to limit your inquiries by geographic or temporal area.</p>
-<p>All queries may be executed as simple HTTP-Get calls, by typing the query in web browser address line, by using any HTTP client, e.g.&nbsp;curl or wget, or from inside of users’ program. The database is accessible free and anonymously (open for anonymous access for everyone, no authorization is used) It may be accessed both from the internal network (virtual machines in Creodias) and from outside, e.g.&nbsp;your home computer. Note, that the actual EO data themselves are restricted to authorized users, only the Data Catalogue is open.</p>
+<p>Due to the fact that offset is not a recommended form of searching repository pages, we had to implement a limit to a maximum of 200k. The requests over the limit will be rejected with the code 400. Therefore, we encourage you to limit your inquiries by geographic or temporal area.</p>
+<p>All queries may be executed as simple HTTP-Get calls by typing the query in the web browser address line, by using any HTTP client, e.g.&nbsp;curl or wget, or from inside of the users’ program. The database is accessible free and anonymously (open for anonymous access for everyone, no authorization is used). It may be accessed both from the internal network (virtual machines in Creodias) and from outside, e.g.&nbsp;your home computer. Note that the actual EO data are restricted to authorized users; only the Data Catalogue is open.</p>
 <section id="general-rules" class="level3">
 <h3 class="anchored" data-anchor-id="general-rules">General Rules</h3>
 <p>The queries produce results in JSON format. Base url:</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" aria-current="page">HTTP Request</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" aria-current="page">HTTP Request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">Python</a></li></ul>
 <div class="tab-content">
 <div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
 <p><a href="http://catalogue.dataspace.copernicus.eu/resto/api/collections/search.json?" target="_blank">http://catalogue.dataspace.copernicus.eu/resto/api/collections/search.json?</a></p>
 </div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<div class="cell" data-execution_count="2">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(<span class="st">"http://catalogue.dataspace.copernicus.eu/resto/api/collections/search.json?"</span>).json()</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame.from_dict(json[<span class="st">'features'</span>]).head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="2">
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">type</th>
+<th data-quarto-table-cell-role="th">id</th>
+<th data-quarto-table-cell-role="th">geometry</th>
+<th data-quarto-table-cell-role="th">properties</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>Feature</td>
+<td>ffc7c4ae-9cdf-56a7-981e-401f2cdd0a53</td>
+<td>{'type': 'Polygon', 'coordinates': [[[22.29859...</td>
+<td>{'collection': 'LANDSAT-5', 'status': 'ONLINE'...</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>Feature</td>
+<td>144c9de3-6c30-5062-8bab-add3d83aa76a</td>
+<td>{'type': 'Polygon', 'coordinates': [[[32.31033...</td>
+<td>{'collection': 'LANDSAT-5', 'status': 'ONLINE'...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>Feature</td>
+<td>bd33aaca-c7d5-5f00-a005-00450cae37bf</td>
+<td>{'type': 'Polygon', 'coordinates': [[[33.90780...</td>
+<td>{'collection': 'LANDSAT-5', 'status': 'ONLINE'...</td>
+</tr>
+</tbody>
+</table>
+
 </div>
 </div>
+</div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
 <p>Most queries are case-sensitive.</p>
+</div>
+</div>
 </section>
 <section id="collections" class="level3">
 <h3 class="anchored" data-anchor-id="collections">Collections</h3>
-<p>The data are organized in so-called collections, corresponding to various satellites. A query may search for data in all collections, or in one particular collection only. If only one satellite is in the field of interest, the second approach is faster and more efficient, than filtering the general query. For example, to find 10 most recent Sentinel-2 products with cloud cover below 10%, the query should look like:</p>
+<p>The data are organized in so-called collections corresponding to various satellites. A query may search for data in all collections or in one particular collection only. If only one satellite is in the field of interest, the second approach is faster and more efficient than filtering the general query. For example, to find the ten most recent Sentinel-2 products with cloud cover below 10%, the query should look like:</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">CLI</a></li></ul>
 <div class="tab-content">
 <div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
-<pre class="{bash}"><code>$ wget -O - "http://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=[0,10]&amp;startDate=2022-06-11&amp;completionDate=2022-06-22&amp;maxRecords=10"</code></pre>
+<pre class="{bash}"><code>$ wget -O - "http://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=[0,10]&amp;startDate=2022-06-11T00:00:00Z&amp;completionDate=2022-06-22T23:59:59Z&amp;maxRecords=10"</code></pre>
 </div>
 </div>
 </div>
@@ -600,46 +711,170 @@ ul.task-list li input[type="checkbox"] {
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true">CLI</a></li></ul>
 <div class="tab-content">
 <div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
-<pre class="{bash}"><code>$ wget -O - "https://catalogue.dataspace.copernicus.eu/resto/api/collections/search.json?cloudCover=[0,10]&amp;startDate=2022-06-11&amp;completionDate=2022-06-22&amp;maxRecords=10"</code></pre>
+<pre class="{bash}"><code>$ wget -O - "https://catalogue.dataspace.copernicus.eu/resto/api/collections/search.json?cloudCover=[0,10]&amp;startDate=2022-06-11T00:00:00Z&amp;completionDate=2022-06-22T23:59:59Z&amp;maxRecords=10"</code></pre>
 </div>
 </div>
 </div>
 <p>As for today the following collections are defined and may be used:</p>
-<p><strong>Sentinel1 or SENTINEL-1</strong></p>
-<p><strong>Sentinel2 or SENTINEL-2</strong></p>
-<p><strong>Sentinel3 or SENTINEL-3</strong></p>
-<p><strong>Sentinel5P or SENTINEL-5P</strong></p>
+<ul>
+<li><p><strong>Sentinel1 or SENTINEL-1</strong></p></li>
+<li><p><strong>Sentinel2 or SENTINEL-2</strong></p></li>
+<li><p><strong>Sentinel3 or SENTINEL-3</strong></p></li>
+<li><p><strong>Sentinel5P or SENTINEL-5P</strong></p></li>
+</ul>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
 <p>Note, that collection names vary a bit from satellite names, as they are used in EO Data repository. For example, the collection is named <strong>Sentinel2,</strong> while in the repository its data are located within <strong>/eodata/Sentinel-2/….</strong> branch of the repository tree.</p>
+</div>
+</div>
 </section>
 <section id="output-sorting-and-limiting" class="level3">
 <h3 class="anchored" data-anchor-id="output-sorting-and-limiting">Output sorting and limiting</h3>
-<p>By default, maximum 20 products are returned only. You may change the limit (beware of long execution time for queries about thousands of products) using the phrase</p>
+<p>By default, maximum of 20 products are returned. You may change the limit (beware of long execution time for queries about thousands of products) using the phrase:</p>
+<div style="margin-left:20px">
 <p><strong>maxRecords=nnn</strong></p>
-<p>If the query is very general and the number of matching products is large, the next pages of products may be retrieved</p>
+</div>
+<p>If the query is very general and the number of matching products is large, the next pages of products can be retrieved using:</p>
+<div style="margin-left:20px">
 <p><strong>page=nnn</strong></p>
-<p>You may also change the order of how the products are presented, using the phrase like</p>
+</div>
+<p>It is also possible to alter the sequence in which the products are displayed by using a phrase similar to:</p>
+<div style="margin-left:20px">
 <p><strong>sortParam=startDate</strong></p>
-<p>will sort the output by observation date. The following orderings are implemented:</p>
+</div>
+<p>This will sort the output by observation date. The following orderings can be implemented:</p>
+<div style="margin-left:20px">
 <p><strong>startDate</strong> - the date when the observation was made (start)</p>
 <p><strong>completionDate</strong> - the date when the observation was made (end)</p>
-<p><strong>published </strong> - the date when the product got published in our repository</p>
-<p>each of them may be accompanied by</p>
+<p><strong>published</strong> - the date when the product got published in our repository</p>
+</div>
+<p>Eeach of these ordering can be be accompanied by:</p>
+<div style="margin-left:20px">
 <p><strong>sortOrder=ascending or sortOrder=descending</strong></p>
+</div>
 <p>For example the query</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true">HTTP Request</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true">HTTP Request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false">Python</a></li></ul>
 <div class="tab-content">
 <div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
-<p><a href="http://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?startDate=2016-07-01&amp;completionDate=2016-07-31&amp;sortParam=cloudCover&amp;maxRecords=20" target="_blank">http://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?startDate=2021-07-01&amp;completionDate=2021-07-31&amp;sortParam=startDate&amp;maxRecords=20</a></p>
+<p><a href="http://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?startDate=2021-07-01T00:00:00Z&amp;completionDate=2021-07-31T23:59:59Z&amp;sortParam=cloudCover&amp;maxRecords=20" target="_blank">http://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?startDate=2021-07-01T00:00:00Z&amp;completionDate=2021-07-31T23:59:59Z&amp;sortParam=startDate&amp;maxRecords=20</a></p>
+</div>
+<div id="tabset-4-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
+<div class="cell" data-execution_count="3">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(<span class="st">"http://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?startDate=2021-07-01T00:00:00Z&amp;completionDate=2021-07-31T23:59:59Z&amp;sortParam=startDate&amp;maxRecords=20"</span>).json()</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame.from_dict(json[<span class="st">'features'</span>]).head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="3">
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">type</th>
+<th data-quarto-table-cell-role="th">id</th>
+<th data-quarto-table-cell-role="th">geometry</th>
+<th data-quarto-table-cell-role="th">properties</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>Feature</td>
+<td>010f2ad1-0199-4bd8-850a-215b5c63b0b9</td>
+<td>{'type': 'Polygon', 'coordinates': [[[158.5965...</td>
+<td>{'collection': 'SENTINEL-2', 'status': 'ONLINE...</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>Feature</td>
+<td>06ccfceb-938e-4bda-beff-3c2acae864b2</td>
+<td>{'type': 'Polygon', 'coordinates': [[[158.5288...</td>
+<td>{'collection': 'SENTINEL-2', 'status': 'ONLINE...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>Feature</td>
+<td>229dd65c-399d-48bc-a116-14bb0e001742</td>
+<td>{'type': 'Polygon', 'coordinates': [[[157.1876...</td>
+<td>{'collection': 'SENTINEL-2', 'status': 'ONLINE...</td>
+</tr>
+</tbody>
+</table>
+
 </div>
 </div>
 </div>
-<p>will return 20 products from July 2021, while the next query would return the next 20:</p>
+</div>
+</div>
+</div>
+<p>The above request will return 20 products from July 2021, whereas the next query will return the next 20:</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-5-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-1" role="tab" aria-controls="tabset-5-1" aria-selected="true">HTTP Request</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-5-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-1" role="tab" aria-controls="tabset-5-1" aria-selected="true">HTTP Request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-2" role="tab" aria-controls="tabset-5-2" aria-selected="false">Python</a></li></ul>
 <div class="tab-content">
 <div id="tabset-5-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-5-1-tab">
-<p><a href="http://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?startDate=2021-07-01&amp;completionDate=2021-07-31&amp;sortParam=startDate&amp;maxRecords=20&amp;page=2" target="_blank">http://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?startDate=2021-07-01&amp;completionDate=2021-07-31&amp;sortParam=startDate&amp;maxRecords=20&amp;page=2</a></p>
+<p><a href="http://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?startDate=2021-07-01T00:00:00Z&amp;completionDate=2021-07-31T23:59:59Z&amp;sortParam=startDate&amp;maxRecords=20&amp;page=2" target="_blank">http://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?startDate=2021-07-01T00:00:00Z&amp;completionDate=2021-07-31T23:59:59Z&amp;sortParam=startDate&amp;maxRecords=20&amp;page=2</a></p>
+</div>
+<div id="tabset-5-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-2-tab">
+<div class="cell" data-execution_count="4">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(<span class="st">"http://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?startDate=2021-07-01T00:00:00Z&amp;completionDate=2021-07-31T23:59:59Z&amp;sortParam=startDate&amp;maxRecords=20&amp;page=2"</span>).json()</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame.from_dict(json[<span class="st">'features'</span>]).head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="4">
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">type</th>
+<th data-quarto-table-cell-role="th">id</th>
+<th data-quarto-table-cell-role="th">geometry</th>
+<th data-quarto-table-cell-role="th">properties</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>Feature</td>
+<td>cdaed6e4-99c3-44db-89e6-efbd21276bef</td>
+<td>{'type': 'Polygon', 'coordinates': [[[156.7053...</td>
+<td>{'collection': 'SENTINEL-2', 'status': 'ONLINE...</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>Feature</td>
+<td>d2a89e60-4b83-4cb6-a3d7-d926e2b804df</td>
+<td>{'type': 'Polygon', 'coordinates': [[[156.0567...</td>
+<td>{'collection': 'SENTINEL-2', 'status': 'ONLINE...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>Feature</td>
+<td>d4e341a1-719f-4297-a6f2-1c5d10098c12</td>
+<td>{'type': 'Polygon', 'coordinates': [[[158.1844...</td>
+<td>{'collection': 'SENTINEL-2', 'status': 'ONLINE...</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -649,39 +884,190 @@ ul.task-list li input[type="checkbox"] {
 <p>The formal query is invoked as a sequence of sub phrases, separated by &amp;. The result is a conjunction of all sub phrases. It is impossible to use an alternative in the question. The query must be specified as a formal query.</p>
 <p>The example of formal query - about cloudless (cloud cover lower or equal to 10%) products for a specific location:</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-6-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-1" role="tab" aria-controls="tabset-6-1" aria-selected="true">HTTP Request</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-6-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-1" role="tab" aria-controls="tabset-6-1" aria-selected="true">HTTP Request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-2" role="tab" aria-controls="tabset-6-2" aria-selected="false">Python</a></li></ul>
 <div class="tab-content">
 <div id="tabset-6-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-6-1-tab">
-<p><a href="https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=%5B0,10%5D&amp;startDate=2021-06-21&amp;completionDate=2021-09-22&amp;lon=21.01&amp;lat=52.22" target="_blank">https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=[0,10]&amp;startDate=2021-06-21&amp;completionDate=2021-09-22&amp;lon=21.01&amp;lat=52.22</a></p>
+<p><a href="https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=%5B0,10%5D&amp;startDate=2021-06-21T00:00:00Z&amp;completionDate=2021-09-22T23:59:59Z&amp;lon=21.01&amp;lat=52.22" target="_blank">https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=[0,10]&amp;startDate=2021-06-21T00:00:00Z&amp;completionDate=2021-09-22T23:59:59Z&amp;lon=21.01&amp;lat=52.22</a></p>
+</div>
+<div id="tabset-6-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-2-tab">
+<div class="cell" data-execution_count="5">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(<span class="st">"https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=[0,10]&amp;startDate=2021-06-21T00:00:00Z&amp;completionDate=2021-09-22T23:59:59Z&amp;lon=21.01&amp;lat=52.22"</span>).json()</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame.from_dict(json[<span class="st">'features'</span>]).head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="5">
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">type</th>
+<th data-quarto-table-cell-role="th">id</th>
+<th data-quarto-table-cell-role="th">geometry</th>
+<th data-quarto-table-cell-role="th">properties</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>Feature</td>
+<td>b47fa808-dec3-5a77-a9b9-018e0c00a376</td>
+<td>{'type': 'Polygon', 'coordinates': [[[19.50094...</td>
+<td>{'collection': 'SENTINEL-2', 'status': 'ONLINE...</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>Feature</td>
+<td>d265f3eb-fa47-57ff-8839-3ef005cfbcab</td>
+<td>{'type': 'Polygon', 'coordinates': [[[19.53152...</td>
+<td>{'collection': 'SENTINEL-2', 'status': 'ONLINE...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>Feature</td>
+<td>b9e8747e-fafd-530e-8253-43ffcb611481</td>
+<td>{'type': 'Polygon', 'coordinates': [[[21.96037...</td>
+<td>{'collection': 'SENTINEL-2', 'status': 'ONLINE...</td>
+</tr>
+</tbody>
+</table>
+
 </div>
 </div>
 </div>
-<p>The queries are in form <strong>param=value or param=[minvalue,maxvalue**]. Most of the parameters are common for all collections, but some are specific for some them (e.g.&nbsp;</strong>cloudCover** applies to optical satellites, but polarisation applies to radar ones), or just single one.</p>
+</div>
+</div>
+</div>
+<p>The queries are in form <strong>param=value or param=[minvalue,maxvalue]</strong>. Most of the parameters are common for all collections, but some are specific for some them (e.g.&nbsp;<strong>cloudCover</strong> applies to optical satellites, but polarisation applies to radar ones), or just single one.</p>
 </section>
 <section id="geography-and-time-frame" class="level3">
 <h3 class="anchored" data-anchor-id="geography-and-time-frame">Geography and time-frame</h3>
 <p>The common set of parameters are:</p>
-<p><strong>startDate, completionDate</strong> - the date limits of the observation. The time may also be specified, e.g.&nbsp;2021-10-01T021:30:00Z</p>
+<div style="margin-left:20px">
+<p><strong>startDate, completionDate</strong> - the date limits of the observation. The time may also be specified, e.g.&nbsp;2021-10-01T21:37:00Z</p>
 <p><strong>publishedAfter, publishedBefore</strong> - the date limits when the product was published in our repository</p>
 <p><strong>lon, lat</strong> - geographical position, expressed in military style (EPSG:4326, as decimal fraction of degrees, positive for eastern latitude and northern longitude) <strong>radius</strong> - region of interest, defined as a circle with centre in point determined by the longitude and latitude with radius expressed in meters (it won’t work with point manually selected in EOFinder/Data Explorer)</p>
 <p><strong>geometry</strong> - region of interest, defined as WKT string (POINT, POLYGON, etc.)</p>
-<p><strong>box</strong> - region of interest, defined as the rectangle with given (west,south,east,north) values</p>
-<p>box is defined this way: &amp;box=west,south,east,north</p>
-<p>For example the query</p>
+<p><strong>box</strong> - region of interest, defined as the rectangle with given (west,south,east,north) values. It should be defined this way: &amp;box=west,south,east,north</p>
+</div>
+<p>For example the query can be:</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-7-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-1" role="tab" aria-controls="tabset-7-1" aria-selected="true">HTTP Request</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-7-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-1" role="tab" aria-controls="tabset-7-1" aria-selected="true">HTTP Request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-2" role="tab" aria-controls="tabset-7-2" aria-selected="false">Python</a></li></ul>
 <div class="tab-content">
 <div id="tabset-7-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-7-1-tab">
-<p><a href="https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=%5B0,10%5D&amp;startDate=2022-06-11&amp;completionDate=2022-06-22&amp;maxRecords=10&amp;box=-1,1,-1,1" target="_blank">https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=[0,10]&amp;startDate=2022-06-11&amp;completionDate=2022-06-22&amp;maxRecords=10&amp;box=-1,1,-1,1</a></p>
+<p><a href="https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=%5B0,10%5D&amp;startDate=2022-06-11T00:00:00Z&amp;completionDate=2022-06-22T23:59:59Z&amp;maxRecords=10&amp;box=-1,1,-1,1" target="_blank">https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=[0,10]&amp;startDate=2022-06-11T00:00:00Z&amp;completionDate=2022-06-22T23:59:59Z&amp;maxRecords=10&amp;box=-1,1,-1,1</a></p>
+</div>
+<div id="tabset-7-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-2-tab">
+<div class="cell" data-execution_count="6">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(<span class="st">"https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=[0,10]&amp;startDate=2022-06-11T00:00:00Z&amp;completionDate=2022-06-22T23:59:59Z&amp;maxRecords=10&amp;box=-1,1,-1,1"</span>).json()</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame.from_dict(json[<span class="st">'features'</span>]).head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="6">
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">type</th>
+<th data-quarto-table-cell-role="th">id</th>
+<th data-quarto-table-cell-role="th">geometry</th>
+<th data-quarto-table-cell-role="th">properties</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>Feature</td>
+<td>c33a50af-94a5-5342-bd10-b2595afcf318</td>
+<td>{'type': 'Polygon', 'coordinates': [[[-49.2582...</td>
+<td>{'collection': 'SENTINEL-2', 'status': 'ONLINE...</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>Feature</td>
+<td>d25e1cd6-7079-5f9b-a950-9b089224e0b0</td>
+<td>{'type': 'Polygon', 'coordinates': [[[37.20205...</td>
+<td>{'collection': 'SENTINEL-2', 'status': 'ONLINE...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>Feature</td>
+<td>5074e11b-44ce-54f2-837f-a24f7f7c1a1e</td>
+<td>{'type': 'Polygon', 'coordinates': [[[33.89884...</td>
+<td>{'collection': 'SENTINEL-2', 'status': 'ONLINE...</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
 <p>or</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-8-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-1" role="tab" aria-controls="tabset-8-1" aria-selected="true">HTTP Request</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-8-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-1" role="tab" aria-controls="tabset-8-1" aria-selected="true">HTTP Request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-8-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-2" role="tab" aria-controls="tabset-8-2" aria-selected="false">Python</a></li></ul>
 <div class="tab-content">
 <div id="tabset-8-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-8-1-tab">
-<p><a href="https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=%5B0,10%5D&amp;startDate=2022-06-11&amp;completionDate=2022-06-22&amp;maxRecords=10&amp;box=-21,23,-24,15" target="_blank">https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=[0,10]&amp;startDate=2022-06-11&amp;completionDate=2022-06-22&amp;maxRecords=10&amp;box=-21,23,-24,15</a></p>
+<p><a href="https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=%5B0,10%5D&amp;startDate=2022-06-11T00:00:00Z&amp;completionDate=2022-06-22T23:59:59Z&amp;maxRecords=10&amp;box=-21,23,-24,15" target="_blank">https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=[0,10]&amp;startDate=2022-06-11T00:00:00Z&amp;completionDate=2022-06-22T23:59:59Z&amp;maxRecords=10&amp;box=-21,23,-24,15</a></p>
+</div>
+<div id="tabset-8-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-8-2-tab">
+<div class="cell" data-execution_count="7">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(<span class="st">"https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=[0,10]&amp;startDate=2022-06-11T00:00:00Z&amp;completionDate=2022-06-22T23:59:59Z&amp;maxRecords=10&amp;box=-21,23,-24,15"</span>).json()</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame.from_dict(json[<span class="st">'features'</span>]).head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="7">
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">type</th>
+<th data-quarto-table-cell-role="th">id</th>
+<th data-quarto-table-cell-role="th">geometry</th>
+<th data-quarto-table-cell-role="th">properties</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>Feature</td>
+<td>df2559e7-00c1-5d50-88fd-c6cec059336b</td>
+<td>{'type': 'Polygon', 'coordinates': [[[36.81347...</td>
+<td>{'collection': 'SENTINEL-2', 'status': 'ONLINE...</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>Feature</td>
+<td>a9ba5a9c-ae83-5e78-92e5-dfc998aa8abd</td>
+<td>{'type': 'Polygon', 'coordinates': [[[37.42252...</td>
+<td>{'collection': 'SENTINEL-2', 'status': 'ONLINE...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>Feature</td>
+<td>540510f0-8300-5ae7-bc70-69041b10b2ed</td>
+<td>{'type': 'Polygon', 'coordinates': [[[39.09219...</td>
+<td>{'collection': 'SENTINEL-2', 'status': 'ONLINE...</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -689,41 +1075,70 @@ ul.task-list li input[type="checkbox"] {
 <section id="volatile-features" class="level3">
 <h3 class="anchored" data-anchor-id="volatile-features">Volatile features</h3>
 <p>Some terrain-like feature masks are not permanent but describing a single scene only. The most commonly used such feature is cloudiness, or cloudCover, which is defined for most of the products coming from optical sensors. For example:</p>
+<div style="margin-left:20px">
 <p><strong>cloudCover=[0,10]</strong></p>
-<p>selects only those scenes, which are covered by clouds by no more than 10%.</p>
-<p>Caution: to be meaningful, the cloudiness must be provided with each product, while in many products is missing. If the cloudiness is unknown for the scene, it is marked by a value of 0 or -1. cloudCover=0 is therefore ambiguous: it may either mean totally cloudless sky or the cloudy scene for which cloud cover had not been estimated during original data processing.</p>
+</div>
+<p>This parameter selects only those scenes, which are covered by clouds by no more than 10%.</p>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Caution
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>To be meaningful, the cloudiness must be provided with each product, while in many products is missing. If the cloudiness is unknown for the scene, it is marked by a value of 0 or -1. cloudCover=0 is therefore ambiguous: it may either mean totally cloudless sky or the cloudy scene for which cloud cover had not been estimated during original data processing.</p>
+</div>
+</div>
 </section>
 <section id="satellite-features" class="level3">
 <h3 class="anchored" data-anchor-id="satellite-features">Satellite features</h3>
+<div style="margin-left:20px">
 <p><strong>instrument</strong> - meaningful only for satellites equipped with multiple instruments. The possible values are satellite specific.</p>
 <p><strong>productType</strong> - the actual types possible are specific for every satellite.</p>
 <p><strong>sensorMode</strong> - also satellite and sensor specific. E.g. (for Sentinel-1): sensorMode=EW</p>
 <p><strong>orbitDirection</strong> - ASCENDING or DESCENDING. For most heliosynchronous satellites descending orbits means the day scenes, while ascending means night ones. For many optical satellites (e.g.&nbsp;Sentinel-2) only day scenes are published.</p>
 <p><strong>resolution</strong> - expected spatial resolution of the product defined in meters.</p>
 <p><strong>status:</strong></p>
+</div>
+<div style="margin-left:40px">
 <ul>
 <li><strong>ONLINE</strong></li>
 <li><strong>OFFLINE</strong></li>
 </ul>
-<p>Some additional parameters are strictly satellite-specific, e.g.&nbsp;polarisation, which is defined only for Sentinel-1</p>
+</div>
+<p>Some additional parameters are strictly satellite-specific, e.g.&nbsp;polarisation, which is defined only for Sentinel-1.</p>
 <p>For every satellite (collection) its set of query-able parameters may be obtained by a query like:</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-9-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-9-1" role="tab" aria-controls="tabset-9-1" aria-selected="true">HTTP Request</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-9-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-9-1" role="tab" aria-controls="tabset-9-1" aria-selected="true">HTTP Request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-9-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-9-2" role="tab" aria-controls="tabset-9-2" aria-selected="false">Python</a></li></ul>
 <div class="tab-content">
 <div id="tabset-9-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-9-1-tab">
 <p><a href="https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel1/describe.xml" target="_blank">https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel1/describe.xml</a></p>
 </div>
+<div id="tabset-9-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-9-2-tab">
+<div class="cell" data-execution_count="8">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>url <span class="op">=</span> <span class="st">'https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel1/describe.xml'</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>response <span class="op">=</span> requests.get(url)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>root <span class="op">=</span> ET.fromstring(response.content)</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> child <span class="kw">in</span> root:</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> child.tag.endswith(<span class="st">'ShortName'</span>) <span class="kw">or</span> child.tag.endswith(<span class="st">'Description'</span>):</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>child<span class="sc">.</span>tag<span class="sc">}</span><span class="ss">: </span><span class="sc">{</span>child<span class="sc">.</span>text<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>{http://a9.com/-/spec/opensearch/1.1/}ShortName: Sentinel-1
+{http://a9.com/-/spec/opensearch/1.1/}Description: Sentinel-1 Collection</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 <p>The resulting XML file provides full list of the parameters for the collection, with their very brief descriptions.</p>
-<!-- Following lines are removed at request from Natalia Sobieska mail to BartBomans dd27.01.2023 16:43
-## Order API Documentation
-
-
-For comprehensive Order API description you can visit these pages:
-was already in comment -- [**https://finder.creodias.eu/api/docs/**](https://finder.creodias.eu/api/docs/) --
-
-[**EO Data Ordering API2 Manual**](https://creodias.eu/-/comletiondatestartdate-and-in-finder-api-v2?) -->
 
 
 </section>
