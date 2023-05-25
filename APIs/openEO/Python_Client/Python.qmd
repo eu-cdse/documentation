@@ -14,8 +14,10 @@ More in-depth information can be found in its [official documentation](https://o
 The openEO Python client library is available on [PyPI](https://pypi.org/project/openeo/){target="_blank"}
 and can easily be installed with a tool like `pip`, for example:
 
-```shell script
+```bash
+
 pip install openeo
+
 ```
 
 The client library is also available on [Conda Forge](https://anaconda.org/conda-forge/openeo){target="_blank"}.
@@ -23,25 +25,26 @@ The client library is also available on [Conda Forge](https://anaconda.org/conda
 It's recommended to work in a virtual environment of some kind (`venv`, `conda`, ...),
 containing Python 3.6 or higher.
 
-::: tip
+::: {.callout-tip collapse="true"} 
+
 For more details, alternative installation procedures or troubleshooting tips:
-see the [official ``openeo`` package installation documentation](https://open-eo.github.io/openeo-python-client/installation.html){target="_blank"}.
+see the [official openEO package installation documentation](https://open-eo.github.io/openeo-python-client/installation.html){target="_blank"}.
+
 :::
 
 
 ## Exploring a back-end
 
-If you do not know an openEO back-end that you want to connect to yet, you can have a look at the [openEO Hub](https://hub.openeo.org/){target="_blank"}, to find all known back-ends with information on their capabilities.
-
-For this tutorial we will use the openEO instance of Google Earth Engine, which is available at `https://earthengine.openeo.org`.
-Note that the code snippets in this guide work the same way for the other back-ends listed in the openEO Hub. Just the collection identifier and band names might differ.
+For this tutorial we will use the openEO instance of Copernicus Data Space Ecosystem, which is available at `https://openeo-staging.creo.vito.be`.
 
 First we need to establish a connection to the back-end. 
 
 ```python
+
 import openeo
 
-connection = openeo.connect("https://earthengine.openeo.org")
+connection = openeo.connect("https://openeo-staging.creo.vito.be")
+
 ```
 
 The [`Connection` object](https://open-eo.github.io/openeo-python-client/api.html#module-openeo.rest.connection){target="_blank"}
@@ -59,35 +62,15 @@ For example, a back-end might provide fundamental satellite collections like "Se
 or preprocessed collections like "NDVI".
 Collections are used as input data for your openEO jobs.
 
-::: tip Note
+::: {.callout-note}
+
 More information on how openEO "collections" relate to terminology used in other systems can be found in
-([the openEO glossary](../glossary.md#eo-data-collections){target="_blank"}).
+([the openEO glossary](../Glossary.qmd#eo-data-collections){target="_blank"}).
+
 :::
 
-Let's list all available collections on the back-end,
-using [`list_collections`](https://open-eo.github.io/openeo-python-client/api.html#openeo.rest.connection.Connection.list_collections):
-
-```python
-print(connection.list_collections())
-```
-
-which returns list of collection metadata dictionaries, e.g. something like:
-
-```
-[{'id': 'AGERA5', 'title': 'ECMWF AGERA5 meteo dataset', 'description': 'Daily surface meteorolociga datal ...', ...},
- {'id': 'SENTINEL2_L2A_SENTINELHUB', 'title': 'Sentinel-2 top of canopy', ...},
- {'id': 'SENTINEL1_GRD', ...},
- ...]
-```
-
-This listing includes basic metadata for each collection.
 If necessary, a more detailed metadata listing for a given collection can be obtained with
 [`describe_collection`](https://open-eo.github.io/openeo-python-client/api.html#openeo.rest.connection.Connection.describe_collection){target="_blank"}.
-
-::: tip
-Programmatically listing collections is just a very simple usage example of the Python client.
-In reality, you probably want to look up or inspect available collections in a web based overview such as the [openEO Hub](https://hub.openeo.org/){target="_blank"}.
-:::
 
 
 ### Processes
@@ -98,31 +81,12 @@ The output of one process can be used as the input of another process,
 and by doing so, multiple processes can be connected that way in a larger "process graph":
 a new (user-defined) processes that implements a certain algorithm.
 
-::: tip Note
-Check [the openEO glossary](./Glossary.qmd)
+::: {.callout-note}
+
+Check [the openEO glossary](../Glossary.qmd)
 for more details on pre-defined, user-defined processes and process graphs.
+
 :::
-
-
-Let's list the (pre-defined) processes available on the back-end
-with [`list_processes`](https://open-eo.github.io/openeo-python-client/api.html#openeo.rest.connection.Connection.list_processes){target="_blank"}:
-
-```python
-print(connection.list_processes())
-```
-
-which returns a list of dictionaries describing the process (including expected arguments and return type), e.g.: 
-
-```
-[{'id': 'absolute', 'summary': 'Absolute value', 'description': 'Computes the absolute value of a real number `x`, which is th...', 
- {'id': 'mean', 'summary': 'Arithmetic mean(average)', ...}
- ...]
-```
-
-
-Like with collections, instead of programmatic exploration you'll probably prefer a web-based overview such as the [openEO Hub](https://hub.openeo.org/) for back-end specific process descriptions
-or browse the [reference specifications of openEO processes](https://processes.openeo.org/){target="_blank"}.
-
 
 
 ## Authentication 
@@ -135,12 +99,12 @@ so that permissions, resource usage, etc. can be managed properly.
 Depending on the back-end, there might be two different approaches to authenticate. 
 You need to inform yourself at your back-end provider of choice, which authentication approach you have to carry out. 
 You can also have a look at the [openEO Hub](https://hub.openeo.org/){target="_blank"} to see the available authentication types of the back-ends.
-For Google Earth Engine, only [Basic Authentication](#basic-authentication){target="_blank"} is supported at the moment.
 
 A detailed description of why and how to use the authentication methods is on the [official documentation](https://open-eo.github.io/openeo-python-client/auth.html#authentication-and-account-management){target="_blank"}.
 
-### OpenID Connect Authentication
-The OIDC ([OpenID Connect](https://openid.net/connect/){target="_blank"}) authentication can be used to authenticate via an external service given a client ID.
+
+To authenticate your account on the backend of the Copernicus Data Space Ecosystem, it is necessary for you to complete the registration process. Once registered,  the OIDC ([OpenID Connect](https://openid.net/connect/){target="_blank"})authentication method will be employed to verify your identity using an external service.
+
 The following code snippet shows how to log in via OIDC authentication:
 
 ```python
@@ -150,33 +114,12 @@ connection.authenticate_oidc()
 
 Calling this method opens your system web browser, with which you can authenticate yourself on the back-end authentication system. 
 After that the website will give you the instructions to go back to the python client, where your connection has logged your account in. 
-This means that every call that comes after that via the connection variable is executed by your user account.
-
-### Basic Authentication
-
-The Basic authentication method is a common way of authenticate HTTP requests given username and password.
-
-::: warning
-The preferred authentication method is OpenID Connect due to better security mechanisms implemented in the OpenID Connect protocol.
-If possible, use OpenID Connect instead of HTTP Basic authentication. 
-::: 
-
-The following code snippet shows how to log in via Basic authentication:
-```python
-print("Authenticate with Basic authentication")
-connection.authenticate_oidc()
-```
-After successfully calling the [`authenticate_basic`](https://open-eo.github.io/openeo-python-client/api.html#openeo.rest.connection.Connection.authenticate_basic) method, you are logged into the back-end with your account. 
-
-This means, that every call that comes after that via the connection variable is executed by your user account.
+This means that every call that comes after that via the `connection` variable is executed by your user account.
 
 
 ## Working with Datacube
 
-Now that we know how to discover the capabilities of the back-end and how to authenticate, 
-let's do some real work and process some EO data in a batch job.
-We'll build the desired algorithm by working on so-called "Datacubes", 
-which is the central concept in openEO to represent EO data.
+Now that we know how to discover the capabilities of the back-end and how to authenticate, let's do some real work and process some EO data in a batch job. We'll build the desired algorithm by working on so-called "Datacubes", which is the central concept in openEO to represent EO data.
 
 
 ### Creating a Datacube
@@ -197,7 +140,8 @@ This results in a [`Datacube` object](https://open-eo.github.io/openeo-python-cl
 containing the "SENTINEL1_GRD" data restricted to the given spatial extent, 
 the given temporal extend and the given bands .
 
-::: tip
+::: {.callout-tip collapse="true"}
+
 You can also filter the datacube step by step or at a later stage by using the following filter methods:
 
 ```python
@@ -208,6 +152,7 @@ datacube = datacube.filter_bands(["VV", "VH"])
 
 Still, it is recommended to always use the filters directly in [load_collection](https://open-eo.github.io/openeo-python-client/api.html#openeo.rest.connection.Connection.load_collection){target="_blank"}
 to avoid loading too much data upfront.
+
 :::
 
 
@@ -250,9 +195,11 @@ datacube = datacube.process(
 This applies the [`ndvi` process](https://docs.openeo.cloud/processes/#ndvi){target="_blank"} to the datacube with the arguments of "data", "nir" and "red" (This example assumes a datacube with bands `B8` and `B4`).
 
 
-::: tip Note
+::: {.callout-note}
+
 Still unsure on how to make use of processes with the Python client? 
 Visit the [official documentation on working with processes](https://open-eo.github.io/openeo-python-client/processes.html#working-with-processes){target="_blank"}.
+
 :::
 
 
@@ -274,7 +221,7 @@ encapsulated in a local `Datacube` object (e.g. the `result` variable above).
 To trigger an actual execution (on the back-end) we have to explicitly send this representation 
 to the back-end.
 
-openEO defines [several processing modes](./Glossary.qmd#data-processing-modes), 
+openEO defines [several processing modes](../Glossary.qmd#data-processing-modes), 
 but for this introduction we'll focus on batch jobs, which is a good default choice.
 
 
@@ -289,8 +236,7 @@ job = result.create_job()
 ```
 
 The batch job, which is referenced by the returned `job` object, is just created at the back-end, 
-it is not started yet.
-To start the job and let your Python script wait until the job has finished then 
+it is not started yet. To start the job and let your Python script wait until the job has finished then 
 download it automatically, you can use the `start_and_wait` method. 
 
 ```python
@@ -302,21 +248,23 @@ job.get_results().download_files("output")
 When everything completes successfully, the processing result will be downloaded as a GeoTIFF file
 in a folder "output".
 
-::: tip
+::: {.callout-tip collapse="true"}
+
 The official openEO Python Client documentation has more information
 on [batch job basics](https://open-eo.github.io/openeo-python-client/basics.html#managing-jobs-in-openeo) {target="_blank"}
 or [more detailed batch job (result) management](https://open-eo.github.io/openeo-python-client/batch_jobs.html){target="_blank"}
+
 :::
 
 
 ## Full Example
 
-In this chapter we will show a full example of an earth observation use case using the Python client and the Google Earth Engine back-end.
+In this chapter we will show a full example of an earth observation use case using the Python client.
 
-::: tip Use Case
-We want to produce a monthly RGB composite of Sentinel 1 backscatter data over the area of Vienna, Austria for three 
+
+Here, we want to produce a monthly RGB composite of Sentinel 1 backscatter data over the area of Vienna, Austria for three 
 months in 2017. This can be used for classification and crop monitoring.
-:::
+
 
 
 
@@ -324,12 +272,12 @@ months in 2017. This can be used for classification and crop monitoring.
 import openeo
 
 # First, we connect to the back-end and authenticate ourselves via Basic authentication. 
-con = openeo.connect("https://earthengine.openeo.org")
-con.authenticate_basic("group11", "test123")
+con = openeo.connect("https://openeo-staging.creo.vito.be")
+con.authenticate_oidc()
 
 # Now that we are connected, we can initialize our datacube object with the area around Vienna 
 # and the time range of interest using Sentinel 1 data.
-datacube = con.load_collection("COPERNICUS/S1_GRD",
+datacube = con.load_collection("SENTINEL1_GRD",
                                spatial_extent={"west": 16.06, "south": 48.06, "east": 16.65, "north": 48.35},
                                temporal_extent=["2017-03-01", "2017-06-01"],
                                bands=["VV"])
@@ -376,13 +324,12 @@ job.start_and_wait().download_results()
 
 Now the resulting GTiff file of the RGB backscatter composite is in your current directory. 
 
-![RGB composite](../getting-started-result-example.jpg)
+![](..//_images/getting-started-result-example.jpg)
 
-The [source code](https://github.com/Open-EO/openeo-python-client/blob/c21b928ab5f4b4561bb07b7c4a934f0ea9b4f0b8/examples/gee_uc1_temp.py) of this example can be found on GitHub.
 
 ## User Defined Functions
 
-If your use case can not be accomplished with the default processes of openEO, you can define a [user defined function](./Glossary.qmd#user-defined-function-udf).
+If your use case can not be accomplished with the default processes of openEO, you can define a [user defined function](../Glossary.qmd#user-defined-function-udf).
 Therefore, you can create a Python function that will be executed at the back-end and functions as a process in your process graph.
 
 Detailed information about Python UDFs can be found in the [official documentation](https://open-eo.github.io/openeo-python-client/udf.html){target="_blank"} as well as examples in the [Python client repository](https://github.com/Open-EO/openeo-python-client/tree/master/examples/udf){target="_blank"}. 
