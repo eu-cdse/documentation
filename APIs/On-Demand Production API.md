@@ -1,7 +1,7 @@
 
 ## Introduction
 
-On-demand processing capability for CARD-BS, CARD-COH6/12 is available on the Copernicus Data Space Ecosystem. This service is offered free to the use via a limited pool of resources, shared across all users, which can be used for processing the data free of charge. This is suitable for users who need to process smaller batches of products. There is no guarantee that processing will be completed in certain time.  For commercial use the price list is available from the Creodias portal [https://creodias.eu/billing-models](https://creodias.eu/billing-models).The service is available via an On Demand Processing API allows the users to interact with the service to issue and control the orders. It provides functionalities like creation, update, cancellation, pausing and monitoring of orders. This allows the users to have a better control over the workflow execution process. 
+On-demand processing capability for CARD-BS, CARD-COH6/12 is available on the Copernicus Data Space Ecosystem. This service is offered free to the use via a limited pool of resources, shared across all users, which can be used for processing the data free of charge. This is suitable for users who need to process smaller batches of products. There is no guarantee that processing will be completed in certain time.  For commercial use the price list is available from the Creodias portal [https://creodias.eu/billing-models](https://creodias.eu/billing-models){target="blank"}.The service is available via an On Demand Processing API allows the users to interact with the service to issue and control the orders. It provides functionalities like creation, update, cancellation, pausing and monitoring of orders. This allows the users to have a better control over the workflow execution process. 
 
 ## OnDemand Processing API with OData interface
 
@@ -15,9 +15,9 @@ The API allows discovery of all available workflows which can be run in the CDSE
 
 ### API Endpoint
 
-The **ODP API endpoint is [https://odp.dataspace.copernicus.eu/odata/v1](https://odp.dataspace.copernicus.eu/odata/v1)**. The endpoint supports both HTTP and HTTPS protocols.
+The **ODP API endpoint is [https://odp.dataspace.copernicus.eu/odata/v1](https://odp.dataspace.copernicus.eu/odata/v1){target="blank"}**. The endpoint supports both HTTP and HTTPS protocols.
 
-**OpenAPI documentation is located at [https://odp.dataspace.copernicus.eu/odata/docs](https://odp.dataspace.copernicus.eu/odata/docs)**
+**OpenAPI documentation is located at [https://odp.dataspace.copernicus.eu/odata/docs](https://odp.dataspace.copernicus.eu/odata/docs){target="blank"}**
 
 ### API Operations
 
@@ -55,7 +55,7 @@ Once you have your token, you can execute request to the API including the token
 curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" \ 'https://odp.dataspace.copernicus.eu/odata/v1/Workflows'
 ````
 
-More information on the tokens and authentication can be found here: [https://documentation.dataspace.copernicus.eu/APIs/OData.html#product-download](https://documentation.dataspace.copernicus.eu/APIs/OData.html#product-download)
+More information on the tokens and authentication can be found here: [https://documentation.dataspace.copernicus.eu/APIs/OData.html#product-download](https://documentation.dataspace.copernicus.eu/APIs/OData.html#product-download){target="blank"}
 
 ## Querying the API
 
