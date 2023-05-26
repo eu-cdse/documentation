@@ -5,4 +5,5 @@ This section provides an overview of the EO Applications available from Copernic
 
 ## [Browser](/Applications/Browser.md) 
 
+## [openEO Web-Editor](Applications/WebEditor.qmd)
 
