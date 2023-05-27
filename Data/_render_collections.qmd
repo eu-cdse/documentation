@@ -194,8 +194,17 @@ def get_availablity(c):
                 footnotes = c['summaries']['DataAvailability'][i]['Note']
             except:
                 footnotes = ''
-            t.append([Status,Access,Spatial,Temporal,From])
-            note += footnotes
+            try:
+                offered_type = c['summaries']['DataAvailability'][i]['offered_type']
+            except:
+                offered_type = ''
+            if offered_type != '':
+                t.append([offered_type,Status,Access,Spatial,Temporal,From])
+                note += footnotes
+            else:
+                t.append([Status,Access,Spatial,Temporal,From])
+                note += footnotes
+                
         table = tabulate(t,headers=["Archive Status","Access Type","Spatial Extent","Temporal Extent","Availability"], tablefmt='html', floatfmt=".4f",stralign="center",numalign="center")
         # Set the minimum width of each column to 100 pixels
         table = table.replace("<table>", '<table class="table">')
