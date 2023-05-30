@@ -5,4 +5,8 @@ This section provides an overview of the EO Applications available from Copernic
 
 ## [Browser](/Applications/Browser.md) 
 
+## [openEO algorithm plaza](/Applications/AlgorithmPlaza.qmd)
+
+The openEO algorithm plaza host many algorithms that are built on top of the openEO API. These algorithms also termed as Earth Observation services can be addressed via openEO Web Editor or via API to embed into new services or platforms. Users are granted with credits to explore the available algorithms and check if they are fit for purpose for their needs. The plaza not only allows to explore the services but also enables third party services provider to onboard their algorithms semi-automatically for further exposure. 
+
 
