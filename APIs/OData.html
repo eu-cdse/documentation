@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.353">
+<meta name="generator" content="quarto-1.3.361">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -90,7 +90,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
     "search-detached-cancel-button-title": "Cancel",
-    "search-submit-button-title": "Submit"
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
   }
 }</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
@@ -139,7 +140,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../APIs.html">APIs</a></li><li class="breadcrumb-item"><a href="../APIs/OData.html">OData</a></li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
-      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
         <i class="bi bi-search"></i>
       </button>
     </div>
@@ -604,6 +605,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#count-option" id="toc-count-option" class="nav-link" data-scroll-target="#count-option">Count option</a></li>
   <li><a href="#expand-option" id="toc-expand-option" class="nav-link" data-scroll-target="#expand-option">Expand option</a></li>
   <li><a href="#product-download" id="toc-product-download" class="nav-link" data-scroll-target="#product-download">Product Download</a></li>
+  <li><a href="#python-17" id="toc-python-17" class="nav-link" data-scroll-target="#python-17">Python</a></li>
   </ul>
 <div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/eu-cdse/documentation/issues" class="toc-action">Report an issue</a></p></div></div></nav>
     </div>
@@ -2587,6 +2589,23 @@ Note
 </div>
 </div>
 </div>
+</section>
+<section id="python-17" class="level1">
+<h1>Python</h1>
+<pre><code>import requests
+session = requests.Session()
+session.headers.update({'Authorization': 'Bearer KEYCLOAK_TOKEN'})
+url = f"http://catalogue.dataspace.copernicus.eu/odata/v1/Products(db0c8ef3-8ec0-5185-a537-812dad3c58f8)/$value"
+response = session.get(url, allow_redirects=False)
+while response.status_code in (301, 302, 303, 307):
+    url = response.headers['Location']
+    response = session.get(url, allow_redirects=False)
+
+file = session.get(url, verify=False, allow_redirects=True)
+
+with open(f"product.zip", 'wb') as p:
+    p.write(file.content)</code></pre>
+<p>::::</p>
 
 
 </section>
