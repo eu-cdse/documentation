@@ -43,7 +43,7 @@ First we need to establish a connection to the back-end.
 
 import openeo
 
-connection = openeo.connect("openeo.vito.be")
+connection = openeo.connect("openeo.dataspace.copernicus.eu")
 
 ```
 
@@ -102,7 +102,7 @@ so that permissions, resource usage, etc. can be managed properly.
 A detailed description of why and how to use the authentication methods is on the [official documentation](https://open-eo.github.io/openeo-python-client/auth.html#authentication-and-account-management){target="_blank"}.
 
 
-To authenticate your account on the backend of the Copernicus Data Space Ecosystem, it is necessary for you to complete the registration process. Once registered,  the OIDC ([OpenID Connect](https://openid.net/connect/){target="_blank"})authentication method will be employed to verify your identity using an external service.
+To authenticate your account on the backend of the Copernicus Data Space Ecosystem, it is necessary for you to complete the registration process. Once registered, you will be authenticated for executing processes.
 
 The following code snippet shows how to log in via OIDC authentication:
 
@@ -110,8 +110,8 @@ The following code snippet shows how to log in via OIDC authentication:
 print("Authenticate with OIDC authentication")
 connection.authenticate_oidc()
 ```
-
-Calling this method opens your system web browser, with which you can authenticate yourself on the back-end authentication system. 
+The method is used to authenticate yourself on the back-end authentication system. 
+Calling this method with either will print a URL to visit, that opens your system web browser where you can use your Copernicus Data Space Ecosystem credentials, or when there are refresh tokens, these will be used directly.
 After that the website will give you the instructions to go back to the python client, where your connection has logged your account in. 
 This means that every call that comes after that via the `connection` variable is executed by your user account.
 
@@ -128,10 +128,10 @@ with [`Connection.load_collection`](https://open-eo.github.io/openeo-python-clie
 
 ```python
 datacube = connection.load_collection(
-  "SENTINEL1_GRD",
-  spatial_extent={"west": 16.06, "south": 48.06, "east": 16.65, "north": 48.35},
-  temporal_extent=["2017-03-01", "2017-04-01"],
-  bands=["VV", "VH"]
+        "SENTINEL1_GRD",
+        spatial_extent={"west": 16.06, "south": 48.06, "east": 16.65, "north": 48.35},
+        temporal_extent=["2017-03-01", "2017-04-01"],
+        bands=["VV", "VH"]
 )
 ```
 
@@ -271,15 +271,17 @@ months in 2017. This can be used for classification and crop monitoring.
 import openeo
 
 # First, we connect to the back-end and authenticate ourselves via Basic authentication. 
-con = openeo.connect("https://openeo.dataspace.copernicus.eu")
+con = openeo.connect("openeo.dataspace.copernicus.eu")
 con.authenticate_oidc()
 
 # Now that we are connected, we can initialize our datacube object with the area around Vienna 
 # and the time range of interest using Sentinel 1 data.
-datacube = con.load_collection("SENTINEL1_GRD",
-                               spatial_extent={"west": 16.06, "south": 48.06, "east": 16.65, "north": 48.35},
-                               temporal_extent=["2017-03-01", "2017-06-01"],
-                               bands=["VV"])
+datacube = con.load_collection(
+          "SENTINEL1_GRD",
+          spatial_extent={"west": 16.06, "south": 48.06, "east": 16.65, "north": 48.35},
+          temporal_extent=["2017-03-01", "2017-06-01"],
+          bands=["VV"]
+          )
 
 # Since we are creating a monthly RGB composite, we need three (R, G and B) separated time ranges.
 # Therefore, we split the datacube into three datacubes by filtering temporal for March, April and May. 
@@ -313,7 +315,7 @@ RGB = RG.merge_cubes(B_band)
 # the result should be a GeoTiff file.
 # We also set, which band should be used for "red", "green" and "blue" color in the options.
 
-RGB = RGB.save_result(format="GTIFF-THUMB")
+RGB = RGB.save_result(format="GTiff")
 
 # With the last process we have finished the datacube definition and can create and start the job at the back-end.
 
