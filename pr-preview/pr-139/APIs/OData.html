@@ -1406,13 +1406,13 @@ Note
 <tr class="odd">
 <td data-quarto-table-cell-role="th">2</td>
 <td>application/octet-stream</td>
-<td>0a41a351-1744-5737-9dfe-e8613226bcf3</td>
+<td>80864895-fd7b-5fe6-a853-a75cfdc0da43</td>
 <td>S3A_SL_1_RBT____20190515T000114_20190515T00041...</td>
 <td>application/octet-stream</td>
 <td>0</td>
-<td>2022-02-22T18:49:27.166Z</td>
-<td>2022-02-22T19:04:45.094Z</td>
-<td>2022-02-22T19:04:45.094Z</td>
+<td>2019-05-16T06:33:18.172Z</td>
+<td>2019-05-16T06:39:06.677Z</td>
+<td>2019-05-16T06:39:06.677Z</td>
 <td>True</td>
 <td></td>
 <td>/eodata/Sentinel-3/SLSTR/SL_1_RBT/2019/05/15/S...</td>
@@ -2591,6 +2591,26 @@ Note
 <div class="tab-content">
 <div id="tabset-23-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-23-1-tab">
 <pre><code>!wget  --header "Authorization: Bearer $KEYCLOAK_TOKEN" 'http://catalogue.dataspace.copernicus.eu/odata/v1/Products(db0c8ef3-8ec0-5185-a537-812dad3c58f8)/$value' -O example_odata.zip</code></pre>
+</div>
+</div>
+</div>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-24-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-24-1" role="tab" aria-controls="tabset-24-1" aria-selected="true">Python</a></li></ul>
+<div class="tab-content">
+<div id="tabset-24-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-24-1-tab">
+<pre><code>import requests
+session = requests.Session()
+session.headers.update({'Authorization': 'Bearer KEYCLOAK_TOKEN'})
+url = f"http://catalogue.dataspace.copernicus.eu/odata/v1/Products(db0c8ef3-8ec0-5185-a537-812dad3c58f8)/$value"
+response = session.get(url, allow_redirects=False)
+while response.status_code in (301, 302, 303, 307):
+    url = response.headers['Location']
+    response = session.get(url, allow_redirects=False)
+
+file = session.get(url, verify=False, allow_redirects=True)
+
+with open(f"product.zip", 'wb') as p:
+    p.write(file.content)</code></pre>
 </div>
 </div>
 </div>
