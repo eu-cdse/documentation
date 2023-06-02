@@ -1,5 +1,9 @@
 ---
 title: Catalog API examples
+format:
+  html:
+    code-fold: true
+jupyter: python3
 ---
 
 The requests below are written in python. To execute them you need to
@@ -322,3 +326,54 @@ query = {
 url = "https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search"
 response = oauth.get(url, params=query)
 ```
+
+```{python}
+#| echo: false
+
+import os
+
+def get_auth():
+    # token generation
+    from oauthlib.oauth2 import BackendApplicationClient
+    from requests_oauthlib import OAuth2Session
+
+    # Your client credentials
+    # client_id = 'adea6192-2672-4296-94aa-1bcb9e5d2df7'
+    client_id = os.environ['CLIENT_ID']
+    client_secret = os.environ['CLIENT_SECRET']
+    # client_secret = '~BRX82#Ii(-0N<,iVI@.d<lw~<sd~Ti?GU.N!6Y)'
+
+    # Create a session
+    client = BackendApplicationClient(client_id=client_id)
+    oauth = OAuth2Session(client=client)
+
+    # Get token for the session
+    gen_token = oauth.fetch_token(token_url='https://services.sentinel-hub.com/oauth/token',
+                              client_secret=client_secret)
+    return gen_token['access_token'] 
+
+token = get_auth()
+```
+
+::: {.panel-tabset}
+
+# Sample test rendering with token 
+```{python}
+
+url = "https://services.sentinel-hub.com/api/v1/catalog/1.0.0/search"
+query = {
+    "bbox": "13,45,14,46",
+    "datetime": "2019-12-10T00:00:00Z/2019-12-11T00:00:00Z",
+    "collections": "sentinel-1-grd",
+    "limit": 5,
+}
+headers = {
+  "Content-Type": "application/json",
+  "Authorization": f"Bearer {token}"}
+
+response = requests.get(url, params=query,headers=headers).json()
+pd.DataFrame.from_dict(response['features']).head(3)
+
+```
+
+:::
