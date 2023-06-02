@@ -1,0 +1,64 @@
+---
+title: Additional Request Parameters
+---
+
+## Additional Request Parameters
+
+WMS/WMTS/WFS/WCS services support many custom parameters which affect
+the generation of the service responses. In the following table, all the
+available custom parameters, such as [preview modes](#preview-modes),
+are listed. All these parameters are optional.
+
+For the examples on how to use them, see this
+[documentation](/APIs/SentinelHub/OGC/Examples.qmd).
+
+Note that atmospheric correction is not a parameter anymore, as we now
+only support L2A atmospheric correction. Read more about it
+[here](#atmospheric-correction).
+
+  Custom parameter   Info                                                                                                                                                                                                                                                                                                      Default value   Valid value range                                                                                                                                                                                                                                         Available for
+  ------------------ --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- --------------- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- ------------------------------------------------------------------------------------------------------------------------------------
+  MAXCC              The maximum allowable cloud coverage in percent. Cloud coverage is a product average and not viewport accurate hence images may have more cloud cover than specified here.                                                                                                                                100.0           0.0 - 100.0                                                                                                                                                                                                                                               **WMS/WMTS/WFS/WCS** (when REQUEST = \"GetMap\", \"GetTile\", \"GetCoverage\", \"GetFeature\", \"GetFeatureInfo\" or \"GetIndex\")
+  PRIORITY           The priority by which to select and sort the overlapping valid tiles from which the output result is made. For example, using mostRecent will place newer tiles over older ones therefore showing the latest image possible. Using leastCC will place the least cloudy tiles available on top.            mostRecent      mostRecent, leastRecent, leastCC, leastTimeDifference, maximumViewingElevation                                                                                                                                                                            **WMS/WMTS/WFS/WCS** (when REQUEST = \"GetMap\", \"GetTile\", \"GetCoverage\", \"GetFeature\", \"GetFeatureInfo\" or \"GetIndex\")
+  EVALSCRIPT         This parameter allows for a custom evaluation script or formula specifying how the output image will be generated from the input bands. See Custom evaluation script usage for details. `<br/>`{=html} `<br/>`{=html} EVALSCRIPT parameter has to be BASE64 encoded before it is passed to the service.                                                                                                                                                                                                                                                                             **WMS/WMTS/WCS** (when REQUEST = \"GetMap\", \"GetTile\" or \"GetCoverage\")
+  EVALSCRIPTURL      This parameter allows for a custom evaluation script or formula to be passed as an URL parameter, where the script itself is located (it should be on HTTPS).                                                                                                                                                                                                                                                                                                                                                                                                                       **WMS/WMTS/WCS** (when REQUEST = \"GetMap\", \"GetTile\" or \"GetCoverage\")
+  PREVIEW            See [Preview modes](#preview-modes) for details.                                                                                                                                                                                                                                                          0               0, 1, 2                                                                                                                                                                                                                                                   **WMS/WMTS/WCS** (when REQUEST = \"GetMap\", \"GetTile\" or \"GetCoverage\")
+  GEOMETRY           Outputs imagery only within the given geometry and cropped to the geometry\'s minimum bounding box.                                                                                                                                                                                                                       one WKT string, one WKB hex string, or a list of coordinate pairs representing a polygon (pairs separated by semicolons, components by comma, i.e. 1 1, 2 2;\...) Coordinates should be specified using the CRS of the request (i.e. same CRS as BBOX).   **WMS/WMTS/WCS** (when REQUEST = \"GetMap\", \"GetTile\" or \"GetCoverage\")
+  QUALITY            Used only when requesting JPEGs.                                                                                                                                                                                                                                                                          90              0 - 100; where 0 is the lowest and 100 the highest quality                                                                                                                                                                                                **WMS/WMTS/WCS** (when REQUEST = \"GetMap\", \"GetTile\" or \"GetCoverage\")
+  UPSAMPLING         Sets the image upsampling method. Used when the requested resolution is higher than the source resolution.                                                                                                                                                                                                NEAREST         NEAREST, BILINEAR, BICUBIC                                                                                                                                                                                                                                **WMS/WMTS/WCS** (when REQUEST = \"GetMap\", \"GetTile\" or \"GetCoverage\")
+  DOWNSAMPLING       Sets the image downsampling method. Used when the requested resolution is lower than the source resolution.                                                                                                                                                                                               NEAREST         NEAREST, BILINEAR, BICUBIC, BOX                                                                                                                                                                                                                           **WMS/WMTS/WCS** (when REQUEST = \"GetMap\", \"GetTile\" or \"GetCoverage\")
+  WARNINGS           Enables or disables the display of in-image warnings, like \"No data available for the specified area\".                                                                                                                                                                                                  YES             YES, NO                                                                                                                                                                                                                                                   **WMS/WMTS/WCS** (when REQUEST = \"GetMap\", \"GetTile\" or \"GetCoverage\")
+
+### Preview modes
+
+Preview modes make it possible to receive data from across all zoom
+levels. Sentinel Hub is optimised for full resolution data access as
+this is what most users need. There are, however, some cases when lower
+resolution previews of the data make sense as well. This is done by
+adding the URL parameter PREVIEW. Optional, default=\"0\". Supported
+values:
+
+  Values      Info
+  ----------- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  PREVIEW=0   Only high resolution data from Sentinel-2 is used. This corresponds to real world distances up to 200m/pixel. This is the default.
+  PREVIEW=1   Allows zooming further out, up to a point. Up to 200m/pixel it displays the same data as PREVIEW=0. In addition to this it uses lower resolution data for real world distances up to 1500m/pixel. `<br/>`{=html} `<br/>`{=html} With resolutions between 200m/pixel and 1500m/pixel cloud filtering is no longer applied.
+  PREVIEW=2   Allows any zoom level but is limited to a maximum of one month of data when most zoomed out. Up to 1500m/pixel it displays the same data as PREVIEW=1. With resolutions lower than 1500m/pixel (more zoomed out) it limits the data to one month prior to the \"TO\" date. `<br/>`{=html} `<br/>`{=html} With resolutions less than 200m/pixel (more zoomed out) cloud filtering is no longer applied.
+
+### Atmospheric correction
+
+Satellite images sometimes seem washed out or foggy, as atmosphere
+absorbs and scatters light on its way to the ground. We can correct for
+this to get clearer images using atmospheric correction. ESA provides a
+[Sen2Cor](http://step.esa.int/main/snap-supported-plugins/sen2cor/){target="_blank"}
+processor, that applies atmospheric correction to the input Sentinel-2
+L1C data with global coverage. The resulting product is called S2L2A
+data. To use Atmospheric correction, use the [Sentinel-2 L2A (S2L2A)
+data collection.](/Data/Sentinel2.qmd)
+
+Below, you can see the difference atmospheric correction makes. The
+first image of Marseille was made in EO Browser using S2L1C data, and
+the lower image was made using S2L2A atmospheric correction.
+
+![](img/marseille_l1c.jpg)
+
+![](img/marseille_l2a.jpg)

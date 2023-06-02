@@ -1,0 +1,63 @@
+---
+title: Web Coverage Service
+---
+
+## WCS Request
+
+The Sentinel Hub WCS (Web Coverage Service) service conforms to the [WCS
+standard](https://www.ogc.org/standard/wcs/){target="_blank"}. Provides
+access to the same bands product and additional informational layers as
+the WMS service except only one layer can be specified at once, even
+when only raw Sentinel-2 bands are used. In addition to raster products,
+the WCS service can also return the vector features of the Sentinel-2
+tiles\' metadata. As with the WMS service, WCS is also only available
+via a user-preconfigured custom server instance URL.
+
+See our OGC API
+[Webinar](https://www.youtube.com/watch?v=CBIlTOl2po4){target="_blank"},
+which will guide you through different OGC services, including WCS, help
+you understand the structure, show you how to run the requests in
+different environments and how they can be integrated with QGIS, ArcGIS
+and web applications.
+
+The base URL for the WCS service:
+
+``` default
+https://sh.dataspace.copernicus.eu/ogc/wcs/<INSTANCE_ID>
+```
+
+The service supports the same output formats as the WMS request (with
+addition of vector output formats, when \"TILE\" is selected as the
+COVERAGE) and supports the standard WCS requests: `GetCoverage`,
+`DescribeCoverage` and `GetCapabilities`. It supports WCS versions 1.0.0
+and 1.1.2.
+
+## WCS URL Parameters
+
+**Standard common WCS URL parameters** (parameter names are case
+insensitive):
+
+  WCS parameter   Info
+  --------------- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  SERVICE         Required, must be \"WCS\".
+  VERSION         WCS version standard. Optional, default: \"1.1.2\". Supported values: \"1.0.0\" and \"1.1.2\".
+  REQUEST         What is requested, valid values: `GetCoverage`, `DescribeCoverage` or `GetCapabilities`. Required.
+  TIME            (when REQUEST = `GetTile`) The time range for which to return the results. The result is based on all scenes between the specified times conforming to the cloud coverage criteria and stacked based on priority setting - e.g. most recent on top. It is written as two time values in ISO8601 format separated by a slash, for example: `TIME=2016-01-01T09:02:44Z/2016-02-01T11:00:00Z`. Reduced accuracy times, where parts of the time string are omitted, are also supported. For example, `TIME=2016-07-15/2016-07-15` will be interpreted as \"TIME=2016-07-15T00:00:00Z/2016-07-15T23:59:59Z\" and `TIME=2016-07/2016-08` will be interpreted as \"TIME=2016-07-01T00:00:00Z/2016-08-31T23:59:59Z\" `<br/>`{=html} Optional, default: none (the last valid image is returned). `<br/>`{=html}`<br/>`{=html} Note: Requesting a single value for TIME parameter is deprecated. Sentinel Hub interpreted it as a time interval \[given time - 6 months, given time\]. For vast majority of cases this resulted in unnecessary long processing time thus we strongly encourage you to always use the smallest possible time range instead.
+
+In addition to the standard WCS URL parameters, the WCS service also
+supports many custom URL parameters. See [Custom service URL
+parameters](/APIs/SentinelHub/OGC/AdditionalRequestParameters.qmd) for
+details.
+
+**Standard `GetCoverage` request URL parameters:**
+
+  WCS parameter   Info
+  --------------- -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  COVERAGE        The preconfigured (in the instance) layer for which to generate the output image, or \"TILE\" to return the vector format features.
+  FORMAT          The returned image format. Optional, default: \"image/png\", other options: \"image/jpeg\", \"image/tiff\". [Detailed information about supported values.](/APIs/SentinelHub/OGC/OutputFormats.qmd)
+
+**Standard `DescribeCoverage` request URL parameters:**
+
+  WCS parameter     Info
+  ----------------- ------
+  Coming soon\...   
