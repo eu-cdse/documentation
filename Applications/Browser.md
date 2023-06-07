@@ -51,9 +51,9 @@ Here you can create a custom *R/G/B* composite or _Index_ (band ratio, normalize
 #### Changing the Data Collection
 
 You can switch visualizing between different data collections by clicking on the arrow next to the Data Collections section in the Visualization tab. Once you click on the arrow as seen in Fig. 4, you will be able to see a drop-down menu with a list of the satellite data that is available. Let us try to visualize Sentinel-3 data of the same location and date as that of the Sentinel-2 data in Visualizing data section.  
-1.	Click on the drop-down arrow on the right next to Pins icon. 
-2.	Click on the drop-down arrow next to Sentinel-2 and select Sentinel-3.
-3.	You can select the product you want to visualize. To visualize the Brightness temperature, select Sentinel-3 SLSTR L1B. You can see the predefined layers that can be visualized and click on the green button to Show latest date.
+1. Click on the drop-down arrow on the right next to Pins icon. 
+2. Click on the drop-down arrow next to Sentinel-2 and select Sentinel-3.
+3. You can select the product you want to visualize. To visualize the Brightness temperature, select Sentinel-3 SLSTR L1B. You can see the predefined layers that can be visualized and click on the green button to Show latest date.
 
 At the moment, the Data Collections available for visualization are Sentinel-2 (L1C and L2A), Sentinel-3 (OLCI Level-1 EFT, SLSTR Level-1 RBT) and Sentinel-5P.
 
@@ -90,16 +90,16 @@ Fig 7: *Find products for current view* button position in the sidebar.
 
 With the 3D visualization tool, users can also visualize the terrain. To obtain a 3D visualization, you need to first select a layer to view and then click on the ![3d](_images/icons/3D.png) icon. You can move forward, backward, left, or right by right clicking on the pan console (labelled 1 in the red box in Fig. 8) and rotate around a point by right clicking on the camera console (labelled 2 in the red box in Fig. 8). The viewing angle can be adjusted by scaling vertically and panning in all directions. You can further explore the area by adjusting the sun projected shadows and the shading parameters of the scene in the settings (labelled as box 3 and 4 respectively in Fig. 8). This 3D view can also be downloaded as a PNG or JPEG file.
 Let us try visualizing Mont Blanc, the highest peak in the Alps.
-1.	Follow the steps mentioned in Visualizing data chapter to visualize Mont Blanc and select the “True Color” visualization.
-2.	Click on the ![3d](_images/icons/3D.png) icon placed at the right of the screen.
-3.	You can navigate around the visualization either with your mouse, keyboard or directly on the map by following the instructions mentioned in the “Help” section (click on the ( ![info3d](_images/icons/Info3D.png)) icon).
-4.  Click on the Settings icon ( ![settings](_images/icons/Settings.png)). Set the Vertical terrain scaling to 150% by moving the slider. 
-5.	To adjust shadows, click on the Parameters next to Sun projected shadows toggle switch. 
-6.	To adjust Shading parameters, click on Edit and modify the Ambient factor, Diffuse factor, Specular factor, and Specular power.
-7.	You can Reset values at any point to return to the default settings. 
 
 <img src="_images/3DViz.png" width="1024">
 
+1. Follow the steps mentioned in Visualizing data chapter to visualize Mont Blanc and select the “True Color” visualization.
+2. Click on the ![3d](_images/icons/3D.png) icon placed at the right of the screen.
+3. You can navigate around the visualization either with your mouse, keyboard or directly on the map by following the instructions mentioned in the “Help” section (click on the ( ![info3d](_images/icons/Info3D.png)) icon).
+4. Click on the Settings icon ( ![settings](_images/icons/Settings.png)). Set the Vertical terrain scaling to 150% by moving the slider. 
+5. To adjust shadows, click on the Parameters next to Sun projected shadows toggle switch. 
+6. To adjust Shading parameters, click on Edit and modify the Ambient factor, Diffuse factor, Specular factor, and Specular power.
+7. You can Reset values at any point to return to the default settings. 
 Fig 8: 3D visualization in the Browser with pop-up Settings windows on the right
 
 ## Product Search
@@ -198,17 +198,15 @@ There are three different download options. You can switch between the options u
 
 **Timelapses** are a very popular and useful tool to show how a certain location on Earth changed through time. Using the timelapse tool you can create your own visualization of changes through time and export it as .GIF or .MPEG4 to share it with others online. 
 Let’s create a timelapse of the deforestation in the Brazil from 2018 – 2022.
-1.	Go to: https://sentinelshare.page.link/osH4 
-2.	Click on the timelapse icon ( ![lapse](_images/icons/TimeLapse.png) ) and click on the play button in the middle of the screen. This opens a pop-up window to create a timelapse.
-3.	Change the settings on the left side to:
-  a.	Dates 2018-01-01 – 2022-12-31
-  b.	Select 1 image per: month
+1. Go to: https://sentinelshare.page.link/osH4 
+2. Click on the timelapse icon ( ![lapse](_images/icons/TimeLapse.png) ) and click on the play button in the middle of the screen. This opens a pop-up window to create a timelapse.
+3. Change the settings on the left side to:
+    1. Dates 2018-01-01 – 2022-12-31
+    2. Select 1 image per: month
 Alternatively, you can select only certain months in a year using the filter by months option. Click on Search to see all the results.
-4.	In the Visualizations set the Min. tile coverage to 100% and the Max. cloud coverage to 2% and manually deselect the images from the 2022-05-30 (slightly cloudy) and the 2022-09-07 (blurry).
-5.	Once you have the list of images you want to display in the timelapse, select the speed, and transition to prepare your timelapse.
-6.	Click on the play button to check the result and download the animation as a GIF-file using the Download button for further use online/offline.
-
-<img src="_images/Timelapse.png" width="1024">
+4. In the Visualizations set the Min. tile coverage to 100% and the Max. cloud coverage to 2% and manually deselect the images from the 2022-05-30 (slightly cloudy) and the 2022-09-07 (blurry).
+5. Once you have the list of images you want to display in the timelapse, select the speed, and transition to prepare your timelapse.
+6. Click on the play button to check the result and download the animation as a GIF-file using the Download button for further use online/offline.
 
 Fig 14: Browser timelapse tool with settings highlighted
 
