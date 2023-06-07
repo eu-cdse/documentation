@@ -523,5 +523,25 @@ or
 ```
 !wget  --header "Authorization: Bearer $KEYCLOAK_TOKEN" 'http://catalogue.dataspace.copernicus.eu/odata/v1/Products(db0c8ef3-8ec0-5185-a537-812dad3c58f8)/$value' -O example_odata.zip
 ```
+:::
 
+::: {.panel-tabset}
+
+# Python 
+
+```
+import requests
+session = requests.Session()
+session.headers.update({'Authorization': 'Bearer KEYCLOAK_TOKEN'})
+url = f"http://catalogue.dataspace.copernicus.eu/odata/v1/Products(db0c8ef3-8ec0-5185-a537-812dad3c58f8)/$value"
+response = session.get(url, allow_redirects=False)
+while response.status_code in (301, 302, 303, 307):
+    url = response.headers['Location']
+    response = session.get(url, allow_redirects=False)
+
+file = session.get(url, verify=False, allow_redirects=True)
+
+with open(f"product.zip", 'wb') as p:
+    p.write(file.content)
+```
 :::
