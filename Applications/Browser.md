@@ -145,9 +145,9 @@ Fig 11: Data filters and parameters
 
 #### Visualize the search result
 
-Once you find the tiles you need following the above steps, you can visualize this one in of the two ways: by clicking on the region of interest and looking at the tiles that cover the region or select the tile from the Search panel on the left. Below the preview of the tile, there is a button to visualize ( ![visualize](_images/icons/VisualizeButton.png) ), which will take you to the Visualize tab.
 
 <img src="_images/VisualizeTile.png" width="1024">
+Once you have found a product, you can visualize the results in two ways: either by directly selecting the viszualize button ( ![visualize](_images/icons/VisualizeButton.png) ) in the sidebar or by selecting the visualize button in the results panel on the map. You can open the results panel by clicking on one of the displayed tile footprints on the map.
 
 Fig 12: Tile selection and visualization
 
@@ -167,9 +167,9 @@ The Browser has several tools to help you better understand the data on the map 
 
 ### Area/Point of Interest
 
-Use the **Area of Interest (AOI)** tool to draw a rectangular or polygonal area of interest by clicking on the ![polygon](_images/icons/PolygonIcon.png) icon in the upper right corner of the browser. You can also upload a KML/KMZ, GPX, WKT (in EPSG:4326) or GEOJSON/JSON file to create an area of interest.
+Use the **Area of Interest (AOI)** tool to draw a rectangular or polygonal area of interest by clicking on the ![polygon](_images/icons/PolygonIcon.png) icon in the upper right corner of the browser. You can also upload a KML/KMZ, GPX, WKT (in EPSG:4326) or GEOJSON/JSON file to create an AOI.
 
-Use the ![location](_images/icons/Location.png) icon to mark a location and re-centre to the **Point of Interest(PoI)**
+Use the ![location](_images/icons/Location.png) icon to mark a location and re-centre to the **Point of Interest(POI)**
 
 ### Measure
 
