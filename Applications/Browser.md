@@ -90,9 +90,6 @@ Fig 7: *Find products for current view* button position in the sidebar.
 
 With the 3D visualization tool, users can also visualize the terrain. To obtain a 3D visualization, you need to first select a layer to view and then click on the ![3d](_images/icons/3D.png) icon. You can move forward, backward, left, or right by right clicking on the pan console (labelled 1 in the red box in Fig. 8) and rotate around a point by right clicking on the camera console (labelled 2 in the red box in Fig. 8). The viewing angle can be adjusted by scaling vertically and panning in all directions. You can further explore the area by adjusting the sun projected shadows and the shading parameters of the scene in the settings (labelled as box 3 and 4 respectively in Fig. 8). This 3D view can also be downloaded as a PNG or JPEG file.
 Let us try visualizing Mont Blanc, the highest peak in the Alps.
-
-<img src="_images/3DViz.png" width="1024">
-
 1. Follow the steps mentioned in Visualizing data chapter to visualize Mont Blanc and select the “True Color” visualization.
 2. Click on the ![3d](_images/icons/3D.png) icon placed at the right of the screen.
 3. You can navigate around the visualization either with your mouse, keyboard or directly on the map by following the instructions mentioned in the “Help” section (click on the ( ![info3d](_images/icons/Info3D.png)) icon).
@@ -100,6 +97,8 @@ Let us try visualizing Mont Blanc, the highest peak in the Alps.
 5. To adjust shadows, click on the Parameters next to Sun projected shadows toggle switch. 
 6. To adjust Shading parameters, click on Edit and modify the Ambient factor, Diffuse factor, Specular factor, and Specular power.
 7. You can Reset values at any point to return to the default settings. 
+
+![3D visualization](_images/3DViz.png)
 Fig 8: 3D visualization in the Browser with pop-up Settings windows on the right
 
 ## Product Search
@@ -122,8 +121,7 @@ To find products you can either use the keyword search (text input) or select on
    3. Set the Time Range to reflect two weeks (e.g., 2023-01-02, 2023-01-16)
    4. Press the _Search_ button
 
-<img src="_images/SearchResult.png" width="1024">
-
+![Search tab](_images/SearchResult.png)
 Fig 10: *SEARCH* tab with L2A collection selected and map centred on Rome (Italy)
 
 You will now see the first 50 search results for your search settings (Sentinel L2A data over Italy for a time range of 2 weeks) in the sidebar and on the map. To load the next 50 results, click on the _Load more_ button at the end of the list in the sidebar. You can view the metadata of a product in the sidebar or by selecting a product on the map. In both cases you can:
@@ -145,11 +143,10 @@ Fig 11: Data filters and parameters
 
 #### Visualize the search result
 
-
-<img src="_images/VisualizeTile.png" width="1024">
 Once you have found a product, you can visualize the results in two ways: either by directly selecting the viszualize button ( ![visualize](_images/icons/VisualizeButton.png) ) in the sidebar or by selecting the visualize button in the results panel on the map. You can open the results panel by clicking on one of the displayed tile footprints on the map.
 
-Fig 12: Tile selection and visualization
+![Search tab](_images/VisualizeTile.png)
+Fig 12: Product metadata and visualize button
 
 ### How to download a Product
 
@@ -208,6 +205,7 @@ Alternatively, you can select only certain months in a year using the filter by 
 5. Once you have the list of images you want to display in the timelapse, select the speed, and transition to prepare your timelapse.
 6. Click on the play button to check the result and download the animation as a GIF-file using the Download button for further use online/offline.
 
+![Timelapse](_images/Timelapse.png)
 Fig 14: Browser timelapse tool with settings highlighted
 
 
