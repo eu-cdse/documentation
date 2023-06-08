@@ -637,7 +637,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul>
   <li><a href="#creating-a-datacube" id="toc-creating-a-datacube" class="nav-link" data-scroll-target="#creating-a-datacube">Creating a Datacube</a></li>
   <li><a href="#applying-processes" id="toc-applying-processes" class="nav-link" data-scroll-target="#applying-processes">Applying processes</a></li>
-  <li><a href="#defining-output-format" id="toc-defining-output-format" class="nav-link" data-scroll-target="#defining-output-format">Defining output format</a></li>
   </ul></li>
   <li><a href="#execution" id="toc-execution" class="nav-link" data-scroll-target="#execution">Execution</a>
   <ul>
@@ -675,8 +674,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>The openEO Python client library is available on <a href="https://pypi.org/project/openeo/" target="_blank">PyPI</a> and can easily be installed with a tool like <code>pip</code>, for example:</p>
 <pre class="{bash}"><code>pip install openeo
 </code></pre>
-<p>The client library is also available on <a href="https://anaconda.org/conda-forge/openeo" target="_blank">Conda Forge</a>.</p>
-<p>It’s recommended to work in a virtual environment of some kind (<code>venv</code>, <code>conda</code>, …), containing Python 3.6 or higher.</p>
+<p>To upgrade the package to the latest release:</p>
+<pre class="{bash}"><code>
+pip install --upgrade openeo
+</code></pre>
+<p>The client library is also available on <a href="https://anaconda.org/conda-forge/openeo" target="_blank">Conda Forge</a> and can be easily installed in a conda environment, for example:</p>
+<pre class="{bash}"><code>
+conda install -c conda-forge openeo
+</code></pre>
+<p>It’s recommended to work in a virtual environment of some kind (<code>venv</code>, <code>conda</code>, …), containing Python 3.8 or higher.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -698,10 +704,10 @@ Tip
 <h2 class="anchored" data-anchor-id="exploring-a-back-end">Exploring a back-end</h2>
 <p>For this tutorial we will use the openEO instance of Copernicus Data Space Ecosystem, which is available at <code>https://openeo.dataspace.copernicus.eu</code>.</p>
 <p>First we need to establish a connection to the back-end.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> openeo</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>connection <span class="op">=</span> openeo.<span class="ex">connect</span>(<span class="st">"openeo.dataspace.copernicus.eu"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> openeo</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>connection <span class="op">=</span> openeo.<span class="ex">connect</span>(<span class="st">"openeo.dataspace.copernicus.eu"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>The <a href="https://open-eo.github.io/openeo-python-client/api.html#module-openeo.rest.connection" target="_blank"><code>Connection</code> object</a> is your central gateway to - list data collections, available processes, file formats and other capabilities of the back-end - start building your openEO algorithm from the desired data on the back-end - execute and monitor (batch) jobs on the back-end - etc.</p>
 <section id="collections" class="level3">
 <h3 class="anchored" data-anchor-id="collections">Collections</h3>
@@ -746,8 +752,8 @@ Note
 <p>A detailed description of why and how to use the authentication methods is on the <a href="https://open-eo.github.io/openeo-python-client/auth.html#authentication-and-account-management" target="_blank">official documentation</a>.</p>
 <p>To authenticate your account on the backend of the Copernicus Data Space Ecosystem, it is necessary for you to complete the registration process. Once registered, you will be authenticated for executing processes.</p>
 <p>The following code snippet shows how to log in via OIDC authentication:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Authenticate with OIDC authentication"</span>)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>connection.authenticate_oidc()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Authenticate with OIDC authentication"</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>connection.authenticate_oidc()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>The method is used to authenticate yourself on the back-end authentication system. Calling this method with either will print a URL to visit, that opens your system web browser where you can use your Copernicus Data Space Ecosystem credentials, or when there are refresh tokens, these will be used directly. After that the website will give you the instructions to go back to the python client, where your connection has logged your account in. This means that every call that comes after that via the <code>connection</code> variable is executed by your user account.</p>
 </section>
 <section id="working-with-datacube" class="level2">
@@ -756,12 +762,12 @@ Note
 <section id="creating-a-datacube" class="level3">
 <h3 class="anchored" data-anchor-id="creating-a-datacube">Creating a Datacube</h3>
 <p>The first step is loading the desired slice of a data collection with <a href="https://open-eo.github.io/openeo-python-client/api.html#openeo.rest.connection.Connection.load_collection" target="_blank"><code>Connection.load_collection</code></a>:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>datacube <span class="op">=</span> connection.load_collection(</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>        <span class="st">"SENTINEL1_GRD"</span>,</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>        spatial_extent<span class="op">=</span>{<span class="st">"west"</span>: <span class="fl">16.06</span>, <span class="st">"south"</span>: <span class="fl">48.06</span>, <span class="st">"east"</span>: <span class="fl">16.65</span>, <span class="st">"north"</span>: <span class="fl">48.35</span>},</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>        temporal_extent<span class="op">=</span>[<span class="st">"2017-03-01"</span>, <span class="st">"2017-04-01"</span>],</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>        bands<span class="op">=</span>[<span class="st">"VV"</span>, <span class="st">"VH"</span>]</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>datacube <span class="op">=</span> connection.load_collection(</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>        <span class="st">"SENTINEL1_GRD"</span>,</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>        spatial_extent<span class="op">=</span>{<span class="st">"west"</span>: <span class="fl">16.06</span>, <span class="st">"south"</span>: <span class="fl">48.06</span>, <span class="st">"east"</span>: <span class="fl">16.65</span>, <span class="st">"north"</span>: <span class="fl">48.35</span>},</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>        temporal_extent<span class="op">=</span>[<span class="st">"2017-03-01"</span>, <span class="st">"2017-04-01"</span>],</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>        bands<span class="op">=</span>[<span class="st">"VV"</span>, <span class="st">"VH"</span>]</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>This results in a <a href="https://open-eo.github.io/openeo-python-client/api.html#openeo.rest.datacube.DataCube" target="_blank"><code>Datacube</code> object</a> containing the “SENTINEL1_GRD” data restricted to the given spatial extent, the given temporal extend and the given bands .</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
@@ -776,9 +782,9 @@ Tip
 <div id="callout-4" class="callout-4-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>You can also filter the datacube step by step or at a later stage by using the following filter methods:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>datacube <span class="op">=</span> datacube.filter_bbox(west<span class="op">=</span><span class="fl">16.06</span>, south<span class="op">=</span><span class="fl">48.06</span>, east<span class="op">=</span><span class="fl">16.65</span>, north<span class="op">=</span><span class="fl">48.35</span>)</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>datacube <span class="op">=</span> datacube.filter_temporal(start_date<span class="op">=</span><span class="st">"2017-03-01"</span>, end_date<span class="op">=</span><span class="st">"2017-04-01"</span>)</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>datacube <span class="op">=</span> datacube.filter_bands([<span class="st">"VV"</span>, <span class="st">"VH"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>datacube <span class="op">=</span> datacube.filter_bbox(west<span class="op">=</span><span class="fl">16.06</span>, south<span class="op">=</span><span class="fl">48.06</span>, east<span class="op">=</span><span class="fl">16.65</span>, north<span class="op">=</span><span class="fl">48.35</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>datacube <span class="op">=</span> datacube.filter_temporal(start_date<span class="op">=</span><span class="st">"2017-03-01"</span>, end_date<span class="op">=</span><span class="st">"2017-04-01"</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>datacube <span class="op">=</span> datacube.filter_bands([<span class="st">"VV"</span>, <span class="st">"VH"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Still, it is recommended to always use the filters directly in <a href="https://open-eo.github.io/openeo-python-client/api.html#openeo.rest.connection.Connection.load_collection" target="_blank">load_collection</a> to avoid loading too much data upfront.</p>
 </div>
 </div>
@@ -788,18 +794,9 @@ Tip
 <h3 class="anchored" data-anchor-id="applying-processes">Applying processes</h3>
 <p>By applying an openEO process on a datacube, we create a new datacube object that represents the manipulated data. The standard way to do this with the Python client is to call the appropriate <a href="https://open-eo.github.io/openeo-python-client/api.html#openeo.rest.datacube.DataCube" target="_blank"><code>Datacube</code> object</a> method. The most common or popular openEO processes have a dedicated <code>Datacube</code> method (e.g.&nbsp;<code>mask</code>, <code>aggregate_spatial</code>, <code>filter_bbox</code>, …). Other processes without a dedicated method can still be applied in a generic way. An on top of that, there are also some convenience methods that implement openEO processes is a compact, Pythonic interface.</p>
 <p>For example, the <a href="https://open-eo.github.io/openeo-python-client/api.html#openeo.rest.datacube.DataCube.min_time" target="_blank"><code>min_time</code></a> method implements a <code>reduce_dimension</code> process along the temporal dimension, using the <code>min</code> process as reducer function:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>datacube <span class="op">=</span> datacube.min_time()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>datacube <span class="op">=</span> datacube.min_time()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>This creates a new datacube (we overwrite the existing variable), where the time dimension is eliminated and for each pixel we just have the minimum value of the corresponding timeseries in the original datacube.</p>
 <p>See the <a href="https://open-eo.github.io/openeo-python-client/api.html#openeo.rest.datacube.DataCube" target="_blank">Python client <code>Datacube</code> API</a> for a more complete listing of methods that implement openEO processes.</p>
-<p>openEO processes that are not supported by a dedicated <code>Datacube</code> method can be applied in a generic way with the <a href="https://open-eo.github.io/openeo-python-client/api.html#openeo.rest.datacube.DataCube.process" target="_blank"><code>process</code> method</a>, e.g.:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>datacube <span class="op">=</span> datacube.process(</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    process_id<span class="op">=</span><span class="st">"ndvi"</span>, </span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    arguments<span class="op">=</span>{</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">"data"</span>: datacube, </span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">"nir"</span>: <span class="st">"B8"</span>, </span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"red"</span>: <span class="st">"B4"</span>}</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>This applies the <a href="https://docs.openeo.cloud/processes/#ndvi" target="_blank"><code>ndvi</code> process</a> to the datacube with the arguments of “data”, “nir” and “red” (This example assumes a datacube with bands <code>B8</code> and <code>B4</code>).</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -814,26 +811,19 @@ Note
 </div>
 </div>
 </section>
-<section id="defining-output-format" class="level3">
-<h3 class="anchored" data-anchor-id="defining-output-format">Defining output format</h3>
-<p>After applying all processes you want to execute, we need to tell the back-end to export the datacube, for example as GeoTiff:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> datacube.save_result(<span class="st">"GTiff"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</section>
 </section>
 <section id="execution" class="level2">
 <h2 class="anchored" data-anchor-id="execution">Execution</h2>
 <p>It’s important to note that all the datacube processes we applied up to this point are not actually executed yet, neither locally nor remotely on the back-end. We just built an abstract representation of the algorithm (input data and processing chain), encapsulated in a local <code>Datacube</code> object (e.g.&nbsp;the <code>result</code> variable above). To trigger an actual execution (on the back-end) we have to explicitly send this representation to the back-end.</p>
-<p>openEO defines <a href="../../../APIs/openEO/Glossary.html#data-processing-modes">several processing modes</a>, but for this introduction we’ll focus on batch jobs, which is a good default choice.</p>
 <section id="batch-job-execution" class="level3">
 <h3 class="anchored" data-anchor-id="batch-job-execution">Batch job execution</h3>
-<p>The <code>result</code> datacube object we built above describes the desired input collections, processing steps and output format. We can now just send this description to the back-end to create a batch job with the <a href="https://open-eo.github.io/openeo-python-client/api.html#openeo.rest.datacube.DataCube.create_job" target="_blank"><code>create_job</code> method</a> like this:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Creating a new job at the back-end by sending the datacube information.</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>job <span class="op">=</span> result.create_job()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>The batch job, which is referenced by the returned <code>job</code> object, is just created at the back-end, it is not started yet. To start the job and let your Python script wait until the job has finished then download it automatically, you can use the <code>start_and_wait</code> method.</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Starts the job and waits until it finished to download the result.</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>job.start_and_wait()</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>job.get_results().download_files(<span class="st">"output"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>When everything completes successfully, the processing result will be downloaded as a GeoTIFF file in a folder “output”.</p>
+<p>Most of the simple, basic openEO usage examples show synchronous downloading of results. This only works properly if the processing doesn’t take too long and is focused on a smaller area of interest. However, you have to use batch jobs for the heavier work (larger regions of interest, larger time series, more intensive processing).</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># While not necessary, it is also recommended to give your batch job a descriptive title so it’s easier to identify in your job listing.</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>job <span class="op">=</span> cube.execute_batch()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="{callout-note}">
+<p>This documentation mainly discusses how to programmatically create and interact with batch job using the openEO Python client library. The openEO API however does not enforce usage of the same tool for each step in the batch job life cycle.</p>
+<p>For example: if you prefer a graphical, web-based interactive environment to manage and monitor your batch jobs, feel free to switch to an openEO web editor like <a href="https://openeo.dataspace.copernicus.eu/">openeo.dataspace.copernicus.eu/</a> at any time. After logging in with the same account you use in your Python scripts, you should see your batch jobs listed under the “Data Processing” tab. More information on using openEO web editor is discussed <a href="../../../Applications/WebEditor.html">here</a>.</p>
+</div>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -856,59 +846,59 @@ Tip
 <h2 class="anchored" data-anchor-id="full-example">Full Example</h2>
 <p>In this chapter we will show a full example of an earth observation use case using the Python client.</p>
 <p>Here, we want to produce a monthly RGB composite of Sentinel 1 backscatter data over the area of Vienna, Austria for three months in 2017. This can be used for classification and crop monitoring.</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> openeo</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co"># First, we connect to the back-end and authenticate ourselves via Basic authentication. </span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>con <span class="op">=</span> openeo.<span class="ex">connect</span>(<span class="st">"openeo.dataspace.copernicus.eu"</span>)</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>con.authenticate_oidc()</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Now that we are connected, we can initialize our datacube object with the area around Vienna </span></span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="co"># and the time range of interest using Sentinel 1 data.</span></span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>datacube <span class="op">=</span> con.load_collection(</span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>          <span class="st">"SENTINEL1_GRD"</span>,</span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>          spatial_extent<span class="op">=</span>{<span class="st">"west"</span>: <span class="fl">16.06</span>, <span class="st">"south"</span>: <span class="fl">48.06</span>, <span class="st">"east"</span>: <span class="fl">16.65</span>, <span class="st">"north"</span>: <span class="fl">48.35</span>},</span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>          temporal_extent<span class="op">=</span>[<span class="st">"2017-03-01"</span>, <span class="st">"2017-06-01"</span>],</span>
-<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>          bands<span class="op">=</span>[<span class="st">"VV"</span>]</span>
-<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>          )</span>
-<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Since we are creating a monthly RGB composite, we need three (R, G and B) separated time ranges.</span></span>
-<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Therefore, we split the datacube into three datacubes by filtering temporal for March, April and May. </span></span>
-<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>march <span class="op">=</span> datacube.filter_temporal(<span class="st">"2017-03-01"</span>, <span class="st">"2017-04-01"</span>)</span>
-<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>april <span class="op">=</span> datacube.filter_temporal(<span class="st">"2017-04-01"</span>, <span class="st">"2017-05-01"</span>)</span>
-<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>may <span class="op">=</span> datacube.filter_temporal(<span class="st">"2017-05-01"</span>, <span class="st">"2017-06-01"</span>)</span>
-<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Now that we split it into the correct time range, we have to aggregate the timeseries values into a single image.</span></span>
-<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Therefore, we make use of the Python Client function `mean_time`, which reduces the time dimension, </span></span>
-<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a><span class="co"># by taking for every timeseries the mean value.</span></span>
-<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a>mean_march <span class="op">=</span> march.mean_time()</span>
-<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>mean_april <span class="op">=</span> april.mean_time()</span>
-<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a>mean_may <span class="op">=</span> may.mean_time()</span>
-<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a><span class="co"># Now the three images will be combined into the temporal composite. </span></span>
-<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Before merging them into one datacube, we need to rename the bands of the images, because otherwise, </span></span>
-<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a><span class="co"># they would be overwritten in the merging process.  </span></span>
-<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a><span class="co"># Therefore, we rename the bands of the datacubes using the `rename_labels` process to "R", "G" and "B".</span></span>
-<span id="cb11-34"><a href="#cb11-34" aria-hidden="true" tabindex="-1"></a><span class="co"># After that we merge them into the "RGB" datacube, which has now three bands ("R", "G" and "B")</span></span>
-<span id="cb11-35"><a href="#cb11-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-36"><a href="#cb11-36" aria-hidden="true" tabindex="-1"></a>R_band <span class="op">=</span> mean_march.rename_labels(dimension<span class="op">=</span><span class="st">"bands"</span>, target<span class="op">=</span>[<span class="st">"R"</span>])</span>
-<span id="cb11-37"><a href="#cb11-37" aria-hidden="true" tabindex="-1"></a>G_band <span class="op">=</span> mean_april.rename_labels(dimension<span class="op">=</span><span class="st">"bands"</span>, target<span class="op">=</span>[<span class="st">"G"</span>])</span>
-<span id="cb11-38"><a href="#cb11-38" aria-hidden="true" tabindex="-1"></a>B_band <span class="op">=</span> mean_may.rename_labels(dimension<span class="op">=</span><span class="st">"bands"</span>, target<span class="op">=</span>[<span class="st">"B"</span>])</span>
-<span id="cb11-39"><a href="#cb11-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-40"><a href="#cb11-40" aria-hidden="true" tabindex="-1"></a>RG <span class="op">=</span> R_band.merge_cubes(G_band)</span>
-<span id="cb11-41"><a href="#cb11-41" aria-hidden="true" tabindex="-1"></a>RGB <span class="op">=</span> RG.merge_cubes(B_band)</span>
-<span id="cb11-42"><a href="#cb11-42" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-43"><a href="#cb11-43" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-44"><a href="#cb11-44" aria-hidden="true" tabindex="-1"></a><span class="co"># Last but not least, we add the process to save the result of the processing. There we define that </span></span>
-<span id="cb11-45"><a href="#cb11-45" aria-hidden="true" tabindex="-1"></a><span class="co"># the result should be a GeoTiff file.</span></span>
-<span id="cb11-46"><a href="#cb11-46" aria-hidden="true" tabindex="-1"></a><span class="co"># We also set, which band should be used for "red", "green" and "blue" color in the options.</span></span>
-<span id="cb11-47"><a href="#cb11-47" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-48"><a href="#cb11-48" aria-hidden="true" tabindex="-1"></a>RGB <span class="op">=</span> RGB.save_result(<span class="bu">format</span><span class="op">=</span><span class="st">"GTiff"</span>)</span>
-<span id="cb11-49"><a href="#cb11-49" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-50"><a href="#cb11-50" aria-hidden="true" tabindex="-1"></a><span class="co"># With the last process we have finished the datacube definition and can create and start the job at the back-end.</span></span>
-<span id="cb11-51"><a href="#cb11-51" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-52"><a href="#cb11-52" aria-hidden="true" tabindex="-1"></a>job <span class="op">=</span> RGB.create_job()</span>
-<span id="cb11-53"><a href="#cb11-53" aria-hidden="true" tabindex="-1"></a>job.start_and_wait().download_results()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> openeo</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co"># First, we connect to the back-end and authenticate ourselves via Basic authentication. </span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>con <span class="op">=</span> openeo.<span class="ex">connect</span>(<span class="st">"openeo.dataspace.copernicus.eu"</span>)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>con.authenticate_oidc()</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Now that we are connected, we can initialize our datacube object with the area around Vienna </span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="co"># and the time range of interest using Sentinel 1 data.</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>datacube <span class="op">=</span> con.load_collection(</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>          <span class="st">"SENTINEL1_GRD"</span>,</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>          spatial_extent<span class="op">=</span>{<span class="st">"west"</span>: <span class="fl">16.06</span>, <span class="st">"south"</span>: <span class="fl">48.06</span>, <span class="st">"east"</span>: <span class="fl">16.65</span>, <span class="st">"north"</span>: <span class="fl">48.35</span>},</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>          temporal_extent<span class="op">=</span>[<span class="st">"2017-03-01"</span>, <span class="st">"2017-06-01"</span>],</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>          bands<span class="op">=</span>[<span class="st">"VV"</span>]</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>          )</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Since we are creating a monthly RGB composite, we need three (R, G and B) separated time ranges.</span></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Therefore, we split the datacube into three datacubes by filtering temporal for March, April and May. </span></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>march <span class="op">=</span> datacube.filter_temporal(<span class="st">"2017-03-01"</span>, <span class="st">"2017-04-01"</span>)</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>april <span class="op">=</span> datacube.filter_temporal(<span class="st">"2017-04-01"</span>, <span class="st">"2017-05-01"</span>)</span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>may <span class="op">=</span> datacube.filter_temporal(<span class="st">"2017-05-01"</span>, <span class="st">"2017-06-01"</span>)</span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Now that we split it into the correct time range, we have to aggregate the timeseries values into a single image.</span></span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Therefore, we make use of the Python Client function `mean_time`, which reduces the time dimension, </span></span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a><span class="co"># by taking for every timeseries the mean value.</span></span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>mean_march <span class="op">=</span> march.mean_time()</span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>mean_april <span class="op">=</span> april.mean_time()</span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>mean_may <span class="op">=</span> may.mean_time()</span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a><span class="co"># Now the three images will be combined into the temporal composite. </span></span>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Before merging them into one datacube, we need to rename the bands of the images, because otherwise, </span></span>
+<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a><span class="co"># they would be overwritten in the merging process.  </span></span>
+<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a><span class="co"># Therefore, we rename the bands of the datacubes using the `rename_labels` process to "R", "G" and "B".</span></span>
+<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a><span class="co"># After that we merge them into the "RGB" datacube, which has now three bands ("R", "G" and "B")</span></span>
+<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a>R_band <span class="op">=</span> mean_march.rename_labels(dimension<span class="op">=</span><span class="st">"bands"</span>, target<span class="op">=</span>[<span class="st">"R"</span>])</span>
+<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a>G_band <span class="op">=</span> mean_april.rename_labels(dimension<span class="op">=</span><span class="st">"bands"</span>, target<span class="op">=</span>[<span class="st">"G"</span>])</span>
+<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a>B_band <span class="op">=</span> mean_may.rename_labels(dimension<span class="op">=</span><span class="st">"bands"</span>, target<span class="op">=</span>[<span class="st">"B"</span>])</span>
+<span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-40"><a href="#cb10-40" aria-hidden="true" tabindex="-1"></a>RG <span class="op">=</span> R_band.merge_cubes(G_band)</span>
+<span id="cb10-41"><a href="#cb10-41" aria-hidden="true" tabindex="-1"></a>RGB <span class="op">=</span> RG.merge_cubes(B_band)</span>
+<span id="cb10-42"><a href="#cb10-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-43"><a href="#cb10-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-44"><a href="#cb10-44" aria-hidden="true" tabindex="-1"></a><span class="co"># Last but not least, we add the process to save the result of the processing. There we define that </span></span>
+<span id="cb10-45"><a href="#cb10-45" aria-hidden="true" tabindex="-1"></a><span class="co"># the result should be a GeoTiff file.</span></span>
+<span id="cb10-46"><a href="#cb10-46" aria-hidden="true" tabindex="-1"></a><span class="co"># We also set, which band should be used for "red", "green" and "blue" color in the options.</span></span>
+<span id="cb10-47"><a href="#cb10-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-48"><a href="#cb10-48" aria-hidden="true" tabindex="-1"></a>RGB <span class="op">=</span> RGB.save_result(<span class="bu">format</span><span class="op">=</span><span class="st">"GTiff"</span>)</span>
+<span id="cb10-49"><a href="#cb10-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-50"><a href="#cb10-50" aria-hidden="true" tabindex="-1"></a><span class="co"># With the last process we have finished the datacube definition and can create and start the job at the back-end.</span></span>
+<span id="cb10-51"><a href="#cb10-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-52"><a href="#cb10-52" aria-hidden="true" tabindex="-1"></a>job <span class="op">=</span> RGB.create_job()</span>
+<span id="cb10-53"><a href="#cb10-53" aria-hidden="true" tabindex="-1"></a>job.start_and_wait().download_results()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Now the resulting GTiff file of the RGB backscatter composite is in your current directory.</p>
 <p><img src="../_images/getting-started-result-example.jpg" class="img-fluid"></p>
 </section>
