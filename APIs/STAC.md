@@ -1,7 +1,7 @@
 # STAC product catalog
 
 
-[STAC API](https://stacspec.org) endpoint: `https://catalogue.dataspace.copernicus.eu/stac/`
+[STAC API](https://stacspec.org){target="blank"} endpoint: `https://catalogue.dataspace.copernicus.eu/stac/`
 
 STAC (Spatio-Temporal Asset Catalog) is a relatively new web service specification for catalogs that is increasingly used and supported.
 
@@ -11,6 +11,6 @@ it already supports basic product search.
 ## Querying the catalog
 
 To query the catalog, you can use a library for your language of choice.
-For Python, we recommend [PySTAC](https://pystac-client.readthedocs.io/en/stable/).
+For Python, we recommend [PySTAC](https://pystac-client.readthedocs.io/en/stable/){target="blank"}.
 
 
