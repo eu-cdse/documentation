@@ -19,11 +19,25 @@ and can easily be installed with a tool like `pip`, for example:
 pip install openeo
 
 ```
+To upgrade the package to the latest release:
 
-The client library is also available on [Conda Forge](https://anaconda.org/conda-forge/openeo){target="_blank"}.
+
+```{bash}
+
+pip install --upgrade openeo
+
+```
+
+The client library is also available on [Conda Forge](https://anaconda.org/conda-forge/openeo){target="_blank"} and can be easily installed in a conda environment, for example:
+
+```{bash}
+
+conda install -c conda-forge openeo
+
+```
 
 It's recommended to work in a virtual environment of some kind (`venv`, `conda`, ...),
-containing Python 3.6 or higher.
+containing Python 3.8 or higher.
 
 ::: {.callout-tip collapse="true"} 
 
@@ -178,37 +192,12 @@ the minimum value of the corresponding timeseries in the original datacube.
 See the [Python client `Datacube` API](https://open-eo.github.io/openeo-python-client/api.html#openeo.rest.datacube.DataCube){target="_blank"} for a more complete listing of methods that implement openEO processes.
 
 
-openEO processes that are not supported by a dedicated `Datacube` method
-can be applied in a generic way with the [`process` method](https://open-eo.github.io/openeo-python-client/api.html#openeo.rest.datacube.DataCube.process){target="_blank"}, e.g.:
-
-```python
-datacube = datacube.process(
-    process_id="ndvi", 
-    arguments={
-        "data": datacube, 
-        "nir": "B8", 
-        "red": "B4"}
-)
-```
-
-This applies the [`ndvi` process](https://docs.openeo.cloud/processes/#ndvi){target="_blank"} to the datacube with the arguments of "data", "nir" and "red" (This example assumes a datacube with bands `B8` and `B4`).
-
-
 ::: {.callout-note}
 
 Still unsure on how to make use of processes with the Python client? 
 Visit the [official documentation on working with processes](https://open-eo.github.io/openeo-python-client/processes.html#working-with-processes){target="_blank"}.
 
 :::
-
-
-### Defining output format
-
-After applying all processes you want to execute, we need to tell the back-end to export the datacube, for example as GeoTiff:
-
-```python
-result = datacube.save_result("GTiff")
-```
 
 
 ## Execution
@@ -220,32 +209,22 @@ encapsulated in a local `Datacube` object (e.g. the `result` variable above).
 To trigger an actual execution (on the back-end) we have to explicitly send this representation 
 to the back-end.
 
-openEO defines [several processing modes](../Glossary.qmd#data-processing-modes), 
-but for this introduction we'll focus on batch jobs, which is a good default choice.
-
 
 ### Batch job execution
 
-The `result` datacube object we built above describes the desired input collections, processing steps and output format.
-We can now just send this description to the back-end to create a batch job with the [`create_job` method](https://open-eo.github.io/openeo-python-client/api.html#openeo.rest.datacube.DataCube.create_job){target="_blank"} like this:
+Most of the simple, basic openEO usage examples show synchronous downloading of results. This only works properly if the processing doesn’t take too long and is focused on a smaller area of interest. However, you have to use batch jobs for the heavier work (larger regions of interest, larger time series, more intensive processing). 
 
 ```python
-# Creating a new job at the back-end by sending the datacube information.
-job = result.create_job()
+# While not necessary, it is also recommended to give your batch job a descriptive title so it’s easier to identify in your job listing.
+job = cube.execute_batch()
 ```
 
-The batch job, which is referenced by the returned `job` object, is just created at the back-end, 
-it is not started yet. To start the job and let your Python script wait until the job has finished then 
-download it automatically, you can use the `start_and_wait` method. 
+:::{callout-note}
 
-```python
-# Starts the job and waits until it finished to download the result.
-job.start_and_wait()
-job.get_results().download_files("output")
-```
+This documentation mainly discusses how to programmatically create and interact with batch job using the openEO Python client library. The openEO API however does not enforce usage of the same tool for each step in the batch job life cycle.
 
-When everything completes successfully, the processing result will be downloaded as a GeoTIFF file
-in a folder "output".
+For example: if you prefer a graphical, web-based interactive environment to manage and monitor your batch jobs, feel free to switch to an openEO web editor like [openeo.dataspace.copernicus.eu/](https://openeo.dataspace.copernicus.eu/) at any time. After logging in with the same account you use in your Python scripts, you should see your batch jobs listed under the “Data Processing” tab. More information on using openEO web editor is discussed [here](../../../Applications/WebEditor.qmd).
+:::
 
 ::: {.callout-tip collapse="true"}
 
