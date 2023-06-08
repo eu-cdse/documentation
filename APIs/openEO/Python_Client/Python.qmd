@@ -142,25 +142,23 @@ with [`Connection.load_collection`](https://open-eo.github.io/openeo-python-clie
 
 ```python
 datacube = connection.load_collection(
-        "SENTINEL1_GRD",
-        spatial_extent={"west": 16.06, "south": 48.06, "east": 16.65, "north": 48.35},
-        temporal_extent=["2017-03-01", "2017-04-01"],
-        bands=["VV", "VH"]
-)
+      "SENTINEL2_L2A",
+      spatial_extent={"west": 5.14, "south": 51.17, "east": 5.17, "north": 51.19},
+      temporal_extent = ["2021-02-01", "2021-04-30"],
+      bands=["B02", "B04", "B08"]
+      )
 ```
 
-This results in a [`Datacube` object](https://open-eo.github.io/openeo-python-client/api.html#openeo.rest.datacube.DataCube){target="_blank"} 
-containing the "SENTINEL1_GRD" data restricted to the given spatial extent, 
-the given temporal extend and the given bands .
+This results in a [`Datacube` object](https://open-eo.github.io/openeo-python-client/api.html#openeo.rest.datacube.DataCube){target="_blank"} containing the "SENTINEL2_L2A" data restricted to the given spatial extent, the given temporal extend and the given bands .
 
 ::: {.callout-tip collapse="true"}
 
 You can also filter the datacube step by step or at a later stage by using the following filter methods:
 
 ```python
-datacube = datacube.filter_bbox(west=16.06, south=48.06, east=16.65, north=48.35)
-datacube = datacube.filter_temporal(start_date="2017-03-01", end_date="2017-04-01")
-datacube = datacube.filter_bands(["VV", "VH"])
+datacube = datacube.filter_bbox(west=5.14, south=51.17, east=5.17, north=51.19)
+datacube = datacube.filter_temporal(start_date="2021-02-01", end_date="2021-04-30")
+datacube = datacube.filter_bands(["B02", "B04", "B08"])
 ```
 
 Still, it is recommended to always use the filters directly in [load_collection](https://open-eo.github.io/openeo-python-client/api.html#openeo.rest.connection.Connection.load_collection){target="_blank"}
@@ -179,10 +177,10 @@ An on top of that, there are also some convenience methods that implement
 openEO processes is a compact, Pythonic interface.
 
 For example, the [`min_time`](https://open-eo.github.io/openeo-python-client/api.html#openeo.rest.datacube.DataCube.min_time){target="_blank"} method
-implements a `reduce_dimension` process along the temporal dimension, using the `min` process as reducer function:
+implements a `reduce_dimension` process along the temporal dimension, using the `max` process as reducer function:
 
 ```python
-datacube = datacube.min_time()
+datacube = datacube.max_time()
 ```
 
 This creates a new datacube (we overwrite the existing variable),
@@ -240,8 +238,7 @@ or [more detailed batch job (result) management](https://open-eo.github.io/opene
 In this chapter we will show a full example of an earth observation use case using the Python client.
 
 
-Here, we want to produce a monthly RGB composite of Sentinel 1 backscatter data over the area of Vienna, Austria for three 
-months in 2017. This can be used for classification and crop monitoring.
+A common task in earth observation is to apply a formula to a number of spectral bands in order to compute an 'index', such as NDVI, NDWI, EVI, ... In this tutorial we'll go through a couple of steps to extract EVI (enhanced vegetation index) values and timeseries
 
 
 
@@ -253,58 +250,49 @@ import openeo
 con = openeo.connect("openeo.dataspace.copernicus.eu")
 con.authenticate_oidc()
 
-# Now that we are connected, we can initialize our datacube object with the area around Vienna 
+# Now that we are connected, we can initialize our datacube object with the area of interest 
 # and the time range of interest using Sentinel 1 data.
-datacube = con.load_collection(
-          "SENTINEL1_GRD",
-          spatial_extent={"west": 16.06, "south": 48.06, "east": 16.65, "north": 48.35},
-          temporal_extent=["2017-03-01", "2017-06-01"],
-          bands=["VV"]
-          )
+datacube = connection.load_collection(
+      "SENTINEL2_L2A",
+      spatial_extent={"west": 5.14, "south": 51.17, "east": 5.17, "north": 51.19},
+      temporal_extent = ["2021-02-01", "2021-04-30"],
+      bands=["B02", "B04", "B08"]
+      )
 
-# Since we are creating a monthly RGB composite, we need three (R, G and B) separated time ranges.
-# Therefore, we split the datacube into three datacubes by filtering temporal for March, April and May. 
-march = datacube.filter_temporal("2017-03-01", "2017-04-01")
-april = datacube.filter_temporal("2017-04-01", "2017-05-01")
-may = datacube.filter_temporal("2017-05-01", "2017-06-01")
-
-# Now that we split it into the correct time range, we have to aggregate the timeseries values into a single image.
-# Therefore, we make use of the Python Client function `mean_time`, which reduces the time dimension, 
-# by taking for every timeseries the mean value.
-
-mean_march = march.mean_time()
-mean_april = april.mean_time()
-mean_may = may.mean_time()
-
-# Now the three images will be combined into the temporal composite. 
-# Before merging them into one datacube, we need to rename the bands of the images, because otherwise, 
-# they would be overwritten in the merging process.  
-# Therefore, we rename the bands of the datacubes using the `rename_labels` process to "R", "G" and "B".
-# After that we merge them into the "RGB" datacube, which has now three bands ("R", "G" and "B")
-
-R_band = mean_march.rename_labels(dimension="bands", target=["R"])
-G_band = mean_april.rename_labels(dimension="bands", target=["G"])
-B_band = mean_may.rename_labels(dimension="bands", target=["B"])
-
-RG = R_band.merge_cubes(G_band)
-RGB = RG.merge_cubes(B_band)
+# By filtering as early as possible (directly in load_collection() in this case), 
+# we make sure the back-end only loads the data we are interested in and avoid incurring unneeded costs.
 
 
-# Last but not least, we add the process to save the result of the processing. There we define that 
-# the result should be a GeoTiff file.
-# We also set, which band should be used for "red", "green" and "blue" color in the options.
+#From this data cube, we can now select the individual bands with the DataCube.band() method and rescale the digital number values to physical reflectances:
+blue = sentinel2_cube.band("B02") * 0.0001
+red = sentinel2_cube.band("B04") * 0.0001
+nir = sentinel2_cube.band("B08") * 0.0001
 
-RGB = RGB.save_result(format="GTiff")
 
-# With the last process we have finished the datacube definition and can create and start the job at the back-end.
+# We now want to compute the enhanced vegetation index and can do that directly with these band variables:
+evi_cube = 2.5 * (nir - red) / (nir + 6.0 * red - 7.5 * blue + 1.0)
 
-job = RGB.create_job()
-job.start_and_wait().download_results()
+# Now we can use the compact “band math” feature again to build a binary mask with a simple comparison operation:
+# Select the "SCL" band from the data cube
+scl_band = s2_scl.band("SCL")
+# Build mask to mask out everything but class 4 (vegetation)
+mask = (scl_band != 4)
+
+# Before we can apply this mask to the EVI cube we have to resample it, as the “SCL” layer has a “ground sample distance” of 20 meter, while it is 10 meter for the “B02”, “B04” and “B08” bands. We can easily do the resampling by referring directly to the EVI cube.
+mask_resampled = mask.resample_cube_spatial(evi_cube)
+
+# Apply the mask to the `evi_cube`
+evi_cube_masked = evi_cube.mask(mask_resampled)
+
+# Because GeoTIFF does not support a temporal dimension, we first eliminate it by taking the temporal maximum value for each pixel:
+evi_composite = evi_cube.max_time()
+
+# Now we can download this to a local file:
+evi_composite.download("evi-composite.tiff")
 ```
+Now, you can inspect the result for the EVI map. 
 
-Now the resulting GTiff file of the RGB backscatter composite is in your current directory. 
-
-![](../_images/getting-started-result-example.jpg)
+![](../_images/evi-masked-composite.png)
 
 
 ## User Defined Functions
