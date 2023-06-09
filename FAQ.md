@@ -44,71 +44,82 @@
     For the details on the data offer and timing, we would like to refer to the <a href="Roadmap.md">Roadmap</a>
      </p>
 </details>
+
 <details>
   <summary>Is there a page that indicates anomalies with the datasets?</summary>
     <p>
     The <a href="https://operations.dashboard.copernicus.eu/index" target="_blank">Copernicus Operations Dashboard</a> provides details of events over the past three months that have impact on the completeness of the data production, such as planned calibration activities, manoeuvrers, or anomalies. The information of which data is affected is included.
      </p>
 </details>
+
 <details>
   <summary>With regard to cloud native formats/interfaces, will the data also be available in the original data formats (e.g. for data downloading)?</summary>
     <p>
     Yes, data will also be available in original data formats (i.e. .SAFE).
      </p>
 </details>
+
 <details>
   <summary>At the moment some of the data are delivered in Jpeg2000, is there any plan to abandon that format for the COG?</summary>
     <p>
     There is currently no plan to convert Sentinel-2 in COGs. However, there is a parallel activity happening within ESA to define format evolution for all Sentinels which will be followed, once decisions are taken. But this is not something that is happening on the short term.
      </p>
 </details>
+
 <details>
   <summary>Will data, such as Sentinel-2, be processed to a consistent version?</summary>
     <p>
     The Sentinel-2 data will be available at the latest processing baseline. And with the reprocessing of Sentinel-2 happening in parallel (out of scope of this project), these will become available on this service as well.
      </p>
 </details>
+
 <details>
   <summary>Is it possible to download a subset of data corresponding to an AOI, instead of the whole image?</summary>
     <p>
     Yes, you will be able to download a subset of data, either using S3 interface, or dedicated APIs, i.e. Sentinel Hub, OpenEO when they become available. See <a href="Roadmap.md">Roadmap</a> section of the documentation.
      </p>
 </details>
+
 <details>
   <summary>Are the data offered via Cloud Optimized Geotiffs (also Level 1)?</summary>
     <p>
     Sentinel-1 GRD data will be available in COG format. Sentinel-2 will stay in JP2 for the moment, as it is a similarly performant cloud optimised format.
      </p>
 </details>
+
 <details>
   <summary>When "on-line data" is mentioned, does that mean the data are not on tape?</summary>
     <p>
     The “on-line data” or IAD we are referring to, are indeed not on the tapes.  Tapes will still be there for redundancy reasons.
      </p>
 </details>
-<details>
-  <summary>For the S3 access in the free tier, will there be no cost for network traffic?</summary>
-    <p>
-    S3 access will be part of free services as well, within the same constraints as the rest of the services.
-     </p>
-</details>
+
 <details>
   <summary>Can we download the data acquired by all Sentinel missions (1, 2, 3, 5P, 6) and the other satellites (e.g. Meteosat) via the new interface? Some missions are not managed by ESA, but by EUMETSAT for example.</summary>
     <p>
     Initialy Sentinel 1, Sentinel 2, Sentinel 3 and Sentinel 5P data up to L2 products will be available. Sentinel 6 data and data from Meteosat are currently not in the roadmap of the project. However access to Copernicus Contributing Missions CORE Datasets, Digital Elevation Models, data from Copernicus Services and additional data sets such as Landsat and ENVISAT and Belgian Collaborative Ground Segment hosted data are planned in the future. The <a href="https://documentation.dataspace.copernicus.eu/Roadmap/DataTable.html">Data Roadmap</a> shows how the Copernicus Data Space Ecosystem will be continously upgraded and how more data will become available.
      </p>
 </details>
+
 <details>
   <summary>Will it still be the case that data is labelled as “on/offline" on the current legacy portal?</summary>
     <p>
     The vast majority of the data will be on-line : all Sentinel-2 L1C/L2A, Sentinel-1 SLC/GRD  and just about all other relevant data collections.
      </p>
 </details>
+
 <details>
   <summary>Will the new interface offer EO ready-to-use products or just L0 and L1 data?</summary>
     <p>
     Up to L2 products will be available. The <a href="Roadmap.md">Roadmap</a> shows how the Copernicus Data Space Ecosystem will be continously upgraded and how more data become available.
      </p>
+</details>
+
+<details>
+  <summary>What is the highest resolution SAR data available in Copernicus Data Space Ecosystem?</summary>
+    <p>The Sentinel-1 SAR achieves a spatial resolution of approximately 5 by 20 m. More info can be found here:
+<a href="https://sentinel.esa.int/web/sentinel/user-guides/sentinel-1-sar/resolutions" target="_blank">https://sentinel.esa.int/web/sentinel/user-guides/sentinel-1-sar/resolutions</a>
+    </p>
 </details>
 
 ## Services
@@ -119,30 +130,50 @@
     Yes, there will be a common user identity, which will allow registered users to seamlessly transfer between systems. This will also extend to other systems that will be added to the free tier to the commerical tier ecosystem in the future, assuming they will integrate it.
      </p>
 </details>
+
 <details>
   <summary>When we develop an EO ready-to-use product, could we integrate it into the interface and ask the payment from clients?</summary>
     <p>
     Yes, commercial services can be built on top, similar to Copernicus open license.
      </p>
 </details>
+
 <details>
   <summary>Can the user come with wish-list to services data products?</summary>
     <p>
     User can come with suggestions to improve or expand the service portfolio. A user forum will be set up and released by July to accommodate this.
      </p>
 </details>
+
 <details>
   <summary>Are you going to develop new services on DAS after July 2023?</summary>
     <p>
     Yes, a marketplace will be available where new Third party services will be able to onboard from July onwards to expand the ecosystem.
      </p>
 </details>
+
 <details>
   <summary>Is there any limitation on the max number of downloads at one time?</summary>
     <p>
     Yes, there will be quotas and constraints for different services.
      </p>
 </details>
+
+<details>
+  <summary>Is it possible to download Sentinel-2 data for a large area at a high resolution in Copernicus Data Space Browser?
+  </summary>
+    <p>
+    Depending on your use, we suggest to use the high-res print (via the high-res print tab) where you will get large areas in a high resolution (the data is though not georeferenced) or if you need georeferenced data, split your area in several smaller images that you download or choose a bit lower resolution to stay within the limits of 2500px.
+    </p>
+</details>
+
+<details>
+  <summary>Can you provide detailed information regarding the quotas and limits for accessing data and using the services through your platform?
+  </summary>
+    <p>We understand the importance of knowing the limitations and restrictions imposed on the usage of our services. For detailed information about the quotas, we recommend referring to the Service Description and Evolution document available on our documentation portal. You can find the document at <a href= "https://documentation.dataspace.copernicus.eu/Roadmap.html" target="_blank">https://documentation.dataspace.copernicus.eu/Roadmap.html </a>. The quotas information can be found in Annex B.
+    </p>
+</details>
+
 
 ## Registration and authentication
 
@@ -152,6 +183,7 @@
     Yes, there will be a common user identity, which will allow registered users to seamlessly transfer between systems. This will also extend to other systems that will be added to the free tier to the commerical tier ecosystem in the future, assuming they will integrate it.
      </p>
 </details>
+
 <details>
   <summary>If I'm having troubles with registering, what can I do?</summary>
     <p>
@@ -167,29 +199,98 @@
     SNAP is integrated in cloud environment, and there will even be some dedicated on-demand services based on SNAP  (i.e. S1 processing to coherence, etc). 
      </p>
 </details>
+
 <details>
   <summary>Is a STAC catalog planned ? Will the data be accessible on cloud object storage (S3)?</summary>
     <p>
     STAC Catalog API is indeed planned.  Note that the phase-in will take from end of January to July 2023.  So services will be added during this timeline, not everything will be available at the beginning. All the data will be available over S3 as well.
      </p>
 </details>
+
 <details>
   <summary>Will LTA process be discontinued when all archived data become online?</summary>
     <p>
     There will still be services available for so called “deferred data access” :  data collections that are not commonly used. That said, all most relevant collections will be available on-line.  The <a href="Roadmap.md">Roadmap</a> shows how the Copernicus Data Space Ecosystem will be continously upgraded and how more data become available.
      </p>
 </details>
+
 <details>
   <summary>Will the platform use STAC standards?</summary>
     <p>
     Yes, there will be STAC compliant Catalog API, as well as STAC items for inpidual products.
      </p>
 </details>
+
 <details>
   <summary>Any plan to offer the Pangeo platform for a "pythonist"?</summary>
     <p>
     This is currently not in the offer or roadmap.
      </p>
+</details>
+
+<details>
+  <summary> How do I generate S3 access and secret keys? 
+  </summary>
+    <p>You can request such credentials as the guided in <a href="https://documentation.dataspace.copernicus.eu/APIs/S3.html" target="_blank"> https://documentation.dataspace.copernicus.eu/APIs/S3.html</a>
+    </p>
+</details>
+
+<details>
+  <summary>Which one amongst the 4 catalog APIs (OData, STAC, OpenSearch, Sentinel Hub catalogue ) is updated first when new products are published?
+  </summary>
+    <p>OpenSearch, OData and STAC catalog APIs all use the same backend database.
+Sentinel Hub catalog API contains a subset of the collections, hence it works only for the ones that have been imported to Sentinel Hub,
+Therefore there is no first updated one.
+    </p>
+</details>
+
+<details>
+  <summary>What is the limitation of the number of requests that I can do at the time?
+  </summary>
+    <p>For detailed information about the limits, we recommend referring to the Service Description and Evolution document available on our documentation portal. You can find the document at <a href= "https://documentation.dataspace.copernicus.eu/Roadmap.html" target="_blank">https://documentation.dataspace.copernicus.eu/Roadmap.html</a>. The quotas information can be found in Annex B.
+    </p>
+</details>
+
+<details>
+  <summary>Can I connect directly to the S3 bucket using AWS S3 commands with the S3 keys provided or do I have to use "s3cmd" to download images?
+  </summary>
+    <p>Yes, you can connect to S3 bucket using AWS S3 connection. However some functionality may not be supported. It is recommended to use the 's3cmd' command to download products.
+    </p>
+</details>
+
+<details>
+  <summary>Do you have to authenticate for requesting through OpenSearch API?
+  </summary>
+    <p>There's no need to use any user or authentication when you want to search. User authentication is required for downloading products.
+    </p>
+</details>
+
+<details>
+  <summary>Can we use the Sentinel Hub bucket and fetch the products based on the id we fetched from OpenSearch API?
+  </summary>
+    <p>You can use Sentinel Hub bucket in addition to some programming tools by providing product ID obtained using OpenSearch API or OData of the Copernicus Dataspace Ecosystem.
+    </p>
+</details>
+
+<details>
+  <summary>What is the benefit of fetching imagery from Copernicus Dataspace S3 bucket?
+  </summary>
+    <p>Downloading products via S3 is faster as it delivers products as an .zip archive, skipping the need of zipper.
+    </p>
+</details>
+
+<details>
+  <summary>On which region resides the Copernicus Dataspace S3 bucket?
+  </summary>
+    <p>Repo is located in Warsaw/Poland. 
+    </p>
+</details>
+
+<details>
+  <summary>How can we search for the product in S3 bucket?
+  </summary>
+    <p>Searching via ID or product name in the OpenSearch or OData will give the S3 path to the product in response.
+    </p>
 </details>
 
 ## Documentation
