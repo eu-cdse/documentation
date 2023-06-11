@@ -766,8 +766,9 @@ Note
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>      <span class="st">"SENTINEL2_L2A"</span>,</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>      spatial_extent<span class="op">=</span>{<span class="st">"west"</span>: <span class="fl">5.14</span>, <span class="st">"south"</span>: <span class="fl">51.17</span>, <span class="st">"east"</span>: <span class="fl">5.17</span>, <span class="st">"north"</span>: <span class="fl">51.19</span>},</span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>      temporal_extent <span class="op">=</span> [<span class="st">"2021-02-01"</span>, <span class="st">"2021-04-30"</span>],</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>      bands<span class="op">=</span>[<span class="st">"B02"</span>, <span class="st">"B04"</span>, <span class="st">"B08"</span>]</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>      )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>      bands<span class="op">=</span>[<span class="st">"B02"</span>, <span class="st">"B04"</span>, <span class="st">"B08"</span>],</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>      max_cloud_cover<span class="op">=</span><span class="dv">85</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>      )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>This results in a <a href="https://open-eo.github.io/openeo-python-client/api.html#openeo.rest.datacube.DataCube" target="_blank"><code>Datacube</code> object</a> containing the “SENTINEL2_L2A” data restricted to the given spatial extent, the given temporal extend and the given bands .</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
@@ -858,39 +859,40 @@ Tip
 <span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>      <span class="st">"SENTINEL2_L2A"</span>,</span>
 <span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>      spatial_extent<span class="op">=</span>{<span class="st">"west"</span>: <span class="fl">5.14</span>, <span class="st">"south"</span>: <span class="fl">51.17</span>, <span class="st">"east"</span>: <span class="fl">5.17</span>, <span class="st">"north"</span>: <span class="fl">51.19</span>},</span>
 <span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>      temporal_extent <span class="op">=</span> [<span class="st">"2021-02-01"</span>, <span class="st">"2021-04-30"</span>],</span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>      bands<span class="op">=</span>[<span class="st">"B02"</span>, <span class="st">"B04"</span>, <span class="st">"B08"</span>]</span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>      )</span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="co"># By filtering as early as possible (directly in load_collection() in this case), </span></span>
-<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a><span class="co"># we make sure the back-end only loads the data we are interested in and avoid incurring unneeded costs.</span></span>
-<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>      bands<span class="op">=</span>[<span class="st">"B02"</span>, <span class="st">"B04"</span>, <span class="st">"B08"</span>],</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>      max_cloud_cover<span class="op">=</span><span class="dv">85</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a><span class="co"># By filtering as early as possible (directly in load_collection() in this case), </span></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a><span class="co"># we make sure the back-end only loads the data we are interested in and avoid incurring unneeded costs.</span></span>
 <span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a><span class="co">#From this data cube, we can now select the individual bands with the DataCube.band() method and rescale the digital number values to physical reflectances:</span></span>
-<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>blue <span class="op">=</span> sentinel2_cube.band(<span class="st">"B02"</span>) <span class="op">*</span> <span class="fl">0.0001</span></span>
-<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>red <span class="op">=</span> sentinel2_cube.band(<span class="st">"B04"</span>) <span class="op">*</span> <span class="fl">0.0001</span></span>
-<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>nir <span class="op">=</span> sentinel2_cube.band(<span class="st">"B08"</span>) <span class="op">*</span> <span class="fl">0.0001</span></span>
-<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a><span class="co">#From this data cube, we can now select the individual bands with the DataCube.band() method and rescale the digital number values to physical reflectances:</span></span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>blue <span class="op">=</span> sentinel2_cube.band(<span class="st">"B02"</span>) <span class="op">*</span> <span class="fl">0.0001</span></span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>red <span class="op">=</span> sentinel2_cube.band(<span class="st">"B04"</span>) <span class="op">*</span> <span class="fl">0.0001</span></span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>nir <span class="op">=</span> sentinel2_cube.band(<span class="st">"B08"</span>) <span class="op">*</span> <span class="fl">0.0001</span></span>
 <span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a><span class="co"># We now want to compute the enhanced vegetation index and can do that directly with these band variables:</span></span>
-<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>evi_cube <span class="op">=</span> <span class="fl">2.5</span> <span class="op">*</span> (nir <span class="op">-</span> red) <span class="op">/</span> (nir <span class="op">+</span> <span class="fl">6.0</span> <span class="op">*</span> red <span class="op">-</span> <span class="fl">7.5</span> <span class="op">*</span> blue <span class="op">+</span> <span class="fl">1.0</span>)</span>
-<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a><span class="co"># Now we can use the compact “band math” feature again to build a binary mask with a simple comparison operation:</span></span>
-<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a><span class="co"># Select the "SCL" band from the data cube</span></span>
-<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a>scl_band <span class="op">=</span> s2_scl.band(<span class="st">"SCL"</span>)</span>
-<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a><span class="co"># Build mask to mask out everything but class 4 (vegetation)</span></span>
-<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a>mask <span class="op">=</span> (scl_band <span class="op">!=</span> <span class="dv">4</span>)</span>
-<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a><span class="co"># Before we can apply this mask to the EVI cube we have to resample it, as the “SCL” layer has a “ground sample distance” of 20 meter, while it is 10 meter for the “B02”, “B04” and “B08” bands. We can easily do the resampling by referring directly to the EVI cube.</span></span>
-<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a>mask_resampled <span class="op">=</span> mask.resample_cube_spatial(evi_cube)</span>
-<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply the mask to the `evi_cube`</span></span>
-<span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a>evi_cube_masked <span class="op">=</span> evi_cube.mask(mask_resampled)</span>
-<span id="cb10-40"><a href="#cb10-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-41"><a href="#cb10-41" aria-hidden="true" tabindex="-1"></a><span class="co"># Because GeoTIFF does not support a temporal dimension, we first eliminate it by taking the temporal maximum value for each pixel:</span></span>
-<span id="cb10-42"><a href="#cb10-42" aria-hidden="true" tabindex="-1"></a>evi_composite <span class="op">=</span> evi_cube.max_time()</span>
-<span id="cb10-43"><a href="#cb10-43" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-44"><a href="#cb10-44" aria-hidden="true" tabindex="-1"></a><span class="co"># Now we can download this to a local file:</span></span>
-<span id="cb10-45"><a href="#cb10-45" aria-hidden="true" tabindex="-1"></a>evi_composite.download(<span class="st">"evi-composite.tiff"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a><span class="co"># We now want to compute the enhanced vegetation index and can do that directly with these band variables:</span></span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>evi_cube <span class="op">=</span> <span class="fl">2.5</span> <span class="op">*</span> (nir <span class="op">-</span> red) <span class="op">/</span> (nir <span class="op">+</span> <span class="fl">6.0</span> <span class="op">*</span> red <span class="op">-</span> <span class="fl">7.5</span> <span class="op">*</span> blue <span class="op">+</span> <span class="fl">1.0</span>)</span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a><span class="co"># Now we can use the compact “band math” feature again to build a binary mask with a simple comparison operation:</span></span>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Select the "SCL" band from the data cube</span></span>
+<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a>scl_band <span class="op">=</span> s2_scl.band(<span class="st">"SCL"</span>)</span>
+<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a><span class="co"># Build mask to mask out everything but class 4 (vegetation)</span></span>
+<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a>mask <span class="op">=</span> (scl_band <span class="op">!=</span> <span class="dv">4</span>)</span>
+<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a><span class="co"># Before we can apply this mask to the EVI cube we have to resample it, as the “SCL” layer has a “ground sample distance” of 20 meter, while it is 10 meter for the “B02”, “B04” and “B08” bands. We can easily do the resampling by referring directly to the EVI cube.</span></span>
+<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a>mask_resampled <span class="op">=</span> mask.resample_cube_spatial(evi_cube)</span>
+<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply the mask to the `evi_cube`</span></span>
+<span id="cb10-40"><a href="#cb10-40" aria-hidden="true" tabindex="-1"></a>evi_cube_masked <span class="op">=</span> evi_cube.mask(mask_resampled)</span>
+<span id="cb10-41"><a href="#cb10-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-42"><a href="#cb10-42" aria-hidden="true" tabindex="-1"></a><span class="co"># Because GeoTIFF does not support a temporal dimension, we first eliminate it by taking the temporal maximum value for each pixel:</span></span>
+<span id="cb10-43"><a href="#cb10-43" aria-hidden="true" tabindex="-1"></a>evi_composite <span class="op">=</span> evi_cube.max_time()</span>
+<span id="cb10-44"><a href="#cb10-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-45"><a href="#cb10-45" aria-hidden="true" tabindex="-1"></a><span class="co"># Now we can download this to a local file:</span></span>
+<span id="cb10-46"><a href="#cb10-46" aria-hidden="true" tabindex="-1"></a>evi_composite.download(<span class="st">"evi-composite.tiff"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Now, you can inspect the result for the EVI map.</p>
 <p><img src="../_images/evi-masked-composite.png" class="img-fluid"></p>
 </section>
