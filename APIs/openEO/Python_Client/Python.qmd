@@ -1,0 +1,315 @@
+---
+title: "Getting started with Python client"
+format:
+  html:
+    code-fold: false
+    
+jupyter: python3
+---
+
+This Getting Started guide will give you just a simple overview of the capabilities of the openEO Python client library.
+More in-depth information can be found in its [official documentation](https://open-eo.github.io/openeo-python-client/){target="_blank"}.
+
+## Installation
+
+The openEO Python client library is available on [PyPI](https://pypi.org/project/openeo/){target="_blank"}
+and can easily be installed with a tool like `pip`, for example:
+
+```{bash}
+pip install openeo
+
+```
+To upgrade the package to the latest release:
+
+
+```{bash}
+
+pip install --upgrade openeo
+
+```
+
+The client library is also available on [Conda Forge](https://anaconda.org/conda-forge/openeo){target="_blank"} and can be easily installed in a conda environment, for example:
+
+```{bash}
+
+conda install -c conda-forge openeo
+
+```
+
+It's recommended to work in a virtual environment of some kind (`venv`, `conda`, ...),
+containing Python 3.8 or higher.
+
+::: {.callout-tip collapse="true"} 
+
+For more details, alternative installation procedures or troubleshooting tips:
+see the [official openEO package installation documentation](https://open-eo.github.io/openeo-python-client/installation.html){target="_blank"}.
+
+:::
+
+
+## Exploring a back-end
+
+For this tutorial we will use the openEO instance of Copernicus Data Space Ecosystem, which is available at `https://openeo.dataspace.copernicus.eu`.
+
+First we need to establish a connection to the back-end. 
+
+```python
+
+import openeo
+
+connection = openeo.connect("openeo.dataspace.copernicus.eu")
+
+```
+
+
+The [`Connection` object](https://open-eo.github.io/openeo-python-client/api.html#module-openeo.rest.connection){target="_blank"}
+is your central gateway to
+- list data collections, available processes, file formats and other capabilities of the back-end
+- start building your openEO algorithm from the desired data on the back-end
+- execute and monitor (batch) jobs on the back-end
+- etc.
+
+
+### Collections
+
+The EO data available at a back-end is organised in so-called collections.
+For example, a back-end might provide fundamental satellite collections like "Sentinel 1" or "Sentinel 2",
+or preprocessed collections like "NDVI".
+Collections are used as input data for your openEO jobs.
+
+::: {.callout-note}
+
+More information on how openEO "collections" relate to terminology used in other systems can be found in
+([the openEO glossary](../Glossary.qmd#eo-data-collections){target="_blank"}).
+
+:::
+
+If necessary, a more detailed metadata listing for a given collection can be obtained with
+[`describe_collection`](https://open-eo.github.io/openeo-python-client/api.html#openeo.rest.connection.Connection.describe_collection){target="_blank"}.
+
+
+### Processes
+
+Processes in openEO are operations that can be applied on (EO) data
+(e.g. calculate the mean of an array, or mask out observations outside a given polygon).
+The output of one process can be used as the input of another process,
+and by doing so, multiple processes can be connected that way in a larger "process graph":
+a new (user-defined) processes that implements a certain algorithm.
+
+::: {.callout-note}
+
+Check [the openEO glossary](../Glossary.qmd)
+for more details on pre-defined, user-defined processes and process graphs.
+
+:::
+
+For other graphical overviews of the openEO processes, there is an [online documentation](https://docs.openeo.cloud/processes/){target="_blank"} for general process descriptions and the [openEO Hub](https://hub.openeo.org/) for back-end specific process descriptions. 
+
+## Authentication 
+
+In the code snippets above we did not need to log in
+since we just queried publicly available back-end information.
+However, to run non-trivial processing queries one has to authenticate
+so that permissions, resource usage, etc. can be managed properly.
+
+
+A detailed description of why and how to use the authentication methods is on the [official documentation](https://open-eo.github.io/openeo-python-client/auth.html#authentication-and-account-management){target="_blank"}.
+
+
+To authenticate your account on the backend of the Copernicus Data Space Ecosystem, it is necessary for you to complete the registration process. Once registered, you will be authenticated for executing processes.
+
+The following code snippet shows how to log in via OIDC authentication:
+
+```python
+print("Authenticate with OIDC authentication")
+connection.authenticate_oidc()
+```
+The method is used to authenticate yourself on the back-end authentication system. 
+Calling this method with either will print a URL to visit, that opens your system web browser where you can use your Copernicus Data Space Ecosystem credentials, or when there are refresh tokens, these will be used directly.
+After that the website will give you the instructions to go back to the python client, where your connection has logged your account in. 
+This means that every call that comes after that via the `connection` variable is executed by your user account.
+
+
+## Working with Datacube
+
+Now that we know how to discover the capabilities of the back-end and how to authenticate, let's do some real work and process some EO data in a batch job. We'll build the desired algorithm by working on so-called "Datacubes", which is the central concept in openEO to represent EO data.
+
+
+### Creating a Datacube
+
+The first step is loading the desired slice of a data collection
+with [`Connection.load_collection`](https://open-eo.github.io/openeo-python-client/api.html#openeo.rest.connection.Connection.load_collection){target="_blank"}:
+
+```python
+datacube = connection.load_collection(
+      "SENTINEL2_L2A",
+      spatial_extent={"west": 5.14, "south": 51.17, "east": 5.17, "north": 51.19},
+      temporal_extent = ["2021-02-01", "2021-04-30"],
+      bands=["B02", "B04", "B08"],
+      max_cloud_cover=85
+      )
+```
+
+This results in a [`Datacube` object](https://open-eo.github.io/openeo-python-client/api.html#openeo.rest.datacube.DataCube){target="_blank"} containing the "SENTINEL2_L2A" data restricted to the given spatial extent, the given temporal extend and the given bands .
+
+::: {.callout-tip collapse="true"}
+
+You can also filter the datacube step by step or at a later stage by using the following filter methods:
+
+```python
+datacube = datacube.filter_bbox(west=5.14, south=51.17, east=5.17, north=51.19)
+datacube = datacube.filter_temporal(start_date="2021-02-01", end_date="2021-04-30")
+datacube = datacube.filter_bands(["B02", "B04", "B08"])
+```
+
+Still, it is recommended to always use the filters directly in [load_collection](https://open-eo.github.io/openeo-python-client/api.html#openeo.rest.connection.Connection.load_collection){target="_blank"}
+to avoid loading too much data upfront.
+
+:::
+
+
+### Applying processes
+
+By applying an openEO process on a datacube, we create a new datacube object that represents the manipulated data.
+The standard way to do this with the Python client is to call the appropriate [`Datacube` object](https://open-eo.github.io/openeo-python-client/api.html#openeo.rest.datacube.DataCube){target="_blank"} method.
+The most common or popular openEO processes have a dedicated `Datacube` method (e.g. `mask`, `aggregate_spatial`, `filter_bbox`, ...). 
+Other processes without a dedicated method can still be applied in a generic way.
+An on top of that, there are also some convenience methods that implement
+openEO processes is a compact, Pythonic interface.
+
+For example, the [`min_time`](https://open-eo.github.io/openeo-python-client/api.html#openeo.rest.datacube.DataCube.min_time){target="_blank"} method
+implements a `reduce_dimension` process along the temporal dimension, using the `max` process as reducer function:
+
+```python
+datacube = datacube.max_time()
+```
+
+This creates a new datacube (we overwrite the existing variable),
+where the time dimension is eliminated and for each pixel we just have 
+the minimum value of the corresponding timeseries in the original datacube.
+
+See the [Python client `Datacube` API](https://open-eo.github.io/openeo-python-client/api.html#openeo.rest.datacube.DataCube){target="_blank"} for a more complete listing of methods that implement openEO processes.
+
+
+::: {.callout-note}
+
+Still unsure on how to make use of processes with the Python client? 
+Visit the [official documentation on working with processes](https://open-eo.github.io/openeo-python-client/processes.html#working-with-processes){target="_blank"}.
+
+:::
+
+
+## Execution
+
+It's important to note that all the datacube processes we applied up to this point
+are not actually executed yet, neither locally nor remotely on the back-end.
+We just built an abstract representation of the algorithm (input data and processing chain), 
+encapsulated in a local `Datacube` object (e.g. the `result` variable above).
+To trigger an actual execution (on the back-end) we have to explicitly send this representation 
+to the back-end.
+
+
+### Batch job execution
+
+Most of the simple, basic openEO usage examples show synchronous downloading of results. This only works properly if the processing doesn’t take too long and is focused on a smaller area of interest. However, you have to use batch jobs for the heavier work (larger regions of interest, larger time series, more intensive processing). 
+
+```python
+# While not necessary, it is also recommended to give your batch job a descriptive title so it’s easier to identify in your job listing.
+job = cube.execute_batch()
+```
+
+:::{callout-note}
+
+This documentation mainly discusses how to programmatically create and interact with batch job using the openEO Python client library. The openEO API however does not enforce usage of the same tool for each step in the batch job life cycle.
+
+For example: if you prefer a graphical, web-based interactive environment to manage and monitor your batch jobs, feel free to switch to an openEO web editor like [openeo.dataspace.copernicus.eu/](https://openeo.dataspace.copernicus.eu/) at any time. After logging in with the same account you use in your Python scripts, you should see your batch jobs listed under the “Data Processing” tab. More information on using openEO web editor is discussed [here](../../../Applications/WebEditor.qmd).
+:::
+
+::: {.callout-tip collapse="true"}
+
+The official openEO Python Client documentation has more information
+on [batch job basics](https://open-eo.github.io/openeo-python-client/basics.html#managing-jobs-in-openeo) {target="_blank"}
+or [more detailed batch job (result) management](https://open-eo.github.io/openeo-python-client/batch_jobs.html){target="_blank"}
+
+:::
+
+
+## Full Example
+
+In this chapter we will show a full example of an earth observation use case using the Python client.
+
+
+A common task in earth observation is to apply a formula to a number of spectral bands in order to compute an 'index', such as NDVI, NDWI, EVI, ... In this tutorial we'll go through a couple of steps to extract EVI (enhanced vegetation index) values and timeseries
+
+
+
+
+```python
+import openeo
+
+# First, we connect to the back-end and authenticate. 
+con = openeo.connect("openeo.dataspace.copernicus.eu")
+con.authenticate_oidc()
+
+# Now that we are connected, we can initialize our datacube object with the area of interest 
+# and the time range of interest using Sentinel 1 data.
+datacube = connection.load_collection(
+      "SENTINEL2_L2A",
+      spatial_extent={"west": 5.14, "south": 51.17, "east": 5.17, "north": 51.19},
+      temporal_extent = ["2021-02-01", "2021-04-30"],
+      bands=["B02", "B04", "B08"],
+      max_cloud_cover=85
+      )
+
+# By filtering as early as possible (directly in load_collection() in this case), 
+# we make sure the back-end only loads the data we are interested in and avoid incurring unneeded costs.
+
+
+#From this data cube, we can now select the individual bands with the DataCube.band() method and rescale the digital number values to physical reflectances:
+blue = sentinel2_cube.band("B02") * 0.0001
+red = sentinel2_cube.band("B04") * 0.0001
+nir = sentinel2_cube.band("B08") * 0.0001
+
+
+# We now want to compute the enhanced vegetation index and can do that directly with these band variables:
+evi_cube = 2.5 * (nir - red) / (nir + 6.0 * red - 7.5 * blue + 1.0)
+
+# Now we can use the compact “band math” feature again to build a binary mask with a simple comparison operation:
+# Select the "SCL" band from the data cube
+scl_band = s2_scl.band("SCL")
+# Build mask to mask out everything but class 4 (vegetation)
+mask = (scl_band != 4)
+
+# Before we can apply this mask to the EVI cube we have to resample it, as the “SCL” layer has a “ground sample distance” of 20 meter, while it is 10 meter for the “B02”, “B04” and “B08” bands. We can easily do the resampling by referring directly to the EVI cube.
+mask_resampled = mask.resample_cube_spatial(evi_cube)
+
+# Apply the mask to the `evi_cube`
+evi_cube_masked = evi_cube.mask(mask_resampled)
+
+# Because GeoTIFF does not support a temporal dimension, we first eliminate it by taking the temporal maximum value for each pixel:
+evi_composite = evi_cube.max_time()
+
+# Now we can download this to a local file:
+evi_composite.download("evi-composite.tiff")
+```
+Now, you can inspect the result for the EVI map. 
+
+![](../_images/evi-masked-composite.png)
+
+
+## User Defined Functions
+
+If your use case can not be accomplished with the default processes of openEO, you can define a [user defined function](../Glossary.qmd#user-defined-function-udf).
+Therefore, you can create a Python function that will be executed at the back-end and functions as a process in your process graph.
+
+Detailed information about Python UDFs can be found in the [official documentation](https://open-eo.github.io/openeo-python-client/udf.html){target="_blank"} as well as examples in the [Python client repository](https://github.com/Open-EO/openeo-python-client/tree/master/examples/udf){target="_blank"}. 
+
+
+## Useful links
+
+Additional information and resources about the openEO Python Client Library:
+
+* [Example scripts](https://github.com/Open-EO/openeo-python-client/tree/master/examples){target="_blank"}
+* [Example Jupyter Notebooks](https://github.com/eu-cdse/notebook-samples/tree/main/openeo){target="_blank"}
+* [Official openEO Python Client Library Documentation](https://open-eo.github.io/openeo-python-client/){target="_blank"}
+* [Repository on GitHub](https://github.com/Open-EO/openeo-python-client){target="_blank"}
