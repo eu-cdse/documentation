@@ -15,7 +15,8 @@ Once the PR is reviewed and merged, the hotfix changes are automatically merged 
 
 ## Other changes
 All other changes are made via a PR on the `staging` branch.
-After reviewing and merging the PR, the changes are automatically pushed to the `staging`
+After reviewing and merging the PR, the changes are automatically pushed to the `staging`. 
+For more details [click here](EU-CDSE_Documentation_Guidelines_v0.pdf)
 
 ## PR commits
 Commits within PR are automatically built and rendered to a custom link on the GitHub Pages. 
