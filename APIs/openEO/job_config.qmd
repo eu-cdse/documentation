@@ -1,0 +1,79 @@
+## Validity of signed URLs in batch job results
+
+Batch job results are accessible to the user via signed URLs stored in the result assets. Within the platform,
+these URLs have a validity (expiry time) of 7 days. Within these 7 days, the results of a batch job can be accessed
+by any person with the URL. Each time a user requests the results from the job endpoint (`GET /jobs/{job_id}/results`),
+a freshly signed URL (valid for 7 days) is created for the result assets.
+
+## Customizing batch job resources
+
+Jobs running on the cloud get assigned a default amount of CPU and memory resources. This
+may not always be enough for your job, for instance when using UDF's. Also for very large jobs, you may want
+to tune your resource settings to optimize for cost.
+
+The example below shows how to start a job with all options set to their default values. It is important to highlight
+that default settings are subject to change by the backend whenever needed.
+
+```python
+job_options = {
+        "executor-memory": "2G",
+        "executor-memoryOverhead": "1800m",
+        "executor-cores": 1,
+        "task-cpus": 1,
+        "max-executors": "20",
+        "driver-memory": "2G",
+        "driver-memoryOverhead": "1G",
+        "driver-cores": 1,
+        "udf-dependency-archives":[],
+        "logging-threshold": "info"
+    }
+cube.execute_batch(job_options=job_options)
+```
+
+This is a short overview of the various options:
+
+- executor-memory: memory assigned to your workers, for the JVM that executes most predefined processes
+- executor-memoryOverhead: memory assigned on top of the JVM, for instance to run UDF's
+- executor-cores: number of CPUs per worker (executor). The number of parallel tasks is executor-cores/task-cpus
+- task-cpus: CPUs assigned to a single task. UDF's using libraries like Tensorflow can benefit from further parallellization on the level of individual tasks.
+- executor-request-cores: this settings is only relevant for Kubernetes based backends, allows to overcommit CPU
+- max-executors: the maximum number of workers assigned to your job. Maximum number of parallel tasks is `max-executors*executor-cores/task-cpus`. Increasing this can inflate your costs, while not necessarily improving performance!
+- driver-memory: memory assigned to the spark 'driver' JVM that controls execution of your batch job
+- driver-memoryOverhead: memory assigned to the spark 'driver' on top of JVM memory, for Python processes.
+- logging-threshold: the threshold for logging, set to 'info' by default, can be set to 'debug' to generate much more logging
+- udf-dependency-archives: an array of urls pointing to zip files with extra dependencies, see below
+
+### Custom UDF dependencies
+
+User defined functions often depend on (specific versions of) libraries or require small auxiliary data files. The UDF specifications do not yet
+define a standardized manner to provide this other than having the ability of selecting from a predefined set of 'runtimes' that than again have a predefined configuration.
+
+We solve this via the udf-dependency-archives job option, that allows to specify a list of zip files that should be included in the working directory of the UDF.
+
+This enables the following example workflow for Python UDF's:
+
+1. Create a Python 'virtualenv' with your dependencies
+2. Based on the 'site-packages' directory of the virtualenv, create a zip file with all dependencies
+3. Upload the zip to a url that can be reached by the backend.
+4. In job options, add  `"udf-dependency-archives": ['https://yourhost.com/myEnv.zip#tmp/mydir'] ` The `#tmp/mydir` suffix indicates where you want to unzip your files, relative to the working directory.
+5. In your UDF, before trying to import libraries, add your directory to the Python path: `sys.path.insert(0, 'tmp/mydir')`
+6. Now your libraries should be loaded before anything else!
+
+Known limitations:
+
+- Your dependencies need to be compatible with the Python version of the backend, currently 3.8.
+- Your dependencies need to be compatible with the OS of the backend, currently AlmaLinux 8.
+- The backend has a limited set of Python dependences that are preloaded, and cannot be changed, such as numpy.
+
+
+### Learning more
+
+The topic of resource optimization is a complex one, and here we just give a short summary. The goal of openEO is to hide most of these
+details from the user, but we realize that advanced users sometimes want to have a bit more insight, so in the spirit of being open, we give some hints.
+
+To learn more about these options, we point to the [piece of code](https://github.com/Open-EO/openeo-geopyspark-driver/blob/faf5d5364a82e870e42efd2a8aee9742f305da9f/openeogeotrellis/backend.py#L1213) that handles this.
+
+
+
+Most memory related options are translated to Apache Spark configuration settings, which are documented [here](https://spark.apache.org/docs/3.3.1/configuration.html#application-properties).
+
