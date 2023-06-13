@@ -94,10 +94,10 @@ def togglescript():
 ```{python}
 # include detail block
 
-def detailblock(ID,xy,time,table,link_block):
+def detailblock(ID,xy,time,table,link_block,license_button):
     
     if any(val for val in (xy, time, table, link_block) if not val.isspace() and val != ""):
-        bandinfo = f"""<button onclick="toggleContent('{ID}')" class="expand-collapse">Further details about the data collection</button><div class="expand-content" id="{ID}" style="display:none;"><div class="row" style="display: flex; justify-content: space-around"><div class="column">{xy}</div><div class="column">{time}</div></div><div>{table}</div><div>{link_block}</div></div>"""
+        bandinfo = f"""<button onclick="toggleContent('{ID}')" class="expand-collapse">Further details about the data collection</button><div class="expand-content" id="{ID}" style="display:none;"><div class="row" style="display: flex; justify-content: space-around"><div class="column">{xy}</div><div class="column">{time}</div></div><div>{table}</div><div>{license_button}</div><div>{link_block}</div></div>"""
     else:
         bandinfo = ""
     return bandinfo
@@ -218,6 +218,7 @@ def get_availablity(c):
     return table
 ```
 
+
 ```{python}
 # for loop to display the content
 text = ''
@@ -252,6 +253,11 @@ for c in meta:
         LevelID = ""
         About = ""
 
+    try:
+        license_type = c["license"]
+    except:
+        license_type = "" 
+
     # insert thumbnail
     thumb_url = get_thumbnail(c)
 
@@ -271,11 +277,19 @@ for c in meta:
     userguide = find_link(rel="about",title_contains="User")
     opensearch = find_link(rel="opensearch")
     databrowser = find_link(rel="browser",title_contains="Data-Browser")
+    license_url = databrowser = find_link(rel="license")
+    
 
     if userguide is not None:
         userguide = f"""[![User guide](https://img.shields.io/badge/-User_guide-77cc09)]({userguide}){{target='_blank'}}"""
     else:
         userguide = ""
+
+
+    if license_url is not None:
+        license_button = f"""<a href="{license_url}" target="_blank"><img src="https://img.shields.io/badge/License-{license_type}-0A4393" /></a>"""
+    else:
+        license_button = ""
 
 
     if databrowser is not None:
@@ -318,7 +332,8 @@ for c in meta:
 
 {offer}
 
-{detailblock(collectionID,spatial,temporal,table,link_block)}
+
+{detailblock(collectionID,spatial,temporal,table,link_block,license_button )}
 
 
 """
