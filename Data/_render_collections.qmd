@@ -94,10 +94,10 @@ def togglescript():
 ```{python}
 # include detail block
 
-def detailblock(ID,xy,time,table,link_block,license_button):
+def detailblock(ID,xy,time,table,link_block,license_button,cite):
     
     if any(val for val in (xy, time, table, link_block) if not val.isspace() and val != ""):
-        bandinfo = f"""<button onclick="toggleContent('{ID}')" class="expand-collapse">Further details about the data collection</button><div class="expand-content" id="{ID}" style="display:none;"><div class="row" style="display: flex; justify-content: space-around"><div class="column">{xy}</div><div class="column">{time}</div></div><div>{table}</div><div>{license_button}</div><div>{link_block}</div></div>"""
+        bandinfo = f"""<button onclick="toggleContent('{ID}')" class="expand-collapse">Further details about the data collection</button><div class="expand-content" id="{ID}" style="display:none;"><div class="row" style="display: flex; justify-content: space-around"><div class="column">{license_button}&nbsp;&nbsp;{cite}</div></div><div class="row" style="display: flex; justify-content: space-around"><div class="column">{xy}</div><div class="column">{time}</div></div><div>{table}</div><div>{link_block}</div></div>"""
     else:
         bandinfo = ""
     return bandinfo
@@ -258,6 +258,11 @@ for c in meta:
     except:
         license_type = "" 
 
+    try: 
+        sci_cite = c["sci:citation"]
+    except:
+        sci_cite = ""
+
     # insert thumbnail
     thumb_url = get_thumbnail(c)
 
@@ -277,7 +282,8 @@ for c in meta:
     userguide = find_link(rel="about",title_contains="User")
     opensearch = find_link(rel="opensearch")
     databrowser = find_link(rel="browser",title_contains="Data-Browser")
-    license_url = databrowser = find_link(rel="license")
+    license_url = find_link(rel="license")
+    cite = find_link(rel="cite-as")
     
 
     if userguide is not None:
@@ -285,9 +291,14 @@ for c in meta:
     else:
         userguide = ""
 
+    if cite is not None:
+        cite = f"""[!["Cite"](https://img.shields.io/badge/-Cite-77cc09)]({cite}){{target='_blank'}}"""
+    else:
+        cite = ""
+
 
     if license_url is not None:
-        license_button = f"""<a href="{license_url}" target="_blank"><img src="https://img.shields.io/badge/License-{license_type}-0A4393" /></a>"""
+        license_button = f"""<a href="{license_url}" target="_blank">{sci_cite}</a>"""
     else:
         license_button = ""
 
@@ -333,7 +344,7 @@ for c in meta:
 {offer}
 
 
-{detailblock(collectionID,spatial,temporal,table,link_block,license_button )}
+{detailblock(collectionID,spatial,temporal,table,link_block,license_button,cite )}
 
 
 """
