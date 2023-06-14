@@ -21,3 +21,10 @@ The openEO Web Editor is a web app that allows users to interact with an openEO 
 * Workflow Execution: Once User have defined their processing workflow and configured the parameters, User can execute the workflow using the Web Editor. 
 * Result Visualization: User can explore the output data on interactive maps, generate charts and graphs 
 * Job Management: The Web Editor allows you to monitor your processing jobs, view job histories, and access the generated results.
+
+
+
+## [Jupyter Hub](Applications/JupyterHub.qmd)
+
+Jupyter Hub is an open-source, online, interactive web application. It gives access to computational 
+environments and resources without burdening the users with installation and maintenance tasks. JupyterHub provides a multi-user environment for hosting JupyterLab or Jupyter Notebook instances. Therefore, registered Copernicus Data Space Users have access to JupyterLab and Jupyter Notebooks free of charge at a limited capacity of resources beneath. You can access them with the same Copernicus Data Space Ecosystem credentials.
