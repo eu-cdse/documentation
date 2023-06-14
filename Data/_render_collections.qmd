@@ -134,36 +134,66 @@ def get_extent(c):
 ```
 
 ```{python}
+from tabulate import tabulate
+
 def get_bandtable(c):
     tabletitle = "Spectral Bands"
-    try: 
+    try:
         band_num = len(c['summaries']['eo:bands'])
         t = []
-        for i in range(0,band_num):
+        headers = ["Band Name", "Common Name", "GSD(m)", "Center Wavelength(μm)"]
+        empty_columns = [True] * len(headers)  # Track empty columns
+        
+        for i in range(band_num):
+            band_data = c['summaries']['eo:bands'][i]
+            
             try:
-                band = c['summaries']['eo:bands'][i]['name'] 
+                band = band_data['name']
             except:
                 band = ""
+            
             try:
-                c_name = c['summaries']['eo:bands'][i]['common_name']
+                c_name = band_data['common_name']
             except:
                 c_name = ''
+            
             try:
-                b_gsd = c['summaries']['eo:bands'][i]['gsd']
+                b_gsd = band_data['gsd']
             except:
                 b_gsd = ''
+            
             try:
-                b_wavelength = c['summaries']['eo:bands'][i]['center_wavelength']
+                b_wavelength = band_data['center_wavelength']
             except:
                 b_wavelength = ''
-            t.append([band,c_name,b_gsd,b_wavelength])
-        table = tabulate(t,headers=["Band Name", "Common Name", "GSD(m)", "Center Wavelength(μm)"], tablefmt='html', floatfmt=".4f",stralign="center",numalign="center")
-        # Set the minimum width of each column to 100 pixels
-        table = table.replace("<table>", '<table class="table">')
-        table = f"""<h5>{tabletitle}</h5>{table}"""
+            
+            row = [band, c_name, b_gsd, b_wavelength]
+            t.append(row)
+            
+            # Check for empty columns
+            for j, value in enumerate(row):
+                if value:
+                    empty_columns[j] = False
+        
+        # Remove empty columns from headers and table rows
+        headers = [header for i, header in enumerate(headers) if not empty_columns[i]]
+        t = [[row[i] for i, value in enumerate(row) if not empty_columns[i]] for row in t]
+        
+        # Check if all columns are empty
+        if len(headers) == 0:
+            table = ""
+        else:
+            table = tabulate(t, headers=headers, tablefmt='html', floatfmt=".4f", stralign="center", numalign="center")
+            # Set the minimum width of each column to 100 pixels
+            table = table.replace("<table>", '<table class="table">')
+            table = f"""<h5>{tabletitle}</h5>{table}"""
     except:
-        table = " "
+        table = ""
+    
     return table
+
+
+
 ```
 
 ```{python}
