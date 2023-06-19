@@ -44,6 +44,7 @@ The data offer will gradually extend starting from January 2023 (an “*” indi
 |L0 (RAW) | packed | DAD | World | Oct-14 - Present | [Details](https://sentinels.copernicus.eu/web/sentinel/user-guides/sentinel-1-sar/product-types-processing-levels/level-0){target="_blank"}| Jan-23(*)|
 
 (*) temporary offer available until the target service offer becomes available in July 2023.
+
 (\*\*) “packed” means data are available in the original bundling (e.g. compressed zipping) 
 
 
@@ -122,7 +123,8 @@ The following changes were made during the conversion of original Sentinel-1 GRD
 gdal_translate -of COG -a_nodata 0 -co OVERVIEW_COUNT=6 -co BLOCKSIZE=1024 -co BIGTIFF=NO -co OVERVIEW_RESAMPLING=RMS -co COMPRESS=ZSTD -co NUM_THREADS=ALL_CPUS -mo GRD_ORIGINAL_HEADER_SIZE=<original_header_size> -mo GRD_ORIGINAL_FOOTER_SIZE=<original_footer_size> <input_tiff>.tiff <input_tiff>-cog.tiff 
 ```
 :::
-    More information about what these options mean can be found in the [GDAL official documentation](https://gdal.org/programs/gdal_translate.html){target='_blank'}. Note that the output filename has a suffix “-cog”, which indicates that the files were converted to COGs.
+    
+More information about what these options mean can be found in the [GDAL official documentation](https://gdal.org/programs/gdal_translate.html){target='_blank'}. Note that the output filename has a suffix “-cog”, which indicates that the files were converted to COGs.
 
 2.	A suffix “_COG” was added to the name of the product and a new CRC code was calculated. For example, the original product 
 
@@ -130,11 +132,11 @@ gdal_translate -of COG -a_nodata 0 -co OVERVIEW_COUNT=6 -co BLOCKSIZE=1024 -co B
 
     S1A_IW_GRDH_1SDV_20230206T165050_20230206T165115_047118_05A716_**74F9_COG**.safe.
 
-3.	Manifest file was adjusted so that it reflects these changes:
+3.	The manifest file was adjusted so that it reflects these changes:
 
-    a.	`safe:processing` element with a name="COG Conversion" was added. It contains metadata about the conversion and includes the name of the original product under `safe:resource` child element.
+    a.	`safe:processing` element with a name="COG Conversion" was added. It contains metadata about the conversion and includes the name of the original product under the `safe:resource` child element.
     
-    b.	`dataObject` elements, which describe the measurements files, have updated values for “size”, “href”, “checksum”.
+    b.	`dataObject` elements, which describe the measurements files, have updated values for “size”, “href”, and “checksum”.
 
 
 <!--|Product Type| File Description| Data Access Type | Spatial Extent | Temporal Extent | More Information | Available from |
