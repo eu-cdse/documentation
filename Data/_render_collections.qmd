@@ -12,7 +12,7 @@ meta = None
 with open("./collections.json") as f:
     meta = json.load(f)["collections"]
 
-meta = [ c for c in meta if mission in c["mission"] ]
+meta = [ c for c in meta if constellation in c["constellation"] ]
 
 ```
 
@@ -45,9 +45,13 @@ def thumbblock(src,userguide, opensearch, gsd,revisit_time, datatype):
 def necessary_links(c):
     stac = get_stac(c)
     wmts = get_wmts()
-    if stac:
+    if stac and wmts:
         link_block =f"""<h5>Useful Links</h5><li>{stac}</li><li>{wmts}</li>"""
-    else:
+    elif stac:
+        link_block =f"""<h5>Useful Links</h5><li>{stac}</li>"""
+    elif wmts:
+        link_block =f"""<h5>Useful Links</h5><li>{wmts}</li>"""
+    else:    
         link_block = ""
     return link_block
 ```
@@ -90,10 +94,10 @@ def togglescript():
 ```{python}
 # include detail block
 
-def detailblock(ID,xy,time,table,link_block):
+def detailblock(ID,xy,time,table,link_block,license_button,cite):
     
     if any(val for val in (xy, time, table, link_block) if not val.isspace() and val != ""):
-        bandinfo = f"""<button onclick="toggleContent('{ID}')" class="expand-collapse">Further details about the data collection</button><div class="expand-content" id="{ID}" style="display:none;"><div class="row" style="display: flex; justify-content: space-around"><div class="column">{xy}</div><div class="column">{time}</div></div><div>{table}</div><div>{link_block}</div></div>"""
+        bandinfo = f"""<button onclick="toggleContent('{ID}')" class="expand-collapse">Further details about the data collection</button><div class="expand-content" id="{ID}" style="display:none;"><div class="row" style="display: flex; justify-content: space-around"><div class="column">{license_button}&nbsp;&nbsp;{cite}</div></div><div class="row" style="display: flex; justify-content: space-around"><div class="column">{xy}</div><div class="column">{time}</div></div><div>{table}</div><div>{link_block}</div></div>"""
     else:
         bandinfo = ""
     return bandinfo
@@ -130,36 +134,66 @@ def get_extent(c):
 ```
 
 ```{python}
+from tabulate import tabulate
+
 def get_bandtable(c):
     tabletitle = "Spectral Bands"
-    try: 
+    try:
         band_num = len(c['summaries']['eo:bands'])
         t = []
-        for i in range(0,band_num):
+        headers = ["Band Name", "Common Name", "GSD(m)", "Center Wavelength(μm)"]
+        empty_columns = [True] * len(headers)  # Track empty columns
+        
+        for i in range(band_num):
+            band_data = c['summaries']['eo:bands'][i]
+            
             try:
-                band = c['summaries']['eo:bands'][i]['name'] 
+                band = band_data['name']
             except:
                 band = ""
+            
             try:
-                c_name = c['summaries']['eo:bands'][i]['common_name']
+                c_name = band_data['common_name']
             except:
                 c_name = ''
+            
             try:
-                b_gsd = c['summaries']['eo:bands'][i]['gsd']
+                b_gsd = band_data['gsd']
             except:
                 b_gsd = ''
+            
             try:
-                b_wavelength = c['summaries']['eo:bands'][i]['center_wavelength']
+                b_wavelength = band_data['center_wavelength']
             except:
                 b_wavelength = ''
-            t.append([band,c_name,b_gsd,b_wavelength])
-        table = tabulate(t,headers=["Band Name", "Common Name", "GSD(m)", "Center Wavelength(μm)"], tablefmt='html', floatfmt=".4f",stralign="center",numalign="center")
-        # Set the minimum width of each column to 100 pixels
-        table = table.replace("<table>", '<table class="table">')
-        table = f"""<h5>{tabletitle}</h5>{table}"""
+            
+            row = [band, c_name, b_gsd, b_wavelength]
+            t.append(row)
+            
+            # Check for empty columns
+            for j, value in enumerate(row):
+                if value:
+                    empty_columns[j] = False
+        
+        # Remove empty columns from headers and table rows
+        headers = [header for i, header in enumerate(headers) if not empty_columns[i]]
+        t = [[row[i] for i, value in enumerate(row) if not empty_columns[i]] for row in t]
+        
+        # Check if all columns are empty
+        if len(headers) == 0:
+            table = ""
+        else:
+            table = tabulate(t, headers=headers, tablefmt='html', floatfmt=".4f", stralign="center", numalign="center")
+            # Set the minimum width of each column to 100 pixels
+            table = table.replace("<table>", '<table class="table">')
+            table = f"""<h5>{tabletitle}</h5>{table}"""
     except:
-        table = " "
+        table = ""
+    
     return table
+
+
+
 ```
 
 ```{python}
@@ -214,6 +248,7 @@ def get_availablity(c):
     return table
 ```
 
+
 ```{python}
 # for loop to display the content
 text = ''
@@ -248,6 +283,16 @@ for c in meta:
         LevelID = ""
         About = ""
 
+    try:
+        license_type = c["license"]
+    except:
+        license_type = "" 
+
+    try: 
+        sci_cite = c["sci:citation"]
+    except:
+        sci_cite = ""
+
     # insert thumbnail
     thumb_url = get_thumbnail(c)
 
@@ -267,11 +312,28 @@ for c in meta:
     userguide = find_link(rel="about",title_contains="User")
     opensearch = find_link(rel="opensearch")
     databrowser = find_link(rel="browser",title_contains="Data-Browser")
+    license_url = find_link(rel="license")
+    cite = find_link(rel="cite-as")
+    
 
     if userguide is not None:
         userguide = f"""[![User guide](https://img.shields.io/badge/-User_guide-77cc09)]({userguide}){{target='_blank'}}"""
     else:
         userguide = ""
+
+    if cite is not None:
+        cite = f"""[!["Cite"](https://img.shields.io/badge/-Cite-77cc09)]({cite}){{target='_blank'}}"""
+    else:
+        cite = ""
+
+
+    if sci_cite is not None:
+        if license_url is not None and  license_url != "":
+            license_button = f"""<a href="{license_url}" target="_blank">{sci_cite}</a>"""
+        else:
+            license_button = f"""{sci_cite}"""
+    else:
+        license_button = ""
 
 
     if databrowser is not None:
@@ -314,7 +376,8 @@ for c in meta:
 
 {offer}
 
-{detailblock(collectionID,spatial,temporal,table,link_block)}
+
+{detailblock(collectionID,spatial,temporal,table,link_block,license_button,cite )}
 
 
 """
