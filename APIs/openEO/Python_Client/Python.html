@@ -731,16 +731,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="installation" class="level2">
 <h2 class="anchored" data-anchor-id="installation">Installation</h2>
 <p>The openEO Python client library is available on <a href="https://pypi.org/project/openeo/" target="_blank">PyPI</a> and can easily be installed with a tool like <code>pip</code>, for example:</p>
-<pre class="{bash}"><code>pip install openeo
-</code></pre>
+<pre class="{bash}"><code>pip install openeo</code></pre>
 <p>To upgrade the package to the latest release:</p>
-<pre class="{bash}"><code>
-pip install --upgrade openeo
-</code></pre>
+<pre class="{bash}"><code>pip install --upgrade openeo</code></pre>
 <p>The client library is also available on <a href="https://anaconda.org/conda-forge/openeo" target="_blank">Conda Forge</a> and can be easily installed in a conda environment, for example:</p>
-<pre class="{bash}"><code>
-conda install -c conda-forge openeo
-</code></pre>
+<pre class="{bash}"><code>conda install -c conda-forge openeo</code></pre>
 <p>It’s recommended to work in a virtual environment of some kind (<code>venv</code>, <code>conda</code>, …), containing Python 3.8 or higher.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
@@ -763,11 +758,16 @@ Tip
 <h2 class="anchored" data-anchor-id="exploring-a-back-end">Exploring a back-end</h2>
 <p>For this tutorial we will use the openEO instance of Copernicus Data Space Ecosystem, which is available at <code>https://openeo.dataspace.copernicus.eu</code>.</p>
 <p>First we need to establish a connection to the back-end.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> openeo</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>connection <span class="op">=</span> openeo.<span class="ex">connect</span>(<span class="st">"openeo.dataspace.copernicus.eu"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>The <a href="https://open-eo.github.io/openeo-python-client/api.html#module-openeo.rest.connection" target="_blank"><code>Connection</code> object</a> is your central gateway to - list data collections, available processes, file formats and other capabilities of the back-end - start building your openEO algorithm from the desired data on the back-end - execute and monitor (batch) jobs on the back-end - etc.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> openeo</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>connection <span class="op">=</span> openeo.<span class="ex">connect</span>(<span class="st">"openeo.dataspace.copernicus.eu"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The <a href="https://open-eo.github.io/openeo-python-client/api.html#module-openeo.rest.connection" target="_blank"><code>Connection</code> object</a> is your central gateway to</p>
+<ul>
+<li>list data collections, available processes, file formats and other capabilities of the back-end</li>
+<li>start building your openEO algorithm from the desired data on the back-end</li>
+<li>execute and monitor (batch) jobs on the back-end</li>
+<li>etc.</li>
+</ul>
 <section id="collections" class="level3">
 <h3 class="anchored" data-anchor-id="collections">Collections</h3>
 <p>The EO data available at a back-end is organised in so-called collections. For example, a back-end might provide fundamental satellite collections like “Sentinel 1” or “Sentinel 2”, or preprocessed collections like “NDVI”. Collections are used as input data for your openEO jobs.</p>
@@ -781,14 +781,15 @@ Note
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>More information on how openEO “collections” relate to terminology used in other systems can be found in (<a href="../../../APIs/openEO/Glossary.html#eo-data-collections" target="_blank">the openEO glossary</a>).</p>
+<p>More information on how openEO “collections” relate to terminology used in other systems can be found in <a href="../../../APIs/openEO/Glossary.html#eo-data-collections" target="_blank">the openEO glossary</a>.</p>
 </div>
 </div>
-<p>If necessary, a more detailed metadata listing for a given collection can be obtained with <a href="https://open-eo.github.io/openeo-python-client/api.html#openeo.rest.connection.Connection.describe_collection" target="_blank"><code>describe_collection</code></a>.</p>
+<p>If necessary, a more detailed metadata listing for a given collection can be obtained with <a href="https://open-eo.github.io/openeo-python-client/api.html#openeo.rest.connection.Connection.describe_collection" target="_blank"><code>connection.describe_collection()</code></a>.</p>
 </section>
 <section id="processes" class="level3">
 <h3 class="anchored" data-anchor-id="processes">Processes</h3>
-<p>Processes in openEO are operations that can be applied on (EO) data (e.g.&nbsp;calculate the mean of an array, or mask out observations outside a given polygon). The output of one process can be used as the input of another process, and by doing so, multiple processes can be connected that way in a larger “process graph”: a new (user-defined) processes that implements a certain algorithm.</p>
+<p>Processes in openEO are operations that can be applied on (EO) data. For example: calculate the mean of an array, mask out pixels outside a given polygon or calculate spatial aggregations.</p>
+<p>The output of one process can be used as the input of another process, and by doing so, multiple processes can be connected that way in a larger “process graph”: a new (user-defined) processes that implements a certain algorithm.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -807,13 +808,17 @@ Note
 </section>
 <section id="authentication" class="level2">
 <h2 class="anchored" data-anchor-id="authentication">Authentication</h2>
-<p>In the code snippets above we did not need to log in since we just queried publicly available back-end information. However, to run non-trivial processing queries one has to authenticate so that permissions, resource usage, etc. can be managed properly.</p>
-<p>A detailed description of why and how to use the authentication methods is on the <a href="https://open-eo.github.io/openeo-python-client/auth.html#authentication-and-account-management" target="_blank">official documentation</a>.</p>
-<p>To authenticate your account on the backend of the Copernicus Data Space Ecosystem, it is necessary for you to complete the registration process. Once registered, you will be authenticated for executing processes.</p>
-<p>The following code snippet shows how to log in via OIDC authentication:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Authenticate with OIDC authentication"</span>)</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>connection.authenticate_oidc()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>The method is used to authenticate yourself on the back-end authentication system. Calling this method with either will print a URL to visit, that opens your system web browser where you can use your Copernicus Data Space Ecosystem credentials, or when there are refresh tokens, these will be used directly. After that the website will give you the instructions to go back to the python client, where your connection has logged your account in. This means that every call that comes after that via the <code>connection</code> variable is executed by your user account.</p>
+<p>Basic metadata about collection and processes, as discussed above is publicly available and does not require being logged in. However, for downloading EO data or running processing workflows, it is necessary to authenticate so that permissions, resource usage, etc. can be managed properly.</p>
+<p>First, make sure to complete your <a href="../../../Registration.html">Copernicus Data Space Ecosystem registration</a>. Once registered, you will be able to authenticate your <code>connection</code> in your Python code with a snippet like this:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>connection.authenticate_oidc()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Usually, the first time you call this <code>authenticate_oidc()</code> method, an URL will be printed for you to visit, for example something like:</p>
+<pre><code>Visit https://dataspace.copernicus.eu/device?user_code=EAXD-RQXV to authenticate.</code></pre>
+<p>Click this URL or copy-paste it to your web browser and log in with your Copernicus Data Space Ecosystem credentials. Once the authentication is completed, your Python script will receive the necessary authentication tokens and print</p>
+<pre><code>Authorized successfully.</code></pre>
+<p>Other times, when you still have valid tokens on your system, it will not be necessary to go through the Copernicus Data Space Ecosystem login steps and you will immediately see</p>
+<pre><code>Authenticated using refresh token.</code></pre>
+<p>In any case, your <code>connection</code> is now authenticated and capable to make download/processing requests.</p>
+<p>A more in-depth discussion of various authentication concepts is available in the <a href="https://open-eo.github.io/openeo-python-client/auth.html" target="_blank">openEO Python client documentation</a>.</p>
 </section>
 <section id="working-with-datacube" class="level2">
 <h2 class="anchored" data-anchor-id="working-with-datacube">Working with Datacube</h2>
@@ -821,13 +826,13 @@ Note
 <section id="creating-a-datacube" class="level3">
 <h3 class="anchored" data-anchor-id="creating-a-datacube">Creating a Datacube</h3>
 <p>The first step is loading the desired slice of a data collection with <a href="https://open-eo.github.io/openeo-python-client/api.html#openeo.rest.connection.Connection.load_collection" target="_blank"><code>Connection.load_collection</code></a>:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>datacube <span class="op">=</span> connection.load_collection(</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>      <span class="st">"SENTINEL2_L2A"</span>,</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>      spatial_extent<span class="op">=</span>{<span class="st">"west"</span>: <span class="fl">5.14</span>, <span class="st">"south"</span>: <span class="fl">51.17</span>, <span class="st">"east"</span>: <span class="fl">5.17</span>, <span class="st">"north"</span>: <span class="fl">51.19</span>},</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>      temporal_extent <span class="op">=</span> [<span class="st">"2021-02-01"</span>, <span class="st">"2021-04-30"</span>],</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>      bands<span class="op">=</span>[<span class="st">"B02"</span>, <span class="st">"B04"</span>, <span class="st">"B08"</span>],</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>      max_cloud_cover<span class="op">=</span><span class="dv">85</span></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>      )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>datacube <span class="op">=</span> connection.load_collection(</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"SENTINEL2_L2A"</span>,</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    spatial_extent<span class="op">=</span>{<span class="st">"west"</span>: <span class="fl">5.14</span>, <span class="st">"south"</span>: <span class="fl">51.17</span>, <span class="st">"east"</span>: <span class="fl">5.17</span>, <span class="st">"north"</span>: <span class="fl">51.19</span>},</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    temporal_extent <span class="op">=</span> [<span class="st">"2021-02-01"</span>, <span class="st">"2021-04-30"</span>],</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    bands<span class="op">=</span>[<span class="st">"B02"</span>, <span class="st">"B04"</span>, <span class="st">"B08"</span>],</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    max_cloud_cover<span class="op">=</span><span class="dv">85</span>,</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>This results in a <a href="https://open-eo.github.io/openeo-python-client/api.html#openeo.rest.datacube.DataCube" target="_blank"><code>Datacube</code> object</a> containing the “SENTINEL2_L2A” data restricted to the given spatial extent, the given temporal extend and the given bands .</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
@@ -842,9 +847,9 @@ Tip
 <div id="callout-4" class="callout-4-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>You can also filter the datacube step by step or at a later stage by using the following filter methods:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>datacube <span class="op">=</span> datacube.filter_bbox(west<span class="op">=</span><span class="fl">5.14</span>, south<span class="op">=</span><span class="fl">51.17</span>, east<span class="op">=</span><span class="fl">5.17</span>, north<span class="op">=</span><span class="fl">51.19</span>)</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>datacube <span class="op">=</span> datacube.filter_temporal(start_date<span class="op">=</span><span class="st">"2021-02-01"</span>, end_date<span class="op">=</span><span class="st">"2021-04-30"</span>)</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>datacube <span class="op">=</span> datacube.filter_bands([<span class="st">"B02"</span>, <span class="st">"B04"</span>, <span class="st">"B08"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>datacube <span class="op">=</span> datacube.filter_bbox(west<span class="op">=</span><span class="fl">5.14</span>, south<span class="op">=</span><span class="fl">51.17</span>, east<span class="op">=</span><span class="fl">5.17</span>, north<span class="op">=</span><span class="fl">51.19</span>)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>datacube <span class="op">=</span> datacube.filter_temporal(start_date<span class="op">=</span><span class="st">"2021-02-01"</span>, end_date<span class="op">=</span><span class="st">"2021-04-30"</span>)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>datacube <span class="op">=</span> datacube.filter_bands([<span class="st">"B02"</span>, <span class="st">"B04"</span>, <span class="st">"B08"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Still, it is recommended to always use the filters directly in <a href="https://open-eo.github.io/openeo-python-client/api.html#openeo.rest.connection.Connection.load_collection" target="_blank">load_collection</a> to avoid loading too much data upfront.</p>
 </div>
 </div>
@@ -854,7 +859,7 @@ Tip
 <h3 class="anchored" data-anchor-id="applying-processes">Applying processes</h3>
 <p>By applying an openEO process on a datacube, we create a new datacube object that represents the manipulated data. The standard way to do this with the Python client is to call the appropriate <a href="https://open-eo.github.io/openeo-python-client/api.html#openeo.rest.datacube.DataCube" target="_blank"><code>Datacube</code> object</a> method. The most common or popular openEO processes have a dedicated <code>Datacube</code> method (e.g.&nbsp;<code>mask</code>, <code>aggregate_spatial</code>, <code>filter_bbox</code>, …). Other processes without a dedicated method can still be applied in a generic way. An on top of that, there are also some convenience methods that implement openEO processes is a compact, Pythonic interface.</p>
 <p>For example, the <a href="https://open-eo.github.io/openeo-python-client/api.html#openeo.rest.datacube.DataCube.min_time" target="_blank"><code>min_time</code></a> method implements a <code>reduce_dimension</code> process along the temporal dimension, using the <code>max</code> process as reducer function:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>datacube <span class="op">=</span> datacube.max_time()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>datacube <span class="op">=</span> datacube.max_time()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>This creates a new datacube (we overwrite the existing variable), where the time dimension is eliminated and for each pixel we just have the minimum value of the corresponding timeseries in the original datacube.</p>
 <p>See the <a href="https://open-eo.github.io/openeo-python-client/api.html#openeo.rest.datacube.DataCube" target="_blank">Python client <code>Datacube</code> API</a> for a more complete listing of methods that implement openEO processes.</p>
 <div class="callout callout-style-default callout-note callout-titled">
@@ -878,8 +883,8 @@ Note
 <section id="batch-job-execution" class="level3">
 <h3 class="anchored" data-anchor-id="batch-job-execution">Batch job execution</h3>
 <p>Most of the simple, basic openEO usage examples show synchronous downloading of results. This only works properly if the processing doesn’t take too long and is focused on a smaller area of interest. However, you have to use batch jobs for the heavier work (larger regions of interest, larger time series, more intensive processing).</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># While not necessary, it is also recommended to give your batch job a descriptive title so it’s easier to identify in your job listing.</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>job <span class="op">=</span> cube.execute_batch()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># While not necessary, it is also recommended to give your batch job a descriptive title so it’s easier to identify in your job listing.</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>job <span class="op">=</span> cube.execute_batch()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="{callout-note}">
 <p>This documentation mainly discusses how to programmatically create and interact with batch job using the openEO Python client library. The openEO API however does not enforce usage of the same tool for each step in the batch job life cycle.</p>
 <p>For example: if you prefer a graphical, web-based interactive environment to manage and monitor your batch jobs, feel free to switch to an openEO web editor like <a href="https://openeo.dataspace.copernicus.eu/">openeo.dataspace.copernicus.eu/</a> at any time. After logging in with the same account you use in your Python scripts, you should see your batch jobs listed under the “Data Processing” tab. More information on using openEO web editor is discussed <a href="../../../Applications/WebEditor.html">here</a>.</p>
@@ -906,52 +911,52 @@ Tip
 <h2 class="anchored" data-anchor-id="full-example">Full Example</h2>
 <p>In this chapter we will show a full example of an earth observation use case using the Python client.</p>
 <p>A common task in earth observation is to apply a formula to a number of spectral bands in order to compute an ‘index’, such as NDVI, NDWI, EVI, … In this tutorial we’ll go through a couple of steps to extract EVI (enhanced vegetation index) values and timeseries</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> openeo</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co"># First, we connect to the back-end and authenticate. </span></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>con <span class="op">=</span> openeo.<span class="ex">connect</span>(<span class="st">"openeo.dataspace.copernicus.eu"</span>)</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>con.authenticate_oidc()</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Now that we are connected, we can initialize our datacube object with the area of interest </span></span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="co"># and the time range of interest using Sentinel 1 data.</span></span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>datacube <span class="op">=</span> connection.load_collection(</span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>      <span class="st">"SENTINEL2_L2A"</span>,</span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>      spatial_extent<span class="op">=</span>{<span class="st">"west"</span>: <span class="fl">5.14</span>, <span class="st">"south"</span>: <span class="fl">51.17</span>, <span class="st">"east"</span>: <span class="fl">5.17</span>, <span class="st">"north"</span>: <span class="fl">51.19</span>},</span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>      temporal_extent <span class="op">=</span> [<span class="st">"2021-02-01"</span>, <span class="st">"2021-04-30"</span>],</span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>      bands<span class="op">=</span>[<span class="st">"B02"</span>, <span class="st">"B04"</span>, <span class="st">"B08"</span>],</span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>      max_cloud_cover<span class="op">=</span><span class="dv">85</span></span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>      )</span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a><span class="co"># By filtering as early as possible (directly in load_collection() in this case), </span></span>
-<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a><span class="co"># we make sure the back-end only loads the data we are interested in and avoid incurring unneeded costs.</span></span>
-<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a><span class="co">#From this data cube, we can now select the individual bands with the DataCube.band() method and rescale the digital number values to physical reflectances:</span></span>
-<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>blue <span class="op">=</span> sentinel2_cube.band(<span class="st">"B02"</span>) <span class="op">*</span> <span class="fl">0.0001</span></span>
-<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>red <span class="op">=</span> sentinel2_cube.band(<span class="st">"B04"</span>) <span class="op">*</span> <span class="fl">0.0001</span></span>
-<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>nir <span class="op">=</span> sentinel2_cube.band(<span class="st">"B08"</span>) <span class="op">*</span> <span class="fl">0.0001</span></span>
-<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a><span class="co"># We now want to compute the enhanced vegetation index and can do that directly with these band variables:</span></span>
-<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>evi_cube <span class="op">=</span> <span class="fl">2.5</span> <span class="op">*</span> (nir <span class="op">-</span> red) <span class="op">/</span> (nir <span class="op">+</span> <span class="fl">6.0</span> <span class="op">*</span> red <span class="op">-</span> <span class="fl">7.5</span> <span class="op">*</span> blue <span class="op">+</span> <span class="fl">1.0</span>)</span>
-<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a><span class="co"># Now we can use the compact “band math” feature again to build a binary mask with a simple comparison operation:</span></span>
-<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Select the "SCL" band from the data cube</span></span>
-<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a>scl_band <span class="op">=</span> s2_scl.band(<span class="st">"SCL"</span>)</span>
-<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a><span class="co"># Build mask to mask out everything but class 4 (vegetation)</span></span>
-<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a>mask <span class="op">=</span> (scl_band <span class="op">!=</span> <span class="dv">4</span>)</span>
-<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a><span class="co"># Before we can apply this mask to the EVI cube we have to resample it, as the “SCL” layer has a “ground sample distance” of 20 meter, while it is 10 meter for the “B02”, “B04” and “B08” bands. We can easily do the resampling by referring directly to the EVI cube.</span></span>
-<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a>mask_resampled <span class="op">=</span> mask.resample_cube_spatial(evi_cube)</span>
-<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply the mask to the `evi_cube`</span></span>
-<span id="cb10-40"><a href="#cb10-40" aria-hidden="true" tabindex="-1"></a>evi_cube_masked <span class="op">=</span> evi_cube.mask(mask_resampled)</span>
-<span id="cb10-41"><a href="#cb10-41" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-42"><a href="#cb10-42" aria-hidden="true" tabindex="-1"></a><span class="co"># Because GeoTIFF does not support a temporal dimension, we first eliminate it by taking the temporal maximum value for each pixel:</span></span>
-<span id="cb10-43"><a href="#cb10-43" aria-hidden="true" tabindex="-1"></a>evi_composite <span class="op">=</span> evi_cube.max_time()</span>
-<span id="cb10-44"><a href="#cb10-44" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-45"><a href="#cb10-45" aria-hidden="true" tabindex="-1"></a><span class="co"># Now we can download this to a local file:</span></span>
-<span id="cb10-46"><a href="#cb10-46" aria-hidden="true" tabindex="-1"></a>evi_composite.download(<span class="st">"evi-composite.tiff"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> openeo</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co"># First, we connect to the back-end and authenticate. </span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>con <span class="op">=</span> openeo.<span class="ex">connect</span>(<span class="st">"openeo.dataspace.copernicus.eu"</span>)</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>con.authenticate_oidc()</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Now that we are connected, we can initialize our datacube object with the area of interest </span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="co"># and the time range of interest using Sentinel 1 data.</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>datacube <span class="op">=</span> connection.load_collection(</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">"SENTINEL2_L2A"</span>,</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>    spatial_extent<span class="op">=</span>{<span class="st">"west"</span>: <span class="fl">5.14</span>, <span class="st">"south"</span>: <span class="fl">51.17</span>, <span class="st">"east"</span>: <span class="fl">5.17</span>, <span class="st">"north"</span>: <span class="fl">51.19</span>},</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>    temporal_extent <span class="op">=</span> [<span class="st">"2021-02-01"</span>, <span class="st">"2021-04-30"</span>],</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>    bands<span class="op">=</span>[<span class="st">"B02"</span>, <span class="st">"B04"</span>, <span class="st">"B08"</span>],</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>    max_cloud_cover<span class="op">=</span><span class="dv">85</span>,</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a><span class="co"># By filtering as early as possible (directly in load_collection() in this case), </span></span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a><span class="co"># we make sure the back-end only loads the data we are interested in and avoid incurring unneeded costs.</span></span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a><span class="co">#From this data cube, we can now select the individual bands with the DataCube.band() method and rescale the digital number values to physical reflectances:</span></span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>blue <span class="op">=</span> sentinel2_cube.band(<span class="st">"B02"</span>) <span class="op">*</span> <span class="fl">0.0001</span></span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>red <span class="op">=</span> sentinel2_cube.band(<span class="st">"B04"</span>) <span class="op">*</span> <span class="fl">0.0001</span></span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>nir <span class="op">=</span> sentinel2_cube.band(<span class="st">"B08"</span>) <span class="op">*</span> <span class="fl">0.0001</span></span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a><span class="co"># We now want to compute the enhanced vegetation index and can do that directly with these band variables:</span></span>
+<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a>evi_cube <span class="op">=</span> <span class="fl">2.5</span> <span class="op">*</span> (nir <span class="op">-</span> red) <span class="op">/</span> (nir <span class="op">+</span> <span class="fl">6.0</span> <span class="op">*</span> red <span class="op">-</span> <span class="fl">7.5</span> <span class="op">*</span> blue <span class="op">+</span> <span class="fl">1.0</span>)</span>
+<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a><span class="co"># Now we can use the compact “band math” feature again to build a binary mask with a simple comparison operation:</span></span>
+<span id="cb13-31"><a href="#cb13-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Select the "SCL" band from the data cube</span></span>
+<span id="cb13-32"><a href="#cb13-32" aria-hidden="true" tabindex="-1"></a>scl_band <span class="op">=</span> s2_scl.band(<span class="st">"SCL"</span>)</span>
+<span id="cb13-33"><a href="#cb13-33" aria-hidden="true" tabindex="-1"></a><span class="co"># Build mask to mask out everything but class 4 (vegetation)</span></span>
+<span id="cb13-34"><a href="#cb13-34" aria-hidden="true" tabindex="-1"></a>mask <span class="op">=</span> (scl_band <span class="op">!=</span> <span class="dv">4</span>)</span>
+<span id="cb13-35"><a href="#cb13-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-36"><a href="#cb13-36" aria-hidden="true" tabindex="-1"></a><span class="co"># Before we can apply this mask to the EVI cube we have to resample it, as the “SCL” layer has a “ground sample distance” of 20 meter, while it is 10 meter for the “B02”, “B04” and “B08” bands. We can easily do the resampling by referring directly to the EVI cube.</span></span>
+<span id="cb13-37"><a href="#cb13-37" aria-hidden="true" tabindex="-1"></a>mask_resampled <span class="op">=</span> mask.resample_cube_spatial(evi_cube)</span>
+<span id="cb13-38"><a href="#cb13-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-39"><a href="#cb13-39" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply the mask to the `evi_cube`</span></span>
+<span id="cb13-40"><a href="#cb13-40" aria-hidden="true" tabindex="-1"></a>evi_cube_masked <span class="op">=</span> evi_cube.mask(mask_resampled)</span>
+<span id="cb13-41"><a href="#cb13-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-42"><a href="#cb13-42" aria-hidden="true" tabindex="-1"></a><span class="co"># Because GeoTIFF does not support a temporal dimension, we first eliminate it by taking the temporal maximum value for each pixel:</span></span>
+<span id="cb13-43"><a href="#cb13-43" aria-hidden="true" tabindex="-1"></a>evi_composite <span class="op">=</span> evi_cube.max_time()</span>
+<span id="cb13-44"><a href="#cb13-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-45"><a href="#cb13-45" aria-hidden="true" tabindex="-1"></a><span class="co"># Now we can download this to a local file:</span></span>
+<span id="cb13-46"><a href="#cb13-46" aria-hidden="true" tabindex="-1"></a>evi_composite.download(<span class="st">"evi-composite.tiff"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Now, you can inspect the result for the EVI map.</p>
 <p><img src="../_images/evi-masked-composite.png" class="img-fluid"></p>
 </section>
