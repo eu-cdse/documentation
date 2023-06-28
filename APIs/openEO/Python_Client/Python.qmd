@@ -17,23 +17,18 @@ and can easily be installed with a tool like `pip`, for example:
 
 ```{bash}
 pip install openeo
-
 ```
+
 To upgrade the package to the latest release:
 
-
 ```{bash}
-
 pip install --upgrade openeo
-
 ```
 
 The client library is also available on [Conda Forge](https://anaconda.org/conda-forge/openeo){target="_blank"} and can be easily installed in a conda environment, for example:
 
 ```{bash}
-
 conda install -c conda-forge openeo
-
 ```
 
 It's recommended to work in a virtual environment of some kind (`venv`, `conda`, ...),
@@ -54,16 +49,15 @@ For this tutorial we will use the openEO instance of Copernicus Data Space Ecosy
 First we need to establish a connection to the back-end. 
 
 ```python
-
 import openeo
 
 connection = openeo.connect("openeo.dataspace.copernicus.eu")
-
 ```
 
 
 The [`Connection` object](https://open-eo.github.io/openeo-python-client/api.html#module-openeo.rest.connection){target="_blank"}
 is your central gateway to
+
 - list data collections, available processes, file formats and other capabilities of the back-end
 - start building your openEO algorithm from the desired data on the back-end
 - execute and monitor (batch) jobs on the back-end
@@ -80,18 +74,20 @@ Collections are used as input data for your openEO jobs.
 ::: {.callout-note}
 
 More information on how openEO "collections" relate to terminology used in other systems can be found in
-([the openEO glossary](../Glossary.qmd#eo-data-collections){target="_blank"}).
+[the openEO glossary](../Glossary.qmd#eo-data-collections){target="_blank"}.
 
 :::
 
 If necessary, a more detailed metadata listing for a given collection can be obtained with
-[`describe_collection`](https://open-eo.github.io/openeo-python-client/api.html#openeo.rest.connection.Connection.describe_collection){target="_blank"}.
+[`connection.describe_collection()`](https://open-eo.github.io/openeo-python-client/api.html#openeo.rest.connection.Connection.describe_collection){target="_blank"}.
 
 
 ### Processes
 
-Processes in openEO are operations that can be applied on (EO) data
-(e.g. calculate the mean of an array, or mask out observations outside a given polygon).
+Processes in openEO are operations that can be applied on (EO) data.
+For example: calculate the mean of an array, mask out pixels outside a given polygon
+or calculate spatial aggregations.
+
 The output of one process can be used as the input of another process,
 and by doing so, multiple processes can be connected that way in a larger "process graph":
 a new (user-defined) processes that implements a certain algorithm.
@@ -107,27 +103,50 @@ For other graphical overviews of the openEO processes, there is an [online docum
 
 ## Authentication 
 
-In the code snippets above we did not need to log in
-since we just queried publicly available back-end information.
-However, to run non-trivial processing queries one has to authenticate
+Basic metadata about collection and processes, as discussed above
+is publicly available and does not require being logged in.
+However, for downloading EO data or running processing workflows,
+it is necessary to authenticate
 so that permissions, resource usage, etc. can be managed properly.
 
-
-A detailed description of why and how to use the authentication methods is on the [official documentation](https://open-eo.github.io/openeo-python-client/auth.html#authentication-and-account-management){target="_blank"}.
-
-
-To authenticate your account on the backend of the Copernicus Data Space Ecosystem, it is necessary for you to complete the registration process. Once registered, you will be authenticated for executing processes.
-
-The following code snippet shows how to log in via OIDC authentication:
+First, make sure to complete your
+[Copernicus Data Space Ecosystem registration](../../../Registration.md).
+Once registered, you will be able to authenticate your `connection` in your Python code
+with a snippet like this:
 
 ```python
-print("Authenticate with OIDC authentication")
 connection.authenticate_oidc()
 ```
-The method is used to authenticate yourself on the back-end authentication system. 
-Calling this method with either will print a URL to visit, that opens your system web browser where you can use your Copernicus Data Space Ecosystem credentials, or when there are refresh tokens, these will be used directly.
-After that the website will give you the instructions to go back to the python client, where your connection has logged your account in. 
-This means that every call that comes after that via the `connection` variable is executed by your user account.
+
+Usually, the first time you call this `authenticate_oidc()` method,
+an URL will be printed for you to visit, for example something like:
+
+```
+Visit https://dataspace.copernicus.eu/device?user_code=EAXD-RQXV to authenticate.
+```
+
+Click this URL or copy-paste it to your web browser and log in with
+your Copernicus Data Space Ecosystem credentials.
+Once the authentication is completed, your Python script will receive 
+the necessary authentication tokens and print 
+
+```
+Authorized successfully.
+```
+
+Other times, when you still have valid tokens on your system,
+it will not be necessary to go through the Copernicus Data Space Ecosystem login steps
+and you will immediately see
+
+```
+Authenticated using refresh token.
+```
+
+In any case, your `connection` is now authenticated and capable to make download/processing requests.
+
+
+A more in-depth discussion of various authentication concepts is available
+in the [openEO Python client documentation](https://open-eo.github.io/openeo-python-client/auth.html){target="_blank"}.
 
 
 ## Working with Datacube
@@ -142,12 +161,12 @@ with [`Connection.load_collection`](https://open-eo.github.io/openeo-python-clie
 
 ```python
 datacube = connection.load_collection(
-      "SENTINEL2_L2A",
-      spatial_extent={"west": 5.14, "south": 51.17, "east": 5.17, "north": 51.19},
-      temporal_extent = ["2021-02-01", "2021-04-30"],
-      bands=["B02", "B04", "B08"],
-      max_cloud_cover=85
-      )
+    "SENTINEL2_L2A",
+    spatial_extent={"west": 5.14, "south": 51.17, "east": 5.17, "north": 51.19},
+    temporal_extent = ["2021-02-01", "2021-04-30"],
+    bands=["B02", "B04", "B08"],
+    max_cloud_cover=85,
+)
 ```
 
 This results in a [`Datacube` object](https://open-eo.github.io/openeo-python-client/api.html#openeo.rest.datacube.DataCube){target="_blank"} containing the "SENTINEL2_L2A" data restricted to the given spatial extent, the given temporal extend and the given bands .
@@ -254,12 +273,12 @@ con.authenticate_oidc()
 # Now that we are connected, we can initialize our datacube object with the area of interest 
 # and the time range of interest using Sentinel 1 data.
 datacube = connection.load_collection(
-      "SENTINEL2_L2A",
-      spatial_extent={"west": 5.14, "south": 51.17, "east": 5.17, "north": 51.19},
-      temporal_extent = ["2021-02-01", "2021-04-30"],
-      bands=["B02", "B04", "B08"],
-      max_cloud_cover=85
-      )
+    "SENTINEL2_L2A",
+    spatial_extent={"west": 5.14, "south": 51.17, "east": 5.17, "north": 51.19},
+    temporal_extent = ["2021-02-01", "2021-04-30"],
+    bands=["B02", "B04", "B08"],
+    max_cloud_cover=85,
+)
 
 # By filtering as early as possible (directly in load_collection() in this case), 
 # we make sure the back-end only loads the data we are interested in and avoid incurring unneeded costs.
