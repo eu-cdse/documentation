@@ -42,9 +42,9 @@ for more details, alternative installation procedures or troubleshooting tips.
 
 ## Exploring a back-end
 
-For this tutorial we will use the openEO instance of Copernicus Data Space Ecosystem, which is available at `https://openeo.dataspace.copernicus.eu`.
-
-First we need to establish a connection to the back-end. 
+For this tutorial we will use the openEO back-end of Copernicus Data Space Ecosystem, 
+which is available at `https://openeo.dataspace.copernicus.eu`.
+We establish a connection to this back-end as follows:
 
 ```python
 import openeo
@@ -53,8 +53,8 @@ connection = openeo.connect("openeo.dataspace.copernicus.eu")
 ```
 
 
-The [`Connection` object](https://open-eo.github.io/openeo-python-client/api.html#module-openeo.rest.connection){target="_blank"}
-is your central gateway to
+The [`Connection` object](https://open-eo.github.io/openeo-python-client/api.html#openeo.rest.connection.Connection){target="_blank"}
+we created here is the central gateway to interact with the back-end:
 
 - list data collections, available processes, file formats and other capabilities of the back-end
 - start building your openEO algorithm from the desired data on the back-end
@@ -62,22 +62,25 @@ is your central gateway to
 - etc.
 
 
-### Collections
+### EO Collections
 
-The EO data available at a back-end is organised in so-called collections.
-For example, a back-end might provide fundamental satellite collections like "Sentinel 1" or "Sentinel 2",
-or preprocessed collections like "NDVI".
-Collections are used as input data for your openEO jobs.
+EO data in openEO is organized in so-called collections,
+which are used as the input data for your openEO jobs
+(see [the glossary](../Glossary.qmd#eo-data-collections) for more info).
+Collections can be listed and inspected programmatically:
 
-::: {.callout-note}
 
-More information on how openEO "collections" relate to terminology used in other systems can be found in
-[the openEO glossary](../Glossary.qmd#eo-data-collections){target="_blank"}.
+```python
+# List collections available on the openEO back-end
+connection.list_collection_ids()
 
-:::
+# Get detailed metadata of a certain collection
+connection.describe_collection("SENTINEL2_L2A")
+```
 
-If necessary, a more detailed metadata listing for a given collection can be obtained with
-[`connection.describe_collection()`](https://open-eo.github.io/openeo-python-client/api.html#openeo.rest.connection.Connection.describe_collection){target="_blank"}.
+However, it is often easier to browse collections through the 
+[openEO collection listing page](../openEO.html#collections)
+or the openEO Web Editor.
 
 
 ### Processes
