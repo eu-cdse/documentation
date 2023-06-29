@@ -83,24 +83,35 @@ However, it is often easier to browse collections through the
 or the openEO Web Editor.
 
 
-### Processes
 
-Processes in openEO are operations that can be applied on (EO) data.
+### openEO Processes
+
+Processes in openEO are operations that can be applied on (EO) data
+(see the [the openEO glossary](../Glossary.qmd) for more info).
 For example: calculate the mean of an array, mask out pixels outside a given polygon
 or calculate spatial aggregations.
-
 The output of one process can be used as the input of another process,
-and by doing so, multiple processes can be connected that way in a larger "process graph":
-a new (user-defined) processes that implements a certain algorithm.
+and by doing so, multiple processes can be connected that way in a larger "process graph",
+as illustrated in this conceptual diagram:
 
-::: {.callout-note}
+```{mermaid}
+flowchart TD
+  load_collection --> NDVI[calculate NDVI]
+  load_collection --> cm[build cloud mask]
+  NDVI --> mask[apply mask]
+  cm --> mask
+  mask --> aggregate_spatial
+  load_geojson[load geometries] --> aggregate_spatial
+  aggregate_spatial --> save_result
+```
 
-Check [the openEO glossary](../Glossary.qmd)
-for more details on pre-defined, user-defined processes and process graphs.
+While it is possible to programmatically list and inspect the available processes
+(e.g. `connection.list_processes()` with the openEO python client),
+it is recommended to just consult
+[the process listing page](../openEO.html#processes)
+or [the official openeo.org processes listing](https://processes.openeo.org/){target="_blank"}.
 
-:::
 
-For other graphical overviews of the openEO processes, there is an [online documentation](https://docs.openeo.cloud/processes/){target="_blank"} for general process descriptions and the [openEO Hub](https://hub.openeo.org/) for back-end specific process descriptions. 
 
 ## Authentication 
 
