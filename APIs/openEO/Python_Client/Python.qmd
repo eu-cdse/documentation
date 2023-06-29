@@ -121,38 +121,51 @@ However, for downloading EO data or running processing workflows,
 it is necessary to authenticate
 so that permissions, resource usage, etc. can be managed properly.
 
-First, make sure to complete your
-[Copernicus Data Space Ecosystem registration](../../../Registration.md).
-Once registered, you will be able to authenticate your `connection` in your Python code
-with a snippet like this:
+
+::: {.callout-important}
+Make sure to complete your
+[Copernicus Data Space Ecosystem registration](../../../Registration.md)
+before attempting to do the authentication explained below.
+:::
+
+Once properly registered, you will be able to authenticate your `connection` handle in your Python code with 
+[`Connection.authenticate_oidc()`](https://open-eo.github.io/openeo-python-client/api.html#openeo.rest.connection.Connection.authenticate_oidc){target="_blank"},
+just like this:
 
 ```python
 connection.authenticate_oidc()
 ```
 
-Usually, the first time you call this `authenticate_oidc()` method,
-an URL will be printed for you to visit, for example something like:
+-   By default, the first time you call this `authenticate_oidc()` method,
+    a URL will be printed. Something like for example:
 
-```
-Visit https://dataspace.copernicus.eu/device?user_code=EAXD-RQXV to authenticate.
-```
+    ```
+    Visit https://auth.example.com/device?user_code=EAXD-RQXV to authenticate.
+    ```
 
-Click this URL or copy-paste it to your web browser and log in with
-your Copernicus Data Space Ecosystem credentials.
-Once the authentication is completed, your Python script will receive 
-the necessary authentication tokens and print 
+    Visit this URL (click it or copy-paste it into your web browser)
+    and follow the login flow using your Copernicus Data Space Ecosystem credentials.
 
-```
-Authorized successfully.
-```
+    ::: {.callout-tip}
+    You can visit this URL with any browser you prefer to complete the login procedure
+    (e.g. on your laptop or smartphone). 
+    It does *not* have to be a browser running on the same machine/network as your Python script/application.
+    :::
 
-Other times, when you still have valid tokens on your system,
-it will not be necessary to go through the Copernicus Data Space Ecosystem login steps
-and you will immediately see
+    Once the authentication is completed, your Python script will receive 
+    the necessary authentication tokens and print 
 
-```
-Authenticated using refresh token.
-```
+    ```
+    Authorized successfully.
+    ```
+
+-   Other times, when you still have valid (refresh) tokens on your system,
+    it will not be necessary to go through the Copernicus Data Space Ecosystem login steps
+    and you will immediately see
+
+    ```
+    Authenticated using refresh token.
+    ```
 
 In any case, your `connection` is now authenticated and capable to make download/processing requests.
 
