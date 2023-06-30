@@ -741,8 +741,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>count</li>
 <li>expand</li>
 </ul>
-<p>Search options should always be preceded with <em>$</em> and consecutive options should be separated with <em>&amp;</em>.</p>
-<p>Consecutive filters within <em>filter</em> option should be separated with <em>and</em> or <em>or</em>. <em>Not</em> operator can also be used e.g.:</p>
+<p>Search options should always be preceded with <code>$</code> and consecutive options should be separated with <code>&amp;</code>.</p>
+<p>Consecutive filters within <em>filter</em> option should be separated with <code>and</code> or <code>or</code>. The <code>not</code> operator can also be used.</p>
+<p>For example:</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" aria-current="page">HTTP Request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">Python</a></li></ul>
 <div class="tab-content">
@@ -856,7 +857,7 @@ Note
 </div>
 <div class="callout-body-container callout-body">
 <p>To accelerate the query performance it is recommended to limit the query by acquisition dates e.g.:</p>
-<p>ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-21T00:00:00.000Z</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-21T00:00:00.000Z</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </section>
@@ -884,8 +885,8 @@ Note
 <div class="cell" data-execution_count="4">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(<span class="st">"https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,'S1A') and ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-21T00:00:00.000Z"</span>).json()</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame.from_dict(json[<span class="st">'value'</span>]).head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(<span class="st">"https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,'S1A') and ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-21T00:00:00.000Z"</span>).json()</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame.from_dict(json[<span class="st">'value'</span>]).head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display" data-execution_count="4">
 <div>
@@ -976,23 +977,22 @@ Note
 </div>
 </div>
 </div>
-<p>Alternatively to <em>contains</em>, <em>endswith</em> and <em>startswith</em> can be used, to search for products ending or starting with provided string.</p>
+<p>Alternatively to <code>contains</code>, <code>endswith</code> and <code>startswith</code> can be used, to search for products ending or starting with provided string.</p>
 </section>
 <section id="query-by-list" class="level3">
 <h3 class="anchored" data-anchor-id="query-by-list">Query by list</h3>
 <p>In case a user desires to search for multiple products by name in one query, POST method can be used:</p>
-<p><strong>POST</strong></p>
-<p><a href="https://catalogue.dataspace.copernicus.eu/odata/v1/Products/OData.CSC.FilterList" target="_blank"><code>https://catalogue.dataspace.copernicus.eu/odata/v1/Products/OData.CSC.FilterList</code></a></p>
-<p><strong>Request body</strong>:</p>
-<pre class="{json}"><code>{
-  "FilterProducts":
-    [
-     {"Name": "S1A_IW_GRDH_1SDV_20141031T161924_20141031T161949_003076_003856_634E.SAFE"},
-     {"Name": "S3B_SL_1_RBT____20190116T050535_20190116T050835_20190117T125958_0179_021_048_0000_LN2_O_NT_003.SEN3"},
-     {"Name": "xxxxxxxx.06.tar"}
-    ]
- }</code></pre>
-<p>Two results are returned, as there is no product named xxxxxxxx.06.tar.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>POST https://catalogue.dataspace.copernicus.eu/odata/v1/Products/OData.CSC.FilterList</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>with request body:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"FilterProducts"</span><span class="fu">:</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>     <span class="fu">{</span><span class="dt">"Name"</span><span class="fu">:</span> <span class="st">"S1A_IW_GRDH_1SDV_20141031T161924_20141031T161949_003076_003856_634E.SAFE"</span><span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>     <span class="fu">{</span><span class="dt">"Name"</span><span class="fu">:</span> <span class="st">"S3B_SL_1_RBT____20190116T050535_20190116T050835_20190117T125958_0179_021_048_0000_LN2_O_NT_003.SEN3"</span><span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>     <span class="fu">{</span><span class="dt">"Name"</span><span class="fu">:</span> <span class="st">"xxxxxxxx.06.tar"</span><span class="fu">}</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a> <span class="fu">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Two results are returned, as there is no product named <code>xxxxxxxx.06.tar</code>.</p>
 </section>
 <section id="query-collection-of-products" class="level3">
 <h3 class="anchored" data-anchor-id="query-collection-of-products">Query Collection of Products</h3>
@@ -1007,8 +1007,8 @@ Note
 <div class="cell" data-execution_count="5">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(<span class="st">"https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name eq 'SENTINEL-2' and ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-03T00:11:00.000Z"</span>).json()</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame.from_dict(json[<span class="st">'value'</span>]).head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(<span class="st">"https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name eq 'SENTINEL-2' and ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-03T00:11:00.000Z"</span>).json()</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame.from_dict(json[<span class="st">'value'</span>]).head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display" data-execution_count="5">
 <div>
@@ -1120,8 +1120,8 @@ Note
 <div class="cell" data-execution_count="6">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(<span class="st">"https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=PublicationDate gt 2019-05-15T00:00:00.000Z and PublicationDate lt 2019-05-16T00:00:00.000Z"</span>).json()</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame.from_dict(json[<span class="st">'value'</span>]).head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(<span class="st">"https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=PublicationDate gt 2019-05-15T00:00:00.000Z and PublicationDate lt 2019-05-16T00:00:00.000Z"</span>).json()</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame.from_dict(json[<span class="st">'value'</span>]).head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display" data-execution_count="6">
 <div>
@@ -1212,7 +1212,7 @@ Note
 </div>
 </div>
 </div>
-<p>To define inclusive interval <em>ge</em> and <em>le</em> parameters can be used:</p>
+<p>To define inclusive interval <code>ge</code> and <code>le</code> parameters can be used:</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-6-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-1" role="tab" aria-controls="tabset-6-1" aria-selected="true">HTTP Request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-2" role="tab" aria-controls="tabset-6-2" aria-selected="false">Python</a></li></ul>
 <div class="tab-content">
@@ -1223,8 +1223,8 @@ Note
 <div class="cell" data-execution_count="7">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(<span class="st">"https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=PublicationDate ge 2019-05-15T00:00:00.000Z and PublicationDate le 2019-05-16T00:00:00.000Z"</span>).json()</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame.from_dict(json[<span class="st">'value'</span>]).head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(<span class="st">"https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=PublicationDate ge 2019-05-15T00:00:00.000Z and PublicationDate le 2019-05-16T00:00:00.000Z"</span>).json()</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame.from_dict(json[<span class="st">'value'</span>]).head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display" data-execution_count="7">
 <div>
@@ -1329,8 +1329,8 @@ Note
 <div class="cell" data-execution_count="8">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(<span class="st">"https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=ContentDate/Start gt 2019-05-15T00:00:00.000Z and ContentDate/Start lt 2019-05-16T00:00:00.000Z"</span>).json()</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame.from_dict(json[<span class="st">'value'</span>]).head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(<span class="st">"https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=ContentDate/Start gt 2019-05-15T00:00:00.000Z and ContentDate/Start lt 2019-05-16T00:00:00.000Z"</span>).json()</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame.from_dict(json[<span class="st">'value'</span>]).head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display" data-execution_count="8">
 <div>
@@ -1421,7 +1421,7 @@ Note
 </div>
 </div>
 </div>
-<p>Usually, there are two parameters describing the ContentDate (Acquisition Dates) for a product - Start and End. Depending on what the user is looking for, these parameters can be mixed, e.g.,:</p>
+<p>Usually, there are two parameters describing the ContentDate (Acquisition Dates) for a product - Start and End. Depending on what the user is looking for, these parameters can be mixed, e.g.:</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-8-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-1" role="tab" aria-controls="tabset-8-1" aria-selected="true">HTTP Request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-8-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-2" role="tab" aria-controls="tabset-8-2" aria-selected="false">Python</a></li></ul>
 <div class="tab-content">
@@ -1432,8 +1432,8 @@ Note
 <div class="cell" data-execution_count="9">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(<span class="st">"https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=ContentDate/Start gt 2019-05-15T00:00:00.000Z and ContentDate/End lt 2019-05-15T00:05:00.000Z"</span>).json()</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame.from_dict(json[<span class="st">'value'</span>]).head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(<span class="st">"https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=ContentDate/Start gt 2019-05-15T00:00:00.000Z and ContentDate/End lt 2019-05-15T00:05:00.000Z"</span>).json()</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame.from_dict(json[<span class="st">'value'</span>]).head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display" data-execution_count="9">
 <div>
@@ -1482,38 +1482,38 @@ Note
 <tr class="even">
 <td data-quarto-table-cell-role="th">1</td>
 <td>application/octet-stream</td>
-<td>80864895-fd7b-5fe6-a853-a75cfdc0da43</td>
-<td>S3A_SL_1_RBT____20190515T000114_20190515T00041...</td>
+<td>2e7d9c5d-e088-5248-80be-0c8453ce6556</td>
+<td>S3A_OL_2_WFR____20190515T000114_20190515T00041...</td>
 <td>application/octet-stream</td>
 <td>0</td>
-<td>2019-05-16T06:33:18.172Z</td>
-<td>2019-05-16T06:39:06.677Z</td>
-<td>2019-05-16T06:39:06.677Z</td>
+<td>2019-05-16T10:54:52.642Z</td>
+<td>2019-05-16T10:59:49.013Z</td>
+<td>2019-05-16T10:59:49.013Z</td>
 <td>True</td>
 <td></td>
-<td>/eodata/Sentinel-3/SLSTR/SL_1_RBT/2019/05/15/S...</td>
-<td>[]</td>
-<td>{'Start': '2019-05-15T00:01:13.801Z', 'End': '...</td>
-<td>geography'SRID=4326;POLYGON ((141.397 10.4492,...</td>
-<td>{'type': 'Polygon', 'coordinates': [[[141.397,...</td>
-</tr>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">2</td>
-<td>application/octet-stream</td>
-<td>7ddcd572-0a58-5b4b-b968-21fc1b2b086c</td>
-<td>S3A_OL_2_LFR____20190515T000114_20190515T00041...</td>
-<td>application/octet-stream</td>
-<td>0</td>
-<td>2019-05-16T04:01:28.238Z</td>
-<td>2019-05-16T04:03:49.321Z</td>
-<td>2019-05-16T04:03:49.321Z</td>
-<td>True</td>
-<td></td>
-<td>/eodata/Sentinel-3/OLCI/OL_2_LFR/2019/05/15/S3...</td>
+<td>/eodata/Sentinel-3/OLCI/OL_2_WFR/2019/05/15/S3...</td>
 <td>[]</td>
 <td>{'Start': '2019-05-15T00:01:13.801Z', 'End': '...</td>
 <td>geography'SRID=4326;POLYGON ((141.591 10.4037,...</td>
 <td>{'type': 'Polygon', 'coordinates': [[[141.591,...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>application/octet-stream</td>
+<td>169fda08-9928-576e-a556-97a6d3b9bacf</td>
+<td>S3B_SL_1_RBT____20190515T000040_20190515T00034...</td>
+<td>application/octet-stream</td>
+<td>0</td>
+<td>2020-11-26T08:59:47.377Z</td>
+<td>2020-11-26T22:21:59.013Z</td>
+<td>2020-11-26T22:21:59.013Z</td>
+<td>True</td>
+<td></td>
+<td>/eodata/Sentinel-3/SLSTR/SL_1_RBT/2019/05/15/S...</td>
+<td>[]</td>
+<td>{'Start': '2019-05-15T00:00:40.204Z', 'End': '...</td>
+<td>geography'SRID=4326;POLYGON ((-8.40421 -46.088...</td>
+<td>{'type': 'Polygon', 'coordinates': [[[-8.40421...</td>
 </tr>
 </tbody>
 </table>
@@ -1538,8 +1538,8 @@ Note
 <div class="cell" data-execution_count="10">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(<span class="st">"https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=OData.CSC.Intersects(area=geography'SRID=4326;POLYGON((12.655118166047592 47.44667197521409,21.39065656328509 48.347694733853245,28.334291357162826 41.877123516783655,17.47086198383573 40.35854475076158,12.655118166047592 47.44667197521409))') and ContentDate/Start gt 2022-05-20T00:00:00.000Z and ContentDate/Start lt 2022-05-21T00:00:00.000Z"</span>).json()</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame.from_dict(json[<span class="st">'value'</span>]).head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(<span class="st">"https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=OData.CSC.Intersects(area=geography'SRID=4326;POLYGON((12.655118166047592 47.44667197521409,21.39065656328509 48.347694733853245,28.334291357162826 41.877123516783655,17.47086198383573 40.35854475076158,12.655118166047592 47.44667197521409))') and ContentDate/Start gt 2022-05-20T00:00:00.000Z and ContentDate/Start lt 2022-05-21T00:00:00.000Z"</span>).json()</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame.from_dict(json[<span class="st">'value'</span>]).head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display" data-execution_count="10">
 <div>
@@ -1641,8 +1641,8 @@ Note
 <div class="cell" data-execution_count="11">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(<span class="st">"https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=OData.CSC.Intersects(area=geography%27SRID=4326;POINT(-0.5319577002158441%2028.65487836189358)%27)"</span>).json()</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame.from_dict(json[<span class="st">'value'</span>]).head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(<span class="st">"https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=OData.CSC.Intersects(area=geography%27SRID=4326;POINT(-0.5319577002158441%2028.65487836189358)%27)"</span>).json()</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame.from_dict(json[<span class="st">'value'</span>]).head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display" data-execution_count="11">
 <div>
@@ -1733,31 +1733,42 @@ Note
 </div>
 </div>
 </div>
-<p><u>Disclaimers</u>:</p>
+<div class="callout callout-style-default callout-warning callout-titled" title="Disclaimers">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Disclaimers
+</div>
+</div>
+<div class="callout-body-container callout-body">
 <ol type="1">
 <li>MULTIPOLYGON is currently not supported.</li>
-<li>Polygon must start and end with the same point.</li>
-<li>Coordinates must be given in EPSG 4326</li>
+<li>The polygon coordinates must start and end with the same point.</li>
+<li>Coordinates must be given in EPSG:4326</li>
 </ol>
+</div>
+</div>
 </section>
 <section id="query-by-attributes" class="level3">
 <h3 class="anchored" data-anchor-id="query-by-attributes">Query by attributes</h3>
 <p>To search for products by attributes it is necessary to build a filter with the following structure:</p>
-<p>Attributes/OData.CSC.ValueTypeAttribute/any(att:att/Name eq ‘[Attribute.Name]’ and att/OData.CSC.ValueTypeAttribute/Value eq ‘[Attribute.Value]’)</p>
+<p><code>Attributes/OData.CSC.ValueTypeAttribute/any(att:att/Name eq '[Attribute.Name]' and att/OData.CSC.ValueTypeAttribute/Value eq '[Attribute.Value]')</code></p>
 <p>where</p>
 <ul>
-<li><em>ValueTypeAttribute</em> can take the following values:
+<li><code>ValueTypeAttribute</code> can take the following values:
 <ul>
 <li><em>StringAttribute</em></li>
 <li><em>DoubleAttribute</em></li>
 <li><em>IntegerAttribute</em></li>
 <li><em>DateTimeOffsetAttribute</em></li>
 </ul></li>
-<li><em>[Attribute.Name]</em> is the attribute name which can take multiple values, depending on collection (Attachment 1 - Coming soon)</li>
-<li><em>eq</em> before <em>[Attribute.Value]</em> can be substituted with le, lt, ge, gt in case of <em>Integer, Double</em> or <em>DateTimeOffset</em> Attributes</li>
-<li><em>[Attribute.Value]</em> is the specific value that the user is searching for</li>
+<li><code>[Attribute.Name]</code> is the attribute name which can take multiple values, depending on collection (Attachment 1 - Coming soon)</li>
+<li><code>eq</code> before <code>[Attribute.Value]</code> can be substituted with <code>le</code>, <code>lt</code>, <code>ge</code>, <code>gt</code> in case of <em>Integer, Double</em> or <em>DateTimeOffset</em> Attributes</li>
+<li><code>[Attribute.Value]</code> is the specific value that the user is searching for</li>
 </ul>
-<p>To get products with CloudCover&lt;40% between two dates:</p>
+<p>To get products with a cloud cover below 40% and between two dates:</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-11-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-11-1" role="tab" aria-controls="tabset-11-1" aria-selected="true">HTTP Request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-11-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-11-2" role="tab" aria-controls="tabset-11-2" aria-selected="false">Python</a></li></ul>
 <div class="tab-content">
@@ -1768,8 +1779,8 @@ Note
 <div class="cell" data-execution_count="12">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(<span class="st">"https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Attributes/OData.CSC.DoubleAttribute/any(att:att/Name eq 'cloudCover' and att/OData.CSC.DoubleAttribute/Value le 40.00) and ContentDate/Start gt 2022-01-01T00:00:00.000Z and ContentDate/Start lt 2022-01-03T00:00:00.000Z&amp;$top=10"</span>).json()</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame.from_dict(json[<span class="st">'value'</span>]).head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(<span class="st">"https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Attributes/OData.CSC.DoubleAttribute/any(att:att/Name eq 'cloudCover' and att/OData.CSC.DoubleAttribute/Value le 40.00) and ContentDate/Start gt 2022-01-01T00:00:00.000Z and ContentDate/Start lt 2022-01-03T00:00:00.000Z&amp;$top=10"</span>).json()</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame.from_dict(json[<span class="st">'value'</span>]).head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display" data-execution_count="12">
 <div>
@@ -1860,7 +1871,7 @@ Note
 </div>
 </div>
 </div>
-<p>To get products with cloudCover&lt; 10% and productType=S2MSI2A and ASCENDING orbitDirection between two dates:</p>
+<p>To get products with cloud cover below 10% and productType=S2MSI2A and ASCENDING orbitDirection between two dates:</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-12-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-12-1" role="tab" aria-controls="tabset-12-1" aria-selected="true">HTTP Request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-12-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-12-2" role="tab" aria-controls="tabset-12-2" aria-selected="false">Python</a></li></ul>
 <div class="tab-content">
@@ -1871,8 +1882,8 @@ Note
 <div class="cell" data-execution_count="13">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(<span class="st">"https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Attributes/OData.CSC.DoubleAttribute/any(att:att/Name eq 'cloudCover' and att/OData.CSC.DoubleAttribute/Value lt 10.00) and Attributes/OData.CSC.StringAttribute/any(att:att/Name eq 'productType' and att/OData.CSC.StringAttribute/Value eq 'S2MSI2A') and Attributes/OData.CSC.StringAttribute/any(att:att/Name eq 'orbitDirection' and att/OData.CSC.StringAttribute/Value eq 'ASCENDING') and ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-03T04:00:00.000Z&amp;$top=10"</span>).json()</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame.from_dict(json[<span class="st">'value'</span>]).head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(<span class="st">"https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Attributes/OData.CSC.DoubleAttribute/any(att:att/Name eq 'cloudCover' and att/OData.CSC.DoubleAttribute/Value lt 10.00) and Attributes/OData.CSC.StringAttribute/any(att:att/Name eq 'productType' and att/OData.CSC.StringAttribute/Value eq 'S2MSI2A') and Attributes/OData.CSC.StringAttribute/any(att:att/Name eq 'orbitDirection' and att/OData.CSC.StringAttribute/Value eq 'ASCENDING') and ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-03T04:00:00.000Z&amp;$top=10"</span>).json()</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame.from_dict(json[<span class="st">'value'</span>]).head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display" data-execution_count="13">
 <div>
@@ -1966,7 +1977,7 @@ Note
 </section>
 <section id="orderby-option" class="level3">
 <h3 class="anchored" data-anchor-id="orderby-option">Orderby option</h3>
-<p>Orderby option can be used to order the products in an ascending (asc) or descending (desc) direction. If asc or desc not specified, then the resources will be ordered in ascending order.</p>
+<p>The <code>orderby</code> option can be used to order the products in an ascending (<code>asc</code>) or descending (<code>desc</code>) direction. If <code>asc</code> or <code>desc</code> not specified, then the resources will be ordered in ascending order.</p>
 <p>To order products by ContentDate/Start in a descending direction:</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-13-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-13-1" role="tab" aria-controls="tabset-13-1" aria-selected="true">HTTP Request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-13-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-13-2" role="tab" aria-controls="tabset-13-2" aria-selected="false">Python</a></li></ul>
@@ -1978,8 +1989,8 @@ Note
 <div class="cell" data-execution_count="14">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(<span class="st">"https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,'S1A_EW_GRD') and ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-03T03:00:00.000Z&amp;$orderby=ContentDate/Start desc"</span>).json()</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame.from_dict(json[<span class="st">'value'</span>]).head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(<span class="st">"https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,'S1A_EW_GRD') and ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-03T03:00:00.000Z&amp;$orderby=ContentDate/Start desc"</span>).json()</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame.from_dict(json[<span class="st">'value'</span>]).head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display" data-execution_count="14">
 <div>
@@ -2071,12 +2082,11 @@ Note
 </div>
 </div>
 <p>By default, if orderby option is not used, the results are not ordered. If orderby option is used, additional orderby by id is also used, so that the results are fully ordered and no products are lost while paginating through the results.</p>
-<p>The acceptable arguments for this option: <em>ContentDate/Start</em>, <em>ContentDate/End, PublicationDate, ModificationDate</em>, in directions: <em>asc, desc</em>.</p>
+<p>The acceptable arguments for this option: <code>ContentDate/Start</code>, <code>ContentDate/End</code>, <code>PublicationDate</code>, <code>ModificationDate</code>, in directions: <code>asc</code>, <code>desc</code>.</p>
 </section>
 <section id="top-option" class="level3">
 <h3 class="anchored" data-anchor-id="top-option">Top option</h3>
-<p>Top option specifies the maximum number of items returned from a query.</p>
-<p>To limit the number of results:</p>
+<p>The <code>top</code> option specifies the maximum number of items returned from a query. The default value is 20. The specified value should be an integer between 0 and 1000. For example, to return 100 items at most:</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-14-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-14-1" role="tab" aria-controls="tabset-14-1" aria-selected="true">HTTP Request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-14-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-14-2" role="tab" aria-controls="tabset-14-2" aria-selected="false">Python</a></li></ul>
 <div class="tab-content">
@@ -2087,8 +2097,8 @@ Note
 <div class="cell" data-execution_count="15">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(<span class="st">"https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A_EW_GRD%27)%20and%20ContentDate/Start</span><span class="sc">%20g</span><span class="st">t%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T12:00:00.000Z&amp;$top=100"</span>).json()</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame.from_dict(json[<span class="st">'value'</span>]).head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(<span class="st">"https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A_EW_GRD%27)%20and%20ContentDate/Start</span><span class="sc">%20g</span><span class="st">t%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T12:00:00.000Z&amp;$top=100"</span>).json()</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame.from_dict(json[<span class="st">'value'</span>]).head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display" data-execution_count="15">
 <div>
@@ -2179,13 +2189,11 @@ Note
 </div>
 </div>
 </div>
-<p>The default value is set to 20.</p>
-<p>The acceptable arguments for this option: <em>Integer &lt;0,1000&gt;</em></p>
 </section>
 </section>
 <section id="skip-option" class="level2">
 <h2 class="anchored" data-anchor-id="skip-option">Skip option</h2>
-<p>Skip option can be used to skip a specific number of results. Exemplary application of this option would be paginating through the results, however for performance reasons, we recommend limiting queries with small time intervals as a substitute of using skip in a more generic query.</p>
+<p>The <code>skip</code> option can be used to skip a specific number of results. Exemplary application of this option would be paginating through the results, however for performance reasons, we recommend limiting queries with small time intervals as a substitute of using skip in a more generic query.</p>
 <p>To skip a specific number of results:</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-15-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-15-1" role="tab" aria-controls="tabset-15-1" aria-selected="true">HTTP Request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-15-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-15-2" role="tab" aria-controls="tabset-15-2" aria-selected="false">Python</a></li></ul>
@@ -2197,8 +2205,8 @@ Note
 <div class="cell" data-execution_count="16">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(<span class="st">"https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A_EW_GRD%27)%20and%20ContentDate/Start</span><span class="sc">%20g</span><span class="st">t%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T12:00:00.000Z&amp;$skip=23"</span>).json()</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame.from_dict(json[<span class="st">'value'</span>]).head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(<span class="st">"https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A_EW_GRD%27)%20and%20ContentDate/Start</span><span class="sc">%20g</span><span class="st">t%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T12:00:00.000Z&amp;$skip=23"</span>).json()</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame.from_dict(json[<span class="st">'value'</span>]).head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display" data-execution_count="16">
 <div>
@@ -2289,9 +2297,9 @@ Note
 </div>
 </div>
 </div>
-<p>The default value is set to 0.</p>
+<p>The default value is 0.</p>
 <p>Whenever a query results in more products than 20 (default top value), the API provides a nextLink at the bottom of the page:</p>
-<pre><code>"@OData.nextLink":</code></pre>
+<div class="sourceCode" id="cb18"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>"@OData.nextLink":</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-16-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-16-1" role="tab" aria-controls="tabset-16-1" aria-selected="true">HTTP Request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-16-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-16-2" role="tab" aria-controls="tabset-16-2" aria-selected="false">Python</a></li></ul>
 <div class="tab-content">
@@ -2302,8 +2310,8 @@ Note
 <div class="cell" data-execution_count="17">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(<span class="st">"http://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,'S1A_EW_GRD')+and+ContentDate/Start+gt+2022-05-03T00:00:00.000Z+and+ContentDate/Start+lt+2022-05-03T12:00:00.000Z&amp;$skip=20"</span>).json()</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame.from_dict(json[<span class="st">'value'</span>]).head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(<span class="st">"http://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,'S1A_EW_GRD')+and+ContentDate/Start+gt+2022-05-03T00:00:00.000Z+and+ContentDate/Start+lt+2022-05-03T12:00:00.000Z&amp;$skip=20"</span>).json()</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame.from_dict(json[<span class="st">'value'</span>]).head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display" data-execution_count="17">
 <div>
@@ -2394,11 +2402,11 @@ Note
 </div>
 </div>
 </div>
-<p>The acceptable arguments for this option: <em>Integer &lt;0,10000&gt;</em></p>
+<p>The acceptable arguments for this option is an integer between 0 and 10000</p>
 </section>
 <section id="count-option" class="level2">
 <h2 class="anchored" data-anchor-id="count-option">Count option</h2>
-<p>Count option enables users to get the exact number of products matching the query. This option is disabled by default to accelerate the query performance.</p>
+<p>The <code>count</code> option enables users to get the exact number of products matching the query. This option is disabled by default to accelerate the query performance.</p>
 <p>To get the exact number of products for a given query:</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-17-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-17-1" role="tab" aria-controls="tabset-17-1" aria-selected="true">HTTP Request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-17-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-17-2" role="tab" aria-controls="tabset-17-2" aria-selected="false">Python</a></li></ul>
@@ -2410,8 +2418,8 @@ Note
 <div class="cell" data-execution_count="18">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(<span class="st">"https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A_EW_GRD%27)%20and%20ContentDate/Start</span><span class="sc">%20g</span><span class="st">t%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T12:00:00.000Z&amp;$count=True"</span>).json()</span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame.from_dict(json[<span class="st">'value'</span>]).head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(<span class="st">"https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A_EW_GRD%27)%20and%20ContentDate/Start</span><span class="sc">%20g</span><span class="st">t%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T12:00:00.000Z&amp;$count=True"</span>).json()</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame.from_dict(json[<span class="st">'value'</span>]).head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display" data-execution_count="18">
 <div>
@@ -2502,11 +2510,11 @@ Note
 </div>
 </div>
 </div>
-<p>The acceptable arguments for this option: <em>True, true, 1, False, false, 0</em>.</p>
+<p>The acceptable arguments for this option: <code>True</code>, <code>true</code>, <code>1</code>, <code>False</code>, <code>false</code>, <code>0</code>.</p>
 </section>
 <section id="expand-option" class="level2">
 <h2 class="anchored" data-anchor-id="expand-option">Expand option</h2>
-<p>Expand option enables users to see full metadata of each returned result.</p>
+<p>The <code>expand</code> option enables users to see full metadata of each returned result.</p>
 <p>To see the metadata of the results:</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-18-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-18-1" role="tab" aria-controls="tabset-18-1" aria-selected="true">HTTP Request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-18-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-18-2" role="tab" aria-controls="tabset-18-2" aria-selected="false">Python</a></li></ul>
@@ -2518,8 +2526,8 @@ Note
 <div class="cell" data-execution_count="19">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(<span class="st">"https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A_EW_GRD%27)%20and%20ContentDate/Start</span><span class="sc">%20g</span><span class="st">t%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T12:00:00.000Z&amp;$expand=Attributes"</span>).json()</span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame.from_dict(json[<span class="st">'value'</span>]).head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(<span class="st">"https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A_EW_GRD%27)%20and%20ContentDate/Start</span><span class="sc">%20g</span><span class="st">t%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T12:00:00.000Z&amp;$expand=Attributes"</span>).json()</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame.from_dict(json[<span class="st">'value'</span>]).head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display" data-execution_count="19">
 <div>
@@ -2614,7 +2622,7 @@ Note
 </div>
 </div>
 </div>
-<p>The acceptable arguments for this option: <em>Attributes</em></p>
+<p>The acceptable arguments for this option: <code>Attributes</code></p>
 </section>
 <section id="product-download" class="level2">
 <h2 class="anchored" data-anchor-id="product-download">Product Download</h2>
@@ -2624,12 +2632,12 @@ Note
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-19-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-19-1" role="tab" aria-controls="tabset-19-1" aria-selected="true">cURL</a></li></ul>
 <div class="tab-content">
 <div id="tabset-19-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-19-1-tab">
-<pre><code>curl --location --request POST 'https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token' \
-  --header 'Content-Type: application/x-www-form-urlencoded' \
-  --data-urlencode 'grant_type=password' \
-  --data-urlencode 'username=&lt;LOGIN&gt;' \
-  --data-urlencode 'password=&lt;PASSWORD&gt;' \
-  --data-urlencode 'client_id=cdse-public'</code></pre>
+<div class="sourceCode" id="cb22"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">--location</span> <span class="at">--request</span> POST <span class="st">'https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token'</span> <span class="dt">\</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">--header</span> <span class="st">'Content-Type: application/x-www-form-urlencoded'</span> <span class="dt">\</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">--data-urlencode</span> <span class="st">'grant_type=password'</span> <span class="dt">\</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--data-urlencode</span> <span class="st">'username=&lt;LOGIN&gt;'</span> <span class="dt">\</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">--data-urlencode</span> <span class="st">'password=&lt;PASSWORD&gt;'</span> <span class="dt">\</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">--data-urlencode</span> <span class="st">'client_id=cdse-public'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
@@ -2641,7 +2649,7 @@ Note
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-20-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-20-1" role="tab" aria-controls="tabset-20-1" aria-selected="true">cURL</a></li></ul>
 <div class="tab-content">
 <div id="tabset-20-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-20-1-tab">
-<pre><code>curl -d 'client_id=cdse-public' -d 'username=&lt;LOGIN&gt;' -d 'password=&lt;PASSWORD&gt;' -d 'grant_type=password' 'https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token' | python -m json.tool | grep "access_token" | awk -F\" '{print $4}'</code></pre>
+<div class="sourceCode" id="cb23"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-d</span> <span class="st">'client_id=cdse-public'</span> <span class="at">-d</span> <span class="st">'username=&lt;LOGIN&gt;'</span> <span class="at">-d</span> <span class="st">'password=&lt;PASSWORD&gt;'</span> <span class="at">-d</span> <span class="st">'grant_type=password'</span> <span class="st">'https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token'</span> <span class="kw">|</span> <span class="ex">python</span> <span class="at">-m</span> json.tool <span class="kw">|</span> <span class="fu">grep</span> <span class="st">"access_token"</span> <span class="kw">|</span> <span class="fu">awk</span> <span class="at">-F\"</span> <span class="st">'{print $4}'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
@@ -2651,11 +2659,11 @@ Note
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-21-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-21-1" role="tab" aria-controls="tabset-21-1" aria-selected="true">cURL</a></li></ul>
 <div class="tab-content">
 <div id="tabset-21-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-21-1-tab">
-<pre><code>curl --location --request POST 'https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token' \
-  --header 'Content-Type: application/x-www-form-urlencoded' \
-  --data-urlencode 'grant_type=refresh_token' \
-  --data-urlencode 'refresh_token=&lt;REFRESH_TOKEN&gt;' \
-  --data-urlencode 'client_id=cdse-public'</code></pre>
+<div class="sourceCode" id="cb24"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">--location</span> <span class="at">--request</span> POST <span class="st">'https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token'</span> <span class="dt">\</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">--header</span> <span class="st">'Content-Type: application/x-www-form-urlencoded'</span> <span class="dt">\</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">--data-urlencode</span> <span class="st">'grant_type=refresh_token'</span> <span class="dt">\</span></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--data-urlencode</span> <span class="st">'refresh_token=&lt;REFRESH_TOKEN&gt;'</span> <span class="dt">\</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">--data-urlencode</span> <span class="st">'client_id=cdse-public'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
@@ -2668,14 +2676,13 @@ Note
 | CODE-DE-EL | [https://identity.dataspace.copernicus.eu/auth/realms/CODE-DE-EL/protocol/openid-connect/token](https://identity.cloudferro.com/auth/realms/CODE-DE-EL){target="_blank"} |
 | wekeo-elasticity | [https://identity.dataspace.copernicus.eu/auth/realms/wekeo-elasticity/protocol/openid-connect/token](https://identity.cloudferro.com/auth/realms/wekeo-elasticity){target="_blank"} |
 | Eumetsat-elasticity | [https://identity.dataspace.copernicus.eu/auth/realms/Eumetsat-elasticity/protocol/openid-connect/token](https://identity.cloudferro.com/auth/realms/Eumetsat-elasticity){target="_blank"} | -->
-<p><br></p>
 <p>Once you have your token, you require a product Id which can be found in the response of the products search: <a href="https://catalogue.dataspace.copernicus.eu/odata/v1/Products" target="_blank"><code>https://catalogue.dataspace.copernicus.eu/odata/v1/Products</code></a></p>
 <p>Finally, you can download the product using this script:</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-22-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-22-1" role="tab" aria-controls="tabset-22-1" aria-selected="true">cURL</a></li></ul>
 <div class="tab-content">
 <div id="tabset-22-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-22-1-tab">
-<pre><code>curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" 'https://catalogue.dataspace.copernicus.eu/odata/v1/Products(060882f4-0a34-5f14-8e25-6876e4470b0d)/$value' --location-trusted --output /tmp/product.zip</code></pre>
+<div class="sourceCode" id="cb25"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-H</span> <span class="st">"Authorization: Bearer </span><span class="va">$KEYCLOAK_TOKEN</span><span class="st">"</span> <span class="st">'https://catalogue.dataspace.copernicus.eu/odata/v1/Products(060882f4-0a34-5f14-8e25-6876e4470b0d)/$value'</span> <span class="at">--location-trusted</span> <span class="at">--output</span> /tmp/product.zip</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
@@ -2684,7 +2691,7 @@ Note
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-23-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-23-1" role="tab" aria-controls="tabset-23-1" aria-selected="true">Wget</a></li></ul>
 <div class="tab-content">
 <div id="tabset-23-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-23-1-tab">
-<pre><code>!wget  --header "Authorization: Bearer $KEYCLOAK_TOKEN" 'http://catalogue.dataspace.copernicus.eu/odata/v1/Products(db0c8ef3-8ec0-5185-a537-812dad3c58f8)/$value' -O example_odata.zip</code></pre>
+<div class="sourceCode" id="cb26"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">wget</span>  <span class="at">--header</span> <span class="st">"Authorization: Bearer </span><span class="va">$KEYCLOAK_TOKEN</span><span class="st">"</span> <span class="st">'http://catalogue.dataspace.copernicus.eu/odata/v1/Products(db0c8ef3-8ec0-5185-a537-812dad3c58f8)/$value'</span> <span class="at">-O</span> example_odata.zip</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
@@ -2692,19 +2699,19 @@ Note
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-24-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-24-1" role="tab" aria-controls="tabset-24-1" aria-selected="true">Python</a></li></ul>
 <div class="tab-content">
 <div id="tabset-24-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-24-1-tab">
-<pre><code>import requests
-session = requests.Session()
-session.headers.update({'Authorization': 'Bearer KEYCLOAK_TOKEN'})
-url = f"http://catalogue.dataspace.copernicus.eu/odata/v1/Products(db0c8ef3-8ec0-5185-a537-812dad3c58f8)/$value"
-response = session.get(url, allow_redirects=False)
-while response.status_code in (301, 302, 303, 307):
-    url = response.headers['Location']
-    response = session.get(url, allow_redirects=False)
-
-file = session.get(url, verify=False, allow_redirects=True)
-
-with open(f"product.zip", 'wb') as p:
-    p.write(file.content)</code></pre>
+<div class="sourceCode" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> requests</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>session <span class="op">=</span> requests.Session()</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>session.headers.update({<span class="st">'Authorization'</span>: <span class="st">'Bearer KEYCLOAK_TOKEN'</span>})</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>url <span class="op">=</span> <span class="ss">f"http://catalogue.dataspace.copernicus.eu/odata/v1/Products(db0c8ef3-8ec0-5185-a537-812dad3c58f8)/$value"</span></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>response <span class="op">=</span> session.get(url, allow_redirects<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> response.status_code <span class="kw">in</span> (<span class="dv">301</span>, <span class="dv">302</span>, <span class="dv">303</span>, <span class="dv">307</span>):</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>    url <span class="op">=</span> response.headers[<span class="st">'Location'</span>]</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>    response <span class="op">=</span> session.get(url, allow_redirects<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a><span class="bu">file</span> <span class="op">=</span> session.get(url, verify<span class="op">=</span><span class="va">False</span>, allow_redirects<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> <span class="bu">open</span>(<span class="ss">f"product.zip"</span>, <span class="st">'wb'</span>) <span class="im">as</span> p:</span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>    p.write(<span class="bu">file</span>.content)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
