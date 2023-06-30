@@ -1,9 +1,6 @@
 # APIs 
 This section gives an overview on the APIs provided by Copernicus Data Space Ecosystem.
 
-
-## Catalogue APIs
-
 #### [OData](APIs/OData.qmd)
 #### [OpenSearch](APIs/OpenSearch.qmd)
 #### [STAC product catalog](APIs/STAC.md)
