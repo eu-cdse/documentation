@@ -1,0 +1,63 @@
+---
+title: "Glossary"
+format:
+  html:
+    code-fold: true
+jupyter: python3
+---
+
+
+The following glossary provides an introduction to the key technical terms commonly used when working with the openEO API.
+
+## General terms
+
+- **EO**: Earth Observation
+- **API**: Application Programming Interface ([wikipedia](https://en.wikipedia.org/wiki/Application_programming_interface){target="_blank"}),
+  a (standardized) communication protocol, for example between a client application and back-end service
+- **client**: Software tool, framework or environment that an end-user directly interacts with.
+  For example: a Jupyter notebook, a Python script/application, an RStudio session, a JavaScript based web app, etc.
+- **back-end**: computer (cloud) infrastructure that takes care of the actual EO (big) data storage and processing.
+  The end-user only interacts with the back-end through a standardized API, while the operational complexity is hidden.
+
+
+## Processes
+
+A **process** is an operation that performs a specific task on a set of parameters and returns a result. An example is computing a statistical operation, such as mean or median, on selected EO data. A process is similar to a function or method in programming languages.
+
+A **pre-defined process** is a process provided by the *back-end*, 
+typically one of the [processes centrally defined by openeo.org](https://processes.openeo.org/){target="_blank"}.
+
+A **user-defined process** is a process defined by the *user*. 
+It can directly be part of another process graph or be stored as custom process on a back-end. 
+Internally it is a *process graph* with optional additional metadata.
+
+A **process graph** chains specific process calls from the set of pre-defined and user-defined processes together. 
+A process graph itself is a (user-defined) process again. 
+
+
+## EO data (Collections)
+
+In openEO, all collections can be requested using a client. These collection follows the [STAC (SpatioTemporal Asset Catalog) metadata specification](https://github.com/radiantearth/stac-spec/blob/master/overview.md#what-is-a-spatiotemporal-asset){target="_blank"}. Within openEO, a **product** (sometimes also called *item* or *asset* in the specification) typically refers to a limited area and a single overpass leading to a very short observation period (seconds) or a temporal aggregation of such data. A user can load (a subset of) a collection using a special process, which returns a (spatial) datacube. All further processing is then applied to the datacube on the back-end.
+
+
+## Spatial datacubes
+
+A spatiotemporal datacube is a multidimensional array with one or more spatial or temporal dimensions.
+In the EO domain, it is common to be implicit about the temporal dimension and just refer to them as spatial datacubes in short.
+Special cases are raster and [vector datacubes](https://r-spatial.org/r/2022/09/12/vdc.html){target="_blank"}.
+Learn more about datacubes in the [datacube documentation](https://openeo.org/documentation/1.0/datacubes.html){target="_blank"}.
+
+
+## User-defined function (UDF)
+
+The abbreviation **UDF** stands for [**user-defined function**](https://open-eo.github.io/openeo-python-client/udf.html){target="_blank"}. With this concept, users are able to upload custom code and have it executed e.g. for every pixel of a scene, or applied to a particular dimension or set of dimensions, allowing custom server-side calculations.
+
+## Data Processing modes
+
+Processes can run in three different ways:
+
+1. Results can be pre-computed by creating a ***batch job***.  They are submitted to the back-end's processing system, but will remain inactive until explicitly put into the processing queue. They will run only once and store results after execution. Results can be downloaded. Batch jobs are typically time consuming and user interaction is not possible although log files are generated for them. This is the only mode that allows to get an estimate about time, volume and costs beforehand.
+   
+2. Processes can also be executed **on-demand** (i.e. synchronously). Results are delivered with the request itself and no job is created. Only lightweight computations, for example previews, should be executed using this approach as timeouts are to be expected for [long-polling HTTP requests](https://www.pubnub.com/blog/2014-12-01-http-long-polling/){target="_blank"}.
+
+3. The third way of data processing in openEO is **client-side processing**. The client-side processing functionality allows to test and use openEO with its processes locally, i.e. without any connection to an openEO back-end. It relies on the projects [openeo-pg-parser-networkx](https://github.com/Open-EO/openeo-pg-parser-networkx){target='_blank'}, which provides an openEO process graph parsing tool, and [openeo-processes-dask](https://github.com/Open-EO/openeo-processes-dask){target='_blank'}, which provides an Xarray and Dask implementation of most openEO processes.
