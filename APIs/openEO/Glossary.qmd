@@ -16,8 +16,8 @@ The following glossary provides an introduction to the key technical terms commo
   a (standardized) communication protocol, for example between a client application and back-end service
 - **client**: Software tool, framework or environment that an end-user directly interacts with.
   For example: a Jupyter notebook, a Python script/application, an RStudio session, a JavaScript based web app, etc.
-- **back-end**: computer (cloud) infrastructure that takes care of the actual EO (big) data storage and processing.
-  The end-user only interacts with the back-end through a standardized API, while the operational complexity is hidden.
+- **(cloud) back-end**: server; computer infrastructure (one or more physical computers or virtual machines) used for storing EO data and processing it
+- **big Earth observation cloud back-end**: server infrastructure where industry and researchers analyse large amounts of EO data
 
 
 ## Processes
@@ -25,19 +25,25 @@ The following glossary provides an introduction to the key technical terms commo
 A **process** is an operation that performs a specific task on a set of parameters and returns a result. An example is computing a statistical operation, such as mean or median, on selected EO data. A process is similar to a function or method in programming languages.
 
 A **pre-defined process** is a process provided by the *back-end*, 
-typically one of the [processes centrally defined by openeo.org](https://processes.openeo.org/){target="_blank"}.
+typically [one of the processes centrally defined by openeo.org](https://processes.openeo.org/){target="_blank"}.
 
 A **user-defined process** is a process defined by the *user*. 
 It can directly be part of another process graph or be stored as custom process on a back-end. 
 Internally it is a *process graph* with optional additional metadata.
 
-A **process graph** chains specific process calls from the set of pre-defined and user-defined processes together. 
-A process graph itself is a (user-defined) process again. 
+A **process graph** chains specific process calls from the set of pre-defined and user-defined processes together. A process graph itself is a (user-defined) process again. Similarly to scripts in the context of programming, process graphs organize and automate the execution of one or more processes that could alternatively be executed individually.
 
 
 ## EO data (Collections)
 
-In openEO, all collections can be requested using a client. These collection follows the [STAC (SpatioTemporal Asset Catalog) metadata specification](https://github.com/radiantearth/stac-spec/blob/master/overview.md#what-is-a-spatiotemporal-asset){target="_blank"}. Within openEO, a **product** (sometimes also called *item* or *asset* in the specification) typically refers to a limited area and a single overpass leading to a very short observation period (seconds) or a temporal aggregation of such data. A user can load (a subset of) a collection using a special process, which returns a (spatial) datacube. All further processing is then applied to the datacube on the back-end.
+In our domain, different terms are used to describe EO data(sets). Within openEO, a **granule** (sometimes also called *item* or *asset* in the specification) typically refers to a limited area and a single overpass leading to a very short observation period (seconds) or a temporal aggregation of such data (e.g. for 16-day MODIS composites). A **collection** is a sequence of granules sharing the same product specification. It typically corresponds to the series of products derived from data acquired by a sensor on board a satellite and having the same mode of operation.
+
+The [CEOS OpenSearch Best Practice Document v1.2](http://ceos.org/ourwork/workinggroups/wgiss/access/opensearch/) lists the following synonyms used by other organizations:
+
+- **granule**: dataset (ESA, ISO 19115), granule (NASA), product (ESA, CNES), scene (JAXA)
+- **collection**: dataset series (ESA, ISO 19115), collection (CNES, NASA), dataset (JAXA), product (JAXA)
+
+In openEO, a back-end offers a set of collections to be processed. All collections can be requested using a client and are described using the [STAC (SpatioTemporal Asset Catalog) metadata specification](https://github.com/radiantearth/stac-spec) as STAC collections. A user can load (a subset of) a collection using a special process, which returns a (spatial) datacube. All further processing is then applied to the datacube on the back-end.
 
 
 ## Spatial datacubes
