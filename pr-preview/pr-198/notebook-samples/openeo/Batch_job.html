@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.433">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Documentation - How to execute large jobs?: Using Batch Job</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": true,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+<meta name="zd-site-verification" content="xj9koofr1crilmoclgxsjd">
+<script type="text/javascript">
+
+    window.onload = () => {
+        const elems = document.getElementsByClassName('navbar-title');
+        if (elems.length > 0) {
+            const title = elems[0];
+            title.parentElement.href = '/Home.html'
+        }
+    }
+</script>
+
+
+<link rel="stylesheet" href="../../custom.css">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a href="https://dataspace.copernicus.eu/" class="navbar-brand navbar-brand-logo">
+    <img src="../../_images/logos/combinedLogo.svg" alt="" class="navbar-logo">
+    </a>
+    <a class="navbar-brand" href="https://dataspace.copernicus.eu/">
+    <span class="navbar-title">Documentation</span>
+    </a>
+  </div>
+        <div class="quarto-navbar-tools ms-auto">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">How to execute large jobs?: Using Batch Job</li></ol></nav>
+      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+      </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Home.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Welcome</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../Roadmap.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Service description and evolution roadmap</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Roadmap/DataTable.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Roadmap/APITable.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">APIs</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Roadmap/AppTable.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Applications</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="px-0"><hr class="sidebar-divider hi "></li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Registration.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">User registration and authentication</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../Data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Data</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Data/Dashboard.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Copernicus Operations Dashboard</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Data/Sentinel1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Sentinel-1</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Data/Sentinel2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Sentinel-2</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Data/Sentinel3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Sentinel-3</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Data/Sentinel5P.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Sentinel-5P</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../APIs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">APIs</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/Token.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Keycloak Token</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/OData.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">OData</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/OpenSearch.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">OpenSearch</span></a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../APIs/openEO/openEO.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">openEO</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/openEO/Glossary.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Glossary</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/openEO/Python_Client/Python.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Using Python client</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/openEO/R_Client/R.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Using R client</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/openEO/JavaScript_Client/JavaScript.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Using JavaScript client</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/openEO/job_config.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Job configuration</span></a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="false">
+ <span class="menu-text">Jupyter notebooks</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth3 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notebook-samples/openeo/NDVI_Timeseries.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Zonal statistics over time</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notebook-samples/openeo/Load_Collection.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Load Sentinel-2 data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notebook-samples/openeo/UDF.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">User defined functions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notebook-samples/openeo/UDP.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Publishing workflow as a service</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/openEO/openeo-community-examples/python/BasicSentinelMerge/sentinel_merge.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preprocessing &amp; merging Sentinels</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/STAC.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">STAC product catalog</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/S3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">S3 Access</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/Traceability.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Traceability API</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/On-Demand Production API.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">On-Demand Production API</span></a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../APIs/SentinelHub.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Sentinel Hub</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="false">
+ <span class="menu-text">User guides</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth3 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/UserGuides/Datamask.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Data Mask</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/UserGuides/CloudMasks.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Cloud Masks</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/UserGuides/Transparency.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Transparency</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/UserGuides/TimeSeries.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Time Series</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../APIs/SentinelHub/Evalscript.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Evalscript (custom script)</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth3 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Evalscript/V3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Evalscript V3</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Evalscript/Functions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Utility Functions</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../APIs/SentinelHub/Overview.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">API Overview</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth3 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Overview/Authentication.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Authentication</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Overview/RateLimiting.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Rate limiting</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Overview/ProcessingUnit.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Processing Unit</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Overview/ErrorHandling.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Error Handling</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../APIs/SentinelHub/Process.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Process API</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-10" class="collapse list-unstyled sidebar-section depth3 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Process/Crs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">CRS support</span></a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" aria-expanded="false">
+ <span class="menu-text">Examples</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-11" class="collapse list-unstyled sidebar-section depth4 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Process/Examples/S2L1C.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Examples for S2L1C</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Process/Examples/S2L2A.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Examples for S2L2A</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Process/Examples/S3OLCI.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Examples for S3OLCI</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Process/Examples/S3SLSTR.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Examples for S3SLSTR</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Process/Examples/S5PL2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Examples for S5PL2</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../APIs/SentinelHub/Catalog.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Catalog API</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-12" class="collapse list-unstyled sidebar-section depth3 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Catalog/Examples.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Examples for Catalog API</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../APIs/SentinelHub/Statistical.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Statistical API</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-13" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-13" class="collapse list-unstyled sidebar-section depth3 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Statistical/Examples.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Examples for Statistical API</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../APIs/SentinelHub/OGC.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">OGC</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-14" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-14" class="collapse list-unstyled sidebar-section depth3 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/OGC/WMS.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">WMS</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/OGC/WCS.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">WCS</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/OGC/WFS.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">WFS</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/OGC/WMTS.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">WMTS</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/OGC/AdditionalRequestParameters.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Additional Request Parameters</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/OGC/OutputFormats.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Output Formats</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/OGC/Examples.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Examples for OGC</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/ApiReference.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">API Reference</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../Applications.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Applications</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-15" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-15" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Applications/Browser.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">About the Browser</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Applications/AlgorithmPlaza.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">openEO algorithm plaza</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Applications/WebEditor.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">openEO Web Editor</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Applications/JupyterHub.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Jupyter Hub</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="px-0"><hr class="sidebar-divider hi "></li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../FAQ.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">FAQ</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Support.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Support</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#visualize-the-result" id="toc-visualize-the-result" class="nav-link active" data-scroll-target="#visualize-the-result">Visualize the result</a></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/eu-cdse/documentation/issues" class="toc-action">Report an issue</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content column-body" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">How to execute large jobs?: Using Batch Job</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>Most of the simple, basic openEO usage examples show synchronous downloading of results: you submit a process graph with a (HTTP POST) request and receive the result as direct response of that same request. This only works properly if the processing doesn’t take too long (order of seconds, or a couple of minutes at most).</p>
+<p>For the heavier work (larger regions of interest, larger time series, more intensive processing, …) you have to use batch jobs.</p>
+<p>This notebook shows how to programmatically create and interact with batch job using the openEO Python client library.</p>
+<div class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> openeo</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># connect to the backend and authenticate</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>connection <span class="op">=</span> openeo.<span class="ex">connect</span>(url<span class="op">=</span><span class="st">"openeo.dataspace.copernicus.eu"</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>connection.authenticate_oidc()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Authenticated using refresh token.</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>&lt;Connection to 'https://openeo.dataspace.copernicus.eu/openeo/1.1/' with OidcBearerAuth&gt;</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># load your data collection</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>cube <span class="op">=</span> connection.load_collection(</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>                <span class="st">"SENTINEL2_L2A"</span>,</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>                bands<span class="op">=</span>[<span class="st">"B04"</span>, <span class="st">"B03"</span>, <span class="st">"B02"</span>],</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>                temporal_extent<span class="op">=</span>(<span class="st">"2022-05-01"</span>, <span class="st">"2022-05-30"</span>),</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>                spatial_extent<span class="op">=</span>{</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"west"</span>: <span class="fl">3.202609</span>,</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"south"</span>: <span class="fl">51.189474</span>,</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"east"</span>: <span class="fl">3.254708</span>,</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"north"</span>: <span class="fl">51.204641</span>,</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"crs"</span>: <span class="st">"EPSG:4326"</span>,</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    },</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    max_cloud_cover<span class="op">=</span><span class="dv">50</span>,</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>cube <span class="op">=</span> cube.max_time()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Store raster data as GeoTIFF files</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>cube <span class="op">=</span> cube.save_result(<span class="bu">format</span><span class="op">=</span><span class="st">"GTiff"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>While not necessary, it is also recommended to give your batch job a descriptive title so it’s easier to identify in your job listing.</p>
+<div class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>job <span class="op">=</span> cube.execute_batch()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>0:00:00 Job 'j-e6e8567c637443298bca57e2cfda0e3f': send 'start'
+0:00:11 Job 'j-e6e8567c637443298bca57e2cfda0e3f': queued (progress N/A)
+0:00:16 Job 'j-e6e8567c637443298bca57e2cfda0e3f': queued (progress N/A)
+0:00:23 Job 'j-e6e8567c637443298bca57e2cfda0e3f': queued (progress N/A)
+0:00:31 Job 'j-e6e8567c637443298bca57e2cfda0e3f': queued (progress N/A)
+0:00:41 Job 'j-e6e8567c637443298bca57e2cfda0e3f': queued (progress N/A)
+0:00:53 Job 'j-e6e8567c637443298bca57e2cfda0e3f': queued (progress N/A)
+0:01:08 Job 'j-e6e8567c637443298bca57e2cfda0e3f': finished (progress N/A)</code></pre>
+</div>
+</div>
+<p>An additional but longer way of executing the job is following a couple of steps starting with creating it using <code>create_job()</code> then starting it with either <code>start_job()</code> or using <code>start_and_wait()</code>.</p>
+<p>A batch job on a back-end is fully identified by its job_id.</p>
+<div class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>job.job_id</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="5">
+<pre><code>'j-e6e8567c637443298bca57e2cfda0e3f'</code></pre>
+</div>
+</div>
+<p>Depending on your situation or use case: make sure to properly take note of the batch job id. It allows you to “reconnect” to your job on the back-end, even if it was created at another time, by another script/notebook or even with another openEO client. Then you can later use use <code>Connection.job("your job id")</code> to create a BatchJob object for an existing batch job.</p>
+<p>A batch job typically takes some time to finish, and you can check its status with the <code>status()</code> method.</p>
+<div class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>job.status()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="6">
+<pre><code>'finished'</code></pre>
+</div>
+</div>
+<p>Batch job logs can be fetched with <code>job.logs()</code>. If you prefer a graphical, web-based interactive environment to manage and monitor your batch jobs, feel free to switch to an openEO web editor like <a href="https://openeo.dataspace.copernicus.eu/">openeo.dataspace.copernicus.eu</a> at any time.</p>
+<div class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>job.logs()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="7">
+
+    <script>
+    if (!window.customElements || !window.customElements.get('openeo-logs')) {
+        var el = document.createElement('script');
+        el.src = "https://cdn.jsdelivr.net/npm/@openeo/vue-components@2/assets/openeo.min.js";
+        document.head.appendChild(el);
+
+        var font = document.createElement('font');
+        font.as = "font";
+        font.type = "font/woff2";
+        font.crossOrigin = true;
+        font.href = "https://use.fontawesome.com/releases/v5.13.0/webfonts/fa-solid-900.woff2"
+        document.head.appendChild(font);
+    }
+    </script>
+    <openeo-logs>
+        <script type="application/json">{"logs": [{"id": "[1684136100733, 420060]", "time": "2023-05-15T07:35:00.733Z", "level": "info", "message": "Starting job 'j-e6e8567c637443298bca57e2cfda0e3f' from user User('3e24e251-2e9a-438f-90a9-d4500e576574', {'oidc_userinfo': {'sub': '3e24e251-2e9a-438f-90a9-d4500e576574', 'email_verified': True, 'name': 'Pratichhya Sharma', 'preferred_username': 'pratichhya.sharma@vito.be', 'given_name': 'Pratichhya', 'family_name': 'Sharma', 'email': 'pratichhya.sharma@vito.be'}}) (proxy user None)"}, {"id": "[1684136100843, 421564]", "time": "2023-05-15T07:35:00.843Z", "level": "debug", "message": "job_options: {}"}, {"id": "[1684136101653, 435020]", "time": "2023-05-15T07:35:01.653Z", "level": "info", "message": "Dry run extracted these source constraints: [(('load_collection', ('SENTINEL2_L2A', (('eo:cloud_cover', (('lte', 50),)), ('productType', (('eq', 'L2A'),))))), {'temporal_extent': ('2022-05-01', '2022-05-30'), 'spatial_extent': {'west': 3.202609, 'south': 51.189474, 'east': 3.254708, 'north': 51.204641, 'crs': 'EPSG:4326'}, 'bands': ['B04', 'B03', 'B02'], 'process_type': [<ProcessType.GLOBAL_TIME: 4>], 'properties': {'productType': {'process_graph': {'asc': {'process_id': 'eq', 'arguments': {'x': {'from_parameter': 'value'}, 'y': 'L2A'}, 'result': True}}}, 'eo:cloud_cover': {'process_graph': {'lte1': {'process_id': 'lte', 'arguments': {'x': {'from_parameter': 'value'}, 'y': 50}, 'result': True}}}}})]"}, {"id": "[1684136102412, 436401]", "time": "2023-05-15T07:35:02.412Z", "level": "info", "message": "mapped job_id j-e6e8567c637443298bca57e2cfda0e3f to application ID job-e6e8567c63-3e24e251-2e9a-438f-9"}, {"id": "[1684136104650, 8410]", "time": "2023-05-15T07:35:04.650Z", "level": "debug", "message": "About to sync status for job_id='j-e6e8567c637443298bca57e2cfda0e3f' user_id='3e24e251-2e9a-438f-90a9-d4500e576574' application_id='job-e6e8567c63-3e24e251-2e9a-438f-9' previous_status='created'"}, {"id": "[1684136104694, 9182]", "time": "2023-05-15T07:35:04.694Z", "level": "error", "message": "Failed to retrieve usage stats from kubecost"}, {"id": "[1684136104694, 14103]", "time": "2023-05-15T07:35:04.694Z", "level": "info", "message": "job j-e6e8567c637443298bca57e2cfda0e3f: status change from created to queued"}, {"id": "[1684136112358, 4035]", "time": "2023-05-15T07:35:12.358Z", "level": "info", "message": "batch_job.py main: start 2023-05-15 07:35:12.353172"}, {"id": "[1684136112358, 4345]", "time": "2023-05-15T07:35:12.358Z", "level": "info", "message": "batch_job.py argv: ['/opt/openeo/lib64/python3.8/site-packages/openeogeotrellis/deploy/batch_job.py', '/batch_jobs/j-e6e8567c637443298bca57e2cfda0e3f/job_specification.json', '/batch_jobs/j-e6e8567c637443298bca57e2cfda0e3f', 'out', 'stdout', 'job_metadata.json', '1.1.0', '[]', '3e24e251-2e9a-438f-90a9-d4500e576574', '0.0']"}, {"id": "[1684136112358, 4933]", "time": "2023-05-15T07:35:12.358Z", "level": "info", "message": "batch_job.py pid 69; ppid 15; cwd /opt/spark/work-dir"}, {"id": "[1684136112562, 5250]", "time": "2023-05-15T07:35:12.562Z", "level": "warning", "message": "batch_job.py version info {'date': '2023-05-15T07:35:12Z', 'versions': {'openeo': '0.16.0', 'openeo_driver': '0.48.0a1.dev20230510+508', 'openeo-geopyspark': '0.11.0a1.dev20230511+1259'}}"}, {"id": "[1684136112562, 5704]", "time": "2023-05-15T07:35:12.562Z", "level": "info", "message": "creating job dir PosixPath('/batch_jobs/j-e6e8567c637443298bca57e2cfda0e3f') (parent dir: {'path': '/batch_jobs', 'mode': 'drwxr-xr-x', 'uid': 18585, 'user': 'spark', 'gid': 18585, 'group': 'spark', 'size': 6}))"}, {"id": "[1684136112567, 6228]", "time": "2023-05-15T07:35:12.567Z", "level": "info", "message": "Using temp dir /opt/spark/work-dir/tmp"}, {"id": "[1684136112655, 6580]", "time": "2023-05-15T07:35:12.655Z", "level": "info", "message": "Trying to load 'custom_processes' with PYTHONPATH ['/opt/venv/lib/python3.8/site-packages/openeogeotrellis/deploy', '/usr/local/spark/python/lib/pyspark.zip', '/usr/local/spark/python/lib/py4j-0.10.9.7-src.zip', '/usr/local/spark-3.4.0/jars/spark-core_2.12-3.4.0.jar', '/opt/spark/work-dir/$PYTHONPATH', '/opt/tensorflow/python38/2.3.0', '/opt/openeo/lib/python3.8/site-packages', '/usr/lib64/python38.zip', '/usr/lib64/python3.8', '/usr/lib64/python3.8/lib-dynload', '/usr/local/lib64/python3.8/site-packages', '/usr/local/lib/python3.8/site-packages', '/usr/lib64/python3.8/site-packages', '/usr/lib/python3.8/site-packages']"}, {"id": "[1684136112655, 7509]", "time": "2023-05-15T07:35:12.655Z", "level": "info", "message": "'custom_processes' not loaded: ModuleNotFoundError(\"No module named 'custom_processes'\")."}, {"id": "[1684136113210, 7903]", "time": "2023-05-15T07:35:13.210Z", "level": "info", "message": "Logging initialized @7127ms to org.sparkproject.jetty.util.log.Slf4jLog"}, {"id": "[1684136115154, 8255]", "time": "2023-05-15T07:35:15.154Z", "level": "debug", "message": "Sending Request: GET https://s3.waw3-1.cloudferro.com /spark-history-cdse-staging/ Parameters: ({\"acl\":[null]}Headers: (User-Agent: Hadoop 3.3.4, aws-sdk-java/1.11.199 Linux/4.18.0-425.3.1.el8.x86_64 OpenJDK_64-Bit_Server_VM/11.0.14+9-LTS java/11.0.14 scala/2.12.17, amz-sdk-invocation-id: a80e6ca1-d5ea-9f39-cda7-ef10e5ee6471, Content-Type: application/octet-stream, ) "}, {"id": "[1684136115332, 8913]", "time": "2023-05-15T07:35:15.332Z", "level": "debug", "message": "Received successful response: 200, AWS Request ID: tx000000000000023b417cd-006461e0b3-58c259fe-default"}, {"id": "[1684136115332, 9308]", "time": "2023-05-15T07:35:15.332Z", "level": "debug", "message": "x-amzn-RequestId: not available"}, {"id": "[1684136115332, 9633]", "time": "2023-05-15T07:35:15.332Z", "level": "debug", "message": "AWS Request ID: tx000000000000023b417cd-006461e0b3-58c259fe-default"}, {"id": "[1684136115343, 9994]", "time": "2023-05-15T07:35:15.343Z", "level": "debug", "message": "Sending Request: HEAD https://s3.waw3-1.cloudferro.com /spark-history-cdse-staging/history Headers: (User-Agent: Hadoop 3.3.4, aws-sdk-java/1.11.199 Linux/4.18.0-425.3.1.el8.x86_64 OpenJDK_64-Bit_Server_VM/11.0.14+9-LTS java/11.0.14 scala/2.12.17, amz-sdk-invocation-id: f326d95e-dff2-5612-2a62-7fd2043ea9ea, Content-Type: application/octet-stream, ) "}, {"id": "[1684136115350, 10631]", "time": "2023-05-15T07:35:15.350Z", "level": "debug", "message": "Received error response: com.amazonaws.services.s3.model.AmazonS3Exception: Not Found (Service: Amazon S3; Status Code: 404; Error Code: 404 Not Found; Request ID: tx000000000000023b2e0c4-006461e0b3-58c36f8c-default; S3 Extended Request ID: null), S3 Extended Request ID: null"}, {"id": "[1684136115352, 11193]", "time": "2023-05-15T07:35:15.352Z", "level": "debug", "message": "Sending Request: GET https://s3.waw3-1.cloudferro.com /spark-history-cdse-staging/ Parameters: ({\"list-type\":[\"2\"],\"delimiter\":[\"/\"],\"max-keys\":[\"2\"],\"prefix\":[\"history/\"],\"fetch-owner\":[\"false\"]}Headers: (User-Agent: Hadoop 3.3.4, aws-sdk-java/1.11.199 Linux/4.18.0-425.3.1.el8.x86_64 OpenJDK_64-Bit_Server_VM/11.0.14+9-LTS java/11.0.14 scala/2.12.17, amz-sdk-invocation-id: fab947b8-6859-d841-2b5d-8400732a021b, Content-Type: application/octet-stream, ) "}, {"id": "[1684136115378, 11955]", "time": "2023-05-15T07:35:15.378Z", "level": "debug", "message": "Received successful response: 200, AWS Request ID: tx00000000000002386e62e-006461e0b3-58d8fc1b-default"}, {"id": "[1684136115378, 12350]", "time": "2023-05-15T07:35:15.378Z", "level": "debug", "message": "x-amzn-RequestId: not available"}, {"id": "[1684136115378, 12675]", "time": "2023-05-15T07:35:15.378Z", "level": "debug", "message": "AWS Request ID: tx00000000000002386e62e-006461e0b3-58d8fc1b-default"}, {"id": "[1684136115384, 13036]", "time": "2023-05-15T07:35:15.384Z", "level": "debug", "message": "Sending Request: HEAD https://s3.waw3-1.cloudferro.com /spark-history-cdse-staging/history Headers: (User-Agent: Hadoop 3.3.4, aws-sdk-java/1.11.199 Linux/4.18.0-425.3.1.el8.x86_64 OpenJDK_64-Bit_Server_VM/11.0.14+9-LTS java/11.0.14 scala/2.12.17, amz-sdk-invocation-id: 4fe5c1a4-74a2-532a-58c4-446fd80f8952, Content-Type: application/octet-stream, ) "}, {"id": "[1684136115390, 13672]", "time": "2023-05-15T07:35:15.390Z", "level": "debug", "message": "Received error response: com.amazonaws.services.s3.model.AmazonS3Exception: Not Found (Service: Amazon S3; Status Code: 404; Error Code: 404 Not Found; Request ID: tx000000000000023b2e0cc-006461e0b3-58c36f8c-default; S3 Extended Request ID: null), S3 Extended Request ID: null"}, {"id": "[1684136115391, 14234]", "time": "2023-05-15T07:35:15.391Z", "level": "debug", "message": "Sending Request: GET https://s3.waw3-1.cloudferro.com /spark-history-cdse-staging/ Parameters: ({\"list-type\":[\"2\"],\"delimiter\":[\"/\"],\"max-keys\":[\"2\"],\"prefix\":[\"history/\"],\"fetch-owner\":[\"false\"]}Headers: (User-Agent: Hadoop 3.3.4, aws-sdk-java/1.11.199 Linux/4.18.0-425.3.1.el8.x86_64 OpenJDK_64-Bit_Server_VM/11.0.14+9-LTS java/11.0.14 scala/2.12.17, amz-sdk-invocation-id: 4c54fbeb-a682-e1f4-9834-3177f20e4d62, Content-Type: application/octet-stream, ) "}, {"id": "[1684136115409, 14996]", "time": "2023-05-15T07:35:15.409Z", "level": "debug", "message": "Received successful response: 200, AWS Request ID: tx000000000000023870ac7-006461e0b3-58d88389-default"}, {"id": "[1684136115410, 15391]", "time": "2023-05-15T07:35:15.410Z", "level": "debug", "message": "x-amzn-RequestId: not available"}, {"id": "[1684136115410, 15716]", "time": "2023-05-15T07:35:15.410Z", "level": "debug", "message": "AWS Request ID: tx000000000000023870ac7-006461e0b3-58d88389-default"}, {"id": "[1684136115412, 16076]", "time": "2023-05-15T07:35:15.412Z", "level": "debug", "message": "Sending Request: HEAD https://s3.waw3-1.cloudferro.com /spark-history-cdse-staging/history/spark-b83457536f4749d39a38b53ceec541aa.inprogress Headers: (User-Agent: Hadoop 3.3.4, aws-sdk-java/1.11.199 Linux/4.18.0-425.3.1.el8.x86_64 OpenJDK_64-Bit_Server_VM/11.0.14+9-LTS java/11.0.14 scala/2.12.17, amz-sdk-invocation-id: c484ebd9-0ef4-0323-ff7f-51c409d0f5ee, Content-Type: application/octet-stream, ) "}, {"id": "[1684136115419, 16763]", "time": "2023-05-15T07:35:15.419Z", "level": "debug", "message": "Received error response: com.amazonaws.services.s3.model.AmazonS3Exception: Not Found (Service: Amazon S3; Status Code: 404; Error Code: 404 Not Found; Request ID: tx000000000000023870acb-006461e0b3-58d88389-default; S3 Extended Request ID: null), S3 Extended Request ID: null"}, {"id": "[1684136115420, 17325]", "time": "2023-05-15T07:35:15.420Z", "level": "debug", "message": "Sending Request: GET https://s3.waw3-1.cloudferro.com /spark-history-cdse-staging/ Parameters: ({\"list-type\":[\"2\"],\"delimiter\":[\"/\"],\"max-keys\":[\"2\"],\"prefix\":[\"history/spark-b83457536f4749d39a38b53ceec541aa.inprogress/\"],\"fetch-owner\":[\"false\"]}Headers: (User-Agent: Hadoop 3.3.4, aws-sdk-java/1.11.199 Linux/4.18.0-425.3.1.el8.x86_64 OpenJDK_64-Bit_Server_VM/11.0.14+9-LTS java/11.0.14 scala/2.12.17, amz-sdk-invocation-id: b15c842d-e6ca-4487-9326-4a6979352ce7, Content-Type: application/octet-stream, ) "}, {"id": "[1684136115466, 18137]", "time": "2023-05-15T07:35:15.466Z", "level": "debug", "message": "Received successful response: 200, AWS Request ID: tx000000000000023b2e0d2-006461e0b3-58c36f8c-default"}, {"id": "[1684136115466, 18532]", "time": "2023-05-15T07:35:15.466Z", "level": "debug", "message": "x-amzn-RequestId: not available"}, {"id": "[1684136115467, 18857]", "time": "2023-05-15T07:35:15.467Z", "level": "debug", "message": "AWS Request ID: tx000000000000023b2e0d2-006461e0b3-58c36f8c-default"}, {"id": "[1684136118189, 19218]", "time": "2023-05-15T07:35:18.189Z", "level": "warning", "message": "Hadoop client does not have hadoop.security.authentication=kerberos."}, {"id": "[1684136118194, 19588]", "time": "2023-05-15T07:35:18.194Z", "level": "info", "message": "Kerberos currentUser='spark (auth:SIMPLE)' isSecurityEnabled=False"}, {"id": "[1684136118219, 19950]", "time": "2023-05-15T07:35:18.219Z", "level": "info", "message": "Job spec: {\n \"process_graph\": {\n  \"loadcollection1\": {\n   \"process_id\": \"load_collection\",\n   \"arguments\": {\n    \"bands\": [\n     \"B04\",\n     \"B03\",\n     \"B02\"\n    ],\n    \"id\": \"SENTINEL2_L2A\",\n    \"properties\": {\n     \"eo:cloud_cover\": {\n      \"process_graph\": {\n       \"lte1\": {\n        \"process_id\": \"lte\",\n        \"arguments\": {\n         \"x\": {\n          \"from_parameter\": \"value\"\n         },\n         \"y\": 50\n        },\n        \"result\": true\n       }\n      }\n     }\n    },\n    \"spatial_extent\": {\n     \"west\": 3.202609,\n     \"south\": 51.189474,\n     \"east\": 3.254708,\n     \"north\": 51.204641,\n     \"crs\": \"EPSG:4326\"\n    },\n    \"temporal_extent\": [\n     \"2022-05-01\",\n     \"2022-05-30\"\n    ]\n   }\n  },\n  \"reducedimension1\": {\n   \"process_id\": \"reduce_dimension\",\n   \"arguments\": {\n    \"data\": {\n     \"from_node\": \"loadcollection1\"\n    },\n    \"dimension\": \"t\",\n    \"reducer\": {\n     \"process_graph\": {\n      \"max1\": {\n       \"process_id\": \"max\",\n       \"arguments\": {\n        \"data\": {\n         \"from_parameter\": \"data\"\n        }\n       },\n       \"result\": true\n      }\n     }\n    }\n   }\n  },\n  \"saveresult1\": {\n   \"process_id\": \"save_result\",\n   \"arguments\": {\n    \"data\": {\n     \"from_node\": \"reducedimension1\"\n    },\n    \"format\": \"GTiff\",\n    \"options\": {}\n   }\n  },\n  \"saveresult2\": {\n   \"process_id\": \"save_result\",\n   \"arguments\": {\n    \"data\": {\n     \"from_node\": \"saveresult1\"\n    },\n    \"format\": \"GTiff\",\n    \"options\": {}\n   },\n   \"result\": true\n  }\n }\n}"}, {"id": "[1684136118219, 21964]", "time": "2023-05-15T07:35:18.219Z", "level": "info", "message": "job_dir=PosixPath('/batch_jobs/j-e6e8567c637443298bca57e2cfda0e3f'), job_dir.resolve()=PosixPath('/batch_jobs/j-e6e8567c637443298bca57e2cfda0e3f'), output_file=PosixPath('/batch_jobs/j-e6e8567c637443298bca57e2cfda0e3f/out'), metadata_file=PosixPath('/batch_jobs/j-e6e8567c637443298bca57e2cfda0e3f/job_metadata.json')"}, {"id": "[1684136118237, 22595]", "time": "2023-05-15T07:35:18.237Z", "level": "info", "message": "_get_layer_catalog: catalog_files=['/opt/layercatalog.json']"}, {"id": "[1684136118237, 22969]", "time": "2023-05-15T07:35:18.237Z", "level": "info", "message": "_get_layer_catalog: reading /opt/layercatalog.json"}, {"id": "[1684136118239, 23333]", "time": "2023-05-15T07:35:18.239Z", "level": "info", "message": "_get_layer_catalog: collected 11 collections"}, {"id": "[1684136118239, 23691]", "time": "2023-05-15T07:35:18.239Z", "level": "info", "message": "_get_layer_catalog: opensearch_enrich=True"}, {"id": "[1684136118239, 24047]", "time": "2023-05-15T07:35:18.239Z", "level": "info", "message": "Getting collection metadata from https://catalogue.dataspace.copernicus.eu/resto/collections"}, {"id": "[1684136118277, 24449]", "time": "2023-05-15T07:35:18.277Z", "level": "warning", "message": "Traceback (most recent call last):\n  File \"/opt/openeo/lib/python3.8/site-packages/openeogeotrellis/layercatalog.py\", line 802, in _get_layer_catalog\n    opensearch_metadata[cid] = opensearch_instance(os_endpoint).get_metadata(collection_id=os_cid)\n  File \"/opt/openeo/lib/python3.8/site-packages/openeogeotrellis/opensearch.py\", line 193, in get_metadata\n    resp.raise_for_status()\n  File \"/opt/openeo/lib/python3.8/site-packages/requests/models.py\", line 1021, in raise_for_status\n    raise HTTPError(http_error_msg, response=self)\nrequests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://catalogue.dataspace.copernicus.eu/resto/collections\n"}, {"id": "[1684136118277, 25443]", "time": "2023-05-15T07:35:18.277Z", "level": "info", "message": "Getting collection metadata from https://finder.creodias.eu/oldresto/resto/collections.json"}, {"id": "[1684136118351, 25842]", "time": "2023-05-15T07:35:18.351Z", "level": "warning", "message": "Traceback (most recent call last):\n  File \"/opt/openeo/lib/python3.8/site-packages/openeogeotrellis/layercatalog.py\", line 802, in _get_layer_catalog\n    opensearch_metadata[cid] = opensearch_instance(os_endpoint).get_metadata(collection_id=os_cid)\n  File \"/opt/openeo/lib/python3.8/site-packages/openeogeotrellis/opensearch.py\", line 174, in get_metadata\n    collection = self._get_collection(collection_id)\n  File \"/opt/openeo/lib/python3.8/site-packages/openeogeotrellis/opensearch.py\", line 169, in _get_collection\n    resp.raise_for_status()\n  File \"/opt/openeo/lib/python3.8/site-packages/requests/models.py\", line 1021, in raise_for_status\n    raise HTTPError(http_error_msg, response=self)\nrequests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://finder.creodias.eu/oldresto/resto/collections.json\n"}, {"id": "[1684136118351, 27002]", "time": "2023-05-15T07:35:18.351Z", "level": "info", "message": "Getting collection metadata from https://phenology.hrvpp2.vgt.vito.be/collections"}, {"id": "[1684136118389, 27392]", "time": "2023-05-15T07:35:18.389Z", "level": "info", "message": "Getting collection metadata from https://services.terrascope.be/catalogue/collections"}, {"id": "[1684136118828, 27786]", "time": "2023-05-15T07:35:18.828Z", "level": "info", "message": "Getting collection metadata from https://catalogue.dataspace.copernicus.eu/resto/collections"}, {"id": "[1684136118861, 28188]", "time": "2023-05-15T07:35:18.861Z", "level": "warning", "message": "Traceback (most recent call last):\n  File \"/opt/openeo/lib/python3.8/site-packages/openeogeotrellis/layercatalog.py\", line 802, in _get_layer_catalog\n    opensearch_metadata[cid] = opensearch_instance(os_endpoint).get_metadata(collection_id=os_cid)\n  File \"/opt/openeo/lib/python3.8/site-packages/openeogeotrellis/opensearch.py\", line 193, in get_metadata\n    resp.raise_for_status()\n  File \"/opt/openeo/lib/python3.8/site-packages/requests/models.py\", line 1021, in raise_for_status\n    raise HTTPError(http_error_msg, response=self)\nrequests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://catalogue.dataspace.copernicus.eu/resto/collections\n"}, {"id": "[1684136118861, 29182]", "time": "2023-05-15T07:35:18.861Z", "level": "info", "message": "Getting collection metadata from https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/collections"}, {"id": "[1684136118881, 29592]", "time": "2023-05-15T07:35:18.881Z", "level": "info", "message": "Creating merged collections for common names: set()"}, {"id": "[1684136118941, 29956]", "time": "2023-05-15T07:35:18.941Z", "level": "info", "message": "Loading configuration from Python file PosixPath('/opt/openeo/lib/python3.8/site-packages/openeo_driver/config/default.py') (variable 'config')"}, {"id": "[1684136118942, 30398]", "time": "2023-05-15T07:35:18.942Z", "level": "info", "message": "Using backend implementation <openeogeotrellis.backend.GeoPySparkBackendImplementation object at 0x7f053a16b160>"}, {"id": "[1684136118942, 30825]", "time": "2023-05-15T07:35:18.942Z", "level": "info", "message": "Correlation id: j-e6e8567c637443298bca57e2cfda0e3f"}, {"id": "[1684136118942, 31190]", "time": "2023-05-15T07:35:18.942Z", "level": "info", "message": "Starting process graph evaluation"}, {"id": "[1684136118942, 31537]", "time": "2023-05-15T07:35:18.942Z", "level": "info", "message": "Doing dry run"}, {"id": "[1684136118953, 31885]", "time": "2023-05-15T07:35:18.953Z", "level": "info", "message": "Using process 'load_collection' from namespace 'backend'."}, {"id": "[1684136118964, 32278]", "time": "2023-05-15T07:35:18.964Z", "level": "info", "message": "Using process 'reduce_dimension' from namespace 'backend'."}, {"id": "[1684136118974, 32672]", "time": "2023-05-15T07:35:18.974Z", "level": "info", "message": "Using process 'save_result' from namespace 'backend'."}, {"id": "[1684136118984, 33060]", "time": "2023-05-15T07:35:18.984Z", "level": "info", "message": "Using process 'save_result' from namespace 'backend'."}, {"id": "[1684136118984, 33449]", "time": "2023-05-15T07:35:18.984Z", "level": "info", "message": "Dry run extracted these source constraints: [(('load_collection', ('SENTINEL2_L2A', (('eo:cloud_cover', (('lte', 50),)), ('productType', (('eq', 'L2A'),))))), {'temporal_extent': ('2022-05-01', '2022-05-30'), 'spatial_extent': {'west': 3.202609, 'south': 51.189474, 'east': 3.254708, 'north': 51.204641, 'crs': 'EPSG:4326'}, 'bands': ['B04', 'B03', 'B02'], 'process_type': [<ProcessType.GLOBAL_TIME: 4>], 'properties': {'productType': {'process_graph': {'asc': {'process_id': 'eq', 'arguments': {'x': {'from_parameter': 'value'}, 'y': 'L2A'}, 'result': True}}}, 'eo:cloud_cover': {'process_graph': {'lte1': {'process_id': 'lte', 'arguments': {'x': {'from_parameter': 'value'}, 'y': 50}, 'result': True}}}}})]"}, {"id": "[1684136118995, 34492]", "time": "2023-05-15T07:35:18.995Z", "level": "info", "message": "Using process 'load_collection' from namespace 'backend'."}, {"id": "[1684136118995, 34882]", "time": "2023-05-15T07:35:18.995Z", "level": "info", "message": "load_collection: start 2023-05-15 07:35:18.995812"}, {"id": "[1684136118996, 35237]", "time": "2023-05-15T07:35:18.996Z", "level": "info", "message": "Creating layer for SENTINEL2_L2A with load params {'temporal_extent': ('2022-05-01', '2022-05-30'), 'spatial_extent': {'west': 3.202609, 'south': 51.189474, 'east': 3.254708, 'north': 51.204641, 'crs': 'EPSG:4326'}, 'global_extent': {'west': 3.202609, 'south': 51.189474, 'east': 3.254708, 'north': 51.204641, 'crs': 'EPSG:4326'}, 'bands': ['B04', 'B03', 'B02'], 'properties': {'eo:cloud_cover': {'process_graph': {'lte1': {'process_id': 'lte', 'arguments': {'x': {'from_parameter': 'value'}, 'y': 50}, 'result': True}}}}, 'aggregate_spatial_geometries': None, 'sar_backscatter': None, 'process_types': {<ProcessType.GLOBAL_TIME: 4>}, 'custom_mask': {}, 'data_mask': None, 'target_crs': None, 'target_resolution': None, 'resample_method': 'near', 'pixel_buffer': None}"}, {"id": "[1684136118996, 36318]", "time": "2023-05-15T07:35:18.996Z", "level": "info", "message": "Layer source type: 'file-s2'"}, {"id": "[1684136118996, 36659]", "time": "2023-05-15T07:35:18.996Z", "level": "info", "message": "band_indices: [3, 2, 1]"}, {"id": "[1684136118996, 36994]", "time": "2023-05-15T07:35:18.996Z", "level": "info", "message": "Correlation ID is 'j-e6e8567c637443298bca57e2cfda0e3f'"}, {"id": "[1684136118996, 37362]", "time": "2023-05-15T07:35:18.996Z", "level": "info", "message": "Detected process types:{<ProcessType.GLOBAL_TIME: 4>}"}, {"id": "[1684136119371, 37729]", "time": "2023-05-15T07:35:19.371Z", "level": "info", "message": "loading pyramid file-s2"}, {"id": "[1684136120242, 38066]", "time": "2023-05-15T07:35:20.242Z", "level": "info", "message": "Loading Sentinel2 with params DataCubeParameters(256, {}, FloatingLayoutScheme, ByDay, 6, None, NearestNeighbor, 0.0, 0.0) and bands IMG_DATA_Band_B04_10m_Tile1_Data;IMG_DATA_Band_B03_10m_Tile1_Data;IMG_DATA_Band_B02_10m_Tile1_Data initial layout: LayoutDefinition(Extent(514150.0, 5670060.0, 519270.0, 5672620.0),CellSize(10.0,10.0),2x1 tiles,512x256 pixels)"}, {"id": "[1684136120518, 38736]", "time": "2023-05-15T07:35:20.518Z", "level": "info", "message": "https://finder.creodias.eu/oldresto/api/collections/Sentinel2/search.json?box=3.2024799673477586%2C51.189327550297754%2C3.2547940851855173%2C51.20480614640677&sortParam=startDate&sortOrder=ascending&page=1&maxRecords=100&status=0%7C34%7C37&dataset=ESA-DATASET&productType=L2A&cloudCover=%5B0%2C50%5D&startDate=2022-05-01T00%3A00%3A00Z&completionDate=2022-05-30T23%3A59%3A59.999999999Z returned 200"}, {"id": "[1684136121550, 39435]", "time": "2023-05-15T07:35:21.550Z", "level": "info", "message": "https://finder.creodias.eu/oldresto/api/collections/Sentinel2/search.json?box=3.2024799673477586%2C51.189327550297754%2C3.2547940851855173%2C51.20480614640677&sortParam=startDate&sortOrder=ascending&page=2&maxRecords=100&status=0%7C34%7C37&dataset=ESA-DATASET&productType=L2A&cloudCover=%5B0%2C50%5D&startDate=2022-05-01T00%3A00%3A00Z&completionDate=2022-05-30T23%3A59%3A59.999999999Z returned 200"}, {"id": "[1684136121851, 40133]", "time": "2023-05-15T07:35:21.851Z", "level": "info", "message": "Datacube requires approximately 2 spatial keys."}, {"id": "[1684136126288, 40491]", "time": "2023-05-15T07:35:26.288Z", "level": "info", "message": "Datacube is sparse: false, requiring 2 keys out of 2. "}, {"id": "[1684136126558, 40860]", "time": "2023-05-15T07:35:26.558Z", "level": "info", "message": "Cube partitioner index: SparseSpaceTimePartitioner 4 false"}, {"id": "[1684136126575, 41229]", "time": "2023-05-15T07:35:26.575Z", "level": "info", "message": "Created cube for Sentinel2 with metadata TileLayerMetadata(uint16,LayoutDefinition(Extent(514150.0, 5670060.0, 519270.0, 5672620.0),CellSize(10.0,10.0),2x1 tiles,512x256 pixels),Extent(514154.35549085174, 5670914.963726785, 517799.85373835656, 5672612.967247324),EPSG:32631,KeyBounds(SpaceTimeKey(0,0,1651968000000),SpaceTimeKey(1,0,1653696000000))) and partitioner Some(SpacePartitioner(KeyBounds(SpaceTimeKey(0,0,1651968000000),SpaceTimeKey(1,0,1653696000000))))"}, {"id": "[1684136126639, 42004]", "time": "2023-05-15T07:35:26.639Z", "level": "info", "message": "load_collection: end 2023-05-15 07:35:26.637486, elapsed 0:00:07.641674"}, {"id": "[1684136126658, 42381]", "time": "2023-05-15T07:35:26.658Z", "level": "info", "message": "Using process 'reduce_dimension' from namespace 'backend'."}, {"id": "[1684136126683, 42775]", "time": "2023-05-15T07:35:26.683Z", "level": "debug", "message": "max process with arguments: data -> org.openeo.geotrellis.OpenEOProcessScriptBuilder$$Lambda$2954/0x0000000841269840@7a114b6e direct args: data -> {from_parameter=data}"}, {"id": "[1684136126704, 43266]", "time": "2023-05-15T07:35:26.704Z", "level": "info", "message": "Applying callback on time dimension of cube with partitioner: SpacePartitioner(KeyBounds(SpaceTimeKey(0,0,1651968000000),SpaceTimeKey(1,0,1653696000000))) - index: SparseSpaceTimePartitioner 4 false and metadata TileLayerMetadata(uint16,LayoutDefinition(Extent(514150.0, 5670060.0, 519270.0, 5672620.0),CellSize(10.0,10.0),2x1 tiles,512x256 pixels),Extent(514154.35549085174, 5670914.963726785, 517799.85373835656, 5672612.967247324),EPSG:32631,KeyBounds(SpaceTimeKey(0,0,1651968000000),SpaceTimeKey(1,0,1653696000000)))"}, {"id": "[1684136126792, 44086]", "time": "2023-05-15T07:35:26.792Z", "level": "info", "message": "Using process 'save_result' from namespace 'backend'."}, {"id": "[1684136126803, 44473]", "time": "2023-05-15T07:35:26.803Z", "level": "info", "message": "Using process 'save_result' from namespace 'backend'."}, {"id": "[1684136126803, 44862]", "time": "2023-05-15T07:35:26.803Z", "level": "info", "message": "Evaluated process graph, result (type <class 'list'>): [<openeo_driver.save_result.ImageCollectionResult object at 0x7f053a16b9a0>, <openeo_driver.save_result.ImageCollectionResult object at 0x7f053b41b190>]"}, {"id": "[1684136126887, 45383]", "time": "2023-05-15T07:35:26.887Z", "level": "info", "message": "save_result format GTIFF with bounds Extent(xmin=514154.35549085174, ymin=5670914.963726785, xmax=517799.85373835656, ymax=5672612.967247324) and options {'batch_mode': True, 'file_metadata': {'title': '', 'description': '', 'institution': 'openEO platform - Geotrellis backend: 0.11.0a1'}}"}, {"id": "[1684136126890, 46000]", "time": "2023-05-15T07:35:26.890Z", "level": "info", "message": "save_result: saveRDD"}, {"id": "[1684136143843, 4678]", "time": "2023-05-15T07:35:43.843Z", "level": "debug", "message": "Parameter with name: datanot found. Available parameters: "}, {"id": "[1684136143843, 5412]", "time": "2023-05-15T07:35:43.843Z", "level": "debug", "message": "Parameter with name: datanot found. Available parameters: "}, {"id": "[1684136143857, 5059]", "time": "2023-05-15T07:35:43.857Z", "level": "debug", "message": "Parameter with name: datanot found. Available parameters: "}, {"id": "[1684136143858, 5793]", "time": "2023-05-15T07:35:43.858Z", "level": "debug", "message": "Parameter with name: datanot found. Available parameters: "}, {"id": "[1684136143862, 5440]", "time": "2023-05-15T07:35:43.862Z", "level": "debug", "message": "Parameter with name: datanot found. Available parameters: "}, {"id": "[1684136143863, 6174]", "time": "2023-05-15T07:35:43.863Z", "level": "debug", "message": "Parameter with name: datanot found. Available parameters: "}, {"id": "[1684136164467, 8412]", "time": "2023-05-15T07:36:04.467Z", "level": "debug", "message": "About to sync status for job_id='j-e6e8567c637443298bca57e2cfda0e3f' user_id='3e24e251-2e9a-438f-90a9-d4500e576574' application_id='job-e6e8567c63-3e24e251-2e9a-438f-9' previous_status='queued'"}, {"id": "[1684136164507, 8923]", "time": "2023-05-15T07:36:04.507Z", "level": "error", "message": "Failed to retrieve usage stats from kubecost"}, {"id": "[1684136164507, 13843]", "time": "2023-05-15T07:36:04.507Z", "level": "info", "message": "job j-e6e8567c637443298bca57e2cfda0e3f: status change from queued to finished"}, {"id": "[1684136164623, 14237]", "time": "2023-05-15T07:36:04.623Z", "level": "debug", "message": "logging resource usage {'jobId': 'j-e6e8567c637443298bca57e2cfda0e3f', 'jobName': None, 'executionId': 'job-e6e8567c63-3e24e251-2e9a-438f-9', 'userId': '3e24e251-2e9a-438f-90a9-d4500e576574', 'sourceId': 'TerraScope/MEP', 'orchestrator': 'openeo', 'jobStart': 1684136104000.0, 'jobFinish': 1684136148000.0, 'state': 'FINISHED', 'status': 'UNDEFINED', 'metrics': {'time': {'value': 44000.0, 'unit': 'milliseconds'}, 'processing': {'value': 0.0, 'unit': 'shpu'}}}"}, {"id": "[1684136165061, 15013]", "time": "2023-05-15T07:36:05.061Z", "level": "info", "message": "Marked j-e6e8567c637443298bca57e2cfda0e3f as done"}]}</script>
+    </openeo-logs>
+    
+</div>
+</div>
+<p>Once a batch job is finished you can get a handle to the results (which can be a single file or multiple files) with <code>get_results()</code>.</p>
+<div class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>results <span class="op">=</span> job.get_results()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="15">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>results</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="15">
+
+    <script>
+    if (!window.customElements || !window.customElements.get('openeo-collection')) {
+        var el = document.createElement('script');
+        el.src = "https://cdn.jsdelivr.net/npm/@openeo/vue-components@2/assets/openeo.min.js";
+        document.head.appendChild(el);
+
+        var font = document.createElement('font');
+        font.as = "font";
+        font.type = "font/woff2";
+        font.crossOrigin = true;
+        font.href = "https://use.fontawesome.com/releases/v5.13.0/webfonts/fa-solid-900.woff2"
+        document.head.appendChild(font);
+    }
+    </script>
+    <openeo-collection>
+        <script type="application/json">{"mapOptions": {}, "data": {"assets": {"openEO.tif": {"eo:bands": [{"center_wavelength": 0.6645, "name": "B04"}, {"center_wavelength": 0.56, "name": "B03"}, {"center_wavelength": 0.4966, "name": "B02"}], "file:nodata": [0], "href": "https://openeo-staging.creo.vito.be/openeo/1.1/jobs/j-e6e8567c637443298bca57e2cfda0e3f/results/assets/M2UyNGUyNTEtMmU5YS00MzhmLTkwYTktZDQ1MDBlNTc2NTc0/b559f64efc0ebd747efccc01e35b3e28/openEO.tif?expires=1684741055", "roles": ["data"], "title": "openEO.tif", "type": "image/tiff; application=geotiff"}}, "bbox": [3.202609, 51.189474, 3.254708, 51.204641], "description": "Results for batch job j-e6e8567c637443298bca57e2cfda0e3f", "epsg": 32631, "extent": {"spatial": {"bbox": [[3.202609, 51.189474, 3.254708, 51.204641]]}, "temporal": {"interval": [["2022-05-01T00:00:00Z", "2022-05-30T00:00:00Z"]]}}, "id": "j-e6e8567c637443298bca57e2cfda0e3f", "license": "proprietary", "links": [{"href": "/eodata/Sentinel-2/MSI/L2A/2022/05/08/S2B_MSIL2A_20220508T105619_N0400_R094_T31UES_20220508T125857.SAFE", "rel": "derived_from", "title": "Derived from /eodata/Sentinel-2/MSI/L2A/2022/05/08/S2B_MSIL2A_20220508T105619_N0400_R094_T31UES_20220508T125857.SAFE"}, {"href": "/eodata/Sentinel-2/MSI/L2A/2022/05/15/S2B_MSIL2A_20220515T104619_N0400_R051_T31UES_20220515T125210.SAFE", "rel": "derived_from", "title": "Derived from /eodata/Sentinel-2/MSI/L2A/2022/05/15/S2B_MSIL2A_20220515T104619_N0400_R051_T31UES_20220515T125210.SAFE"}, {"href": "/eodata/Sentinel-2/MSI/L2A/2022/05/18/S2B_MSIL2A_20220518T105619_N0400_R094_T31UES_20220518T123354.SAFE", "rel": "derived_from", "title": "Derived from /eodata/Sentinel-2/MSI/L2A/2022/05/18/S2B_MSIL2A_20220518T105619_N0400_R094_T31UES_20220518T123354.SAFE"}, {"href": "/eodata/Sentinel-2/MSI/L2A/2022/05/28/S2B_MSIL2A_20220528T105619_N0400_R094_T31UES_20220528T130057.SAFE", "rel": "derived_from", "title": "Derived from /eodata/Sentinel-2/MSI/L2A/2022/05/28/S2B_MSIL2A_20220528T105619_N0400_R094_T31UES_20220528T130057.SAFE"}, {"href": "https://openeo-staging.creo.vito.be/openeo/1.1/jobs/j-e6e8567c637443298bca57e2cfda0e3f/results", "rel": "self", "type": "application/json"}, {"href": "https://openeo-staging.creo.vito.be/openeo/1.1/jobs/j-e6e8567c637443298bca57e2cfda0e3f/results/M2UyNGUyNTEtMmU5YS00MzhmLTkwYTktZDQ1MDBlNTc2NTc0/a60cac3c5e74876366b868e903024c09?expires=1684741055", "rel": "canonical", "type": "application/json"}, {"href": "http://ceos.org/ard/files/PFS/SR/v5.0/CARD4L_Product_Family_Specification_Surface_Reflectance-v5.0.pdf", "rel": "card4l-document", "type": "application/pdf"}, {"href": "https://openeo-staging.creo.vito.be/openeo/1.1/jobs/j-e6e8567c637443298bca57e2cfda0e3f/results/items/M2UyNGUyNTEtMmU5YS00MzhmLTkwYTktZDQ1MDBlNTc2NTc0/b559f64efc0ebd747efccc01e35b3e28/openEO.tif?expires=1684741055", "rel": "item", "type": "application/geo+json"}], "stac_extensions": ["https://stac-extensions.github.io/eo/v1.1.0/schema.json", "https://stac-extensions.github.io/file/v2.1.0/schema.json"], "stac_version": "1.0.0", "type": "Collection"}}</script>
+    </openeo-collection>
+    
+</div>
+</div>
+<p>In the general case, when you have one or more result files (also called “assets”), the easiest option to download them is using <code>download_files()</code> (plural) where you just specify a download folder (otherwise the current working directory will be used by default).</p>
+<div class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>results.download_files(<span class="st">"output/out"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="11">
+<pre><code>[WindowsPath('output/out/openEO.tif'),
+ WindowsPath('output/out/job-results.json')]</code></pre>
+</div>
+</div>
+<section id="visualize-the-result" class="level3">
+<h3 class="anchored" data-anchor-id="visualize-the-result">Visualize the result</h3>
+<div class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> rasterio</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> skimage <span class="im">import</span> exposure</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>img <span class="op">=</span> rasterio.<span class="bu">open</span>(<span class="st">"output/out/openEO.tif"</span>).read()</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> normalizeimg(data):</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>    data <span class="op">=</span> data.astype(<span class="bu">float</span>)</span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(data.shape[<span class="dv">2</span>]):</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>        p2, p98 <span class="op">=</span> np.percentile(data[:, :, i], (<span class="dv">2</span>, <span class="dv">98</span>))</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>        data[:, :, i] <span class="op">=</span> exposure.rescale_intensity(data[:, :, i], in_range<span class="op">=</span>(p2, p98))</span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">6</span>, <span class="dv">2</span>), dpi<span class="op">=</span><span class="dv">150</span>)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>ax.imshow(normalizeimg(np.moveaxis(img, <span class="dv">0</span>, <span class="op">-</span><span class="dv">1</span>)))</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">"RGB Image"</span>)</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Adjusting the spacing between subplots</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the figure</span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="Batch_job_files/figure-html/cell-13-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
