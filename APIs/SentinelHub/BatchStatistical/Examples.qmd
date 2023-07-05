@@ -1,0 +1,148 @@
+---
+title: Examples of Batch Statistical Workflow
+---
+
+The requests below are written in Python. To execute them you need to
+create an OAuth client as is explained
+[here](/APIs/SentinelHub/Overview/Authentication.qmd#python). It is
+named `oauth` in these examples.
+
+## Create a batch statistical request
+
+This request defines which data is requested and how it will be
+processed. In this example we\'ll get the statistics for a single band
+on a given day. To create a batch statistical request replace the
+`input.features.s3.url` field for the actual path to the GeoPackage
+features and the `output.s3.url` field for the desired path where the
+output data will be processed.
+
+``` python
+evalscript = """
+//VERSION=3
+function setup() {
+  return {
+    input: [{
+      bands: [
+        "B04",
+        "dataMask"
+      ]
+    }],
+    output: [
+      {
+        id: "output_B04",
+        bands: 1,
+        sampleType: "FLOAT32"
+      },
+      {
+        id: "dataMask",
+        bands: 1
+      }]
+  }
+}
+function evaluatePixel(samples) {
+    return {
+        output_B04: [samples.B04],
+        dataMask: [samples.dataMask]
+        }
+}
+"""
+
+request_payload = {
+  "input": {
+  "features":{
+      "s3": {
+          "url": "s3://<my-bucket>/<path-to-geopackage>",
+          "accessKey": "<my-s3-access-key>,
+          "secretAccessKey": "<my-secret-access-key>
+      }
+  },
+    "data": [
+      {
+        "type": "sentinel-2-l2a",
+        "dataFilter": {
+            "mosaickingOrder": "leastCC"
+        }
+      }
+    ]
+  },
+  "aggregation": {
+    "timeRange": {
+            "from": "2020-06-01T00:00:00Z",
+            "to": "2020-07-31T00:00:00Z"
+      },
+    "aggregationInterval": {
+        "of": "P30D"
+    },
+    "evalscript": evalscript,
+    "resx": 10,
+    "resy": 10
+  },
+  "output": {
+      "s3": {
+          "url": "s3://<my-bucket>/<path>",
+          "accessKey": "<my-s3-access-key>,
+          "secretAccessKey": "<my-secret-access-key>
+      }
+  }
+}
+
+headers = {
+  'Content-Type': 'application/json',
+   'Accept': 'application/json'
+}
+
+url = "https://sh.dataspace.copernicus.eu/api/v1/statistics/batch"
+
+response = oauth.request("POST", url=url, headers=headers, json=request_payload)
+
+request_id = response.json()['id']
+```
+
+Note that in the above example we\'re specifying an `accessKey` and
+`secretAccessKey`, so Sentinel Hub can read and write to the user\'s
+bucket. You can find more details about this under the [AWS access
+section](/APIs/SentinelHub/BatchStatistical.qmd#access-your-bucket-using-accesskey-and-secretaccesskey).
+
+You can download an example of a valid `.gpkg` (GeoPackage) file by
+clicking
+[here](/APIs/SentinelHub/BatchStatistical/resources/gpkg/geopackage-example.gpkg).
+
+### Get information about a batch statistical request
+
+``` python
+response = oauth.request("GET", f"https://sh.dataspace.copernicus.eu/api/v1/statistics/batch/{request_id}")
+
+response.json()
+```
+
+### Get status information about a batch statistical request
+
+``` python
+response = oauth.request("GET", f"https://sh.dataspace.copernicus.eu/api/v1/statistics/batch/{request_id}/status")
+
+response.json()
+```
+
+### Request analysis of a batch statistical request (ANALYSIS)
+
+``` python
+response = oauth.request("POST", f"https://sh.dataspace.copernicus.eu/api/v1/statistics/batch/{request_id}/analyse")
+
+response.status_code
+```
+
+### Request the start of a batch statistical request (START)
+
+``` python
+response = oauth.request("POST", f"https://sh.dataspace.copernicus.eu/api/v1/statistics/batch/{request_id}/start")
+
+response.status_code
+```
+
+### Stop a batch statistical request (STOP)
+
+``` python
+response = oauth.request("POST", f"https://sh.dataspace.copernicus.eu/api/v1/statistics/batch/{request_id}/stop")
+
+response.status_code
+```
