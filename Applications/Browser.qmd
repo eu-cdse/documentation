@@ -183,7 +183,7 @@ To avoid downloading all the products, you can add the product to your workspace
 
 - Keep track of the processed products (status, finished/queued products)
 
-To do this, click on the Add to Workspace icon (![workspace](_images/icons/AddToWorkspace.png)) appearing in your search result.  The workspace can be accessed bu clicking on the dropdown menu next to your user name and clicking on Workspace. 
+To do this, click on the Add to Workspace icon (![workspace](_images/icons/AddToWorkspace.png)) appearing in your search result.  The workspace can be accessed by clicking on the dropdown menu under your username or directly [here](https://dataspace.copernicus.eu/workspace/).
 
 <img src="_images/User_DropDown.png" width="450">
 
