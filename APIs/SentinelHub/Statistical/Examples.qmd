@@ -544,12 +544,12 @@ function setup() {
 
 function evaluatePixel(samples) {
     let ndvi = (samples.B08 - samples.B04)/(samples.B08 + samples.B04)
-    
+
     var validNDVIMask = 1
     if (samples.B08 + samples.B04 == 0 ){
         validNDVIMask = 0
     }
-    
+
     var noWaterMask = 1
     if (samples.SCL == 6 ){
         noWaterMask = 0
@@ -760,7 +760,7 @@ function evaluatePixel(samples) {
         max = ndvi > max ? ndvi:max;
       }
     }
-    
+
     return {
         data: [max],
         dataMask: [hasData]
@@ -965,17 +965,17 @@ function setup() {
 }
 function evaluatePixel(samples) {
     let ndvi = (samples.B08 - samples.B04)/(samples.B08 + samples.B04)
-    
+
     var validNDVIMask = 1
     if (samples.B08 + samples.B04 == 0 ){
         validNDVIMask = 0
     }
-    
+
     var noWaterMask = 1
     if (samples.SCL == 6 ){
         noWaterMask = 0
     }
-    
+
     return {
         output_my_bands: [samples.B04, samples.B08],
         output_my_indices: [ndvi],
@@ -1030,7 +1030,7 @@ stats_request = {
           }
         }
       }
-    },    
+    },
     "output_scl": {
       "histograms": {
         "default": {
@@ -1314,15 +1314,15 @@ function setup() {
 
 function evaluatePixel(samples) {
   let ndvi = (samples.s2[0].B08 - samples.s2[0].B04) / (samples.s2[0].B08+samples.s2[0].B04);
-  
+
   // Create a mask for invalid ndvi value
   let validNDVIMask = 1;
   if (!isFinite(ndvi)) {
     validNDVIMask = 0;
   }
-  
+
   // Create a mask for water
-  // The threshold comes from the result of exploring river flooding during the winter of 2020/21 on the River Severn in the United Kingdom 
+  // The threshold comes from the result of exploring river flooding during the winter of 2020/21 on the River Severn in the United Kingdom
   // (https://medium.com/euro-data-cube/exploring-time-and-space-a-guide-to-accessing-analysing-and-visualising-data-in-the-euro-data-e4a46f2bb55b)
   let noWaterMask = 1;
   if (toDB(samples.s1[0].VV) <= -20) {
