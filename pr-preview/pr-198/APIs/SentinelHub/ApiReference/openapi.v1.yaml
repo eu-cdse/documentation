@@ -31,17 +31,14 @@ components:
         ```
 
         curl --request POST \
-          --url https://sh.dataspace.copernicus.eu/oauth/token \
+          --url https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token \
           --header "content-type: application/x-www-form-urlencoded" \
           --data "grant_type=client_credentials&client_id=<your client id>&client_secret=<your client secret>"
         ```
       flows:
         clientCredentials:
-          tokenUrl: https://sh.dataspace.copernicus.eu/oauth/token
-          scopes:
-            SH: Sentinel Hub
-        implicit:
-          authorizationUrl: https://sh.dataspace.copernicus.eu/oauth/auth
+          tokenUrl: >-
+            https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token
           scopes:
             SH: Sentinel Hub
   parameters:
@@ -447,6 +444,52 @@ components:
         $ref: '#/components/schemas/CatalogGeometryGeoJSON'
       style: form
       explode: false
+    BatchRequestId:
+      name: requestId
+      description: Request ID
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    BatchCollectionId:
+      name: collectionId
+      description: Collection ID
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    BatchTileId:
+      name: tileId
+      description: Tile ID
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+    BatchTilinggridsId:
+      name: id
+      description: Tilinggrids ID
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+    ByocCollectionId:
+      name: collectionId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    ByocTileId:
+      name: tileId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
     ConfigurationDatasetType:
       name: datasetType
       description: Dataset type
@@ -546,24 +589,80 @@ components:
             title: Sentinel Hub STAC catalog
             description: STAC v1.0.0 implementation by Sentinel Hub
             conformsTo:
-              - https://api.stacspec.org/v1.0.0-rc.2/core
               - http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/core
               - http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/oas30
               - http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/geojson
+              - https://api.stacspec.org/v1.0.0/core
+              - https://api.stacspec.org/v1.0.0/collections
+              - https://api.stacspec.org/v1.0.0/ogcapi-features
+              - https://api.stacspec.org/v1.0.0/ogcapi-features#fields
+              - https://api.stacspec.org/v1.0.0/ogcapi-features#context
+              - https://api.stacspec.org/v1.0.0/ogcapi-features#filter
+              - https://api.stacspec.org/v1.0.0/item-search
+              - https://api.stacspec.org/v1.0.0/item-search#fields
+              - https://api.stacspec.org/v1.0.0/item-search#context
+              - https://api.stacspec.org/v1.0.0/item-search#filter
+              - http://www.opengis.net/spec/ogcapi-features-3/1.0/conf/filter
+              - >-
+                http://www.opengis.net/spec/ogcapi-features-3/1.0/conf/features-filter
+              - http://www.opengis.net/spec/cql2/1.0/conf/cql2-text
+              - http://www.opengis.net/spec/cql2/1.0/conf/cql2-json
+              - http://www.opengis.net/spec/cql2/1.0/conf/basic-cql2
             links:
               - href: https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/
+                rel: root
+                type: application/json
+              - href: https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/
                 rel: self
-              - href: >-
-                  https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/conformance
-                rel: conformance
+                type: application/json
               - href: >-
                   https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/collections
                 rel: data
+                type: application/json
+              - href: >-
+                  https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/conformance
+                rel: conformance
+                type: application/json
+                title: STAC conformance classes implemented by this server
               - href: https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search
                 rel: search
+                type: application/geo+json
+                title: STAC search
+                method: GET
+              - href: https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search
+                rel: search
+                type: application/geo+json
+                title: STAC search
+                method: POST
+              - href: >-
+                  https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/queryables
+                rel: http://www.opengis.net/def/rel/ogc/1.0/queryables
+                type: application/schema+json
+              - href: >-
+                  https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/collections/sentinel-2-l1c
+                rel: child
+                type: application/json
+                title: Sentinel 2 L1C
+              - href: >-
+                  https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/collections/sentinel-1-grd
+                rel: child
+                type: application/json
+                title: Sentinel 1 GRD
               - href: >-
                   https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/collections/sentinel-2-l2a
                 rel: child
+                type: application/json
+                title: Sentinel 2 L2A
+              - href: >-
+                  https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/ApiReference/openapi.v1.yaml
+                rel: service-desc
+                type: application/vnd.oai.openapi;version="3.1"
+                title: OpenAPI service description
+              - href: >-
+                  https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/ApiReference.html#tag/catalog_core
+                rel: service-doc
+                type: text/html
+                title: OpenAPI service documentation
     CatalogConformanceDeclaration:
       description: |-
         The URIs of all conformance classes supported by the server.
@@ -578,10 +677,25 @@ components:
             $ref: '#/components/schemas/CatalogConformanceClasses'
           example:
             conformsTo:
-              - https://api.stacspec.org/v1.0.0-rc.2/core
               - http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/core
               - http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/oas30
               - http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/geojson
+              - https://api.stacspec.org/v1.0.0/core
+              - https://api.stacspec.org/v1.0.0/collections
+              - https://api.stacspec.org/v1.0.0/ogcapi-features
+              - https://api.stacspec.org/v1.0.0/ogcapi-features#fields
+              - https://api.stacspec.org/v1.0.0/ogcapi-features#context
+              - https://api.stacspec.org/v1.0.0/ogcapi-features#filter
+              - https://api.stacspec.org/v1.0.0/item-search
+              - https://api.stacspec.org/v1.0.0/item-search#fields
+              - https://api.stacspec.org/v1.0.0/item-search#context
+              - https://api.stacspec.org/v1.0.0/item-search#filter
+              - http://www.opengis.net/spec/ogcapi-features-3/1.0/conf/filter
+              - >-
+                http://www.opengis.net/spec/ogcapi-features-3/1.0/conf/features-filter
+              - http://www.opengis.net/spec/cql2/1.0/conf/cql2-text
+              - http://www.opengis.net/spec/cql2/1.0/conf/cql2-json
+              - http://www.opengis.net/spec/cql2/1.0/conf/basic-cql2
     CatalogCollectionsCollections:
       description: >-
         The feature collections shared by this API.
@@ -625,18 +739,27 @@ components:
             $ref: '#/components/schemas/CatalogCollectionsCollections'
           example:
             links:
+              - href: https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/
+                rel: root
+                type: application/json
               - href: >-
                   https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/collections/
                 rel: self
                 type: application/json
+              - href: https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/
+                rel: parent
+                type: application/json
             collections:
               - stac_version: 1.0.0
                 stac_extensions:
+                  - >-
+                    https://stac-extensions.github.io/scientific/v1.0.0/schema.json
                   - https://stac-extensions.github.io/eo/v1.0.0/schema.json
                 type: Collection
                 id: sentinel-2-l1c
                 title: Sentinel 2 L1C
                 description: Sentinel 2 imagery processed to level 1C
+                sci:citation: Modified Copernicus Sentinel data [Year]/Sentinel Hub
                 license: proprietary
                 providers:
                   - name: ESA
@@ -663,6 +786,18 @@ components:
                       - - '2015-11-01T00:00:00Z'
                         - null
                 summaries:
+                  platform:
+                    - sentinel-2a
+                    - sentinel-2b
+                  instrument:
+                    - msi
+                  constellation:
+                    - sentinel-2
+                  gsd:
+                    - 10
+                  eo:cloud_cover:
+                    minimum: 0
+                    maximum: 100
                   eo:bands:
                     - name: B01
                       common_name: coastal
@@ -714,19 +849,171 @@ components:
                       center_wavelength: 2.2024
                       full_width_half_max: 0.175
                 links:
+                  - href: https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/
+                    rel: root
+                    type: application/json
                   - href: >-
                       https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/collections/sentinel-2-l1c
                     rel: self
+                    type: application/json
+                  - href: >-
+                      https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/collections
+                    rel: parent
+                    type: application/json
+                  - href: >-
+                      https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/collections/sentinel-2-l1c/queryables
+                    rel: http://www.opengis.net/def/rel/ogc/1.0/queryables
+                    type: application/schema+json
                   - href: >-
                       https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/collections/sentinel-2-l1c/items
                     rel: items
+                    type: application/geo+json
               - stac_version: 1.0.0
                 stac_extensions:
+                  - >-
+                    https://stac-extensions.github.io/scientific/v1.0.0/schema.json
+                  - https://stac-extensions.github.io/sat/v1.0.0/schema.json
+                  - https://stac-extensions.github.io/sar/v1.0.0/schema.json
+                  - >-
+                    https://docs.sentinel-hub.com/api/latest/stac/s1/v1.0.0/schema.json
+                type: Collection
+                id: sentinel-1-grd
+                title: Sentinel 1 GRD
+                description: Sentinel 1 Ground Range Detected Imagery
+                sci:citation: Modified Copernicus Sentinel data [Year]/Sentinel Hub
+                license: proprietary
+                providers:
+                  - name: ESA
+                    roles:
+                      - producer
+                    url: https://esa.int/
+                  - name: AWS
+                    roles:
+                      - host
+                    url: https://aws.amazon.com/
+                  - name: Sinergise
+                    roles:
+                      - processor
+                    url: https://www.sinergise.com/
+                extent:
+                  spatial:
+                    bbox:
+                      - - -180
+                        - -85
+                        - 180
+                        - 85
+                  temporal:
+                    interval:
+                      - - '2014-10-03T00:00:00Z'
+                        - null
+                summaries:
+                  platform:
+                    - sentinel-1a
+                    - sentinel-1b
+                  instrument:
+                    - c-sar
+                  constellation:
+                    - sentinel-1
+                  sat:orbit_state:
+                    - ascending
+                    - descending
+                  sar:instrument_mode:
+                    - SM
+                    - IW
+                    - EW
+                    - WV
+                    - EN
+                    - AN
+                    - IM
+                  sar:frequency_band:
+                    - C
+                  sar:center_frequency:
+                    - 5.405
+                  sar:product_type:
+                    - GRD
+                  sar:polarizations:
+                    - HH
+                    - HV
+                    - VH
+                    - VV
+                  sar:resolution_range:
+                    - 9
+                    - 20
+                    - 23
+                    - 50
+                    - 52
+                    - 84
+                    - 88
+                    - 93
+                  sar:resolution_azimuth:
+                    - 9
+                    - 22
+                    - 23
+                    - 50
+                    - 51
+                    - 84
+                    - 87
+                  sar:pixel_spacing_range:
+                    - 3.5
+                    - 10
+                    - 25
+                    - 40
+                  sar:pixel_spacing_azimuth:
+                    - 3.5
+                    - 10
+                    - 25
+                    - 40
+                  s1:timeliness:
+                    - NRT10m
+                    - NRT1h
+                    - NRT3h
+                    - Fast24h
+                    - Offline
+                    - Reprocessing
+                    - ArchNormal
+                  s1:resolution:
+                    - HIGH
+                    - MEDIUM
+                    - FULL
+                  s1:polarization:
+                    - SH
+                    - SV
+                    - DH
+                    - DV
+                    - HH
+                    - HV
+                    - VV
+                    - VH
+                links:
+                  - href: https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/
+                    rel: root
+                    type: application/json
+                  - href: >-
+                      https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/collections/sentinel-1-grd
+                    rel: self
+                    type: application/json
+                  - href: >-
+                      https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/collections
+                    rel: parent
+                    type: application/json
+                  - href: >-
+                      https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/collections/sentinel-1-grd/queryables
+                    rel: http://www.opengis.net/def/rel/ogc/1.0/queryables
+                    type: application/schema+json
+                  - href: >-
+                      https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/collections/sentinel-1-grd/items
+                    rel: items
+                    type: application/geo+json
+              - stac_version: 1.0.0
+                stac_extensions:
+                  - >-
+                    https://stac-extensions.github.io/scientific/v1.0.0/schema.json
                   - https://stac-extensions.github.io/eo/v1.0.0/schema.json
                 type: Collection
                 id: sentinel-2-l2a
                 title: Sentinel 2 L2A
                 description: Sentinel 2 imagery processed to level 2A
+                sci:citation: Modified Copernicus Sentinel data [Year]/Sentinel Hub
                 license: proprietary
                 providers:
                   - name: ESA
@@ -753,6 +1040,18 @@ components:
                       - - '2016-11-01T00:00:00Z'
                         - null
                 summaries:
+                  platform:
+                    - sentinel-2a
+                    - sentinel-2b
+                  instrument:
+                    - msi
+                  constellation:
+                    - sentinel-2
+                  gsd:
+                    - 10
+                  eo:cloud_cover:
+                    minimum: 0
+                    maximum: 100
                   eo:bands:
                     - name: B01
                       common_name: coastal
@@ -800,12 +1099,25 @@ components:
                       center_wavelength: 2.2024
                       full_width_half_max: 0.175
                 links:
+                  - href: https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/
+                    rel: root
+                    type: application/json
                   - href: >-
                       https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/collections/sentinel-2-l2a
                     rel: self
+                    type: application/json
+                  - href: >-
+                      https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/collections
+                    rel: parent
+                    type: application/json
+                  - href: >-
+                      https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/collections/sentinel-2-l2a/queryables
+                    rel: http://www.opengis.net/def/rel/ogc/1.0/queryables
+                    type: application/schema+json
                   - href: >-
                       https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/collections/sentinel-2-l2a/items
                     rel: items
+                    type: application/geo+json
     CatalogCollectionsCollection:
       description: >-
         Information about the feature collection with id `collectionId`.
@@ -842,11 +1154,13 @@ components:
           example:
             stac_version: 1.0.0
             stac_extensions:
+              - https://stac-extensions.github.io/scientific/v1.0.0/schema.json
               - https://stac-extensions.github.io/eo/v1.0.0/schema.json
             type: Collection
             id: sentinel-2-l2a
             title: Sentinel 2 L2A
             description: Sentinel 2 imagery processed to level 2A
+            sci:citation: Modified Copernicus Sentinel data [Year]/Sentinel Hub
             license: proprietary
             providers:
               - name: ESA
@@ -873,6 +1187,18 @@ components:
                   - - '2016-11-01T00:00:00Z'
                     - null
             summaries:
+              platform:
+                - sentinel-2a
+                - sentinel-2b
+              instrument:
+                - msi
+              constellation:
+                - sentinel-2
+              gsd:
+                - 10
+              eo:cloud_cover:
+                minimum: 0
+                maximum: 100
               eo:bands:
                 - name: B01
                   common_name: coastal
@@ -920,12 +1246,25 @@ components:
                   center_wavelength: 2.2024
                   full_width_half_max: 0.175
             links:
+              - href: https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/
+                rel: root
+                type: application/json
               - href: >-
                   https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/collections/sentinel-2-l2a
                 rel: self
+                type: application/json
+              - href: >-
+                  https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/collections
+                rel: parent
+                type: application/json
+              - href: >-
+                  https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/collections/sentinel-2-l2a/queryables
+                rel: http://www.opengis.net/def/rel/ogc/1.0/queryables
+                type: application/schema+json
               - href: >-
                   https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/collections/sentinel-2-l2a/items
                 rel: items
+                type: application/geo+json
     CatalogCollectionQueryables:
       description: A JSON Schema defining the Queryables allowed in CQL2 expressions
       content:
@@ -1065,29 +1404,45 @@ components:
                     href: s3://sentinel-s2-l2a/tiles/33/T/UK/2020/12/29/0/
                     title: s3
                     type: inode/directory
+                collection: sentinel-2-l2a
                 links:
+                  - href: https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/
+                    rel: root
+                    type: application/json
                   - href: >-
                       https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/collections/sentinel-2-l2a/items/S2B_MSIL2A_20201229T101329_N0214_R022_T33TUK_20201229T115442
                     rel: self
-                    type: application/json
+                    type: application/geo+json
                   - href: >-
                       https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/collections/sentinel-2-l2a
                     rel: parent
+                    type: application/json
+                  - href: >-
+                      https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/collections/sentinel-2-l2a
+                    rel: collection
+                    type: application/json
                   - href: >-
                       https://scihub.copernicus.eu/dhus/odata/v1/Products('1da14794-939f-4ede-b490-cd3a2348b495')/$value
                     rel: derived_from
                     title: scihub download
             links:
+              - href: https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/
+                rel: root
+                type: application/json
               - href: >-
-                  https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/collections/sentinel-2-l2a/items?bbox=13%2C45%2C14%2C46&limit=1&datetime=2020-12-10T00%3A00%3A00Z%2F2020-12-30T00%3A00%3A00Z
+                  https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/collections/sentinel-2-l2a/items?bbox=13,45,14,46&limit=1&datetime=2020-12-10T00:00:00Z/2020-12-30T00:00:00Z
                 rel: self
+                type: application/geo+json
+              - href: >-
+                  https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/collections/sentinel-2-l2a
+                rel: parent
                 type: application/json
               - href: >-
-                  https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/collections/sentinel-2-l2a/items?limit=1&next=1&datetime=2020-12-10T00%3A00%3A00Z%2F2020-12-30T00%3A00%3A00Z&bbox=13%2C45%2C14%2C46
+                  https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/collections/sentinel-2-l2a/items?limit=1&next=1&datetime=2020-12-10T00:00:00Z/2020-12-30T00:00:00Z&bbox=13,45,14,46
                 rel: next
-                type: application/json
+                type: application/geo+json
                 title: Next set of results
-            timeStamp: '2022-09-21T13:04:07.530832Z'
+            timeStamp: '2023-05-19T12:54:40.429059Z'
             numberReturned: 1
     CatalogFeaturesFeature:
       description: |-
@@ -1162,14 +1517,23 @@ components:
                 href: s3://sentinel-s2-l2a/tiles/33/T/UK/2020/12/29/0/
                 title: s3
                 type: inode/directory
+            collection: sentinel-2-l2a
             links:
+              - href: https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/
+                rel: root
+                type: application/json
               - href: >-
                   https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/collections/sentinel-2-l2a/items/S2B_MSIL2A_20201229T101329_N0214_R022_T33TUK_20201229T115442
                 rel: self
-                type: application/json
+                type: application/geo+json
               - href: >-
                   https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/collections/sentinel-2-l2a
                 rel: parent
+                type: application/json
+              - href: >-
+                  https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/collections/sentinel-2-l2a
+                rel: collection
+                type: application/json
               - href: >-
                   https://scihub.copernicus.eu/dhus/odata/v1/Products('1da14794-939f-4ede-b490-cd3a2348b495')/$value
                 rel: derived_from
@@ -1693,8 +2057,7 @@ components:
           properties:
             previewMode:
               type: string
-              description: >
-                The preview mode
+              description: The preview mode
               enum:
                 - DETAIL
                 - TILE_PREVIEW
@@ -1974,7 +2337,7 @@ components:
         - type: object
           properties:
             harmonizeValues:
-              description: >
+              description: >-
                 Harmonizes data values to be comparable with old processing
                 baselines.
               type: boolean
@@ -2118,7 +2481,8 @@ components:
           description: >
             Your evalscript. For details, click
 
-            <a href="https://eu-cdse.github.io/documentation/APIs/SentinelHub/Evalscript/V3.html"
+            <a
+            href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Evalscript/V3.html"
             target="_blank">here</a>.
           type: string
     MultiPartProcessRequest:
@@ -2137,7 +2501,8 @@ components:
           description: >
             Your evalscript. For details, click
 
-            <a href="https://eu-cdse.github.io/documentation/APIs/SentinelHub/Evalscript/V3.html"
+            <a
+            href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Evalscript/V3.html"
             target="_blank">here</a>.
           type: string
     ProcessRequestInput:
@@ -2158,7 +2523,7 @@ components:
 
         To learn how to request and work with multiple collection, check the
         "Data Fusion" page in our documentation
-        https://eu-cdse.github.io/documentation/APIs/SentinelHub/Process/DataFusion.html.
+        https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Process/DataFusion.html.
       type: array
       minItems: 1
       items:
@@ -2228,7 +2593,7 @@ components:
             The coordinate reference system of the coordinates. Must be
 
             one of the values listed at
-            https://eu-cdse.github.io/documentation/APIs/SentinelHub/Process/Crs.html.
+            https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Process/Crs.html.
 
             Default CRS is WGS84, http://www.opengis.net/def/crs/OGC/1.3/CRS84.
           type: string
@@ -2309,11 +2674,11 @@ components:
 
             Each response identifier value must either match one of the values
             in `setup()` -> `output.id` in the evalscript (see <a
-            href="https://eu-cdse.github.io/documentation/APIs/SentinelHub/Process/Examples/S2L1C.html#ndvi-image-and-value-multi-part-response-png-and-geotiff"
+            href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Process/Examples/S2L1C.html#ndvi-image-and-value-multi-part-response-png-and-geotiff"
             target="_blank">example</a>)
 
             or be `userdata` (see <a
-            href="https://eu-cdse.github.io/documentation/APIs/SentinelHub/Process/Examples/S2L1C.html#true-color-and-metadata-multi-part-response-geotiff-and-json"
+            href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Process/Examples/S2L1C.html#true-color-and-metadata-multi-part-response-geotiff-and-json"
             target="_blank">example</a>).
           enum:
             - <identifier>
@@ -2534,108 +2899,6 @@ components:
                     anyOf:
                       - type: string
                       - type: number
-      example:
-        stac_version: 1.0.0
-        stac_extensions: []
-        type: Collection
-        id: Sentinel-2
-        title: 'Sentinel-2 MSI: MultiSpectral Instrument, Level-1C'
-        description: |
-          Sentinel-2 is a wide-swath, high-resolution, multi-spectral
-          imaging mission...
-        license: proprietary
-        keywords:
-          - copernicus
-          - esa
-          - eu
-          - msi
-          - radiance
-          - sentinel
-        providers:
-          - name: ESA
-            roles:
-              - producer
-              - licensor
-            url: https://sentinel.esa.int/web/sentinel/user-guides/sentinel-2-msi
-        extent:
-          spatial:
-            bbox:
-              - - -180
-                - -56
-                - 180
-                - 83
-          temporal:
-            interval:
-              - - '2015-06-23T00:00:00Z'
-                - '2019-07-10T13:44:56Z'
-        summaries:
-          datetime:
-            min: '2015-06-23T00:00:00Z'
-            max: '2019-07-10T13:44:56Z'
-          sci:citation:
-            - Copernicus Sentinel data [Year]
-          eo:gsd:
-            - 10
-            - 30
-            - 60
-          platform:
-            - sentinel-2a
-            - sentinel-2b
-          constellation:
-            - sentinel-2
-          instruments:
-            - msi
-          view:off_nadir:
-            min: 0
-            max: 100
-          view:sun_elevation:
-            min: 6.78
-            max: 89.9
-          eo:bands:
-            - - name: B1
-                common_name: coastal
-                center_wavelength: 4.439
-              - name: B2
-                common_name: blue
-                center_wavelength: 4.966
-              - name: B3
-                common_name: green
-                center_wavelength: 5.6
-              - name: B4
-                common_name: red
-                center_wavelength: 6.645
-              - name: B5
-                center_wavelength: 7.039
-              - name: B6
-                center_wavelength: 7.402
-              - name: B7
-                center_wavelength: 7.825
-              - name: B8
-                common_name: nir
-                center_wavelength: 8.351
-              - name: B8A
-                center_wavelength: 8.648
-              - name: B9
-                center_wavelength: 9.45
-              - name: B10
-                center_wavelength: 1.3735
-              - name: B11
-                common_name: swir16
-                center_wavelength: 1.6137
-              - name: B12
-                common_name: swir22
-                center_wavelength: 2.2024
-        links:
-          - rel: self
-            href: http://cool-sat.com/collections/Sentinel-2
-          - rel: root
-            href: http://cool-sat.com/collections
-          - rel: license
-            href: >-
-              https://scihub.copernicus.eu/twiki/pub/SciHubWebPortal/TermsConditions/Sentinel_Data_Terms_and_Conditions.pdf
-            title: >-
-              Legal notice on the use of Copernicus Sentinel Data and Service
-              Information
     CatalogExtent:
       title: extent
       type: object
@@ -2651,7 +2914,7 @@ components:
 
         The first item in the array describes the overall extent of
 
-        the data. All subsequent items describe more precise extents, 
+        the data. All subsequent items describe more precise extents,
 
         e.g., to identify clusters of data.
 
@@ -2676,7 +2939,7 @@ components:
 
                 The first bounding box describes the overall spatial
 
-                extent of the data. All subsequent bounding boxes describe 
+                extent of the data. All subsequent bounding boxes describe
 
                 more precise bounding boxes, e.g., to identify clusters of data.
 
@@ -2785,7 +3048,7 @@ components:
                 The first time interval describes the overall
 
                 temporal extent of the data. All subsequent time intervals
-                describe 
+                describe
 
                 more precise time intervals, e.g., to identify clusters of data.
 
@@ -2975,10 +3238,10 @@ components:
         vertical axis (elevation or depth):
 
         * Lower left corner, coordinate axis 1
-        * Lower left corner, coordinate axis 2  
-        * Lower left corner, coordinate axis 3 (optional) 
-        * Upper right corner, coordinate axis 1 
-        * Upper right corner, coordinate axis 2 
+        * Lower left corner, coordinate axis 2
+        * Lower left corner, coordinate axis 3 (optional)
+        * Upper right corner, coordinate axis 1
+        * Upper right corner, coordinate axis 2
         * Upper right corner, coordinate axis 3 (optional)
 
         The coordinate reference system of the values is WGS84
@@ -3076,7 +3339,6 @@ components:
         stac_extensions:
           - https://stac-extensions.github.io/eo/v1.0.0/schema.json
           - https://stac-extensions.github.io/view/v1.0.0/schema.json
-          - https://example.com/cs-extension/1.0/schema.json
         type: Feature
         id: CS3-20160503_132131_05
         bbox:
@@ -3170,8 +3432,6 @@ components:
             type: string
             format: url
             description: Link to the asset object
-            example: >-
-              http://cool-sat.com/catalog/collections/cs/items/CS3-20160503_132130_04/thumb.png
           title:
             type: string
             description: Displayed title
@@ -3519,7 +3779,7 @@ components:
           example:
             - rel: next
               href: >-
-                http://api.cool-sat.com/search?next=ANsXtp9mrqN0yrKWhf-y2PUpHRLQb1GT-mtxNcXou8TwkXhi1Jbk
+                https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search?next=10
     Cql2BooleanExpression:
       title: booleanExpression
       oneOf:
@@ -3818,6 +4078,788 @@ components:
 
         the extent or all relevant temporal properties.
       example: 2018-02-12T00:00:00Z/2018-03-18T12:31:12Z
+    BatchProcessRequest:
+      required:
+        - processRequest
+      type: object
+      properties:
+        id:
+          description: Identifier
+          type: string
+          format: uuid
+          readOnly: true
+        userId:
+          description: User that submitted the request
+          type: string
+          format: uuid
+          readOnly: true
+        accountId:
+          description: Account that submitted the request
+          type: string
+          format: uuid
+          readOnly: true
+        created:
+          description: Creation time of the request in ISO 8601
+          type: string
+          format: date-time
+          readOnly: true
+        processRequest:
+          $ref: '#/components/schemas/ProcessRequestForBatch'
+        tilingGridId:
+          description: This parameter was moved to tilingGrid
+          type: integer
+          format: int64
+          deprecated: true
+        tilingGrid:
+          $ref: '#/components/schemas/TilingGridSettings'
+        resolution:
+          description: This parameter was moved to tilingGrid.
+          type: number
+          format: double
+          deprecated: true
+        output:
+          $ref: '#/components/schemas/BatchProcessOutput'
+        bucketName:
+          description: >
+            Simplified alternative for specifying where the results shall be
+            written, where only the bucket name is specified. Specifying
+            `some-bucket` as `bucketName` is equivalent to specifying
+            `s3://some-bucket` as the `defaultTilePath` in `output`.
+          type: string
+        zarrOutput:
+          $ref: '#/components/schemas/BatchZarrParameters'
+        description:
+          description: Optional description that can be used to keep track of requests
+          type: string
+        valueEstimate:
+          description: >
+            Estimated processing value (cost) of the request in [processing
+            units](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Overview/ProcessingUnit.html).
+            The accuracy of the estimate depends on your request, as described
+            in the
+            [documentation](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Batch.html#cost-estimate).
+          type: number
+          format: double
+          readOnly: true
+        tileCount:
+          description: Number of output tiles
+          type: integer
+          format: int32
+          readOnly: true
+        tileWidthPx:
+          description: Tile width in pixels
+          type: integer
+          format: int32
+          readOnly: true
+        tileHeightPx:
+          description: Tile height in pixels
+          type: integer
+          format: int32
+          readOnly: true
+        userAction:
+          description: Last user action on the request
+          type: string
+          enum:
+            - NONE
+            - ANALYSE
+            - START
+            - CANCEL
+          readOnly: true
+        userActionUpdated:
+          description: Time of last user action update in ISO 8601
+          type: string
+          format: date-time
+          readOnly: true
+        status:
+          description: Current processing status of the request
+          type: string
+          enum:
+            - CREATED
+            - ANALYSING
+            - ANALYSIS_DONE
+            - PROCESSING
+            - DONE
+            - PARTIAL
+            - FAILED
+            - CANCELED
+          readOnly: true
+        error:
+          description: >-
+            Error description for requests that were submitted but failed during
+            analysis or processing
+          type: string
+          readOnly: true
+    MultiPartBatchRequest:
+      type: object
+      properties:
+        request:
+          $ref: '#/components/schemas/BatchProcessRequest'
+        evalscript:
+          description: Block of JavaScript code.
+          type: string
+    ProcessRequestOutputBatchResponse:
+      type: object
+      required:
+        - format
+      properties:
+        identifier:
+          type: string
+          description: >
+            Response's identifier is used to connect the results of an
+            evalscript with the output file.
+
+            Each response identifier value must either match one of the values
+            in `setup()` -> `output.id` in the evalscript (see <a
+            href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Process/Examples/S2L1C.html#ndvi-image-and-value-multi-part-response-png-and-geotiff"
+            target="_blank">example</a>)
+
+            or be `userdata` (see <a
+            href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Process/Examples/S2L1C.html#true-color-and-metadata-multi-part-response-geotiff-and-json"
+            target="_blank">example</a>).
+          enum:
+            - <identifier>
+            - userdata
+        format:
+          description: >
+            Format object
+
+
+            **Note**: Zarr output is currently in beta release. Both the request
+            parameters and the output are likely to change in the future.
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/ProcessRequestOutputFormatTiff'
+            - $ref: '#/components/schemas/ProcessRequestOutputFormatJson'
+            - $ref: '#/components/schemas/ProcessRequestOutputFormatZarr'
+    BatchProcessRequestUpdatePayload:
+      type: object
+      properties:
+        output:
+          description: >-
+            Modified `output` object. If omitted, no values within `output` will
+            be changed.
+          type: object
+          properties:
+            collectionId:
+              description: >
+                The batch collection to link this batch process request to. The
+                collection must exist and be either compatible with the batch
+                process request (same band names and bit depths) or
+                uninitialized, in which case it will get initialized with the
+                batch process request's parameters. If omitted, the batch
+                process request will be unlinked from its current collection.
+              type:
+                - string
+                - 'null'
+              default: null
+        description:
+          description: >
+            Optional description that can be used to keep track of requests. If
+            omitted, the description will not be changed.
+          type: string
+    BatchCollection:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        userId:
+          type: string
+          format: uuid
+          readOnly: true
+        accountId:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+        s3Bucket:
+          type: string
+        batchData:
+          type: object
+          properties:
+            tilingGridId:
+              description: ID of the tiling grid
+              type: integer
+              format: int64
+              readOnly: true
+        additionalData:
+          $ref: '#/components/schemas/BYOCCollectionAdditionalData'
+        created:
+          description: The date when the collection was created.
+          type:
+            - string
+            - 'null'
+          readOnly: true
+    BatchCollectionUpdatePayload:
+      type: object
+      properties:
+        name:
+          description: Collection name
+          type: string
+    BatchCollectionCreatePayload:
+      type: object
+      required:
+        - name
+        - s3Bucket
+      properties:
+        name:
+          description: Collection name
+          type: string
+        s3Bucket:
+          type: string
+          description: S3 bucket where data will get ingested
+    TilingGridSettings:
+      required:
+        - id
+        - resolution
+      description: |
+        Tiling grid settings.
+      type: object
+      properties:
+        id:
+          description: Id of one of the supported tiling grids
+          type: integer
+          format: int64
+        resolution:
+          description: Output resolution in units of the tiling grid
+          type: number
+          format: double
+        bufferX:
+          description: >
+            Will expand each output tile horizontally (on the left and the
+            right) by number of pixels specified by this value. <br><br>
+            <b>Example:</b> <br> If bufferX is 5, the output tile will be wider
+            by 10 pixels. Coordinates of the tile are also moved accordingly by
+            the number of pixels multiplied by resolution in each direction.
+            However, the `tileWidthX` property returned by the API will **not**
+            include the buffer.
+          type: integer
+          format: int16
+        bufferY:
+          description: >
+            Will expand each output tile vertically (on the top and the bottom)
+            by number of pixels specified by this value. See `bufferX` above for
+            an example.
+          type: integer
+          format: int16
+    BatchProcessOutput:
+      description: >
+        Specifies the tile output paths where the results shall be written.
+        Required unless `bucketName` or `zarrOutput` is specified.
+      type: object
+      properties:
+        defaultTilePath:
+          description: >
+            Path or path template specifying where batch processing results
+            shall be stored. Supported formats: <ul>
+              <li>a valid S3 URL, e.g. `s3://some-bucket/some/folder`.<br/>
+                A subdirectory will be created for this batch request, named after the request ID, and will contain further subdirectories with the output tiles.
+                This is equivalent to the template `s3://some-bucket/some/folder/<requestId>/<tileName>/<outputId>.<format>`.
+              </li>
+              <li>a templated S3 URL, e.g. `s3://some-bucket/some/folder/<tileName>.tif`.
+                Templating allows custom organization of the output files.
+                Templates can contain the following placeholders, which are replaced by respective actual values when writing results:
+                <ul>
+                  <li> `<requestId>` - the ID of your batch request,</li>
+                  <li> `<tileName>` - the name (string ID) of the tile within the used tiling grid,</li>
+                  <li> `<tileId>` - the numerical ID of the tile within the used tiling grid,</li>
+                  <li> `<outputId>` - the output (raster) identifier (e.g. `default`),</li>
+                  <li> `<format>` - the filename extension of the output's format (e.g. `tiff`).</li>
+                </ul>
+                The template must contain `<tileName>` or `<tileId>` in order to ensure unique output files.
+                In case of multiple outputs, the template must also contain `<outputId>`.
+              </li>
+            </ul> The request will fail if files already exist.
+          type: string
+        overwrite:
+          description: >
+            If `true`, the request will **never** fail if files already exist.
+            Instead, any existing files will be overwritten, except if
+            `skipExisting` is `true` and **all** outputs for a tile exist.
+
+
+            *Note:* checking for existing files can only be done if the task is
+            estimated to output fewer than 5000 files, e.g. a task that produces
+            5 outputs per tile and is estimated to span over 1000 grid tiles is
+            too big to check. Such big tasks must either: <ul>
+              <li> ensure that the output path is unique to the task by including `<taskId>` in `defaultTilePath` and all `tilePath`s,</li>
+              <li> ensure that the output path is unique by using a simple, non-templated `defaultTilePath`, or</li>
+              <li> suppress overwrite checks by setting `overwrite` to `true` and `skipExisting` to `false`.</li>
+            <ul>
+          default: false
+          type: boolean
+        skipExisting:
+          description: >
+            If `true`, any tiles for which **all** outputs already exist will be
+            skipped. Tiles for which only **some** of the outputs exist will
+            either be *fully overwritten* (if `overwrite` is `true`) or will
+            cause the whole request to fail.
+          default: false
+          type: boolean
+        cogOutput:
+          description: >-
+            If `true`, the results will be written as COG (cloud optimized
+            GeoTIFFs). All outputs must use the TIFF format and **cannot** use
+            `sampleType` INT8. We also suggest setting the evalscript output
+            object `nodataValue` (<a
+            href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Evalscript/V3.html#output-object-properties"
+            target="_blank">more details</a>) for correct overview generation.
+          default: false
+          type: boolean
+        cogParameters:
+          $ref: '#/components/schemas/BatchCogParameters'
+        createCollection:
+          description: >
+            If `true`, the results will be written as COG (cloud optimized
+            GeoTIFFs) and a collection will be automatically created. All
+            outputs must be single-band and use the TIFF format. Only one of
+            *createCollection* and *collectinId* may be specified. Requires
+            `"cogOutput"=true`.
+          type: boolean
+          default: false
+        collectionId:
+          description: >
+            If provided, the results will be written as COG (cloud optimized
+            GeoTIFFs) and added to the existing collection with the specified
+            identifier. All outputs must be single-band and use the TIFF format.
+            The collection must exist and be compatible -- that is, must contain
+            bands equivalent to the batch request's outputs with the same bit
+            depths. Only one of *createCollection* and *collectinId* may be
+            specified. Requires `"cogOutput"=true`.
+          type:
+            - string
+            - 'null'
+          default: null
+    BatchCogParameters:
+      description: >
+        Allows to specify COG creation parameters.
+
+
+        When the output is a batch collection (that is, either
+        *createCollection* is true or *collectionId* is provided),
+
+        COG customization is limited: only the *resamplingAlgorithm* parameter
+        can be specified in *cogParameters*,
+
+        all others must **not** be provided.
+      type: object
+      properties:
+        overviewLevels:
+          description: >-
+            Corresponds to the *levels* parameter of
+            [gdaladdo](https://gdal.org/programs/gdaladdo.html).
+          type: array
+          items:
+            type: integer
+        overviewMinSize:
+          description: >
+            Corresponds to the *minsize* parameter of
+            [gdaladdo](https://gdal.org/programs/gdaladdo.html).
+
+            Default value minimum of blockxsize and blockysize
+          type: integer
+        resamplingAlgorithm:
+          type: string
+          enum:
+            - nearest
+            - average
+            - gauss
+            - cubic
+            - cubicspline
+            - lanczos
+            - average_magphase
+            - mode
+          description: >-
+            Corresponds to the value of the *-r* parameter of
+            [gdaladdo](https://gdal.org/programs/gdaladdo.html).
+          default: average
+        blockxsize:
+          description: >-
+            Corresponds to the *BLOCKXSIZE* parameter of [GDAL GTiff raster
+            driver](https://gdal.org/drivers/raster/gtiff.html).
+          type: integer
+          default: 1024
+        blockysize:
+          description: >-
+            Corresponds to the *BLOCKYSIZE* parameter of [GDAL GTiff raster
+            driver](https://gdal.org/drivers/raster/gtiff.html).
+          type: integer
+          default: 1024
+        usePredictor:
+          description: >
+            Whether predictor should be used for TIFF compression. If true, the
+            predictor "2" will be passed to [GDAL GTiff raster
+            driver](https://gdal.org/drivers/raster/gtiff.html) in case of
+            integer output and "3" for FLOAT32 output. If false, the value "1"
+            (no predictor) will be used.
+          type: boolean
+          default: true
+    BatchZarrParameters:
+      description: >
+        Specifies Zarr creation parameters.
+
+
+        If this parameter is specified, all outputs in processRequest **must**
+        be of the type zarr/array
+
+        and neither `bucketName` nor `output` can be specified.
+
+        With Zarr output **only** WGS84 and LAEA grids **are supported**.
+
+
+        **Note**: Zarr output is currently in beta release.
+
+        Both the request parameters and the output are likely to change in the
+        future.
+      type: object
+      required:
+        - path
+        - group
+      properties:
+        path:
+          description: >
+            Path or path template specifying where batch processing results
+            shall be stored. Supported formats: <ul>
+              <li>a valid S3 URL, e.g. `s3://some-bucket/some/folder`.<br/>
+                The output Zarr will be stored to this folder (prefix).
+                The request will fail if any files already exist in the folder.
+              </li>
+              <li>a templated S3 URL, e.g. `s3://some-bucket/some/folder/<requestId>`.
+                The placeholder `<requestId>` will be replaced by the ID of your batch request
+                and the output Zarr will be stored there.
+              </li>
+            </ul> The specified path <b>must</b> not contain any subfolders or
+            Zarr files such as <code>.zattrs</code>,  <code>.zgroup</code>,
+            <code>.zmetadata</code>.
+          type: string
+        group:
+          $ref: '#/components/schemas/Group'
+        arrayParameters:
+          description: >
+            Parameters that will be used for all output arrays, except where
+            overriden with `arrayOverrides`. Required unless `arrayOverrides`
+            includes all required fields for all output arrays. All fields are
+            standard Zarr fields. Further information can be found on the link
+            below.
+          externalDocs:
+            description: Zarr metadata specification version 2, Attributes
+            url: https://zarr.readthedocs.io/en/stable/spec/v2.html#metadata
+          allOf:
+            - $ref: '#/components/schemas/ArrayParameters'
+        arrayOverrides:
+          $ref: '#/components/schemas/ArrayOverrides'
+    Group:
+      required:
+        - zarr_format
+      description: Zarr group level parameters
+      properties:
+        zarr_format:
+          description: Zarr format version. Currently only version 2 is supported.
+          example: 2
+          type: integer
+        coordinates:
+          description: Allows customization of certain output coordinate system parameters
+          properties:
+            origin:
+              type: string
+              description: |
+                Defines the origin of the output raster/sign of resolution:
+                 * `topLeft` (default): negative resolution along the Zarr y-axis, same as for TIFF output</li>
+                 * `bottomLeft`: positive resolution along the Zarr y-axis</li>
+
+                The resolution along the Zarr x-axis is always positive.
+              default: topLeft
+              enum:
+                - topLeft
+                - bottomLeft
+        customAttributes:
+          description: >
+            User-defined metadata to store into the group's `.zattrs` file.
+
+            For example, to include a copyright notice in the ouptut Zarr, you
+            could set this field to
+
+            `{"copyright": "My Company Ltd, 2023"}`.
+
+
+            **Note**: multiple fields are added to the group attributes by
+            default, such as "date_modified"
+
+            and the geospatial extent. Listing any such field in
+            `customAttributes` will override its default value.
+          type: object
+    ArrayParameters:
+      required:
+        - dtype
+        - chunks
+        - order
+        - fill_value
+      properties:
+        dtype:
+          description: >
+            Data type/encoding. Allowed values depend on the `sampleType`
+            defined in `evalscript`:
+             * `|u1`: 8-bit unsigned integer, recommended for `sampleType` UINT8 and AUTO,
+             * `|i1`: 8-bit signed integer, recommended for `sampleType` INT8,
+             * `<u2`,`>u2`: 16-bit unsigned integer (little and big endian, respectively), recommended for `sampleType` UINT16, allowed for UINT8 and AUTO,
+             * `<i2`,`>i2`: 16-bit signed integer (little and big endian, respectively), recommended for `sampleType` INT16, allowed for UINT8, INT8 and AUTO,
+             * `<f4`, `>f4`, `<f8`, `>f8`: float (little/big endian single precision, little/big endian double precision, respectively),
+               recommended for `sampleType` FLOAT32, allowed for any `sampleType`.
+
+            *Recommended* values encode the chosen `sampleType` losslessly,
+            while other allowed values encode the same values in a wider data
+            type but do not add any more precision.
+          example: <f4
+          type: string
+          externalDocs:
+            description: Zarr data type specification version 2, Attributes
+            url: >-
+              https://zarr.readthedocs.io/en/stable/spec/v2.html#data-type-encoding
+        order:
+          description: >-
+            Layout of values within each chunk of the array. Currently only "C"
+            is supported, which means row-major order.
+          type: string
+          default: C
+        chunks:
+          description: >
+            A list of integers defining the length of each dimension of a chunk
+            of the array, e.g. `[1, 1000, 1000]`.
+
+
+            The first element (time dimension chunking) must be 1.
+
+
+            The second and third (latidude/y and longitude/x-dimension chunking,
+            respectively)
+
+            must evenly divide the batch output tile raster size.
+
+            For example, when using the [LAEA 100km
+            grid](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Batch.html#tiling-grids)
+
+            with an output resolution of 50 m, each batch tile will be 2000 x
+            2000 pixels,
+
+            thus valid chunking sizes are 2000, 1000, 500, 400 etc.
+          example:
+            - 1
+            - 1000
+            - 1000
+          type: array
+          minItems: 3
+          maxItems: 3
+          items:
+            type: number
+            format: integer
+        fill_value:
+          type: number
+          description: >
+            A scalar value providing the default value for portions of the array
+            corresponding to non-existing chunks:
+
+            * any chunks consisting solely of this value will **not** be
+            written,
+
+            * the value will be included in the output Zarr metadata.
+
+
+            **Note**: `fill_value` must be representable by the array's `dtype`.
+
+
+            **Note**: any grid tiles that are within Zarr envelope but outside
+            of `processRequest.input.bounds.geometry` will not be processed by
+            batch at all.
+
+            No chunks will thus be written for those tiles, thus `fill_value` is
+            required to ensure a valid Zarr is created.
+        compressor:
+          description: >
+            Compressor type and parameters, which will be used to compress the
+            data chunks.
+          default:
+            id: blosc
+            cname: lz4
+            clevel: 5
+            shuffle: 1
+            blocksize: 0
+          type: object
+    ArrayOverrides:
+      description: Overrides the values of `arrayParameters` for individual arrays.
+      type: object
+      additionalProperties:
+        x-additionalPropertiesName: array name
+        $ref: '#/components/schemas/ArrayOverride'
+    ArrayOverride:
+      type: object
+      description: >
+        Values for the particular output Zarr array. The array names are equal
+        to the identifiers of the outputs/responses of the `processRequest`.
+      allOf:
+        - $ref: '#/components/schemas/ArrayParameters'
+        - type: object
+          properties:
+            customAttributes:
+              description: >
+                User-defined metadata to append to the array's `.zattrs` file.
+
+                For example, to include information on array's content and
+                units, you could set this field to
+
+                `{"long_name": "Chlorophyll-a concentration", "units":
+                "milligram m-3"}`
+
+
+                **Note**: the field "_ARRAY_DIMENSIONS" is added to the array
+                attributes by default.
+
+                Listing this field in `customAttributes` will override its
+                default value.
+              type: object
+    BatchTile:
+      type: object
+      properties:
+        id:
+          description: Identifier
+          type: integer
+          format: int64
+        requestId:
+          description: ID of the request the tile belongs to
+          type: string
+          format: uuid
+        geometry:
+          description: >
+            Geometry of the grid tile that this request tile corresponds to.
+
+
+            Note that this may differ from the geometry of the tile's ouput
+            raster
+
+            due to *bufferX/bufferY* parameters of your request
+
+            and due to reprojection from the tile's coordinate reference system
+            to WGS84.
+
+            The exact output raster geometry can be calculated from the tile's
+            origin, width, height,
+
+            and your request parameters *resolution*, *bufferX* and *bufferY*.
+          $ref: '#/components/schemas/Polygon'
+        origin:
+          $ref: '#/components/schemas/BatchTileOrigin'
+        status:
+          description: Current processing status of the tile
+          type: string
+          enum:
+            - PENDING
+            - SCHEDULED
+            - QUEUED
+            - PROCESSING
+            - PROCESSED
+            - FAILED
+        error:
+          description: Error description for tiles that failed during processing.
+          type: string
+        cost:
+          description: Tile processing cost (PU)
+          type: number
+          format: double
+    BatchTileOrigin:
+      description: Coordinates of the tile origin (lower left corner) in the tile's CRS.
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - Point
+        coordinates:
+          type: array
+          minItems: 2
+          maxItems: 2
+          items:
+            type: number
+            format: double
+        crs:
+          type: object
+          properties:
+            type:
+              type: string
+              enum:
+                - name
+            properties:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: CRS used by the tile, e.g. `urn:ogc:def:crs:EPSG::4326`
+                  example: urn:ogc:def:crs:EPSG::4326
+    TilingGridDescriptor:
+      type: object
+      properties:
+        id:
+          description: Identifier
+          type: integer
+          format: int64
+        name:
+          type: string
+        properties:
+          $ref: '#/components/schemas/TilingGridDescriptorProperties'
+    TilingGridDescriptorProperties:
+      type: object
+      properties:
+        tileWidth:
+          description: Width of each output tile, in units used by the grid
+          type: number
+          format: double
+        tileHeight:
+          description: Height of each output tile, in units used by the grid
+          type: number
+          format: double
+        resolutions:
+          description: List of supported resolutions, in units used by the grid
+          type: array
+          uniqueItems: true
+          items:
+            type: number
+            description: List of supported resolutions, in units used by the grid
+            format: double
+        unit:
+          description: Units used by the grid
+          type: string
+          enum:
+            - METRE
+            - DEGREE
+    ProcessRequestForBatch:
+      type: object
+      description: >-
+        Batch processing equivalent of the <a href="#operation/process">Process
+        request</a>.
+      required:
+        - evalscript
+        - input
+      properties:
+        input:
+          $ref: '#/components/schemas/ProcessRequestInput'
+        output:
+          $ref: '#/components/schemas/ProcessRequestOutputForBatch'
+        evalscript:
+          description: >
+            Your evalscript. For details, click
+
+            <a
+            href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Evalscript/V3.html"
+            target="_blank">here</a>.
+          type: string
+    ProcessRequestOutputForBatch:
+      type: object
+      properties:
+        responses:
+          type: array
+          description: Response object.
+          items:
+            $ref: '#/components/schemas/ProcessRequestOutputBatchResponse'
     StatisticalRequest:
       required:
         - input
@@ -3850,8 +4892,8 @@ components:
         of:
           description: >
             Duration in ISO 8601 duration format, check
-            [here](https://eu-cdse.github.io/documentation/APIs/SentinelHub/Statistical.html#split-requested-timerange-into-multiple-time-intervals)
-            for more details. 
+            [here](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Statistical.html#split-requested-timerange-into-multiple-time-intervals)
+            for more details.
           type: string
         lastIntervalBehavior:
           description: >
@@ -3898,7 +4940,7 @@ components:
         Each key must match with one of the band names
 
         `output.bands` specified in a `setup()` function in an evalscript (for
-        this output) or be "default". If it is "default", 
+        this output) or be "default". If it is "default",
 
         the histogram specified below will be returned for all bands of this
         output for which histogram is not explicitly defined.
@@ -3911,7 +4953,7 @@ components:
           * exact bins provided by `bins` array
 
         [This
-        example](https://eu-cdse.github.io/documentation/APIs/SentinelHub/Statistical/Examples.html#multiple-outputs-with-different-datamasks-multi-band-output-with-custom-bands-names-different-histogram-types) 
+        example](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Statistical/Examples.html#multiple-outputs-with-different-datamasks-multi-band-output-with-custom-bands-names-and-different-histogram-types)
 
         shows how to specify histograms using different parameters.
 
@@ -3978,7 +5020,7 @@ components:
               description: >
                 Percentiles definition as array of values between [0,1], [see
                 this
-                example](https://eu-cdse.github.io/documentation/APIs/SentinelHub/Statistical/Examples.html#statistics-histogram-and-percentiles-for-one-single-band-output).
+                example](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Statistical/Examples.html#statistics-histogram-and-percentiles-for-one-single-band-output).
               type: array
               items:
                 type: number
@@ -4003,7 +5045,7 @@ components:
           $ref: '#/components/schemas/Aggregation'
         width:
           description: >
-            Width of the sample matrix.  
+            Width of the sample matrix.
 
             _Only one pair of parameters "width"/"height" or "resx"/"resy" must
             be set at the same time._
@@ -4015,7 +5057,7 @@ components:
           example: 512
         height:
           description: >
-            Height of the sample matrix.  
+            Height of the sample matrix.
 
             _Only one pair of parameters "width"/"height" or "resx"/"resy" must
             be set at the same time._
@@ -4033,7 +5075,7 @@ components:
             Its units are defined by the CRS given in
             `input.bounds.properties.crs`
 
-            parameter.  
+            parameter.
 
             _Only one pair of parameters "width"/"height" or "resx"/"resy" must
             be set at the same time._
@@ -4047,7 +5089,7 @@ components:
             Its units are defined by the CRS given in
             `input.bounds.properties.crs`
 
-            parameter.  
+            parameter.
 
             _Only one pair of parameters "width"/"height" or "resx"/"resy" must
             be set at the same time._
@@ -4084,8 +5126,8 @@ components:
                 Your evalscript. For details, click
 
                 <a
-                href="https://eu-cdse.github.io/documentation/APIs/SentinelHub/Evalscript/V3.html"
-                target="_blank">here</a>. 
+                href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Evalscript/V3.html"
+                target="_blank">here</a>.
 
                 The evalscript will be executed once for each time interval
                 defined by `timeRange` and `aggregationInterval`.
@@ -4214,6 +5256,493 @@ components:
                 x-additionalPropertiesName: percentile [0,1]
                 type: number
                 format: double
+    BatchStatisticalRequest:
+      type: object
+      required:
+        - input
+        - aggregation
+        - output
+      properties:
+        input:
+          $ref: '#/components/schemas/BatchStatisticalInput'
+        aggregation:
+          $ref: '#/components/schemas/BatchStatisticalRequestAggregation'
+        calculations:
+          $ref: '#/components/schemas/StatisticalRequestCalculations'
+        output:
+          description: Storage location where the results shall be written.
+          $ref: '#/components/schemas/ObjectStorageOutputInfo'
+    BatchStatisticalInput:
+      type: object
+      required:
+        - features
+        - data
+      properties:
+        features:
+          description: >-
+            Storage location of the GeoPackage containing the features
+            (polygons) to calculate the statistics for.
+          $ref: '#/components/schemas/ObjectStorageInfo'
+        data:
+          $ref: '#/components/schemas/ProcessRequestInputData'
+    ObjectStorageInfo:
+      type: object
+      required:
+        - s3
+      properties:
+        s3:
+          $ref: '#/components/schemas/S3BucketInfo'
+    S3BucketInfo:
+      type: object
+      required:
+        - url
+      properties:
+        url:
+          type: string
+          description: >-
+            A URL pointing to an S3 bucket or an object in an S3 bucket. It can
+            contain prefixes, e.g. `s3://my-personal-bucket/some-folder` or
+            `s3://my-personal-bucket/some-folder/some-file.gpk`.
+        accessKey:
+          type: string
+          description: >-
+            access key, which allows programmatic access to the S3 bucket
+            specified in the `url` field.
+        secretAccessKey:
+          type: string
+          description: secret access key which must correspond to the access key.
+    ObjectStorageOutputInfo:
+      type: object
+      required:
+        - s3
+      properties:
+        s3:
+          $ref: '#/components/schemas/S3BucketInfoTemplated'
+    S3BucketInfoTemplated:
+      type: object
+      required:
+        - url
+      properties:
+        url:
+          type: string
+          description: >
+            A URL or URL template specifying where the results shall be written.
+            Supported formats: <ul>
+              <li>a valid S3 URL, e.g. `s3://my-personal-bucket/some-folder`.
+                A subdirectory will be created for this statistical batch request, named after the request ID, and output JSON files will be stored there.
+                This is equivalent to the template `s3://my-personal-bucket/some-folder/<REQUEST_ID>/<ID>.json`.
+              </li>
+              <li>a templated S3 URL, e.g. `s3://my-personal-bucket/some-folder/<ID>.json`.
+                Templating allows custom organization of the output files.
+                Templates can contain the following placeholders, which are replaced by respective actual values when writing results:
+                <ul>
+                  <li> `<REQUEST_ID>` - the ID of your statistical batch request,</li>
+                  <li> `<ID>` - the `id` property of the feature,</li>
+                  <li> `<IDENTIFIER>` - the `identifier` property of the feature.</li>
+                </ul>
+                The template must contain `<ID>` or `<IDENTIFIER>` in order to ensure unique output files.
+              </li>
+            </ul>
+        accessKey:
+          type: string
+          description: >-
+            access key, which allows programmatic access to the S3 bucket
+            specified in the `url` field.
+        secretAccessKey:
+          type: string
+          description: secret access key which must correspond to the access key.
+        region:
+          type: string
+          description: >-
+            The region where the S3 bucket is located. If omitted, the region of
+            the Sentinel Hub deployment that the request is submitted to is
+            assumed.
+    BatchStatisticalRequestAggregation:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/StatisticalRequestAggregationWithoutEvalscript'
+        - type: object
+          properties:
+            evalscript:
+              description: >
+                Your evalscript. For details, click
+
+                <a
+                href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Evalscript/V3.html"
+                target="_blank">here</a>.
+
+                The evalscript will be executed once for each time interval
+                defined by `timeRange` and `aggregationInterval`.
+
+
+                Either this or `evalscriptReference` parameter is required.
+              type: string
+            evalscriptReference:
+              description: >
+                Reference to your evalscript stored in an object storage. For
+                details, click
+
+                <a
+                href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Evalscript/V3.html"
+                target="_blank">here</a>.
+
+
+                Either this or `evalscript` parameter is required.
+              $ref: '#/components/schemas/ObjectStorageInfo'
+    BatchStatisticsTaskStatusDto:
+      type: object
+      properties:
+        status:
+          description: >-
+            Current processing status of the request. Must NOT be specified when
+            creating new requests
+          type: string
+          enum:
+            - CREATED
+            - ANALYSING
+            - ANALYSIS_DONE
+            - PROCESSING
+            - DONE
+            - FAILED
+            - STOPPED
+            - PARTIAL
+        error:
+          description: Description of error in case the request failed.
+          type: string
+        completionPercentage:
+          type: number
+        lastUpdated:
+          type: string
+          format: date-time
+        costPu:
+          type: number
+          description: Cost of the request in processing units
+        created:
+          description: Creation time of the request
+          type: string
+          format: date-time
+        stoppedStatusReason:
+          description: The reason for request having status STOPPED.
+          type: string
+          enum:
+            - OUT_OF_PU
+            - USER_ACTION
+    BatchStatisticsTaskDto:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/BatchStatisticsTaskStatusDto'
+        - type: object
+          properties:
+            request:
+              $ref: '#/components/schemas/BatchStatisticalRequest'
+            userId:
+              type: string
+              format: uuid
+            userAction:
+              description: Last user action on the request.
+              type: string
+              enum:
+                - NONE
+                - ANALYSE
+                - START
+                - STOP
+            userActionUpdated:
+              type: string
+              description: Date of the last user action on the request
+              format: date-time
+            domainAccountId:
+              type: string
+              format: uuid
+    BYOCCollectionResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/BYOCCollection'
+    BYOCCollectionsResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/BYOCCollection'
+        links:
+          $ref: '#/components/schemas/View'
+    BYOCCollection:
+      required:
+        - name
+        - s3Bucket
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        userId:
+          type: string
+          format: uuid
+          readOnly: true
+        accountId:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+        s3Bucket:
+          type: string
+        isConfigured:
+          description: It's set to true, if the collection has bands.
+          type: boolean
+        created:
+          description: >-
+            The date when the collection was created. Older collections don't
+            have it.
+          type:
+            - string
+            - 'null'
+          format: date-time
+          readOnly: true
+        noData:
+          type: number
+        requiresMetadataUpdate:
+          description: >
+            Flag if the metadata, found under additionalData, needs to be
+            updated after a tile is added or removed.
+
+            Metadata is updated in a few minutes.
+          type: boolean
+          readOnly: true
+        additionalData:
+          $ref: '#/components/schemas/BYOCCollectionAdditionalData'
+    BYOCCollectionAdditionalData:
+      type: object
+      properties:
+        bands:
+          type: object
+          description: Limited to 100 bands.
+          additionalProperties:
+            x-additionalPropertiesName: band
+            $ref: '#/components/schemas/BYOCFormat'
+        maxMetersPerPixel:
+          type: number
+          readOnly: true
+          description: >
+            How much meters per pixel can you request with Process/OGC/Batch
+            requests for this collection. The limit is internally increased to
+            500, if it's less than that.
+        extent:
+          description: The collection extent in WGS84.
+          $ref: '#/components/schemas/Polygon'
+        hasSensingTimes:
+          type: string
+          enum:
+            - 'YES'
+            - PARTIALLY
+            - 'NO'
+          description: Information if tiles have sensing time.
+          readOnly: true
+        fromSensingTime:
+          type: string
+          format: date-time
+          description: The sensing time in ISO 8601 of the least recent tile.
+          readOnly: true
+        toSensingTime:
+          type: string
+          format: date-time
+          description: The sensing time in ISO 8601 of the most recent tile.
+          readOnly: true
+    BYOCFormat:
+      type: object
+      required:
+        - bitDepth
+        - sampleFormat
+      properties:
+        source:
+          description: >-
+            The string that must appear in `(BAND)` placeholder. If unset,
+            defaults to the band name.
+          type: string
+        bandIndex:
+          description: The index of band in 1-based numbering.
+          type: integer
+          format: int32
+          default: 1
+        bitDepth:
+          type: integer
+          format: int32
+          enum:
+            - 8
+            - 16
+            - 32
+        sampleFormat:
+          type: string
+          enum:
+            - UINT
+            - INT
+            - FLOAT
+        noData:
+          type: number
+          description: >-
+            You can define noData either per band or per collection, but not
+            both.
+    BYOCTilesResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/BYOCTile'
+        links:
+          $ref: '#/components/schemas/View'
+    BYOCTileResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/BYOCTile'
+    BYOCTile:
+      type: object
+      required:
+        - path
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        path:
+          description: |
+            The path within the bucket where the files are. Can also use
+            the '(BAND)' placeholder when the file names contain more than just
+            the band name.
+          type: string
+          pattern: ^([^/](/?[^/])*)?$
+          example: folder/prefix_(BAND)
+        tileGeometry:
+          description: |
+            The tile bounding box in the CRS of the tile.
+            It's automatically set to the union of all file bounding boxes.
+          readOnly: true
+          $ref: '#/components/schemas/Polygon'
+        coverGeometry:
+          allOf:
+            - description: >
+                The geometry as GeoJSON which outlines the area that has data.
+
+
+                If it isn't specified, it is automatically set to the
+                intersection of all file bounding boxes.
+
+
+                You may specify this in any CRS, however it will be converted to
+                CRS84.
+
+
+                After ingestion is complete, this stays in CRS84 on our system,
+
+                however, for you convenience, we convert and return this in the
+                CRS of the tile.
+            - $ref: '#/components/schemas/Geometry'
+        sensingTime:
+          type:
+            - string
+            - 'null'
+          format: date-time
+          description: >-
+            The sensing time of the tile in ISO 8601 but without sub-millisecond
+            precision.
+        status:
+          $ref: '#/components/schemas/BYOCTileStatus'
+        additionalData:
+          $ref: '#/components/schemas/BYOCTileAdditionalData'
+        created:
+          type: string
+          format: date-time
+          description: The time when the tile was created in ISO 8601.
+          readOnly: true
+    BYOCTileStatus:
+      description: The status of the tile.
+      type: string
+      enum:
+        - WAITING
+        - QUEUED
+        - INGESTING
+        - INGESTED
+        - FAILED
+      readOnly: true
+    BYOCTileAdditionalData:
+      type: object
+      properties:
+        failedIngestionCause:
+          description: >-
+            Contains additional information about why ingestion failed (if
+            applicable).
+          type:
+            - string
+            - 'null'
+        warnings:
+          description: Contains additional information about potential tile problems.
+          type:
+            - string
+            - 'null'
+    BYOCTileUpdatePayload:
+      type: object
+      properties:
+        coverGeometry:
+          description: >
+            The geometry as GeoJSON, which outlines the area that has data. If
+            it isn't specified, it is automatically set to the tile bounding
+            box.
+          $ref: '#/components/schemas/Geometry'
+        sensingTime:
+          type:
+            - string
+            - 'null'
+          format: date-time
+          description: >-
+            The sensing time of the tile in ISO 8601 but without sub-millisecond
+            precision.
+    BYOCCollectionUpdatePayload:
+      type: object
+      required:
+        - name
+        - s3Bucket
+      properties:
+        name:
+          type: string
+        s3Bucket:
+          description: Can only be changed if the collection is empty.
+          type: string
+        noData:
+          description: If the value is not provided, the old one gets deleted.
+          type: number
+        additionalData:
+          description: >
+            If provided, overwrites the current bands property of the
+            collection:
+
+            - to rename band(s), provide the current value of the "bands"
+            property with only the name(s) of one or more bands changed
+
+            - to set noData value(s), provide the current value of the "bands"
+            property with only the noData value(s) of one or more bands changed
+
+            - to remove band(s), provide the current value of the "bands"
+            property but leave out the band(s) you wish to remove
+
+            - to remove all bands, you must first empty the collection, then
+            provide "additionalData" without the "bands" property or with an
+            empty "bands" property.
+
+
+            Keep in mind that:
+
+            - bands cannot be added nor their other properties ("bitDepth",
+            "bandIndex", etc) changed once you add a tile.
+
+            - once sample format is set you cannot change it, and tiles ingested
+            from then on need be in the set sample format.
+
+
+            If "additionalData" is omitted, the bands will not be changed.
+          $ref: '#/components/schemas/BYOCCollectionAdditionalData'
     ResolvableDataProduct:
       type: object
       properties:
@@ -4222,24 +5751,38 @@ components:
     DataProduct:
       type: object
       properties:
+        '@id':
+          description: Resource URL reference to the data product.
+          type: string
         id:
           type: integer
           description: Identifier
           format: int64
         name:
           type: string
+          description: Data product name.
         description:
           type: string
+          description: A description of the data product.
         evalScript:
           type: string
-        legend:
-          type: object
+          description: The evalscript of the data product.
         dataset:
           $ref: '#/components/schemas/ResourceReference'
         baseProduct:
           type: string
         visualization:
           type: string
+          description: |
+            Visualization type.
+
+            **Note**: Not present for every data product.
+        scriptVersion:
+          type: integer
+          description: Evalscript version.
+        listed:
+          type: boolean
+          description: If `false` the data product is deprecated.
     DatasetDescriptor:
       type: object
       allOf:
@@ -4453,8 +5996,22 @@ tags:
     description: >-
       This is an OpenAPI definition of the SpatioTemporal Asset Catalog API -
       Item Search specification.
+  - name: batch_process
+    x-displayName: Process
+  - name: batch_collection
+    x-displayName: Collection
+  - name: batch_tile
+    x-displayName: Tile
+  - name: batch_tiling_grid
+    x-displayName: Tiling grid
   - name: statistical
     x-displayName: Statistical
+  - name: batch_statistical
+    x-displayName: Statistical
+  - name: byoc_collection
+    x-displayName: Collection
+  - name: byoc_tile
+    x-displayName: Tile
   - name: configuration_data_product
     x-displayName: Data product
   - name: configuration_dataset
@@ -4479,9 +6036,22 @@ x-tagGroups:
       - catalog_collections
       - catalog_features
       - catalog_item_search
+  - name: Batch API
+    tags:
+      - batch_process
+      - batch_collection
+      - batch_tile
+      - batch_tiling_grid
   - name: Stats API
     tags:
       - statistical
+  - name: Batch Stats API
+    tags:
+      - batch_statistical
+  - name: BYOC
+    tags:
+      - byoc_collection
+      - byoc_tile
   - name: Configuration
     tags:
       - configuration_data_product
@@ -4817,7 +6387,7 @@ paths:
         expressions. The
 
         precise definition of this can be found in the OGC API - Features - Part
-        3: Filtering and the 
+        3: Filtering and the
 
         Common Query Language (CQL) specification.
       parameters:
@@ -4968,13 +6538,13 @@ paths:
                       platform: sentinel-2b
                 links:
                   - href: >-
-                      https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search?collections=sentinel-2-l2a&bbox=13,45,14,46&limit=1&2020-12-10T00:00:00Z/2020-12-30T00:00:00Z&filter=eo:cloud_cover>90&ffields=id,type,-geometry,bbox,properties,-links,-assets
+                      https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search?collections=sentinel-2-l2a&bbox=13,45,14,46&limit=1&datetime=2020-12-10T00:00:00Z/2020-12-30T00:00:00Z&filter=eo:cloud_cover>90&fields=id,type,-geometry,bbox,properties,-links,-assets
                     rel: self
-                    type: application/json
+                    type: application/geo+json
                   - href: >-
-                      https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search?filter=eo:cloud_cover>90&next=1&2020-12-10T00:00:00Z/2020-12-30T00:00:00Z&collections=sentinel-2-l2a&bbox=13,45,14,46&limit=1&ffields=id,type,-geometry,bbox,properties,-links,-assets
+                      https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search?collections=sentinel-2-l2a&bbox=13,45,14,46&limit=1&datetime=2020-12-10T00:00:00Z/2020-12-30T00:00:00Z&filter=eo:cloud_cover>90&fields=id,type,-geometry,bbox,properties,-links,-assets&next=1
                     rel: next
-                    type: application/json
+                    type: application/geo+json
                     title: Next set of results
                 context:
                   next: 1
@@ -5090,11 +6660,11 @@ paths:
                   - href: >-
                       https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search
                     rel: self
-                    type: application/json
+                    type: application/geo+json
                   - href: >-
                       https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search
                     rel: next
-                    type: application/json
+                    type: application/geo+json
                     title: Next set of results
                     method: POST
                     body:
@@ -5106,6 +6676,495 @@ paths:
                   returned: 1
         '500':
           $ref: '#/components/responses/CatalogError'
+      security:
+        - OAuth2: []
+  /api/v1/batch/process:
+    post:
+      operationId: createNewBatchProcessingRequest
+      summary: Submit new batch processing request
+      tags:
+        - batch_process
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BatchProcessRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/MultiPartBatchRequest'
+      responses:
+        '201':
+          description: Request submitted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BatchProcessRequest'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+      security:
+        - OAuth2: []
+    get:
+      summary: Query batch process requests
+      operationId: getAllBatchProcessRequests
+      tags:
+        - batch_process
+      parameters:
+        - name: userid
+          description: User ID
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: collectionId
+          description: >
+            Filter batch process requests by the collectionId of batch
+            collection.
+
+            Omit to get all batch process requests, including those not linked
+            to any collection.
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - $ref: '#/components/parameters/SearchBeanCount'
+        - $ref: '#/components/parameters/SearchBeanViewtoken'
+        - $ref: '#/components/parameters/SearchBeanSearch'
+        - name: sort
+          description: |
+            Sort the batch process requests by given field.
+            Omit for default ordering.
+          in: query
+          schema:
+            type: string
+            enum:
+              - created
+              - created:desc
+              - status
+              - status:desc
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/BatchProcessRequest'
+                  links:
+                    $ref: '#/components/schemas/View'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+      security:
+        - OAuth2: []
+  /api/v1/batch/process/{requestId}:
+    get:
+      summary: Retrieve a single batch process request
+      operationId: getSingleBatchProcessRequestById
+      tags:
+        - batch_process
+      parameters:
+        - $ref: '#/components/parameters/BatchRequestId'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BatchProcessRequest'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+      security:
+        - OAuth2: []
+    put:
+      summary: Update a batch process request
+      description: >
+        Only the requests that are not currently being processed nor waiting to
+        be processed can be updated.
+      operationId: updateBatchProcessRequest
+      tags:
+        - batch_process
+      parameters:
+        - $ref: '#/components/parameters/BatchRequestId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BatchProcessRequestUpdatePayload'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BatchProcessRequest'
+        '400':
+          $ref: '#/components/responses/401'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+      security:
+        - OAuth2: []
+    delete:
+      summary: Delete a batch process request
+      operationId: deleteBatchProcessRequest
+      description: >
+        Deletes a batch process request if it:
+
+        * is not currently being processed or analysed,
+
+        * has not been confirmed for processing or analysis,
+
+        * has no successfully processed tiles.
+
+
+        Requests that have been confirmed or are currently being processed or
+        analysed must be canceled before deletion.
+
+        Requests with processed tiles cannot be deleted.
+      tags:
+        - batch_process
+      parameters:
+        - $ref: '#/components/parameters/BatchRequestId'
+      responses:
+        '204':
+          description: Successful response
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          description: Conflict - batch request state does not allow its deletion
+  /api/v1/batch/process/{requestId}/analyse:
+    post:
+      summary: Request analysis of a batch process request
+      operationId: batchAnalyse
+      tags:
+        - batch_process
+      parameters:
+        - $ref: '#/components/parameters/BatchRequestId'
+      responses:
+        '204':
+          description: Success
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+      security:
+        - OAuth2: []
+  /api/v1/batch/process/{requestId}/start:
+    post:
+      summary: Start (confirm) processing of a batch process request
+      operationId: batchStartProcessRequest
+      tags:
+        - batch_process
+      parameters:
+        - $ref: '#/components/parameters/BatchRequestId'
+      responses:
+        '204':
+          description: Success
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+      security:
+        - OAuth2: []
+  /api/v1/batch/process/{requestId}/cancel:
+    post:
+      summary: Cancel a batch process request
+      operationId: batchCancelProcessRequest
+      tags:
+        - batch_process
+      parameters:
+        - $ref: '#/components/parameters/BatchRequestId'
+      responses:
+        '204':
+          description: Success
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+      security:
+        - OAuth2: []
+  /api/v1/batch/process/{requestId}/restartpartial:
+    post:
+      summary: Restart a partially processed request
+      description: Restart processing of failed tiles in a partially processed request
+      operationId: batchRestartPartialProcessRequest
+      tags:
+        - batch_process
+      parameters:
+        - $ref: '#/components/parameters/BatchRequestId'
+      responses:
+        '204':
+          description: Success
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+      security:
+        - OAuth2: []
+  /api/v1/batch/collections:
+    post:
+      operationId: createNewBatchCollection
+      summary: Create a new batch collection
+      tags:
+        - batch_collection
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BatchCollectionCreatePayload'
+      responses:
+        '201':
+          description: Collection created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BatchCollection'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+      security:
+        - OAuth2: []
+    get:
+      summary: Query batch collections
+      operationId: getAllBatchCollections
+      tags:
+        - batch_collection
+      parameters:
+        - $ref: '#/components/parameters/SearchBeanCount'
+        - $ref: '#/components/parameters/SearchBeanViewtoken'
+        - $ref: '#/components/parameters/SearchBeanSearch'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/BatchCollection'
+                  links:
+                    $ref: '#/components/schemas/View'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+      security:
+        - OAuth2: []
+  /api/v1/batch/collections/{collectionId}:
+    get:
+      summary: Retrieve a single batch collection
+      operationId: getSingleBatchCollectionById
+      tags:
+        - batch_collection
+      parameters:
+        - $ref: '#/components/parameters/BatchCollectionId'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BatchCollection'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+      security:
+        - OAuth2: []
+    put:
+      summary: Update a batch collection
+      operationId: updateBatchCollection
+      tags:
+        - batch_collection
+      parameters:
+        - $ref: '#/components/parameters/BatchCollectionId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BatchCollectionUpdatePayload'
+      responses:
+        '204':
+          description: Collection updated
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+      security:
+        - OAuth2: []
+    delete:
+      summary: Delete a batch collection
+      operationId: deleteBatchCollection
+      description: >
+        Deletes a batch collection if it is not being used by any batch process
+        request,
+
+        except for possible `FAILED` and `CANCELED` requests.
+      tags:
+        - batch_collection
+      parameters:
+        - $ref: '#/components/parameters/BatchCollectionId'
+      responses:
+        '204':
+          description: Successful response
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          description: Conflict - batch collection in use
+  /api/v1/batch/process/{requestId}/tiles:
+    get:
+      summary: Get all tiles of a batch process
+      operationId: getAllBatchProcessTiles
+      tags:
+        - batch_tile
+      parameters:
+        - $ref: '#/components/parameters/BatchRequestId'
+        - name: status
+          description: Only tiles with this status will be returned. Omit to get all tiles.
+          in: query
+          schema:
+            type: string
+            enum:
+              - PENDING
+              - SCHEDULED
+              - QUEUED
+              - PROCESSING
+              - PROCESSED
+              - FAILED
+        - $ref: '#/components/parameters/SearchBeanCount'
+        - $ref: '#/components/parameters/SearchBeanViewtoken'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/BatchTile'
+                  links:
+                    $ref: '#/components/schemas/View'
+      security:
+        - OAuth2: []
+  /api/v1/batch/process/{requestId}/tiles/{tileId}:
+    get:
+      summary: Retrieve a single tile for the specific batch process
+      operationId: getBatchTileById
+      tags:
+        - batch_tile
+      parameters:
+        - $ref: '#/components/parameters/BatchRequestId'
+        - $ref: '#/components/parameters/BatchTileId'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BatchTile'
+        '404':
+          $ref: '#/components/responses/404'
+      security:
+        - OAuth2: []
+  /api/v1/batch/tilinggrids:
+    get:
+      summary: Get properties of all supported tiling grids
+      operationId: getBatchTilingGridsProperties
+      tags:
+        - batch_tiling_grid
+      parameters:
+        - $ref: '#/components/parameters/SearchBeanCount'
+        - $ref: '#/components/parameters/SearchBeanViewtoken'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TilingGridDescriptor'
+                  links:
+                    $ref: '#/components/schemas/View'
+        '401':
+          $ref: '#/components/responses/401'
+      security:
+        - OAuth2: []
+  /api/v1/batch/tilinggrids/{id}:
+    get:
+      summary: Get properties of a single tiling grid
+      operationId: getBatchTilingGridProperties
+      tags:
+        - batch_tiling_grid
+      parameters:
+        - $ref: '#/components/parameters/BatchTilinggridsId'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TilingGridDescriptor'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
       security:
         - OAuth2: []
   /api/v1/statistics:
@@ -5133,6 +7192,521 @@ paths:
           $ref: '#/components/responses/400'
         '403':
           $ref: '#/components/responses/403'
+      security:
+        - OAuth2: []
+  /api/v1/statistics/batch:
+    post:
+      operationId: createNewBatchStatisticsRequest
+      summary: Submit a new statistical batch request
+      tags:
+        - batch_statistical
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BatchStatisticalRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/MultiPartBatchRequest'
+      responses:
+        '201':
+          description: Request submitted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BatchStatisticsTaskDto'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+      security:
+        - OAuth2: []
+    get:
+      operationId: searchBatchStatisticsRequests
+      summary: Query statistical batch requests
+      tags:
+        - batch_statistical
+      parameters:
+        - $ref: '#/components/parameters/SearchBeanCount'
+        - $ref: '#/components/parameters/SearchBeanViewtoken'
+        - name: sort
+          description: |
+            Sort the statistical batch requests by given field.
+            Omit for default ordering.
+          in: query
+          schema:
+            type: string
+            enum:
+              - created
+              - created:desc
+              - status
+              - status:desc
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/BatchStatisticsTaskDto'
+                  links:
+                    $ref: '#/components/schemas/View'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+      security:
+        - OAuth2: []
+  /api/v1/statistics/batch/{requestId}:
+    get:
+      summary: Retrieve a single batch statistical request
+      operationId: getSingleBatchStatisticalRequestById
+      tags:
+        - batch_statistical
+      parameters:
+        - $ref: '#/components/parameters/BatchRequestId'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BatchStatisticsTaskDto'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+      security:
+        - OAuth2: []
+  /api/v1/statistics/batch/{requestId}/status:
+    get:
+      summary: Retrieve the status of a batch statistical request.
+      operationId: batchStatisticalGetStatus
+      tags:
+        - batch_statistical
+      parameters:
+        - $ref: '#/components/parameters/BatchRequestId'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BatchStatisticsTaskStatusDto'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+      security:
+        - OAuth2: []
+  /api/v1/statistics/batch/{requestId}/analyse:
+    post:
+      summary: Request analysis of a batch statistical request
+      operationId: batchStatisticalAnalyse
+      tags:
+        - batch_statistical
+      parameters:
+        - $ref: '#/components/parameters/BatchRequestId'
+      responses:
+        '204':
+          description: Success
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+      security:
+        - OAuth2: []
+  /api/v1/statistics/batch/{requestId}/start:
+    post:
+      summary: Start (confirm) processing of a batch statistical request
+      operationId: batchStartStatisticalRequest
+      tags:
+        - batch_statistical
+      parameters:
+        - $ref: '#/components/parameters/BatchRequestId'
+      responses:
+        '204':
+          description: Success
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+      security:
+        - OAuth2: []
+  /api/v1/statistics/batch/{requestId}/stop:
+    post:
+      summary: Stop a batch statistical request
+      operationId: batchStopStatisticalRequest
+      tags:
+        - batch_statistical
+      parameters:
+        - $ref: '#/components/parameters/BatchRequestId'
+      responses:
+        '204':
+          description: Success
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+      security:
+        - OAuth2: []
+  /api/v1/byoc/collections/{collectionId}/tiles:
+    post:
+      summary: Create a tile
+      operationId: createByocCollectionTile
+      tags:
+        - byoc_tile
+      parameters:
+        - $ref: '#/components/parameters/ByocCollectionId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BYOCTile'
+      responses:
+        '201':
+          description: Tile created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BYOCTileResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '409':
+          $ref: '#/components/responses/409'
+      security:
+        - OAuth2: []
+    get:
+      summary: Get collection tiles
+      operationId: getByocCollectionTiles
+      tags:
+        - byoc_tile
+      parameters:
+        - $ref: '#/components/parameters/ByocCollectionId'
+        - name: count
+          description: Number of items to retrieve.
+          in: query
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+            maximum: 100
+        - $ref: '#/components/parameters/SearchBeanViewtoken'
+        - name: sort
+          description: >-
+            Get tiles sorted by created date or path, and either in ascending or
+            descending order.
+          in: query
+          schema:
+            type: string
+            enum:
+              - created:asc
+              - created:desc
+              - path:asc
+              - path:desc
+        - name: path
+          description: >-
+            Get the tile with the exact path. Returns a single tile or no tile,
+            if there's none with given path.
+          in: query
+          schema:
+            type: string
+        - name: status
+          description: Get only the files with the given status.
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BYOCTileStatus'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BYOCTilesResponse'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+      security:
+        - OAuth2: []
+  /api/v1/byoc/collections/{collectionId}/tiles/{tileId}:
+    get:
+      summary: Get a tile
+      operationId: getByocCollectionTileById
+      tags:
+        - byoc_tile
+      parameters:
+        - $ref: '#/components/parameters/ByocCollectionId'
+        - $ref: '#/components/parameters/ByocTileId'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BYOCTileResponse'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+      security:
+        - OAuth2: []
+    put:
+      summary: Update a tile
+      operationId: updateByocCollectionTileById
+      tags:
+        - byoc_tile
+      parameters:
+        - $ref: '#/components/parameters/ByocCollectionId'
+        - $ref: '#/components/parameters/ByocTileId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BYOCTileUpdatePayload'
+      responses:
+        '204':
+          description: Tile updated
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+      security:
+        - OAuth2: []
+    delete:
+      summary: Delete a tile
+      operationId: deleteByocCollectionTileById
+      tags:
+        - byoc_tile
+      parameters:
+        - $ref: '#/components/parameters/ByocCollectionId'
+        - $ref: '#/components/parameters/ByocTileId'
+      responses:
+        '204':
+          description: Tile deleted
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+      security:
+        - OAuth2: []
+  /api/v1/byoc/collections/{collectionId}/tiles/{tileId}/reingest:
+    post:
+      summary: Reingest a tile
+      description: Initiates reingestion of a tile.
+      operationId: reingestByocCollectionTileById
+      tags:
+        - byoc_tile
+      parameters:
+        - $ref: '#/components/parameters/ByocCollectionId'
+        - $ref: '#/components/parameters/ByocTileId'
+      responses:
+        '204':
+          description: Reingestion initiated.
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+      security:
+        - OAuth2: []
+  /api/v1/byoc/collections:
+    post:
+      summary: Create a collection
+      operationId: createByocCollection
+      tags:
+        - byoc_collection
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BYOCCollection'
+      responses:
+        '201':
+          description: Collection created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BYOCCollectionResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '409':
+          $ref: '#/components/responses/409'
+      security:
+        - OAuth2: []
+    get:
+      summary: Query collections
+      operationId: getByocCollections
+      tags:
+        - byoc_collection
+      parameters:
+        - name: count
+          description: Number of items to retrieve.
+          in: query
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+            maximum: 100
+        - $ref: '#/components/parameters/SearchBeanViewtoken'
+        - $ref: '#/components/parameters/SearchBeanSearch'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BYOCCollectionsResponse'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+      security:
+        - OAuth2: []
+  /api/v1/byoc/collections/{collectionId}:
+    get:
+      summary: Get a collection
+      operationId: getByocCollectionById
+      tags:
+        - byoc_collection
+      parameters:
+        - $ref: '#/components/parameters/ByocCollectionId'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BYOCCollectionResponse'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+      security:
+        - OAuth2: []
+    put:
+      summary: Update a collection
+      operationId: updateByocCollectionById
+      tags:
+        - byoc_collection
+      parameters:
+        - $ref: '#/components/parameters/ByocCollectionId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BYOCCollectionUpdatePayload'
+      responses:
+        '204':
+          description: Collection updated
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+      security:
+        - OAuth2: []
+    delete:
+      summary: Delete a collection
+      operationId: deleteByocCollectionById
+      tags:
+        - byoc_collection
+      parameters:
+        - $ref: '#/components/parameters/ByocCollectionId'
+      responses:
+        '204':
+          description: Collection deleted
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+      security:
+        - OAuth2: []
+  /api/v1/byoc/collections/{collectionId}/copyTiles:
+    post:
+      summary: Copy collection tiles
+      description: >
+        Copies ingested tiles from one collection to another, but only those
+        whose path isn't present in the target collection.
+
+
+        You need to have access to both source and target collections, and
+        target collection needs to have either the same band names and types, or
+        it should have no bands.
+      operationId: copyByocCollectionTiles
+      tags:
+        - byoc_collection
+      parameters:
+        - $ref: '#/components/parameters/ByocCollectionId'
+        - name: toCollection
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Tiles copied
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
       security:
         - OAuth2: []
   /configuration/v1/datasets/{datasetType}/dataproducts:
