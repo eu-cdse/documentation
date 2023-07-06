@@ -159,6 +159,7 @@ Fig 12: Data filters and parameters
 Once you have found a product, you can visualize the results in two ways: either by directly selecting the viszualize button ( ![visualize](_images/icons/VisualizeButton.png) ) in the sidebar or by selecting the visualize button in the results panel on the map. You can open the results panel by clicking on one of the displayed tile footprints on the map.
 
 ![Search tab](_images/VisualizeTile.png)
+
 Fig 13: Product metadata and visualize button
 
 ### How to download a Product
@@ -180,12 +181,11 @@ A "product" refers to a directory containing a collection of information such as
 To avoid downloading all the products, you can add the product to your workspace and give as input to your workflow on the Copernicus Dataspace Ecosystem directly. The main objective of the workspace is to:
 
 - Further process single products (with various options to select the algorithm/processing required for your application).
-
 - Keep track of the processed products (status, finished/queued products)
 
 To do this, click on the Add to Workspace icon (![workspace](_images/icons/AddToWorkspace.png)) appearing in your search result.  The workspace can be accessed by clicking on the dropdown menu under your username or directly [here](https://dataspace.copernicus.eu/workspace/).
 
-<img src="_images/User_DropDown.png" width="450">
+<img src="_images/User_DropDown.png" width="250">
 
 Fig 15: User dropdown menu to access Workspace.
 
