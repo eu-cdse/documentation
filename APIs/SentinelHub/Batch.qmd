@@ -1,0 +1,391 @@
+---
+title: Batch Processing API
+---
+
+**The Batch Processing API is available only for users with Copernicus Service accounts. Contact our [Copernicus Data Space Ecosystem support](https://helpcenter.dataspace.copernicus.eu/hc/en-gb/requests/new) to request your Copernicus Service account.**
+
+Batch Processing API (or shortly \"Batch API\") enables you to request
+data for large areas and/or longer time periods for any Sentinel Hub
+supported collection, including BYOC (bring your own data).
+
+It is an asynchronous REST service. This means that data will not be
+returned immediately in a request response but will be delivered to your
+object storage, which needs to be specified in the request (e.g. a
+bucket, see [Bucket settings](#aws-bucket-settings) below). The
+processing results will be divided in tiles as described
+[below](#processing-results).
+
+## Workflow
+
+The batch processing API comes with the set of REST APIs which support
+the execution of various workflows. The diagram below shows all possible
+statuses of a batch processing request (`CREATED`, `ANALYSING`,
+`ANALYSIS_DONE`, `PROCESSING`, `DONE`, `FAILED`, `CANCELED`, `PARTIAL`)
+and user\'s actions (`ANALYSE`, `START`, `RESTART`, `CANCEL`) which
+trigger transitions among them.
+
+``` {mermaid}
+stateDiagram
+    [*]-->CREATED
+    state fork_state_created <<fork>>
+    CREATED-->fork_state_created
+    fork_state_created-->PROCESSING: #128100; START
+    fork_state_created-->ANALYSING: #128100; ANALYSE
+    ANALYSING --> ANALYSIS_DONE
+    state fork_state_analysis_done <<fork>>
+    ANALYSIS_DONE-->fork_state_analysis_done
+    fork_state_analysis_done-->PROCESSING: #128100; START
+    PROCESSING-->CANCELED: #128100; CANCEL
+    fork_state_analysis_done-->CANCELED: #128100; CANCEL
+    fork_state_created-->CANCELED: #128100; CANCEL
+    PROCESSING-->DONE
+    PROCESSING-->PARTIAL
+    PROCESSING-->FAILED
+    PARTIAL-->PROCESSING: #128100; RESTART
+    DONE-->[*]
+    PARTIAL-->[*]
+    FAILED-->[*]
+    CANCELED-->[*]
+```
+
+The workflow starts when a user posts a new batch processing request. In
+this step the system:
+
+-   creates new batch processing request with status `CREATED`,
+-   validates the user\'s inputs, and
+-   returns an estimated number of output tiles that will be processed.
+
+User can then decide to either request an additional analysis of the
+request, start the processing or cancel the request. When additional
+analysis is requested:
+
+-   the status of the request changes to `ANALYSING`,
+-   the evalscript is validated,
+-   a list of required tiles is created, and
+-   the request\'s cost is estimated, i.e. the estimated number of
+    processing units (PU) needed for the requested processing. Note that
+    in case of `ORBIT` or `TILE` mosaicking the cost estimate can be
+    significantly inaccurate, as described [below](#cost-estimate).
+-   After the analysis is finished the status of the request changes to
+    `ANALYSIS_DONE`.
+
+If the user chooses to directly start processing, the system still
+executes the analysis but when the analysis is done it automatically
+starts with processing. This is not explicitly shown in the diagram in
+order to keep it simple.
+
+The user can now request a list of tiles for their request, start the
+processing, or cancel the request. When the user starts the processing:
+
+-   the estimated number of PU is reserved,
+-   the status of the request changes to `PROCESSING` (this may take a
+    while),
+-   the processing starts.
+
+When the processing finishes, the status of the request changes to:
+
+-   `FAILED` when all tiles failed processing,
+-   `PARTIAL` when some tiles were processed and some failed,
+-   `DONE` when all tiles were processed.
+
+Although the process has built-in fault tolerance, occasionally, tile
+processing may fail. In this case, the batch request ends up in status
+`PARTIAL` and user can request restart its processing as shown in [this
+example](/APIs/SentinelHub/Batch/Examples.qmd#restart-a-partially-processed-batch-processing-request-restart).
+This will restart processing of all `FAILED` tiles.
+
+#### Canceling the request
+
+User may cancel the request at any time. However:
+
+-   if the status is `ANALYSING`, the analysis will complete,
+-   if the status is `PROCESSING`, all tiles that have been processed or
+    are being processed at that moment are charged for. The remaining
+    PUs are returned to the user.
+
+#### Automatic deletion of stale data
+
+Stale requests will be deleted after some time. Specifically, the
+following requests will be deleted:
+
+-   failed requests (request status `FAILED`),
+-   requests that were created but never started (request statuses
+    `CREATED`, `ANALYSIS_DONE`),
+-   successful requests (request statuses `DONE` and `PARTIAL`) for
+    which it was not requested to add the results to your collections.
+    Note that only such requests themselves will be deleted, while the
+    requests\' result (created imagery) will remain under your control
+    in your S3 bucket.
+
+#### Cost estimate
+
+The cost estimate, provided in the analysis stage, is based on the rules
+for calculating [processing
+units](/APIs/SentinelHub/Overview/ProcessingUnit.qmd). It takes the
+number of output pixels, the number of input bands, and the output
+format into account. However, for mosaicking `ORBIT` or `TILE` the
+number of data samples (i.e. the no. of observations available in the
+requested time range) can not be calculated accurately during the
+analysis. Our cost estimate is thus based on the assumption that one
+data sample is available every three days within the requested time
+range. For example, we assume 10 available data samples between 1.1.2021
+and 31.1.2021. If you request batch processing of more/fewer data
+samples, the actual cost will be proportionally higher/lower.
+
+The actual costs can be significantly different from the estimate if:
+
+-   the number of data samples is reduced in your evalscript by
+    [`preProcessScenes`](/APIs/SentinelHub/Evalscript/V3.qmd#preprocessscenes-function-optional)
+    function or by filters such as `maxCloudCoverage`. The actual cost
+    will be lower than the estimate.
+-   your AOI (area of interest) includes large areas with no data, e.g.
+    when requesting Sentinel-2 data over oceans. The actual cost will be
+    lower than the estimate.
+-   you request processing of data collections with revisit period
+    shorter/longer than three days (e.g. your BYOC collection). The
+    actual cost will be proportionally higher/lower than the estimate.
+    Revisit period depends also on selected AOI, e.g. the actual costs
+    of processing Sentinel-2 data close to the equator/at high latitudes
+    will be lower/higher than the estimate.
+
+If you know how many data samples per pixel will be processed, you can
+adjust the estimate yourself. For example, if you request processing for
+data that is available daily, the cost will be 3 times higher than our
+estimate.
+
+Note that the cost estimate does **not** take the multiplication factor
+of 1/3 for batch processing into account. The actual costs will be 3
+times lower than the estimate.
+
+#### Tile status
+
+Users can follow the progress of tile processing by checking for their
+current status. This can be done directly in Dashboard, or via [the
+API](/APIs/SentinelHub/ApiReference.qmd#tag/batch_tile). The statuses
+are as follows:
+
+1.  In the analysis phase, tiles are created with status PENDING.
+2.  When tiles move into scheduling queue, their status changes to
+    SCHEDULED.
+3.  When a tile is pulled from the queue and processing starts, it
+    becomes PROCESSING.
+4.  When tile processing succeeds/fails, it\'s DONE/FAILED.
+5.  If a tile gets stuck, it goes back into PENDING up to twice. If it
+    gets stuck the third time, it becomes a FAILED tile.
+6.  When a batch request with status PARTIAL is restarted, all its
+    FAILed tiles go back into PENDING.
+
+``` {mermaid}
+stateDiagram
+    [*]-->PENDING: Analyzer creates tiles
+    PENDING-->SCHEDULED: Move to scheduling queue
+    SCHEDULED --> PROCESSING: Start processing
+    PROCESSING-->DONE: Finished
+    PROCESSING-->FAILED: Error
+    PROCESSING-->PENDING: Stuck (up to 2x)
+```
+
+## Tiling grids
+
+For more effective processing we divide the area of interest into tiles
+and process each tile separately. While `process` API uses grids which
+come together with each datasource for processing of the data, the
+`batch` API uses one of the predefined tiling grids. The predefined
+tiling grids 0-2 are based on the [Sentinel-2
+tiling](https://sentinel.esa.int/web/sentinel/missions/sentinel-2/data-products){target="_blank"}
+in WGS84/UTM projection with some adjustments:
+
+-   The width and height of tiles in the original Sentinel 2 grid is 100
+    km while the width and height of tiles in our grids are given in the
+    table below.
+-   All redundant tiles (i.e. fully overlapped tiles) are removed.
+
+All available tiling grids can be requested with (*NOTE: To run this
+example you need to first create an OAuth client as is explained
+[here](/APIs/SentinelHub/Overview/Authentication.qmd#python)*):
+
+``` python
+url = "https://sh.dataspace.copernicus.eu/api/v1/batch/tilinggrids/"
+
+response = oauth.request("GET", url)
+
+response.json()
+```
+
+This will return the list of available grids and information about tile
+size and available resolutions for each grid. Currently, available grids
+are:
+
+  name                  id   tile size   resolutions                        coverage                                                                  output CRS   download the grid \[zip with shp file\] \*\*
+  --------------------- ---- ----------- ---------------------------------- ------------------------------------------------------------------------- ------------ ----------------------------------------------------------------------------------------------------------------
+  UTM 20km grid         0    20040 m     10 m, 20 m, 30m\*, 60 m            World, latitudes from -80.7° to 80.7°                                     UTM          [UTM 20km grid](https://s3.eu-central-1.amazonaws.com/sh-batch-grids/tiling-grid-0.zip){target="_blank"}
+  UTM 10km grid         1    10000 m     10 m, 20 m                         World, latitudes from -80.6° to 80.6°                                     UTM          [UTM 10km grid](https://s3.eu-central-1.amazonaws.com/sh-batch-grids/tiling-grid-1.zip){target="_blank"}
+  UTM 100km grid        2    100080 m    30m\*, 60 m, 120 m, 240 m, 360 m   World, latitudes from -81° to 81°                                         UTM          [UTM 100km grid](https://s3.eu-central-1.amazonaws.com/sh-batch-grids/tiling-grid-2.zip){target="_blank"}
+  WGS84 1 degree grid   3    1 °         0.0001°, 0.0002°                   World, all latitudes                                                      WGS84        [WGS84 1 degree grid](https://s3.eu-central-1.amazonaws.com/sh-batch-grids/tiling-grid-3.zip){target="_blank"}
+  LAEA 100km grid       6    100000 m    40 m, 50 m, 100 m                  Europe, including Turkey, Iceland, Svalbald, Azores, and Canary Islands   EPSG:3035    [LAEA 100km grid](https://s3.eu-central-1.amazonaws.com/sh-batch-grids/tiling-grid-6.zip){target="_blank"}
+  LAEA 20km grid        7    20000 m     10 m, 20 m                         Europe, including Turkey, Iceland, Svalbald, Azores, and Canary Islands   EPSG:3035    [LAEA 20km grid](https://s3.eu-central-1.amazonaws.com/sh-batch-grids/tiling-grid-7.zip){target="_blank"}
+
+\*\* The geometries of the tiles are reprojected to WGS84 for download.
+Because of this and other reasons the geometries of the output rasters
+may differ from the tile geometries provided here.
+
+To use `20km` grid with 60 m resolution, for example, specify `id` and
+`resolution` parameters of the `tilingGrid` object when creating a new
+batch request (see an example of [full
+request](/APIs/SentinelHub/Batch/Examples.qmd#create-a-batch-processing-request))
+as:
+
+``` JSON
+{
+  ...
+  "tilingGrid": {
+    "id": 0,
+    "resolution": 60.0
+  },
+  ...
+}
+```
+
+Contact us if you would like to use any other grid for processing.
+
+## Batch collection
+
+Batch processing results can also be uploaded into a BYOC-like
+collection, which makes it possible to:
+
+-   Access data with Processing API, by using the collection ID
+-   Create a configuration with custom layers
+-   Make OGC requests to a configuration
+-   View data in EO Browser
+
+The users can either upload data to an existing batch collection by
+specyfing the `collectionId`, or create a new one by using the
+`createCollection` parameter. Read about both options in [BATCH API
+reference](/APIs/SentinelHub/ApiReference.qmd#operation/createNewBatchProcessingRequest).
+
+When creating a new batch collection, one has to be careful to:
+
+-   Make sure that `"cogOutput"=true`
+-   Make sure the evalscript returns only single-band outputs
+-   Keep `sampleType` in mind, as the values the evalscript returns when
+    creating a collection will be the values available when making a
+    request to access it
+
+Regardless of whether the user specifies an existing collection or
+requests a new one, processed data will still upload to the users S3
+bucket, where they will be available for download and analysis.
+
+## Processing results
+
+The outputs of a batch processing will be stored to your object storage
+in either GeoTIFF (and JSON for metadata) or in Zarr format.
+
+### GeoTIFF output format
+
+GeoTIFF format will be used if your request contains the `output` field.
+An example of a batch request with GeoTIFF output is available
+[here](/APIs/SentinelHub/Batch/Examples.qmd#option-1-geotiff-format-output).
+
+By default, the results will be organized in sub-folders where one
+sub-folder will be created for each tile. Each sub-folder might contain
+one or more images depending on how many outputs were defined in the
+[evalscript](/APIs/SentinelHub/Evalscript/V3.qmd#setup-function) of the
+request.
+
+You can also customize the sub-folder structure and file naming as
+described in the `defaultTilePath` parameter under `output` in [BATCH
+API
+reference](/APIs/SentinelHub/ApiReference.qmd#operation/createNewBatchProcessingRequest)
+.
+
+You can choose to return your GeoTIFF files as Cloud Optimized GeoTIFF
+(COG), by setting the `cogOutput` parameter under `output` in your
+request as `true`. Several advanced COG options can be selected as
+well - read about the parameter in [BATCH API
+reference](/APIs/SentinelHub/ApiReference.qmd#operation/createNewBatchProcessingRequest).
+
+The results of batch processing will be in the projection of the
+selected [tiling grid](/APIs/SentinelHub/Batch.qmd#tiling-grids). For
+UTM-based grids, each part of the AOI (area of interest) is delivered in
+the UTM zone with which it intersects. In other words, in case your AOI
+intersects with more UTM zones, the results will be delivered as tiles
+in different UTM zones (and thus different CRSs).
+
+### Zarr output format
+
+Zarr format will be used if your request contains the `zarrOutput`
+field. An example of a batch request with Zarr output is available
+[here](/APIs/SentinelHub/Batch/Examples.qmd#option-2-zarr-format-output).
+
+The outputs of a batch processing will be stored as a single Zarr group
+containing one data array for each evalscript output and multiple
+coordinate arrays. By default, the Zarr will be stored in the folder you
+pass to the batch processing api in the `path` parameter under
+`zarrOutput` (see [BATCH API
+reference](/APIs/SentinelHub/ApiReference.qmd#tag/batch_process/operation/createNewBatchProcessingRequest)).
+The folder must not contain any existing Zarr files. We recommend using
+a placeholder `<requestId>` as explained in the API reference to keep
+the results of your processing better organized.
+
+The results of batch processing will be in the projection of the
+selected [tiling grid](/APIs/SentinelHub/Batch.qmd#tiling-grids). The
+tiling grids where output CRS is UTM zone are not supported for Zarr
+format output.
+
+## Bucket settings
+
+The results will be delivered in your own bucket hosted at Copernicus Data Space Ecosystem.
+
+If you do not yet have a bucket at Copernicus Data Space Ecosystem, please follow [these steps](https://creodias.docs.cloudferro.com/en/latest/s3/Create-S3-bucket-and-use-it-in-Sentinel-Hub-requests.html) to get one.
+
+You will have to configure your bucket to allow full access to Sentinel Hub. To do
+this, [update your bucket policy](https://creodias.docs.cloudferro.com/en/latest/s3/Bucket-sharing-using-s3-bucket-policy-on-Creodias.html#setting-a-policy-on-the-bucket) to include the following statement (don't forget to replace `<bucket_name>` with your actual bucket name):
+
+```
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "Sentinel Hub permissions",
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": "arn:aws:iam::ddf4c98b5e6647f0a246f0624c8341d9:root"
+            },
+            "Action": [
+                "s3:*"
+            ],
+            "Resource": [
+                "arn:aws:s3:::<bucket_name>",
+                "arn:aws:s3:::<bucket_name>/*"
+            ]
+        }
+    ]
+}
+```
+
+
+## Tutorials and Other Related Materials
+
+Watch our [webinar on batch
+processing](https://www.youtube.com/watch?v=GnQZGvNrKpQ){target="_blank"},
+where you will learn how to process large amounts of satellite data step
+by step. The webinar will show you how to process and download data,
+create a collection and access it using processing API. June 23, 2021
+
+To learn more about how batch processing can be used to create huge
+mosaics or to enhance your algorithms, read the following blog posts:
+
+-   [How to create your own Cloudless Mosaic in less than an
+    hour](https://medium.com/sentinel-hub/how-to-create-your-own-cloudless-mosaic-in-less-than-an-hour-a4117b292c40){target="_blank"},
+    November 3, 2020
+-   [Scale-up your eo-learn workflow using Batch Processing
+    API](https://medium.com/sentinel-hub/scale-up-your-eo-learn-workflow-using-batch-processing-api-d183b70ea237){target="_blank"},
+    September 17, 2020
+-   [Large-scale data preparation --- introducing Batch
+    Processing](https://medium.com/sentinel-hub/large-scale-data-preparation-introducing-batch-processing-b3a58755b8a1){target="_blank"},
+    January 7, 2020
+
+## Examples
+
+[Example of Batch Processing
+Workflow](/APIs/SentinelHub/Batch/Examples.qmd)
