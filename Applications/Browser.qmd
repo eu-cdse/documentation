@@ -199,7 +199,7 @@ Use the **Area of Interest (AOI)** tool to draw a rectangular or polygonal area 
 
 Use the ![location](_images/icons/Location.png) icon to mark a location and re-centre to the **Point of Interest(POI)**
 
-Once you have selected the Area of interest, depending on the type of data you are looking at, you can view the spectral signature of the region with **Spectral Explorer**(![spectral](_images/icons/Spectral_Explorer.png)) or, in case of indices, look at the change in value over time with **Statistical Info** (![timeseries](_images/icons/HistIcon.png)).
+Once you have selected the AOI, depending on the type of data you are looking at, you can view the spectral signature of the region using the **Spectral Explorer**(![spectral](_images/icons/Spectral_Explorer.png)) or, in case of indices, look at the change in value over time using the **Statistical Info** (![timeseries](_images/icons/HistIcon.png)) feature.
 
 ### Measure
 
