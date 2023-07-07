@@ -197,33 +197,39 @@ def get_bandtable(c):
 ```
 
 ```{python}
+
+from tabulate import tabulate
+
 def get_availablity(c):
     tabletitle = "Offered Data"
+    
     try: 
         data_offer = len(c['summaries']['DataAvailability'])
         t = []
         note = ""
-        for i in range(0,data_offer):
+        empty_columns = []  # Track empty columns
+
+        for i in range(0, data_offer):
             try:
                 Status = c['summaries']['DataAvailability'][i]['Archive_status']
             except:
-                Status = 'no data'
+                Status = ''
             try:
                 Access = c['summaries']['DataAvailability'][i]['Access_type']
             except:
-                Access = 'no data'
+                Access = ''
             try:
                 Spatial = c['summaries']['DataAvailability'][i]['Spatial']
             except:
-                Spatial = 'no data'
+                Spatial = ''
             try:
                 Temporal = c['summaries']['DataAvailability'][i]['Temporal']
             except:
-                Temporal = 'no data'
+                Temporal = ''
             try:
                 From = c['summaries']['DataAvailability'][i]['Availabilty']
             except:
-                From = 'no data'
+                From = ''
             try:
                 footnotes = c['summaries']['DataAvailability'][i]['Note']
             except:
@@ -232,20 +238,36 @@ def get_availablity(c):
                 offered_type = c['summaries']['DataAvailability'][i]['offered_type']
             except:
                 offered_type = ''
+
             if offered_type != '':
-                t.append([offered_type,Status,Access,Spatial,Temporal,From])
+                t.append([offered_type, Status, Access, Spatial, Temporal, From])
                 note += footnotes
+                headers = ["Timeliness","Archive Status", "Access Type", "Spatial Extent", "Temporal Extent", "Available in Ecosystem from"]
             else:
-                t.append([Status,Access,Spatial,Temporal,From])
+                t.append([Status, Access, Spatial, Temporal, From])
                 note += footnotes
-                
-        table = tabulate(t,headers=["Archive Status","Access Type","Spatial Extent","Temporal Extent","Available in Ecosystem from"], tablefmt='html', floatfmt=".4f",stralign="center",numalign="center")
+                headers = ["Archive Status", "Access Type", "Spatial Extent", "Temporal Extent", "Available in Ecosystem from"]
+
+        # Find empty columns
+        for j in range(len(t[0])):
+            column_values = [row[j] for row in t]
+            if all(value == '' for value in column_values):
+                empty_columns.append(j)
+
+        # Remove empty columns
+        
+        headers = [header for i, header in enumerate(headers) if i not in empty_columns]
+        t = [[row[i] for i in range(len(headers))] for row in t]
+
+        table = tabulate(t, headers=headers, tablefmt='html', floatfmt=".4f", stralign="center", numalign="center")
         # Set the minimum width of each column to 100 pixels
         table = table.replace("<table>", '<table class="table">')
         table = f"""<h5>{tabletitle}</h5>{table}{note}"""
     except:
         table = " "
+    
     return table
+
 ```
 
 
