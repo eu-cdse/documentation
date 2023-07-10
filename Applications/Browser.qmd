@@ -255,12 +255,12 @@ Fig. 17: Example of a distribution plot of NDVI values
 
 #### Spectral Explorer
 
-The **Spectral Explorer** analyses the various bands of the multi-spectral imagery to extract the spectral signature and helps to identify the scene in the region of interest. You can follow these steps to see a simple example of this feature.
+The **Spectral Explorer** analyses the various bands of the multi-spectral imagery to extract the spectral signature and helps to identify the scene in the region of interest. You can follow these steps to see a simple example of this feature. Note that this feature is only available for Sentinel-2 imagery at the moment.
 
 1. Go to the [location](https://sentinelshare.page.link/C7g8) and draw a bounding box in the open water like shown in the figure.
 2. Click on the **Spectral Explorer** icon (![spectral](_images/icons/Spectral_Explorer.png)) within the AOI tool.
 
-<img src="_images/Browser_Spectral_Explorer.png" width="550">
+<img src="_images/Browser_Spectral_Explorer.png" width="750">
 
 Fig. 18: Screenshot of steps to follow to see an example of spectral signature of open water.
 
@@ -270,24 +270,15 @@ By doing this, you can see a graph pop up with the spectral signature (associate
 
 Fig. 19: Example of spectral signatures plotted in comparison to other known signatures labelled in the bottom of the graph.
 
----
-**NOTE**: At the moment, it is only possible to see the spectral signatures for Sentinel-2 imagery.
-
----
 
 #### Time Series
 
 With the **Statistical Info** (![timeseries](_images/icons/HistIcon.png)) feature within the AOI tool, you can see how the value of an index has changed in time. To see this, it is necessary to choose a visualisation which give an index as output, (e.g., NDVI) or any single band. You can follow these steps to see an example Time Series of the NDVI of a single agricultural field. 
-
----
-**NOTE**: **Statistical Info** can only be displayed for single band outputs such as indices and single band information.
-
----
  
  1. Select the Normalized Difference Vegetation Index (NDVI) layer to visualise the [scene](https://sentinelshare.page.link/vPgD) scene.
  2. Outline an agriculutral field with the AOI tool to select the area you want to analyse the changes in.
 
-<img src="_images/NDVI_TimeSeries.png" width="550">
+<img src="_images/NDVI_TimeSeries.png" width="750">
 
 Fig. 20: Screenshot of steps to follow to see an example of time series of NDVI over an agricultural field.
     
