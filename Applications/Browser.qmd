@@ -244,7 +244,7 @@ Fig 16: Browser timelapse tool with settings highlighted
 
 ### Statistical Ananlysis
 
-There are quite a lot of statistical analyses that can be done in the Browser itself. Depending on the type of data you are looking at, you can look at the distribution of the pixel values, view the spectral signature of the region using the **Spectral Explorer**(![spectral](_images/icons/Spectral_Explorer.png)) or, in case of indices, look at the change in value over time using the **Statistical Info** (![timeseries](_images/icons/HistIcon.png)) feature. 
+There are quite a lot of statistical analyses that can be done in the Browser itself. Depending on the type of data you are looking at, you can look at the distribution of the pixel values, view the spectral signature of the region using the **Spectral Explorer**(![spectral](_images/icons/Spectral_Explorer.png)) or, in case of indices, look at its change over time using the **Statistical Info** (![timeseries](_images/icons/HistIcon.png)) feature. 
 #### Histogram
 
 With the **Histogram** tool you can display statistical data (the distribution of values) for specific layers by clicking on the ![histogram](_images/icons/HistIcon.png) icon. The histogram is calculated for the data within your AOI, if defined or otherwise for the whole screen. This tool currently only works for index layers (e.g., the NDVI).
