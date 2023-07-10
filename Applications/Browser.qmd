@@ -242,7 +242,9 @@ Alternatively, you can select only certain months in a year using the filter by 
 ![Timelapse](_images/Timelapse.png)
 Fig 16: Browser timelapse tool with settings highlighted
 
+### Statistical Ananlysis
 
+There are quite a lot of statistical analyses that can be done in the Browser itself. Depending on the type of data you are looking at, you can look at the distribution of the pixel values, view the spectral signature of the region using the **Spectral Explorer**(![spectral](_images/icons/Spectral_Explorer.png)) or, in case of indices, look at the change in value over time using the **Statistical Info** (![timeseries](_images/icons/HistIcon.png)) feature. 
 #### Histogram
 
 With the **Histogram** tool you can display statistical data (the distribution of values) for specific layers by clicking on the ![histogram](_images/icons/HistIcon.png) icon. The histogram is calculated for the data within your AOI, if defined or otherwise for the whole screen. This tool currently only works for index layers (e.g., the NDVI).
@@ -250,3 +252,53 @@ With the **Histogram** tool you can display statistical data (the distribution o
 <img src="_images/Hist.png" width="550">
 
 Fig. 17: Example of a distribution plot of NDVI values
+
+#### Spectral Explorer
+
+The **Spectral Explorer** analyses the various bands of the multi-spectral imagery to extract the spectral signature and helps to identify the scene in the region of interest. You can follow these steps to see a simple example of this feature.
+
+1. Go to the [location](https://sentinelshare.page.link/C7g8) and draw a bounding box in the open water like shown in the figure.
+2. Click on the **Spectral Explorer** icon (![spectral](_images/icons/Spectral_Explorer.png)) within the AOI tool.
+
+<img src="_images/Browser_Spectral_Explorer.png" width="550">
+
+Fig. 18: Screenshot of steps to follow to see an example of spectral signature of open water.
+
+By doing this, you can see a graph pop up with the spectral signature (associated with specific chemical composition) averaged over all the pixels within this box. This helps to compare the spectral signature of the scene (in light green) with other known signatures.
+
+<img src="_images/Spectral_Explorer.png" width="450">
+
+Fig. 19: Example of spectral signatures plotted in comparison to other known signatures labelled in the bottom of the graph.
+
+---
+**NOTE**
+
+At the moment, it is only possible to see the spectral signatures for Sentinel-2 imagery.
+
+---
+
+#### Time Series
+
+With the **Statistical Info** (![timeseries](_images/icons/HistIcon.png)) feature within the AOI tool, you can see how the value of an index has changed in time. To see this, it is necessary to choose a visualisation which give an index as output, (e.g., NDVI) or any single band. You can follow these steps to see an example Time Series of the NDVI of a single agricultural field. 
+
+---
+**NOTE**
+
+**Statistical Info** can only be displayed for single band outputs such as indices and single band information.
+
+---
+ 
+ 1. Select the Normalized Difference Vegetation Index (NDVI) layer to visualise the [scene](https://sentinelshare.page.link/vPgD) scene.
+ 2. Outline an agriculutral field with the AOI tool to select the area you want to analyse the changes in.
+
+<img src="_images/NDVI_TimeSeries.png" width="550">
+
+Fig. 20: Screenshot of steps to follow to see an example of time series of NDVI over an agricultural field.
+    
+ 3. Select the **Statistical Info** (![timeseries](_images/icons/HistIcon.png)) chart icon within the AOI tools.
+ 4. You can choose the time over which you want to see the changes at the top of the graph that pops up. Due to the clouds being in the way and distorting the NDVI considerably (cloud NDVI values are low), the growth curve isn't as orderly as one would have hoped. So you can also adjust the cloud cover to visualise the changes without distortion.
+
+<img src="_images/TimeSeries.png" width="450">
+
+Fig. 21: Example of Time Series plotted for an agricultural field over a period of 1 year with 0% cloud cover.
+  
