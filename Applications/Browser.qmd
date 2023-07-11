@@ -274,7 +274,7 @@ Fig. 19: Example of spectral signatures plotted in comparison to other known sig
 
 With the **Statistical Info** (![timeseries](_images/icons/HistIcon.png)) feature within the AOI tool, you can see how the value of an index has changed in time. To see this, it is necessary to choose a visualisation which give an index as output, (e.g., NDVI) or any single band. You can follow these steps to see an example Time Series of the NDVI of a single agricultural field. 
  
- 1. Select the Normalized Difference Vegetation Index (NDVI) layer to visualise the [scene](https://sentinelshare.page.link/vPgD) scene.
+ 1. Select the Normalized Difference Vegetation Index (NDVI) layer to visualise the [scene](https://sentinelshare.page.link/vPgD).
  2. Outline an agriculutral field with the AOI tool to select the area you want to analyse the changes in.
 
 <img src="_images/NDVI_TimeSeries.png" width="750">
