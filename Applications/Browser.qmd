@@ -7,6 +7,7 @@ The Browser is a web browser application that allows you to easily search, visua
 Currently you need a free account to use the Browser. To register for a free account, click [here](https://identity.cloudferro.com/auth/realms/CDSE/protocol/openid-connect/auth?client_id=sh-5f8b630b-b083-49ed-b340-b8f01ecb81c4&redirect_uri=https%3A%2F%2Fdataspace.copernicus.eu%2Fbrowser%2FoauthCallback.html&response_type=token&state=) to the browser. A new window will open where you can click on **New user? Click [here](https://identity.cloudferro.com/auth/realms/CDSE/login-actions/registration?client_id=sh-5f8b630b-b083-49ed-b340-b8f01ecb81c4&tab_id=kuySlol9oac){target="_blank"} to create an account and access the data**. Once you have created the account, you will automatically be logged in to the Browser. Remember to save your login credentials for the next time you want to log in to the Browser.
 
 ![Browser start screen](_images/StartScreen.png)
+
 Fig 1: Browser start screen
 
 
@@ -112,6 +113,7 @@ Let us try visualizing Mont Blanc, the highest peak in the Alps.
 7. You can Reset values at any point to return to the default settings. 
 
 ![3D visualization](_images/3DViz.png)
+
 Fig 9: 3D visualization in the Browser with pop-up Settings windows on the right
 
 ## Product Search
@@ -171,10 +173,6 @@ You can continue to use the app as normal while a product is being downloaded.
 <img src="_images/ProductDownload.png" width="450">
 
 Fig 14: Product download (in progress) with Download product and cancel button highlighted
-
-#### Download single files
-
-A "product" refers to a directory containing a collection of information such as metadata, product information, the satellite image and quality data, auxiliary data and more. If downloading all of this data is not of your interest, you can opt to download single files within this directory but clicking on the single file download icon (![SFD](_images/icons/SingleFileDownload.png)). Depending on the product you are trying to download, you will get a list of files within the directory and the  ![download](_images/icons/DownloadIcon.png) icon next to them to download each file individually.
 
 ### Add Product to Workspace
 
@@ -240,6 +238,7 @@ Alternatively, you can select only certain months in a year using the filter by 
 6. Click on the play button to check the result and download the animation as a GIF-file using the Download button for further use online/offline.
 
 ![Timelapse](_images/Timelapse.png)
+
 Fig 16: Browser timelapse tool with settings highlighted
 
 ### Statistical Ananlysis
