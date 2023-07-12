@@ -10,9 +10,11 @@ def main(c):
         "Landsat-5": ComplementaryOffer,
         "Landsat-7": ComplementaryOffer,
         "Landsat-8": ComplementaryOffer,
-        "Commercial data": VHROffer,
-        "AdditionalComplementaryData": Additional,
-        "CAMS": CAMSOffer
+        "Commercial data": VHROffer,            # needs to be updated
+        "AdditionalComplementaryData": Additional,      # needs to be updated
+        "CAMS": CAMSOffer,
+        "CLMS": CLMSOffer_tables,                # needs to be updated
+        "CMEMS" : CMEMSOffer
     }
     AvailabilityTable = cases.get(constellation, general)(c)
     return AvailabilityTable
@@ -280,6 +282,204 @@ def CAMSOffer(c):
         empty_columns = []  # Track empty columns
 
         for i in range(0, data_offer):
+            try:
+                Product_type = c['summaries']['DataAvailability'][i]['Product_type']
+            except:
+                Product_type = ''
+            try:
+                SpecificProduct = c['summaries']['DataAvailability'][i]['SpecificProduct']
+            except:
+                SpecificProduct = ''
+            try:
+                Spatial = c['summaries']['DataAvailability'][i]['Spatial']
+            except:
+                Spatial = ''
+            try:
+                Temporal = c['summaries']['DataAvailability'][i]['Temporal']
+            except:
+                Temporal = ''
+            try:
+                Catalogue = c['summaries']['DataAvailability'][i]['Catalogue']
+            except:
+                Catalogue = ''
+            try:
+                ProductLink = c['summaries']['DataAvailability'][i]['ProductLink']
+            except:
+                ProductLink = ''
+            try:
+                footnotes = c['summaries']['DataAvailability'][i]['Note']
+            except:
+                footnotes = ''
+
+            t.append([Product_type, SpecificProduct, Spatial, Temporal, Catalogue, ProductLink])
+            note += footnotes
+            headers = ["Product Type", "Specific Products", "Spatial Extext","Temporal Extent", "Catalogue","Product Detail"]
+
+        # Find empty columns
+        for j in range(len(t[0])):
+            column_values = [row[j] for row in t]
+            if all(value == '' for value in column_values):
+                empty_columns.append(j)
+
+        # Remove empty columns
+        
+        headers = [header for i, header in enumerate(headers) if i not in empty_columns]
+        t = [[row[i] for i in range(len(headers))] for row in t]
+
+        table = tabulate(t, headers=headers, tablefmt='html', floatfmt=".4f", stralign="left", numalign="left")
+        # Set the minimum width of each column to 100 pixels
+        table = table.replace("<table>", '<table class="table">')
+        table = f"""<h5>{tabletitle}</h5>{table}{note}"""
+    except:
+        table = " "
+    
+    return table
+
+def CMEMSOffer(c):
+    tabletitle = "Offered Data"
+    
+    try: 
+        data_offer = len(c['summaries']['DataAvailability'])
+        t = []
+        note = ""
+        empty_columns = []  # Track empty columns
+
+        for i in range(0, data_offer):
+            try:
+                ProductID = c['summaries']['DataAvailability'][i]['ProductID']
+            except:
+                ProductID = ''
+            try:
+                Product_type = c['summaries']['DataAvailability'][i]['Product_type']
+            except:
+                Product_type = ''
+            try:
+                SpecificProduct = c['summaries']['DataAvailability'][i]['SpecificProduct']
+            except:
+                SpecificProduct = ''
+            try:
+                Spatial = c['summaries']['DataAvailability'][i]['Spatial']
+            except:
+                Spatial = ''
+            try:
+                Temporal = c['summaries']['DataAvailability'][i]['Temporal']
+            except:
+                Temporal = ''
+            try:
+                Catalogue = c['summaries']['DataAvailability'][i]['Catalogue']
+            except:
+                Catalogue = ''
+            try:
+                ProductLink = c['summaries']['DataAvailability'][i]['ProductLink']
+            except:
+                ProductLink = ''
+            try:
+                footnotes = c['summaries']['DataAvailability'][i]['Note']
+            except:
+                footnotes = ''
+
+            t.append([Product_type, SpecificProduct, Spatial, Temporal, Catalogue, ProductLink])
+            note += footnotes
+            headers = ["Product Type", "Specific Products", "Spatial Extext","Temporal Extent", "Catalogue","Product Detail"]
+
+        # Find empty columns
+        for j in range(len(t[0])):
+            column_values = [row[j] for row in t]
+            if all(value == '' for value in column_values):
+                empty_columns.append(j)
+
+        # Remove empty columns
+        
+        headers = [header for i, header in enumerate(headers) if i not in empty_columns]
+        t = [[row[i] for i in range(len(headers))] for row in t]
+
+        table = tabulate(t, headers=headers, tablefmt='html', floatfmt=".4f", stralign="left", numalign="left")
+        # Set the minimum width of each column to 100 pixels
+        table = table.replace("<table>", '<table class="table">')
+        table = f"""<h5>{tabletitle}</h5>{table}{note}"""
+    except:
+        table = " "
+    
+    return table
+
+
+def CLMSOffer(c):
+    tabletitle = "Offered Data"
+    data_offer = len(c['summaries']['DataAvailability'])
+    unique_ids = []
+    for i in range(0, data_offer):
+        try:
+            ProductID = c['summaries']['DataAvailability'][i]['ProductID']
+            if ProductID not in unique_ids:
+                unique_ids.append(ProductID)
+        except:
+            unique_ids = ""
+
+    t = []
+    note = ""
+    empty_columns = []  # Track empty columns
+    for id in data_ids:
+        if id in unique_ids:
+            # perform further action here, e.g.:
+            print(f"data id {id} matches a unique product id")
+        else:
+            print(f"data id {id} does not match any unique product id")
+    
+    return 
+def CLMS_table(l,c):
+    t = []
+    for i in range(0, data_offer):
+        try:
+            ProductID = c['summaries']['DataAvailability'][i]['ProductID']
+        except:
+            ProductID = ''
+        try:
+            Product_type = c['summaries']['DataAvailability'][i]['Product_type']
+        except:
+            Product_type = ''
+        try:
+            SpecificProduct = c['summaries']['DataAvailability'][i]['SpecificProduct']
+        except:
+            SpecificProduct = ''
+        try:
+            Spatial = c['summaries']['DataAvailability'][i]['Spatial']
+        except:
+            Spatial = ''
+        try:
+            Temporal = c['summaries']['DataAvailability'][i]['Temporal']
+        except:
+            Temporal = ''
+        try:
+            Catalogue = c['summaries']['DataAvailability'][i]['Catalogue']
+        except:
+            Catalogue = ''
+        try:
+            ProductLink = c['summaries']['DataAvailability'][i]['ProductLink']
+        except:
+            ProductLink = ''
+        try:
+            footnotes = c['summaries']['DataAvailability'][i]['Note']
+        except:
+            footnotes = ''
+
+        t.append([Product_type, SpecificProduct, Spatial, Temporal, Catalogue, ProductLink])
+    return t
+
+
+def CLMSOffer_tables(c):
+    tabletitle = "Offered Data"
+    
+    try: 
+        data_offer = len(c['summaries']['DataAvailability'])
+        t = []
+        note = ""
+        empty_columns = []  # Track empty columns
+
+        for i in range(0, data_offer):
+            try:
+                ProductID = c['summaries']['DataAvailability'][i]['ProductID']
+            except:
+                ProductID = ''
             try:
                 Product_type = c['summaries']['DataAvailability'][i]['Product_type']
             except:
