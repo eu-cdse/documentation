@@ -311,7 +311,7 @@ def CAMSOffer(c):
 
             t.append([Product_type, SpecificProduct, Spatial, Temporal, Catalogue, ProductLink])
             note += footnotes
-            headers = ["Product Type", "Specific Products", "Spatial Extext","(*) Temporal Extent", "Catalogue","Product Detail"]
+            headers = ["Product Type", "Specific Products", "Spatial Extext","Temporal Extent", "Catalogue","Product Detail"]
 
         # Find empty columns
         for j in range(len(t[0])):
