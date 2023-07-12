@@ -6,7 +6,6 @@ def main(c):
     constellation = c["constellation"]
     cases = {
         "SMOS": SMOSOffer,
-        "Landsat": Landsat
     }
     AvailabilityTable = cases.get(constellation, general)(c)
     return AvailabilityTable
@@ -92,6 +91,10 @@ def SMOSOffer(c):
 
         for i in range(0, data_offer):
             try:
+                Type = c['summaries']['DataAvailability'][i]['Product_type']
+            except:
+                Type = ''
+            try:
                 Status = c['summaries']['DataAvailability'][i]['Archive_status']
             except:
                 Status = ''
@@ -108,26 +111,17 @@ def SMOSOffer(c):
             except:
                 Temporal = ''
             try:
-                From = c['summaries']['DataAvailability'][i]['Availabilty']
+                Catalogue = c['summaries']['DataAvailability'][i]['Catalogue']
             except:
-                From = ''
+                Catalogue = ''
             try:
                 footnotes = c['summaries']['DataAvailability'][i]['Note']
             except:
                 footnotes = ''
-            try:
-                offered_type = c['summaries']['DataAvailability'][i]['offered_type']
-            except:
-                offered_type = ''
 
-            if offered_type != '':
-                t.append([offered_type, Status, Access, Spatial, Temporal, From])
-                note += footnotes
-                headers = ["Timeliness","Archive Status", "Access Type", "Spatial Extent", "Temporal Extent", "Available in Ecosystem from"]
-            else:
-                t.append([Status, Access, Spatial, Temporal, From])
-                note += footnotes
-                headers = ["Archive Status", "Access Type", "Spatial Extent", "Temporal Extent", "Available in Ecosystem from"]
+            t.append([Type,Status, Access, Spatial, Temporal, Catalogue])
+            note += footnotes
+            headers = ["Product Type","Archive Status", "Access Type", "Spatial Extent", "Temporal Extent", "Catalogue"]
 
         # Find empty columns
         for j in range(len(t[0])):
@@ -149,6 +143,3 @@ def SMOSOffer(c):
     
     return table
     
-
-def Landsat(c):
-    print("I will print a table")
