@@ -6,6 +6,7 @@ def main(c):
     constellation = c["constellation"]
     cases = {
         "SMOS": SMOSOffer,
+        "MERIS": MERISOffer
     }
     AvailabilityTable = cases.get(constellation, general)(c)
     return AvailabilityTable
@@ -142,4 +143,67 @@ def SMOSOffer(c):
         table = " "
     
     return table
+
+
+def MERISOffer(c):
+    tabletitle = "Offered Data"
     
+    try: 
+        data_offer = len(c['summaries']['DataAvailability'])
+        t = []
+        note = ""
+        empty_columns = []  # Track empty columns
+
+        for i in range(0, data_offer):
+            try:
+                Type = c['summaries']['DataAvailability'][i]['Product_type']
+            except:
+                Type = ''
+            try:
+                Status = c['summaries']['DataAvailability'][i]['Archive_status']
+            except:
+                Status = ''
+            try:
+                Access = c['summaries']['DataAvailability'][i]['Access_type']
+            except:
+                Access = ''
+            try:
+                Spatial = c['summaries']['DataAvailability'][i]['Spatial']
+            except:
+                Spatial = ''
+            try:
+                Temporal = c['summaries']['DataAvailability'][i]['Temporal']
+            except:
+                Temporal = ''
+            try:
+                Catalogue = c['summaries']['DataAvailability'][i]['Catalogue']
+            except:
+                Catalogue = ''
+            try:
+                footnotes = c['summaries']['DataAvailability'][i]['Note']
+            except:
+                footnotes = ''
+
+            t.append([Type,Status, Access, Spatial, Temporal, Catalogue])
+            note += footnotes
+            headers = ["Product Type","Archive Status", "Access Type", "Spatial Extent", "Temporal Extent", "Catalogue"]
+
+        # Find empty columns
+        for j in range(len(t[0])):
+            column_values = [row[j] for row in t]
+            if all(value == '' for value in column_values):
+                empty_columns.append(j)
+
+        # Remove empty columns
+        
+        headers = [header for i, header in enumerate(headers) if i not in empty_columns]
+        t = [[row[i] for i in range(len(headers))] for row in t]
+
+        table = tabulate(t, headers=headers, tablefmt='html', floatfmt=".4f", stralign="center", numalign="center")
+        # Set the minimum width of each column to 100 pixels
+        table = table.replace("<table>", '<table class="table">')
+        table = f"""<h5>{tabletitle}</h5>{table}{note}"""
+    except:
+        table = " "
+    
+    return table
