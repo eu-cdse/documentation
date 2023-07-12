@@ -34,11 +34,11 @@ def get_thumbnail(c):
 ```{python}
 # thumbnail block 
 
-def thumbblock(src,userguide, opensearch, gsd,revisit_time, datatype):
+def thumbblock(src,userguide, opensearch, gsd,revisit_time, datatype, frequency):
     if src:
-        thumb =  f"""<div class="row" style="display: flex; justify-content: space-around"><div class="column"><div class="badge-row">{userguide} {opensearch}</div><div class="badge-row gutter">{gsd}{revisit_time}</div><div class="badge-row">{datatype}</div></div><div class="column" style="margin-right:10%; margin-left:auto; text-align: right;"><figure><img width="165" height="150" src={src}><figcaption align="center">{databrowser}</figcaption></figure></div></div>"""
+        thumb =  f"""<div class="row" style="display: flex; justify-content: space-around"><div class="column"><div class="badge-row">{userguide} {opensearch}</div><div class="badge-row gutter">{gsd}{revisit_time}{frequency}</div><div class="badge-row">{datatype}</div></div><div class="column" style="margin-right:10%; margin-left:auto; text-align: right;"><figure><img width="165" height="150" src={src}><figcaption align="center">{databrowser}</figcaption></figure></div></div>"""
     else:
-        thumb =  f"""<div class="row" style="display: flex; justify-content: space-around"><div class="column"><div class="badge-row">{userguide}{opensearch}</div><div class="badge-row gutter">{gsd}{revisit_time}</div><div class="badge-row">{datatype}</div></div><div class="column" style="margin-right:10%; margin-left:auto; text-align: right;"></div></div>"""
+        thumb =  f"""<div class="row" style="display: flex; justify-content: space-around"><div class="column"><div class="badge-row">{userguide}{opensearch}</div><div class="badge-row gutter">{gsd}{revisit_time}{frequency}</div><div class="badge-row">{datatype}</div></div><div class="column" style="margin-right:10%; margin-left:auto; text-align: right;"></div></div>"""
     return thumb
 
 ```
@@ -271,6 +271,11 @@ for c in meta:
     except:
         sci_cite = ""
 
+    try:
+        frequency = c["summaries"]["Frequency"]
+    except:
+        frequency = ""
+
     # insert thumbnail
     thumb_url = get_thumbnail(c)
 
@@ -329,6 +334,11 @@ for c in meta:
     else:
         revisit_time = ""
 
+    if frequency is not None and  frequency != "":
+        Updated_freq = f"""<img src="https://img.shields.io/badge/Update_Frequency-{frequency}-0A4393"/>"""
+    else:
+        Updated_freq = ""
+
     if "ARD" in datatype:
         datatype = f"""![](https://img.shields.io/badge/{datatype}-77cc09) """
     elif "Unprojected" in datatype:
@@ -346,7 +356,7 @@ for c in meta:
 
 ## {title}
 
-{thumbblock(thumb_url,userguide,opensearch,gsd,revisit_time,datatype)}
+{thumbblock(thumb_url,userguide,opensearch,gsd,revisit_time,datatype,Updated_freq)}
 
 #### Overview
 
