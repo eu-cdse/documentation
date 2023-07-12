@@ -150,7 +150,7 @@ To get more suitable results, you can also select or choose additional filters a
 1.	Select the Data Source and the appropriate instrument/ processing level.
 2.	Click on the Filter button and set the filtering parameters.
 3.	Press the Search button. 
-Here, you can choose various parameters depending on the chosen Data Source. For example, you can see the filter parameters for Sentinel-1 in Figure 11, letting you filter the results based on satellite platform, orbit direction, relative orbit number, acquisition mode, Beam ID and polarization.
+Here, you can choose various parameters depending on the chosen Data Source. For example, you can see the filter parameters for Sentinel-1 in figure below, letting you filter the results based on satellite platform, orbit direction, relative orbit number, acquisition mode, Beam ID and polarization.
 
 <img src="_images/Filters.png" width="450">
 
