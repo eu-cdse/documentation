@@ -1,6 +1,7 @@
 import json
 from IPython.display import display, Markdown, Latex,HTML
 from tabulate import tabulate
+from bs4 import BeautifulSoup
 
 def main(c):
     constellation = c["constellation"]
@@ -13,8 +14,8 @@ def main(c):
         "Commercial data": VHROffer,            # needs to be updated
         "AdditionalComplementaryData": Additional,      # needs to be updated
         "CAMS": CAMSOffer,
-        "CLMS": CLMSOffer_tables,                # needs to be updated
-        "CMEMS" : CMEMSOffer
+        "CLMS": CMEMSOffer_final,                # needs to be updated
+        "CMEMS" : CMEMSOffer_final                # needs to be updated
     }
     AvailabilityTable = cases.get(constellation, general)(c)
     return AvailabilityTable
@@ -131,66 +132,6 @@ def ComplementaryOffer(c):
             t.append([Type,Status, Access, Spatial, Temporal, Catalogue])
             note += footnotes
             headers = ["Product Type","Archive Status", "Access Type", "Spatial Extent", "Temporal Extent", "Catalogue"]
-
-        # Find empty columns
-        for j in range(len(t[0])):
-            column_values = [row[j] for row in t]
-            if all(value == '' for value in column_values):
-                empty_columns.append(j)
-
-        # Remove empty columns
-        
-        headers = [header for i, header in enumerate(headers) if i not in empty_columns]
-        t = [[row[i] for i in range(len(headers))] for row in t]
-
-        table = tabulate(t, headers=headers, tablefmt='html', floatfmt=".4f", stralign="center", numalign="center")
-        # Set the minimum width of each column to 100 pixels
-        table = table.replace("<table>", '<table class="table">')
-        table = f"""<h5>{tabletitle}</h5>{table}{note}"""
-    except:
-        table = " "
-    
-    return table
-
-
-def VHROffer(c):
-    tabletitle = "Offered Data"
-    
-    try: 
-        data_offer = len(c['summaries']['DataAvailability'])
-        t = []
-        note = ""
-        empty_columns = []  # Track empty columns
-
-        for i in range(0, data_offer):
-            try:
-                Provider = c['summaries']['DataAvailability'][i]['Provider']
-            except:
-                Provider = ''
-            try:
-                Satellite = c['summaries']['DataAvailability'][i]['Satellite']
-            except:
-                Satellite = ''
-            try:
-                Product_type = c['summaries']['DataAvailability'][i]['Product_type']
-            except:
-                Product_type = ''
-            try:
-                Resolution = c['summaries']['DataAvailability'][i]['Resolution']
-            except:
-                Resolution = ''
-            try:
-                Access_type = c['summaries']['DataAvailability'][i]['Access_type']
-            except:
-                Access_type = ''
-            try:
-                footnotes = c['summaries']['DataAvailability'][i]['Note']
-            except:
-                footnotes = ''
-
-            t.append([Provider, Satellite, Product_type, Resolution, Access_type])
-            note += footnotes
-            headers = ["Dataset provider ","Satellite constellation", "Product Type  ", "Spatial Resolution ", "Type of Access"]
 
         # Find empty columns
         for j in range(len(t[0])):
@@ -402,71 +343,7 @@ def CMEMSOffer(c):
     
     return table
 
-
 def CLMSOffer(c):
-    tabletitle = "Offered Data"
-    data_offer = len(c['summaries']['DataAvailability'])
-    unique_ids = []
-    for i in range(0, data_offer):
-        try:
-            ProductID = c['summaries']['DataAvailability'][i]['ProductID']
-            if ProductID not in unique_ids:
-                unique_ids.append(ProductID)
-        except:
-            unique_ids = ""
-
-    t = []
-    note = ""
-    empty_columns = []  # Track empty columns
-    for id in data_ids:
-        if id in unique_ids:
-            # perform further action here, e.g.:
-            print(f"data id {id} matches a unique product id")
-        else:
-            print(f"data id {id} does not match any unique product id")
-    
-    return 
-def CLMS_table(l,c):
-    t = []
-    for i in range(0, data_offer):
-        try:
-            ProductID = c['summaries']['DataAvailability'][i]['ProductID']
-        except:
-            ProductID = ''
-        try:
-            Product_type = c['summaries']['DataAvailability'][i]['Product_type']
-        except:
-            Product_type = ''
-        try:
-            SpecificProduct = c['summaries']['DataAvailability'][i]['SpecificProduct']
-        except:
-            SpecificProduct = ''
-        try:
-            Spatial = c['summaries']['DataAvailability'][i]['Spatial']
-        except:
-            Spatial = ''
-        try:
-            Temporal = c['summaries']['DataAvailability'][i]['Temporal']
-        except:
-            Temporal = ''
-        try:
-            Catalogue = c['summaries']['DataAvailability'][i]['Catalogue']
-        except:
-            Catalogue = ''
-        try:
-            ProductLink = c['summaries']['DataAvailability'][i]['ProductLink']
-        except:
-            ProductLink = ''
-        try:
-            footnotes = c['summaries']['DataAvailability'][i]['Note']
-        except:
-            footnotes = ''
-
-        t.append([Product_type, SpecificProduct, Spatial, Temporal, Catalogue, ProductLink])
-    return t
-
-
-def CLMSOffer_tables(c):
     tabletitle = "Offered Data"
     
     try: 
@@ -532,3 +409,162 @@ def CLMSOffer_tables(c):
         table = " "
     
     return table
+
+######################DEFINE A FUNCTION TO MERGE TABLES######################
+def mergecells(tabletxt):
+    soup = BeautifulSoup(tabletxt, 'html.parser')
+    table = soup.find('table')
+
+    header_cell = None
+
+    for row in table.find_all('tr'):
+        first_cell = row.find('td')
+        
+        if header_cell is None or first_cell.get_text() != header_cell.get_text():
+            header_cell = first_cell
+        else:
+            header_cell['rowspan'] = int(header_cell.get('rowspan', 1)) + 1
+            first_cell.extract()
+    return table
+
+def VHROffer(c):
+    tabletitle = "Offered Data"
+    
+    try: 
+        data_offer = len(c['summaries']['DataAvailability'])
+        t = []
+        note = ""
+        empty_columns = []  # Track empty columns
+
+        for i in range(0, data_offer):
+            try:
+                Provider = c['summaries']['DataAvailability'][i]['Provider']
+            except:
+                Provider = ''
+            try:
+                Satellite = c['summaries']['DataAvailability'][i]['Satellite']
+            except:
+                Satellite = ''
+            try:
+                Product_type = c['summaries']['DataAvailability'][i]['Product_type']
+            except:
+                Product_type = ''
+            try:
+                Resolution = c['summaries']['DataAvailability'][i]['Resolution']
+            except:
+                Resolution = ''
+            try:
+                Access_type = c['summaries']['DataAvailability'][i]['Access_type']
+            except:
+                Access_type = ''
+            try:
+                footnotes = c['summaries']['DataAvailability'][i]['Note']
+            except:
+                footnotes = ''
+
+            t.append([Provider, Satellite, Product_type, Resolution, Access_type])
+            note += footnotes
+            headers = ["Dataset provider ","Satellite constellation", "Product Type  ", "Spatial Resolution ", "Type of Access"]
+
+        # Find empty columns
+        for j in range(len(t[0])):
+            column_values = [row[j] for row in t]
+            if all(value == '' for value in column_values):
+                empty_columns.append(j)
+
+        # Remove empty columns
+        
+        headers = [header for i, header in enumerate(headers) if i not in empty_columns]
+        t = [[row[i] for i in range(len(headers))] for row in t]
+        table = tabulate(t, headers=headers, tablefmt='html', floatfmt=".4f", stralign="center", numalign="center")
+        # Set the minimum width of each column to 100 pixels
+        table = table.replace("<table>", '<table class="table">')
+        ###################### merge the table content into a merged table #####################
+        table=mergecells(table)
+        ###################### end merging the content into a merged table #####################
+        table = f"""<h5>{tabletitle}</h5>{table}{note}"""
+    except:
+        table = " "
+    return table
+
+
+def CMEMSOffer_final(c):
+    tabletitle = "Offered Data"
+    tables=""
+    try: 
+        note = ""
+        #first find the unique product ids
+        df=pd.DataFrame.from_records(c['summaries']['DataAvailability'])
+        product_ids=df.ProductID.unique().tolist()
+        counts=df.ProductID.value_counts().tolist()
+        print(product_ids)
+        for i in  range(len(product_ids)):
+            headers = ["Product Type", "Specific Products", "Spatial Extext","Temporal Extent", "Catalogue","Product Detail"]
+            product_id=product_ids[i]
+            print(product_id)  
+            t = []
+            empty_columns = []  # Track empty columns
+            for i in range(0, int(counts[i])):
+                try:
+                    ProductID = c['summaries']['DataAvailability'][i]['ProductID']
+                    
+                except:
+                    ProductID = ''
+                try:
+                    Product_type = c['summaries']['DataAvailability'][i]['Product_type']
+                except:
+                    Product_type = ''
+                try:
+                    SpecificProduct = c['summaries']['DataAvailability'][i]['SpecificProduct']
+                except:
+                    SpecificProduct = ''
+                try:
+                    Spatial = c['summaries']['DataAvailability'][i]['Spatial']
+                except:
+                    Spatial = ''
+                try:
+                    Temporal = c['summaries']['DataAvailability'][i]['Temporal']
+                except:
+                    Temporal = ''
+                try:
+                    Catalogue = c['summaries']['DataAvailability'][i]['Catalogue']
+                except:
+                    Catalogue = ''
+                try:
+                    ProductLink = c['summaries']['DataAvailability'][i]['ProductLink']
+                except:
+                    ProductLink = ''
+                try:
+                    footnotes = c['summaries']['DataAvailability'][i]['Note']
+                except:
+                    footnotes = ''
+
+                t.append([Product_type, SpecificProduct, Spatial, Temporal, Catalogue, ProductLink])
+                note += footnotes
+                
+            # Find empty columns
+            for j in range(len(t[0])):
+                column_values = [row[j] for row in t]
+                if all(value == '' for value in column_values):
+                    empty_columns.append(j)
+
+            # Remove empty columns
+            
+            headers = [header for i, header in enumerate(headers) if i not in empty_columns]
+            t = [[row[i] for i in range(len(headers))] for row in t]
+
+            table = tabulate(t, headers=headers, tablefmt='html', floatfmt=".4f", stralign="left", numalign="left")
+            # Set the minimum width of each column to 100 pixels
+            table = table.replace("<table>", '<table class="table">')
+            table=mergecells(table)
+            table = f"""<h4>{product_id}</h4>{table}"""
+            tables=tables+table
+            del t 
+            del headers
+            # break
+        print(tables)
+        tablertn = f"""<h5>{tabletitle}</h5>{tables}{note}"""
+    except:
+        tablertn = " "
+    
+    return tablertn
