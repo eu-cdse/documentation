@@ -15,8 +15,8 @@ def main(c):
         "Commercial data": VHROffer,            
         "AdditionalComplementaryData": Additional,      
         "CAMS": CAMSOffer,
-        "CLMS": CLMS_TEST,               #NEED FIXING
-        "CMEMS" : CMEMS_CLMSOffer          #NEED FIXING     
+        "CLMS": CLMSOffer,               #NEED FIXING
+        "CMEMS" : CMEMSOffer          #NEED FIXING     
     }
     AvailabilityTable = cases.get(constellation, general)(c)
     return AvailabilityTable
@@ -362,77 +362,86 @@ def VHROffer(c):
     return table
 
 ###################### FUNCTION TEST FOR CLMS ######################
-def CLMS_TEST(c):
+def CMEMSOffer(c):
     tabletitle = "Offered Data"
-    
-    try: 
-        data_offer = len(c['summaries']['DataAvailability'])
-        t = []
+    tables=""
+    try:
         note = ""
-        empty_columns = []  # Track empty columns
+        #first find the unique product ids
+        df=pd.DataFrame.from_records(c['summaries']['DataAvailability'])
+        product_ids=df.ProductID.unique().tolist()
+        counts=dict(df.ProductID.value_counts())
+        k=0
+        for product_id in  product_ids:
+            headers = ["Product Type", "Specific Products","Temporal Extent","Product Detail"]
+            # print(product_id)  
+            t = []
+            empty_columns = []  # Track empty columns
+            for i in range(0, int(counts[product_id])):
+                k+=1
+                i=k
+                try:
+                    Product_type = c['summaries']['DataAvailability'][i-1]['Product_type']
+                except:
+                    Product_type = ''
+                try:
+                    SpecificProduct = c['summaries']['DataAvailability'][i-1]['SpecificProduct']
+                except:
+                    SpecificProduct = ''
+                try:
+                    Spatial = c['summaries']['DataAvailability'][i-1]['Spatial']
+                except:
+                    Spatial = ''
+                try:
+                    Temporal = c['summaries']['DataAvailability'][i-1]['Temporal']
+                except:
+                    Temporal = ''
+                # try:
+                #     Catalogue = c['summaries']['DataAvailability'][i]['Catalogue']
+                # except:
+                #     Catalogue = ''
+                try:
+                    ProductLink = c['summaries']['DataAvailability'][i-1]['ProductLink']
+                except:
+                    ProductLink = ''
+                try:
+                    footnotes = c['summaries']['DataAvailability'][i-1]['Note']
+                except:
+                    footnotes = ''
 
-        for i in range(0, data_offer):
-            try:
-                ProductID = c['summaries']['DataAvailability'][i]['ProductID']
+                t.append([Product_type, SpecificProduct, Temporal, ProductLink])
+                note += footnotes
                 
-            except:
-                ProductID = ''
-            try:
-                Product_type = c['summaries']['DataAvailability'][i]['Product_type']
-            except:
-                Product_type = ''
-            try:
-                SpecificProduct = c['summaries']['DataAvailability'][i]['SpecificProduct']
-            except:
-                SpecificProduct = ''
-            try:
-                Spatial = c['summaries']['DataAvailability'][i]['Spatial']
-            except:
-                Spatial = ''
-            try:
-                Temporal = c['summaries']['DataAvailability'][i]['Temporal']
-            except:
-                Temporal = ''
-            # try:
-            #     Catalogue = c['summaries']['DataAvailability'][i]['Catalogue']
-            # except:
-            #     Catalogue = ''
-            try:
-                ProductLink = c['summaries']['DataAvailability'][i]['ProductLink']
-            except:
-                ProductLink = ''
-            try:
-                footnotes = c['summaries']['DataAvailability'][i]['Note']
-            except:
-                footnotes = ''
+            # Find empty columns
+            for j in range(len(t[0])):
+                column_values = [row[j] for row in t]
+                if all(value == '' for value in column_values):
+                    empty_columns.append(j)
 
-            t.append([Product_type, SpecificProduct, Spatial, Temporal, ProductLink])
-            note += footnotes
-            headers = ["Product Type", "Specific Products", "Spatial Extext","Temporal Extent","Product Detail"]
+            # Remove empty columns
+            
+            headers = [header for i, header in enumerate(headers) if i not in empty_columns]
+            t = [[row[i] for i in range(len(headers))] for row in t]
 
-        # Find empty columns
-        for j in range(len(t[0])):
-            column_values = [row[j] for row in t]
-            if all(value == '' for value in column_values):
-                empty_columns.append(j)
-
-        # Remove empty columns
-        
-        headers = [header for i, header in enumerate(headers) if i not in empty_columns]
-        t = [[row[i] for i in range(len(headers))] for row in t]
-        table = tabulate(t, headers=headers, tablefmt='html', floatfmt=".4f", stralign="center", numalign="center")
-        # Set the minimum width of each column to 100 pixels
-        table = table.replace("<table>", '<table class="table">')
-        ###################### merge the table content into a merged table #####################
-        table=mergecells(table)
-        ###################### end merging the content into a merged table #####################
-        table = f"""<h5>{tabletitle}</h5>{table}{note}"""
+            table = tabulate(t, headers=headers, tablefmt='html', floatfmt=".4f", stralign="left", numalign="left")
+            # Set the minimum width of each column to 100 pixels
+            table = table.replace("<table>", '<table class="table">')
+            table=mergecells(table)
+            table = f"""<h4>{product_id}</h4>{table}"""
+            tables=tables+table
+            del t 
+            del headers
+            # break
+        # print(tables)
+        tablertn = f"""<h5>{tabletitle}</h5>{tables}{note}"""
     except:
-        table = " "
-    return table
+        tablertn = " "
+    
+    return tablertn
+
 
 ########################## DEFINE FUNCTION TO CREATE DATA AVAILABILITY TABLE FOR CMEMS and CLMS ########################
-def CMEMS_CLMSOffer(c):
+def CLMSOffer(c):
     tabletitle = "Offered Data"
     tables=""
     try:
@@ -450,26 +459,20 @@ def CMEMS_CLMSOffer(c):
             for i in range(0, int(counts[product_id])):
                 k+=1
                 i=k
-                # print(i)
                 try:
-                    ProductID = c['summaries']['DataAvailability'][i]['ProductID']
-                    
-                except:
-                    ProductID = ''
-                try:
-                    Product_type = c['summaries']['DataAvailability'][i]['Product_type']
+                    Product_type = c['summaries']['DataAvailability'][i-1]['Product_type']
                 except:
                     Product_type = ''
                 try:
-                    SpecificProduct = c['summaries']['DataAvailability'][i]['SpecificProduct']
+                    SpecificProduct = c['summaries']['DataAvailability'][i-1]['SpecificProduct']
                 except:
                     SpecificProduct = ''
                 try:
-                    Spatial = c['summaries']['DataAvailability'][i]['Spatial']
+                    Spatial = c['summaries']['DataAvailability'][i-1]['Spatial']
                 except:
                     Spatial = ''
                 try:
-                    Temporal = c['summaries']['DataAvailability'][i]['Temporal']
+                    Temporal = c['summaries']['DataAvailability'][i-1]['Temporal']
                 except:
                     Temporal = ''
                 # try:
@@ -477,11 +480,11 @@ def CMEMS_CLMSOffer(c):
                 # except:
                 #     Catalogue = ''
                 try:
-                    ProductLink = c['summaries']['DataAvailability'][i]['ProductLink']
+                    ProductLink = c['summaries']['DataAvailability'][i-1]['ProductLink']
                 except:
                     ProductLink = ''
                 try:
-                    footnotes = c['summaries']['DataAvailability'][i]['Note']
+                    footnotes = c['summaries']['DataAvailability'][i-1]['Note']
                 except:
                     footnotes = ''
 
