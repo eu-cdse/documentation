@@ -16,7 +16,7 @@ def main(c):
         "AdditionalComplementaryData": Additional,      
         "CAMS": CAMSOffer,
         "CLMS": CLMSOffer,               #NEED FIXING
-        "CMEMS" : CMEMSOffer          #NEED FIXING     
+        "CMEMS" : CMEMSOffer               
     }
     AvailabilityTable = cases.get(constellation, general)(c)
     return AvailabilityTable
@@ -474,6 +474,100 @@ def CLMSOffer(c):
 
                 t.append([Product_type, SpecificProduct, Spatial, Temporal, ProductLink])
                 note += footnotes
+                
+            # Find empty columns
+            for j in range(len(t[0])):
+                column_values = [row[j] for row in t]
+                if all(value == '' for value in column_values):
+                    empty_columns.append(j)
+
+            # Remove empty columns
+            
+            headers = [header for i, header in enumerate(headers) if i not in empty_columns]
+            t = [[row[i] for i in range(len(headers))] for row in t]
+
+            table = tabulate(t, headers=headers, tablefmt='html', floatfmt=".4f", stralign="left", numalign="left")
+            # Set the minimum width of each column to 100 pixels
+            table = table.replace("<table>", '<table class="table">')
+            table=mergecells(table)
+            table = f"""<h4>{product_id}</h4>{table}"""
+            tables=tables+table
+            del t 
+            del headers
+            # break
+        # print(tables)
+        tablertn = f"""<h5>{tabletitle}</h5>{tables}{note}"""
+    except:
+        tablertn = " "
+    
+    return tablertn
+
+def CLMSOffer(c):
+    tabletitle = "Offered Data"
+    tables=""
+    try:
+        note = ""
+        #first find the unique product ids
+        df=pd.DataFrame.from_records(c['summaries']['DataAvailability'])
+        product_ids=df.ProductID.unique().tolist()
+        counts=dict(df.ProductID.value_counts())
+        k=0
+        for product_id in  product_ids:
+            # print(product_id)  
+            t = []
+            empty_columns = []  # Track empty columns
+            for i in range(0, int(counts[product_id])):
+                k+=1
+                i=k
+                try:
+                    Product_type = c['summaries']['DataAvailability'][i-1]['Product_type']
+                except:
+                    Product_type = ''
+                try:
+                    SpecificProduct = c['summaries']['DataAvailability'][i-1]['SpecificProduct']
+                except:
+                    SpecificProduct = ''
+                try:
+                    Product = c['summaries']['DataAvailability'][i-1]['Product']
+                except:
+                    Product = ''
+                try:
+                    Subproduct = c['summaries']['DataAvailability'][i-1]['Sub-product']
+                except:
+                    Subproduct = ''
+                try:
+                    Spatial = c['summaries']['DataAvailability'][i-1]['Spatial']
+                except:
+                    Spatial = ''
+                try:
+                    Temporal = c['summaries']['DataAvailability'][i-1]['Temporal']
+                except:
+                    Temporal = ''
+                try:
+                    ProductLink = c['summaries']['DataAvailability'][i-1]['ProductLink']
+                except:
+                    ProductLink = ''
+                try:
+                    footnotes = c['summaries']['DataAvailability'][i-1]['Note']
+                except:
+                    footnotes = ''
+
+                if product_id == "HIGH RESOLUTION LAYERS (HRL)":
+                    t.append([Product_type, Product,Subproduct,SpecificProduct,ProductLink])
+                    headers = ["Product Type", "Products","Sub-Product","Specific Products","Product Detail"]
+                    note += footnotes
+                elif product_id == "RELATED PAN-EUROPEAN":
+                    t.append([Product_type, Product,SpecificProduct,Spatial,ProductLink])
+                    headers = ["Product Type", "Products","Specific Products","Spatial","Product Detail"]
+                    note += footnotes
+                elif product_id == "Local":
+                    t.append([Product_type, SpecificProduct, Subproduct,Spatial, ProductLink])
+                    headers = ["Product Type", "Products","Specific Products","Spatial","Product Detail"]
+                    note += footnotes
+                else:
+                    t.append([Product_type, SpecificProduct, Spatial, Temporal, ProductLink])
+                    headers = ["Product Type", "Specific Products", "Spatial Extext","Temporal Extent","Product Detail"]
+                    note += footnotes
                 
             # Find empty columns
             for j in range(len(t[0])):
