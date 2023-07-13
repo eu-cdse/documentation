@@ -2,6 +2,7 @@ import json
 from IPython.display import display, Markdown, Latex,HTML
 from tabulate import tabulate
 from bs4 import BeautifulSoup
+import pandas as pd
 
 def main(c):
     constellation = c["constellation"]
@@ -11,7 +12,7 @@ def main(c):
         "Landsat-5": ComplementaryOffer,
         "Landsat-7": ComplementaryOffer,
         "Landsat-8": ComplementaryOffer,
-        "Commercial data": VHROffer,            # needs to be updated
+        "Commercial data": VHROffer,            
         "AdditionalComplementaryData": Additional,      # needs to be updated
         "CAMS": CAMSOffer,
         "CLMS": CMEMSOffer_final,                # needs to be updated
@@ -20,7 +21,24 @@ def main(c):
     AvailabilityTable = cases.get(constellation, general)(c)
     return AvailabilityTable
 
+###################### DEFINE A FUNCTION TO MERGE TABLES ######################
+def mergecells(tabletxt):
+    soup = BeautifulSoup(tabletxt, 'html.parser')
+    table = soup.find('table')
 
+    header_cell = None
+
+    for row in table.find_all('tr'):
+        first_cell = row.find('td')
+        
+        if header_cell is None or first_cell.get_text() != header_cell.get_text():
+            header_cell = first_cell
+        else:
+            header_cell['rowspan'] = int(header_cell.get('rowspan', 1)) + 1
+            first_cell.extract()
+    return table
+
+################## DEFINE GENERAL FUNCTION TO CREATE DATA AVAILABILITY TABLE ########################
 def general(c):
     tabletitle = "Offered Data"
     
@@ -89,6 +107,7 @@ def general(c):
     
     return table
 
+########################### DEFINE FUNCTION TO CREATE DATA AVAILABILITY TABLE FOR SMOS, LANDSAT AND MERIS ########################
 
 def ComplementaryOffer(c):
     tabletitle = "Offered Data"
@@ -154,6 +173,7 @@ def ComplementaryOffer(c):
     return table
 
 
+########################## DEFINE FUNCTION TO CREATE DATA AVAILABILITY TABLE FOR ADDITIONAL ########################
 def Additional(c):
     tabletitle = "Offered Data"
     
@@ -207,12 +227,15 @@ def Additional(c):
         table = tabulate(t, headers=headers, tablefmt='html', floatfmt=".4f", stralign="center", numalign="center")
         # Set the minimum width of each column to 100 pixels
         table = table.replace("<table>", '<table class="table">')
+        # call the merge cell function
+        table=mergecells(table)
         table = f"""<h5>{tabletitle}</h5>{table}{note}"""
     except:
         table = " "
     
     return table
 
+########################## DEFINE FUNCTION TO CREATE DATA AVAILABILITY TABLE FOR CAMS ########################
 def CAMSOffer(c):
     tabletitle = "Offered Data"
     
@@ -410,23 +433,7 @@ def CLMSOffer(c):
     
     return table
 
-######################DEFINE A FUNCTION TO MERGE TABLES######################
-def mergecells(tabletxt):
-    soup = BeautifulSoup(tabletxt, 'html.parser')
-    table = soup.find('table')
-
-    header_cell = None
-
-    for row in table.find_all('tr'):
-        first_cell = row.find('td')
-        
-        if header_cell is None or first_cell.get_text() != header_cell.get_text():
-            header_cell = first_cell
-        else:
-            header_cell['rowspan'] = int(header_cell.get('rowspan', 1)) + 1
-            first_cell.extract()
-    return table
-
+########################## DEFINE FUNCTION TO CREATE DATA AVAILABILITY TABLE FOR VHR ########################
 def VHROffer(c):
     tabletitle = "Offered Data"
     
