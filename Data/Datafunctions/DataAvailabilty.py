@@ -139,10 +139,6 @@ def ComplementaryOffer(c):
                 Temporal = c['summaries']['DataAvailability'][i]['Temporal']
             except:
                 Temporal = ''
-            # try:
-            #     Catalogue = c['summaries']['DataAvailability'][i]['Catalogue']
-            # except:
-            #     Catalogue = ''
             try:
                 footnotes = c['summaries']['DataAvailability'][i]['Note']
             except:
@@ -262,10 +258,6 @@ def CAMSOffer(c):
                 Temporal = c['summaries']['DataAvailability'][i]['Temporal']
             except:
                 Temporal = ''
-            # try:
-            #     Catalogue = c['summaries']['DataAvailability'][i]['Catalogue']
-            # except:
-            #     Catalogue = ''
             try:
                 ProductLink = c['summaries']['DataAvailability'][i]['ProductLink']
             except:
@@ -396,10 +388,6 @@ def CMEMSOffer(c):
                     Temporal = c['summaries']['DataAvailability'][i-1]['Temporal']
                 except:
                     Temporal = ''
-                # try:
-                #     Catalogue = c['summaries']['DataAvailability'][i]['Catalogue']
-                # except:
-                #     Catalogue = ''
                 try:
                     ProductLink = c['summaries']['DataAvailability'][i-1]['ProductLink']
                 except:
@@ -475,10 +463,6 @@ def CLMSOffer(c):
                     Temporal = c['summaries']['DataAvailability'][i-1]['Temporal']
                 except:
                     Temporal = ''
-                # try:
-                #     Catalogue = c['summaries']['DataAvailability'][i]['Catalogue']
-                # except:
-                #     Catalogue = ''
                 try:
                     ProductLink = c['summaries']['DataAvailability'][i-1]['ProductLink']
                 except:
