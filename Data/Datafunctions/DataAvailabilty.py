@@ -140,13 +140,17 @@ def ComplementaryOffer(c):
             except:
                 Temporal = ''
             try:
+                Catalogue = c['summaries']['DataAvailability'][i]['Catalogue']
+            except:
+                Catalogue = ''
+            try:
                 footnotes = c['summaries']['DataAvailability'][i]['Note']
             except:
                 footnotes = ''
 
-            t.append([Type,Status, Access, Spatial, Temporal])
+            t.append([Type,Status, Access, Spatial, Temporal,Catalogue])
             note += footnotes
-            headers = ["Product Type","Archive Status", "Access Type", "Spatial Extent", "Temporal Extent"]
+            headers = ["Product Type","Archive Status", "Access Type", "Spatial Extent", "Temporal Extent","Catalogue"]
 
         # Find empty columns
         for j in range(len(t[0])):
@@ -201,13 +205,17 @@ def Additional(c):
             except:
                 ProductLink = ''
             try:
+                Catalogue = c['summaries']['DataAvailability'][i]['Catalogue']
+            except:
+                Catalogue = ''
+            try:
                 footnotes = c['summaries']['DataAvailability'][i]['Note']
             except:
                 footnotes = ''
 
-            t.append([Product_type, SpecificProduct, Spatial, Temporal, ProductLink])
+            t.append([Product_type, SpecificProduct, Spatial, Temporal,Catalogue, ProductLink])
             note += footnotes
-            headers = ["Product Type", "Specific Products", "Spatial Extext","Temporal Extent", "Product Detail"]
+            headers = ["Product Type", "Specific Products", "Spatial Extext","Temporal Extent","Catalogue" ,"Product Detail"]
 
         # Find empty columns
         for j in range(len(t[0])):
