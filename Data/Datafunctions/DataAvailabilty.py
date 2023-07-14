@@ -37,6 +37,22 @@ def mergecells(tabletxt):
             header_cell['rowspan'] = int(header_cell.get('rowspan', 1)) + 1
             first_cell.extract()
     return table
+# function to remove empty columns
+def removeempty(t,headers):
+    empty_columns=[]
+    for j in range(len(t[0])):
+        column_values = [row[j] for row in t]
+        if all(value == '' for value in column_values):
+            empty_columns.append(j)
+    # print(empty_columns)
+    if empty_columns:
+
+        # Remove empty columns
+        t= [[row[i] for i,_ in enumerate(headers) if i not in empty_columns for row in t]]
+        headers = [header for i, header in enumerate(headers) if i not in empty_columns]
+        return t,headers
+    else:
+        return t,headers
 
 ################## DEFINE GENERAL FUNCTION TO CREATE DATA AVAILABILITY TABLE ########################
 def general(c):
@@ -87,16 +103,8 @@ def general(c):
                 note += footnotes
                 headers = ["Archive Status", "Access Type", "Spatial Extent", "Temporal Extent", "Available in Ecosystem from"]
 
-        # Find empty columns
-        for j in range(len(t[0])):
-            column_values = [row[j] for row in t]
-            if all(value == '' for value in column_values):
-                empty_columns.append(j)
-
-        # Remove empty columns
-        
-        headers = [header for i, header in enumerate(headers) if i not in empty_columns]
-        t = [[row[i] for i in range(len(headers))] for row in t]
+        # Find empty columns and remove them
+        t,headers=removeempty(t,headers)
 
         table = tabulate(t, headers=headers, tablefmt='html', floatfmt=".4f", stralign="center", numalign="center")
         # Set the minimum width of each column to 100 pixels
@@ -120,7 +128,7 @@ def ComplementaryOffer(c):
 
         for i in range(0, data_offer):
             try:
-                Type = c['summaries']['DataAvailability'][i]['Product_type']
+                Type = c['summaries']['DataAvailability'][i]['Product']
             except:
                 Type = ''
             try:
@@ -150,18 +158,10 @@ def ComplementaryOffer(c):
 
             t.append([Type,Status, Access, Spatial, Temporal,Catalogue])
             note += footnotes
-            headers = ["Product Type","Archive Status", "Access Type", "Spatial Extent", "Temporal Extent","Catalogue"]
+            headers = ["Product","Archive Status", "Access Type", "Spatial Extent", "Temporal Extent","Catalogue"]
 
-        # Find empty columns
-        for j in range(len(t[0])):
-            column_values = [row[j] for row in t]
-            if all(value == '' for value in column_values):
-                empty_columns.append(j)
-
-        # Remove empty columns
-        
-        headers = [header for i, header in enumerate(headers) if i not in empty_columns]
-        t = [[row[i] for i in range(len(headers))] for row in t]
+        # Find and remove empty columns
+        t,headers=removeempty(t,headers)
 
         table = tabulate(t, headers=headers, tablefmt='html', floatfmt=".4f", stralign="center", numalign="center")
         # Set the minimum width of each column to 100 pixels
@@ -217,16 +217,8 @@ def Additional(c):
             note += footnotes
             headers = ["Product Type", "Specific Products", "Spatial Extext","Temporal Extent","Catalogue" ,"Product Detail"]
 
-        # Find empty columns
-        for j in range(len(t[0])):
-            column_values = [row[j] for row in t]
-            if all(value == '' for value in column_values):
-                empty_columns.append(j)
-
-        # Remove empty columns
-        
-        headers = [header for i, header in enumerate(headers) if i not in empty_columns]
-        t = [[row[i] for i in range(len(headers))] for row in t]
+        # Find and remove empty columns
+        t,headers=removeempty(t,headers)
 
         table = tabulate(t, headers=headers, tablefmt='html', floatfmt=".4f", stralign="center", numalign="center")
         # Set the minimum width of each column to 100 pixels
@@ -279,16 +271,8 @@ def CAMSOffer(c):
             note += footnotes
             headers = ["Product Type", "Specific Products", "Spatial Extext","Temporal Extent","Product Detail"]
 
-        # Find empty columns
-        for j in range(len(t[0])):
-            column_values = [row[j] for row in t]
-            if all(value == '' for value in column_values):
-                empty_columns.append(j)
-
-        # Remove empty columns
-        
-        headers = [header for i, header in enumerate(headers) if i not in empty_columns]
-        t = [[row[i] for i in range(len(headers))] for row in t]
+        # Find and remove empty columns
+        t,headers=removeempty(t,headers)
 
         table = tabulate(t, headers=headers, tablefmt='html', floatfmt=".4f", stralign="left", numalign="left")
         # Set the minimum width of each column to 100 pixels
@@ -340,16 +324,9 @@ def VHROffer(c):
             note += footnotes
             headers = ["Dataset provider ","Satellite constellation", "Product Type", "Spatial Resolution ", "Type of Access"]
 
-        # Find empty columns
-        for j in range(len(t[0])):
-            column_values = [row[j] for row in t]
-            if all(value == '' for value in column_values):
-                empty_columns.append(j)
-
-        # Remove empty columns
+        # Find and remove empty columns
+        t,headers=removeempty(t,headers)
         
-        headers = [header for i, header in enumerate(headers) if i not in empty_columns]
-        t = [[row[i] for i in range(len(headers))] for row in t]
         table = tabulate(t, headers=headers, tablefmt='html', floatfmt=".4f", stralign="center", numalign="center")
         # Set the minimum width of each column to 100 pixels
         table = table.replace("<table>", '<table class="table">')
@@ -408,16 +385,8 @@ def CMEMSOffer(c):
                 t.append([Product_type, SpecificProduct, Temporal, ProductLink])
                 note += footnotes
                 
-            # Find empty columns
-            for j in range(len(t[0])):
-                column_values = [row[j] for row in t]
-                if all(value == '' for value in column_values):
-                    empty_columns.append(j)
-
-            # Remove empty columns
-            
-            headers = [header for i, header in enumerate(headers) if i not in empty_columns]
-            t = [[row[i] for i in range(len(headers))] for row in t]
+            # Find and remove empty columns
+            t,headers=removeempty(t,headers)
 
             table = tabulate(t, headers=headers, tablefmt='html', floatfmt=".4f", stralign="left", numalign="left")
             # Set the minimum width of each column to 100 pixels
@@ -483,16 +452,8 @@ def CLMSOffer(c):
                 t.append([Product_type, SpecificProduct, Spatial, Temporal, ProductLink])
                 note += footnotes
                 
-            # Find empty columns
-            for j in range(len(t[0])):
-                column_values = [row[j] for row in t]
-                if all(value == '' for value in column_values):
-                    empty_columns.append(j)
-
-            # Remove empty columns
-            
-            headers = [header for i, header in enumerate(headers) if i not in empty_columns]
-            t = [[row[i] for i in range(len(headers))] for row in t]
+            # Find and remove empty columns
+            t,headers=removeempty(t,headers)
 
             table = tabulate(t, headers=headers, tablefmt='html', floatfmt=".4f", stralign="left", numalign="left")
             # Set the minimum width of each column to 100 pixels
@@ -577,16 +538,8 @@ def CLMSOffer(c):
                     headers = ["Product Type", "Specific Products", "Spatial Extext","Temporal Extent","Product Detail"]
                     note += footnotes
                 
-            # Find empty columns
-            for j in range(len(t[0])):
-                column_values = [row[j] for row in t]
-                if all(value == '' for value in column_values):
-                    empty_columns.append(j)
-
-            # Remove empty columns
-            
-            headers = [header for i, header in enumerate(headers) if i not in empty_columns]
-            t = [[row[i] for i in range(len(headers))] for row in t]
+            # Find and remove empty columns
+            t,headers=removeempty(t,headers)
 
             table = tabulate(t, headers=headers, tablefmt='html', floatfmt=".4f", stralign="left", numalign="left")
             # Set the minimum width of each column to 100 pixels
