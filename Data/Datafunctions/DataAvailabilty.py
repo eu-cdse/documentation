@@ -173,7 +173,7 @@ def general(c):
         table = tabulate(t, headers=headers, tablefmt='html', floatfmt=".4f", stralign="left", numalign="left")
         # Set the minimum width of each column to 100 pixels
         table = table.replace("<table>", '<table class="table">')
-        table = f"""<h5>{tabletitle}</h5>{table}{note}"""
+        table = f"""<h6>{tabletitle}</h6>{table}{note}"""
     except:
         table = " "
     
@@ -201,7 +201,7 @@ def ComplementaryOffer(c):
         table = tabulate(t, headers=headers, tablefmt='html', floatfmt=".4f", stralign="left", numalign="left")
         # Set the minimum width of each column to 100 pixels
         table = table.replace("<table>", '<table class="table">')
-        table = f"""<h5>{tabletitle}</h5>{table}{note}"""
+        table = f"""<h6>{tabletitle}</h6>{table}{note}"""
     except:
         table = " "
     
@@ -231,7 +231,7 @@ def Additional(c):
         table = table.replace("<table>", '<table class="table">')
         # call the merge cell function
         table=mergecells(table)
-        table = f"""<h5>{tabletitle}</h5>{table}{note}"""
+        table = f"""<h6>{tabletitle}</h6>{table}{note}"""
     except:
         table = " "
     
@@ -257,7 +257,7 @@ def CAMSOffer(c):
         table = tabulate(t, headers=headers, tablefmt='html', floatfmt=".4f", stralign="left", numalign="left")
         # Set the minimum width of each column to 100 pixels
         table = table.replace("<table>", '<table class="table">')
-        table = f"""<h5>{tabletitle}</h5>{table}{note}"""
+        table = f"""<h6>{tabletitle}</h6>{table}{note}"""
     except:
         table = " "
     
@@ -289,7 +289,7 @@ def VHROffer(c):
         ###################### merge the table content into a merged table #####################
         table=mergecells(table)
         ###################### end merging the content into a merged table #####################
-        table = f"""<h5>{tabletitle}</h5>{table}{note}"""
+        table = f"""<h6>{tabletitle}</h6>{table}{note}"""
     except:
         table = " "
     return table
@@ -357,7 +357,7 @@ def CMEMSOffer(c):
             del headers
             # break
         # print(tables)
-        tablertn = f"""<h5>{tabletitle}</h5>{tables}{note}"""
+        tablertn = f"""<h6>{tabletitle}</h6>{tables}{note}"""
     except:
         tablertn = " "
     
@@ -449,7 +449,7 @@ def CLMSOffer(c):
             del headers
             # break
         # print(tables)
-        tablertn = f"""<h5>{tabletitle}</h5>{tables}{note}"""
+        tablertn = f"""<h6>{tabletitle}</h6>{tables}{note}"""
     except:
         tablertn = " "
     
