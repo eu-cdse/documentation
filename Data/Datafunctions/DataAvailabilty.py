@@ -351,7 +351,7 @@ def CMEMSOffer(c):
             # Set the minimum width of each column to 100 pixels
             table = table.replace("<table>", '<table class="table">')
             table=mergecells(table)
-            table = f"""<h4>{product_id}</h4>{table}"""
+            table = f"""<h6>{product_id}</h6>{table}"""
             tables=tables+table
             del t 
             del headers
@@ -443,7 +443,7 @@ def CLMSOffer(c):
             # Set the minimum width of each column to 100 pixels
             table = table.replace("<table>", '<table class="table">')
             table=mergecells(table)
-            table = f"""<h4>{product_id}</h4>{table}"""
+            table = f"""<h6>{product_id}</h6>{table}"""
             tables=tables+table
             del t 
             del headers
