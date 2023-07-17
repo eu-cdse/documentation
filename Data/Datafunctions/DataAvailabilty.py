@@ -247,9 +247,9 @@ def CAMSOffer(c):
 
         for i in range(0, data_offer): 
             Type,Status,Access,Product_type,SpecificProduct,Spatial,Temporal,ProductLink,Catalogue,footnotes,Provider,Satellite,Resolution = DataFetch(c,i)
-            t.append([Product_type, SpecificProduct, Spatial, Temporal, ProductLink])
+            t.append([Product_type, SpecificProduct, Spatial, Temporal, Catalogue,ProductLink])
             note += footnotes
-            headers = ["Product Type", "Specific Products", "Spatial Extext","Temporal Extent","Product Detail"]
+            headers = ["Product Type", "Specific Products", "Spatial Extext","Temporal Extent","Catalogue","Product Detail"]
 
         # Find and remove empty columns
         t,headers=removeempty(t,headers)
@@ -305,7 +305,7 @@ def CMEMSOffer(c):
         counts=dict(df.ProductID.value_counts())
         k=0
         for product_id in  product_ids:
-            headers = ["Product Type", "Specific Products","Temporal Extent","Product Detail"]
+            headers = ["Product Type", "Specific Products","Temporal Extent","Catalogue","Product Detail"]
             # print(product_id)  
             t = []
             empty_columns = []  # Track empty columns
@@ -336,8 +336,12 @@ def CMEMSOffer(c):
                     footnotes = c['summaries']['DataAvailability'][i-1]['Note']
                 except:
                     footnotes = ''
+                try:
+                    Catalogue = c['summaries']['DataAvailability'][i-1]['Catalogue']
+                except:
+                    Catalogue = ''
 
-                t.append([Product_type, SpecificProduct, Temporal, ProductLink])
+                t.append([Product_type, SpecificProduct, Temporal,Catalogue, ProductLink])
                 note += footnotes
                 
             # Find and remove empty columns
@@ -410,22 +414,26 @@ def CLMSOffer(c):
                     footnotes = c['summaries']['DataAvailability'][i-1]['Note']
                 except:
                     footnotes = ''
+                try:
+                    Catalogue = c['summaries']['DataAvailability'][i-1]['Catalogue']
+                except:
+                    Catalogue = ''
 
                 if product_id == "HIGH RESOLUTION LAYERS (HRL)":
-                    t.append([Product_type, Product,Subproduct,SpecificProduct,ProductLink])
-                    headers = ["Product Type", "Products","Sub-Product","Specific Products","Product Detail"]
+                    t.append([Product_type, Product,Subproduct,SpecificProduct,Catalogue,ProductLink])
+                    headers = ["Product Type", "Products","Sub-Product","Specific Products","Catalogue","Product Detail"]
                     note += footnotes
                 elif product_id == "RELATED PAN-EUROPEAN":
-                    t.append([Product_type, Product,SpecificProduct,Spatial,ProductLink])
-                    headers = ["Product Type", "Products","Specific Products","Spatial","Product Detail"]
+                    t.append([Product_type, Product,SpecificProduct,Spatial,Catalogue,ProductLink])
+                    headers = ["Product Type", "Products","Specific Products","Spatial","Catalogue","Product Detail"]
                     note += footnotes
                 elif product_id == "Local":
-                    t.append([Product_type, SpecificProduct, Subproduct,Spatial, ProductLink])
-                    headers = ["Product Type", "Products","Specific Products","Spatial","Product Detail"]
+                    t.append([Product_type, SpecificProduct, Subproduct,Spatial,Catalogue, ProductLink])
+                    headers = ["Product Type", "Products","Specific Products","Spatial","Catalogue","Product Detail"]
                     note += footnotes
                 else:
-                    t.append([Product_type, SpecificProduct, Spatial, Temporal, ProductLink])
-                    headers = ["Product Type", "Specific Products", "Spatial Extext","Temporal Extent","Product Detail"]
+                    t.append([Product_type, SpecificProduct, Spatial, Temporal,Catalogue, ProductLink])
+                    headers = ["Product Type", "Specific Products", "Spatial Extext","Temporal Extent","Catalogue","Product Detail"]
                     note += footnotes
                 
             # Find and remove empty columns
