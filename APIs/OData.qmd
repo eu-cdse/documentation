@@ -35,9 +35,11 @@ As a general note, OData query consists of elements which in this documentation 
 * count
 * expand
 
-Search options should always be preceded with *$* and consecutive options should be separated with *&*.
+Search options should always be preceded with `$` and consecutive options should be separated with `&`.
 
-Consecutive filters within *filter* option should be separated with *and* or *or*. *Not* operator can also be used e.g.:
+Consecutive filters within *filter* option should be separated with `and` or `or`. The `not` operator can also be used.
+
+For example:
 
 ::: {.panel-tabset}
 
@@ -55,10 +57,11 @@ pd.DataFrame.from_dict(json['value']).head(3)
 
 
 ::: {.callout-note} 
-
 To accelerate the query performance it is recommended to limit the query by acquisition dates e.g.:
 
+```default
 ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-21T00:00:00.000Z
+```
 
 :::
 
@@ -91,18 +94,19 @@ pd.DataFrame.from_dict(json['value']).head(3)
 
 :::
 
-Alternatively to *contains*, *endswith* and *startswith* can be used, to search for products ending or starting with provided string.
+Alternatively to `contains`, `endswith` and `startswith` can be used, to search for products ending or starting with provided string.
 
 ### Query by list
 
 In case a user desires to search for multiple products by name in one query, POST method can be used:
 
-**POST**
+```default
+POST https://catalogue.dataspace.copernicus.eu/odata/v1/Products/OData.CSC.FilterList
+```
 
-[`https://catalogue.dataspace.copernicus.eu/odata/v1/Products/OData.CSC.FilterList`](https://catalogue.dataspace.copernicus.eu/odata/v1/Products/OData.CSC.FilterList){target="_blank"}
+with request body:
 
-**Request body**:
-```{json}
+```json
 {
   "FilterProducts":
     [
@@ -112,7 +116,8 @@ In case a user desires to search for multiple products by name in one query, POS
     ]
  }
 ```
-Two results are returned, as there is no product named xxxxxxxx.06.tar.
+
+Two results are returned, as there is no product named `xxxxxxxx.06.tar`.
 
 ### Query Collection of Products
 
@@ -157,7 +162,7 @@ pd.DataFrame.from_dict(json['value']).head(3)
 
 :::
 
-To define inclusive interval *ge* and *le* parameters can be used:
+To define inclusive interval `ge` and `le` parameters can be used:
 
 ::: {.panel-tabset}
 
@@ -191,7 +196,7 @@ pd.DataFrame.from_dict(json['value']).head(3)
 
 :::
 
-Usually, there are two parameters describing the ContentDate (Acquisition Dates) for a product - Start and End. Depending on what the user is looking for, these parameters can be mixed, e.g.,:
+Usually, there are two parameters describing the ContentDate (Acquisition Dates) for a product - Start and End. Depending on what the user is looking for, these parameters can be mixed, e.g.:
 
 ::: {.panel-tabset}
 
@@ -241,33 +246,35 @@ pd.DataFrame.from_dict(json['value']).head(3)
 
 :::
 
-<u>Disclaimers</u>:
+
+::: {.callout-warning title="Disclaimers"}
 
 1. MULTIPOLYGON is currently not supported.
-2. Polygon must start and end with the same point.
-3. Coordinates must be given in EPSG 4326
+2. The polygon coordinates must start and end with the same point.
+3. Coordinates must be given in EPSG:4326
+:::
+
 
 ### Query by attributes
 
 To search for products by attributes it is necessary to build a filter with the following structure:
 
 
-
- Attributes/OData.CSC.ValueTypeAttribute/any(att:att/Name eq '[Attribute.Name]' and att/OData.CSC.ValueTypeAttribute/Value eq '[Attribute.Value]')
+`Attributes/OData.CSC.ValueTypeAttribute/any(att:att/Name eq '[Attribute.Name]' and att/OData.CSC.ValueTypeAttribute/Value eq '[Attribute.Value]')`
 
 where
 
-- *ValueTypeAttribute* can take the following values:
+- `ValueTypeAttribute` can take the following values:
   - *StringAttribute*
   - *DoubleAttribute*
   - *IntegerAttribute*
   - *DateTimeOffsetAttribute*
-- *[Attribute.Name]* is the attribute name which can take multiple values, depending on collection (Attachment 1 - Coming soon)
-- *eq* before *[Attribute.Value]* can be substituted with le, lt, ge, gt in case of *Integer, Double* or *DateTimeOffset* Attributes
-- *[Attribute.Value]* is the specific value that the user is searching for
+- `[Attribute.Name]` is the attribute name which can take multiple values, depending on collection (Attachment 1 - Coming soon)
+- `eq` before `[Attribute.Value]` can be substituted with `le`, `lt`, `ge`, `gt` in case of *Integer, Double* or *DateTimeOffset* Attributes
+- `[Attribute.Value]` is the specific value that the user is searching for
 
 
-To get products with CloudCover\<40% between two dates:
+To get products with a cloud cover below 40% and between two dates:
 
 ::: {.panel-tabset}
 
@@ -283,7 +290,7 @@ pd.DataFrame.from_dict(json['value']).head(3)
 
 :::
 
-To get products with cloudCover\< 10% and productType=S2MSI2A and ASCENDING orbitDirection between two dates:
+To get products with cloud cover below 10% and productType=S2MSI2A and ASCENDING orbitDirection between two dates:
 
 ::: {.panel-tabset}
 
@@ -302,7 +309,7 @@ pd.DataFrame.from_dict(json['value']).head(3)
 
 ### Orderby option
 
-Orderby option can be used to order the products in an ascending (asc) or descending (desc) direction. If asc or desc not specified, then the resources will be ordered in ascending order.
+The `orderby` option can be used to order the products in an ascending (`asc`) or descending (`desc`) direction. If `asc` or `desc` not specified, then the resources will be ordered in ascending order.
 
 To order products by ContentDate/Start in a descending direction:
 
@@ -322,13 +329,14 @@ pd.DataFrame.from_dict(json['value']).head(3)
 
 By default, if orderby option is not used, the results are not ordered. If orderby option is used, additional orderby by id is also used, so that the results are fully ordered and no products are lost while paginating through the results.
 
-The acceptable arguments for this option: *ContentDate/Start*, *ContentDate/End, PublicationDate, ModificationDate*, in directions: *asc, desc*.
+The acceptable arguments for this option: `ContentDate/Start`, `ContentDate/End`, `PublicationDate`, `ModificationDate`, in directions: `asc`, `desc`.
 
 ### Top option
 
-Top option specifies the maximum number of items returned from a query.
-
-To limit the number of results:
+The `top` option specifies the maximum number of items returned from a query. 
+The default value is 20.
+The specified value should be an integer between 0 and 1000.
+For example, to return 100 items at most:
 
 ::: {.panel-tabset}
 
@@ -344,13 +352,10 @@ pd.DataFrame.from_dict(json['value']).head(3)
 
 :::
 
-The default value is set to 20.
-
-The acceptable arguments for this option: _Integer \<0,1000\>_
 
 ## Skip option
 
-Skip option can be used to skip a specific number of results. Exemplary application of this option would be paginating through the results, however for performance reasons, we recommend limiting queries with small time intervals as a substitute of using skip in a more generic query.
+The `skip` option can be used to skip a specific number of results. Exemplary application of this option would be paginating through the results, however for performance reasons, we recommend limiting queries with small time intervals as a substitute of using skip in a more generic query.
 
 To skip a specific number of results:
 
@@ -368,12 +373,13 @@ pd.DataFrame.from_dict(json['value']).head(3)
 
 :::
 
-The default value is set to 0.
+The default value is 0.
 
 Whenever a query results in more products than 20 (default top value), the API provides a nextLink at the bottom of the page:
-```
+```default
 "@OData.nextLink":
 ```
+
 ::: {.panel-tabset}
 
 # HTTP Request
@@ -388,11 +394,11 @@ pd.DataFrame.from_dict(json['value']).head(3)
 
 :::
 
-The acceptable arguments for this option: *Integer \<0,10000\>*
+The acceptable arguments for this option is an integer between 0 and 10000
 
 ## Count option
 
-Count option enables users to get the exact number of products matching the query. This option is disabled by default to accelerate the query performance.
+The `count` option enables users to get the exact number of products matching the query. This option is disabled by default to accelerate the query performance.
 
 To get the exact number of products for a given query:
 
@@ -410,11 +416,11 @@ pd.DataFrame.from_dict(json['value']).head(3)
 
 :::
 
-The acceptable arguments for this option: *True, true, 1, False, false, 0*.
+The acceptable arguments for this option: `True`, `true`, `1`, `False`, `false`, `0`.
 
 ## Expand option
 
-Expand option enables users to see full metadata of each returned result.
+The `expand` option enables users to see full metadata of each returned result.
 
 To see the metadata of the results:
 
@@ -432,7 +438,7 @@ pd.DataFrame.from_dict(json['value']).head(3)
 
 :::
 
-The acceptable arguments for this option: *Attributes*
+The acceptable arguments for this option: `Attributes`
 
 ## Product Download
 
@@ -445,7 +451,7 @@ To get the token you can use the following scripts:
 
 # cURL
 
-```
+```bash
 curl --location --request POST 'https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token' \
   --header 'Content-Type: application/x-www-form-urlencoded' \
   --data-urlencode 'grant_type=password' \
@@ -465,7 +471,7 @@ or
 
 # cURL
 
-```
+```bash
 curl -d 'client_id=cdse-public' -d 'username=<LOGIN>' -d 'password=<PASSWORD>' -d 'grant_type=password' 'https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token' | python -m json.tool | grep "access_token" | awk -F\" '{print $4}'
 ```
 :::
@@ -478,7 +484,7 @@ To re-generate the Access Token from the Refresh Token it can be done with the f
 
 # cURL
 
-```
+```bash
 curl --location --request POST 'https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token' \
   --header 'Content-Type: application/x-www-form-urlencoded' \
   --data-urlencode 'grant_type=refresh_token' \
@@ -498,7 +504,6 @@ curl --location --request POST 'https://identity.dataspace.copernicus.eu/auth/re
 | Eumetsat-elasticity | [https://identity.dataspace.copernicus.eu/auth/realms/Eumetsat-elasticity/protocol/openid-connect/token](https://identity.cloudferro.com/auth/realms/Eumetsat-elasticity){target="_blank"} | -->
 
 
-<br>
 
 Once you have your token, you require a product Id which can be found in the response of the products search: [`https://catalogue.dataspace.copernicus.eu/odata/v1/Products`](https://catalogue.dataspace.copernicus.eu/odata/v1/Products){target="_blank"}
 
@@ -509,7 +514,7 @@ Finally, you can download the product using this script:
 
 # cURL
 
-```
+```bash
 curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" 'https://catalogue.dataspace.copernicus.eu/odata/v1/Products(060882f4-0a34-5f14-8e25-6876e4470b0d)/$value' --location-trusted --output /tmp/product.zip
 ```
 :::
@@ -520,8 +525,8 @@ or
 
 # Wget
 
-```
-!wget  --header "Authorization: Bearer $KEYCLOAK_TOKEN" 'http://catalogue.dataspace.copernicus.eu/odata/v1/Products(db0c8ef3-8ec0-5185-a537-812dad3c58f8)/$value' -O example_odata.zip
+```bash
+wget  --header "Authorization: Bearer $KEYCLOAK_TOKEN" 'http://catalogue.dataspace.copernicus.eu/odata/v1/Products(db0c8ef3-8ec0-5185-a537-812dad3c58f8)/$value' -O example_odata.zip
 ```
 :::
 
@@ -529,7 +534,7 @@ or
 
 # Python 
 
-```
+```python
 import requests
 session = requests.Session()
 session.headers.update({'Authorization': 'Bearer KEYCLOAK_TOKEN'})

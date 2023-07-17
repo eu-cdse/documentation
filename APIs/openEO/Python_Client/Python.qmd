@@ -1,5 +1,5 @@
 ---
-title: "Getting started with Python client"
+title: "Getting started with the openEO Python client"
 format:
   html:
     code-fold: false
@@ -7,127 +7,172 @@ format:
 jupyter: python3
 ---
 
-This Getting Started guide will give you just a simple overview of the capabilities of the openEO Python client library.
-More in-depth information can be found in its [official documentation](https://open-eo.github.io/openeo-python-client/){target="_blank"}.
+This Getting Started guide will just give a small taste of using the openEO Python client library
+in the context of the Copernicus Data Space Ecosystem.
+Consult [the official openEO Python client library documentation](https://open-eo.github.io/openeo-python-client/){target="_blank"}
+for more in-depth information and a broader coverage of its functionality.
+
 
 ## Installation
+
+::: {.callout-tip} 
+As with any Python project, it is recommended to work in some kind of virtual environment
+(`venv`, `virtualenv`, `conda`, docker, ...) to avoid interference with other projects or applications.
+:::
+
 
 The openEO Python client library is available on [PyPI](https://pypi.org/project/openeo/){target="_blank"}
 and can easily be installed with a tool like `pip`, for example:
 
-```{bash}
-pip install openeo
-
-```
-To upgrade the package to the latest release:
-
-
-```{bash}
-
-pip install --upgrade openeo
-
+```bash
+pip instal openeo
 ```
 
 The client library is also available on [Conda Forge](https://anaconda.org/conda-forge/openeo){target="_blank"} and can be easily installed in a conda environment, for example:
 
-```{bash}
-
+```bash
 conda install -c conda-forge openeo
-
 ```
 
-It's recommended to work in a virtual environment of some kind (`venv`, `conda`, ...),
-containing Python 3.8 or higher.
-
-::: {.callout-tip collapse="true"} 
-
-For more details, alternative installation procedures or troubleshooting tips:
-see the [official openEO package installation documentation](https://open-eo.github.io/openeo-python-client/installation.html){target="_blank"}.
-
+::: {.callout-tip} 
+See [the official `openeo` installation docs](https://open-eo.github.io/openeo-python-client/installation.html){target="_blank"}
+for more details, alternative installation procedures or troubleshooting tips.
 :::
 
 
 ## Exploring a back-end
 
-For this tutorial we will use the openEO instance of Copernicus Data Space Ecosystem, which is available at `https://openeo.dataspace.copernicus.eu`.
-
-First we need to establish a connection to the back-end. 
+For this tutorial we will use the openEO back-end of Copernicus Data Space Ecosystem, 
+which is available at `https://openeo.dataspace.copernicus.eu`.
+We establish a connection to this back-end as follows:
 
 ```python
-
 import openeo
 
 connection = openeo.connect("openeo.dataspace.copernicus.eu")
-
 ```
 
 
-The [`Connection` object](https://open-eo.github.io/openeo-python-client/api.html#module-openeo.rest.connection){target="_blank"}
-is your central gateway to
+The [`Connection` object](https://open-eo.github.io/openeo-python-client/api.html#openeo.rest.connection.Connection){target="_blank"}
+we created here is the central gateway to interact with the back-end:
+
 - list data collections, available processes, file formats and other capabilities of the back-end
 - start building your openEO algorithm from the desired data on the back-end
 - execute and monitor (batch) jobs on the back-end
 - etc.
 
 
-### Collections
+### EO Collections
 
-The EO data available at a back-end is organised in so-called collections.
-For example, a back-end might provide fundamental satellite collections like "Sentinel 1" or "Sentinel 2",
-or preprocessed collections like "NDVI".
-Collections are used as input data for your openEO jobs.
-
-::: {.callout-note}
-
-More information on how openEO "collections" relate to terminology used in other systems can be found in
-([the openEO glossary](../Glossary.qmd#eo-data-collections){target="_blank"}).
-
-:::
-
-If necessary, a more detailed metadata listing for a given collection can be obtained with
-[`describe_collection`](https://open-eo.github.io/openeo-python-client/api.html#openeo.rest.connection.Connection.describe_collection){target="_blank"}.
+EO data in openEO is organized in so-called collections,
+which are used as the input data for your openEO jobs
+(see [the glossary](../Glossary.qmd#eo-data-collections) for more info).
+Collections can be listed and inspected programmatically:
 
 
-### Processes
+```python
+# List collections available on the openEO back-end
+connection.list_collection_ids()
+
+# Get detailed metadata of a certain collection
+connection.describe_collection("SENTINEL2_L2A")
+```
+
+However, it is often easier to browse collections through the 
+[openEO collection listing page](../openEO.html#collections)
+or the collection listing sidebar of the [openEO Web Editor](../../../Applications/WebEditor.html).
+
+
+
+### openEO Processes
 
 Processes in openEO are operations that can be applied on (EO) data
-(e.g. calculate the mean of an array, or mask out observations outside a given polygon).
+(see the [the openEO glossary](../Glossary.qmd) for more info).
+For example: calculate the mean of an array, mask out pixels outside a given polygon
+or calculate spatial aggregations.
 The output of one process can be used as the input of another process,
-and by doing so, multiple processes can be connected that way in a larger "process graph":
-a new (user-defined) processes that implements a certain algorithm.
+and by doing so, multiple processes can be connected that way in a larger "process graph",
+as illustrated in this conceptual diagram:
 
-::: {.callout-note}
+```{mermaid}
+flowchart TD
+  load_collection --> NDVI[calculate NDVI]
+  load_collection --> cm[build cloud mask]
+  NDVI --> mask[apply mask]
+  cm --> mask
+  mask --> aggregate_spatial
+  load_geojson[load geometries] --> aggregate_spatial
+  aggregate_spatial --> save_result
+```
 
-Check [the openEO glossary](../Glossary.qmd)
-for more details on pre-defined, user-defined processes and process graphs.
+While it is possible to programmatically list and inspect the available processes
+(e.g. `connection.list_processes()` with the openEO python client),
+it is recommended to just consult
+[the process listing page](../openEO.html#processes),
+the process listing sidebar of the [openEO Web Editor](../../../Applications/WebEditor.html),
+or [the official openeo.org processes listing](https://processes.openeo.org/){target="_blank"}.
 
-:::
 
-For other graphical overviews of the openEO processes, there is an [online documentation](https://docs.openeo.cloud/processes/){target="_blank"} for general process descriptions and the [openEO Hub](https://hub.openeo.org/) for back-end specific process descriptions. 
 
 ## Authentication 
 
-In the code snippets above we did not need to log in
-since we just queried publicly available back-end information.
-However, to run non-trivial processing queries one has to authenticate
+Basic metadata about collection and processes, as discussed above
+is publicly available and does not require being logged in.
+However, for downloading EO data or running processing workflows,
+it is necessary to authenticate
 so that permissions, resource usage, etc. can be managed properly.
 
 
-A detailed description of why and how to use the authentication methods is on the [official documentation](https://open-eo.github.io/openeo-python-client/auth.html#authentication-and-account-management){target="_blank"}.
+::: {.callout-important}
+Make sure to complete your
+[Copernicus Data Space Ecosystem registration](../../../Registration.md)
+before attempting to do the authentication explained below.
+:::
 
-
-To authenticate your account on the backend of the Copernicus Data Space Ecosystem, it is necessary for you to complete the registration process. Once registered, you will be authenticated for executing processes.
-
-The following code snippet shows how to log in via OIDC authentication:
+Once properly registered, you will be able to authenticate your `connection` handle in your Python code with 
+[`Connection.authenticate_oidc()`](https://open-eo.github.io/openeo-python-client/api.html#openeo.rest.connection.Connection.authenticate_oidc){target="_blank"},
+just like this:
 
 ```python
-print("Authenticate with OIDC authentication")
 connection.authenticate_oidc()
 ```
-The method is used to authenticate yourself on the back-end authentication system. 
-Calling this method with either will print a URL to visit, that opens your system web browser where you can use your Copernicus Data Space Ecosystem credentials, or when there are refresh tokens, these will be used directly.
-After that the website will give you the instructions to go back to the python client, where your connection has logged your account in. 
-This means that every call that comes after that via the `connection` variable is executed by your user account.
+
+-   By default, the first time you call this `authenticate_oidc()` method,
+    a URL will be printed. Something like for example:
+
+    ```
+    Visit https://auth.example.com/device?user_code=EAXD-RQXV to authenticate.
+    ```
+
+    Visit this URL (click it or copy-paste it into your web browser)
+    and follow the login flow using your Copernicus Data Space Ecosystem credentials.
+
+    ::: {.callout-tip}
+    You can visit this URL with any browser you prefer to complete the login procedure
+    (e.g. on your laptop or smartphone). 
+    It does *not* have to be a browser running on the same machine/network as your Python script/application.
+    :::
+
+    Once the authentication is completed, your Python script will receive 
+    the necessary authentication tokens and print 
+
+    ```
+    Authorized successfully.
+    ```
+
+-   Other times, when you still have valid (refresh) tokens on your system,
+    it will not be necessary to go through the Copernicus Data Space Ecosystem login steps
+    and you will immediately see
+
+    ```
+    Authenticated using refresh token.
+    ```
+
+In any case, your `connection` is now authenticated and capable to make download/processing requests.
+
+
+A more in-depth discussion of various authentication concepts is available
+in the [openEO Python client documentation](https://open-eo.github.io/openeo-python-client/auth.html){target="_blank"}.
 
 
 ## Working with Datacube
@@ -142,12 +187,12 @@ with [`Connection.load_collection`](https://open-eo.github.io/openeo-python-clie
 
 ```python
 datacube = connection.load_collection(
-      "SENTINEL2_L2A",
-      spatial_extent={"west": 5.14, "south": 51.17, "east": 5.17, "north": 51.19},
-      temporal_extent = ["2021-02-01", "2021-04-30"],
-      bands=["B02", "B04", "B08"],
-      max_cloud_cover=85
-      )
+    "SENTINEL2_L2A",
+    spatial_extent={"west": 5.14, "south": 51.17, "east": 5.17, "north": 51.19},
+    temporal_extent = ["2021-02-01", "2021-04-30"],
+    bands=["B02", "B04", "B08"],
+    max_cloud_cover=85,
+)
 ```
 
 This results in a [`Datacube` object](https://open-eo.github.io/openeo-python-client/api.html#openeo.rest.datacube.DataCube){target="_blank"} containing the "SENTINEL2_L2A" data restricted to the given spatial extent, the given temporal extend and the given bands .
@@ -254,12 +299,12 @@ con.authenticate_oidc()
 # Now that we are connected, we can initialize our datacube object with the area of interest 
 # and the time range of interest using Sentinel 1 data.
 datacube = connection.load_collection(
-      "SENTINEL2_L2A",
-      spatial_extent={"west": 5.14, "south": 51.17, "east": 5.17, "north": 51.19},
-      temporal_extent = ["2021-02-01", "2021-04-30"],
-      bands=["B02", "B04", "B08"],
-      max_cloud_cover=85
-      )
+    "SENTINEL2_L2A",
+    spatial_extent={"west": 5.14, "south": 51.17, "east": 5.17, "north": 51.19},
+    temporal_extent = ["2021-02-01", "2021-04-30"],
+    bands=["B02", "B04", "B08"],
+    max_cloud_cover=85,
+)
 
 # By filtering as early as possible (directly in load_collection() in this case), 
 # we make sure the back-end only loads the data we are interested in and avoid incurring unneeded costs.

@@ -8,12 +8,11 @@ Digital signatures on the traces provide users with the ability to verify authen
 traces themselves – this also enables users to detect any alterations of the product during its
 lifecycle.
 
-Users may interact with Traceability service by either curl command (on both Windows and Linux),
-directly via the Traceability Service API endpoint or via the Traceability Service API documentation.
+Users may interact with Traceability API either directly using e.g. curl, or through the open source Traceability command line utility.
 
-Traceability Service API endpoint: [https://trace.dataspace.copernicus.eu/api](https://trace.dataspace.copernicus.eu/api){target="blank"}
+Traceability Service API OpenAPI endpoint documentation: [https://trace.dataspace.copernicus.eu/api/docs](https://trace.dataspace.copernicus.eu/api/docs){target="blank"}
 
-Documentation related to Traceability Service API: [https://trace.dataspace.copernicus.eu/api/docs](https://trace.dataspace.copernicus.eu/api/docs){target="blank"}
+Traceability Service command line utility: [https://github.com/eu-cdse/trace-cli ](https://github.com/eu-cdse/trace-cli ){target="blank"}
 
 ## Example
 
