@@ -362,6 +362,7 @@ def CMEMSOffer(c):
 
 ########################## DEFINE FUNCTION TO CREATE DATA AVAILABILITY TABLE FOR CLMS ########################
 def CLMSOffer(c):
+    tabletitle = "Offered Data"
     tables=""
     try:
         note = ""
@@ -371,7 +372,6 @@ def CLMSOffer(c):
         counts=dict(df.ProductID.value_counts())
         k=0
         for product_id in  product_ids:
-            headers = ["Product Type", "Specific Products", "Spatial Extext","Temporal Extent","Product Detail"]
             # print(product_id)  
             t = []
             empty_columns = []  # Track empty columns
@@ -386,6 +386,14 @@ def CLMSOffer(c):
                     SpecificProduct = c['summaries']['DataAvailability'][i-1]['SpecificProduct']
                 except:
                     SpecificProduct = ''
+                try:
+                    Product = c['summaries']['DataAvailability'][i-1]['Product']
+                except:
+                    Product = ''
+                try:
+                    Subproduct = c['summaries']['DataAvailability'][i-1]['Sub-product']
+                except:
+                    Subproduct = ''
                 try:
                     Spatial = c['summaries']['DataAvailability'][i-1]['Spatial']
                 except:
@@ -403,8 +411,22 @@ def CLMSOffer(c):
                 except:
                     footnotes = ''
 
-                t.append([Product_type, SpecificProduct, Spatial, Temporal, ProductLink])
-                note += footnotes
+                if product_id == "HIGH RESOLUTION LAYERS (HRL)":
+                    t.append([Product_type, Product,Subproduct,SpecificProduct,ProductLink])
+                    headers = ["Product Type", "Products","Sub-Product","Specific Products","Product Detail"]
+                    note += footnotes
+                elif product_id == "RELATED PAN-EUROPEAN":
+                    t.append([Product_type, Product,SpecificProduct,Spatial,ProductLink])
+                    headers = ["Product Type", "Products","Specific Products","Spatial","Product Detail"]
+                    note += footnotes
+                elif product_id == "Local":
+                    t.append([Product_type, SpecificProduct, Subproduct,Spatial, ProductLink])
+                    headers = ["Product Type", "Products","Specific Products","Spatial","Product Detail"]
+                    note += footnotes
+                else:
+                    t.append([Product_type, SpecificProduct, Spatial, Temporal, ProductLink])
+                    headers = ["Product Type", "Specific Products", "Spatial Extext","Temporal Extent","Product Detail"]
+                    note += footnotes
                 
             # Find and remove empty columns
             t,headers=removeempty(t,headers)
@@ -417,6 +439,8 @@ def CLMSOffer(c):
             tables=tables+table
             del t 
             del headers
+            # break
+        # print(tables)
         tablertn = f"""<h5>{tabletitle}</h5>{tables}{note}"""
     except:
         tablertn = " "
