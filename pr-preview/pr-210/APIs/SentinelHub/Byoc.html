@@ -1,0 +1,1459 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.433">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Documentation - Bring Your Own COG API</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../APIs/SentinelHub/Byoc/Examples.html" rel="next">
+<link href="../../APIs/SentinelHub/BatchStatistical/Examples.html" rel="prev">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": true,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<meta name="zd-site-verification" content="xj9koofr1crilmoclgxsjd">
+<script type="text/javascript">
+
+    window.onload = () => {
+        const elems = document.getElementsByClassName('navbar-title');
+        if (elems.length > 0) {
+            const title = elems[0];
+            title.parentElement.href = '/Home.html'
+        }
+    }
+</script>
+
+
+<script type="text/javascript">
+function scrollFunction() {
+    var prevScrollpos = window.pageYOffset;
+    if (prevScrollpos > 50) {
+      document.getElementsByClassName("navbar-brand")[1].style.display = "none";
+    } else {
+      document.getElementsByClassName("navbar-brand")[1].style.display = "initial";
+     
+    }
+  }
+  
+  window.addEventListener('scroll', scrollFunction);
+</script>
+
+
+<link rel="stylesheet" href="../../custom.css">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a href="https://dataspace.copernicus.eu/" class="navbar-brand navbar-brand-logo">
+    <img src="../../_images/logos/combinedLogo.svg" alt="" class="navbar-logo">
+    </a>
+    <a class="navbar-brand" href="https://dataspace.copernicus.eu/">
+    <span class="navbar-title">Documentation</span>
+    </a>
+  </div>
+        <div class="quarto-navbar-tools ms-auto">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../APIs.html">APIs</a></li><li class="breadcrumb-item"><a href="../../APIs/SentinelHub.html">Sentinel Hub</a></li><li class="breadcrumb-item"><a href="../../APIs/SentinelHub/Byoc.html">Bring Your Own COG API</a></li></ol></nav>
+      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+      </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Home.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Welcome</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../Roadmap.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Service description and evolution roadmap</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Roadmap/DataTable.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Roadmap/APITable.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">APIs</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Roadmap/AppTable.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Applications</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="px-0"><hr class="sidebar-divider hi "></li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Registration.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">User registration and authentication</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../Data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Data</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Data/Dashboard.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Copernicus Operations Dashboard</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Data/Sentinel1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Sentinel-1</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Data/Sentinel2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Sentinel-2</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Data/Sentinel3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Sentinel-3</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Data/Sentinel5P.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Sentinel-5P</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../APIs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">APIs</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/Token.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Keycloak Token</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/OData.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">OData</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/OpenSearch.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">OpenSearch</span></a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../APIs/openEO/openEO.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">openEO</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/openEO/Glossary.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Glossary</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/openEO/Python_Client/Python.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Using Python client</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/openEO/R_Client/R.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Using R client</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/openEO/JavaScript_Client/JavaScript.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Using JavaScript client</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/openEO/job_config.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Job configuration</span></a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="false">
+ <span class="menu-text">Jupyter notebooks</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth3 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notebook-samples/openeo/NDVI_Timeseries.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Zonal statistics over time</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notebook-samples/openeo/Load_Collection.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Load Sentinel-2 data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notebook-samples/openeo/UDF.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">User defined functions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notebook-samples/openeo/UDP.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Publishing workflow as a service</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/openEO/openeo-community-examples/python/BasicSentinelMerge/sentinel_merge.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preprocessing &amp; merging Sentinels</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/STAC.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">STAC product catalog</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/S3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">S3 Access</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/Traceability.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Traceability API</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/On-Demand Production API.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">On-Demand Production API</span></a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../APIs/SentinelHub.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Sentinel Hub</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth2 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="false">
+ <span class="menu-text">User guides</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth3 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/UserGuides/Datamask.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Data Mask</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/UserGuides/CloudMasks.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Cloud Masks</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/UserGuides/Transparency.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Transparency</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/UserGuides/TimeSeries.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Time Series</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../APIs/SentinelHub/Evalscript.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Evalscript (custom script)</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth3 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Evalscript/V3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Evalscript V3</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Evalscript/Functions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Utility Functions</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../APIs/SentinelHub/Overview.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">API Overview</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth3 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Overview/Authentication.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Authentication</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Overview/RateLimiting.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Rate limiting</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Overview/ProcessingUnit.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Processing Unit</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Overview/ErrorHandling.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Error Handling</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../APIs/SentinelHub/Process.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Process API</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-10" class="collapse list-unstyled sidebar-section depth3 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Process/Crs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">CRS support</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Process/DataFusion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Data Fusion</span></a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" aria-expanded="false">
+ <span class="menu-text">Examples</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-11" class="collapse list-unstyled sidebar-section depth4 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Process/Examples/S1GRD.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Examples for S1GRD</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Process/Examples/S2L1C.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Examples for S2L1C</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Process/Examples/S2L2A.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Examples for S2L2A</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Process/Examples/S3OLCI.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Examples for S3OLCI</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Process/Examples/S3SLSTR.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Examples for S3SLSTR</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Process/Examples/S5PL2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Examples for S5PL2</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Process/Examples/DataFusion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Examples for DataFusion</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../APIs/SentinelHub/Catalog.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Catalog API</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-12" class="collapse list-unstyled sidebar-section depth3 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Catalog/Examples.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Examples for Catalog API</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../APIs/SentinelHub/Batch.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Batch Processing API</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-13" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-13" class="collapse list-unstyled sidebar-section depth3 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Batch/Crs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">CRS</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Batch/Examples.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Examples of Batch Processing Workflow</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../APIs/SentinelHub/Statistical.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Statistical API</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-14" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-14" class="collapse list-unstyled sidebar-section depth3 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Statistical/Examples.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Examples for Statistical API</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../APIs/SentinelHub/BatchStatistical.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Batch Statistical API</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-15" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-15" class="collapse list-unstyled sidebar-section depth3 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/BatchStatistical/Examples.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Examples of Batch Statistical Workflow</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../APIs/SentinelHub/Byoc.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Bring Your Own COG API</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-16" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-16" class="collapse list-unstyled sidebar-section depth3 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Byoc/Examples.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">BYOC API examples</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../APIs/SentinelHub/OGC.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">OGC</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-17" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-17" class="collapse list-unstyled sidebar-section depth3 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/OGC/WMS.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">WMS</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/OGC/WCS.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">WCS</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/OGC/WFS.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">WFS</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/OGC/WMTS.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">WMTS</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/OGC/AdditionalRequestParameters.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Additional Request Parameters</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/OGC/OutputFormats.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Output Formats</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/OGC/Examples.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Examples for OGC</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/ApiReference.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">API Reference</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../Applications.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Applications</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-18" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-18" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Applications/Browser.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">About the Browser</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Applications/AlgorithmPlaza.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">openEO algorithm plaza</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Applications/WebEditor.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">openEO Web Editor</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Applications/JupyterHub.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Jupyter Hub</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="px-0"><hr class="sidebar-divider hi "></li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../FAQ.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">FAQ</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Support.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Support</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview">Overview</a>
+  <ul>
+  <li><a href="#a-note-about-cog-overviews-used-for-processing" id="toc-a-note-about-cog-overviews-used-for-processing" class="nav-link" data-scroll-target="#a-note-about-cog-overviews-used-for-processing">A note about COG overviews used for processing</a></li>
+  <li><a href="#sentinel-hub-byoc-tool" id="toc-sentinel-hub-byoc-tool" class="nav-link" data-scroll-target="#sentinel-hub-byoc-tool">Sentinel Hub BYOC Tool</a></li>
+  </ul></li>
+  <li><a href="#converting-to-cog" id="toc-converting-to-cog" class="nav-link" data-scroll-target="#converting-to-cog">Converting to COG</a>
+  <ul>
+  <li><a href="#constraints-and-settings" id="toc-constraints-and-settings" class="nav-link" data-scroll-target="#constraints-and-settings">Constraints and settings</a></li>
+  <li><a href="#gdal-example-command" id="toc-gdal-example-command" class="nav-link" data-scroll-target="#gdal-example-command">GDAL example command</a>
+  <ul class="collapse">
+  <li><a href="#older-gdal-versions-or-planar-multi-band-cogs" id="toc-older-gdal-versions-or-planar-multi-band-cogs" class="nav-link" data-scroll-target="#older-gdal-versions-or-planar-multi-band-cogs">Older GDAL versions or planar multi-band COGs</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#bucket-settings" id="toc-bucket-settings" class="nav-link" data-scroll-target="#bucket-settings">Bucket settings</a></li>
+  <li><a href="#configuring-collections" id="toc-configuring-collections" class="nav-link" data-scroll-target="#configuring-collections">Configuring collections</a>
+  <ul>
+  <li><a href="#automatic-configuration" id="toc-automatic-configuration" class="nav-link" data-scroll-target="#automatic-configuration">Automatic configuration</a></li>
+  <li><a href="#manual-band-configuration" id="toc-manual-band-configuration" class="nav-link" data-scroll-target="#manual-band-configuration">Manual band configuration</a></li>
+  <li><a href="#band-renaming" id="toc-band-renaming" class="nav-link" data-scroll-target="#band-renaming">Band renaming</a></li>
+  <li><a href="#configuring-band-sample-format" id="toc-configuring-band-sample-format" class="nav-link" data-scroll-target="#configuring-band-sample-format">Configuring band sample format</a></li>
+  </ul></li>
+  <li><a href="#ingesting-the-tiles" id="toc-ingesting-the-tiles" class="nav-link" data-scroll-target="#ingesting-the-tiles">Ingesting the tiles</a>
+  <ul>
+  <li><a href="#a-note-about-changing-files" id="toc-a-note-about-changing-files" class="nav-link" data-scroll-target="#a-note-about-changing-files">A note about changing files</a></li>
+  <li><a href="#a-note-about-cover-geometries" id="toc-a-note-about-cover-geometries" class="nav-link" data-scroll-target="#a-note-about-cover-geometries">A note about cover geometries</a>
+  <ul class="collapse">
+  <li><a href="#generating-cover-geometries" id="toc-generating-cover-geometries" class="nav-link" data-scroll-target="#generating-cover-geometries">Generating cover geometries</a></li>
+  <li><a href="#workarounds" id="toc-workarounds" class="nav-link" data-scroll-target="#workarounds">Workarounds</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#collection-metadata" id="toc-collection-metadata" class="nav-link" data-scroll-target="#collection-metadata">Collection metadata</a></li>
+  <li><a href="#tutorials-and-other-related-materials" id="toc-tutorials-and-other-related-materials" class="nav-link" data-scroll-target="#tutorials-and-other-related-materials">Tutorials and Other Related Materials</a></li>
+  <li><a href="#examples" id="toc-examples" class="nav-link" data-scroll-target="#examples">Examples</a></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/eu-cdse/documentation/issues" class="toc-action">Report an issue</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content column-body" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Bring Your Own COG API</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p><strong>Bring Your Own COG API is available only for users with Copernicus Service accounts. Contact our <a href="https://helpcenter.dataspace.copernicus.eu/hc/en-gb/requests/new">Copernicus Data Space Ecosystem support</a> to request your Copernicus Service account.</strong></p>
+<section id="overview" class="level2">
+<h2 class="anchored" data-anchor-id="overview">Overview</h2>
+<p>Bring Your Own COG API (or shortly "BYOC") enables you to import your own data in Sentinel Hub and access it just like any other data you are used to. To be able to do so, the following conditions should be met:</p>
+<ul>
+<li>Store your raster data in the cloud optimized geotiff (COG) <a href="https://www.cogeo.org/" target="_blank">format</a> on your own S3 bucket in the supported region.</li>
+<li>Configure the bucket's permissions so that Sentinel Hub can read them.</li>
+<li>Import tiles using the Dashboard or API.</li>
+</ul>
+<p>Your data needs to be organized into collections of tiles. Each tile needs to contain a set of bands and (optionally) an acquisition date and time. Tiles with the same bands can be grouped into collections. Think of the Sentinel-2 data as a collection of Sentinel-2 tiles.</p>
+<section id="a-note-about-cog-overviews-used-for-processing" class="level4">
+<h4 class="anchored" data-anchor-id="a-note-about-cog-overviews-used-for-processing">A note about COG overviews used for processing</h4>
+<p>When processing data, we select the nearest overview level which has higher resolution than your request, or the full resolution image.</p>
+</section>
+<section id="sentinel-hub-byoc-tool" class="level3">
+<h3 class="anchored" data-anchor-id="sentinel-hub-byoc-tool">Sentinel Hub BYOC Tool</h3>
+<p>The Sentinel Hub BYOC Tool is software which can be used to prepare your data for use in Sentinel Hub. It can be run either in Docker or as a Java JAR. It takes care of the entire process; it is simple to use for simple cases but is also highly configurable allowing for more complex requirements. The same steps can be done manually and are detailed below, should you prefer or require more control over the process. Get the tool <a href="https://github.com/sentinel-hub/byoc-tool" target="_blank">here</a>.</p>
+</section>
+</section>
+<section id="converting-to-cog" class="level2">
+<h2 class="anchored" data-anchor-id="converting-to-cog">Converting to COG</h2>
+<section id="constraints-and-settings" class="level3">
+<h3 class="anchored" data-anchor-id="constraints-and-settings">Constraints and settings</h3>
+<p>COGs can contain either a single band or multiple bands. For multi-band COGs we support both <a href="https://www.awaresystems.be/imaging/tiff/tifftags/planarconfiguration.html" target="_blank">planar configurations formats</a> - chunky and planar format.</p>
+<p>There are a few additional constraints in addition to having COG files. These are:</p>
+<ul>
+<li>The COG header size must not exceed one megabyte.</li>
+<li>The internal tile size must be between 256 x 256 and 2048 x 2048.</li>
+<li>The projection needs to be one of: WGS84 (EPSG:4326), WebMercator (EPGS:3857), any UTM zone (EPSG:32601-32660, 32701-32760), or Europe LAEA (EPSG:3035).</li>
+<li>The COG must not cross any of the two poles.</li>
+<li>The band name should be a valid JavaScript identifier so it can be safely used in evalscripts; valid identifiers are case-sensitive, can contain Unicode letters, $, _, and digits (0-9), but may not start with a digit, and should not be one of the reserved JavaScript keywords.</li>
+<li>There can be at most 100 bands.</li>
+<li>Multi-band COGs in chunky format can have at most 10 bands.</li>
+<li>The file names need to be consistent for all tiles in a collection. For example, if you have B1.tiff in one tile then you also need B1.tiff in all the other tiles in your collection.</li>
+<li>All files of each tile needs to have consistent extension (so a tile cannot contain both B1.tiff and B2.TIF).</li>
+<li>The maximum allowable difference between the intersection of all file bounding boxes and each individual file is one pixel of that file [1].</li>
+<li>All files of each band need to have the same bit depth.</li>
+<li>Files can be compressed with DEFLATE, ZLIB, PIXTIFF_ZIP, PACKBITS or LZW compression method. JPEG compression is not supported.</li>
+<li>Supported sample types and bit depths are the same as those supported for outputs, as well as reading unsigned integer 1, 2, 4 bit files. See also <a href="../../APIs/SentinelHub/Evalscript/V3.html#sampletype">sampleType</a>.</li>
+</ul>
+<p>Bands can have different resolutions.</p>
+<p>For best performance we recommend the following setting for COGs: deflate compressed with 1024x1024 pixel internal tiling.</p>
+<ul>
+<li>[1]: Here's one example of files with slightly different bounding boxes. One file has the bounding box <code>[0, 0, 10, 10]</code> and resolution of one meter per pixel, and the other file has the bounding box <code>[0.5, 0.5, 10.5, 10.5]</code> and 0.5 meter resolution. The intersection <code>[0.5, 0.5, 10, 10]</code> is not more than one pixel away from each individual file, therefore such files are valid for BYOC.</li>
+</ul>
+</section>
+<section id="gdal-example-command" class="level3">
+<h3 class="anchored" data-anchor-id="gdal-example-command">GDAL example command</h3>
+<p>COGs can be generated in a single step with GDAL 3.1 or newer using the <a href="https://gdal.org/drivers/raster/cog.html" target="_blank">COG raster driver</a>. For older GDAL versions or if you want planar multi-band COGs, see <a href="#older-gdal-versions-or-planar-multi-band-cogs">below</a>. <strong>Even though you can use any GDAL version, we highly recommend you use v3.1 or newer, as older versions have issues with average downsampling (see <a href="https://gdal.org/programs/gdaladdo.html" target="_blank">https://gdal.org/programs/gdaladdo.html</a>).</strong></p>
+<p>The input file must conform to the <a href="#constraints-and-settings">constraints</a> regarding the projection, units per pixel, and pixel formats. To generate a COG from an input file:</p>
+<p><code>gdal_translate -of COG -co COMPRESS=DEFLATE -co BLOCKSIZE=1024 -co RESAMPLING=AVERAGE -co OVERVIEWS=IGNORE_EXISTING input.extension output.tiff</code></p>
+<p>Additional parameters may be needed:</p>
+<ul>
+<li>if the input file contains multiple bands, but you only need one or only some of them, add <code>-b &lt;bandA&gt; -b &lt;bandB&gt; ...</code>, where <code>&lt;bandX&gt;</code> is the band number, starting from 1.</li>
+<li>if your input data has nodata values, add them to this command using: <code>-a_nodata NO_DATA_VALUE</code>, e.g.&nbsp;for zero: <code>-a_nodata 0</code>.</li>
+<li>for many types of data adding a predictor can further reduce the file size. It is best to test this on your own data, to enable the predictor add <code>-co PREDICTOR=YES</code>.</li>
+</ul>
+<p>Multi-band COGs generated this way, are encoded in chunky format and you cannot change it to planar format. To get a COG in planar format, follow the next chapter.</p>
+<section id="older-gdal-versions-or-planar-multi-band-cogs" class="level4">
+<h4 class="anchored" data-anchor-id="older-gdal-versions-or-planar-multi-band-cogs">Older GDAL versions or planar multi-band COGs</h4>
+<p>For GDAL older than 3.1 or if you want planar multi-band COGs, multiple commands are needed. To extract individual bands, add <code>-b &lt;band&gt;</code>, where <code>&lt;band&gt;</code> is the band number, starting from 1, to the first command.</p>
+<p><code>gdal_translate -of GTIFF input.extension intermediate.tiff</code></p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>If your input data has nodata values, add them to this command using: <code>-a_nodata NO_DATA_VALUE</code>, e.g.&nbsp;for zero: <code>-a_nodata 0</code>.</p>
+</div>
+</div>
+<p><code>gdaladdo -r average --config GDAL_TIFF_OVR_BLOCKSIZE 1024 intermediate.tiff 2 4 8 16 32</code></p>
+<p>(The number of overview levels you need depends on your source data. A good rule of thumb is to have as many overview levels as necessary for the entire source image to fit on one 1024x1024 tile).</p>
+<p><code>gdal_translate -co TILED=YES -co COPY_SRC_OVERVIEWS=YES --config GDAL_TIFF_OVR_BLOCKSIZE 1024 -co BLOCKXSIZE=1024 -co BLOCKYSIZE=1024 -co COMPRESS=DEFLATE intermediate.tiff output.tiff</code></p>
+<p>To generate a planar multi-band COG, add <code>-co INTERLEAVE=BAND</code>. For chunky format, you don't need to pass anything, as this is the default format.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>for many types of data adding a predictor can further reduce the file size. It is best you test this on your own data. To enable the predictor, add to the above command <code>-co PREDICTOR=2</code> for integers, and <code>-co PREDICTOR=3</code> for floating points.</p>
+</div>
+</div>
+<p>Once the commands finish, you can delete the intermediate.tiff file.</p>
+<p>For more information about each command see the GDAL documentation:</p>
+<ul>
+<li><a href="https://www.gdal.org/gdal_translate.html" target="_blank">gdal_translate</a></li>
+<li><a href="https://www.gdal.org/gdaladdo.html" target="_blank">gdaladdo</a></li>
+</ul>
+</section>
+</section>
+</section>
+<section id="bucket-settings" class="level2">
+<h2 class="anchored" data-anchor-id="bucket-settings">Bucket settings</h2>
+<p>If you do not yet have a bucket at Copernicus Data Space Ecosystem, please follow <a href="https://creodias.docs.cloudferro.com/en/latest/s3/Create-S3-bucket-and-use-it-in-Sentinel-Hub-requests.html">these steps</a> to get one.</p>
+<p>You will have to configure your bucket to allow read access to Sentinel Hub. To do this, <a href="https://creodias.docs.cloudferro.com/en/latest/s3/Bucket-sharing-using-s3-bucket-policy-on-Creodias.html#setting-a-policy-on-the-bucket">update your bucket policy</a> to include the following statement (don’t forget to replace <code>&lt;bucket_name&gt;</code> with your actual bucket name):</p>
+<pre><code>{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "Sentinel Hub permissions",
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": "arn:aws:iam::ddf4c98b5e6647f0a246f0624c8341d9:root"
+            },
+            "Action": [
+                "s3:GetBucketLocation",
+                "s3:ListBucket",
+                "s3:GetObject"
+            ],
+            "Resource": [
+                "arn:aws:s3:::&lt;bucket_name&gt;",
+                "arn:aws:s3:::&lt;bucket_name&gt;/*"
+            ]
+        }
+    ]
+}</code></pre>
+<p>A python script to set a bucket policy can be downloaded <a href="byoc/resources/python/cdse_set_bucket_access_policy.py">here</a>.</p>
+</section>
+<section id="configuring-collections" class="level2">
+<h2 class="anchored" data-anchor-id="configuring-collections">Configuring collections</h2>
+<p>When creating a collection:</p>
+<ul>
+<li>you need to provide the S3 bucket where you data is; if you have data in CreoDIAS or CODE-DE, prefix the bucket name by your CreoDIAS or CODE-DE Project ID as follows: <code>PROJECT_ID:bucket_name</code> ,</li>
+<li>you can define bands, but only using BYOC API,</li>
+<li>you can provide the no data value using Dashboard or BYOC API.</li>
+</ul>
+<p>The no data value cannot be configured to NaN (not a number). However, there is no need to do this, as NaNs are by default treated as no data value.</p>
+<section id="automatic-configuration" class="level3">
+<h3 class="anchored" data-anchor-id="automatic-configuration">Automatic configuration</h3>
+<p>If bands are not configured, BYOC service automatically configures them based on the files of the first ingested tile. In this case the bands are named after the files, while for multi-band files the band index in 1-based numbering is also added at the end. For example, the bands in a multi-band file named <code>RGB.tiff</code> would be named <code>RGB_1</code>, <code>RGB_2</code>, etc. You can rename any band later.</p>
+<p>In this process, the service also configures the "no data" value, if it's not set by the user. The service automatically extracts "no data" values from the TIFF tag GDAL_NODATA (TIFF entry ID = 42113) of the files of the first ingested tile, and sets the value as the collection "no data" value, if all files have the exactly same value and if the value is a number. Otherwise, it sets values per band.</p>
+</section>
+<section id="manual-band-configuration" class="level3">
+<h3 class="anchored" data-anchor-id="manual-band-configuration">Manual band configuration</h3>
+<p>The below example shows how to configure manually instead of relying on the automatic configuration described above. Suppose your tiles are composed of two files - "RGB.tiff" with three 16-bit bands and "CLOUD_MASK.tiff" with a single 8-bit band. You would provide such configuration in <code>additionalData.bands</code> field of a new collection:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"Red"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"source"</span><span class="fu">:</span> <span class="st">"RGB"</span><span class="fu">,</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"bandIndex"</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"bitDepth"</span><span class="fu">:</span> <span class="dv">16</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">},</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"Green"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"source"</span><span class="fu">:</span> <span class="st">"RGB"</span><span class="fu">,</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"bandIndex"</span><span class="fu">:</span> <span class="dv">2</span><span class="fu">,</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"bitDepth"</span><span class="fu">:</span> <span class="dv">16</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">},</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"Blue"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"source"</span><span class="fu">:</span> <span class="st">"RGB"</span><span class="fu">,</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"bandIndex"</span><span class="fu">:</span> <span class="dv">3</span><span class="fu">,</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"bitDepth"</span><span class="fu">:</span> <span class="dv">16</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">},</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"CloudMask"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"source"</span><span class="fu">:</span> <span class="st">"CLOUD_MASK"</span><span class="fu">,</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"bandIndex"</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"bitDepth"</span><span class="fu">:</span> <span class="dv">8</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The keys "Red", "Green", "Blue", and "CloudMask" are the names of the bands that you are going to use in evalscripts. These names can be changed at any time. Inside each band specification you specify where the band is stored using the fields <code>source</code> and <code>bandIndex</code>. The <code>source</code>, together with tile path, defines the file (see <a href="#ingesting-the-tiles">below</a> for details), while <code>bandIndex</code> is the band index in 1-based numbering.</p>
+</section>
+<section id="band-renaming" class="level3">
+<h3 class="anchored" data-anchor-id="band-renaming">Band renaming</h3>
+<p>Bands can be easily renamed in Dashboard. To do this using API, you need to provide the same band specs, but with new names. To obtain the current band specs, use <a href="../../APIs/SentinelHub/ApiReference.html#operation/getByocCollectionById">this endpoint</a>. For example, let's say your bands are defined like this, and you would like to rename bands "RGB_1", "RGB_2", "RGB_3" to "Red", "Green", and "Blue", respectively:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"RGB_1"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"source"</span><span class="fu">:</span> <span class="st">"RGB"</span><span class="fu">,</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"bandIndex"</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"bitDepth"</span><span class="fu">:</span> <span class="dv">16</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">},</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"RGB_2"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"source"</span><span class="fu">:</span> <span class="st">"RGB"</span><span class="fu">,</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"bandIndex"</span><span class="fu">:</span> <span class="dv">2</span><span class="fu">,</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"bitDepth"</span><span class="fu">:</span> <span class="dv">16</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">},</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"RGB_3"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"source"</span><span class="fu">:</span> <span class="st">"RGB"</span><span class="fu">,</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"bandIndex"</span><span class="fu">:</span> <span class="dv">3</span><span class="fu">,</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"bitDepth"</span><span class="fu">:</span> <span class="dv">16</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">},</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"CLOUD_MASK"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"source"</span><span class="fu">:</span> <span class="st">"CLOUD_MASK"</span><span class="fu">,</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"bandIndex"</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"bitDepth"</span><span class="fu">:</span> <span class="dv">8</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>To achieve this, you need to use <a href="../../APIs/SentinelHub/ApiReference.html#operation/updateByocCollectionById">this endpoint</a>. You need to provide the new names at the top level, but leave the band properties ("source", "bandIndex", etc) and values the same. So the content of <code>additionalData.bands</code> would be:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"Red"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"source"</span><span class="fu">:</span> <span class="st">"RGB"</span><span class="fu">,</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"bandIndex"</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"bitDepth"</span><span class="fu">:</span> <span class="dv">16</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">},</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"Green"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"source"</span><span class="fu">:</span> <span class="st">"RGB"</span><span class="fu">,</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"bandIndex"</span><span class="fu">:</span> <span class="dv">2</span><span class="fu">,</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"bitDepth"</span><span class="fu">:</span> <span class="dv">16</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">},</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"Blue"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"source"</span><span class="fu">:</span> <span class="st">"RGB"</span><span class="fu">,</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"bandIndex"</span><span class="fu">:</span> <span class="dv">3</span><span class="fu">,</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"bitDepth"</span><span class="fu">:</span> <span class="dv">16</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">},</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"CLOUD_MASK"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"source"</span><span class="fu">:</span> <span class="st">"CLOUD_MASK"</span><span class="fu">,</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"bandIndex"</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"bitDepth"</span><span class="fu">:</span> <span class="dv">8</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Keep in mind:</p>
+<ul>
+<li>that the bucket cannot be changed after the collection is created,</li>
+<li>that once bands have been configured you can only change band names or remove bands,</li>
+<li>and that the no data value can be changed at anytime using Dashboard or BYOC API.</li>
+</ul>
+</section>
+<section id="configuring-band-sample-format" class="level3">
+<h3 class="anchored" data-anchor-id="configuring-band-sample-format">Configuring band sample format</h3>
+<p>The sample format is TIFF info that defines the band data type. It can be set to signed integers, unsigned integers, or floating points. Learn more about sample format <a href="https://www.awaresystems.be/imaging/tiff/tifftags/sampleformat.html" target="_blank">here</a>. These values are in BYOC defined as <code>INT</code>, <code>UINT</code> and <code>FLOAT</code>, respectively.</p>
+<p>You can configure format manually in BYOC using API or Dashboard. If not set, it will get set to the value of the first ingested tile.</p>
+<p>To configure it manually, set <code>sampleFormat</code> field for each band like this:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"Red"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"source"</span><span class="fu">:</span> <span class="st">"RGB"</span><span class="fu">,</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"bandIndex"</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"bitDepth"</span><span class="fu">:</span> <span class="dv">16</span><span class="fu">,</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"sampleFormat"</span><span class="fu">:</span> <span class="st">"INT"</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">},</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"Green"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"source"</span><span class="fu">:</span> <span class="st">"RGB"</span><span class="fu">,</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"bandIndex"</span><span class="fu">:</span> <span class="dv">2</span><span class="fu">,</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"bitDepth"</span><span class="fu">:</span> <span class="dv">16</span><span class="fu">,</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"sampleFormat"</span><span class="fu">:</span> <span class="st">"INT"</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">},</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"Blue"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"source"</span><span class="fu">:</span> <span class="st">"RGB"</span><span class="fu">,</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"bandIndex"</span><span class="fu">:</span> <span class="dv">3</span><span class="fu">,</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"bitDepth"</span><span class="fu">:</span> <span class="dv">16</span><span class="fu">,</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"sampleFormat"</span><span class="fu">:</span> <span class="st">"INT"</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">},</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"CLOUD_MASK"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"source"</span><span class="fu">:</span> <span class="st">"CLOUD_MASK"</span><span class="fu">,</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"bandIndex"</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"bitDepth"</span><span class="fu">:</span> <span class="dv">8</span><span class="fu">,</span></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"sampleFormat"</span><span class="fu">:</span> <span class="st">"UINT"</span></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>After formats are set, the formats of all new files must match the formats defined in BYOC. If they do not match, files do not get ingested.</p>
+</section>
+</section>
+<section id="ingesting-the-tiles" class="level2">
+<h2 class="anchored" data-anchor-id="ingesting-the-tiles">Ingesting the tiles</h2>
+<p>There are two ways of doing this. The easier version is using the <a href="https://shapps.dataspace.copernicus.eu/dashboard/#/byoc" target="_blank">dashboard</a>.</p>
+<p>To create a new collection click the <code>New collection</code> button. The name can be anything and is there for your own reference. The <code>S3 bucket name</code> is the bucket name containing your data.</p>
+<p>Once the collection is created you can add tiles. Note that only a single tile can be added in one step.</p>
+<p>To add a tile, click the <code>Add tile</code> button. Provide a <code>path</code> to the COG files inside the s3 bucket. For example, if your files are stored in <code>s3://bucket-name/folder/</code>, simply set <code>folder</code> as the tile path. Optionally, set the sensing time of the tile here as well.</p>
+<p>When the tile is ingested its path will be automatically changed to <code>folder/(BAND).tiff</code> or similar, depending on the extension of the files in <code>folder</code>. Note that <code>(BAND)</code> is a placeholder that is replaced by the <code>source</code> of a band to obtain the actual file where the band is stored. In the example <a href="#manual-band-configuration">above</a> your collection uses sources "RGB" and "CLOUD_MASK", thus the two files of the tile will be <code>folder/RGB.tiff</code> and <code>folder/CLOUD_MASK.tiff</code>.</p>
+<p>For more complicated cases you must provide the path with the <code>(BAND)</code> placeholder and extension. For example, suppose your folder contains the files for multiple tiles:</p>
+<ul>
+<li><code>s3://bucket-name/folder/tile_1_B1_2019.tif</code>,</li>
+<li><code>s3://bucket-name/folder/tile_1_B2_2019.tif</code>,</li>
+<li><code>s3://bucket-name/folder/tile_2_B1_2019.tif</code>,</li>
+<li><code>s3://bucket-name/folder/tile_2_B2_2019.tif</code>.</li>
+</ul>
+<p>Create the first tile with the path <code>folder/tile_1_(BAND)_2019.tif</code> to use the first two files and the second tile with the path <code>folder/tile_2_(BAND)_2019.tif</code> to use the next two files.</p>
+<p>Do not forget that all tiles must contain the same set of files (with different data of course); that is, if a tile is missing one or more files it will fail to ingest.</p>
+<p>To ingest tiles via API requests instead of the dashboard, see <a href="../../APIs/SentinelHub/ApiReference.html#tag/byoc_collection">BYOC API reference</a> or <a href="../../APIs/SentinelHub/Byoc/Examples.html">Python examples</a>.</p>
+<section id="a-note-about-changing-files" class="level3">
+<h3 class="anchored" data-anchor-id="a-note-about-changing-files">A note about changing files</h3>
+<p>While you may freely modify the data in your buckets, for it to continue to work reliably through Sentinel Hub you need to reingest tiles with changed data. You can do this in Dashboard, by clicking the "Refresh" button next to the tile, or using the API, by calling the <a href="../../APIs/SentinelHub/ApiReference.html#tag/byoc_tile/operation/reingestByocCollectionTileById">reingest endpoint</a> with the collection and tile id. This is needed as it will update metadata required for processing and failing to do so can result in odd behavior.</p>
+</section>
+<section id="a-note-about-cover-geometries" class="level3">
+<h3 class="anchored" data-anchor-id="a-note-about-cover-geometries">A note about cover geometries</h3>
+<p>Each tile ingested also requires a cover geometry. A cover geometry is a geometry which outlines the valid data part of the tile. Nodata therefore should not be contained in the cover geometry. In the simplest case, the cover geometry will equal the bounding box of the file being ingested.</p>
+<p>The cover geometry is important because it tells the system where it can expect to find data. As a consequence, this determines how data is rendered where tiles overlap. If you have tiles with overlapping cover geometries, only the data from one tile can be rendered where two (or more) cover geometries intersect. This is true even if this data is nodata or if it lies outside the tile bounding box. Having quality cover geometries is therefore important for collections where many tiles containing nodata overlap. Not all cases need precise cover geometries, however. A single tile or a regularly gridded collection with a single date and coordinate reference system can get away with cover geometries equalling the bounding box.</p>
+<br>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Byoc/img/overlapping-tiles.svg" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Overlapping tiles</figcaption>
+</figure>
+</div>
+<p>If the cover geometry is not specified during ingestion it will automatically be set to the tile bounding box. Sentinel Hub will not attempt to generate a more precise geometry as it is impossible to prepare such a process which will work well for all users. It is therefore your responsibility to provide quality cover geometries and in doing so allow you to extract the most out of your data. If ingesting tiles using the API, set the cover geometry using the <code>coverGeometry</code> field in the API request. It must be in the GeoJSON format and in a projected or geodetic coordinate reference system which is supported by Sentinel Hub. Cover geometries in practice mean one polygon or multipolygon. They must also contain no more than 100 points.</p>
+<section id="generating-cover-geometries" class="level4">
+<h4 class="anchored" data-anchor-id="generating-cover-geometries">Generating cover geometries</h4>
+<section id="gdal" class="level5">
+<h5 class="anchored" data-anchor-id="gdal">GDAL</h5>
+<p>One way of getting a cover geometry is using the GDAL utility script <a href="https://github.com/gina-alaska/dans-gdal-scripts/wiki/Gdal_trace_outline" target="_blank">gdal_trace_outline</a> which takes a raster and returns a cover geometry in the WKT format. This then needs to be converted to GeoJSON. In this example a single band file is traced:</p>
+<p><code>gdal_trace_outline band.tif -out-cs en -wkt-out wkt.txt</code></p>
+<p>The process might take a while if you have a large file. To speed up the process you can pass a subsampled file which you can get with <code>gdal_translate</code>. To get a file that is 1% of the original size:</p>
+<p><code>gdal_translate band.tif subsampled.tif -outsize 1% 1%</code></p>
+<p>or if it's stored on AWS S3:</p>
+<p><code>gdal_translate /vsis3/bucket-name/folder/band.tif subsampled.tif -outsize 1% 1%</code></p>
+<p><em>Note that calculating the cover geometry on subsampled rasters may not be sufficiently accurate for touching but not intersecting tiles as the imprecision caused by downsampling may leave gaps.</em></p>
+<p>Finally, you need to convert the WKT file to GeoJSON and specify the CRS under <code>crs.properties.name</code> (except when WGS84 when it can be omitted). CRSs with the EPSG code <code>&lt;EpsgCode&gt;</code> should be specified as <code>urn:ogc:def:crs:EPSG::&lt;EpsgCode&gt;</code>. Here is a GeoJSON example in ESPG:32633.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"MultiPolygon"</span><span class="fu">,</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"crs"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"name"</span><span class="fu">,</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"properties"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"name"</span><span class="fu">:</span> <span class="st">"urn:ogc:def:crs:EPSG::32633"</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">},</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"coordinates"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>        <span class="ot">[</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>            <span class="ot">[</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>                <span class="ot">[</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>                    <span class="fl">370270.52147506207</span><span class="ot">,</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>                    <span class="fl">5085707.891369364</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>                <span class="ot">],</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>                <span class="er">...</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>            <span class="ot">]</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>        <span class="ot">]</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="sentinel-hub-byoc-tool-1" class="level5">
+<h5 class="anchored" data-anchor-id="sentinel-hub-byoc-tool-1">Sentinel Hub BYOC Tool</h5>
+<p>The <a href="#sentinel-hub-byoc-tool">Sentinel Hub BYOC Tool</a> can also help you update the cover geometry of existing tiles on Sentinel Hub. Use the <code>set-coverage</code> command. On Docker, get help and parameters by running: <code>docker run sentinelhub/byoc-tool set-coverage --help</code></p>
+</section>
+</section>
+<section id="workarounds" class="level4">
+<h4 class="anchored" data-anchor-id="workarounds">Workarounds</h4>
+<p>In case your input data is complex and cannot be adequately simply outlined it is nevertheless possible to obtain pixel-precise rendering. In this case, set the cover geometry to any which covers all the valid input pixels. The file bounding box as the default is such an example. What follows is doing the mosaicking in the custom script with the help of <a href="../../APIs/SentinelHub/UserGuides/Datamask.html">dataMask</a>.</p>
+<p>First, set the <a href="../../APIs/SentinelHub/Evalscript/V3.html#mosaicking">mosaicking</a> parameter within <code>setup</code> to <code>TILE</code> (<code>mosaicking: Mosaicking.TILE</code>) and add the <code>dataMask</code> to the array of input bands.</p>
+<p>Then use something like the following as your evalscript. Since <code>dataMask</code> precisely determines which pixels are valid and which ones are not, the moment a valid pixel is found this can be returned, alternatively the next scene should be checked.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode javascript code-with-copy"><code class="sourceCode javascript"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">evaluatePixel</span>(samples<span class="op">,</span> scenes) {</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (<span class="kw">let</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> samples<span class="op">.</span><span class="at">length</span><span class="op">;</span> i<span class="op">++</span>) {</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> sample <span class="op">=</span> samples[i]<span class="op">;</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (sample<span class="op">.</span><span class="at">dataMask</span> <span class="op">==</span> <span class="dv">1</span>) {</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>      <span class="cf">return</span> <span class="fu">someCombination</span>(sample)<span class="op">;</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> someNodataValueArray<span class="op">;</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Optionally, you may additionally use the <code>preProcessScenes</code> function to potentially reduce the number of tiles which will be processed. This is useful to set an upper limit for the number of processing units which will be used. The following limits the maximum number of tiles to 5, for example.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode javascript code-with-copy"><code class="sourceCode javascript"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">preProcessScenes</span> (collections) {</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  collections<span class="op">.</span><span class="at">scenes</span><span class="op">.</span><span class="at">tiles</span> <span class="op">=</span> collections<span class="op">.</span><span class="at">scenes</span><span class="op">.</span><span class="at">tiles</span><span class="op">.</span><span class="fu">splice</span>(<span class="dv">5</span>)<span class="op">;</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> collections<span class="op">;</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><em>Note that getting data in such a manner will use more processing units than SIMPLE mosaicking with precise cover geometries.</em></p>
+</section>
+</section>
+</section>
+<section id="collection-metadata" class="level2">
+<h2 class="anchored" data-anchor-id="collection-metadata">Collection metadata</h2>
+<p>Collections have the following metadata available under <code>additionalData</code>:</p>
+<ul>
+<li><code>extent</code>: the collection extent in WGS84</li>
+<li><code>hasSensingTimes</code>: information if tiles have sensing time</li>
+<li><code>fromSensingTime</code> the sensing time in ISO 8601 of the least recent tile</li>
+<li><code>toSensingTime</code>: the sensing time in ISO 8601 of the most recent tile</li>
+</ul>
+<p>The metadata is updated in a few minutes after a tile is added or removed. To find out if your collection requires metadata updates, check out the flag <code>requiresMetadataUpdate</code>.</p>
+</section>
+<section id="tutorials-and-other-related-materials" class="level2">
+<h2 class="anchored" data-anchor-id="tutorials-and-other-related-materials">Tutorials and Other Related Materials</h2>
+<p>See our <a href="https://www.youtube.com/watch?v=OGxwRHtn5H8" target="_blank">beginner BYOC webinar</a>, where you will learn step-by-step how to prepare and ingest raster data with Sentinel Hub, make API requests to your data and visualize it.</p>
+<p>This <a href="https://sentinelhub-py.readthedocs.io/en/latest/examples/byoc_request.html" target="_blank">BYOC tutorial notebook</a> is a simple walk-through on creating, updating, listing, and deleting your data collections through Python using Sentinel Hub Python package.</p>
+</section>
+<section id="examples" class="level2">
+<h2 class="anchored" data-anchor-id="examples">Examples</h2>
+<p><a href="../../APIs/SentinelHub/Byoc/Examples.html">BYOC API Examples</a></p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation column-body">
+  <div class="nav-page nav-page-previous">
+      <a href="../../APIs/SentinelHub/BatchStatistical/Examples.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Examples of Batch Statistical Workflow</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../../APIs/SentinelHub/Byoc/Examples.html" class="pagination-link">
+        <span class="nav-page-text">BYOC API examples</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+</body></html>
