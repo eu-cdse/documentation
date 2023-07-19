@@ -3,6 +3,8 @@
 import json
 from IPython.display import display, Markdown, Latex,HTML
 from tabulate import tabulate
+
+from Datafunctions import DataAvailabilty 
 ```
 
 ```{python}
@@ -32,12 +34,16 @@ def get_thumbnail(c):
 ```{python}
 # thumbnail block 
 
-def thumbblock(src,userguide, opensearch, gsd,revisit_time, datatype):
-    if src:
-        thumb =  f"""<div class="row" style="display: flex; justify-content: space-around"><div class="column"><div class="badge-row">{userguide} {opensearch}</div><div class="badge-row gutter">{gsd}{revisit_time}</div><div class="badge-row">{datatype}</div></div><div class="column" style="margin-right:10%; margin-left:auto; text-align: right;"><figure><img width="165" height="150" src={src}><figcaption align="center">{databrowser}</figcaption></figure></div></div>"""
+def thumbblock(src,userguide, opensearch, gsd,revisit_time, datatype, frequency):
+
+    if src or userguide or opensearch or gsd or revisit_time or datatype or frequency:
+        if src:
+            thumb =  f"""<div class="column"><div class="badge-row"></div><div class="badge-row gutter">{gsd}{revisit_time}{frequency}</div><div class="badge-row">{datatype}</div></div><div class="column" style="margin-right:10%; margin-left:auto; text-align: right;"><figure><img width="165" height="150" src={src}><figcaption align="center">{databrowser}</figcaption></figure></div></div>"""
+        else:
+            thumb =  f"""<div class="row" style="display: flex; justify-content: space-around"><div class="column"><div class="badge-row">{userguide}{opensearch}</div><div class="badge-row gutter">{gsd}{revisit_time}{frequency}</div><div class="badge-row">{datatype}</div></div><div class="column" style="margin-right:10%; margin-left:auto; text-align: right;"></div></div>"""
+        return thumb
     else:
-        thumb =  f"""<div class="row" style="display: flex; justify-content: space-around"><div class="column"><div class="badge-row">{userguide}{opensearch}</div><div class="badge-row gutter">{gsd}{revisit_time}</div><div class="badge-row">{datatype}</div></div><div class="column" style="margin-right:10%; margin-left:auto; text-align: right;"></div></div>"""
-    return thumb
+        return ''
 
 ```
 
@@ -45,14 +51,20 @@ def thumbblock(src,userguide, opensearch, gsd,revisit_time, datatype):
 def necessary_links(c):
     stac = get_stac(c)
     wmts = get_wmts()
-    if stac and wmts:
-        link_block =f"""<h5>Useful Links</h5><li>{stac}</li><li>{wmts}</li>"""
-    elif stac:
-        link_block =f"""<h5>Useful Links</h5><li>{stac}</li>"""
-    elif wmts:
-        link_block =f"""<h5>Useful Links</h5><li>{wmts}</li>"""
-    else:    
+    source = get_source()
+    info = get_moreinfo()
+
+    # list of all links
+    links = [stac, wmts, source, info]
+
+    # join non-empty links using HTML list tags
+    non_empty_links = [link for link in links if link]
+    if non_empty_links:
+        link_items = [f"<li>{link}</li>" for link in non_empty_links]
+        link_block = f"""<h5>Useful Links</h5><ul>{"".join(link_items)}</ul>"""
+    else:
         link_block = ""
+
     return link_block
 ```
 
@@ -77,6 +89,29 @@ def get_wmts():
         wmts = find_link(rel="wmts",title_contains="Web Map Tile Service")
         if wmts is not None:
             url = f"""WMTS:  <a href="{wmts}" target="_blank">{wmts}</a>""" 
+    except:
+        url = ""
+    return url
+```
+
+```{python}
+def get_source():
+    url = ""
+    try:
+        source = find_link(rel="source")
+        if source is not None:
+            url = f"""Source:  <a href="{source}" target="_blank">{source}</a>""" 
+    except:
+        url = ""
+    return url
+```
+```{python}
+def get_moreinfo():
+    url = ""
+    try:
+        info = find_link(rel="MoreInformation")
+        if info is not None:
+            url = f"""More Information:  <a href="{info}" target="_blank">{info}</a>""" 
     except:
         url = ""
     return url
@@ -197,81 +232,6 @@ def get_bandtable(c):
 ```
 
 ```{python}
-
-from tabulate import tabulate
-
-def get_availablity(c):
-    tabletitle = "Offered Data"
-    
-    try: 
-        data_offer = len(c['summaries']['DataAvailability'])
-        t = []
-        note = ""
-        empty_columns = []  # Track empty columns
-
-        for i in range(0, data_offer):
-            try:
-                Status = c['summaries']['DataAvailability'][i]['Archive_status']
-            except:
-                Status = ''
-            try:
-                Access = c['summaries']['DataAvailability'][i]['Access_type']
-            except:
-                Access = ''
-            try:
-                Spatial = c['summaries']['DataAvailability'][i]['Spatial']
-            except:
-                Spatial = ''
-            try:
-                Temporal = c['summaries']['DataAvailability'][i]['Temporal']
-            except:
-                Temporal = ''
-            try:
-                From = c['summaries']['DataAvailability'][i]['Availabilty']
-            except:
-                From = ''
-            try:
-                footnotes = c['summaries']['DataAvailability'][i]['Note']
-            except:
-                footnotes = ''
-            try:
-                offered_type = c['summaries']['DataAvailability'][i]['offered_type']
-            except:
-                offered_type = ''
-
-            if offered_type != '':
-                t.append([offered_type, Status, Access, Spatial, Temporal, From])
-                note += footnotes
-                headers = ["Timeliness","Archive Status", "Access Type", "Spatial Extent", "Temporal Extent", "Available in Ecosystem from"]
-            else:
-                t.append([Status, Access, Spatial, Temporal, From])
-                note += footnotes
-                headers = ["Archive Status", "Access Type", "Spatial Extent", "Temporal Extent", "Available in Ecosystem from"]
-
-        # Find empty columns
-        for j in range(len(t[0])):
-            column_values = [row[j] for row in t]
-            if all(value == '' for value in column_values):
-                empty_columns.append(j)
-
-        # Remove empty columns
-        
-        headers = [header for i, header in enumerate(headers) if i not in empty_columns]
-        t = [[row[i] for i in range(len(headers))] for row in t]
-
-        table = tabulate(t, headers=headers, tablefmt='html', floatfmt=".4f", stralign="center", numalign="center")
-        # Set the minimum width of each column to 100 pixels
-        table = table.replace("<table>", '<table class="table">')
-        table = f"""<h5>{tabletitle}</h5>{table}{note}"""
-    except:
-        table = " "
-    
-    return table
-
-```
-
-
-```{python}
 # for loop to display the content
 text = ''
 
@@ -315,6 +275,11 @@ for c in meta:
     except:
         sci_cite = ""
 
+    try:
+        frequency = c["summaries"]["Frequency"]
+    except:
+        frequency = ""
+
     # insert thumbnail
     thumb_url = get_thumbnail(c)
 
@@ -328,7 +293,7 @@ for c in meta:
     table = get_bandtable(c)
 
     # include offer table
-    offer = get_availablity(c)
+    offer = DataAvailabilty.main(c)
     
     links = { l["rel"] + l.get("title",""):l["href"] for l in c.get("links",[])}
     userguide = find_link(rel="about",title_contains="User")
@@ -373,6 +338,11 @@ for c in meta:
     else:
         revisit_time = ""
 
+    if frequency is not None and  frequency != "":
+        Updated_freq = f"""<img src="https://img.shields.io/badge/Update_Frequency-{frequency}-0A4393"/>"""
+    else:
+        Updated_freq = ""
+
     if "ARD" in datatype:
         datatype = f"""![](https://img.shields.io/badge/{datatype}-77cc09) """
     elif "Unprojected" in datatype:
@@ -390,7 +360,7 @@ for c in meta:
 
 ## {title}
 
-{thumbblock(thumb_url,userguide,opensearch,gsd,revisit_time,datatype)}
+{thumbblock(thumb_url,userguide,opensearch,gsd,revisit_time,datatype,Updated_freq)}
 
 #### Overview
 
