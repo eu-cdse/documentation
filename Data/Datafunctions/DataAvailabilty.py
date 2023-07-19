@@ -173,7 +173,7 @@ def general(c):
         table = tabulate(t, headers=headers, tablefmt='html', floatfmt=".4f", stralign="left", numalign="left")
         # Set the minimum width of each column to 100 pixels
         table = table.replace("<table>", '<table class="table">')
-        table = f"""<h6>{tabletitle}</h6>{table}{note}"""
+        table = f"""<h5>{tabletitle}</h5>{table}{note}"""
     except:
         table = " "
     
@@ -201,7 +201,7 @@ def ComplementaryOffer(c):
         table = tabulate(t, headers=headers, tablefmt='html', floatfmt=".4f", stralign="left", numalign="left")
         # Set the minimum width of each column to 100 pixels
         table = table.replace("<table>", '<table class="table">')
-        table = f"""<h6>{tabletitle}</h6>{table}{note}"""
+        table = f"""<h5>{tabletitle}</h5>{table}{note}"""
     except:
         table = " "
     
@@ -231,7 +231,7 @@ def Additional(c):
         table = table.replace("<table>", '<table class="table">')
         # call the merge cell function
         table=mergecells(table)
-        table = f"""<h6>{tabletitle}</h6>{table}{note}"""
+        table = f"""<h5>{tabletitle}</h5>{table}{note}"""
     except:
         table = " "
     
@@ -257,7 +257,7 @@ def CAMSOffer(c):
         table = tabulate(t, headers=headers, tablefmt='html', floatfmt=".4f", stralign="left", numalign="left")
         # Set the minimum width of each column to 100 pixels
         table = table.replace("<table>", '<table class="table">')
-        table = f"""<h6>{tabletitle}</h6>{table}{note}"""
+        table = f"""<h5>{tabletitle}</h5>{table}{note}"""
     except:
         table = " "
     
@@ -289,7 +289,7 @@ def VHROffer(c):
         ###################### merge the table content into a merged table #####################
         table=mergecells(table)
         ###################### end merging the content into a merged table #####################
-        table = f"""<h6>{tabletitle}</h6>{table}{note}"""
+        table = f"""<h5>{tabletitle}</h5>{table}{note}"""
     except:
         table = " "
     return table
@@ -305,7 +305,7 @@ def CMEMSOffer(c):
         counts=dict(df.ProductID.value_counts())
         k=0
         for product_id in  product_ids:
-            headers = ["Product Type", "Specific Products","Temporal Extent","Catalogue","Product Detail"]
+            headers = ["Product Type", "Specific Products","Temporal Extent","S3 path","Product Detail"]
             # print(product_id)  
             t = []
             empty_columns = []  # Track empty columns
@@ -357,7 +357,7 @@ def CMEMSOffer(c):
             del headers
             # break
         # print(tables)
-        tablertn = f"""<h6>{tabletitle}</h6>{tables}{note}"""
+        tablertn = f"""<h5>{tabletitle}</h5>{tables}{note}"""
     except:
         tablertn = " "
     
@@ -421,19 +421,19 @@ def CLMSOffer(c):
 
                 if product_id == "HIGH RESOLUTION LAYERS (HRL)":
                     t.append([Product_type, Product,Subproduct,SpecificProduct,Catalogue,ProductLink])
-                    headers = ["Product Type", "Products","Sub-Product","Specific Products","Catalogue","Product Detail"]
+                    headers = ["Product Type", "Products","Sub-Product","Specific Products","S3 path","Product Detail"]
                     note += footnotes
                 elif product_id == "RELATED PAN-EUROPEAN":
                     t.append([Product_type, Product,SpecificProduct,Spatial,Catalogue,ProductLink])
-                    headers = ["Product Type", "Products","Specific Products","Spatial","Catalogue","Product Detail"]
+                    headers = ["Product Type", "Products","Specific Products","Spatial","S3 path","Product Detail"]
                     note += footnotes
                 elif product_id == "Local":
                     t.append([Product_type, SpecificProduct, Subproduct,Spatial,Catalogue, ProductLink])
-                    headers = ["Product Type", "Products","Specific Products","Spatial","Catalogue","Product Detail"]
+                    headers = ["Product Type", "Products","Specific Products","Spatial","S3 path","Product Detail"]
                     note += footnotes
                 else:
                     t.append([Product_type, SpecificProduct, Spatial, Temporal,Catalogue, ProductLink])
-                    headers = ["Product Type", "Specific Products", "Spatial Extext","Temporal Extent","Catalogue","Product Detail"]
+                    headers = ["Product Type", "Specific Products", "Spatial Extext","Temporal Extent","S3 path","Product Detail"]
                     note += footnotes
                 
             # Find and remove empty columns
@@ -449,7 +449,7 @@ def CLMSOffer(c):
             del headers
             # break
         # print(tables)
-        tablertn = f"""<h6>{tabletitle}</h6>{tables}{note}"""
+        tablertn = f"""<h5>{tabletitle}</h5>{tables}{note}"""
     except:
         tablertn = " "
     
