@@ -7,6 +7,9 @@ This section provides an overview of the EO Applications available from Copernic
 
 The Copernicus Data Space Ecosystem Browser serves as a central hub for accessing, exploring and utilizing the wealth of Earth observation and environmental data provided by the Copernicus Sentinel constellations, contributing missions, Auxiliary engineering data, on-demand data and more (Check out the documentation on [Data](/Data.md) for more details) . Based on Sentinel Hub's EO Browser, users can visualise, compare and analyse and download all this data for a variety of applications, from environmental monitoring and disaster management to urban planning and agriculture. Check out the user guide to know more about the features of the Browser and how to use it.
 
+## [Data Workspace](/Applications/DataWorkspace.md) 
+
+Data Workspace is a web application to generate earth observation products on demand. It makes use of a visual interface that is intuitive and easy to navigate, enabling you to select the desired processing algorithm and relevant parameters with ease.
 
 ## [Jupyter Hub](Applications/JupyterHub.qmd)
 
