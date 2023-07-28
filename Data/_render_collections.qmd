@@ -3,6 +3,8 @@
 import json
 from IPython.display import display, Markdown, Latex,HTML
 from tabulate import tabulate
+
+from Datafunctions import DataAvailabilty 
 ```
 
 ```{python}
@@ -12,7 +14,7 @@ meta = None
 with open("./collections.json") as f:
     meta = json.load(f)["collections"]
 
-meta = [ c for c in meta if mission in c["mission"] ]
+meta = [ c for c in meta if constellation in c["constellation"] ]
 
 ```
 
@@ -32,12 +34,16 @@ def get_thumbnail(c):
 ```{python}
 # thumbnail block 
 
-def thumbblock(src,userguide, opensearch, gsd,revisit_time, datatype):
-    if src:
-        thumb =  f"""<div class="row" style="display: flex; justify-content: space-around"><div class="column"><div class="badge-row">{userguide} {opensearch}</div><div class="badge-row gutter">{gsd}{revisit_time}</div><div class="badge-row">{datatype}</div></div><div class="column" style="margin-right:10%; margin-left:auto; text-align: right;"><figure><img width="165" height="150" src={src}><figcaption align="center">{databrowser}</figcaption></figure></div></div>"""
+def thumbblock(src,userguide, opensearch, gsd,revisit_time, datatype, frequency):
+
+    if src or userguide or opensearch or gsd or revisit_time or datatype or frequency:
+        if src:
+            thumb =  f"""<div class="row" style="display: flex; justify-content: space-around"><div class="column"><div class="badge-row"></div><div class="badge-row gutter">{gsd}{revisit_time}{frequency}</div><div class="badge-row">{datatype}</div></div><div class="column" style="margin-right:10%; margin-left:auto; text-align: right;"><figure><img width="165" height="150" src={src}><figcaption align="center">{databrowser}</figcaption></figure></div></div></div>"""
+        else:
+            thumb =  f"""<div class="row" style="display: flex; justify-content: space-around"><div class="column"><div class="badge-row">{userguide}{opensearch}</div><div class="badge-row gutter">{gsd}{revisit_time}{frequency}</div><div class="badge-row">{datatype}</div></div><div class="column" style="margin-right:10%; margin-left:auto; text-align: right;"></div></div>"""
+        return thumb
     else:
-        thumb =  f"""<div class="row" style="display: flex; justify-content: space-around"><div class="column"><div class="badge-row">{userguide}{opensearch}</div><div class="badge-row gutter">{gsd}{revisit_time}</div><div class="badge-row">{datatype}</div></div><div class="column" style="margin-right:10%; margin-left:auto; text-align: right;"></div></div>"""
-    return thumb
+        return ''
 
 ```
 
@@ -45,10 +51,20 @@ def thumbblock(src,userguide, opensearch, gsd,revisit_time, datatype):
 def necessary_links(c):
     stac = get_stac(c)
     wmts = get_wmts()
-    if stac:
-        link_block =f"""<h5>Useful Links</h5><li>{stac}</li><li>{wmts}</li>"""
+    source = get_source()
+    info = get_moreinfo()
+
+    # list of all links
+    links = [stac, wmts, source, info]
+
+    # join non-empty links using HTML list tags
+    non_empty_links = [link for link in links if link]
+    if non_empty_links:
+        link_items = [f"<li>{link}</li>" for link in non_empty_links]
+        link_block = f"""<h5>Useful Links</h5><ul>{"".join(link_items)}</ul>"""
     else:
         link_block = ""
+
     return link_block
 ```
 
@@ -79,6 +95,29 @@ def get_wmts():
 ```
 
 ```{python}
+def get_source():
+    url = ""
+    try:
+        source = find_link(rel="source")
+        if source is not None:
+            url = f"""Source:  <a href="{source}" target="_blank">{source}</a>""" 
+    except:
+        url = ""
+    return url
+```
+```{python}
+def get_moreinfo():
+    url = ""
+    try:
+        info = find_link(rel="MoreInformation")
+        if info is not None:
+            url = f"""More Information:  <a href="{info}" target="_blank">{info}</a>""" 
+    except:
+        url = ""
+    return url
+```
+
+```{python}
 # function to toggle detail block
 
 def togglescript():
@@ -90,10 +129,10 @@ def togglescript():
 ```{python}
 # include detail block
 
-def detailblock(ID,xy,time,table,link_block):
+def detailblock(ID,xy,time,table,link_block,license_button,cite):
     
     if any(val for val in (xy, time, table, link_block) if not val.isspace() and val != ""):
-        bandinfo = f"""<button onclick="toggleContent('{ID}')" class="expand-collapse">Further details about the data collection</button><div class="expand-content" id="{ID}" style="display:none;"><div class="row" style="display: flex; justify-content: space-around"><div class="column">{xy}</div><div class="column">{time}</div></div><div>{table}</div><div>{link_block}</div></div>"""
+        bandinfo = f"""<button onclick="toggleContent('{ID}')" class="expand-collapse">Further details about the data collection</button><div class="expand-content" id="{ID}" style="display:none;"><div class="row" style="display: flex; justify-content: space-around"><div class="column">{license_button}&nbsp;&nbsp;{cite}</div></div><div class="row" style="display: flex; justify-content: space-around"><div class="column">{xy}</div><div class="column">{time}</div></div><div>{table}</div><div>{link_block}</div></div>"""
     else:
         bandinfo = ""
     return bandinfo
@@ -130,88 +169,66 @@ def get_extent(c):
 ```
 
 ```{python}
+from tabulate import tabulate
+
 def get_bandtable(c):
     tabletitle = "Spectral Bands"
-    try: 
+    try:
         band_num = len(c['summaries']['eo:bands'])
         t = []
-        for i in range(0,band_num):
+        headers = ["Band Name", "Common Name", "GSD(m)", "Center Wavelength(μm)"]
+        empty_columns = [True] * len(headers)  # Track empty columns
+        
+        for i in range(band_num):
+            band_data = c['summaries']['eo:bands'][i]
+            
             try:
-                band = c['summaries']['eo:bands'][i]['name'] 
+                band = band_data['name']
             except:
                 band = ""
+            
             try:
-                c_name = c['summaries']['eo:bands'][i]['common_name']
+                c_name = band_data['common_name']
             except:
                 c_name = ''
+            
             try:
-                b_gsd = c['summaries']['eo:bands'][i]['gsd']
+                b_gsd = band_data['gsd']
             except:
                 b_gsd = ''
+            
             try:
-                b_wavelength = c['summaries']['eo:bands'][i]['center_wavelength']
+                b_wavelength = band_data['center_wavelength']
             except:
                 b_wavelength = ''
-            t.append([band,c_name,b_gsd,b_wavelength])
-        table = tabulate(t,headers=["Band Name", "Common Name", "GSD(m)", "Center Wavelength(μm)"], tablefmt='html', floatfmt=".4f",stralign="center",numalign="center")
-        # Set the minimum width of each column to 100 pixels
-        table = table.replace("<table>", '<table class="table">')
-        table = f"""<h5>{tabletitle}</h5>{table}"""
+            
+            row = [band, c_name, b_gsd, b_wavelength]
+            t.append(row)
+            
+            # Check for empty columns
+            for j, value in enumerate(row):
+                if value:
+                    empty_columns[j] = False
+        
+        # Remove empty columns from headers and table rows
+        headers = [header for i, header in enumerate(headers) if not empty_columns[i]]
+        t = [[row[i] for i, value in enumerate(row) if not empty_columns[i]] for row in t]
+        
+        # Check if all columns are empty
+        if len(headers) == 0:
+            table = ""
+        else:
+            table = tabulate(t, headers=headers, tablefmt='html', floatfmt=".4f", stralign="center", numalign="center")
+            # Set the minimum width of each column to 100 pixels
+            table = table.replace("<table>", '<table class="table">')
+            table = f"""<h5>{tabletitle}</h5>{table}"""
     except:
-        table = " "
+        table = ""
+    
     return table
-```
 
-```{python}
-def get_availablity(c):
-    tabletitle = "Offered Data"
-    try: 
-        data_offer = len(c['summaries']['DataAvailability'])
-        t = []
-        note = ""
-        for i in range(0,data_offer):
-            try:
-                Status = c['summaries']['DataAvailability'][i]['Archive_status']
-            except:
-                Status = 'no data'
-            try:
-                Access = c['summaries']['DataAvailability'][i]['Access_type']
-            except:
-                Access = 'no data'
-            try:
-                Spatial = c['summaries']['DataAvailability'][i]['Spatial']
-            except:
-                Spatial = 'no data'
-            try:
-                Temporal = c['summaries']['DataAvailability'][i]['Temporal']
-            except:
-                Temporal = 'no data'
-            try:
-                From = c['summaries']['DataAvailability'][i]['Availabilty']
-            except:
-                From = 'no data'
-            try:
-                footnotes = c['summaries']['DataAvailability'][i]['Note']
-            except:
-                footnotes = ''
-            try:
-                offered_type = c['summaries']['DataAvailability'][i]['offered_type']
-            except:
-                offered_type = ''
-            if offered_type != '':
-                t.append([offered_type,Status,Access,Spatial,Temporal,From])
-                note += footnotes
-            else:
-                t.append([Status,Access,Spatial,Temporal,From])
-                note += footnotes
-                
-        table = tabulate(t,headers=["Archive Status","Access Type","Spatial Extent","Temporal Extent","Available in Ecosystem from"], tablefmt='html', floatfmt=".4f",stralign="center",numalign="center")
-        # Set the minimum width of each column to 100 pixels
-        table = table.replace("<table>", '<table class="table">')
-        table = f"""<h5>{tabletitle}</h5>{table}{note}"""
-    except:
-        table = " "
-    return table
+
+
 ```
 
 ```{python}
@@ -248,6 +265,21 @@ for c in meta:
         LevelID = ""
         About = ""
 
+    try:
+        license_type = c["license"]
+    except:
+        license_type = "" 
+
+    try: 
+        sci_cite = c["sci:citation"]
+    except:
+        sci_cite = ""
+
+    try:
+        frequency = c["summaries"]["Frequency"]
+    except:
+        frequency = ""
+
     # insert thumbnail
     thumb_url = get_thumbnail(c)
 
@@ -261,17 +293,34 @@ for c in meta:
     table = get_bandtable(c)
 
     # include offer table
-    offer = get_availablity(c)
+    offer = DataAvailabilty.main(c)
     
     links = { l["rel"] + l.get("title",""):l["href"] for l in c.get("links",[])}
     userguide = find_link(rel="about",title_contains="User")
     opensearch = find_link(rel="opensearch")
     databrowser = find_link(rel="browser",title_contains="Data-Browser")
+    license_url = find_link(rel="license")
+    cite = find_link(rel="cite-as")
+    
 
     if userguide is not None:
         userguide = f"""[![User guide](https://img.shields.io/badge/-User_guide-77cc09)]({userguide}){{target='_blank'}}"""
     else:
         userguide = ""
+
+    if cite is not None:
+        cite = f"""[!["Cite"](https://img.shields.io/badge/-Cite-77cc09)]({cite}){{target='_blank'}}"""
+    else:
+        cite = ""
+
+
+    if sci_cite is not None:
+        if license_url is not None and  license_url != "":
+            license_button = f"""<a href="{license_url}" target="_blank">{sci_cite}</a>"""
+        else:
+            license_button = f"""{sci_cite}"""
+    else:
+        license_button = ""
 
 
     if databrowser is not None:
@@ -288,6 +337,11 @@ for c in meta:
         revisit_time = f"""<img src="https://img.shields.io/badge/revisit-{revisit}--daily-0A4393"/>"""
     else:
         revisit_time = ""
+
+    if frequency is not None and  frequency != "":
+        Updated_freq = f"""<img src="https://img.shields.io/badge/Update_Frequency-{frequency}-0A4393"/>"""
+    else:
+        Updated_freq = ""
 
     if "ARD" in datatype:
         datatype = f"""![](https://img.shields.io/badge/{datatype}-77cc09) """
@@ -306,7 +360,7 @@ for c in meta:
 
 ## {title}
 
-{thumbblock(thumb_url,userguide,opensearch,gsd,revisit_time,datatype)}
+{thumbblock(thumb_url,userguide,opensearch,gsd,revisit_time,datatype,Updated_freq)}
 
 #### Overview
 
@@ -314,7 +368,8 @@ for c in meta:
 
 {offer}
 
-{detailblock(collectionID,spatial,temporal,table,link_block)}
+
+{detailblock(collectionID,spatial,temporal,table,link_block,license_button,cite )}
 
 
 """

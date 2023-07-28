@@ -1,0 +1,218 @@
+---
+resources:
+- BatchStatistical/resources/gpkg/geopackage-example.gpkg
+title: Batch Statistical API
+---
+
+**The Batch Statistical API is available only for users with Copernicus Service accounts. Contact our [Copernicus Data Space Ecosystem support](https://helpcenter.dataspace.copernicus.eu/hc/en-gb/requests/new) to request your Copernicus Service account.**
+
+The Batch Statistical API (or shortly \"Batch Stats API\") enables you
+to request statistics similarly as with the [Statistical
+API](/APIs/SentinelHub/Statistical.qmd) but for multiple polygons at
+once and/or for longer aggregations. A typical use case would be
+calculating statistics for all parcels in a country.
+
+Similarly to the [Batch Processing API](/APIs/SentinelHub/Batch.qmd),
+this is an asynchronous REST service. This means that data will not be
+immediately returned in the response of the request but delivered to
+your object storage, which needs to be specified in the request (e.g. a
+bucket, see [bucket settings](#bucket-settings) below).
+
+You can find more details about the API in the [API
+Reference](/APIs/SentinelHub/ApiReference.qmd#tag/batch-statistical) or
+in the [examples](/APIs/SentinelHub/BatchStatistical/Examples.qmd) of
+the workflow.
+
+## Workflow
+
+The Batch statistical API workflow in many ways resembles the [Batch
+Processing API workflow](/APIs/SentinelHub/Batch.qmd#workflow).
+Available actions and statuses are:
+
+-   user\'s actions `ANALYSE`, `START` and `STOP`.
+-   request\'s statuses `CREATED`, `ANALYSING`, `ANALYSIS_DONE`,
+    `STOPPED`, `PROCESSING`, `DONE`, and `FAILED`.
+
+The Batch statistical API comes with a set of REST actions that support
+the execution of various steps in the workflow. The diagram below shows
+all possible statuses of the batch statistical request and users\'
+actions which trigger transitions among them.
+
+``` {mermaid}
+stateDiagram
+    [*]-->CREATED
+    CREATED-->ANALYSING: #128100; START/ANALYSE
+    state fork_state_analysis <<fork>>
+    ANALYSING --> fork_state_analysis
+    fork_state_analysis --> FAILED
+    fork_state_analysis --> ANALYSIS_DONE
+    state fork_state_analysis_done <<fork>>
+    ANALYSIS_DONE-->fork_state_analysis_done
+    fork_state_analysis_done-->PROCESSING: #128100; START
+    PROCESSING--> STOPPED: #128100; STOP
+    fork_state_analysis_done--> STOPPED: #128100; STOP
+    PROCESSING--> DONE
+    STOPPED --> ANALYSIS_DONE: #128100; START
+    DONE-->[*]
+    FAILED-->[*]
+```
+
+The workflow starts when a user posts a new batch statistical request.
+In this step the system:
+
+-   creates a new batch statistical request with status `CREATED`,
+-   validates the user\'s input (not the evalscript),
+-   returns the overview of the created request.
+
+The user can then decide to either request an additional analysis of the
+request or start the processing. When an additional analysis is
+requested:
+
+-   the status of the request changes to `ANALYSING`,
+-   the evalscript is validated,
+-   After the analysis is finished the status of the request changes to
+    `ANALYSIS_DONE`.
+
+If the user chooses to directly start processing, the system still
+executes the analysis but when the analysis is done it automatically
+starts with processing. This is not explicitly shown in the diagram in
+order to keep it simple.
+
+When the user starts the processing:
+
+-   the status of the request changes to `PROCESSING` (this may take a
+    while),
+-   the processing starts,
+-   spent processing units are billed periodically.
+
+When the processing finishes, the status of the request changes to
+`DONE`.
+
+#### Stopping the request
+
+A user may stop the request in following states: `ANALYSING`,
+`ANALYSIS_DONE` and `PROCESSING`. However:
+
+-   if the status is `ANALYSING`, the analysis will complete,
+-   if the status is `PROCESSING`, all features (polygons) that have
+    been processed or are being processed at that moment are charged
+    for,
+-   user is not allowed to restart the request in the next 30 minutes.
+
+#### Processing unit costs
+
+To be able to create, analyse or start a request the user has to have at
+least `1000` processing units available in their account. If available
+processing units of a user drop below `1000` while request is being
+processed the request is automatically stopped and cannot be restarted
+in the next 60 minutes. Therefore it is highly recommended to start a
+request with a sufficient reserve.
+
+More information about batch statistical costs is available
+[here](/APIs/SentinelHub/Overview/ProcessingUnit.qmd#batch-statistical-api).
+
+#### Automatic deletion of stale data
+
+Stale (inactive) requests will be deleted after a certain period of
+inactivity, depending on their status:
+
+-   requests with status `CREATED` are deleted after 7 days of
+    inactivity
+-   requests with status `FAILED` are deleted after 15 days of
+    inactivity
+-   all other requests are deleted after 30 days of inactivity.
+
+Note that only such requests themselves will be deleted, while the
+requests\' result (created statistics) will remain under your control in
+your S3 bucket.
+
+## Input polygons as GeoPackage file
+
+The Batch Statistical API accepts a [GeoPackage
+file](https://www.geopackage.org/){target="_blank"} containing features
+(polygons) as an input. The GeoPackage must be stored in your object
+storage (e.g. AWS S3 bucket) and Sentinel Hub must be able to read from
+the storage (find more details about this in the [bucket
+access](#aws-bucket-access) section below). In a batch statistical
+request, the input GeoPackage is specified by setting the path to the
+`.gpkg` file in the `input.features.s3` parameter.
+
+All features (polygons) in an input GeoPackage must be in the same CRS
+[supported by Sentinel Hub](/APIs/SentinelHub/Process/Crs.qmd). An
+example of a GeoPackage file can be downloaded
+[here](/APIs/SentinelHub/BatchStatistical/resources/gpkg/geopackage-example.gpkg).
+
+## Evalscript and Batch statistical API
+
+The same specifics as described for [evalscript and Statistical
+API](/APIs/SentinelHub/Statistical.qmd#statistical-api-and-evalscript)
+apply also for Batch statistical API.
+
+Evalscripts smaller than 32KB in size can be provided directly in a
+batch statistical request under `evalscript` parameter. If your
+evalsript exceeds this limit, you can store it to your S3 bucket and
+provide a reference to it in a batch statistical request under
+`evalscriptReference` parameter.
+
+## Processing results
+
+Outputs of a Batch Statistical API request are `json` files stored in
+your object storage. Each `.json` file will contain requested statistics
+for one feature (polygon) in the provided GeoPackage. You can connect
+statistics in a json file with corresponding feature (polygon) in the
+GeoPackge based on:
+
+-   `id` of a feature from GeoPackage is used as name of json file (e.g.
+    `1.json`, `2.json`) and available in the json file as `id` property
+    OR
+-   a custom column `identifier` of type string can be added to
+    GeoPackage and its value will be available in json file as
+    `identifier` property.
+
+The outputs will be stored in the bucket and the folder specified by
+`output.s3.path` parameter of the batch statistical request. The outputs
+will be available in a sub-folder named after the ID of your request
+(e.g.
+`s3://<my-bucket>/<my-folder>/db7de265-dfd4-4dc0-bc82-74866078a5ce`).
+
+## Bucket settings
+
+As noted above, the Batch Statistical API uses buckets to:
+- read GeoPackage file with input features (polygons) from a bucket,
+- read evalscript from a bucket (this is optional because an evalscript can also be provided directly in a request),
+- write results of processing to a bucket.
+
+One bucket or different buckets can be used for all three purposes.
+
+If you do not yet have a bucket at Copernicus Data Space Ecosystem, please follow [these steps](https://creodias.docs.cloudferro.com/en/latest/s3/Create-S3-bucket-and-use-it-in-Sentinel-Hub-requests.html) to get one.
+
+You will have to configure your bucket to allow full access to Sentinel Hub. To do
+this, [update your bucket policy](https://creodias.docs.cloudferro.com/en/latest/s3/Bucket-sharing-using-s3-bucket-policy-on-Creodias.html#setting-a-policy-on-the-bucket) to include the following statement (don't forget to replace `<bucket_name>` with your actual bucket name):
+
+```
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "Sentinel Hub permissions",
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": "arn:aws:iam::ddf4c98b5e6647f0a246f0624c8341d9:root"
+            },
+            "Action": [
+                "s3:*"
+            ],
+            "Resource": [
+                "arn:aws:s3:::<bucket_name>",
+                "arn:aws:s3:::<bucket_name>/*"
+            ]
+        }
+    ]
+}
+```
+
+
+## Examples
+
+[Example of a Batch Statistical
+Workflow](/APIs/SentinelHub/BatchStatistical/Examples.qmd)

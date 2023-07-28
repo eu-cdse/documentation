@@ -1,0 +1,398 @@
+---
+title: Examples of Batch Processing Workflow
+---
+
+The requests below are written in Python. To execute them you need to
+create an OAuth client as is explained
+[here](/APIs/SentinelHub/Overview/Authentication.qmd#python). It is
+named `oauth` in these examples.
+
+### Create a batch processing request
+
+#### Option 1: GeoTiff format output
+
+This request defines which data is requested and how it will be
+processed. In this particular example we will calculate maximum NDVI
+over two months period for an area in Corsica and visualize the results
+using a built-in visualizer. The resulting image will in a Geotiff
+format. To create a batch processing request replace `<MyBucket>` with
+the name of your S3 bucket and run:
+
+``` python
+url = "https://sh.dataspace.copernicus.eu/api/v1/batch/process"
+
+evalscript = """
+    //VERSION=3
+    function setup() {
+        return {
+            input: [{
+                bands: ["B04", "B08"]
+            }],
+            output: [{
+                id: "default",
+                bands: 3
+            }],
+            mosaicking: Mosaicking.ORBIT
+        }
+    }
+
+    function calcNDVI(sample) {
+        var denom = sample.B04 + sample.B08
+        return ((denom != 0) ? (sample.B08 - sample.B04) / denom : 0.0)
+    }
+
+    const maxNDVIcolors = [
+        [-0.2, 0xbfbfbf],
+        [0, 0xebebeb],
+        [0.1, 0xc8c682],
+        [0.2, 0x91bf52],
+        [0.4, 0x4f8a2e],
+        [0.6, 0x0f540c]
+    ]
+
+    const visualizer = new ColorRampVisualizer(maxNDVIcolors);
+
+    function evaluatePixel(samples) {
+        var max = 0
+        for (var i = 0; i < samples.length; i++) {
+            var ndvi = calcNDVI(samples[i])
+            max = ndvi > max ? ndvi : max
+        }
+        ndvi = max
+        return visualizer.process(ndvi)
+    }
+"""
+
+payload = {
+    "processRequest": {
+        "input": {
+            "bounds": {
+                "bbox": [
+                    8.44,
+                    41.31,
+                    9.66,
+                    43.1
+                ],
+                "properties": {
+                    "crs": "http://www.opengis.net/def/crs/OGC/1.3/CRS84"
+                }
+            },
+            "data": [{
+                "dataFilter": {
+                    "timeRange": {
+                        "from": "2019-04-01T00:00:00Z",
+                        "to": "2019-06-30T00:00:00Z"
+                    },
+                "maxCloudCoverage": 70.0
+                },
+                "type": "sentinel-2-l2a"
+            }]
+        },
+        "output": {
+            "responses": [{
+                "identifier": "default",
+                "format": {
+                    "type": "image/tiff"
+                }
+            }]
+        },
+        "evalscript": evalscript
+    },
+    "tilingGrid": {
+        "id": 0,
+        "resolution": 60.0
+    },
+    "bucketName": "<MyBucket>",
+
+    "description": "Max NDVI over Corsica"
+}
+
+headers = {
+  'Content-Type': 'application/json'
+}
+
+response = oauth.request("POST", url, headers=headers, json = payload)
+
+response.json()
+```
+
+Extracting the batch request id from the response:
+
+``` python
+batch_request_id = response.json()['id']
+```
+
+#### Option 2: Zarr format output
+
+In this example we will calculate maximum NDVI over two months period
+for an area in Corsica. Besides maximum NDVI, we will also return values
+of bands B04 and B08, which were used to calculate maximum NDVI. All
+three results will be stored as arrays of an output Zarr file. To create
+a batch processing request replace `<MyBucket>` with the name of your S3
+bucket and run:
+
+``` python
+url = "https://sh.dataspace.copernicus.eu/api/v1/batch/process"
+
+evalscript = """
+    //VERSION=3
+    function setup() {
+        return {
+            input: [{
+                bands: ["B04", "B08"]
+            }],
+            output: [{
+                id: "maxNDVI",
+                sampleType: "FLOAT32",
+                bands: 1
+            },
+            {
+                id: "band04",
+                sampleType: "UINT16",
+                bands: 1
+            },
+            {
+                id: "band08",
+                sampleType: "UINT16",
+                bands: 1
+            }],
+            mosaicking: Mosaicking.ORBIT
+        }
+    }
+
+    function calcNDVI(sample) {
+        var denom = sample.B04 + sample.B08
+        return ((denom != 0) ? (sample.B08 - sample.B04) / denom : 0.0)
+    }
+
+    function evaluatePixel(samples) {
+        var maxNDVI = 0
+        var band04 = 0
+        var band08 = 0
+        for (var i = 0; i < samples.length; i++) {
+            var ndvi = calcNDVI(samples[i])
+            if (ndvi > maxNDVI){
+                maxNDVI = ndvi
+                band04 = samples[i].B04
+                band08 = samples[i].B08
+            }
+        }
+
+        return {
+            maxNDVI: [maxNDVI],
+            band04: [band04],
+            band08: [band08]
+        }
+    }
+"""
+
+payload = {
+    "processRequest": {
+        "input": {
+            "bounds": {
+                "bbox": [
+                    8.44,
+                    41.31,
+                    9.66,
+                    43.1
+                ],
+                "properties": {
+                    "crs": "http://www.opengis.net/def/crs/OGC/1.3/CRS84"
+                }
+            },
+            "data": [{
+                "dataFilter": {
+                    "timeRange": {
+                        "from": "2019-04-01T00:00:00Z",
+                        "to": "2019-06-30T00:00:00Z"
+                    },
+                "maxCloudCoverage": 70.0
+                },
+                "type": "sentinel-2-l2a"
+            }]
+        },
+        "output": {
+            "responses": [{
+                "identifier": "band08",
+                "format": {
+                    "type": "zarr/array"
+                }
+            },
+                {
+                "identifier": "band04",
+                "format": {
+                    "type": "zarr/array"
+                }
+            },
+                {
+                "identifier": "maxNDVI",
+                "format": {
+                    "type": "zarr/array"
+                }
+            }]
+        },
+        "evalscript": evalscript
+    },
+    "tilingGrid": {
+        "id": 6,
+        "resolution": 100.0
+    },
+    "zarrOutput": {
+        "path": "<MyBucket>/<requestId>",
+        "group": {
+            "zarr_format": 2
+        },
+        "arrayParameters": {
+            "dtype": "<u2",
+            "order": "C",
+            "chunks": [1, 1000, 1000],
+            "fill_value": 0
+        },
+        "arrayOverrides": {
+            "maxNDVI": {
+                "dtype": "<f4",
+                "fill_value": "NaN"
+            },
+        }
+    },
+    "description": "Max NDVI over Corsica with Zarr format output"
+}
+
+headers = {
+  'Content-Type': 'application/json'
+}
+
+response = oauth.request("POST", url, headers=headers, json = payload)
+
+response.json()
+```
+
+Extracting the batch request id from the response:
+
+``` python
+batch_request_id = response.json()['id']
+```
+
+### Get information about all your batch processing requests
+
+``` python
+url = f"https://sh.dataspace.copernicus.eu/api/v1/batch/process"
+
+response = oauth.request("GET", url)
+
+response.json()
+```
+
+### Get information about a batch processing request
+
+``` python
+url = f"https://sh.dataspace.copernicus.eu/api/v1/batch/process/{batch_request_id}"
+
+response = oauth.request("GET", url)
+
+response.json()
+```
+
+### Get current status of a batch processing request
+
+``` python
+url = f"https://sh.dataspace.copernicus.eu/api/v1/batch/process/{batch_request_id}"
+
+response = oauth.request("GET", url)
+
+response.json()['status']
+```
+
+### Request detailed analysis (ANALYSE)
+
+``` python
+url = f"https://sh.dataspace.copernicus.eu/api/v1/batch/process/{batch_request_id}/analyse"
+
+response = oauth.request("POST", url)
+
+response.status_code
+```
+
+### Get tiles for a batch processing request (optional)
+
+``` python
+url = f"https://sh.dataspace.copernicus.eu/api/v1/batch/process/{batch_request_id}/tiles"
+
+response = oauth.request("GET", url)
+
+response.json()
+```
+
+### Request the start of processing (START)
+
+``` python
+url = f"https://sh.dataspace.copernicus.eu/api/v1/batch/process/{batch_request_id}/start"
+
+response = oauth.request("POST", url)
+
+response.status_code
+```
+
+### Get the latest user\'s action for a batch processing request
+
+``` python
+url = f"https://sh.dataspace.copernicus.eu/api/v1/batch/process/{batch_request_id}"
+
+response = oauth.request("GET", url)
+
+response.json()['userAction']
+```
+
+### Cancel a batch processing request (CANCEL)
+
+``` python
+url = f"https://sh.dataspace.copernicus.eu/api/v1/batch/process/{batch_request_id}/cancel"
+
+response = oauth.request("POST", url)
+
+response.status_code
+```
+
+### Restart a partially processed batch processing request (RESTART)
+
+If case your batch processing fails only for some tiles while some are
+processed successfully (i.e. your batch processing request has status
+`PARTIAL`), you can restart the processing for all `FAILED` tiles by
+running the following code.
+
+``` python
+url = f"https://sh.dataspace.copernicus.eu/api/v1/batch/process/{batch_request_id}/restartpartial"
+
+response = oauth.request("POST", url)
+
+response.status_code
+```
+
+### Create a new batch collection
+
+Add the parameters `cogOutput` and `createCollection` as `true` to your
+request `output`. Add also `description": "<Name>"` to the request, to
+name your collection.
+
+``` python
+"description": "<Name>",
+"output": {
+  "defaultTilePath": "s3://<MyBucket>/<MyFolder>",
+  "cogOutput": true,
+  "createCollection": true
+}
+```
+
+Note that custom collections can only contain single-band TIFFs. To
+create a multi-band collection, return separate bands as multiple
+outputs in the evalscript and connect them to multiple identifiers in
+the request.
+
+The output format of batch requests determines the data format of the
+collection. By default, the output format of batch requests will be in
+`sampleType.AUTO`, which means that batch results 0..1 will be scaled to
+0..255 and stored as UINT8. Processing API request on the resulting
+collection will thus get values 0..255 as input. We recommend you
+instead use `FLOAT32` as the `sampleType` for the batch request, so the
+batch request output is exactly the same as what you get with a process
+requests on the resulting collection.
