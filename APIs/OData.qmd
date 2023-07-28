@@ -452,7 +452,39 @@ pd.DataFrame.from_dict(json['value']).head(3)
 
 :::
 
-The acceptable arguments for this option: `Attributes`
+The acceptable arguments for this option: *Attributes* and *Assets*
+
+### Expand assets
+
+Expand assets allows to list additional assets of a products, including quicklooks:
+
+::: {.panel-tabset}
+
+# HTTP Request
+
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%20%27SL_2_FRP___%27)&$expand=Assets`](https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%20%27SL_2_FRP___%27)&$expand=Assets){target="_blank"}
+
+# Python
+```{python}
+json = requests.get("https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%20%27SL_2_FRP___%27)&$expand=Assets").json()
+pd.DataFrame.from_dict(json['value']).head(3)
+```
+
+:::
+
+### Quicklook
+
+For example, a quicklook for product `S3A_SL_2_FRP____20200821T042815_20200821T043115_20200822T092750_0179_062_033_2340_LN2_O_NT_004.SEN3` with ID of a quicklook `f4a87522-dd81-4c40-856e-41d40510e3b6`, can be downloaded with the request:
+
+::: {.panel-tabset}
+
+# HTTP Request
+
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/Assets(f4a87522-dd81-4c40-856e-41d40510e3b6)/$value`](https://catalogue.dataspace.copernicus.eu/odata/v1/Assets(f4a87522-dd81-4c40-856e-41d40510e3b6)/$value){target="_blank"}
+
+:::
+
+Download link is also available under *DownloadLink* parameter in Assets.
 
 ## Product Download
 
@@ -478,15 +510,15 @@ curl --location --request POST 'https://identity.dataspace.copernicus.eu/auth/re
 or
 <!-- Following bash has been replaced by the new bash for ticket DAS-333
 ```bash
-'-d 'password=' -d 'grant_type=password' 'https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token' | python -m json.tool | grep "access_token" | awk -F\" '{print $4}')]]>
+'-d 'password=' -d 'grant_type=password' 'https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token' | python3 -m json.tool | grep "access_token" | awk -F\" '{print $4}')]]>
 ``` -->
 
 ::: {.panel-tabset}
 
 # cURL
 
-```bash
-curl -d 'client_id=cdse-public' -d 'username=<LOGIN>' -d 'password=<PASSWORD>' -d 'grant_type=password' 'https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token' | python -m json.tool | grep "access_token" | awk -F\" '{print $4}'
+```
+curl -d 'client_id=cdse-public' -d 'username=<LOGIN>' -d 'password=<PASSWORD>' -d 'grant_type=password' 'https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token' | python3 -m json.tool | grep "access_token" | awk -F\" '{print $4}'
 ```
 :::
 
@@ -528,8 +560,8 @@ Finally, you can download the product using this script:
 
 # cURL
 
-```bash
-curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" 'https://catalogue.dataspace.copernicus.eu/odata/v1/Products(060882f4-0a34-5f14-8e25-6876e4470b0d)/$value' --location-trusted --output /tmp/product.zip
+```
+curl -H "Authorization: Bearer $ACCESS_TOKEN" 'https://catalogue.dataspace.copernicus.eu/odata/v1/Products(060882f4-0a34-5f14-8e25-6876e4470b0d)/$value' --location-trusted --output /tmp/product.zip
 ```
 :::
 
@@ -539,8 +571,8 @@ or
 
 # Wget
 
-```bash
-wget  --header "Authorization: Bearer $KEYCLOAK_TOKEN" 'http://catalogue.dataspace.copernicus.eu/odata/v1/Products(db0c8ef3-8ec0-5185-a537-812dad3c58f8)/$value' -O example_odata.zip
+```
+!wget  --header "Authorization: Bearer $ACCESS_TOKEN" 'http://catalogue.dataspace.copernicus.eu/odata/v1/Products(db0c8ef3-8ec0-5185-a537-812dad3c58f8)/$value' -O example_odata.zip
 ```
 :::
 
@@ -551,8 +583,8 @@ wget  --header "Authorization: Bearer $KEYCLOAK_TOKEN" 'http://catalogue.dataspa
 ```python
 import requests
 session = requests.Session()
-session.headers.update({'Authorization': 'Bearer KEYCLOAK_TOKEN'})
-url = f"http://catalogue.dataspace.copernicus.eu/odata/v1/Products(db0c8ef3-8ec0-5185-a537-812dad3c58f8)/$value"
+session.headers.update({'Authorization': f'Bearer {access_token}'})
+url = f"https://catalogue.dataspace.copernicus.eu/odata/v1/Products(db0c8ef3-8ec0-5185-a537-812dad3c58f8)/$value"
 response = session.get(url, allow_redirects=False)
 while response.status_code in (301, 302, 303, 307):
     url = response.headers['Location']
