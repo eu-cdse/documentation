@@ -4,7 +4,7 @@ import json
 from IPython.display import display, Markdown, Latex,HTML
 from tabulate import tabulate
 
-from Datafunctions import DataAvailabilty 
+from Datafunctions import DataAvailabilty, Filter
 ```
 
 ```{python}
@@ -231,9 +231,11 @@ def get_bandtable(c):
 
 ```
 
+
 ```{python}
 # for loop to display the content
 text = ''
+categories=[]
 
 for c in meta:
 
@@ -279,6 +281,13 @@ for c in meta:
         frequency = c["summaries"]["Frequency"]
     except:
         frequency = ""
+
+    try:
+        Category = c["Category"]
+        
+    except:
+        Category = ""
+    categories.append(Category)
 
     # insert thumbnail
     thumb_url = get_thumbnail(c)
@@ -377,7 +386,7 @@ for c in meta:
 ```
 
 ```{python}
-text = text + togglescript()
+text = Filter.createcheckboxes(list(set(categories))) + text + togglescript()
 
 display(Markdown(text))
 
