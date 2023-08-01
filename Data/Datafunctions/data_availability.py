@@ -63,55 +63,55 @@ def removeempty(t,headers):
 def DataFetch(c,i):
     try:
         type = c['summaries']['DataAvailability'][i]['Product']
-    except:
+    except Exception:
         type = ''
     try:
         status = c['summaries']['DataAvailability'][i]['Archive_status']
-    except:
+    except Exception:
         status = ''
     try:
         access = c['summaries']['DataAvailability'][i]['Access_type']
-    except:
+    except Exception:
         access = ''
     try:
         product_type = c['summaries']['DataAvailability'][i]['Product_type']
-    except:
+    except Exception:
         product_type = ''
     try:
         specific_product = c['summaries']['DataAvailability'][i]['SpecificProduct']
-    except:
+    except Exception:
         specific_product = ''
     try:
         spatial = c['summaries']['DataAvailability'][i]['Spatial']
-    except:
+    except Exception:
         spatial = ''
     try:
         temporal = c['summaries']['DataAvailability'][i]['Temporal']
-    except:
+    except Exception:
         temporal = ''
     try:
         product_link = c['summaries']['DataAvailability'][i]['ProductLink']
-    except:
+    except Exception:
         product_link = ''
     try:
         catalogue = c['summaries']['DataAvailability'][i]['Catalogue']
-    except:
+    except Exception:
         catalogue = ''
     try:
         footnotes = c['summaries']['DataAvailability'][i]['Note']
-    except:
+    except Exception:
         footnotes = ''
     try:
         provider = c['summaries']['DataAvailability'][i]['Provider']
-    except:
+    except Exception:
         provider = ''
     try:
         satellite = c['summaries']['DataAvailability'][i]['Satellite']
-    except:
+    except Exception:
         satellite = ''
     try:
         resolution = c['summaries']['DataAvailability'][i]['Resolution']
-    except:
+    except Exception:
         resolution = ''
 
 
@@ -131,31 +131,31 @@ def general(c):
         for i in range(0, data_offer):
             try:
                 status = c['summaries']['DataAvailability'][i]['Archive_status']
-            except:
+            except Exception:
                 status = ''
             try:
                 access = c['summaries']['DataAvailability'][i]['Access_type']
-            except:
+            except Exception:
                 access = ''
             try:
                 spatial = c['summaries']['DataAvailability'][i]['Spatial']
-            except:
+            except Exception:
                 spatial = ''
             try:
                 temporal = c['summaries']['DataAvailability'][i]['Temporal']
-            except:
+            except Exception:
                 temporal = ''
             try:
                 available_from = c['summaries']['DataAvailability'][i]['Availabilty']
-            except:
+            except Exception:
                 available_from = ''
             try:
                 footnotes = c['summaries']['DataAvailability'][i]['Note']
-            except:
+            except Exception:
                 footnotes = ''
             try:
                 offered_type = c['summaries']['DataAvailability'][i]['offered_type']
-            except:
+            except Exception:
                 offered_type = ''
         
             if offered_type != '':
@@ -174,7 +174,7 @@ def general(c):
         # Set the minimum width of each column to 100 pixels
         table = table.replace("<table>", '<table class="table">')
         table = f"""<h5>{tabletitle}</h5>{table}{note}"""
-    except:
+    except Exception:
         table = " "
     
     return table
@@ -202,7 +202,7 @@ def ComplementaryOffer(c):
         # Set the minimum width of each column to 100 pixels
         table = table.replace("<table>", '<table class="table">')
         table = f"""<h5>{tabletitle}</h5>{table}{note}"""
-    except:
+    except Exception:
         table = " "
     
     return table
@@ -232,7 +232,7 @@ def Additional(c):
         # call the merge cell function
         table=mergecells(table)
         table = f"""<h5>{tabletitle}</h5>{table}{note}"""
-    except:
+    except Exception:
         table = " "
     
     return table
@@ -258,7 +258,7 @@ def CAMSOffer(c):
         # Set the minimum width of each column to 100 pixels
         table = table.replace("<table>", '<table class="table">')
         table = f"""<h5>{tabletitle}</h5>{table}{note}"""
-    except:
+    except Exception:
         table = " "
     
     return table
@@ -290,7 +290,7 @@ def VHROffer(c):
         table=mergecells(table)
         ###################### end merging the content into a merged table #####################
         table = f"""<h5>{tabletitle}</h5>{table}{note}"""
-    except:
+    except Exception:
         table = " "
     return table
 
@@ -314,27 +314,27 @@ def CMEMSOffer(c):
                 i=k
                 try:
                     product_type = c['summaries']['DataAvailability'][i-1]['Product_type']
-                except:
+                except Exception:
                     product_type = ''
                 try:
                     specific_product = c['summaries']['DataAvailability'][i-1]['SpecificProduct']
-                except:
+                except Exception:
                     specific_product = ''
                 try:
                     temporal = c['summaries']['DataAvailability'][i-1]['Temporal']
-                except:
+                except Exception:
                     temporal = ''
                 try:
                     product_link = c['summaries']['DataAvailability'][i-1]['ProductLink']
-                except:
+                except Exception:
                     product_link = ''
                 try:
                     footnotes = c['summaries']['DataAvailability'][i-1]['Note']
-                except:
+                except Exception:
                     footnotes = ''
                 try:
                     catalogue = c['summaries']['DataAvailability'][i-1]['Catalogue']
-                except:
+                except Exception:
                     catalogue = ''
 
                 t.append([product_type, specific_product, temporal,catalogue, product_link])
@@ -354,7 +354,7 @@ def CMEMSOffer(c):
             # break
         # print(tables)
         tablertn = f"""<h5>{tabletitle}</h5>{tables}{note}"""
-    except:
+    except Exception:
         tablertn = " "
     
     return tablertn
@@ -380,39 +380,39 @@ def CLMSOffer(c):
                 i=k
                 try:
                     product_type = c['summaries']['DataAvailability'][i-1]['Product_type']
-                except:
+                except Exception:
                     product_type = ''
                 try:
                     specific_product = c['summaries']['DataAvailability'][i-1]['SpecificProduct']
-                except:
+                except Exception:
                     specific_product = ''
                 try:
                     product = c['summaries']['DataAvailability'][i-1]['Product']
-                except:
+                except Exception:
                     product = ''
                 try:
                     sub_product = c['summaries']['DataAvailability'][i-1]['Sub-product']
-                except:
+                except Exception:
                     sub_product = ''
                 try:
                     spatial = c['summaries']['DataAvailability'][i-1]['Spatial']
-                except:
+                except Exception:
                     spatial = ''
                 try:
                     temporal = c['summaries']['DataAvailability'][i-1]['Temporal']
-                except:
+                except Exception:
                     temporal = ''
                 try:
                     product_link = c['summaries']['DataAvailability'][i-1]['ProductLink']
-                except:
+                except Exception:
                     product_link = ''
                 try:
                     footnotes = c['summaries']['DataAvailability'][i-1]['Note']
-                except:
+                except Exception:
                     footnotes = ''
                 try:
                     catalogue = c['summaries']['DataAvailability'][i-1]['Catalogue']
-                except:
+                except Exception:
                     catalogue = ''
 
                 if product_id == "HIGH RESOLUTION LAYERS (HRL)":
@@ -446,7 +446,7 @@ def CLMSOffer(c):
             # break
         # print(tables)
         tablertn = f"""<h5>{tabletitle}</h5>{tables}{note}"""
-    except:
+    except Exception:
         tablertn = " "
     
     return tablertn
