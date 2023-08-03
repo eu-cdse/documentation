@@ -4,7 +4,7 @@
   * [APIs](Roadmap/APITable.html)
   * [Applications](Roadmap/AppTable.html)
 ___
-* [User registration and authentication](Registration.md)
+* [User registration and authentication](Registration.qmd)
 
 * [Data](Data.md)
   *  [Sentinel 1](Data/Sentinel1.qmd)
