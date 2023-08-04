@@ -272,11 +272,15 @@ def CEMSOffer(c):
         note = ""
         empty_columns = []  # Track empty columns
 
-        for i in range(0, data_offer): 
+        for i in range(0, data_offer):
+            try:
+                event_list = c['summaries']['DataAvailability'][i]['Details']
+            except:
+                event_list = ""
             Type,Status,Access,Product_type,SpecificProduct,Spatial,Temporal,ProductLink,Catalogue,footnotes,Provider,Satellite,Resolution = DataFetch(c,i)
-            t.append([Product_type, Catalogue])
+            t.append([Product_type, Catalogue, event_list])
             note += footnotes
-            headers = ["Product Type", "Catalogue"]
+            headers = ["Product Type", "Catalogue", "Events"]
 
         # Find and remove empty columns
         t,headers=removeempty(t,headers)
