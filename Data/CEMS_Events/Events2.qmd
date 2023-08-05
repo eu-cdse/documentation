@@ -1,0 +1,118 @@
+---
+format:
+  html:
+    toc: false
+---
+
+```{=html}
+
+        <style>
+            .tab {
+                display: block;
+            }
+button{
+  background-color:white;
+}
+
+button:hover{background-color: #ced9e9;}
+
+button:focus{background-color: #4570ad ;color: white;}
+
+a {
+  color: orange;
+}
+
+a.button{
+  color:green;
+  text-decoration: none;
+}
+
+a:visited {
+  color: purple;
+}
+
+a:active {
+  color: blue;
+}
+        </style>
+    <script type="text/javascript">
+            window.onload = function() {
+                openTabFromJson('Mass movement'); // Set Tab 1 as initially displayed
+            };
+          
+            async function  openTabFromJson(tabName) {
+
+                // const jsonData=events
+                const response =  await fetch('events.json');
+                
+                const jsonData =  await response.json();
+                const filterKey = tabName; // Change this to the key you want to filter on
+                
+
+                const filteredData = jsonData.filter(item => item.producttype === filterKey);
+                console.log(filteredData)
+
+                const tableContainer = document.getElementById('table-container');
+                tableContainer.innerHTML='<h2>'+tabName+'</h2>';
+                const table = document.createElement('table');
+                const tableHead = document.createElement('thead');
+                const tableBody = document.createElement('tbody');
+
+                const headerRow = document.createElement('tr');
+                const headerCell1 = document.createElement('th');
+                const headerCell2 = document.createElement('th');
+                const headerCell3 = document.createElement('th');
+
+                headerCell1.textContent = 'Product ID';
+                headerCell2.textContent = 'Event';
+                headerCell3.textContent = 'Catalouge';
+
+                headerRow.appendChild(headerCell1);
+                headerRow.appendChild(headerCell2);
+                headerRow.appendChild(headerCell3);
+
+                tableHead.appendChild(headerRow);
+                table.appendChild(tableHead);
+                table.appendChild(tableBody);
+
+                filteredData.forEach(item => {
+                const row = document.createElement('tr');
+                const cell1 = document.createElement('td');
+                const cell2 = document.createElement('td');
+                const cell3 = document.createElement('td');
+
+                cell1.textContent = item.productid;
+                cell2.textContent = item.event;
+                cell3.textContent = item.catalogue;
+
+                row.appendChild(cell1);
+                row.appendChild(cell2);
+                row.appendChild(cell3);
+
+                tableBody.appendChild(row);
+                });
+
+                tableContainer.appendChild(table);
+
+            }
+          </script>
+          
+
+        <div>
+        <button id ='mm' onclick="openTabFromJson('Mass movement')">Mass Movement</button>
+        <button onclick="openTabFromJson('Strom')">Storm</button>
+        <button onclick="openTabFromJson('Volcanic activity')">Volcano</button>
+        <button onclick="openTabFromJson('Wildfire')">Wild fire</button>
+        <button onclick="openTabFromJson('Forest fire, wild fire')">Forest fire</button>
+        <button onclick="openTabFromJson('Flood')">Flood</button>
+        <button onclick="openTabFromJson('Wind strom')">Wind strom</button>
+        <button onclick="openTabFromJson('Earthquake')">Earthquake</button>
+        <button onclick="openTabFromJson('Industrial accproductident')">Industrial</button>
+        <button onclick="openTabFromJson('Extreme temperature')">Humanitarian</button>
+        <button onclick="openTabFromJson('Epidemic')">Epidemic</button>
+        <button onclick="openTabFromJson('Other')">Others</button>
+        </div>
+
+          <div id="table-container"></div>
+
+```
