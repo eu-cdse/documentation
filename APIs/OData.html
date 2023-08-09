@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.433">
+<meta name="generator" content="quarto-1.3.450">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -886,6 +886,10 @@ function scrollFunction() {
   <li><a href="#expand-assets" id="toc-expand-assets" class="nav-link" data-scroll-target="#expand-assets">Expand assets</a></li>
   <li><a href="#quicklook" id="toc-quicklook" class="nav-link" data-scroll-target="#quicklook">Quicklook</a></li>
   </ul></li>
+  <li><a href="#listing-product-nodes" id="toc-listing-product-nodes" class="nav-link" data-scroll-target="#listing-product-nodes">Listing product nodes</a>
+  <ul>
+  <li><a href="#example-nodes-listing" id="toc-example-nodes-listing" class="nav-link" data-scroll-target="#example-nodes-listing">Example nodes listing</a></li>
+  </ul></li>
   <li><a href="#product-download" id="toc-product-download" class="nav-link" data-scroll-target="#product-download">Product Download</a></li>
   </ul>
 <div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/eu-cdse/documentation/issues" class="toc-action">Report an issue</a></p></div></div></nav>
@@ -1684,14 +1688,14 @@ Note
 <td>8bf7e312-2ea0-5288-abdb-01b1da9cc26b</td>
 <td>S1B_IW_SLC__1SDV_20190515T000004_20190515T0000...</td>
 <td>application/octet-stream</td>
-<td>0</td>
+<td>8062592075</td>
 <td>2019-05-15T00:00:04.000Z</td>
 <td>2019-05-15T05:39:50.376Z</td>
-<td>2019-05-15T05:39:50.376Z</td>
-<td>False</td>
+<td>2023-08-07T21:16:42.962Z</td>
+<td>True</td>
 <td></td>
 <td>/eodata/Sentinel-1/SAR/SLC/2019/05/15/S1B_IW_S...</td>
-<td>[]</td>
+<td>[{'Value': '34e720f7267eb536f966bf88e24e4603',...</td>
 <td>{'Start': '2019-05-15T00:00:04.536Z', 'End': '...</td>
 <td>geography'SRID=4326;POLYGON ((99.446007 64.201...</td>
 <td>{'type': 'Polygon', 'coordinates': [[[99.44600...</td>
@@ -2936,6 +2940,37 @@ Note
 </div>
 </div>
 <p>Download link is also available under <em>DownloadLink</em> parameter in Assets.</p>
+</section>
+</section>
+<section id="listing-product-nodes" class="level2">
+<h2 class="anchored" data-anchor-id="listing-product-nodes">Listing product nodes</h2>
+<p>Product content can be listed by accessing the following URL patterns using Nodes:</p>
+<pre><code>https://catalogue.dataspace.copernicus.eu/odata/v1/Products(&lt;PRODUCT_UUID&gt;)/Nodes
+https://catalogue.dataspace.copernicus.eu/odata/v1/Products(&lt;PRODUCT_UUID&gt;)/Nodes(&lt;NODE_NAME&gt;)/Nodes
+https://catalogue.dataspace.copernicus.eu/odata/v1/Products(&lt;PRODUCT_UUID&gt;)/Nodes(&lt;NODE_NAME&gt;)/Nodes(&lt;NODE_NAME&gt;)/Nodes</code></pre>
+<p>where:</p>
+<p><product_uuid> - is ID of the product obtained by search query,</product_uuid></p>
+<p><node_name> - is name of element inside product returned from previous listing response.</node_name></p>
+<p>Only nodes that are folders can have their contents listed. Attempting to list Nodes for file results returning an empty list. The listing Nodes feature is available for both authorized and unauthorized users.</p>
+<section id="example-nodes-listing" class="level3">
+<h3 class="anchored" data-anchor-id="example-nodes-listing">Example nodes listing</h3>
+<p>Example URL:</p>
+<pre><code>https://catalogue.dataspace.copernicus.eu/odata/v1/Products(db0c8ef3-8ec0-5185-a537-812dad3c58f8)/Nodes</code></pre>
+<p>Response:</p>
+<pre><code>{
+   "result":[
+      {
+         "Id":"S2A_MSIL1C_20180927T051221_N0206_R033_T42FXL_20180927T073143.SAFE",
+         "Name":"S2A_MSIL1C_20180927T051221_N0206_R033_T42FXL_20180927T073143.SAFE",
+         "ContentLength":0,
+         "ChildrenNumber":9,
+         "Nodes":{
+            "uri":"https://zipper.dataspace.copernicus.eu/odata/v1/Products(db0c8ef3-8ec0-5185-a537-812dad3c58f8)/Nodes(S2A_MSIL1C_20180927T051221_N0206_R033_T42FXL_20180927T073143.SAFE)/Nodes"
+         }
+      }
+   ]
+}</code></pre>
+<p>Every Listed Node has “uri” field, which lists its children.</p>
 </section>
 </section>
 <section id="product-download" class="level2">
