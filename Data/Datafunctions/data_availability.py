@@ -62,61 +62,61 @@ def removeempty(t,headers):
 
 def DataFetch(c,i):
     try:
-        Type = c['summaries']['DataAvailability'][i]['Product']
-    except:
-        Type = ''
+        type = c['summaries']['DataAvailability'][i]['Product']
+    except Exception:
+        type = ''
     try:
-        Status = c['summaries']['DataAvailability'][i]['Archive_status']
-    except:
-        Status = ''
+        status = c['summaries']['DataAvailability'][i]['Archive_status']
+    except Exception:
+        status = ''
     try:
-        Access = c['summaries']['DataAvailability'][i]['Access_type']
-    except:
-        Access = ''
+        access = c['summaries']['DataAvailability'][i]['Access_type']
+    except Exception:
+        access = ''
     try:
-        Product_type = c['summaries']['DataAvailability'][i]['Product_type']
-    except:
-        Product_type = ''
+        product_type = c['summaries']['DataAvailability'][i]['Product_type']
+    except Exception:
+        product_type = ''
     try:
-        SpecificProduct = c['summaries']['DataAvailability'][i]['SpecificProduct']
-    except:
-        SpecificProduct = ''
+        specific_product = c['summaries']['DataAvailability'][i]['SpecificProduct']
+    except Exception:
+        specific_product = ''
     try:
-        Spatial = c['summaries']['DataAvailability'][i]['Spatial']
-    except:
-        Spatial = ''
+        spatial = c['summaries']['DataAvailability'][i]['Spatial']
+    except Exception:
+        spatial = ''
     try:
-        Temporal = c['summaries']['DataAvailability'][i]['Temporal']
-    except:
-        Temporal = ''
+        temporal = c['summaries']['DataAvailability'][i]['Temporal']
+    except Exception:
+        temporal = ''
     try:
-        ProductLink = c['summaries']['DataAvailability'][i]['ProductLink']
-    except:
-        ProductLink = ''
+        product_link = c['summaries']['DataAvailability'][i]['ProductLink']
+    except Exception:
+        product_link = ''
     try:
-        Catalogue = c['summaries']['DataAvailability'][i]['Catalogue']
-    except:
-        Catalogue = ''
+        catalogue = c['summaries']['DataAvailability'][i]['Catalogue']
+    except Exception:
+        catalogue = ''
     try:
         footnotes = c['summaries']['DataAvailability'][i]['Note']
-    except:
+    except Exception:
         footnotes = ''
     try:
-        Provider = c['summaries']['DataAvailability'][i]['Provider']
-    except:
-        Provider = ''
+        provider = c['summaries']['DataAvailability'][i]['Provider']
+    except Exception:
+        provider = ''
     try:
-        Satellite = c['summaries']['DataAvailability'][i]['Satellite']
-    except:
-        Satellite = ''
+        satellite = c['summaries']['DataAvailability'][i]['Satellite']
+    except Exception:
+        satellite = ''
     try:
-        Resolution = c['summaries']['DataAvailability'][i]['Resolution']
-    except:
-        Resolution = ''
+        resolution = c['summaries']['DataAvailability'][i]['Resolution']
+    except Exception:
+        resolution = ''
 
 
 
-    return Type,Status,Access,Product_type,SpecificProduct,Spatial,Temporal,ProductLink,Catalogue,footnotes,Provider,Satellite,Resolution
+    return type,status,access,product_type,specific_product,spatial,temporal,product_link,catalogue,footnotes,provider,satellite,resolution
 
 ################## DEFINE GENERAL FUNCTION TO CREATE DATA AVAILABILITY TABLE for Copernicus Missions########################
 def general(c):
@@ -130,40 +130,40 @@ def general(c):
 
         for i in range(0, data_offer):
             try:
-                Status = c['summaries']['DataAvailability'][i]['Archive_status']
-            except:
-                Status = ''
+                status = c['summaries']['DataAvailability'][i]['Archive_status']
+            except Exception:
+                status = ''
             try:
-                Access = c['summaries']['DataAvailability'][i]['Access_type']
-            except:
-                Access = ''
+                access = c['summaries']['DataAvailability'][i]['Access_type']
+            except Exception:
+                access = ''
             try:
-                Spatial = c['summaries']['DataAvailability'][i]['Spatial']
-            except:
-                Spatial = ''
+                spatial = c['summaries']['DataAvailability'][i]['Spatial']
+            except Exception:
+                spatial = ''
             try:
-                Temporal = c['summaries']['DataAvailability'][i]['Temporal']
-            except:
-                Temporal = ''
+                temporal = c['summaries']['DataAvailability'][i]['Temporal']
+            except Exception:
+                temporal = ''
             try:
-                From = c['summaries']['DataAvailability'][i]['Availabilty']
-            except:
-                From = ''
+                available_from = c['summaries']['DataAvailability'][i]['Availabilty']
+            except Exception:
+                available_from = ''
             try:
                 footnotes = c['summaries']['DataAvailability'][i]['Note']
-            except:
+            except Exception:
                 footnotes = ''
             try:
                 offered_type = c['summaries']['DataAvailability'][i]['offered_type']
-            except:
+            except Exception:
                 offered_type = ''
         
             if offered_type != '':
-                t.append([offered_type, Status, Access, Spatial, Temporal, From])
+                t.append([offered_type, status, access, spatial, temporal, available_from])
                 note += footnotes
                 headers = ["Timeliness","Archive Status", "Access Type", "Spatial Extent", "Temporal Extent", "Available in Ecosystem from"]
             else:
-                t.append([Status, Access, Spatial, Temporal, From])
+                t.append([status, access, spatial, temporal, available_from])
                 note += footnotes
                 headers = ["Archive Status", "Access Type", "Spatial Extent", "Temporal Extent", "Available in Ecosystem from"]
 
@@ -174,7 +174,7 @@ def general(c):
         # Set the minimum width of each column to 100 pixels
         table = table.replace("<table>", '<table class="table">')
         table = f"""<h5>{tabletitle}</h5>{table}{note}"""
-    except:
+    except Exception:
         table = " "
     
     return table
@@ -190,8 +190,8 @@ def ComplementaryOffer(c):
         empty_columns = []  # Track empty columns
 
         for i in range(0, data_offer):
-            Type,Status,Access,Product_type,SpecificProduct,Spatial,Temporal,ProductLink,Catalogue,footnotes,Provider,Satellite,Resolution = DataFetch(c,i)
-            t.append([Type,Status, Access, Spatial, Temporal,Catalogue])
+            type,status,access,product_type,specific_product,spatial,temporal,product_link,catalogue,footnotes,provider,satellite,resolution = DataFetch(c,i)
+            t.append([type,status, access, spatial, temporal,catalogue])
             note += footnotes
             headers = ["Product","Archive Status", "Access Type", "Spatial Extent", "Temporal Extent","Catalogue"]
 
@@ -202,7 +202,7 @@ def ComplementaryOffer(c):
         # Set the minimum width of each column to 100 pixels
         table = table.replace("<table>", '<table class="table">')
         table = f"""<h5>{tabletitle}</h5>{table}{note}"""
-    except:
+    except Exception:
         table = " "
     
     return table
@@ -218,8 +218,8 @@ def Additional(c):
         empty_columns = []  # Track empty columns
 
         for i in range(0, data_offer):
-            Type,Status,Access,Product_type,SpecificProduct,Spatial,Temporal,ProductLink,Catalogue,footnotes,Provider,Satellite,Resolution = DataFetch(c,i)
-            t.append([SpecificProduct, Spatial, Temporal,Catalogue])
+            type,status,access,product_type,specific_product,spatial,temporal,product_link,catalogue,footnotes,provider,satellite,resolution = DataFetch(c,i)
+            t.append([specific_product, spatial, temporal,catalogue])
             note += footnotes
             headers = ["Specific Products", "Spatial Extext","Temporal Extent","Catalogue"]
 
@@ -232,7 +232,7 @@ def Additional(c):
         # call the merge cell function
         table=mergecells(table)
         table = f"""<h5>{tabletitle}</h5>{table}{note}"""
-    except:
+    except Exception:
         table = " "
     
     return table
@@ -246,8 +246,8 @@ def CAMSOffer(c):
         empty_columns = []  # Track empty columns
 
         for i in range(0, data_offer): 
-            Type,Status,Access,Product_type,SpecificProduct,Spatial,Temporal,ProductLink,Catalogue,footnotes,Provider,Satellite,Resolution = DataFetch(c,i)
-            t.append([Product_type, SpecificProduct, Spatial, Temporal, Catalogue,ProductLink])
+            type,status,access,product_type,specific_product,spatial,temporal,product_link,catalogue,footnotes,provider,satellite,resolution = DataFetch(c,i)
+            t.append([product_type, specific_product, spatial, temporal, catalogue,product_link])
             note += footnotes
             headers = ["Product Type", "Specific Products", "Spatial Extext","Temporal Extent","Catalogue","Product Detail"]
 
@@ -258,7 +258,7 @@ def CAMSOffer(c):
         # Set the minimum width of each column to 100 pixels
         table = table.replace("<table>", '<table class="table">')
         table = f"""<h5>{tabletitle}</h5>{table}{note}"""
-    except:
+    except Exception:
         table = " "
     
     return table
@@ -274,9 +274,9 @@ def VHROffer(c):
         empty_columns = []  # Track empty columns
 
         for i in range(0, data_offer):
-            Type,Status,Access,Product_type,SpecificProduct,Spatial,Temporal,ProductLink,Catalogue,footnotes,Provider,Satellite,Resolution = DataFetch(c,i)
+            type,status,access,product_type,specific_product,spatial,temporal,product_link,catalogue,footnotes,provider,satellite,resolution = DataFetch(c,i)
 
-            t.append([Provider, Satellite, Product_type, Resolution, Access])
+            t.append([provider, satellite, product_type, resolution, access])
             note += footnotes
             headers = ["Dataset provider ","Satellite constellation", "Product Type", "Spatial Resolution ", "Type of Access"]
 
@@ -290,7 +290,7 @@ def VHROffer(c):
         table=mergecells(table)
         ###################### end merging the content into a merged table #####################
         table = f"""<h5>{tabletitle}</h5>{table}{note}"""
-    except:
+    except Exception:
         table = " "
     return table
 
@@ -313,35 +313,31 @@ def CMEMSOffer(c):
                 k+=1
                 i=k
                 try:
-                    Product_type = c['summaries']['DataAvailability'][i-1]['Product_type']
-                except:
-                    Product_type = ''
+                    product_type = c['summaries']['DataAvailability'][i-1]['Product_type']
+                except Exception:
+                    product_type = ''
                 try:
-                    SpecificProduct = c['summaries']['DataAvailability'][i-1]['SpecificProduct']
-                except:
-                    SpecificProduct = ''
+                    specific_product = c['summaries']['DataAvailability'][i-1]['SpecificProduct']
+                except Exception:
+                    specific_product = ''
                 try:
-                    Spatial = c['summaries']['DataAvailability'][i-1]['Spatial']
-                except:
-                    Spatial = ''
+                    temporal = c['summaries']['DataAvailability'][i-1]['Temporal']
+                except Exception:
+                    temporal = ''
                 try:
-                    Temporal = c['summaries']['DataAvailability'][i-1]['Temporal']
-                except:
-                    Temporal = ''
-                try:
-                    ProductLink = c['summaries']['DataAvailability'][i-1]['ProductLink']
-                except:
-                    ProductLink = ''
+                    product_link = c['summaries']['DataAvailability'][i-1]['ProductLink']
+                except Exception:
+                    product_link = ''
                 try:
                     footnotes = c['summaries']['DataAvailability'][i-1]['Note']
-                except:
+                except Exception:
                     footnotes = ''
                 try:
-                    Catalogue = c['summaries']['DataAvailability'][i-1]['Catalogue']
-                except:
-                    Catalogue = ''
+                    catalogue = c['summaries']['DataAvailability'][i-1]['Catalogue']
+                except Exception:
+                    catalogue = ''
 
-                t.append([Product_type, SpecificProduct, Temporal,Catalogue, ProductLink])
+                t.append([product_type, specific_product, temporal,catalogue, product_link])
                 note += footnotes
                 
             # Find and remove empty columns
@@ -358,7 +354,7 @@ def CMEMSOffer(c):
             # break
         # print(tables)
         tablertn = f"""<h5>{tabletitle}</h5>{tables}{note}"""
-    except:
+    except Exception:
         tablertn = " "
     
     return tablertn
@@ -383,56 +379,56 @@ def CLMSOffer(c):
                 k+=1
                 i=k
                 try:
-                    Product_type = c['summaries']['DataAvailability'][i-1]['Product_type']
-                except:
-                    Product_type = ''
+                    product_type = c['summaries']['DataAvailability'][i-1]['Product_type']
+                except Exception:
+                    product_type = ''
                 try:
-                    SpecificProduct = c['summaries']['DataAvailability'][i-1]['SpecificProduct']
-                except:
-                    SpecificProduct = ''
+                    specific_product = c['summaries']['DataAvailability'][i-1]['SpecificProduct']
+                except Exception:
+                    specific_product = ''
                 try:
-                    Product = c['summaries']['DataAvailability'][i-1]['Product']
-                except:
-                    Product = ''
+                    product = c['summaries']['DataAvailability'][i-1]['Product']
+                except Exception:
+                    product = ''
                 try:
-                    Subproduct = c['summaries']['DataAvailability'][i-1]['Sub-product']
-                except:
-                    Subproduct = ''
+                    sub_product = c['summaries']['DataAvailability'][i-1]['Sub-product']
+                except Exception:
+                    sub_product = ''
                 try:
-                    Spatial = c['summaries']['DataAvailability'][i-1]['Spatial']
-                except:
-                    Spatial = ''
+                    spatial = c['summaries']['DataAvailability'][i-1]['Spatial']
+                except Exception:
+                    spatial = ''
                 try:
-                    Temporal = c['summaries']['DataAvailability'][i-1]['Temporal']
-                except:
-                    Temporal = ''
+                    temporal = c['summaries']['DataAvailability'][i-1]['Temporal']
+                except Exception:
+                    temporal = ''
                 try:
-                    ProductLink = c['summaries']['DataAvailability'][i-1]['ProductLink']
-                except:
-                    ProductLink = ''
+                    product_link = c['summaries']['DataAvailability'][i-1]['ProductLink']
+                except Exception:
+                    product_link = ''
                 try:
                     footnotes = c['summaries']['DataAvailability'][i-1]['Note']
-                except:
+                except Exception:
                     footnotes = ''
                 try:
-                    Catalogue = c['summaries']['DataAvailability'][i-1]['Catalogue']
-                except:
-                    Catalogue = ''
+                    catalogue = c['summaries']['DataAvailability'][i-1]['Catalogue']
+                except Exception:
+                    catalogue = ''
 
                 if product_id == "HIGH RESOLUTION LAYERS (HRL)":
-                    t.append([Product_type, Product,Subproduct,SpecificProduct,Catalogue,ProductLink])
+                    t.append([product_type, product,sub_product,specific_product,catalogue,product_link])
                     headers = ["Product Type", "Products","Sub-Product","Specific Products","S3 path","Product Detail"]
                     note += footnotes
                 elif product_id == "RELATED PAN-EUROPEAN":
-                    t.append([Product_type, Product,SpecificProduct,Spatial,Catalogue,ProductLink])
+                    t.append([product_type, product,specific_product,spatial,catalogue,product_link])
                     headers = ["Product Type", "Products","Specific Products","Spatial","S3 path","Product Detail"]
                     note += footnotes
                 elif product_id == "Local":
-                    t.append([Product_type, SpecificProduct, Subproduct,Spatial,Catalogue, ProductLink])
+                    t.append([product_type, specific_product, sub_product,spatial,catalogue, product_link])
                     headers = ["Product Type", "Products","Specific Products","Spatial","S3 path","Product Detail"]
                     note += footnotes
                 else:
-                    t.append([Product_type, SpecificProduct, Spatial, Temporal,Catalogue, ProductLink])
+                    t.append([product_type, specific_product, spatial, temporal,catalogue, product_link])
                     headers = ["Product Type", "Specific Products", "Spatial Extext","Temporal Extent","S3 path","Product Detail"]
                     note += footnotes
                 
@@ -450,7 +446,7 @@ def CLMSOffer(c):
             # break
         # print(tables)
         tablertn = f"""<h5>{tabletitle}</h5>{tables}{note}"""
-    except:
+    except Exception:
         tablertn = " "
     
     return tablertn
