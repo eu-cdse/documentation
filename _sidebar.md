@@ -6,7 +6,7 @@
 ___
 * [User registration and authentication](Registration.qmd)
 
-* [Data](Data.md)
+* [Data](Data.qmd)
   *  [Sentinel 1](Data/Sentinel1.qmd)
   *  [Sentinel 2](Data/Sentinel2.qmd)
   *  [Sentinel 3](Data/Sentinel3.md)
