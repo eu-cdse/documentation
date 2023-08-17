@@ -2,7 +2,7 @@
 title: Copernicus Data Space Ecosystem Token Generation
 ---
 
-In order to download products from CDSE catalogue using OData and OpenSearch API user are required to have an Keycloak token. This token can be generated in both Linux and Window OS using either cURL or python script.
+In order to download products from CDSE catalogue using OData and OpenSearch API user are required to have an access token. This token can be generated in both Linux and Window OS using either cURL or python script.
 
 ## By query with cURL
 
@@ -10,14 +10,14 @@ CURL is a tool to send data to the server using several protocols such as HTTP.
 
 *On Linux*:
 
-In this example, the output is being filtered by grep and awk commands to obtain a token. In the Linux operating system it's being seen as environmental variable **KEYCLOAK_TOKEN**.
+In this example, the output is being filtered by grep and awk commands to obtain a token. In the Linux operating system it's being seen as environmental variable **ACCESS_TOKEN**.
 
 ::: {.panel-tabset}
 
 # cURL
 
 ``` {bash}
-export KEYCLOAK_TOKEN=$(curl -d 'client_id=cdse-public' \
+export ACCESS_TOKEN=$(curl -d 'client_id=cdse-public' \
                     -d "username=<username>" \
                     -d "password=<password>" \
                     -d 'grant_type=password' \
@@ -30,7 +30,7 @@ export KEYCLOAK_TOKEN=$(curl -d 'client_id=cdse-public' \
 You can use following command to print the token:
 
 ```{bash}
-printenv KEYCLOAK_TOKEN
+printenv ACCESS_TOKEN
 ```
 
 *On Windows*:
@@ -57,7 +57,7 @@ curl -s -X POST https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protoc
 #| eval: false
 import json
 import requests
-def get_keycloak(username: str, password: str) -> str:
+def get_access(username: str, password: str) -> str:
     data = {
         "client_id": "cdse-public",
         "username": username,
@@ -71,12 +71,12 @@ def get_keycloak(username: str, password: str) -> str:
         r.raise_for_status()
     except Exception as e:
         raise Exception(
-            f"Keycloak token creation failed. Reponse from the server was: {r.json()}"
+            f"Access token creation failed. Reponse from the server was: {r.json()}"
             )
     return r.json()["access_token"]
         
 
-keycloak_token = get_keycloak("USERNAME", "PASSWORD")
+token = get_access("USERNAME", "PASSWORD")
 
 ```
 :::
