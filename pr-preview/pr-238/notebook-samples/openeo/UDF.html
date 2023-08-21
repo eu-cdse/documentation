@@ -65,6 +65,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <meta name="quarto:offset" content="../../">
 <link href="../../notebook-samples/openeo/UDP.html" rel="next">
 <link href="../../notebook-samples/openeo/Load_Collection.html" rel="prev">
+<link href="../../_images/logos/favicon.png" rel="icon" type="image/png">
 <script src="../../site_libs/quarto-html/quarto.js"></script>
 <script src="../../site_libs/quarto-html/popper.min.js"></script>
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -123,6 +124,32 @@ function scrollFunction() {
   
   window.addEventListener('scroll', scrollFunction);
 </script>
+
+
+<script>
+function togglecheck(className, displayState){
+  var elements = document.getElementsByClassName(className)
+  for (var i = 0; i < elements.length; i++){
+  if (elements[i].style.display === "none") {
+    elements[i].style.display = "block";
+  } else {
+    elements[i].style.display = "none";
+  }
+  }
+}
+window.onload = function() {
+      // Modify this array to contain the levelids of checkboxes that should be unchecked by default
+      var uncheckedByDefault = ["Level-0"];
+  
+      for (var i = 0; i < uncheckedByDefault.length; i++) {
+          togglecheck(uncheckedByDefault[i], "none");
+      }
+  };
+</script>
+
+
+
+
 
 
 <link rel="stylesheet" href="../../custom.css">
@@ -355,7 +382,7 @@ function scrollFunction() {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../APIs/Token.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Keycloak Token</span></a>
+ <span class="menu-text">Access Token</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -911,17 +938,17 @@ function scrollFunction() {
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># load collection</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>cube <span class="op">=</span> connection.load_collection(</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>                <span class="st">"SENTINEL2_L2A"</span>,</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>                bands<span class="op">=</span>[<span class="st">"B04"</span>, <span class="st">"B03"</span>, <span class="st">"B02"</span>],</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>                temporal_extent<span class="op">=</span>(<span class="st">"2022-05-01"</span>, <span class="st">"2022-05-30"</span>),</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>                spatial_extent<span class="op">=</span>{</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"west"</span>: <span class="fl">5.05</span>,</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"south"</span>: <span class="fl">51.21</span>,</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"east"</span>: <span class="fl">5.1</span>,</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"north"</span>: <span class="fl">51.23</span>,</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"crs"</span>: <span class="st">"EPSG:4326"</span>,</span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>                },</span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>                max_cloud_cover<span class="op">=</span><span class="dv">50</span>,</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"SENTINEL2_L2A"</span>,</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    bands<span class="op">=</span>[<span class="st">"B04"</span>, <span class="st">"B03"</span>, <span class="st">"B02"</span>],</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    temporal_extent<span class="op">=</span>(<span class="st">"2022-05-01"</span>, <span class="st">"2022-05-30"</span>),</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    spatial_extent<span class="op">=</span>{</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">"west"</span>: <span class="fl">5.05</span>,</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">"south"</span>: <span class="fl">51.21</span>,</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>        <span class="st">"east"</span>: <span class="fl">5.1</span>,</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>        <span class="st">"north"</span>: <span class="fl">51.23</span>,</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>        <span class="st">"crs"</span>: <span class="st">"EPSG:4326"</span>,</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    },</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    max_cloud_cover<span class="op">=</span><span class="dv">50</span>,</span>
 <span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>cube <span class="op">=</span> cube.reduce_dimension(dimension<span class="op">=</span><span class="st">"t"</span>, reducer<span class="op">=</span><span class="st">"max"</span>)</span>

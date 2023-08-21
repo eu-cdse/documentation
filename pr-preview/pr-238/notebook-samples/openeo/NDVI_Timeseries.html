@@ -65,6 +65,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <meta name="quarto:offset" content="../../">
 <link href="../../notebook-samples/openeo/Load_Collection.html" rel="next">
 <link href="../../APIs/openEO/job_config.html" rel="prev">
+<link href="../../_images/logos/favicon.png" rel="icon" type="image/png">
 <script src="../../site_libs/quarto-html/quarto.js"></script>
 <script src="../../site_libs/quarto-html/popper.min.js"></script>
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -94,6 +95,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 <meta name="zd-site-verification" content="xj9koofr1crilmoclgxsjd">
 <script type="text/javascript">
 
@@ -120,6 +124,32 @@ function scrollFunction() {
   
   window.addEventListener('scroll', scrollFunction);
 </script>
+
+
+<script>
+function togglecheck(className, displayState){
+  var elements = document.getElementsByClassName(className)
+  for (var i = 0; i < elements.length; i++){
+  if (elements[i].style.display === "none") {
+    elements[i].style.display = "block";
+  } else {
+    elements[i].style.display = "none";
+  }
+  }
+}
+window.onload = function() {
+      // Modify this array to contain the levelids of checkboxes that should be unchecked by default
+      var uncheckedByDefault = ["Level-0"];
+  
+      for (var i = 0; i < uncheckedByDefault.length; i++) {
+          togglecheck(uncheckedByDefault[i], "none");
+      }
+  };
+</script>
+
+
+
+
 
 
 <link rel="stylesheet" href="../../custom.css">
@@ -352,7 +382,7 @@ function scrollFunction() {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../APIs/Token.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Keycloak Token</span></a>
+ <span class="menu-text">Access Token</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -869,7 +899,10 @@ function scrollFunction() {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#timeseries-smoothing" id="toc-timeseries-smoothing" class="nav-link active" data-scroll-target="#timeseries-smoothing">Timeseries Smoothing</a></li>
+  <li><a href="#setup" id="toc-setup" class="nav-link active" data-scroll-target="#setup">Setup</a></li>
+  <li><a href="#basic-ndvi-timeseries" id="toc-basic-ndvi-timeseries" class="nav-link" data-scroll-target="#basic-ndvi-timeseries">Basic NDVI Timeseries</a></li>
+  <li><a href="#cloud-masking-in-ndvi" id="toc-cloud-masking-in-ndvi" class="nav-link" data-scroll-target="#cloud-masking-in-ndvi">Cloud Masking in NDVI</a></li>
+  <li><a href="#timeseries-smoothing" id="toc-timeseries-smoothing" class="nav-link" data-scroll-target="#timeseries-smoothing">Timeseries Smoothing</a></li>
   </ul>
 <div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/eu-cdse/documentation/issues" class="toc-action">Report an issue</a></p></div></div></nav>
     </div>
@@ -894,146 +927,285 @@ function scrollFunction() {
 </header>
 
 <p>This notebook presents an application case, that demonstrates how to display the NDVI (Normalized Difference Vegetation Index) timeseries for specific fields. The case study showcases the process of selecting the fields and generating average NDVI timeseries data for analysis and visualization.</p>
-<div class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> shapely.geometry</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json</span>
+<section id="setup" class="level2">
+<h2 class="anchored" data-anchor-id="setup">Setup</h2>
+<div class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> scipy.signal</span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> openeo</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> openeo.rest.conversions <span class="im">import</span> timeseries_json_to_pandas</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> openeo</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># defining the plotting function</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>DEFAULT_FIGSIZE <span class="op">=</span> (<span class="dv">5</span>, <span class="dv">4</span>)</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plot_timeseries(filename):</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Helper to plot the timeseries directly from JSON file"""</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> <span class="bu">open</span>(filename) <span class="im">as</span> f:</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>        ts <span class="op">=</span> timeseries_json_to_pandas(json.load(f)).dropna()</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    ts.index <span class="op">=</span> pd.to_datetime(ts.index)</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>DEFAULT_FIGSIZE)</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    ts.plot(marker<span class="op">=</span><span class="st">"o"</span>, ax<span class="op">=</span>ax)</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    ax.set_title(<span class="st">"Average NDVI"</span>)</span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    ax.set_ylabel(<span class="st">"NDVI"</span>)</span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    ax.set_ylim(<span class="dv">0</span>, <span class="dv">1</span>)</span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    ax.legend(title<span class="op">=</span><span class="st">"parcel id"</span>, loc<span class="op">=</span><span class="st">"lower left"</span>, ncol<span class="op">=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># connect to the backend and authenticate</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>connection <span class="op">=</span> openeo.<span class="ex">connect</span>(url<span class="op">=</span><span class="st">"openeo.dataspace.copernicus.eu"</span>).authenticate_oidc()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Establish an authenticated connection to Copernicus Data Space Ecosystem openEO back-end.</p>
+<div class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>connection <span class="op">=</span> openeo.<span class="ex">connect</span>(url<span class="op">=</span><span class="st">"openeo.dataspace.copernicus.eu"</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>connection.authenticate_oidc()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Authenticated using refresh token.</code></pre>
 </div>
-</div>
-<p>let’s calculate a time series of the average NDVI in a couple of fields in this area.</p>
-<p>First, load the fields as shapely geometries:</p>
-<div class="cell" data-execution_count="6">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>fields_geojson <span class="op">=</span> <span class="st">'{"type": "GeometryCollection", "geometries": [{"type": "Polygon", "coordinates": [[[5.055945487931457, 51.222709834076504], [5.064972484168688, 51.221122565090525], [5.064972484168688, 51.221122565090525], [5.067474954083448, 51.218249806779134], [5.064827929485983, 51.21689628072789], [5.05917785594747, 51.217191909908095], [5.053553857094518, 51.21807492332223], [5.055945487931457, 51.222709834076504]]]}, {"type": "Polygon", "coordinates": [[[5.063345886679116, 51.23087606640057], [5.06604742694687, 51.22886710731809], [5.070627820472246, 51.22874440121892], [5.068403609708207, 51.22657208381529], [5.064823257492447, 51.22676051738515], [5.064892324615199, 51.2283032878514], [5.063641745941974, 51.2285757299238], [5.062340811262595, 51.227722351687945], [5.06076005158084, 51.228042312276536], [5.063345886679116, 51.23087606640057]]]}, {"type": "Polygon", "coordinates": [[[5.07163184674986, 51.23481147556147], [5.076706025697324, 51.23317590781036], [5.077828303041866, 51.233226237184724], [5.078024733866917, 51.23263978271262], [5.080771081607657, 51.23259097170763], [5.083734842574312, 51.23530464074437], [5.080957826735458, 51.23646091560258], [5.079752631651647, 51.23519531038643], [5.077238400183506, 51.23490534677628], [5.072856439300575, 51.23593546777778], [5.07163184674986, 51.23481147556147]]]}, {"type": "Polygon", "coordinates": [[[5.083897244679042, 51.23510639883143], [5.081302408741335, 51.232922477780846], [5.082963802194108, 51.233146058575876], [5.084497702305552, 51.232672717580655], [5.085732850338428, 51.2340852086282], [5.083897244679042, 51.23510639883143]]]}]}'</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>fields <span class="op">=</span> shapely.geometry.shape(json.loads(fields_geojson))</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>fields</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="6">
-<p><img src="NDVI_Timeseries_files/figure-html/cell-5-output-1.svg" class="img-fluid"></p>
+<div class="cell-output cell-output-display" data-execution_count="2">
+<pre><code>&lt;Connection to 'https://openeo.dataspace.copernicus.eu/openeo/1.1/' with OidcBearerAuth&gt;</code></pre>
 </div>
 </div>
-<p>We want to calculate the NDVI for a larger time window covering of a couple of months.</p>
-<p>Also note that we don’t have to specify a bounding box explicitly when loading the cube, because we will pass the desired fields in a next step, and the backend will limit the data loading to those areas appropriately.</p>
-<div class="cell" data-execution_count="7">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>dates <span class="op">=</span> (<span class="st">"2020-06-01"</span>, <span class="st">"2020-10-01"</span>)</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>cube <span class="op">=</span> connection.load_collection(</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>                <span class="st">"SENTINEL2_L2A"</span>, temporal_extent<span class="op">=</span>dates, bands<span class="op">=</span>[<span class="st">"B04"</span>, <span class="st">"B08"</span>, <span class="st">"SCL"</span>]</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>red <span class="op">=</span> cube.band(<span class="st">"B04"</span>)</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>nir <span class="op">=</span> cube.band(<span class="st">"B08"</span>)</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>ndvi <span class="op">=</span> (nir <span class="op">-</span> red) <span class="op">/</span> (nir <span class="op">+</span> red)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="basic-ndvi-timeseries" class="level2">
+<h2 class="anchored" data-anchor-id="basic-ndvi-timeseries">Basic NDVI Timeseries</h2>
+<p>We want to calculate the NDVI values in a couple of fields in a time window of a couple of months.</p>
+<p>For simplicty, we load the field geometries as an inline GeoJSON feature collection:</p>
+<div class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>fields <span class="op">=</span> json.loads(</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"""{</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="st">    "type": "FeatureCollection",</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="st">    "features": [</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="st">        {"type": "Feature", "properties": </span><span class="sc">{}</span><span class="st">, "geometry": {"type": "Polygon", "coordinates": [[[5.055945487931457, 51.222709834076504], [5.064972484168688, 51.221122565090525], [5.064972484168688, 51.221122565090525], [5.067474954083448, 51.218249806779134], [5.064827929485983, 51.21689628072789], [5.05917785594747, 51.217191909908095], [5.053553857094518, 51.21807492332223], [5.055945487931457, 51.222709834076504]]]</span><span class="sc">}}</span><span class="st">, </span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="st">        {"type": "Feature", "properties": </span><span class="sc">{}</span><span class="st">, "geometry": {"type": "Polygon", "coordinates": [[[5.063345886679116, 51.23087606640057], [5.06604742694687, 51.22886710731809], [5.070627820472246, 51.22874440121892], [5.068403609708207, 51.22657208381529], [5.064823257492447, 51.22676051738515], [5.064892324615199, 51.2283032878514], [5.063641745941974, 51.2285757299238], [5.062340811262595, 51.227722351687945], [5.06076005158084, 51.228042312276536], [5.063345886679116, 51.23087606640057]]]</span><span class="sc">}}</span><span class="st">,</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="st">        {"type": "Feature", "properties": </span><span class="sc">{}</span><span class="st">, "geometry": {"type": "Polygon", "coordinates": [[[5.07163184674986, 51.23481147556147], [5.076706025697324, 51.23317590781036], [5.077828303041866, 51.233226237184724], [5.078024733866917, 51.23263978271262], [5.080771081607657, 51.23259097170763], [5.083734842574312, 51.23530464074437], [5.080957826735458, 51.23646091560258], [5.079752631651647, 51.23519531038643], [5.077238400183506, 51.23490534677628], [5.072856439300575, 51.23593546777778], [5.07163184674986, 51.23481147556147]]]</span><span class="sc">}}</span><span class="st">, </span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="st">        {"type": "Feature", "properties": </span><span class="sc">{}</span><span class="st">, "geometry": {"type": "Polygon", "coordinates": [[[5.083897244679042, 51.23510639883143], [5.081302408741335, 51.232922477780846], [5.082963802194108, 51.233146058575876], [5.084497702305552, 51.232672717580655], [5.085732850338428, 51.2340852086282], [5.083897244679042, 51.23510639883143]]]</span><span class="sc">}}</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="st">    ]}</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Load the “B04” (red) and “B08” (NIR) brands from the <code>SENTINEL2_L2A</code> collection for the desired time window:</p>
+<div class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>s2cube <span class="op">=</span> connection.load_collection(</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"SENTINEL2_L2A"</span>,</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    temporal_extent<span class="op">=</span>[<span class="st">"2020-06-01"</span>, <span class="st">"2020-10-01"</span>],</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    bands<span class="op">=</span>[<span class="st">"B04"</span>, <span class="st">"B08"</span>],</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Note here that it is not necessary to specify a spatial extent in <code>load_collection</code>, because we will provide the field geometries in a later step. The openEO back-end will automatically limit the effective data loading to the necessary bounding box.</p>
+<p>Calculate the NDVI from the red and NIR bands:</p>
+<div class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>red <span class="op">=</span> s2cube.band(<span class="st">"B04"</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>nir <span class="op">=</span> s2cube.band(<span class="st">"B08"</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>ndvi <span class="op">=</span> (nir <span class="op">-</span> red) <span class="op">/</span> (nir <span class="op">+</span> red)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>With the <code>DataCube.aggregate_spatial()</code> method , we can calculate the mean NDVI for each of the fields.</p>
-<div class="cell" data-execution_count="8">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>timeseries <span class="op">=</span> ndvi.aggregate_spatial(geometries<span class="op">=</span>fields, reducer<span class="op">=</span><span class="st">"mean"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>timeseries <span class="op">=</span> ndvi.aggregate_spatial(geometries<span class="op">=</span>fields, reducer<span class="op">=</span><span class="st">"mean"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>We trigger execution by downloading the result. Because <code>DataCube.aggregate_spatial()</code> returns a timeseries (instead of raster data), we download it in JSON format.</p>
+<p>We now execute this as a batch job and download the timeseries in CSV format.</p>
+<div class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>job <span class="op">=</span> timeseries.execute_batch(out_format<span class="op">=</span><span class="st">"CSV"</span>, title<span class="op">=</span><span class="st">"NDVI timeseries"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>0:00:00 Job 'j-15b2097d399a4f4196e7c0baaf83a582': send 'start'
+0:00:11 Job 'j-15b2097d399a4f4196e7c0baaf83a582': created (progress N/A)
+0:00:17 Job 'j-15b2097d399a4f4196e7c0baaf83a582': created (progress N/A)
+0:00:23 Job 'j-15b2097d399a4f4196e7c0baaf83a582': created (progress N/A)
+0:00:31 Job 'j-15b2097d399a4f4196e7c0baaf83a582': created (progress N/A)
+0:00:41 Job 'j-15b2097d399a4f4196e7c0baaf83a582': running (progress N/A)
+0:00:54 Job 'j-15b2097d399a4f4196e7c0baaf83a582': running (progress N/A)
+0:01:09 Job 'j-15b2097d399a4f4196e7c0baaf83a582': running (progress N/A)
+0:01:29 Job 'j-15b2097d399a4f4196e7c0baaf83a582': running (progress N/A)
+0:01:53 Job 'j-15b2097d399a4f4196e7c0baaf83a582': running (progress N/A)
+0:02:23 Job 'j-15b2097d399a4f4196e7c0baaf83a582': running (progress N/A)
+0:03:00 Job 'j-15b2097d399a4f4196e7c0baaf83a582': finished (progress N/A)</code></pre>
+</div>
+</div>
+<p>Download the timeseries CSV:</p>
+<div class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>job.get_results().download_file(<span class="st">"ndvi-results/timeseries-basic.csv"</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>pd.read_csv(<span class="st">"ndvi-results/timeseries-basic.csv"</span>, index_col<span class="op">=</span><span class="dv">0</span>).head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="8">
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">feature_index</th>
+<th data-quarto-table-cell-role="th">avg(band_0)</th>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">date</th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2020-06-09T00:00:00.000Z</td>
+<td>3</td>
+<td>0.019730</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">2020-06-09T00:00:00.000Z</td>
+<td>0</td>
+<td>0.036967</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2020-06-09T00:00:00.000Z</td>
+<td>2</td>
+<td>0.031822</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">2020-06-09T00:00:00.000Z</td>
+<td>1</td>
+<td>0.038564</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2020-06-26T00:00:00.000Z</td>
+<td>0</td>
+<td>0.568291</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p>Create a quick plot helper to visualize the NDVI data:</p>
 <div class="cell" data-execution_count="9">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>timeseries.download(<span class="st">"output/timeseries.json"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plot_timeseries(filename, figsize<span class="op">=</span>(<span class="dv">6</span>, <span class="dv">3</span>)):</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> pd.read_csv(filename, index_col<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    df.index <span class="op">=</span> pd.to_datetime(df.index)</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>figsize, dpi<span class="op">=</span><span class="dv">90</span>)</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    df.groupby(<span class="st">"feature_index"</span>)[<span class="st">"avg(band_0)"</span>].plot(marker<span class="op">=</span><span class="st">"o"</span>, ax<span class="op">=</span>ax)</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    ax.set_title(filename.split(<span class="st">"/"</span>)[<span class="op">-</span><span class="dv">1</span>])</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    ax.set_ylabel(<span class="st">"NDVI"</span>)</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    ax.set_ylim(<span class="dv">0</span>, <span class="dv">1</span>)</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    ax.legend(title<span class="op">=</span><span class="st">"parcel id"</span>, loc<span class="op">=</span><span class="st">"lower left"</span>, ncol<span class="op">=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell" data-execution_count="10">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>plot_timeseries( <span class="st">"output/timeseries.json"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>plot_timeseries(<span class="st">"ndvi-results/timeseries-basic.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<p><img src="NDVI_Timeseries_files/figure-html/cell-9-output-1.png" class="img-fluid"></p>
+<p><img src="NDVI_Timeseries_files/figure-html/cell-11-output-1.png" class="img-fluid"></p>
 </div>
 </div>
-<p>The result above is a good start, but needs some work: there are quite some outliers and zero’s that don’t look right.</p>
-<p>To filter out the cloudy pixels: we create a cloud mask based on the scene classification band on which gaussian filter is applied.</p>
-<p>By convolving the mask with the kernel, the values of neighboring pixels are taken into account when determining whether a pixel should be classified as cloud or non-cloud. This improves the accuracy of the cloud mask by considering the spatial context of each pixel in relation to its surroundings.</p>
-<p>Therefore, we need a simple gaussian kernel:</p>
+</section>
+<section id="cloud-masking-in-ndvi" class="level2">
+<h2 class="anchored" data-anchor-id="cloud-masking-in-ndvi">Cloud Masking in NDVI</h2>
+<p>The result above is a good start, but there is room for improvement to get smoother NDVI profiles.</p>
+<p>There are quite some outliers because we didn’t filter out cloudy observations or pixels. We can use the “SCL” (scene classification) band from the “SENTINEL2_L2A” collection to focus on non-cloud pixels. Let’s load an “SENTINEL2_L2A” data cube again, with the additional “SCL” band, and calculate the NDVI like before:</p>
 <div class="cell" data-execution_count="11">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>g <span class="op">=</span> scipy.signal.windows.gaussian(<span class="dv">11</span>, std<span class="op">=</span><span class="fl">1.6</span>)</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>kernel <span class="op">=</span> np.outer(g, g)</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>kernel <span class="op">=</span> kernel <span class="op">/</span> kernel.<span class="bu">sum</span>()</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>im <span class="op">=</span> plt.imshow(kernel)</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>plt.colorbar(im)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="11">
-<pre><code>&lt;matplotlib.colorbar.Colorbar at 0x7f413782b190&gt;</code></pre>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>s2cube <span class="op">=</span> connection.load_collection(</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"SENTINEL2_L2A"</span>,</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    temporal_extent<span class="op">=</span>[<span class="st">"2020-06-01"</span>, <span class="st">"2020-10-01"</span>],</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    bands<span class="op">=</span>[<span class="st">"B04"</span>, <span class="st">"B08"</span>, <span class="st">"SCL"</span>],</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>red <span class="op">=</span> s2cube.band(<span class="st">"B04"</span>)</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>nir <span class="op">=</span> s2cube.band(<span class="st">"B08"</span>)</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>ndvi <span class="op">=</span> (nir <span class="op">-</span> red) <span class="op">/</span> (nir <span class="op">+</span> red)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell-output cell-output-display">
-<p><img src="NDVI_Timeseries_files/figure-html/cell-10-output-2.png" class="img-fluid"></p>
-</div>
-</div>
+<p>Now, from the “SCL” band we will build a mask to remove everything that is not class 4 (“vegetation”) or 5 (“not vegetated”). This mask data cube is 1 for pixels which we want to remove (clouds, cloud shadow, …) and 0 for pixels we want to keep.</p>
 <div class="cell" data-execution_count="12">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>classification <span class="op">=</span> cube.band(<span class="st">"SCL"</span>)</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>mask <span class="op">=</span> <span class="op">~</span>((classification <span class="op">==</span> <span class="dv">4</span>) <span class="op">|</span> (classification <span class="op">==</span> <span class="dv">5</span>))</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>mask <span class="op">=</span> mask.apply_kernel(kernel)</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>mask <span class="op">=</span> mask <span class="op">&gt;</span> <span class="fl">0.1</span></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>masked_ndvi <span class="op">=</span> ndvi.mask(mask)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>scl <span class="op">=</span> s2cube.band(<span class="st">"SCL"</span>)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>mask <span class="op">=</span> <span class="op">~</span>((scl <span class="op">==</span> <span class="dv">4</span>) <span class="op">|</span> (scl <span class="op">==</span> <span class="dv">5</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>This mask is however a bit noisy (because of imperfect classification) and to be a bit conservative we also want to expand it a bit to exclude extra pixels at cloud edges. We can do this morphological operation by using a convolution with a gaussian kernel and applying a threshold to get a binary mask again.</p>
 <div class="cell" data-execution_count="13">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>masked_timeseries <span class="op">=</span> masked_ndvi.aggregate_spatial(geometries<span class="op">=</span>fields, reducer<span class="op">=</span><span class="st">"mean"</span>)</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>masked_timeseries.download(<span class="st">"output/timeseries-masked.json"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 2D gaussian kernel</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>g <span class="op">=</span> scipy.signal.windows.gaussian(<span class="dv">11</span>, std<span class="op">=</span><span class="fl">1.6</span>)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>kernel <span class="op">=</span> np.outer(g, g)</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>kernel <span class="op">=</span> kernel <span class="op">/</span> kernel.<span class="bu">sum</span>()</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Morphological dilation of mask: convolution + threshold</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>mask <span class="op">=</span> mask.apply_kernel(kernel)</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>mask <span class="op">=</span> mask <span class="op">&gt;</span> <span class="fl">0.1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>Now, we mask the NDVI data cube and do aggregation again:</p>
 <div class="cell" data-execution_count="14">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>plot_timeseries( <span class="st">"output/timeseries-masked.json"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display">
-<p><img src="NDVI_Timeseries_files/figure-html/cell-13-output-1.png" class="img-fluid"></p>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>ndvi_masked <span class="op">=</span> ndvi.mask(mask)</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>timeseries_masked <span class="op">=</span> ndvi_masked.aggregate_spatial(geometries<span class="op">=</span>fields, reducer<span class="op">=</span><span class="st">"mean"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</div>
-<section id="timeseries-smoothing" class="level1">
-<h1>Timeseries Smoothing</h1>
-<p>Furthermore with an aim to improve the plot’s smoothness by using a kernel, in this notebook we define a kernel as an smoothening UDF. The kernel will help to reduce noise and fluctuations in the data, resulting in a smoother and more accurate representation of the NDVI timeseries.</p>
-<p>Here We define an UDF (user-defined function) to interpolate the missing values and to apply a Savitzky-Golay filter for smoothing of the timeseries, using <code>scipy.signal.savgol_filter</code>.</p>
 <div class="cell" data-execution_count="15">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>udf <span class="op">=</span> openeo.UDF(</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"""</span></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="st">from scipy.signal import savgol_filter</span></span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="st">from openeo.udf import XarrayDataCube</span></span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="st">def apply_datacube(cube: XarrayDataCube, context: dict) -&gt; XarrayDataCube:</span></span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="st">    array = cube.get_array()</span></span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="st">    filled = array.interpolate_na(dim='t')</span></span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="st">    smoothed_array = savgol_filter(filled.values, 5, 2, axis=0)</span></span>
-<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="st">    return DataCube(xarray.DataArray(smoothed_array, dims=array. dims,coords=array.coords))</span></span>
-<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span>
-<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>smoothed_ndvi <span class="op">=</span> masked_ndvi.apply_dimension(code<span class="op">=</span>udf, dimension<span class="op">=</span><span class="st">"t"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>job <span class="op">=</span> timeseries_masked.execute_batch(out_format<span class="op">=</span><span class="st">"CSV"</span>, title<span class="op">=</span><span class="st">"Maked NDVI timeseries"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>0:00:00 Job 'j-7dce486bc7e24b68b7a433c6a63aa9d2': send 'start'
+0:00:11 Job 'j-7dce486bc7e24b68b7a433c6a63aa9d2': created (progress N/A)
+0:00:16 Job 'j-7dce486bc7e24b68b7a433c6a63aa9d2': created (progress N/A)
+0:00:23 Job 'j-7dce486bc7e24b68b7a433c6a63aa9d2': created (progress N/A)
+0:00:31 Job 'j-7dce486bc7e24b68b7a433c6a63aa9d2': created (progress N/A)
+0:00:41 Job 'j-7dce486bc7e24b68b7a433c6a63aa9d2': running (progress N/A)
+0:00:53 Job 'j-7dce486bc7e24b68b7a433c6a63aa9d2': running (progress N/A)
+0:01:09 Job 'j-7dce486bc7e24b68b7a433c6a63aa9d2': running (progress N/A)
+0:01:28 Job 'j-7dce486bc7e24b68b7a433c6a63aa9d2': running (progress N/A)
+0:01:53 Job 'j-7dce486bc7e24b68b7a433c6a63aa9d2': running (progress N/A)
+0:02:23 Job 'j-7dce486bc7e24b68b7a433c6a63aa9d2': running (progress N/A)
+0:03:00 Job 'j-7dce486bc7e24b68b7a433c6a63aa9d2': running (progress N/A)
+0:03:47 Job 'j-7dce486bc7e24b68b7a433c6a63aa9d2': finished (progress N/A)</code></pre>
 </div>
-<p>Now, aggregate this again per field and get the time series.</p>
+</div>
 <div class="cell" data-execution_count="16">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>smoothed_timeseries <span class="op">=</span> smoothed_ndvi.aggregate_spatial(geometries<span class="op">=</span>fields, reducer<span class="op">=</span><span class="st">"mean"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>job.get_results().download_file(<span class="st">"ndvi-results/timeseries-masked.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="16">
+<pre><code>PosixPath('ndvi-results/timeseries-masked.csv')</code></pre>
+</div>
 </div>
 <div class="cell" data-execution_count="17">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>smoothed_timeseries.download(<span class="st">"output/timeseries-smoothed.json"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell" data-execution_count="18">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>plot_timeseries(<span class="st">"output/timeseries-smoothed.json"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>plot_timeseries(<span class="st">"ndvi-results/timeseries-masked.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<p><img src="NDVI_Timeseries_files/figure-html/cell-17-output-1.png" class="img-fluid"></p>
+<p><img src="NDVI_Timeseries_files/figure-html/cell-18-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+<section id="timeseries-smoothing" class="level2">
+<h2 class="anchored" data-anchor-id="timeseries-smoothing">Timeseries Smoothing</h2>
+<p>As final step in this demonstration we will add a openEO user-defined function (UDF) to the processing. A UDF allows to submit a snippet of, for example, Python code to be executed on the data at the backend side. In this case we’ll define a UDF to:</p>
+<ul>
+<li>interpolate missing values (due to cloud filtering)</li>
+<li>apply a Savitzky-Golay filter for temporal smoothing of the timeseries (using <code>scipy.signal.savgol_filter</code>)</li>
+</ul>
+<p>We can load a UDF from an external file, but here we’ll load it as an inline snippet:</p>
+<div class="cell" data-execution_count="18">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>udf <span class="op">=</span> openeo.UDF(</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"""</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="st">from scipy.signal import savgol_filter</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="st">from openeo.udf import XarrayDataCube</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="st">def apply_datacube(cube: XarrayDataCube, context: dict) -&gt; XarrayDataCube:</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a><span class="st">    array = cube.get_array()</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a><span class="st">    filled = array.interpolate_na(dim='t')</span></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a><span class="st">    smoothed_array = savgol_filter(filled.values, 5, 2, axis=0)</span></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a><span class="st">    return DataCube(xarray.DataArray(smoothed_array, dims=array. dims,coords=array.coords))</span></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We apply this UDF along the time dimension of the <code>ndvi_masked</code> cube we created in the previous step:</p>
+<div class="cell" data-execution_count="19">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>ndvi_smoothed <span class="op">=</span> ndvi_masked.apply_dimension(code<span class="op">=</span>udf, dimension<span class="op">=</span><span class="st">"t"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now, aggregate this again per field and get the time series.</p>
+<div class="cell" data-execution_count="20">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>timeseries_smoothed <span class="op">=</span> ndvi_smoothed.aggregate_spatial(geometries<span class="op">=</span>fields, reducer<span class="op">=</span><span class="st">"mean"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="21">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>job <span class="op">=</span> timeseries_smoothed.execute_batch(</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>    out_format<span class="op">=</span><span class="st">"CSV"</span>, title<span class="op">=</span><span class="st">"Smoothed NDVI timeseries"</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>0:00:00 Job 'j-5a6b67070f4c4092a3d40bf0f7f7105c': send 'start'
+0:00:11 Job 'j-5a6b67070f4c4092a3d40bf0f7f7105c': created (progress N/A)
+0:00:17 Job 'j-5a6b67070f4c4092a3d40bf0f7f7105c': created (progress N/A)
+0:00:24 Job 'j-5a6b67070f4c4092a3d40bf0f7f7105c': created (progress N/A)
+0:00:32 Job 'j-5a6b67070f4c4092a3d40bf0f7f7105c': created (progress N/A)
+0:00:42 Job 'j-5a6b67070f4c4092a3d40bf0f7f7105c': created (progress N/A)
+0:00:54 Job 'j-5a6b67070f4c4092a3d40bf0f7f7105c': running (progress N/A)
+0:01:10 Job 'j-5a6b67070f4c4092a3d40bf0f7f7105c': running (progress N/A)
+0:01:29 Job 'j-5a6b67070f4c4092a3d40bf0f7f7105c': running (progress N/A)
+0:01:53 Job 'j-5a6b67070f4c4092a3d40bf0f7f7105c': running (progress N/A)
+0:02:23 Job 'j-5a6b67070f4c4092a3d40bf0f7f7105c': running (progress N/A)
+0:03:01 Job 'j-5a6b67070f4c4092a3d40bf0f7f7105c': running (progress N/A)
+0:03:48 Job 'j-5a6b67070f4c4092a3d40bf0f7f7105c': running (progress N/A)
+0:04:47 Job 'j-5a6b67070f4c4092a3d40bf0f7f7105c': running (progress N/A)
+0:05:47 Job 'j-5a6b67070f4c4092a3d40bf0f7f7105c': finished (progress N/A)</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="22">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>job.get_results().download_file(<span class="st">"ndvi-results/timeseries-smoothed.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="22">
+<pre><code>PosixPath('ndvi-results/timeseries-smoothed.csv')</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="23">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>plot_timeseries(<span class="st">"ndvi-results/timeseries-smoothed.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="NDVI_Timeseries_files/figure-html/cell-24-output-1.png" class="img-fluid"></p>
 </div>
 </div>
 

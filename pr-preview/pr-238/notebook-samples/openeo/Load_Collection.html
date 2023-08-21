@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Documentation - How to load a data collection?</title>
+<title>Documentation - openEO Basics: How to load a data dube from a data collection?</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -65,6 +65,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <meta name="quarto:offset" content="../../">
 <link href="../../notebook-samples/openeo/UDF.html" rel="next">
 <link href="../../notebook-samples/openeo/NDVI_Timeseries.html" rel="prev">
+<link href="../../_images/logos/favicon.png" rel="icon" type="image/png">
 <script src="../../site_libs/quarto-html/quarto.js"></script>
 <script src="../../site_libs/quarto-html/popper.min.js"></script>
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -120,6 +121,32 @@ function scrollFunction() {
   
   window.addEventListener('scroll', scrollFunction);
 </script>
+
+
+<script>
+function togglecheck(className, displayState){
+  var elements = document.getElementsByClassName(className)
+  for (var i = 0; i < elements.length; i++){
+  if (elements[i].style.display === "none") {
+    elements[i].style.display = "block";
+  } else {
+    elements[i].style.display = "none";
+  }
+  }
+}
+window.onload = function() {
+      // Modify this array to contain the levelids of checkboxes that should be unchecked by default
+      var uncheckedByDefault = ["Level-0"];
+  
+      for (var i = 0; i < uncheckedByDefault.length; i++) {
+          togglecheck(uncheckedByDefault[i], "none");
+      }
+  };
+</script>
+
+
+
+
 
 
 <link rel="stylesheet" href="../../custom.css">
@@ -352,7 +379,7 @@ function scrollFunction() {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../APIs/Token.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Keycloak Token</span></a>
+ <span class="menu-text">Access Token</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -869,7 +896,10 @@ function scrollFunction() {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#visualize-the-result" id="toc-visualize-the-result" class="nav-link active" data-scroll-target="#visualize-the-result">Visualize the result</a></li>
+  <li><a href="#setup" id="toc-setup" class="nav-link active" data-scroll-target="#setup">Setup</a></li>
+  <li><a href="#data-loading" id="toc-data-loading" class="nav-link" data-scroll-target="#data-loading">Data Loading</a></li>
+  <li><a href="#data-processing" id="toc-data-processing" class="nav-link" data-scroll-target="#data-processing">Data Processing</a></li>
+  <li><a href="#cloud-masking" id="toc-cloud-masking" class="nav-link" data-scroll-target="#cloud-masking">Cloud masking</a></li>
   </ul>
 <div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/eu-cdse/documentation/issues" class="toc-action">Report an issue</a></p></div></div></nav>
     </div>
@@ -878,7 +908,7 @@ function scrollFunction() {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">How to load a data collection?</h1>
+<h1 class="title">openEO Basics: How to load a data dube from a data collection?</h1>
 </div>
 
 
@@ -893,27 +923,26 @@ function scrollFunction() {
 
 </header>
 
-<p>This notebook provides a detailed guide on how to load a data collection, including all the necessary steps involved. Additionally, it will explain how to authenticate your account to ensure secure access to the data.</p>
+<p>This notebook provides a detailed guide on how to load a <code>DataCube</code> from a data collection. Additionally, it will cover how to authenticate in order to process and download data.</p>
+<section id="setup" class="level2">
+<h2 class="anchored" data-anchor-id="setup">Setup</h2>
+<p>Import the <code>openeo</code> package and connect to the Copernicus Data Space Ecosystem openEO back-end.</p>
 <div class="cell" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># import necessary packages</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> openeo</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># connect to the backend</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>connection <span class="op">=</span> openeo.<span class="ex">connect</span>(url<span class="op">=</span><span class="st">"openeo.dataspace.copernicus.eu"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> openeo</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> xarray</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>To verify whether the users is authenticated, they can check if connection to the backend is authenticated.</p>
 <div class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># check your connection details</span></span>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>connection <span class="op">=</span> openeo.<span class="ex">connect</span>(url<span class="op">=</span><span class="st">"openeo.dataspace.copernicus.eu"</span>)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>connection</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="2">
 <pre><code>&lt;Connection to 'https://openeo.dataspace.copernicus.eu/openeo/1.1/' with NullAuth&gt;</code></pre>
 </div>
 </div>
-<p>If the user’s connection to the backend returns a NullAuth status, it means that they are not authenticated. In this case, they can authenticate themselves by using the <code>authenticate_oidc()</code> method.</p>
+<p>Note the <code>NullAuth</code> in the representation of the connection, which indicates that we are not logged in yet.</p>
+<p>The canonical way to log in is using the <code>authenticate_oidc()</code> method. This might, depending on your situation, trigger an authentication procedure. Follow the instructions, if any.</p>
 <div class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># authenticate and recheck for your connection</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>connection.authenticate_oidc()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>connection.authenticate_oidc()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Authenticated using refresh token.</code></pre>
 </div>
@@ -921,91 +950,109 @@ function scrollFunction() {
 <pre><code>&lt;Connection to 'https://openeo.dataspace.copernicus.eu/openeo/1.1/' with OidcBearerAuth&gt;</code></pre>
 </div>
 </div>
-<p>After authentication to load the data collection, the next step is to filter it based on the specific requirements or criteria of the user. This involves narrowing down the dataset to a particular period or geographic location.</p>
+<p>Note that the connection is now authenticated now through <code>OidcBearerAuth</code>.</p>
+</section>
+<section id="data-loading" class="level2">
+<h2 class="anchored" data-anchor-id="data-loading">Data Loading</h2>
+<p>With our authenticated connection, we can now start loading a data collection data to build a <code>DataCube</code>, filtered according to specific spatio-temporal constraints:</p>
 <div class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># load collection</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>cube <span class="op">=</span> connection.load_collection(</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>                <span class="st">"SENTINEL2_L2A"</span>,</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>                bands<span class="op">=</span>[<span class="st">"B04"</span>, <span class="st">"B03"</span>, <span class="st">"B02"</span>, <span class="st">"SCL"</span>],</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>                temporal_extent<span class="op">=</span>(<span class="st">"2022-05-01"</span>, <span class="st">"2022-05-30"</span>),</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>                spatial_extent<span class="op">=</span>{</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"west"</span>: <span class="fl">3.202609</span>,</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"south"</span>: <span class="fl">51.189474</span>,</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"east"</span>: <span class="fl">3.254708</span>,</span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"north"</span>: <span class="fl">51.204641</span>,</span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"crs"</span>: <span class="st">"EPSG:4326"</span>,</span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>                },</span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>                max_cloud_cover<span class="op">=</span><span class="dv">50</span>,</span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>s2_cube <span class="op">=</span> connection.load_collection(</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"SENTINEL2_L2A"</span>,</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    temporal_extent<span class="op">=</span>(<span class="st">"2022-05-01"</span>, <span class="st">"2022-05-30"</span>),</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    spatial_extent<span class="op">=</span>{</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">"west"</span>: <span class="fl">3.20</span>,</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"south"</span>: <span class="fl">51.18</span>,</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"east"</span>: <span class="fl">3.25</span>,</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">"north"</span>: <span class="fl">51.21</span>,</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">"crs"</span>: <span class="st">"EPSG:4326"</span>,</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    },</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    bands<span class="op">=</span>[<span class="st">"B04"</span>, <span class="st">"B03"</span>, <span class="st">"B02"</span>, <span class="st">"SCL"</span>],</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    max_cloud_cover<span class="op">=</span><span class="dv">50</span>,</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>In this step we will apply cloud masking to filter out cloud pixels to make the result more usable. It is very common for earth observation data to have separate masking layers that for instance indicate whether a pixel is covered by a (type of) cloud or not. For Sentinel-2, one such layer is the “scene classification” layer generated by the Sen2Cor algorithm. In the following cells, we will use this layer to mask out unwanted data.</p>
-<div class="cell" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Select the "SCL" band from the data cube</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>scl_cube <span class="op">=</span> cube.band(<span class="st">"SCL"</span>)</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Build mask to mask out everything but cloud</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>mask <span class="op">=</span> (scl_cube <span class="op">==</span> <span class="dv">7</span>) <span class="op">|</span> (scl_cube <span class="op">==</span> <span class="dv">8</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>Before we can apply this mask to the cube we have to resample it, as the “SCL” layer has a “ground sample distance” of 20 meter, while it is 10 meter for the “B02”, “B03” and “B04” bands. We can easily do the resampling by referring directly to the cube.</p>
+<p>Let’s download this slice of data in netCDF format to give it an initial inspection.</p>
 <div class="cell" data-execution_count="6">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>mask_resampled <span class="op">=</span> mask.resample_cube_spatial(cube)</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply the mask to the `evi_cube`</span></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>cube_masked <span class="op">=</span> cube.mask(mask_resampled)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>s2_cube.download(<span class="st">"output/load-raw.nc"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>Quick visualisation of first and last observation in the timeseries.</p>
 <div class="cell" data-execution_count="7">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Because GeoTIFF does not support a temporal dimension, we first eliminate it by taking the temporal maximum value for each pixel</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>final_image <span class="op">=</span> cube_masked.max_time()</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>image <span class="op">=</span> cube.max_time()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>To complete the data analysis process, the final step involves downloading the filtered data. This can be done in two ways: synchronously or through the batch job-based method. Synchronous downloading allows the user to download the data immediately, whereas batch job-based downloading enables the user to download the data in batches or at a scheduled time. The choice of method depends on the user’s preference and the size of the dataset. In this example we follow the first method, i.e., Synchronous download.</p>
-<div class="cell" data-execution_count="15">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># # download the RGB image</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co"># final_image.download("output/RGB_masked.tiff")</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co"># image.download("output/RGB_withoutmask.tiff")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<section id="visualize-the-result" class="level4">
-<h4 class="anchored" data-anchor-id="visualize-the-result">Visualize the result</h4>
-<div class="cell" data-execution_count="27">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> rasterio</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> skimage <span class="im">import</span> exposure</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>img <span class="op">=</span> rasterio.<span class="bu">open</span>(<span class="st">"output/RGB_withoutmask.tiff"</span>).read()</span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>masked_img <span class="op">=</span> rasterio.<span class="bu">open</span>(<span class="st">"output/RGB_masked.tiff"</span>).read()</span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> normalizeimg(data):</span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>    data <span class="op">=</span> data.astype(<span class="bu">float</span>)</span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(data.shape[<span class="dv">2</span>]):</span>
-<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>        p2, p98 <span class="op">=</span> np.percentile(data[:, :, i], (<span class="dv">2</span>, <span class="dv">98</span>))</span>
-<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>        data[:, :, i] <span class="op">=</span> exposure.rescale_intensity(data[:, :, i], in_range<span class="op">=</span>(p2, p98))</span>
-<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell" data-execution_count="20">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Assuming you have two images img1 and img2</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>fig, (ax1, ax2) <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">6</span>, <span class="dv">2</span>), dpi<span class="op">=</span><span class="dv">150</span>)</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Plotting the first image on the left subplot</span></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>ax1.imshow(normalizeimg(np.moveaxis(img, <span class="dv">0</span>, <span class="op">-</span><span class="dv">1</span>)))</span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>ax1.set_title(<span class="st">"RGB Image"</span>)</span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Plotting the second image on the right subplot</span></span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>ax2.imshow(normalizeimg(np.moveaxis(masked_img, <span class="dv">0</span>, <span class="op">-</span><span class="dv">1</span>)))</span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>ax2.set_title(<span class="st">"Masked RGB Image"</span>)</span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Adjusting the spacing between subplots</span></span>
-<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
-<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the figure</span></span>
-<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>ds <span class="op">=</span> xarray.load_dataset(<span class="st">"output/load-raw.nc"</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert xarray DataSet to a (bands, t, x, y) DataArray</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> ds[[<span class="st">"B04"</span>, <span class="st">"B03"</span>, <span class="st">"B02"</span>]].to_array(dim<span class="op">=</span><span class="st">"bands"</span>)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(ncols<span class="op">=</span><span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">3</span>), dpi<span class="op">=</span><span class="dv">90</span>, sharey<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>data[{<span class="st">"t"</span>: <span class="dv">0</span>}].plot.imshow(vmin<span class="op">=</span><span class="dv">0</span>, vmax<span class="op">=</span><span class="dv">2000</span>, ax<span class="op">=</span>axes[<span class="dv">0</span>])</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>data[{<span class="st">"t"</span>: <span class="op">-</span><span class="dv">1</span>}].plot.imshow(vmin<span class="op">=</span><span class="dv">0</span>, vmax<span class="op">=</span><span class="dv">2000</span>, ax<span class="op">=</span>axes[<span class="dv">1</span>])<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<p><img src="Load_Collection_files/figure-html/cell-11-output-1.png" class="img-fluid"></p>
+<p><img src="Load_Collection_files/figure-html/cell-7-output-1.png" class="img-fluid"></p>
 </div>
 </div>
+<p>Notice how the observation on the right suffers from clouds and cloud shadows.</p>
+</section>
+<section id="data-processing" class="level2">
+<h2 class="anchored" data-anchor-id="data-processing">Data Processing</h2>
+<p>Let’s include a bit of extra data processing. We’ll build a naive composite image by taking the temporal maximum:</p>
+<div class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>composite <span class="op">=</span> s2_cube.max_time()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Download this composite and visualize it:</p>
+<div class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>composite.download(<span class="st">"output/load-composite.nc"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>ds <span class="op">=</span> xarray.load_dataset(<span class="st">"output/load-composite.nc"</span>)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert xarray DataSet to a (bands, x, y) DataArray</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> ds[[<span class="st">"B04"</span>, <span class="st">"B03"</span>, <span class="st">"B02"</span>]].to_array(dim<span class="op">=</span><span class="st">"bands"</span>)</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(ncols<span class="op">=</span><span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">4</span>, <span class="dv">4</span>), dpi<span class="op">=</span><span class="dv">90</span>)</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>data.plot.imshow(vmin<span class="op">=</span><span class="dv">0</span>, vmax<span class="op">=</span><span class="dv">2000</span>, ax<span class="op">=</span>ax)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="10">
+<pre><code>&lt;matplotlib.image.AxesImage at 0x7f5288567fd0&gt;</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="Load_Collection_files/figure-html/cell-10-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<p>Note how the clouds influence this composite: while the cloud shadows are eliminated by the <code>max</code> operation, the bright clouds ruin the composite image.</p>
+</section>
+<section id="cloud-masking" class="level2">
+<h2 class="anchored" data-anchor-id="cloud-masking">Cloud masking</h2>
+<p>In general, to make the raw data more useful, we typically want remove the cloud pixels and only work with non-cloud data. It is very common for earth observation data to have separate masking layers that for instance indicate whether a pixel is covered by a (type of) cloud or not. For Sentinel-2, one such layer is the “scene classification” layer (band name “SCL”) generated by the Sen2Cor algorithm.</p>
+<p>With openEO and the openEO Python client library, we can take this “SCL” band (which we already included before in the <code>load_collection</code> call) and apply cloud masking as follows.</p>
+<p>First we build a binary cloud mask from the SCL values 3 (cloud shadows), 8 (cloud medium probability) and 9 (cloud high probability):</p>
+<div class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>scl_band <span class="op">=</span> s2_cube.band(<span class="st">"SCL"</span>)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>cloud_mask <span class="op">=</span> (scl_band <span class="op">==</span> <span class="dv">3</span>) <span class="op">|</span> (scl_band <span class="op">==</span> <span class="dv">8</span>) <span class="op">|</span> (scl_band <span class="op">==</span> <span class="dv">9</span>)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: TEMP WORKAROUND FOR OFFSET ERROR ON SCL BAND</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>cloud_mask <span class="op">=</span> (scl_band <span class="op">==</span> <span class="dv">3</span> <span class="op">-</span> <span class="dv">1000</span>) <span class="op">|</span> (scl_band <span class="op">==</span> <span class="dv">8</span> <span class="op">-</span> <span class="dv">1000</span>) <span class="op">|</span> (scl_band <span class="op">==</span> <span class="dv">9</span> <span class="op">-</span> <span class="dv">1000</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Before we can apply this mask to the cube we have to resample it, as the “SCL” layer has a “ground sample distance” of 20 meter, while it is 10 meter for the “B02”, “B03” and “B04” bands. We can easily do the resampling by referring directly to the data cube to mask.</p>
+<div class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>cloud_mask <span class="op">=</span> cloud_mask.resample_cube_spatial(s2_cube)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Apply the cloud mask, and build the composite again:</p>
+<div class="cell" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>cube_masked <span class="op">=</span> s2_cube.mask(cloud_mask)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>composite_masked <span class="op">=</span> cube_masked.max_time()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Download the result and visualize it.</p>
+<div class="cell" data-execution_count="15">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>composite_masked.download(<span class="st">"output/load-composite-masked.nc"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="22">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>ds <span class="op">=</span> xarray.load_dataset(<span class="st">"output/load-composite-masked.nc"</span>)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert xarray DataSet to a (bands, x, y) DataArray</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> ds[[<span class="st">"B04"</span>, <span class="st">"B03"</span>, <span class="st">"B02"</span>]].to_array(dim<span class="op">=</span><span class="st">"bands"</span>)</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(ncols<span class="op">=</span><span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">4</span>, <span class="dv">4</span>), dpi<span class="op">=</span><span class="dv">90</span>)</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>data.plot.imshow(vmin<span class="op">=</span><span class="dv">0</span>, vmax<span class="op">=</span><span class="dv">2000</span>, ax<span class="op">=</span>ax)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="Load_Collection_files/figure-html/cell-15-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>The cloud masking clearly helped to build a better composte. Note however that there are still some artifacts due to the quality of the SCL band and our simple cloud mask.</p>
 
 
 </section>
