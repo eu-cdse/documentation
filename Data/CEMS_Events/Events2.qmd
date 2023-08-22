@@ -14,11 +14,16 @@ format:
             }
 button{
   background-color:white;
+  background-color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 17px;
+  border: 2px solid #0a4393;
 }
 
-button:hover{background-color: #ced9e9;}
-
-button:focus{background-color: #4570ad ;color: white;}
+button:hover, button:focus, button.active {
+ background-color: #0a4393;
+ color: white;
+ }
 
 a {
   color: orange;
@@ -38,20 +43,34 @@ a:active {
 }
         </style>
     <script type="text/javascript">
+            let activeTab;
             window.onload = function() {
                 openTabFromJson('Mass movement'); // Set Tab 1 as initially displayed
             };
-          
+
+            function changeActiveTab(newTab) {
+                const activeClass = 'active'
+                const tabId = newTab.toLowerCase().replace(' ', '_').replace(',', '_')
+                // Remove the active class from the current tab
+                if (activeTab) {
+                    document.getElementById(activeTab).classList.remove(activeClass);
+                }
+                console.log("Updating class of ", tabId,  document.getElementById(tabId));
+                 document.getElementById(tabId).classList.add(activeClass);
+                 activeTab = tabId;
+            }
+
+
             async function  openTabFromJson(tabName) {
+
+                changeActiveTab(tabName);
 
                 // const jsonData=events
                 const response =  await fetch('events.json');
                 
                 const jsonData =  await response.json();
-                const filterKey = tabName; // Change this to the key you want to filter on
-                
 
-                const filteredData = jsonData.filter(item => item.producttype === filterKey);
+                const filteredData = jsonData.filter(item => item.producttype === tabName);
                 console.log(filteredData)
 
                 const tableContainer = document.getElementById('table-container');
@@ -101,18 +120,18 @@ a:active {
           
 
         <div>
-        <button id ='mm' onclick="openTabFromJson('Mass movement')">Mass Movement</button>
-        <button onclick="openTabFromJson('Strom')">Storm</button>
-        <button onclick="openTabFromJson('Volcanic activity')">Volcano</button>
-        <button onclick="openTabFromJson('Wildfire')">Wild fire</button>
-        <button onclick="openTabFromJson('Forest fire, wild fire')">Forest fire</button>
-        <button onclick="openTabFromJson('Flood')">Flood</button>
-        <button onclick="openTabFromJson('Wind strom')">Wind strom</button>
-        <button onclick="openTabFromJson('Earthquake')">Earthquake</button>
-        <button onclick="openTabFromJson('Industrial accident')">Industrial</button>
-        <button onclick="openTabFromJson('Extreme temperature')">Humanitarian</button>
-        <button onclick="openTabFromJson('Epidemic')">Epidemic</button>
-        <button onclick="openTabFromJson('Other')">Others</button>
+        <button id='mass_movement' onclick="openTabFromJson('Mass movement')">Mass Movement</button>
+        <button id='strom' onclick="openTabFromJson('Strom')">Storm</button>
+        <button id='volcanic_activity' onclick="openTabFromJson('Volcanic activity')">Volcano</button>
+        <button id='wildfire' onclick="openTabFromJson('Wildfire')">Wild fire</button>
+        <button id='forest_fire__wild_fire' onclick="openTabFromJson('Forest fire, wild fire')">Forest fire</button>
+        <button id='flood' onclick="openTabFromJson('Flood')">Flood</button>
+        <button id='wind_strom' onclick="openTabFromJson('Wind strom')">Wind strom</button>
+        <button id='earthquake' onclick="openTabFromJson('Earthquake')">Earthquake</button>
+        <button id='industrial_accident' onclick="openTabFromJson('Industrial accident')">Industrial</button>
+        <button id='extreme_temperature' onclick="openTabFromJson('Extreme temperature')">Humanitarian</button>
+        <button id='epidemic' onclick="openTabFromJson('Epidemic')">Epidemic</button>
+        <button id='other' onclick="openTabFromJson('Other')">Others</button>
         </div>
 
           <div id="table-container"></div>
