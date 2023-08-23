@@ -1002,7 +1002,7 @@ window.onload = function() {
     }
     </script>
     <openeo-model-builder>
-        <script type="application/json">{"id": "6964e1d8530d49599dd062fb319ae141", "explicit-zoom": true, "height": "400px", "value": {"process_graph": {"loadcollection1": {"process_id": "load_collection", "arguments": {"bands": ["B03", "B08"], "id": "SENTINEL2_L2A", "spatial_extent": {"from_parameter": "bbox"}, "temporal_extent": {"from_parameter": "date_range"}}}, "reducedimension1": {"process_id": "reduce_dimension", "arguments": {"data": {"from_node": "loadcollection1"}, "dimension": "bands", "reducer": {"process_graph": {"arrayelement1": {"process_id": "array_element", "arguments": {"data": {"from_parameter": "data"}, "index": 0}}, "arrayelement2": {"process_id": "array_element", "arguments": {"data": {"from_parameter": "data"}, "index": 1}}, "subtract1": {"process_id": "subtract", "arguments": {"x": {"from_node": "arrayelement1"}, "y": {"from_node": "arrayelement2"}}}, "add1": {"process_id": "add", "arguments": {"x": {"from_node": "arrayelement1"}, "y": {"from_node": "arrayelement2"}}}, "divide1": {"process_id": "divide", "arguments": {"x": {"from_node": "subtract1"}, "y": {"from_node": "add1"}}, "result": true}}}}, "result": true}}}}</script>
+        <script type="application/json">{"id": "9e308357495747e994646e19de56de87", "explicit-zoom": true, "height": "400px", "value": {"process_graph": {"loadcollection1": {"process_id": "load_collection", "arguments": {"bands": ["B03", "B08"], "id": "SENTINEL2_L2A", "spatial_extent": {"from_parameter": "bbox"}, "temporal_extent": {"from_parameter": "date_range"}}}, "reducedimension1": {"process_id": "reduce_dimension", "arguments": {"data": {"from_node": "loadcollection1"}, "dimension": "bands", "reducer": {"process_graph": {"arrayelement1": {"process_id": "array_element", "arguments": {"data": {"from_parameter": "data"}, "index": 0}}, "arrayelement2": {"process_id": "array_element", "arguments": {"data": {"from_parameter": "data"}, "index": 1}}, "subtract1": {"process_id": "subtract", "arguments": {"x": {"from_node": "arrayelement1"}, "y": {"from_node": "arrayelement2"}}}, "add1": {"process_id": "add", "arguments": {"x": {"from_node": "arrayelement1"}, "y": {"from_node": "arrayelement2"}}}, "divide1": {"process_id": "divide", "arguments": {"x": {"from_node": "subtract1"}, "y": {"from_node": "add1"}}, "result": true}}}}, "result": true}}}}</script>
     </openeo-model-builder>
     
 </div>
@@ -1047,35 +1047,31 @@ window.onload = function() {
 <section id="use-the-udp" class="level2">
 <h2 class="anchored" data-anchor-id="use-the-udp">Use the UDP</h2>
 <p>Now, let’s evaluate our freshly created user-defined processes “NDWI”. We can using <code>datacube_from_process()</code> to create a <code>DataCube</code> from this process and only have to provide concrete temporal and spatial extents:</p>
-<div class="cell" data-execution_count="8">
+<div class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>ndwi2022 <span class="op">=</span> connection.datacube_from_process(</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    process_id<span class="op">=</span><span class="st">"NDWI"</span>,</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    date_range<span class="op">=</span>[<span class="st">"2022-06-01"</span>, <span class="st">"2022-09-01"</span>],</span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    bbox<span class="op">=</span>{<span class="st">"west"</span>: <span class="fl">5.09</span>, <span class="st">"south"</span>: <span class="fl">51.18</span>, <span class="st">"east"</span>: <span class="fl">5.15</span>, <span class="st">"north"</span>: <span class="fl">51.21</span>},</span>
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>/home/lippenss/src/openeo/openeo-python-client/openeo/metadata.py:255: UserWarning: No cube:dimensions metadata
-  complain("No cube:dimensions metadata")</code></pre>
 </div>
-</div>
-<div class="cell" data-execution_count="9">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>ndwi2022.download(<span class="st">"output/ndwi2022.tiff"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>ndwi2022.download(<span class="st">"ndwi2022.tiff"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <section id="visualize-the-result" class="level3">
 <h3 class="anchored" data-anchor-id="visualize-the-result">Visualize the result</h3>
-<div class="cell" data-execution_count="10">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> rasterio</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> rasterio.<span class="bu">open</span>(<span class="st">"output/ndwi2022.tiff"</span>).read()</span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">6</span>, <span class="dv">4</span>), dpi<span class="op">=</span><span class="dv">90</span>)</span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>img <span class="op">=</span> ax.imshow(data[<span class="dv">0</span>], vmin<span class="op">=</span>np.percentile(data, <span class="dv">1</span>), vmax<span class="op">=</span>np.percentile(data, <span class="dv">99</span>))</span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">"NDWI"</span>)</span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>plt.colorbar(img)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="10">
-<pre><code>&lt;matplotlib.colorbar.Colorbar at 0x7fa1a094ca30&gt;</code></pre>
+<div class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> rasterio</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> rasterio.<span class="bu">open</span>(<span class="st">"ndwi2022.tiff"</span>).read()</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">6</span>, <span class="dv">4</span>), dpi<span class="op">=</span><span class="dv">90</span>)</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>img <span class="op">=</span> ax.imshow(data[<span class="dv">0</span>], vmin<span class="op">=</span>np.percentile(data, <span class="dv">1</span>), vmax<span class="op">=</span>np.percentile(data, <span class="dv">99</span>))</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">"NDWI"</span>)</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>plt.colorbar(img)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="11">
+<pre><code>&lt;matplotlib.colorbar.Colorbar at 0x7f3e35c1b690&gt;</code></pre>
 </div>
 <div class="cell-output cell-output-display">
 <p><img src="UDP_files/figure-html/cell-11-output-2.png" class="img-fluid"></p>
