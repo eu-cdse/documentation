@@ -19,7 +19,8 @@ def main(c):
         "AdditionalComplementaryData": Additional,      
         "CAMS": CAMSOffer,
         "CLMS": CLMSOffer,               
-        "CMEMS" : CMEMSOffer               
+        "CMEMS" : CMEMSOffer,
+        "CEMS": CEMSOffer               
     }
     AvailabilityTable = cases.get(constellation, general)(c)
     return AvailabilityTable
@@ -259,6 +260,36 @@ def CAMSOffer(c):
         table = table.replace("<table>", '<table class="table">')
         table = f"""<h5>{tabletitle}</h5>{table}{note}"""
     except Exception:
+        table = " "
+    
+    return table
+
+########################## DEFINE FUNCTION TO CREATE DATA AVAILABILITY TABLE FOR CEMS ########################
+def CEMSOffer(c):    
+    try: 
+        data_offer = len(c['summaries']['DataAvailability'])
+        t = []
+        note = ""
+        empty_columns = []  # Track empty columns
+
+        for i in range(0, data_offer):
+            try:
+                event_list = c['summaries']['DataAvailability'][i]['Details']
+            except:
+                event_list = ""
+            Type,Status,Access,Product_type,SpecificProduct,Spatial,Temporal,ProductLink,Catalogue,footnotes,Provider,Satellite,Resolution = DataFetch(c,i)
+            t.append([Product_type, Catalogue, event_list])
+            note += footnotes
+            headers = ["Product Type", "Catalogue", "Events"]
+
+        # Find and remove empty columns
+        t,headers=removeempty(t,headers)
+
+        table = tabulate(t, headers=headers, tablefmt='html', floatfmt=".4f", stralign="left", numalign="left")
+        # Set the minimum width of each column to 100 pixels
+        table = table.replace("<table>", '<table class="table">')
+        table = f"""<h5>{tabletitle}</h5>{table}{note}"""
+    except:
         table = " "
     
     return table
