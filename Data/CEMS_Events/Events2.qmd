@@ -1,0 +1,139 @@
+---
+format:
+  html:
+    toc: false
+    resources: 'events.json'
+---
+
+
+```{=html}
+
+        <style>
+            .tab {
+                display: block;
+            }
+button{
+  background-color:white;
+  background-color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 17px;
+  border: 2px solid #0a4393;
+}
+
+button:hover, button:focus, button.active {
+ background-color: #0a4393;
+ color: white;
+ }
+
+a {
+  color: orange;
+}
+
+a.button{
+  color:green;
+  text-decoration: none;
+}
+
+a:visited {
+  color: purple;
+}
+
+a:active {
+  color: blue;
+}
+        </style>
+    <script type="text/javascript">
+            let activeTab;
+            window.onload = function() {
+                openTabFromJson('Mass movement'); // Set Tab 1 as initially displayed
+            };
+
+            function changeActiveTab(newTab) {
+                const activeClass = 'active'
+                const tabId = newTab.toLowerCase().replaceAll(' ', '_').replaceAll(',', '_')
+                // Remove the active class from the current tab
+                if (activeTab) {
+                    document.getElementById(activeTab).classList.remove(activeClass);
+                }
+                console.log("Updating class of ", tabId,  document.getElementById(tabId));
+                 document.getElementById(tabId).classList.add(activeClass);
+                 activeTab = tabId;
+            }
+
+
+            async function  openTabFromJson(tabName) {
+
+                changeActiveTab(tabName);
+
+                // const jsonData=events
+                const response =  await fetch('events.json');
+                
+                const jsonData =  await response.json();
+
+                const filteredData = jsonData.filter(item => item.producttype === tabName);
+                console.log(filteredData)
+
+                const tableContainer = document.getElementById('table-container');
+                tableContainer.innerHTML='<h2>'+tabName+'</h2>';
+                const table = document.createElement('table');
+                const tableHead = document.createElement('thead');
+                const tableBody = document.createElement('tbody');
+
+                const headerRow = document.createElement('tr');
+                const headerCell1 = document.createElement('th');
+                const headerCell2 = document.createElement('th');
+                const headerCell3 = document.createElement('th');
+
+                headerCell1.textContent = 'Product ID';
+                headerCell2.textContent = 'Event';
+                headerCell3.textContent = 'Catalouge';
+
+                headerRow.appendChild(headerCell1);
+                headerRow.appendChild(headerCell2);
+                headerRow.appendChild(headerCell3);
+
+                tableHead.appendChild(headerRow);
+                table.appendChild(tableHead);
+                table.appendChild(tableBody);
+
+                filteredData.forEach(item => {
+                const row = document.createElement('tr');
+                const cell1 = document.createElement('td');
+                const cell2 = document.createElement('td');
+                const cell3 = document.createElement('td');
+
+                cell1.textContent = item.productid;
+                cell2.textContent = item.event;
+                cell3.textContent = item.catalogue;
+
+                row.appendChild(cell1);
+                row.appendChild(cell2);
+                row.appendChild(cell3);
+
+                tableBody.appendChild(row);
+                });
+
+                tableContainer.appendChild(table);
+
+            }
+          </script>
+          
+
+        <div>
+        <button id='mass_movement' onclick="openTabFromJson('Mass movement')">Mass Movement</button>
+        <button id='storm' onclick="openTabFromJson('Storm')">Storm</button>
+        <button id='volcanic_activity' onclick="openTabFromJson('Volcanic activity')">Volcano</button>
+        <button id='wildfire' onclick="openTabFromJson('Wildfire')">Wild fire</button>
+        <button id='forest_fire__wild_fire' onclick="openTabFromJson('Forest fire, wild fire')">Forest fire</button>
+        <button id='flood' onclick="openTabFromJson('Flood')">Flood</button>
+        <button id='wind_storm' onclick="openTabFromJson('Wind storm')">Wind storm</button>
+        <button id='earthquake' onclick="openTabFromJson('Earthquake')">Earthquake</button>
+        <button id='industrial_accident' onclick="openTabFromJson('Industrial accident')">Industrial</button>
+        <button id='extreme_temperature' onclick="openTabFromJson('Extreme temperature')">Humanitarian</button>
+        <button id='epidemic' onclick="openTabFromJson('Epidemic')">Epidemic</button>
+        <button id='other' onclick="openTabFromJson('Other')">Others</button>
+        </div>
+
+          <div id="table-container"></div>
+
+```
