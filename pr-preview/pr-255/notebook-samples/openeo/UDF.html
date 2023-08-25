@@ -970,7 +970,7 @@ window.onload = function() {
     }
     </script>
     <openeo-model-builder>
-        <script type="application/json">{"id": "d7b4f8ad67ad405999f711ed9ddf6009", "explicit-zoom": true, "height": "400px", "value": {"process_graph": {"loadcollection1": {"process_id": "load_collection", "arguments": {"bands": ["B04", "B03", "B02"], "id": "SENTINEL2_L2A", "properties": {"eo:cloud_cover": {"process_graph": {"lte1": {"process_id": "lte", "arguments": {"x": {"from_parameter": "value"}, "y": 50}, "result": true}}}}, "spatial_extent": {"west": 5.05, "south": 51.21, "east": 5.1, "north": 51.23, "crs": "EPSG:4326"}, "temporal_extent": ["2022-05-01", "2022-05-30"]}}, "reducedimension1": {"process_id": "reduce_dimension", "arguments": {"data": {"from_node": "loadcollection1"}, "dimension": "t", "reducer": {"process_graph": {"max1": {"process_id": "max", "arguments": {"data": {"from_parameter": "data"}}, "result": true}}}}, "result": true}}}}</script>
+        <script type="application/json">{"id": "843dbe0a86f94d7ca4516af4b461252b", "explicit-zoom": true, "height": "400px", "value": {"process_graph": {"loadcollection1": {"process_id": "load_collection", "arguments": {"bands": ["B04", "B03", "B02"], "id": "SENTINEL2_L2A", "properties": {"eo:cloud_cover": {"process_graph": {"lte1": {"process_id": "lte", "arguments": {"x": {"from_parameter": "value"}, "y": 50}, "result": true}}}}, "spatial_extent": {"west": 5.05, "south": 51.21, "east": 5.1, "north": 51.23, "crs": "EPSG:4326"}, "temporal_extent": ["2022-05-01", "2022-05-30"]}}, "reducedimension1": {"process_id": "reduce_dimension", "arguments": {"data": {"from_node": "loadcollection1"}, "dimension": "t", "reducer": {"process_graph": {"max1": {"process_id": "max", "arguments": {"data": {"from_parameter": "data"}}, "result": true}}}}, "result": true}}}}</script>
     </openeo-model-builder>
     
 </div>
@@ -994,18 +994,18 @@ window.onload = function() {
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply the UDF to a cube.</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>rescaled_cube <span class="op">=</span> cube.<span class="bu">apply</span>(process<span class="op">=</span>udf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-execution_count="6">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>rescaled_cube.download(<span class="st">"output/rescale_s2.tiff"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>rescaled_cube.download(<span class="st">"rescale_s2.tiff"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <section id="visualize-the-result" class="level3">
 <h3 class="anchored" data-anchor-id="visualize-the-result">Visualize the result</h3>
-<div class="cell" data-execution_count="9">
+<div class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> rasterio</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> skimage <span class="im">import</span> exposure</span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>img <span class="op">=</span> rasterio.<span class="bu">open</span>(<span class="st">"output/rescale_s2.tiff"</span>).read()</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>img <span class="op">=</span> rasterio.<span class="bu">open</span>(<span class="st">"rescale_s2.tiff"</span>).read()</span>
 <span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> normalizeimg(data):</span>
@@ -1015,7 +1015,7 @@ window.onload = function() {
 <span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>        data[:, :, i] <span class="op">=</span> exposure.rescale_intensity(data[:, :, i], in_range<span class="op">=</span>(p2, p98))</span>
 <span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-execution_count="10">
+<div class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">6</span>, <span class="dv">2</span>), dpi<span class="op">=</span><span class="dv">150</span>)</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>ax.imshow(normalizeimg(np.moveaxis(img, <span class="dv">0</span>, <span class="op">-</span><span class="dv">1</span>)))</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
