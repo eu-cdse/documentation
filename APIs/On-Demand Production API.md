@@ -1,7 +1,7 @@
 
 ## Introduction
 
-On-demand processing capability for CARD-BS, CARD-COH6/12 is available on the Copernicus Data Space Ecosystem. This service is offered free to the use via a limited pool of resources, shared across all users, which can be used for processing the data free of charge. This is suitable for users who need to process smaller batches of products. There is no guarantee that processing will be completed in certain time.  For commercial use the price list is available from the Creodias portal [https://creodias.eu/billing-models](https://creodias.eu/billing-models){target="blank"}.The service is available via an On Demand Processing API allows the users to interact with the service to issue and control the orders. It provides functionalities like creation, update, cancellation, pausing and monitoring of orders. This allows the users to have a better control over the workflow execution process. 
+On-demand processing capability for CARD-BS, CARD-COH6/12 is available on the Copernicus Data Space Ecosystem. This service is offered free to the use via a limited pool of resources, shared across all users, which can be used for processing the data free of charge. This is suitable for users who need to process smaller batches of products. There is no guarantee that processing will be completed in certain time.  For commercial use the price list is available from the Creodias portal [https://creodias.eu/billing-models](https://creodias.eu/billing-models){target="blank"}.The service is available via an On Demand Processing API that allows the users to interact with the service to issue and control the orders. It provides functionalities like creation, update, cancellation, pausing and monitoring of orders. This allows the users to have a better control over the workflow execution process. 
 
 ## OnDemand Processing API with OData interface
 
@@ -11,7 +11,7 @@ The OnDemand Processing API allows the users to interact with the service to iss
 
 This documentation provides an overview of the OnDemand Processing (ODP) API, which is based on the Open Data Protocol (OData) standard. The ODP API provides a RESTful interface for accessing data and metadata from the Copernicus data catalogue.
 Access to the API is limited by the Authentication service. Quotas are assigned according to the user typology and include limits on number of concurrent orders and available processing workflows.
-The API allows discovery of all available workflows which can be run in the CDSE platform, indicating which data types can be processed, what are the available parameters and output modes.
+The API allows discovery of all available workflows which can be run in the Copernicus Data Space Ecosystem platform, indicating which data types can be processed, what are the available parameters and output modes.
 
 ### API Endpoint
 
