@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.433">
+<meta name="generator" content="quarto-1.3.450">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -31,6 +31,7 @@ ul.task-list li input[type="checkbox"] {
 <meta name="quarto:offset" content="../">
 <link href="../Data/Sentinel2.html" rel="next">
 <link href="../Data/Dashboard.html" rel="prev">
+<link href="../_images/logos/favicon.png" rel="icon" type="image/png">
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -86,6 +87,32 @@ function scrollFunction() {
   
   window.addEventListener('scroll', scrollFunction);
 </script>
+
+
+<script>
+function togglecheck(className, displayState){
+  var elements = document.getElementsByClassName(className)
+  for (var i = 0; i < elements.length; i++){
+  if (elements[i].style.display === "none") {
+    elements[i].style.display = "block";
+  } else {
+    elements[i].style.display = "none";
+  }
+  }
+}
+window.onload = function() {
+      // Modify this array to contain the levelids of checkboxes that should be unchecked by default
+      var uncheckedByDefault = ["Level-0"];
+  
+      for (var i = 0; i < uncheckedByDefault.length; i++) {
+          togglecheck(uncheckedByDefault[i], "none");
+      }
+  };
+</script>
+
+
+
+
 
 
 <link rel="stylesheet" href="../custom.css">
@@ -318,7 +345,7 @@ function scrollFunction() {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../APIs/Token.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Keycloak Token</span></a>
+ <span class="menu-text">Access Token</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -788,6 +815,12 @@ function scrollFunction() {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../Applications/DataWorkspace.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">About Data Workspace</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../Applications/AlgorithmPlaza.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">openEO algorithm plaza</span></a>
   </div>
@@ -824,11 +857,32 @@ function scrollFunction() {
 </nav>
 <div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#sentinel-1-level-1-ground-range-detected-grd" id="toc-sentinel-1-level-1-ground-range-detected-grd" class="nav-link active" data-scroll-target="#sentinel-1-level-1-ground-range-detected-grd">Sentinel-1 Level 1 Ground Range Detected (GRD)</a>
+  <ul>
+  <li><a href="#overview" id="toc-overview" class="nav-link" data-scroll-target="#overview">Overview</a></li>
+  </ul></li>
+  <li><a href="#sentinel-1-level-1-single-look-complex-slc" id="toc-sentinel-1-level-1-single-look-complex-slc" class="nav-link" data-scroll-target="#sentinel-1-level-1-single-look-complex-slc">Sentinel-1 Level 1 Single Look Complex (SLC)</a>
+  <ul>
+  <li><a href="#overview-1" id="toc-overview-1" class="nav-link" data-scroll-target="#overview-1">Overview</a></li>
+  </ul></li>
+  <li><a href="#sentinel-1-level-2-ocean-ocn" id="toc-sentinel-1-level-2-ocean-ocn" class="nav-link" data-scroll-target="#sentinel-1-level-2-ocean-ocn">Sentinel-1 Level 2 Ocean (OCN)</a>
+  <ul>
+  <li><a href="#overview-2" id="toc-overview-2" class="nav-link" data-scroll-target="#overview-2">Overview</a></li>
+  </ul></li>
+  <li><a href="#sentinel-1-level-0" id="toc-sentinel-1-level-0" class="nav-link" data-scroll-target="#sentinel-1-level-0">Sentinel-1 Level 0</a>
+  <ul>
+  <li><a href="#overview-3" id="toc-overview-3" class="nav-link" data-scroll-target="#overview-3">Overview</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/eu-cdse/documentation/issues" class="toc-action">Report an issue</a></p></div></div></nav>
     </div>
 <!-- main -->
-<main class="content column-page-right" id="quarto-document-content">
+<main class="content column-body" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
@@ -850,17 +904,17 @@ function scrollFunction() {
 <p>The <a href="https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-1" target="_blank">Sentinel-1 radar imaging mission</a> is composed of a constellation of two polar-orbiting satellites providing continous all-weather, day and night imagery for Land and Maritime Monitoring. C-band synthentic aperture radar imaging has the advantage of operating at wavelenghts that are not obstructed by clouds or lack of illumination and therefore can acquire data during day or night under all weather conditions.</p>
 <p><strong>The end of mission of the Sentinel-1B satellite has been declared in July 2022</strong> <br>On 23 December 2021, Copernicus Sentinel-1B experienced an anomaly related to the instrument electronics power supply provided by the satellite platform, leaving it unable to deliver radar data. Despite all investigations and recovery attempts, ESA and the European Commission had to announce that it is the end of the mission for Sentinel-1B. Copernicus Sentinel-1A remains fully operational. More information about the end of the mission for the Sentinel-1B satellite can be found on the webpage <a href="https://www.esa.int/Applications/Observing_the_Earth/Copernicus/Sentinel-1/Mission_ends_for_Copernicus_Sentinel-1B_satellite" target="_blank">Mission ends for Copernicus Sentinel-1B satellite</a>. <br>In response to the loss of Sentinel-1B, <strong>the mission observation scenario of Sentinel-1A was adjusted</strong>, affecting the nominal global coverage frequency. An up-to-date overview of the observation scenario in place can be consulted on the webpage <a href="https://sentinel.esa.int/web/sentinel/missions/sentinel-1/observation-scenario" target="_blank">Sentinel-1 Observation Scenario</a>. Some regions are currently not observed by Sentinel-1. Nevertheless, the regions that are still observed, now have a repeat cycle of 12 days under a one-satellite constellation scenario, which affects possible interferometric analyses.</p>
 <p>Sentinel data products are made available systematically and free of charge to all data users including the general public, scientific and commercial users. These <a href="https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-1/data-products" target="_blank">data products</a> are available in single polarisation for Wave mode and dual polarisation or single polarisation for SM, IW and EW modes.</p>
-<div class="cell" data-execution_count="17">
-<div class="cell-output cell-output-display">
+<p><input type="checkbox" onchange="togglecheck(&quot;Level-0&quot;)" style="margin: 15px;"> Level-0<input type="checkbox" onchange="togglecheck(&quot;Level-1&quot;)" style="margin: 15px;" checked=""> Level-1<input type="checkbox" onchange="togglecheck(&quot;Level-2&quot;)" style="margin: 15px;" checked=""> Level-2</p>
+<div class="Level-1" style="display: block;">
 <section id="sentinel-1-level-1-ground-range-detected-grd" class="level2">
 <h2 class="anchored" data-anchor-id="sentinel-1-level-1-ground-range-detected-grd">Sentinel-1 Level 1 Ground Range Detected (GRD)</h2>
 <div class="row" style="display: flex; justify-content: space-around">
 <div class="column">
 <div class="badge-row">
-
+<a href="https://sentinel.esa.int/web/sentinel/technical-guides/sentinel-1-sar/products-algorithms/level-1-algorithms/ground-range-detected" target="_blank"><img src="https://img.shields.io/badge/-User_guide-77cc09.png" class="img-fluid" alt="User guide"></a><a href="https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel1/search.json?&amp;filter=producttype:GRD" target="_blank"><img src="https://img.shields.io/badge/-Catalog_API-77cc09?style=flat.png" class="img-fluid" alt="Catalog API"></a>
 </div>
 <div class="badge-row gutter">
-
+<img src="https://img.shields.io/badge/revisit-12--day-0A4393">
 </div>
 <div class="badge-row">
 
@@ -874,7 +928,6 @@ function scrollFunction() {
 </figure>
 </div>
 </div>
-</section></div>
 <section id="overview" class="level4">
 <h4 class="anchored" data-anchor-id="overview">Overview</h4>
 <p>The <a href="https://sentinel.esa.int/web/sentinel/user-guides/sentinel-1-sar/product-types-processing-levels/level-1" target="_blank">Sentinel 1 Level 1 GRD</a> products in this Collection consist of focused SAR data that has been detected, multi-looked and projected to ground range using the Earth ellipsoid model WGS84. The ellipsoid projection of the GRD products is corrected using the terrain height specified in the product general annotation. The terrain height used varies in azimuth but is constant in range (but can be different for each IW/EW sub-swath). Ground range coordinates are the slant range coordinates projected onto the ellipsoid of the Earth. Pixel values represent detected amplitude. Phase information is lost. The resulting product has approximately square resolution pixels and square pixel spacing with reduced speckle at a cost of reduced spatial resolution.</p>
@@ -1022,6 +1075,16 @@ VH
 VV
 </td>
 </tr>
+<tr>
+<td>
+HH
+</td>
+</tr>
+<tr>
+<td>
+HV
+</td>
+</tr>
 </tbody>
 
 </table>
@@ -1038,16 +1101,18 @@ STAC: <a href="https://stac-extensions.github.io/datacube/v1.0.0/schema.json" ta
 </div>
 </div>
 </section>
-
+</section>
+</div>
+<div class="Level-1" style="display: block;">
 <section id="sentinel-1-level-1-single-look-complex-slc" class="level2">
 <h2 class="anchored" data-anchor-id="sentinel-1-level-1-single-look-complex-slc">Sentinel-1 Level 1 Single Look Complex (SLC)</h2>
 <div class="row" style="display: flex; justify-content: space-around">
 <div class="column">
 <div class="badge-row">
-
+<a href="https://sentinel.esa.int/web/sentinel/technical-guides/sentinel-1-sar/products-algorithms/level-1-algorithms/single-look-complex" target="_blank"><img src="https://img.shields.io/badge/-User_guide-77cc09.png" class="img-fluid" alt="User guide"></a><a href="https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel1/search.json?&amp;filter=producttype:SLC" target="_blank"><img src="https://img.shields.io/badge/-Catalog_API-77cc09?style=flat.png" class="img-fluid" alt="Catalog API"></a>
 </div>
 <div class="badge-row gutter">
-
+<img src="https://img.shields.io/badge/revisit-12--day-0A4393">
 </div>
 <div class="badge-row">
 
@@ -1061,7 +1126,6 @@ STAC: <a href="https://stac-extensions.github.io/datacube/v1.0.0/schema.json" ta
 </figure>
 </div>
 </div>
-</section></div>
 <section id="overview-1" class="level4">
 <h4 class="anchored" data-anchor-id="overview-1">Overview</h4>
 <p>The <a href="https://sentinels.copernicus.eu/web/sentinel/technical-guides/sentinel-1-sar/products-algorithms/level-1-algorithms/single-look-complex" target="_blank">Sentinel 1 Level 1 SLC</a> products are images in the slant range by azimuth imaging plane, in the image plane of satellite data acquisition. Each image pixel is represented by a complex (I and Q) magnitude value and therefore contains both amplitude and phase information. Each I and Q value is 16 bits per pixel. The processing for all SLC products results in a single look in each dimension using the full available signal bandwidth. The imagery is geo-referenced using orbit and attitude data from the satellite.</p>
@@ -1183,7 +1247,9 @@ STAC: <a href="https://stac-extensions.github.io/datacube/v2.2.0/schema.json" ta
 </div>
 </div>
 </section>
-
+</section>
+</div>
+<div class="Level-2" style="display: block;">
 <section id="sentinel-1-level-2-ocean-ocn" class="level2">
 <h2 class="anchored" data-anchor-id="sentinel-1-level-2-ocean-ocn">Sentinel-1 Level 2 Ocean (OCN)</h2>
 <div class="row" style="display: flex; justify-content: space-around">
@@ -1192,7 +1258,7 @@ STAC: <a href="https://stac-extensions.github.io/datacube/v2.2.0/schema.json" ta
 <a href="https://sentinels.copernicus.eu/web/sentinel/user-guides/sentinel-1-sar/product-types-processing-levels/level-2" target="_blank"><img src="https://img.shields.io/badge/-User_guide-77cc09.png" class="img-fluid" alt="User guide"></a><a href="https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel1/search.json?&amp;filter=producttype:OCN" target="_blank"><img src="https://img.shields.io/badge/-Catalog_API-77cc09?style=flat.png" class="img-fluid" alt="Catalog API"></a>
 </div>
 <div class="badge-row gutter">
-
+<img src="https://img.shields.io/badge/revisit-12--day-0A4393">
 </div>
 <div class="badge-row">
 
@@ -1300,6 +1366,8 @@ Temporal Interval
 </div>
 </section>
 </section>
+</div>
+<div class="Level-0" style="display: block;">
 <section id="sentinel-1-level-0" class="level2">
 <h2 class="anchored" data-anchor-id="sentinel-1-level-0">Sentinel-1 Level 0</h2>
 <div class="row" style="display: flex; justify-content: space-around">
@@ -1308,7 +1376,7 @@ Temporal Interval
 <a href="https://sentinels.copernicus.eu/web/sentinel/user-guides/sentinel-1-sar/product-types-processing-levels/level-0" target="_blank"><img src="https://img.shields.io/badge/-User_guide-77cc09.png" class="img-fluid" alt="User guide"></a><a href="https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel1/search.json?&amp;filter=producttype:SLC%20AND%20sensoroperationalmode:EW" target="_blank"><img src="https://img.shields.io/badge/-Catalog_API-77cc09?style=flat.png" class="img-fluid" alt="Catalog API"></a>
 </div>
 <div class="badge-row gutter">
-
+<img src="https://img.shields.io/badge/revisit-12--day-0A4393">
 </div>
 <div class="badge-row">
 
@@ -1418,15 +1486,14 @@ Jul 2023
 
 </table>
 <p>(*) temporary offer available until the target service offer becomes available in July 2023.</p>
+</section>
+</section>
+</div>
 <script>function toggleContent(id){var x = document.getElementById(id);if (x.style.display === "none"){x.style.display = "block";} else {x.style.display = "none";}}</script>
-</section>
-</section>
-</main></div>
 
 
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/eu-cdse/documentation/issues" class="toc-action">Report an issue</a></p></div></div></div></div></footer>
 
- <!-- /main -->
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
@@ -1660,7 +1727,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script>
-<nav class="page-navigation column-page-right">
+<nav class="page-navigation column-body">
   <div class="nav-page nav-page-previous">
       <a href="../Data/Dashboard.html" class="pagination-link">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Copernicus Operations Dashboard</span>
@@ -1672,7 +1739,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       </a>
   </div>
 </nav>
- <!-- /content -->
+</div> <!-- /content -->
 
 
 
