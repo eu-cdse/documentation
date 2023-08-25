@@ -129,7 +129,7 @@ def togglescript():
 def detailblock(ID,xy,time,table,link_block,license_button,cite):
     
     if any(val for val in (xy, time, table, link_block) if not val.isspace() and val != ""):
-        bandinfo = f"""<button onclick="toggleContent('{ID}')" class="expand-collapse">Further details about the data collection</button><div class="expand-content" id="{ID}" style="display:none;"><div class="row" style="display: flex; justify-content: space-around"><div class="column">{license_button}&nbsp;&nbsp;{cite}</div></div><div class="row" style="display: flex; justify-content: space-around"><div class="column">{xy}</div><div class="column">{time}</div></div><div>{table}</div><div>{link_block}</div></div>"""
+        bandinfo = f"""<button onclick="toggleContent('{ID}')" class="expand-collapse">Further details about the data collection</button><div class="expand-content" id="{ID}" style="display:none;"><div class="row" style="display: flex; justify-content: space-around"><div class="column">{license_button}&nbsp;&nbsp;{cite}</div></div><div class="row" style="display: flex; justify-content: space-around"><div class="column">{xy}</div><div class="column">{time}</div></div><div style="overflow-y: scroll; height:300px;">{table}</div><div>{link_block}</div></div>"""
     else:
         bandinfo = ""
     return bandinfo
@@ -169,11 +169,11 @@ def get_extent(c):
 from tabulate import tabulate
 
 def get_bandtable(c):
-    tabletitle = "Spectral Bands"
+    tabletitle = "Spectral Layers"
     try:
         band_num = len(c['summaries']['eo:bands'])
         t = []
-        headers = ["Band Name", "Common Name", "GSD(m)", "Center Wavelength(μm)"]
+        headers = ["Layer Name", "Common Name", "GSD(m)", "Center Wavelength(μm)"]
         empty_columns = [True] * len(headers)  # Track empty columns
         
         for i in range(band_num):
@@ -201,7 +201,7 @@ def get_bandtable(c):
             table = tabulate(t, headers=headers, tablefmt='html', floatfmt=".4f", stralign="left", numalign="center")
             # Set the minimum width of each column to 100 pixels
             table = table.replace("<table>", '<table class="table">')
-            table = f"""<h5>{tabletitle}</h5>{table}"""
+            table = f"""<h5 style="position: sticky; top: 0; background-color:#f6f6f6">{tabletitle}</h5>{table}"""
     except:
         table = ""
     
