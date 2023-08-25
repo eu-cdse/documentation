@@ -4,7 +4,7 @@ import json
 from IPython.display import display, Markdown, Latex,HTML
 from tabulate import tabulate
 
-from Datafunctions import DataAvailabilty 
+from Datafunctions import data_availability, filter_levels
 ```
 
 ```{python}
@@ -23,10 +23,7 @@ meta = [ c for c in meta if constellation in c["constellation"] ]
 dummy_thumb = "https://www.esa.int/var/esa/storage/images/esa_multimedia/images/2015/06/northwest_italy_and_southern_france/15492215-1-eng-GB/Northwest_Italy_and_southern_France_pillars.jpg"
 
 def get_thumbnail(c):
-    try:
-        thumb_url = c["assets"]["thumbnail"]["href"]
-    except:
-        thumb_url = ""
+    thumb_url = c.get("assets", {}).get("thumbnail",{}).get("href", "")
     return thumb_url
 
 ```
@@ -38,7 +35,7 @@ def thumbblock(src,userguide, opensearch, gsd,revisit_time, datatype, frequency)
 
     if src or userguide or opensearch or gsd or revisit_time or datatype or frequency:
         if src:
-            thumb =  f"""<div class="row" style="display: flex; justify-content: space-around"><div class="column"><div class="badge-row"></div><div class="badge-row gutter">{gsd}{revisit_time}{frequency}</div><div class="badge-row">{datatype}</div></div><div class="column" style="margin-right:10%; margin-left:auto; text-align: right;"><figure><img width="165" height="150" src={src}><figcaption align="center">{databrowser}</figcaption></figure></div></div></div>"""
+            thumb =  f"""<div class="row" style="display: flex; justify-content: space-around"><div class="column"><div class="badge-row">{userguide}{opensearch}</div><div class="badge-row gutter">{gsd}{revisit_time}{frequency}</div><div class="badge-row">{datatype}</div></div><div class="column" style="margin-right:10%; margin-left:auto; text-align: right;"><figure><img width="165" height="150" src={src}><figcaption align="center">{databrowser}</figcaption></figure></div></div>"""
         else:
             thumb =  f"""<div class="row" style="display: flex; justify-content: space-around"><div class="column"><div class="badge-row">{userguide}{opensearch}</div><div class="badge-row gutter">{gsd}{revisit_time}{frequency}</div><div class="badge-row">{datatype}</div></div><div class="column" style="margin-right:10%; margin-left:auto; text-align: right;"></div></div>"""
         return thumb
@@ -78,7 +75,7 @@ def get_stac(c):
             if item.startswith('http'):
                 stac_url = f"""STAC: <a href="{item}" target="_blank">{item}</a>"""
                 break  # exit the loop once you've found the link        
-    except:
+    except Exception:
         stac_url = ""
     return stac_url
 ```
@@ -89,7 +86,7 @@ def get_wmts():
         wmts = find_link(rel="wmts",title_contains="Web Map Tile Service")
         if wmts is not None:
             url = f"""WMTS:  <a href="{wmts}" target="_blank">{wmts}</a>""" 
-    except:
+    except Exception:
         url = ""
     return url
 ```
@@ -101,7 +98,7 @@ def get_source():
         source = find_link(rel="source")
         if source is not None:
             url = f"""Source:  <a href="{source}" target="_blank">{source}</a>""" 
-    except:
+    except Exception:
         url = ""
     return url
 ```
@@ -158,12 +155,12 @@ def get_extent(c):
         extent = c["extent"]
         spatial = extent['spatial']['bbox']
         spatial = f'<h5>Spatial Extent</h5> {spatial}'
-    except:
+    except Exception:
         spatial = ""
     try:
         temporal = extent['temporal']['interval']
         temporal = f'<h5>Temporal Interval</h5> {temporal}'
-    except:
+    except Exception:
         temporal = ""
     return spatial,temporal
 ```
@@ -181,27 +178,10 @@ def get_bandtable(c):
         
         for i in range(band_num):
             band_data = c['summaries']['eo:bands'][i]
-            
-            try:
-                band = band_data['name']
-            except:
-                band = ""
-            
-            try:
-                c_name = band_data['common_name']
-            except:
-                c_name = ''
-            
-            try:
-                b_gsd = band_data['gsd']
-            except:
-                b_gsd = ''
-            
-            try:
-                b_wavelength = band_data['center_wavelength']
-            except:
-                b_wavelength = ''
-            
+            band = band_data.get("name", "")    
+            c_name = band_data.get("common_name", "")  
+            b_gsd = band_data.get("gsd", "")
+            b_wavelength = band_data.get("center_wavelength", "")               
             row = [band, c_name, b_gsd, b_wavelength]
             t.append(row)
             
@@ -231,54 +211,38 @@ def get_bandtable(c):
 
 ```
 
+
 ```{python}
 # for loop to display the content
 text = ''
+categories=[]
 
 for c in meta:
 
     title = c["title"]
-    try:
-        resolution = c["gsd"] 
-    except:
-        resolution = ""
-    try:
-        revisit = c["revisit"] 
-    except:
-        revisit = ""
-    try:
-        datatype = c["type"] 
-    except:
-        datatype = ""
-        
-    try:
-        collectionID = c["id"]
-    except:
-        collectionID = ""
+    resolution = c.get("gsd", "")
+    revisit = c.get("revisit", "")
+    datatype = c.get("type", "")   
+    collectionID = c.get("id", "")       
 
     try:
         for i in c["data_product"]:
-            LevelID = c["data_product"][i]["Level_ID"]
-            About = c["data_product"][i]["description"]
-            levelids.append((LevelID,About))
-    except:
-        LevelID = ""
-        About = ""
+            levelID = c["data_product"][i]["Level_ID"]
+            about_product = c["data_product"][i]["description"]
+            levelids.append((levelID,about_product))
+    except Exception:
+        levelID = ""
+        about_product = ""
 
-    try:
-        license_type = c["license"]
-    except:
-        license_type = "" 
 
-    try: 
-        sci_cite = c["sci:citation"]
-    except:
-        sci_cite = ""
-
-    try:
-        frequency = c["summaries"]["Frequency"]
-    except:
-        frequency = ""
+    license_type = c.get("license", "")
+    sci_cite = c.get("sci:citation", "")
+    frequency = c.get('summaries',{}).get('Frequency',"")
+    category = c.get("Category", "")
+    if category != "":
+        categories.append(category)
+    else:
+        pass
 
     # insert thumbnail
     thumb_url = get_thumbnail(c)
@@ -293,7 +257,7 @@ for c in meta:
     table = get_bandtable(c)
 
     # include offer table
-    offer = DataAvailabilty.main(c)
+    offer = data_availability.main(c)
     
     links = { l["rel"] + l.get("title",""):l["href"] for l in c.get("links",[])}
     userguide = find_link(rel="about",title_contains="User")
@@ -334,7 +298,7 @@ for c in meta:
         gsd = ""
 
     if revisit is not None and  revisit != "":
-        revisit_time = f"""<img src="https://img.shields.io/badge/revisit-{revisit}--daily-0A4393"/>"""
+        revisit_time = f"""<img src="https://img.shields.io/badge/revisit-{revisit}--day-0A4393"/>"""
     else:
         revisit_time = ""
 
@@ -358,6 +322,10 @@ for c in meta:
 
     text = text + f"""
 
+<div class="{category}" style="display: block;">
+
+<div>
+
 ## {title}
 
 {thumbblock(thumb_url,userguide,opensearch,gsd,revisit_time,datatype,Updated_freq)}
@@ -371,13 +339,16 @@ for c in meta:
 
 {detailblock(collectionID,spatial,temporal,table,link_block,license_button,cite )}
 
+</div>
+
+</div>
 
 """
 
 ```
 
 ```{python}
-text = text + togglescript()
+text = filter_levels.createcheckboxes(sorted(set(categories))) +text + togglescript()
 
 display(Markdown(text))
 
