@@ -45,17 +45,24 @@ def mergecells(tabletxt):
 ######################## FUNCTION TO REMOVE EMPTY COLUMNS #######################
 def removeempty(t,headers):
     empty_columns=[]
+    t_new=[]
+    # print(t)
     for j in range(len(t[0])):
         column_values = [row[j] for row in t]
         if all(value == '' for value in column_values):
             empty_columns.append(j)
     # print(empty_columns)
     if empty_columns:
-
         # Remove empty columns
-        t= [[row[i] for i,_ in enumerate(headers) if i not in empty_columns for row in t]]
+        for row in t:
+            t_temp=[]
+            for i,_ in enumerate(headers):
+                if i not in empty_columns:
+                    t_temp.append(row[i])
+            t_new.append(t_temp)
         headers = [header for i, header in enumerate(headers) if i not in empty_columns]
-        return t,headers
+        # print(t_new,headers)
+        return t_new,headers
     else:
         return t,headers
     
