@@ -126,10 +126,10 @@ def togglescript():
 ```{python}
 # include detail block
 
-def detailblock(ID,xy,time,table,link_block,license_button,cite):
+def detailblock(ID,xy,time,table,subproduct_table,link_block,license_button,cite):
     
     if any(val for val in (xy, time, table, link_block) if not val.isspace() and val != ""):
-        bandinfo = f"""<button onclick="toggleContent('{ID}')" class="expand-collapse">Further details about the data collection</button><div class="expand-content" id="{ID}" style="display:none;"><div class="row" style="display: flex; justify-content: space-around"><div class="column">{license_button}&nbsp;&nbsp;{cite}</div></div><div class="row" style="display: flex; justify-content: space-around"><div class="column">{xy}</div><div class="column">{time}</div></div><div>{table}</div><div>{link_block}</div></div>"""
+        bandinfo = f"""<button onclick="toggleContent('{ID}')" class="expand-collapse">Further details about the data collection</button><div class="expand-content" id="{ID}" style="display:none;"><div class="row" style="display: flex; justify-content: space-around"><div class="column">{license_button}&nbsp;&nbsp;{cite}</div></div><div class="row" style="display: flex; justify-content: space-around"><div class="column">{xy}</div><div class="column">{time}</div></div><div>{table}</div><div>{subproduct_table}</div><div>{link_block}</div></div>"""
     else:
         bandinfo = ""
     return bandinfo
@@ -207,7 +207,47 @@ def get_bandtable(c):
     
     return table
 
+```
 
+```{python}
+from tabulate import tabulate
+
+def get_subproduct(c):
+    tabletitle = "Sub-Datasets"
+    try:
+        band_num = len(c['summaries']['subproduct'])
+        t = []
+        headers = ["Variable Name", "Description", "Units", "Input Bands"]
+        empty_columns = [True] * len(headers)  # Track empty columns
+        for i in range(band_num):
+            product_data = c['summaries']['subproduct'][i]
+            variable = product_data.get("variable", "")    
+            description = product_data.get("description", "")  
+            dimensions = product_data.get("dimensions", "")
+            input_bands = product_data.get("input_bands", "")               
+            row = [variable, description, dimensions, input_bands]
+            t.append(row)
+            # Check for empty columns
+            for j, value in enumerate(row):
+                if value:
+                    empty_columns[j] = False
+        
+        # Remove empty columns from headers and table rows
+        headers = [header for i, header in enumerate(headers) if not empty_columns[i]]
+        t = [[row[i] for i, value in enumerate(row) if not empty_columns[i]] for row in t]
+        
+        # Check if all columns are empty
+        if len(headers) == 0:
+            table = ""
+        else:
+            table = tabulate(t, headers=headers, tablefmt='html', floatfmt=".4f", stralign="center", numalign="center")
+            # Set the minimum width of each column to 100 pixels
+            table = table.replace("<table>", '<table class="table">')
+            table = f"""<h5>{tabletitle}</h5>{table}"""
+    except:
+        table = ""
+    
+    return table
 
 ```
 
@@ -255,6 +295,10 @@ for c in meta:
 
     # include spectral band table
     table = get_bandtable(c)
+
+    #include sub-product table
+    subproduct_table = get_subproduct(c)
+
 
     # include offer table
     offer = data_availability.main(c)
@@ -336,8 +380,7 @@ for c in meta:
 
 {offer}
 
-
-{detailblock(collectionID,spatial,temporal,table,link_block,license_button,cite )}
+{detailblock(collectionID,spatial,temporal,table,subproduct_table,link_block,license_button,cite )}
 
 </div>
 
