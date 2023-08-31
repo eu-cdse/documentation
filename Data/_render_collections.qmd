@@ -126,10 +126,10 @@ def togglescript():
 ```{python}
 # include detail block
 
-def detailblock(ID,xy,time,table,subproduct_table,link_block,license_button,cite):
+def detailblock(ID,xy,time,table,producttype_table,link_block,license_button,cite):
     
     if any(val for val in (xy, time, table, link_block) if not val.isspace() and val != ""):
-        bandinfo = f"""<button onclick="toggleContent('{ID}')" class="expand-collapse">Further details about the data collection</button><div class="expand-content" id="{ID}" style="display:none;"><div class="row" style="display: flex; justify-content: space-around"><div class="column">{license_button}&nbsp;&nbsp;{cite}</div></div><div class="row" style="display: flex; justify-content: space-around"><div class="column">{xy}</div><div class="column">{time}</div></div><div>{table}</div><div>{subproduct_table}</div><div>{link_block}</div></div>"""
+        bandinfo = f"""<button onclick="toggleContent('{ID}')" class="expand-collapse">Further details about the data collection</button><div class="expand-content" id="{ID}" style="display:none;"><div class="row" style="display: flex; justify-content: space-around"><div class="column">{license_button}&nbsp;&nbsp;{cite}</div></div><div class="row" style="display: flex; justify-content: space-around"><div class="column">{xy}</div><div class="column">{time}</div></div><div>{table}</div><div>{producttype_table}</div><div>{link_block}</div></div>"""
     else:
         bandinfo = ""
     return bandinfo
@@ -212,15 +212,15 @@ def get_bandtable(c):
 ```{python}
 from tabulate import tabulate
 
-def get_subproduct(c):
-    tabletitle = "Sub-Datasets"
+def get_producttype(c):
+    tabletitle = "Product Type"
     try:
-        band_num = len(c['summaries']['subproduct'])
+        band_num = len(c['summaries']['producttype'])
         t = []
         headers = ["Variable Name", "Description", "Units", "Input Bands"]
         empty_columns = [True] * len(headers)  # Track empty columns
         for i in range(band_num):
-            product_data = c['summaries']['subproduct'][i]
+            product_data = c['summaries']['producttype'][i]
             variable = product_data.get("variable", "")    
             description = product_data.get("description", "")  
             dimensions = product_data.get("dimensions", "")
@@ -297,7 +297,7 @@ for c in meta:
     table = get_bandtable(c)
 
     #include sub-product table
-    subproduct_table = get_subproduct(c)
+    producttype_table = get_producttype(c)
 
 
     # include offer table
@@ -380,7 +380,7 @@ for c in meta:
 
 {offer}
 
-{detailblock(collectionID,spatial,temporal,table,subproduct_table,link_block,license_button,cite )}
+{detailblock(collectionID,spatial,temporal,table,producttype_table,link_block,license_button,cite )}
 
 </div>
 
