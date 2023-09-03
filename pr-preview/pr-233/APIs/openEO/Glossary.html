@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.433">
+<meta name="generator" content="quarto-1.3.450">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -31,6 +31,7 @@ ul.task-list li input[type="checkbox"] {
 <meta name="quarto:offset" content="../../">
 <link href="../../APIs/openEO/Python_Client/Python.html" rel="next">
 <link href="../../APIs/openEO/openEO.html" rel="prev">
+<link href="../../_images/logos/favicon.png" rel="icon" type="image/png">
 <script src="../../site_libs/quarto-html/quarto.js"></script>
 <script src="../../site_libs/quarto-html/popper.min.js"></script>
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -86,6 +87,32 @@ function scrollFunction() {
   
   window.addEventListener('scroll', scrollFunction);
 </script>
+
+
+<script>
+function togglecheck(className, displayState){
+  var elements = document.getElementsByClassName(className)
+  for (var i = 0; i < elements.length; i++){
+  if (elements[i].style.display === "none") {
+    elements[i].style.display = "block";
+  } else {
+    elements[i].style.display = "none";
+  }
+  }
+}
+window.onload = function() {
+      // Modify this array to contain the levelids of checkboxes that should be unchecked by default
+      var uncheckedByDefault = ["Level-0"];
+  
+      for (var i = 0; i < uncheckedByDefault.length; i++) {
+          togglecheck(uncheckedByDefault[i], "none");
+      }
+  };
+</script>
+
+
+
+
 
 
 <link rel="stylesheet" href="../../custom.css">
@@ -296,12 +323,6 @@ function scrollFunction() {
  <span class="menu-text">Additional Complementary Data</span></a>
   </div>
 </li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../Data/VHR.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">VHR Commercial Data</span></a>
-  </div>
-</li>
       </ul>
   </li>
       </ul>
@@ -318,7 +339,7 @@ function scrollFunction() {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../APIs/Token.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Keycloak Token</span></a>
+ <span class="menu-text">Access Token</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -788,6 +809,12 @@ function scrollFunction() {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../../Applications/DataWorkspace.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">About Data Workspace</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../../Applications/AlgorithmPlaza.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">openEO algorithm plaza</span></a>
   </div>
@@ -833,6 +860,7 @@ function scrollFunction() {
   <li><a href="#processes" id="toc-processes" class="nav-link" data-scroll-target="#processes">Processes</a></li>
   <li><a href="#eo-data-collections" id="toc-eo-data-collections" class="nav-link" data-scroll-target="#eo-data-collections">EO data (Collections)</a></li>
   <li><a href="#spatial-datacubes" id="toc-spatial-datacubes" class="nav-link" data-scroll-target="#spatial-datacubes">Spatial datacubes</a></li>
+  <li><a href="#vector-data" id="toc-vector-data" class="nav-link" data-scroll-target="#vector-data">Vector data</a></li>
   <li><a href="#user-defined-function-udf" id="toc-user-defined-function-udf" class="nav-link" data-scroll-target="#user-defined-function-udf">User-defined function (UDF)</a></li>
   <li><a href="#data-processing-modes" id="toc-data-processing-modes" class="nav-link" data-scroll-target="#data-processing-modes">Data Processing modes</a></li>
   </ul>
@@ -865,27 +893,43 @@ function scrollFunction() {
 <li><strong>EO</strong>: Earth Observation</li>
 <li><strong>API</strong>: Application Programming Interface (<a href="https://en.wikipedia.org/wiki/Application_programming_interface" target="_blank">wikipedia</a>), a (standardized) communication protocol, for example between a client application and back-end service</li>
 <li><strong>client</strong>: Software tool, framework or environment that an end-user directly interacts with. For example: a Jupyter notebook, a Python script/application, an RStudio session, a JavaScript based web app, etc.</li>
-<li><strong>back-end</strong>: computer (cloud) infrastructure that takes care of the actual EO (big) data storage and processing. The end-user only interacts with the back-end through a standardized API, while the operational complexity is hidden.</li>
+<li><strong>back-end</strong>: server; computer infrastructure (one or more physical computers or virtual machines) used for storing EO data and processing it. Additionally, here, industry and researchers can analyse large amounts of EO data.</li>
 </ul>
 </section>
 <section id="processes" class="level2">
 <h2 class="anchored" data-anchor-id="processes">Processes</h2>
 <p>A <strong>process</strong> is an operation that performs a specific task on a set of parameters and returns a result. An example is computing a statistical operation, such as mean or median, on selected EO data. A process is similar to a function or method in programming languages.</p>
-<p>A <strong>pre-defined process</strong> is a process provided by the <em>back-end</em>, typically one of the <a href="https://processes.openeo.org/" target="_blank">processes centrally defined by openeo.org</a>.</p>
+<p>A <strong>pre-defined process</strong> is a process provided by the <em>back-end</em>, typically <a href="https://processes.openeo.org/" target="_blank">one of the processes centrally defined by openeo.org</a>.</p>
 <p>A <strong>user-defined process</strong> is a process defined by the <em>user</em>. It can directly be part of another process graph or be stored as custom process on a back-end. Internally it is a <em>process graph</em> with optional additional metadata.</p>
-<p>A <strong>process graph</strong> chains specific process calls from the set of pre-defined and user-defined processes together. A process graph itself is a (user-defined) process again.</p>
+<p>A <strong>process graph</strong> chains specific process calls from the set of pre-defined and user-defined processes together. A process graph itself is a (user-defined) process again. Similarly to scripts in the context of programming, process graphs organize and automate the execution of one or more processes that could alternatively be executed individually.</p>
 </section>
 <section id="eo-data-collections" class="level2">
 <h2 class="anchored" data-anchor-id="eo-data-collections">EO data (Collections)</h2>
-<p>In openEO, all collections can be requested using a client. These collection follows the <a href="https://github.com/radiantearth/stac-spec/blob/master/overview.md#what-is-a-spatiotemporal-asset" target="_blank">STAC (SpatioTemporal Asset Catalog) metadata specification</a>. Within openEO, a <strong>product</strong> (sometimes also called <em>item</em> or <em>asset</em> in the specification) typically refers to a limited area and a single overpass leading to a very short observation period (seconds) or a temporal aggregation of such data. A user can load (a subset of) a collection using a special process, which returns a (spatial) datacube. All further processing is then applied to the datacube on the back-end.</p>
+<p>In the Earth Observation domain, different terms are used to describe EO data(sets). Within openEO, a <strong>granule</strong> (sometimes also called <em>item</em> or <em>asset</em> in the specification) typically refers to a limited area and a single overpass leading to a very short observation period (seconds) or a temporal aggregation of such data (e.g.&nbsp;for 16-day MODIS composites). A <strong>collection</strong> is a sequence of granules sharing the same product specification. It typically corresponds to the series of products derived from data acquired by a sensor on board of a satellite and having the same mode of operation.</p>
+<p>The <a href="http://ceos.org/ourwork/workinggroups/wgiss/access/opensearch/">CEOS OpenSearch Best Practice Document v1.2</a> lists the following synonyms used by other organizations:</p>
+<ul>
+<li><strong>granule</strong>: dataset (ESA, ISO 19115), granule (NASA), product (ESA, CNES), scene (JAXA)</li>
+<li><strong>collection</strong>: dataset series (ESA, ISO 19115), collection (CNES, NASA), dataset (JAXA), product (JAXA)</li>
+</ul>
+<p>In openEO, a back-end offers a set of collections to be processed. All collections can be requested using a client and are described using the <a href="https://github.com/radiantearth/stac-spec">STAC (SpatioTemporal Asset Catalog) metadata specification</a> as STAC collections. A user can load (a subset of) a collection using a special process, which returns a (spatial) datacube. All further processing is then applied to the datacube on the back-end.</p>
 </section>
 <section id="spatial-datacubes" class="level2">
 <h2 class="anchored" data-anchor-id="spatial-datacubes">Spatial datacubes</h2>
 <p>A spatiotemporal datacube is a multidimensional array with one or more spatial or temporal dimensions. In the EO domain, it is common to be implicit about the temporal dimension and just refer to them as spatial datacubes in short. Special cases are raster and <a href="https://r-spatial.org/r/2022/09/12/vdc.html" target="_blank">vector datacubes</a>. Learn more about datacubes in the <a href="https://openeo.org/documentation/1.0/datacubes.html" target="_blank">datacube documentation</a>.</p>
 </section>
+<section id="vector-data" class="level2">
+<h2 class="anchored" data-anchor-id="vector-data">Vector data</h2>
+<p>In general, <strong>vector data</strong> represent specific things (also called “features”) in a space, e.g.&nbsp;on the surface of the Earth. It comprises of individual points stored as coordinate pairs that indicate a physical location in the world. These points can be joined, in a particular order, to form lines or joined into closed areas to form polygons.</p>
+<p>A <strong>coordinate</strong> represents a specific point in space.</p>
+<p>A <strong>feature</strong> is a thing that usually has a geometry (e.g.&nbsp;the outline of an agricultural field, a forest or an urban area) and it may have additional properties assigned (e.g.&nbsp;a name, a color or a population). In rare cases features may not have a geometry, which is often referred to as an “empty geometry”.</p>
+<p><strong>Geometries</strong> consist of one or more coordinates that may be connected and then form a specific type of geometry, e.g.&nbsp;two points can be connected to a straight line and four straight lines can be connected to rectangle.</p>
+<p>Commonly used types of geometries are: - Point - LineString (connected straight line pieces) - Polygon (connected straight line pieces forming a closed ring, possibly with holes - for example a triangle or rectangle)</p>
+<p>Further more, these base geometries can be grouped to form, for example, so-called “multi-point” or “multi-polygon” geometries. It’s important to note that these multi-geometries act as single entities with regard to their associated properties.</p>
+<p>Features and geometries are specified by the OGC in the <a href="https://www.ogc.org/standards/sfa">Simple Feature Access specification</a> (and ISO 19125). See the specification for more details.</p>
+</section>
 <section id="user-defined-function-udf" class="level2">
 <h2 class="anchored" data-anchor-id="user-defined-function-udf">User-defined function (UDF)</h2>
-<p>The abbreviation <strong>UDF</strong> stands for <a href="https://open-eo.github.io/openeo-python-client/udf.html" target="_blank"><strong>user-defined function</strong></a>. With this concept, users are able to upload custom code and have it executed e.g.&nbsp;for every pixel of a scene, or applied to a particular dimension or set of dimensions, allowing custom server-side calculations.</p>
+<p>The abbreviation <strong>UDF</strong> stands for <strong>user-defined function</strong>. With this concept, users are able to upload custom code and have it executed e.g.&nbsp;for every pixel of a scene, or applied to a particular dimension or set of dimensions, allowing custom server-side calculations. See the section on <a href="https://open-eo.github.io/openeo-python-client/udf.html" target="_blank">UDFs</a> for more information.</p>
 </section>
 <section id="data-processing-modes" class="level2">
 <h2 class="anchored" data-anchor-id="data-processing-modes">Data Processing modes</h2>
