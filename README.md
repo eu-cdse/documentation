@@ -1,4 +1,4 @@
-# Copernicus Data Space Ecosystem documentation portal
+# Copernicus Data Space Ecosystem Documentation Portal
 This repo contains the source code for the [quarto](https://quarto.org/) technical documentation portal for the Copernicus Data Space Ecosystem.
 
 ## Branches
