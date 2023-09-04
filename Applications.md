@@ -30,3 +30,8 @@ The openEO Web Editor is a web app that allows users to interact with an openEO 
 
 Jupyter Hub is an open-source, online, interactive web application. It gives access to computational 
 environments and resources without burdening the users with installation and maintenance tasks. JupyterHub provides a multi-user environment for hosting JupyterLab or Jupyter Notebook instances. Therefore, registered Copernicus Data Space Users have access to JupyterLab and Jupyter Notebooks free of charge at a limited capacity of resources beneath. You can access them with the same Copernicus Data Space Ecosystem credentials.
+
+## [QGIS Plugin](Applications/QGIS.qmd)
+
+The Sentinel Hub QGIS plugin allows you to bring satellite imagery directly into your GIS. You can compare images directly with your GIS data to evaluate accuracy, detect change, assess land cover based on time series and more. Use your Copernicus Data Space Ecosystem user account for free authentication or your Sentinel Hub account for additional data.
+
