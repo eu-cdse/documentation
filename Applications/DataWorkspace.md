@@ -66,7 +66,7 @@ After the processing status is Finished/Completed, the ordered product is availa
 
 [https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A_IW_GRDH_1SDV_20230729T092359_20230729T092424_049636_05F7FC_0A61%27](https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A_IW_GRDH_1SDV_20230729T092359_20230729T092424_049636_05F7FC_0A61%27))
 
-Downloading from the catalogue is done in the same way as described in the <a href="https://documentation.dataspace.copernicus.eu/APIs/OData.html#product-download" target="_blank">manual</a>.
+Downloading from the catalogue is done in the same way as described in the <a href="https://documentation.dataspace.copernicus.eu/APIs/OData.html#product-download" target="_blank">OData Product Download</a> documentation.
 
 ## Processing products
 
@@ -118,4 +118,4 @@ After the processing status is Finished/Completed, the processed product is avai
 
 [https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A_IW_GRDH_1SDV_20230729T092359_20230729T092424_049636_05F7FC_0A61%27](https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A_IW_GRDH_1SDV_20230729T092359_20230729T092424_049636_05F7FC_0A61%27))
 
-You will find both the product on which the product has been processed and the product after processing. Downloading from the catalogue is done in the same way as described in the <a href="https://documentation.dataspace.copernicus.eu/APIs/OData.html#product-download" target="_blank">manual</a>.
+You will find both the product on which the product has been processed and the product after processing. Downloading from the catalogue is done in the same way as described in the <a href="https://documentation.dataspace.copernicus.eu/APIs/OData.html#product-download" target="_blank">OData Product Download</a> documentation.
