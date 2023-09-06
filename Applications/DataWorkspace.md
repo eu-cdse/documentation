@@ -62,6 +62,10 @@ You will get a confirmation of your order. You can check its status under the **
 
 ![Order confirmation](_images/DW-order_3.png)
 
+After the processing status is Finished/Completed, the ordered product is available in the catalogue and you can look it up via the API using various searches, for example by name: https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A_IW_GRDH_1SDV_20230729T092359_20230729T092424_049636_05F7FC_0A61%27)
+
+Downloading from the catalogue is done in the same way as described in the <a href="https://documentation.dataspace.copernicus.eu/APIs/OData.html#product-download" target="_blank">manual</a>.
+
 ## Processing products
 
 Processing products in the Processing center allows user to transform products in a way that they could become useful for certain cases. The method of processing and its outcome is defined for each avaliable processor used for the process.
@@ -107,3 +111,7 @@ You will be redirected to the **Processing Status** tab.
 ![Processing status tab](_images/DW-process_10.png)
 
 From here you can check ongoing processing orders. Once they will be finished, they shall be transfered to the list of orders under **Finished** tab.
+
+After the processing status is Finished/Completed, the processed product is available in the catalogue and you can look it up via the API using various searches, for example by name: https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A_IW_GRDH_1SDV_20230729T092359_20230729T092424_049636_05F7FC_0A61%27)
+
+You will find both the product on which the product has been processed and the product after processing. Downloading from the catalogue is done in the same way as described in the <a href="https://documentation.dataspace.copernicus.eu/APIs/OData.html#product-download" target="_blank">manual</a>.
