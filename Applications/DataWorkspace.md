@@ -64,7 +64,7 @@ You will get a confirmation of your order. You can check its status under the **
 
 After the processing status is Finished/Completed, the ordered product is available in the catalogue and you can look it up via the API using various searches, for example by name:
 
-[https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,'S1A_IW_GRDH_1SDV_20230729T092359_20230729T092424_049636_05F7FC_0A61')](https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,'S1A_IW_GRDH_1SDV_20230729T092359_20230729T092424_049636_05F7FC_0A61')){target="_blank"}
+<a href="https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,'S1A_IW_GRDH_1SDV_20230729T092359_20230729T092424_049636_05F7FC_0A61')" target="_blank">https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,'S1A_IW_GRDH_1SDV_20230729T092359_20230729T092424_049636_05F7FC_0A61')</a>
 
 Downloading from the catalogue is done in the same way as described in the <a href="https://documentation.dataspace.copernicus.eu/APIs/OData.html#product-download" target="_blank">OData Product Download</a> documentation.
 
@@ -116,6 +116,6 @@ From here you can check ongoing processing orders. Once they will be finished, t
 
 After the processing status is Finished/Completed, the processed product is available in the catalogue and you can look it up via the API using various searches, for example by name:
 
-[https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,'S1A_IW_GRDH_1SDV_20230729T092359_20230729T092424_049636_05F7FC_0A61')](https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,'S1A_IW_GRDH_1SDV_20230729T092359_20230729T092424_049636_05F7FC_0A61')){target="_blank"}
+<a href="https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,'S1A_IW_GRDH_1SDV_20230729T092359_20230729T092424_049636_05F7FC_0A61')" target="_blank">https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,'S1A_IW_GRDH_1SDV_20230729T092359_20230729T092424_049636_05F7FC_0A61')</a>
 
 You will find both the product on which the product has been processed and the product after processing. Downloading from the catalogue is done in the same way as described in the <a href="https://documentation.dataspace.copernicus.eu/APIs/OData.html#product-download" target="_blank">OData Product Download</a> documentation.
