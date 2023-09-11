@@ -23,10 +23,10 @@ on the data collection, area, time range or any other selection criteria availab
 ### Catalog APIs news
 This section provides the detailed information about upcoming changes and the changelog of the implemented updates. The releases include all APIs interfaces. To avoid disruption to your scripts or apps, we recommend reviewing the upcoming changes and the latest release notes described below.
 
-##### 1. [Upcoming changes](APIs/UpcomingChanges.qmd)
+#### 1. [Upcoming changes](APIs/UpcomingChanges.qmd)
 Upcoming changes to be implemented to Catalog APIs.
 
-##### 2. [Release notes](APIs/ReleaseNotes.qmd)
+#### 2. [Release notes](APIs/ReleaseNotes.qmd)
 Release notes of the Catalog APIs. 
 
 ## Streamlined data access
