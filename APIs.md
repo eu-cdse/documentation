@@ -23,8 +23,8 @@ on the data collection, area, time range or any other selection criteria availab
 ### Catalog APIs news
 This section provides detailed information about upcoming changes and the changelog of the implemented updates. The releases include all APIs interfaces. To avoid disruption to your scripts or apps, we recommend reviewing the upcoming changes and the latest release notes described below:
 
-#### 1. [Upcoming changes](APIs/UpcomingChanges.qmd)
-Upcoming changes to be implemented to Catalog APIs.
+#### 1. Upcoming Changes
+We've put together a list of potential updates related to OpenSearch and the OData API as of September 2023. ou can find a detailed comparison of these changes [here](APIs/UpcomingChanges.qmd).
 
 #### 2. Release notes
 The [release notes document](APIs/ReleaseNotes.qmd) provides you with a comprehensive list of modifications made to the Catalog APIs for every release.
