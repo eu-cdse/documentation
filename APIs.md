@@ -26,8 +26,8 @@ This section provides detailed information about upcoming changes and the change
 #### 1. [Upcoming changes](APIs/UpcomingChanges.qmd)
 Upcoming changes to be implemented to Catalog APIs.
 
-#### 2. [Release notes](APIs/ReleaseNotes.qmd)
-Release notes of the Catalog APIs. 
+#### 2. Release notes
+The [release notes document](APIs/ReleaseNotes.qmd) provides you with a comprehensive list of modifications made to the Catalog APIs for every release.
 
 ## Streamlined data access
 
