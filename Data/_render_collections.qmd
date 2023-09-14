@@ -5,7 +5,10 @@ from IPython.display import display, Markdown, Latex,HTML
 from tabulate import tabulate
 
 from Datafunctions import data_availability, filter_levels
+
 ```
+
+
 
 ```{python}
 #load the collection
@@ -211,6 +214,15 @@ def get_bandtable(c):
 
 ```
 
+```{python}
+# Display the Markdown content
+def baselineinfo(filename): 
+    # Read the content of the Markdown file
+    with open(filename, 'r') as file:
+        sentinel2_baseline = file.read()
+    info = sentinel2_baseline
+    return info
+```
 
 ```{python}
 # for loop to display the content
@@ -219,6 +231,7 @@ categories=[]
 
 for c in meta:
 
+    additional_info = ""
     title = c["title"]
     resolution = c.get("gsd", "")
     revisit = c.get("revisit", "")
@@ -241,6 +254,11 @@ for c in meta:
     category = c.get("Category", "")
     if category != "":
         categories.append(category)
+    else:
+        pass
+
+    if collectionID == "SENTINEL2_L2A":
+        additional_info = baselineinfo("Sentinel2_baseline.qmd")
     else:
         pass
 
@@ -336,8 +354,9 @@ for c in meta:
 
 {offer}
 
-
 {detailblock(collectionID,spatial,temporal,table,link_block,license_button,cite )}
+
+{additional_info}
 
 </div>
 
