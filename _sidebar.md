@@ -3,6 +3,7 @@
   * [Data](Roadmap/DataTable.html)
   * [APIs](Roadmap/APITable.html)
   * [Applications](Roadmap/AppTable.html)
+  * [Quotas](Roadmap/QuotaTable.html)
 ___
 * [User registration and authentication](Registration.qmd)
 
