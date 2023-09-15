@@ -1,4 +1,4 @@
-# Quotas and Limitations
+# User types and Quotas
 
 This section provides an overview of the different user types that exist in the Copernicus Data Space Ecosystem.
 
