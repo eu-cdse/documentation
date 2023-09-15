@@ -19,7 +19,7 @@ ___
   <!-- *  [Sentinel Hub Catalog API](APIs.md) -->
 * [Applications](Applications.md) 
   * [Browser](Applications/Browser.md)
-* [Quotas](Roadmap/Quotas.qmd)
+* [Quotas](Quotas.qmd)
 ___
 * [FAQ](FAQ.md)
 * [Support](Support.md)
