@@ -3,7 +3,6 @@
   * [Data](Roadmap/DataTable.html)
   * [APIs](Roadmap/APITable.html)
   * [Applications](Roadmap/AppTable.html)
-  * [Quotas](Roadmap/QuotaTable.html)
 ___
 * [User registration and authentication](Registration.qmd)
 
@@ -20,7 +19,6 @@ ___
   <!-- *  [Sentinel Hub Catalog API](APIs.md) -->
 * [Applications](Applications.md) 
   * [Browser](Applications/Browser.md)
-* [Quotas](Quotas.qmd)
 ___
 * [FAQ](FAQ.md)
 * [Support](Support.md)
