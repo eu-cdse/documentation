@@ -2,9 +2,322 @@
 
 This is the list of upcoming changes to Catalog APIs.
 
+## OpenSearch API error handling update
+
+Please be informed that the **OpenSearch API** error handling will be updated soon. 
+The exact date of the update will be announced [here](APIs/UpcomingChanges.qmd) in a separate release note no later than 5 days before the scheduled change.
+
+Please also note that new responses with errors will provide the `RequestId` which is intended to help identify the requests with errors. It is strongly recommended to include the `RequestId` in your issues submitted to the support team in case of Catalog API problems.
+
+The new error handling is described below.
+
+#### Incorrect collection name
+
+::: {.panel-tabset}
+
+# Current response
+```{json}
+{
+    "detail": {
+        "ErrorMessage": "loadFromStore - Not Found",
+        "ErrorCode": 404
+    }
+}
+```
+# New response
+```{json}
+{
+    "detail": {
+        "ErrorMessage": "Unknown collection.",
+        "ErrorCode": 404,
+        "ErrorDetail": [
+            {
+                "loc": [
+                    "collection"
+                ],
+                "msg": "Collection '<collection name presented in query>' does not exist.",
+            },
+        ],
+        "RequestId": <request_id>,
+    }
+}
+```
+:::
+
+**Example**
+
+::: {.panel-tabset}
+
+# HTTP Request
+
+[`https://datahub.creodias.eu/resto/api/collections/Sentinl2/search.json`](<https://datahub.creodias.eu/resto/api/collections/Sentinl2/search.json>){target="_blank"}
+
+# New response example
+```{json}
+{
+    "detail": {
+        "ErrorMessage": "Unknown collection.",
+        "ErrorCode": 404,
+        "ErrorDetail": [
+            {
+                "loc": [
+                    "collection"
+                ],
+                "msg": "Collection 'Sentinl2' does not exist."
+            },
+        ],
+        "RequestID": "70970f42-e374-4e26-8778-41a1463e700d"
+    }
+}
+
+```
+
+:::
+
+#### Incorrect name of the query parameter (when the collection is not specified)
+
+::: {.panel-tabset}
+
+# Current response
+
+No error is returned. The incorrect query parameter is ignored and not reflected in `appliedFilters`. 
+
+# New response
+
+```{json}
+{
+    "detail": {
+        "ErrorMessage": "Unknown query parameter(s).",
+        "ErrorCode": 400,
+        "ErrorDetail": [
+            {
+                "loc": [<list of unexisting parameters>],
+                "msg": "Query parameters do not exist.",
+            },
+        ],
+        "RequestId": <request_id>,
+    }
+}
+
+```
+
+:::
+
+**Example**
+
+::: {.panel-tabset}
+
+# HTTP Request
+
+[`https://datahub.creodias.eu/resto/api/collections/search.json?productsType=S2MSI1C`](<https://datahub.creodias.eu/resto/api/collections/search.json?productsType=S2MSI1C>){target="_blank"}
+
+# New response example
+```{json}
+{
+    "detail": {
+        "ErrorMessage": "Unknown query parameter(s).",
+        "ErrorCode": 400,
+        "ErrorDetail": {
+            "loc": [
+                "productsType"
+            ],
+            "msg": "Query parameters do not exist."
+        },
+        "RequestID": "d9f22173-4d56-44fd-ab18-35d6018c49d7"
+    }
+}
+```
+
+:::
+
+#### Incorrect name of the query parameter (when the collection is specified)
+
+::: {.panel-tabset}
+
+# Current response
+
+No error is returned. The incorrect query parameter is ignored and not reflected in `appliedFilters`. 
+
+# New response
+```{json}
+{
+    "detail": {
+        "ErrorMessage": "Unknown query parameter(s).",
+        "ErrorCode": 400,
+        "ErrorDetail": [
+            {
+                "loc": [<list of unexisting parameters>],
+                "msg": "Query parameters do not exist or are not available for specified collection.",
+            },
+        ],
+        "RequestId": <request_id>,
+  }
+}
+```
+
+:::
+
+**Example**
+
+::: {.panel-tabset}
+
+# HTTP Request
+
+[`https://datahub.creodias.eu/resto/api/collections/Sentinel2/search.json?productType=S2MSI1C&startDat=2023-06-11&completionDte=2023-06-22`](<https://datahub.creodias.eu/resto/api/collections/Sentinel2/search.json?productType=S2MSI1C&startDat=2023-06-11&completionDte=2023-06-22>){target="_blank"}
+
+# New response example
+```{json}
+{
+    "detail": {
+        "ErrorMessage": "Unknown query parameter(s).",
+        "ErrorCode": 400,
+        "ErrorDetail": {
+            "loc": [
+                "startDat",
+                "completionDte",
+                        ],
+            "msg": "Query parameters do not exist"
+        },
+        "RequestID": "25d522af-ba4e-4152-a368-9635d560e649"
+    }
+}
+```
+
+:::
+
+#### Incorrect value of the query parameter *(maxRecords, index, page, sortParam, sortOrder, exactCount, geometry, box, lon, lat, radius, startDate, completionDate, updated, published, publishedAfter, publishedBefore, status)*
+
+::: {.panel-tabset}
+
+# Current response
+
+```{json}
+{
+    "detail": {
+        "ErrorMessage": <error message>,
+        "ErrorCode": 400
+    }
+}
+```
+
+# New response
+
+```{json}
+{
+    "detail": {
+        "ErrorMessage": "Validation error.",
+        "ErrorCode": 400,
+        "ErrorDetail": [
+            {
+                "loc": [<list of parameters that error "msg" field relate to>],
+                "msg”: <error message>}>,
+         	},
+        ]
+        "RequestId": <request_id>,
+  }
+}
+```
+
+:::
+
+**Example**
+
+::: {.panel-tabset}
+
+# HTTP Request
+
+[`https://datahub.creodias.eu/resto/api/collections/search.json?startDate=2021-07-01T00:00:00Z&completionDate=2021-07-31T23:59:59Z&maxRecords=2001`](<https://datahub.creodias.eu/resto/api/collections/search.json?startDate=2021-07-01T00:00:00Z&completionDate=2021-07-31T23:59:59Z&maxRecords=2001>){target="_blank"}
+
+# New response example
+
+```{json}
+{
+    "detail": {
+        "ErrorMessage": "Validation error.",
+        "ErrorCode": 400,
+        "ErrorDetail": [
+            {
+                "loc": [
+                    "maxRecords"
+                ],
+                "msg": "Input should be less than or equal to 2000."
+            }
+        ],
+        "RequestID": "b3b4c0bb-9697-4ff8-b90c-4eb1b97a9914"
+    }
+}
+```
+
+:::
+
+#### Incorrect value type of the query parameter
+
+::: {.panel-tabset}
+
+# Current response
+
+```{json}
+{
+    "detail": {
+        "ErrorMessage": <error message>,
+        "ErrorCode": 400
+    }
+}
+```
+
+# New response
+```{json}
+{
+    "detail": {
+        "ErrorMessage": "Validation error.",
+        "ErrorCode": 400,
+        "ErrorDetail": [
+            {
+                "loc": [<list of parameters that error "msg" field relate to>],
+                "msg”: <error message>}>,
+         	},
+        ]
+        "RequestId": <request_id>,
+  }
+}
+```
+
+:::
+
+**Example**
+
+::: {.panel-tabset}
+
+# HTTP Request
+
+[`https://datahub.creodias.eu/resto/api/collections/search.json?orbitNumber=ascending`](<https://datahub.creodias.eu/resto/api/collections/search.json?orbitNumber=ascending>){target="_blank"}
+
+# New response example
+```{json}
+{
+    "detail": {
+        "ErrorMessage": "Validation error.",
+        "ErrorCode": 400,
+        "ErrorDetail": [
+            {
+                "loc": [
+                    "orbitNumber"
+                ],
+                "msg": "Proper value types for specified attribute query parameters are: 'orbitNumber'-integer"
+            }
+        ],
+        "RequestID": "33e3ebb0-7d44-4dcd-8cb2-f60216c11cef"
+    }
+}
+```
+
+:::
+
+We recommend reviewing the upcoming changes to **Catalog OpenSearch API** described above to avoid disruption to your current scripts or apps.
+
 ## STAC API interface update
 
-Please be informed that the **STAC API** items interface will be updated on the **25th of September 2023**. The update will be announced in a separate release note within [release notes document](APIs/ReleaseNotes.qmd). 
+Please be informed that the **STAC API** items interface will be updated on the **05th of October 2023**. The update will be announced in a separate release note within [release notes document](APIs/ReleaseNotes.qmd). 
 
 The update will cover the removal of `beginningDateTime` and `endingDateTime`.
 Eventually, to be compliant with the STAC item specification `beginningDateTime` and `endingDateTime` will be replaced by `start_datetime` and `end_datetime`.
@@ -14,10 +327,9 @@ Eventually, to be compliant with the STAC item specification `beginningDateTime`
 
 # STAC Request Example
 
-[`https://catalogue.dataspace.copernicus.eu/stac/search?datetime=2023-09-01`](<https://catalogue.dataspace.copernicus.eu/stac/search?datetime=2023-09-01>){target="_blank"}
+[`https://datahub.creodias.eu/stac/collections/SENTINEL-3/items?`](<https://datahub.creodias.eu/stac/collections/SENTINEL-3/items?>){target="_blank"}
 
 :::
-
 
 #### STAC API response change
 
@@ -116,9 +428,9 @@ We recommend reviewing the upcoming changes to **Catalog STAC API** described ab
 ## OData API single product response update
 
 Please be informed that the **OData API** 
-interface will be updated on the **27th of September 2023**. The update will be announced in a separate release note within [release notes document](APIs/ReleaseNotes.qmd). 
+interface will be updated on the **02nd of October 2023**. The update will be announced in a separate release note within [release notes document](APIs/ReleaseNotes.qmd). 
 
-To be compliant with the OData PRIP interfaces the API response for a single product query will be updated. The response will now return the product itself instead of a list containing the product (assigned to the field `value`). The example reflecting the change is presented below.
+To be compliant with the OData PRIP interfaces the OData API response for a single product query will be updated. The response will now return the product itself instead of a list containing the product (assigned to the field `value`). The example reflecting the change is presented below.
 
 ::: {.panel-tabset}
 
@@ -168,8 +480,7 @@ To be compliant with the OData PRIP interfaces the API response for a single pro
             "Footprint": "geography'SRID=4326;POLYGON ((...))'",
             "GeoFootprint": {
                 "type": "Polygon",
-                "coordinates": [...
-                ]
+                "coordinates": [...]
             }
         }
     ]
@@ -211,316 +522,3 @@ To be compliant with the OData PRIP interfaces the API response for a single pro
 :::
 
 We recommend reviewing the upcoming changes to **Catalog OData API** described above to avoid disruption to your current scripts or apps.
-
-## OpenSearch API error handling update
-
-Please be informed that the **OpenSearch API** error handling will be updated soon. 
-The exact date of the update will be announced [here](APIs/UpcomingChanges.qmd) in a separate release note no later than 5 days before the scheduled change.
-
-Please also note that new responses with errors will provide the `RequestId` which is intended to help identify the requests with errors. It is strongly recommended to include the `RequestId` in your issues submitted to the support team in case of Catalog API problems.
-
-The new error handling will cover the following issues:
-
-* incorrect collection name
-
-::: {.panel-tabset}
-
-# Current response
-```{json}
-{
-    "detail": {
-        "ErrorMessage": "loadFromStore - Not Found",
-        "ErrorCode": 404
-    }
-}
-```
-# New response
-```{json}
-{
-    "detail": {
-        "ErrorMessage": "Unknown collection.",
-        "ErrorCode": 404,
-        "ErrorDetail": [
-            {
-                "loc": [
-                    "collection"
-                ],
-                "msg": "Collection '<collection name presented in query>' does not exist.",
-            },
-        ],
-        "RequestId": <request_id>,
-    }
-}
-```
-:::
-
-**Example**
-
-::: {.panel-tabset}
-
-# HTTP Request
-
-[`https://datahub.creodias.eu/resto/api/collections/Sentinl2/search.json`](<https://datahub.creodias.eu/resto/api/collections/Sentinl2/search.json>){target="_blank"}
-
-# New response example
-```{json}
-{
-    "detail": {
-        "ErrorMessage": "Unknown collection.",
-        "ErrorCode": 404,
-        "ErrorDetail": [
-            {
-                "loc": [
-                    "collection"
-                ],
-                "msg": "Collection 'Sentinl2' does not exist."
-            },
-        ],
-        "RequestID": "70970f42-e374-4e26-8778-41a1463e700d"
-    }
-}
-
-```
-
-:::
-
-* incorrect name of the query parameter (when the collection is not specified)
-
-::: {.panel-tabset}
-
-# Current response
-
-No error is returned. The incorrect query parameter is ignored and not reflected in `appliedFilters`. 
-
-# New response
-
-```{json}
-{
-    "detail": {
-        "ErrorMessage": "Unknown query parameter(s).",
-        "ErrorCode": 400,
-        "ErrorDetail": [
-            {
-                "loc": [<list of unexisting parameters>],
-                "msg": "Query parameters do not exist.",
-            },
-        ],
-        "RequestId": <request_id>,
-    }
-}
-
-```
-
-:::
-
-**Example**
-
-::: {.panel-tabset}
-
-# HTTP Request
-
-[`https://datahub.creodias.eu/resto/api/collections/search.json?productsType=S2MSI1C`](<https://datahub.creodias.eu/resto/api/collections/search.json?productsType=S2MSI1C>){target="_blank"}
-
-# New response example
-```{json}
-{
-    "detail": {
-        "ErrorMessage": "Unknown query parameter(s).",
-        "ErrorCode": 400,
-        "ErrorDetail": {
-            "loc": [
-                "productsType"
-            ],
-            "msg": "Query parameters do not exist."
-        },
-        "RequestID": "d9f22173-4d56-44fd-ab18-35d6018c49d7"
-    }
-}
-```
-
-:::
-
-* incorrect name of the query parameter (when the collection is specified)
-
-::: {.panel-tabset}
-
-# Current response
-
-No error is returned. The incorrect query parameter is ignored and not reflected in `appliedFilters`. 
-
-# New response
-```{json}
-{
-    "detail": {
-        "ErrorMessage": "Unknown query parameter(s).",
-        "ErrorCode": 400,
-        "ErrorDetail": [
-            {
-                "loc": [<list of unexisting parameters>],
-                "msg": "Query parameters do not exist or are not available for specified collection.",
-            },
-        ],
-        "RequestId": <request_id>,
-  }
-}
-```
-
-:::
-
-**Example**
-
-::: {.panel-tabset}
-
-# HTTP Request
-
-[`https://datahub.creodias.eu/resto/api/collections/Sentinel2/search.json?productType=S2MSI1C&startDat=2023-06-11&completionDte=2023-06-22`](<https://datahub.creodias.eu/resto/api/collections/Sentinel2/search.json?productType=S2MSI1C&startDat=2023-06-11&completionDte=2023-06-22>){target="_blank"}
-
-# New response example
-```{json}
-{
-    "detail": {
-        "ErrorMessage": "Unknown query parameter(s).",
-        "ErrorCode": 400,
-        "ErrorDetail": {
-            "loc": [
-                "startDat",
-                "completionDte",
-                        ],
-            "msg": "Query parameters do not exist"
-        },
-        "RequestID": "25d522af-ba4e-4152-a368-9635d560e649"
-    }
-}
-```
-
-:::
-
-* incorrect value of the query parameter *(maxRecords, index, page, sortParam, sortOrder, exactCount, geometry, box, lon, lat, radius, startDate, completionDate, updated, published, publishedAfter, publishedBefore, status)*
-
-::: {.panel-tabset}
-
-# Current response
-
-```{json}
-{
-    "detail": {
-        "ErrorMessage": <error message>,
-        "ErrorCode": 400
-    }
-}
-```
-
-# New response
-
-```{json}
-{
-    "detail": {
-        "ErrorMessage": "Validation error.",
-        "ErrorCode": 400,
-        "ErrorDetail": [
-            {
-                "loc": [<list of parameters that error "msg" field relate to>],
-                "msg”: <error message>}>,
-         	},
-        ]
-        "RequestId": <request_id>,
-  }
-}
-```
-
-:::
-
-**Example**
-
-::: {.panel-tabset}
-
-# HTTP Request
-
-[`https://datahub.creodias.eu/resto/api/collections/search.json?startDate=2021-07-01T00:00:00Z&completionDate=2021-07-31T23:59:59Z&maxRecords=2001`](<https://datahub.creodias.eu/resto/api/collections/search.json?startDate=2021-07-01T00:00:00Z&completionDate=2021-07-31T23:59:59Z&maxRecords=2001>){target="_blank"}
-
-# New response example
-
-```{json}
-{
-    "detail": {
-        "ErrorMessage": "Validation error.",
-        "ErrorCode": 400,
-        "ErrorDetail": [
-            {
-                "loc": [
-                    "maxRecords"
-                ],
-                "msg": "Input should be less than or equal to 2000."
-            }
-        ],
-        "RequestID": "b3b4c0bb-9697-4ff8-b90c-4eb1b97a9914"
-    }
-}
-```
-
-:::
-
-* incorrect value type of the query parameter
-
-::: {.panel-tabset}
-
-# Current response
-
-```{json}
-{
-    "detail": {
-        "ErrorMessage": <error message>,
-        "ErrorCode": 400
-    }
-}
-```
-
-# New response
-```{json}
-{
-    "detail": {
-        "ErrorMessage": "Validation error.",
-        "ErrorCode": 400,
-        "ErrorDetail": [
-            {
-                "loc": [<list of parameters that error "msg" field relate to>],
-                "msg”: <error message>}>,
-         	},
-        ]
-        "RequestId": <request_id>,
-  }
-}
-```
-
-:::
-
-**Example**
-
-::: {.panel-tabset}
-
-# HTTP Request
-
-[`https://datahub.creodias.eu/resto/api/collections/search.json?orbitNumber=ascending`](<https://datahub.creodias.eu/resto/api/collections/search.json?orbitNumber=ascending>){target="_blank"}
-
-# New response example
-```{json}
-{
-    "detail": {
-        "ErrorMessage": "Validation error.",
-        "ErrorCode": 400,
-        "ErrorDetail": [
-            {
-                "loc": [
-                    "orbitNumber"
-                ],
-                "msg": "Proper value types for specified attribute query parameters are: 'orbitNumber'-integer"
-            }
-        ],
-        "RequestID": "33e3ebb0-7d44-4dcd-8cb2-f60216c11cef"
-    }
-}
-```
-
-:::
-
-We recommend reviewing the upcoming changes to **Catalog OpenSearch API** described above to avoid disruption to your current scripts or apps.
