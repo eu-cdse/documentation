@@ -6,13 +6,6 @@ format:
 jupyter: python3
 ---
 
-```{python}
-#| echo: false
-#import packages
-import requests
-import pandas as pd
-```
-
 <!-- # Data catalogue API with OData interface -->
 ```{python}
 #| echo: false
@@ -45,10 +38,17 @@ Consecutive filters within *filter* option should be separated with *and* or *or
 
 [`https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=not contains(Name,'S2') and ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-03T00:10:00.000Z&$orderby=ContentDate/Start&$top=100`](<https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=not%20contains(Name,%27S2%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T00:10:00.000Z&$orderby=ContentDate/Start&$top=100>){target="_blank"}
 
+
 # Python
 ```{python}
+#| tbl-wrap: true
 json = requests.get("https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=not contains(Name,'S2') and ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-03T00:10:00.000Z&$orderby=ContentDate/Start&$top=100").json()
-pd.DataFrame.from_dict(json['value']).head(3)
+df = pd.DataFrame.from_dict(json['value'])
+
+# Print only specific columns
+columns_to_print = ['Id', 'Name','S3Path','GeoFootprint']  
+df[columns_to_print].head(3)
+
 ```
 
 :::
@@ -86,7 +86,12 @@ To search for products containing "S1A" in their names:
 # Python
 ```{python}
 json = requests.get("https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,'S1A') and ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-21T00:00:00.000Z").json()
-pd.DataFrame.from_dict(json['value']).head(3)
+df = pd.DataFrame.from_dict(json['value'])
+
+# Print only specific columns
+columns_to_print = ['Id', 'Name','S3Path','GeoFootprint']  
+df[columns_to_print].head(3)
+
 ```
 
 :::
@@ -127,7 +132,12 @@ To search for products within a specific collection:
 # Python
 ```{python}
 json = requests.get("https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name eq 'SENTINEL-2' and ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-03T00:11:00.000Z").json()
-pd.DataFrame.from_dict(json['value']).head(3)
+df = pd.DataFrame.from_dict(json['value'])
+
+# Print only specific columns
+columns_to_print = ['Id', 'Name','S3Path','GeoFootprint']  
+df[columns_to_print].head(3)
+
 ```
 
 :::
@@ -166,7 +176,12 @@ To search for products published between two dates:
 # Python
 ```{python}
 json = requests.get("https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=PublicationDate gt 2019-05-15T00:00:00.000Z and PublicationDate lt 2019-05-16T00:00:00.000Z").json()
-pd.DataFrame.from_dict(json['value']).head(3)
+df = pd.DataFrame.from_dict(json['value'])
+
+# Print only specific columns
+columns_to_print = ['Id', 'Name','S3Path','GeoFootprint']  
+df[columns_to_print].head(3)
+
 ```
 
 :::
@@ -182,7 +197,12 @@ To define inclusive interval *ge* and *le* parameters can be used:
 # Python
 ```{python}
 json = requests.get("https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=PublicationDate ge 2019-05-15T00:00:00.000Z and PublicationDate le 2019-05-16T00:00:00.000Z").json()
-pd.DataFrame.from_dict(json['value']).head(3)
+df = pd.DataFrame.from_dict(json['value'])
+
+# Print only specific columns
+columns_to_print = ['Id', 'Name','S3Path','GeoFootprint']  
+df[columns_to_print].head(3)
+
 ```
 
 :::
@@ -200,7 +220,12 @@ To search for products acquired between two dates:
 # Python
 ```{python}
 json = requests.get("https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=ContentDate/Start gt 2019-05-15T00:00:00.000Z and ContentDate/Start lt 2019-05-16T00:00:00.000Z").json()
-pd.DataFrame.from_dict(json['value']).head(3)
+df = pd.DataFrame.from_dict(json['value'])
+
+# Print only specific columns
+columns_to_print = ['Id', 'Name','S3Path','GeoFootprint']  
+df[columns_to_print].head(3)
+
 ```
 
 :::
@@ -216,7 +241,12 @@ Usually, there are two parameters describing the ContentDate (Acquisition Dates)
 # Python
 ```{python}
 json = requests.get("https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=ContentDate/Start gt 2019-05-15T00:00:00.000Z and ContentDate/End lt 2019-05-15T00:05:00.000Z").json()
-pd.DataFrame.from_dict(json['value']).head(3)
+df = pd.DataFrame.from_dict(json['value'])
+
+# Print only specific columns
+columns_to_print = ['Id', 'Name','S3Path','GeoFootprint']  
+df[columns_to_print].head(3)
+
 ```
 
 :::
@@ -234,7 +264,12 @@ To search for products intersecting the specified polygon:
 # Python
 ```{python}
 json = requests.get("https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=OData.CSC.Intersects(area=geography'SRID=4326;POLYGON((12.655118166047592 47.44667197521409,21.39065656328509 48.347694733853245,28.334291357162826 41.877123516783655,17.47086198383573 40.35854475076158,12.655118166047592 47.44667197521409))') and ContentDate/Start gt 2022-05-20T00:00:00.000Z and ContentDate/Start lt 2022-05-21T00:00:00.000Z").json()
-pd.DataFrame.from_dict(json['value']).head(3)
+df = pd.DataFrame.from_dict(json['value'])
+
+# Print only specific columns
+columns_to_print = ['Id', 'Name','S3Path','GeoFootprint']  
+df[columns_to_print].head(3)
+
 ```
 
 :::
@@ -250,7 +285,12 @@ To search for products intersecting the specified point:
 # Python
 ```{python}
 json = requests.get("https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=OData.CSC.Intersects(area=geography%27SRID=4326;POINT(-0.5319577002158441%2028.65487836189358)%27)").json()
-pd.DataFrame.from_dict(json['value']).head(3)
+df = pd.DataFrame.from_dict(json['value'])
+
+# Print only specific columns
+columns_to_print = ['Id', 'Name','S3Path','GeoFootprint']  
+df[columns_to_print].head(3)
+
 ```
 
 :::
@@ -292,7 +332,12 @@ To get products with CloudCover\<40% between two dates:
 # Python
 ```{python}
 json = requests.get("https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Attributes/OData.CSC.DoubleAttribute/any(att:att/Name eq 'cloudCover' and att/OData.CSC.DoubleAttribute/Value le 40.00) and ContentDate/Start gt 2022-01-01T00:00:00.000Z and ContentDate/Start lt 2022-01-03T00:00:00.000Z&$top=10").json()
-pd.DataFrame.from_dict(json['value']).head(3)
+df = pd.DataFrame.from_dict(json['value'])
+
+# Print only specific columns
+columns_to_print = ['Id', 'Name','S3Path','GeoFootprint']  
+df[columns_to_print].head(3)
+
 ```
 
 :::
@@ -308,7 +353,12 @@ To get products with cloudCover\< 10% and productType=S2MSI2A and ASCENDING orbi
 # Python
 ```{python}
 json = requests.get("https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Attributes/OData.CSC.DoubleAttribute/any(att:att/Name eq 'cloudCover' and att/OData.CSC.DoubleAttribute/Value lt 10.00) and Attributes/OData.CSC.StringAttribute/any(att:att/Name eq 'productType' and att/OData.CSC.StringAttribute/Value eq 'S2MSI2A') and Attributes/OData.CSC.StringAttribute/any(att:att/Name eq 'orbitDirection' and att/OData.CSC.StringAttribute/Value eq 'ASCENDING') and ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-03T04:00:00.000Z&$top=10").json()
-pd.DataFrame.from_dict(json['value']).head(3)
+df = pd.DataFrame.from_dict(json['value'])
+
+# Print only specific columns
+columns_to_print = ['Id', 'Name','S3Path','GeoFootprint']  
+df[columns_to_print].head(3)
+
 ```
 
 :::
@@ -329,7 +379,12 @@ To order products by ContentDate/Start in a descending direction:
 # Python
 ```{python}
 json = requests.get("https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,'S1A_EW_GRD') and ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-03T03:00:00.000Z&$orderby=ContentDate/Start desc").json()
-pd.DataFrame.from_dict(json['value']).head(3)
+df = pd.DataFrame.from_dict(json['value'])
+
+# Print only specific columns
+columns_to_print = ['Id', 'Name','S3Path','GeoFootprint']  
+df[columns_to_print].head(3)
+
 ```
 
 :::
@@ -353,7 +408,12 @@ To limit the number of results:
 # Python
 ```{python}
 json = requests.get("https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A_EW_GRD%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T12:00:00.000Z&$top=100").json()
-pd.DataFrame.from_dict(json['value']).head(3)
+df = pd.DataFrame.from_dict(json['value'])
+
+# Print only specific columns
+columns_to_print = ['Id', 'Name','S3Path','GeoFootprint']  
+df[columns_to_print].head(3)
+
 ```
 
 :::
@@ -377,7 +437,12 @@ To skip a specific number of results:
 # Python
 ```{python}
 json = requests.get("https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A_EW_GRD%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T12:00:00.000Z&$skip=23").json()
-pd.DataFrame.from_dict(json['value']).head(3)
+df = pd.DataFrame.from_dict(json['value'])
+
+# Print only specific columns
+columns_to_print = ['Id', 'Name','S3Path','GeoFootprint']  
+df[columns_to_print].head(3)
+
 ```
 
 :::
@@ -397,7 +462,12 @@ Whenever a query results in more products than 20 (default top value), the API p
 # Python
 ```{python}
 json = requests.get("http://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,'S1A_EW_GRD')+and+ContentDate/Start+gt+2022-05-03T00:00:00.000Z+and+ContentDate/Start+lt+2022-05-03T12:00:00.000Z&$skip=20").json()
-pd.DataFrame.from_dict(json['value']).head(3)
+df = pd.DataFrame.from_dict(json['value'])
+
+# Print only specific columns
+columns_to_print = ['Id', 'Name','S3Path','GeoFootprint']  
+df[columns_to_print].head(3)
+
 ```
 
 :::
@@ -419,7 +489,12 @@ To get the exact number of products for a given query:
 # Python
 ```{python}
 json = requests.get("https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A_EW_GRD%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T12:00:00.000Z&$count=True").json()
-pd.DataFrame.from_dict(json['value']).head(3)
+df = pd.DataFrame.from_dict(json['value'])
+
+# Print only specific columns
+columns_to_print = ['Id', 'Name','S3Path','GeoFootprint']  
+df[columns_to_print].head(3)
+
 ```
 
 :::
@@ -441,7 +516,12 @@ To see the metadata of the results:
 # Python
 ```{python}
 json = requests.get("https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A_EW_GRD%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T12:00:00.000Z&$expand=Attributes").json()
-pd.DataFrame.from_dict(json['value']).head(3)
+df = pd.DataFrame.from_dict(json['value'])
+
+# Print only specific columns
+columns_to_print = ['Id', 'Name','S3Path','GeoFootprint']  
+df[columns_to_print].head(3)
+
 ```
 
 :::
@@ -461,7 +541,12 @@ Expand assets allows to list additional assets of a products, including quickloo
 # Python
 ```{python}
 json = requests.get("https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%20%27SL_2_FRP___%27)&$expand=Assets").json()
-pd.DataFrame.from_dict(json['value']).head(3)
+df = pd.DataFrame.from_dict(json['value'])
+
+# Print only specific columns
+columns_to_print = ['Id', 'Name','S3Path','GeoFootprint']  
+df[columns_to_print].head(3)
+
 ```
 
 :::
