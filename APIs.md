@@ -21,10 +21,10 @@ The OpenSearch catalogue allows you to search through Copernicus data using a st
 on the data collection, area, time range or any other selection criteria available in the search APIs
 
 #### Catalog APIs news
-This section provides detailed information about upcoming changes and the changelog of the implemented updates. The releases include all APIs interfaces. To avoid disruption to your scripts or apps, we recommend reviewing the upcoming changes and the latest release notes described below:
+This section provides detailed information about upcoming changes and the changelog of the implemented updates. The releases include all Catalog APIs interfaces. To avoid disruption to your scripts or apps, we recommend reviewing the upcoming changes and the latest release notes described below:
 
 ##### 1.[ Upcoming Changes ](APIs/UpcomingChanges.qmd)
-We've put together a list of potential updates related to OpenSearch and the OData API as of September 2023. You can find a detailed comparison of these changes [here](APIs/UpcomingChanges.qmd).
+We've put together a list of potential updates related to Catalog APIs as of September 2023. You can find a detailed comparison of these changes [here](APIs/UpcomingChanges.qmd).
 
 ##### 2. [Release notes](APIs/ReleaseNotes.qmd)
 The [release notes document](APIs/ReleaseNotes.qmd) provides you with a comprehensive list of modifications made to the Catalog APIs for every release.
