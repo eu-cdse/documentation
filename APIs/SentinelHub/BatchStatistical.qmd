@@ -1,10 +1,16 @@
 ---
 resources:
 - BatchStatistical/resources/gpkg/geopackage-example.gpkg
+- BatchStatistical/resources/python/cdse_set_bucket_access_policy.py
 title: Batch Statistical API
 ---
 
-**The Batch Statistical API is available only for users with Copernicus Service accounts. Contact our [Copernicus Data Space Ecosystem support](https://helpcenter.dataspace.copernicus.eu/hc/en-gb/requests/new) to request your Copernicus Service account.**
+**The Batch Statistical API is available only for users with Copernicus
+Service accounts.** Please refer to our [FAQ](/FAQ.qmd) on account
+typology change and [Submit A
+Request](https://helpcenter.dataspace.copernicus.eu/hc/en-gb/requests/new){target="_blank"}
+to our Copernicus Data Space Ecosystem Support Team to request your
+Copernicus Service account accordingly.
 
 The Batch Statistical API (or shortly \"Batch Stats API\") enables you
 to request statistics similarly as with the [Statistical
@@ -15,7 +21,7 @@ calculating statistics for all parcels in a country.
 Similarly to the [Batch Processing API](/APIs/SentinelHub/Batch.qmd),
 this is an asynchronous REST service. This means that data will not be
 immediately returned in the response of the request but delivered to
-your object storage, which needs to be specified in the request (e.g. a
+your object storage, which needs to be specified in the request (e.g.
 bucket, see [bucket settings](#bucket-settings) below).
 
 You can find more details about the API in the [API
@@ -124,16 +130,16 @@ inactivity, depending on their status:
 
 Note that only such requests themselves will be deleted, while the
 requests\' result (created statistics) will remain under your control in
-your S3 bucket.
+your bucket.
 
 ## Input polygons as GeoPackage file
 
 The Batch Statistical API accepts a [GeoPackage
 file](https://www.geopackage.org/){target="_blank"} containing features
 (polygons) as an input. The GeoPackage must be stored in your object
-storage (e.g. AWS S3 bucket) and Sentinel Hub must be able to read from
-the storage (find more details about this in the [bucket
-access](#aws-bucket-access) section below). In a batch statistical
+storage (e.g. AWS bucket) and Sentinel Hub must be able to read from the
+storage (find more details about this in the [bucket
+settings](#bucket-settings) section below). In a batch statistical
 request, the input GeoPackage is specified by setting the path to the
 `.gpkg` file in the `input.features.s3` parameter.
 
@@ -150,7 +156,7 @@ apply also for Batch statistical API.
 
 Evalscripts smaller than 32KB in size can be provided directly in a
 batch statistical request under `evalscript` parameter. If your
-evalsript exceeds this limit, you can store it to your S3 bucket and
+evalsript exceeds this limit, you can store it to your bucket and
 provide a reference to it in a batch statistical request under
 `evalscriptReference` parameter.
 
@@ -178,18 +184,26 @@ will be available in a sub-folder named after the ID of your request
 ## Bucket settings
 
 As noted above, the Batch Statistical API uses buckets to:
-- read GeoPackage file with input features (polygons) from a bucket,
-- read evalscript from a bucket (this is optional because an evalscript can also be provided directly in a request),
-- write results of processing to a bucket.
+
+-   read GeoPackage file with input features (polygons) from a bucket,
+-   read evalscript from a bucket (this is optional because an
+    evalscript can also be provided directly in a request),
+-   write results of processing to a bucket.
 
 One bucket or different buckets can be used for all three purposes.
 
-If you do not yet have a bucket at Copernicus Data Space Ecosystem, please follow [these steps](https://creodias.docs.cloudferro.com/en/latest/s3/Create-S3-bucket-and-use-it-in-Sentinel-Hub-requests.html) to get one.
+If you do not yet have a bucket at Copernicus Data Space Ecosystem,
+please follow [these
+steps](https://creodias.docs.cloudferro.com/en/latest/s3/Create-S3-bucket-and-use-it-in-Sentinel-Hub-requests.html){target="_blank"}
+to get one.
 
-You will have to configure your bucket to allow full access to Sentinel Hub. To do
-this, [update your bucket policy](https://creodias.docs.cloudferro.com/en/latest/s3/Bucket-sharing-using-s3-bucket-policy-on-Creodias.html#setting-a-policy-on-the-bucket) to include the following statement (don't forget to replace `<bucket_name>` with your actual bucket name):
+You will have to configure your bucket to allow full access to Sentinel
+Hub. To do this, [update your bucket
+policy](https://creodias.docs.cloudferro.com/en/latest/s3/Bucket-sharing-using-s3-bucket-policy-on-Creodias.html#setting-a-policy-on-the-bucket){target="_blank"}
+to include the following statement (don't forget to replace
+`<bucket_name>` with your actual bucket name):
 
-```
+``` default
 {
     "Version": "2012-10-17",
     "Statement": [
@@ -211,6 +225,8 @@ this, [update your bucket policy](https://creodias.docs.cloudferro.com/en/latest
 }
 ```
 
+A python script to set a bucket policy can be downloaded
+[here](/APIs/SentinelHub/BatchStatistical/resources/python/cdse_set_bucket_access_policy.py).
 
 ## Examples
 

@@ -1,0 +1,301 @@
+---
+title: Examples for DEM
+---
+
+The requests below are written in python. To execute them you need to
+create an OAuth client as is explained
+[here](/APIs/SentinelHub/Overview/Authentication.qmd#python). It is
+named `oauth` in these examples.
+
+### Copernicus DEM 30 image (png)
+
+``` python
+evalscript = """
+//VERSION=3
+function setup() {
+  return {
+    input: ["DEM"],
+    output: { bands: 1 },
+  }
+}
+
+function evaluatePixel(sample) {
+  return [sample.DEM / 1000]
+}
+"""
+
+request = {
+    "input": {
+        "bounds": {
+            "properties": {"crs": "http://www.opengis.net/def/crs/OGC/1.3/CRS84"},
+            "bbox": [
+                13.822174072265625,
+                45.85080395917834,
+                14.55963134765625,
+                46.29191774991382,
+            ],
+        },
+        "data": [
+            {
+                "type": "dem",
+                "dataFilter": {"demInstance": "COPERNICUS_30"},
+                "processing": {
+                    "upsampling": "BILINEAR",
+                    "downsampling": "BILINEAR",
+                },
+            }
+        ],
+    },
+    "output": {
+        "width": 512,
+        "height": 512,
+        "responses": [
+            {
+                "identifier": "default",
+                "format": {"type": "image/png"},
+            }
+        ],
+    },
+    "evalscript": evalscript,
+}
+
+url = "https://sh.dataspace.copernicus.eu/api/v1/process"
+response = oauth.post(url, json=request)
+```
+
+### Copernicus DEM 30, 0.0003° (\~33m) resolution (tiff) {#copernicus-dem-30-00003-33m-resolution-tiff}
+
+``` python
+evalscript = """
+//VERSION=3
+function setup() {
+  return {
+    input: ["DEM"],
+    output: { bands: 1 },
+  }
+}
+
+function evaluatePixel(sample) {
+  return [sample.DEM / 1000]
+}
+"""
+
+request = {
+    "input": {
+        "bounds": {
+            "properties": {"crs": "http://www.opengis.net/def/crs/OGC/1.3/CRS84"},
+            "bbox": [
+                13.822174072265625,
+                45.85080395917834,
+                14.55963134765625,
+                46.29191774991382,
+            ],
+        },
+        "data": [
+            {
+                "type": "dem",
+                "dataFilter": {"demInstance": "COPERNICUS_30"},
+                "processing": {
+                    "upsampling": "BILINEAR",
+                    "downsampling": "BILINEAR",
+                },
+            }
+        ],
+    },
+    "output": {
+        "resx": 0.0003,
+        "resy": 0.0003,
+        "responses": [
+            {
+                "identifier": "default",
+                "format": {"type": "image/tiff"},
+            }
+        ],
+    },
+    "evalscript": evalscript,
+}
+
+url = "https://sh.dataspace.copernicus.eu/api/v1/process"
+response = oauth.post(url, json=request)
+```
+
+### Copernicus DEM 90 values, orthometric heights (tif)
+
+``` python
+evalscript = """
+//VERSION=3
+function setup() {
+  return {
+    input: ["DEM"],
+    output: {
+      id: "default",
+      bands: 1,
+      sampleType: SampleType.FLOAT32,
+    },
+  }
+}
+
+function evaluatePixel(sample) {
+  return [sample.DEM]
+}
+"""
+
+request = {
+    "input": {
+        "bounds": {
+            "properties": {"crs": "http://www.opengis.net/def/crs/OGC/1.3/CRS84"},
+            "bbox": [
+                13.822174072265625,
+                45.85080395917834,
+                14.55963134765625,
+                46.29191774991382,
+            ],
+        },
+        "data": [
+            {
+                "type": "dem",
+                "dataFilter": {"demInstance": "COPERNICUS_90"},
+                "processing": {
+                    "upsampling": "BILINEAR",
+                    "downsampling": "BILINEAR",
+                },
+            }
+        ],
+    },
+    "output": {
+        "width": 512,
+        "height": 512,
+        "responses": [
+            {
+                "identifier": "default",
+                "format": {"type": "image/tiff"},
+            }
+        ],
+    },
+    "evalscript": evalscript,
+}
+
+url = "https://sh.dataspace.copernicus.eu/api/v1/process"
+response = oauth.post(url, json=request)
+```
+
+### Copernicus DEM 90 values, ellipsoidal heights (tif)
+
+``` python
+evalscript = """
+//VERSION=3
+function setup() {
+  return {
+    input: ["DEM"],
+    output: {
+      id: "default",
+      bands: 1,
+      sampleType: SampleType.FLOAT32,
+    },
+  }
+}
+
+function evaluatePixel(sample) {
+  return [sample.DEM]
+}
+"""
+
+request = {
+    "input": {
+        "bounds": {
+            "properties": {"crs": "http://www.opengis.net/def/crs/OGC/1.3/CRS84"},
+            "bbox": [
+                13.822174072265625,
+                45.85080395917834,
+                14.55963134765625,
+                46.29191774991382,
+            ],
+        },
+        "data": [
+            {
+                "type": "dem",
+                "dataFilter": {"demInstance": "COPERNICUS_90"},
+                "processing": {
+                    "egm": True,
+                    "upsampling": "BILINEAR",
+                    "downsampling": "BILINEAR",
+                },
+            }
+        ],
+    },
+    "output": {
+        "width": 512,
+        "height": 512,
+        "responses": [
+            {
+                "identifier": "default",
+                "format": {"type": "image/tiff"},
+            }
+        ],
+    },
+    "evalscript": evalscript,
+}
+
+url = "https://sh.dataspace.copernicus.eu/api/v1/process"
+response = oauth.post(url, json=request)
+```
+
+### Copernicus DEM 90 image at sea level (png)
+
+``` python
+evalscript = """
+//VERSION=3
+function setup() {
+  return {
+    input: ["DEM"],
+    output: { bands: 3 },
+  }
+}
+
+function evaluatePixel(sample) {
+  if (sample.DEM > 0) {
+    return [0, sample.DEM / 1000, 0]
+  } else {
+    return [0, 0, -sample.DEM / 100]
+  }
+}
+"""
+
+request = {
+    "input": {
+        "bounds": {
+            "properties": {"crs": "http://www.opengis.net/def/crs/OGC/1.3/CRS84"},
+            "bbox": [
+                10.082016,
+                42.625876,
+                10.496063,
+                42.927268,
+            ],
+        },
+        "data": [
+            {
+                "type": "dem",
+                "dataFilter": {"demInstance": "COPERNICUS_90"},
+                "processing": {
+                    "upsampling": "BILINEAR",
+                    "downsampling": "BILINEAR",
+                },
+            }
+        ],
+    },
+    "output": {
+        "width": 512,
+        "height": 512,
+        "responses": [
+            {
+                "identifier": "default",
+                "format": {"type": "image/png"},
+            }
+        ],
+    },
+    "evalscript": evalscript,
+}
+
+url = "https://sh.dataspace.copernicus.eu/api/v1/process"
+response = oauth.post(url, json=request)
+```
