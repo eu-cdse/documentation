@@ -1,8 +1,15 @@
 ---
+resources:
+- Batch/resources/python/cdse_set_bucket_access_policy.py
 title: Batch Processing API
 ---
 
-**The Batch Processing API is available only for users with Copernicus Service accounts.** Please refer to our [FAQ](https://documentation.dataspace.copernicus.eu/FAQ.html) on account typology change and [Submit A Request](https://helpcenter.dataspace.copernicus.eu/hc/en-gb/requests/new) to our Copernicus Data Space Ecosystem Support Team to request your Copernicus Service account accordingly.
+**The Batch Processing API is available only for users with Copernicus
+Service accounts.** Please refer to our [FAQ](/FAQ.qmd) on account
+typology change and [Submit A
+Request](https://helpcenter.dataspace.copernicus.eu/hc/en-gb/requests/new){target="_blank"}
+to our Copernicus Data Space Ecosystem Support Team to request your
+Copernicus Service account accordingly.
 
 Batch Processing API (or shortly \"Batch API\") enables you to request
 data for large areas and/or longer time periods for any Sentinel Hub
@@ -10,10 +17,9 @@ supported collection, including BYOC (bring your own data).
 
 It is an asynchronous REST service. This means that data will not be
 returned immediately in a request response but will be delivered to your
-object storage, which needs to be specified in the request (e.g. a
-bucket, see [Bucket settings](#bucket-settings) below). The
-processing results will be divided in tiles as described
-[below](#processing-results).
+object storage, which needs to be specified in the request (e.g. bucket,
+see [bucket settings](#bucket-settings) below). The processing results
+will be divided in tiles as described [below](#processing-results).
 
 ## Workflow
 
@@ -69,6 +75,12 @@ analysis is requested:
 -   After the analysis is finished the status of the request changes to
     `ANALYSIS_DONE`.
 
+In the evalscript validation for ORBIT and TILE mosaicking, we select a
+few orbits or tiles that match your request, and test if your evalscript
+can process them. We also test, if your evalscript can process the case,
+when no orbit or tile is passed. So make sure your evalscript handles
+this.
+
 If the user chooses to directly start processing, the system still
 executes the analysis but when the analysis is done it automatically
 starts with processing. This is not explicitly shown in the diagram in
@@ -115,7 +127,7 @@ following requests will be deleted:
     which it was not requested to add the results to your collections.
     Note that only such requests themselves will be deleted, while the
     requests\' result (created imagery) will remain under your control
-    in your S3 bucket.
+    in your bucket.
 
 #### Cost estimate
 
@@ -272,7 +284,7 @@ When creating a new batch collection, one has to be careful to:
     request to access it
 
 Regardless of whether the user specifies an existing collection or
-requests a new one, processed data will still upload to the users S3
+requests a new one, processed data will still upload to the users
 bucket, where they will be available for download and analysis.
 
 ## Processing results
@@ -316,16 +328,18 @@ in different UTM zones (and thus different CRSs).
 Zarr format will be used if your request contains the `zarrOutput`
 field. An example of a batch request with Zarr output is available
 [here](/APIs/SentinelHub/Batch/Examples.qmd#option-2-zarr-format-output).
+Your request **must** only have one band per output and the
+`application/json` format in responses is **not** supported.
 
-The outputs of a batch processing will be stored as a single Zarr group
+The outputs of batch processing will be stored as a single Zarr group
 containing one data array for each evalscript output and multiple
 coordinate arrays. By default, the Zarr will be stored in the folder you
 pass to the batch processing api in the `path` parameter under
 `zarrOutput` (see [BATCH API
 reference](/APIs/SentinelHub/ApiReference.qmd#tag/batch_process/operation/createNewBatchProcessingRequest)).
-The folder must not contain any existing Zarr files. We recommend using
-a placeholder `<requestId>` as explained in the API reference to keep
-the results of your processing better organized.
+The folder **must not** contain any existing Zarr files. We recommend
+using a placeholder `<requestId>` as explained in the API reference to
+keep the results of your processing better organized.
 
 The results of batch processing will be in the projection of the
 selected [tiling grid](/APIs/SentinelHub/Batch.qmd#tiling-grids). The
@@ -334,14 +348,21 @@ format output.
 
 ## Bucket settings
 
-The results will be delivered in your own bucket hosted at Copernicus Data Space Ecosystem.
+The results will be delivered in your own bucket hosted at Copernicus
+Data Space Ecosystem.
 
-If you do not yet have a bucket at Copernicus Data Space Ecosystem, please follow [these steps](https://creodias.docs.cloudferro.com/en/latest/s3/Create-S3-bucket-and-use-it-in-Sentinel-Hub-requests.html) to get one.
+If you do not yet have a bucket at Copernicus Data Space Ecosystem,
+please follow [these
+steps](https://creodias.docs.cloudferro.com/en/latest/s3/Create-S3-bucket-and-use-it-in-Sentinel-Hub-requests.html){target="_blank"}
+to get one.
 
-You will have to configure your bucket to allow full access to Sentinel Hub. To do
-this, [update your bucket policy](https://creodias.docs.cloudferro.com/en/latest/s3/Bucket-sharing-using-s3-bucket-policy-on-Creodias.html#setting-a-policy-on-the-bucket) to include the following statement (don't forget to replace `<bucket_name>` with your actual bucket name):
+You will have to configure your bucket to allow full access to Sentinel
+Hub. To do this, [update your bucket
+policy](https://creodias.docs.cloudferro.com/en/latest/s3/Bucket-sharing-using-s3-bucket-policy-on-Creodias.html#setting-a-policy-on-the-bucket){target="_blank"}
+to include the following statement (don't forget to replace
+`<bucket_name>` with your actual bucket name):
 
-```
+``` default
 {
     "Version": "2012-10-17",
     "Statement": [
@@ -363,27 +384,8 @@ this, [update your bucket policy](https://creodias.docs.cloudferro.com/en/latest
 }
 ```
 
-
-## Tutorials and Other Related Materials
-
-Watch our [webinar on batch
-processing](https://www.youtube.com/watch?v=GnQZGvNrKpQ){target="_blank"},
-where you will learn how to process large amounts of satellite data step
-by step. The webinar will show you how to process and download data,
-create a collection and access it using processing API. June 23, 2021
-
-To learn more about how batch processing can be used to create huge
-mosaics or to enhance your algorithms, read the following blog posts:
-
--   [How to create your own Cloudless Mosaic in less than an
-    hour](https://medium.com/sentinel-hub/how-to-create-your-own-cloudless-mosaic-in-less-than-an-hour-a4117b292c40){target="_blank"},
-    November 3, 2020
--   [Scale-up your eo-learn workflow using Batch Processing
-    API](https://medium.com/sentinel-hub/scale-up-your-eo-learn-workflow-using-batch-processing-api-d183b70ea237){target="_blank"},
-    September 17, 2020
--   [Large-scale data preparation --- introducing Batch
-    Processing](https://medium.com/sentinel-hub/large-scale-data-preparation-introducing-batch-processing-b3a58755b8a1){target="_blank"},
-    January 7, 2020
+A python script to set a bucket policy can be downloaded
+[here](/APIs/SentinelHub/Batch/resources/python/cdse_set_bucket_access_policy.py).
 
 ## Examples
 
