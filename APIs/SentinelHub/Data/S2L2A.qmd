@@ -1,0 +1,252 @@
+---
+title: Sentinel-2 L2A
+---
+
+## About Sentinel-2 L2A Data
+
+General information about Sentinel-2 mission can be found
+[here](/Data/Sentinel2.qmd). Sentinel Hub offers [Sentinel-2 Level
+2A](/Data/Sentinel2.qmd#sentinel-2-level-2a-top-of-canopy-toc) products.
+
+## Accessing Sentinel-2 L2A Data
+
+To access data you need to send a POST request to our `process` API. The
+requested data will be returned as the response to your request. Each
+POST request can be tailored to get you exactly the data you require. To
+do this requires setting various parameters which depend on the
+datasource you are querying. This chapter will help you understand the
+parameters for S2L2A data. To see examples of such requests go
+[here](/APIs/SentinelHub/Process/Examples/S2L2A.qmd), and for an
+overview of all API parameters see the [API
+Reference](/APIs/SentinelHub/ApiReference.qmd).
+
+### Data type identifier: sentinel-2-l2a
+
+Use `sentinel-2-l2a` (previously `S2L2A`) as the value of the
+`input.data.type` parameter in your API requests. This is mandatory and
+will ensure you get Sentinel-2 L2A data.
+
+### Filtering Options
+
+This chapter will explain the `input.data.dataFilter` object of the
+`S2L2A` `process` API.
+
+#### mosaickingOrder
+
+Sets the order of overlapping tiles from which the output result is
+mosaicked. Note that tiles will in most cases come from the same
+orbit/acquisition. The tiling is done by ESA for easier distribution.
+
+  Value             Description                                                                                       Notes
+  ----------------- ------------------------------------------------------------------------------------------------- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **mostRecent**    selected by default. The pixel will be selected from the tile, which was acquired most recently   in case there are more tiles available with the same timestamp (some tiles are processed by many ground stations, some are reprocessed, etc.), the one, which was downloaded from SciHub later will be used.
+  **leastRecent**   similar to **mostRecent** but in reverse order                                                    
+  **leastCC**       pixel is selected from tile with the least cloud coverage metadata                                note that \"per tile\" information is used here, each covering about a 12,000 sq. km area, so this information is only an estimate .
+
+#### maxCloudCoverage
+
+Sets the upper limit for cloud coverage in percent based on the
+precomputed cloud coverage estimate for each Sentinel-2 tile as present
+in the tile metadata. Satellite data will therefore not be retrieved for
+tiles with a higher cloud coverage estimate. For example, by setting the
+value to `20`, only tiles with at most 20% cloud coverage will be used.
+Note that this parameter is set per tile and might not be directly
+applicable to the chosen area of interest.
+
+#### previewMode
+
+Sentinel Hub API is optimised for full resolution data access as this is
+what most users need. While the Sentinel-2 L1C has low-resolution
+previews generated, this is not yet the case for Sentinel-2 L2A. Lower
+resolution processing is enabled by default, but the performance
+degrades after going beyond 250m per pixel (up to 1500m per pixel).
+
+  Value        Description
+  ------------ ----------------------------------------------------------------
+  **DETAIL**   displays original data from full-resolution to 1500m per pixel
+
+### Processing Options
+
+This chapter will explain the `input.data.processing` object of the
+`S2L2A` `process` API.
+
+  Parameter      Description                                                                                                                                       Values                                                                                                                                                                                                                                                                                                                                                                                    Default
+  -------------- ------------------------------------------------------------------------------------------------------------------------------------------------- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -------------
+  upsampling     Defines the interpolation used for processing when the pixel resolution is greater than the source resolution (e.g. 5m/px with a 10m/px source)   **NEAREST** - [nearest neighbour interpolation](https://en.wikipedia.org/wiki/Nearest-neighbor_interpolation){target="_blank"} `<br/>`{=html} **BILINEAR** - [bilinear interpolation](https://en.wikipedia.org/wiki/Bilinear_interpolation){target="_blank"} `<br/>`{=html} **BICUBIC** - [bicubic interpolation](https://en.wikipedia.org/wiki/Bicubic_interpolation){target="_blank"}   **NEAREST**
+  downsampling   As above except when the resolution is lower.                                                                                                     **NEAREST** - [nearest neighbour interpolation](https://en.wikipedia.org/wiki/Nearest-neighbor_interpolation){target="_blank"} `<br/>`{=html} **BILINEAR** - [bilinear interpolation](https://en.wikipedia.org/wiki/Bilinear_interpolation){target="_blank"} `<br/>`{=html} **BICUBIC** - [bicubic interpolation](https://en.wikipedia.org/wiki/Bicubic_interpolation){target="_blank"}   **NEAREST**
+
+A visual representation of upsampling results using various algorithms
+is available
+[here](https://en.wikipedia.org/wiki/Comparison_gallery_of_image_scaling_algorithms){target="_blank"}.
+
+### Available Bands and Data
+
+This chapter will explain the bands and data which can be set in the
+[evalscript input
+object](/APIs/SentinelHub/Evalscript/V3.qmd#input-object-properties).
+Any string listed in the column **Name** can be an element of the
+`input.bands` array in your evalscript.
+
+  Name               Description                                                                            Resolution
+  ------------------ -------------------------------------------------------------------------------------- ------------
+  B01                Coastal aerosol, 442.7 nm (S2A), 442.3 nm (S2B)                                        60m
+  B02                Blue, 492.4 nm (S2A), 492.1 nm (S2B)                                                   10m
+  B03                Green, 559.8 nm (S2A), 559.0 nm (S2B)                                                  10m
+  B04                Red, 664.6 nm (S2A), 665.0 nm (S2B)                                                    10m
+  B05                Vegetation red edge, 704.1 nm (S2A), 703.8 nm (S2B)                                    20m
+  B06                Vegetation red edge, 740.5 nm (S2A), 739.1 nm (S2B)                                    20m
+  B07                Vegetation red edge, 782.8 nm (S2A), 779.7 nm (S2B)                                    20m
+  B08                NIR, 832.8 nm (S2A), 833.0 nm (S2B)                                                    10m
+  B8A                Narrow NIR, 864.7 nm (S2A), 864.0 nm (S2B)                                             20m
+  B09                Water vapour, 945.1 nm (S2A), 943.2 nm (S2B)                                           60m
+  B11                SWIR, 1613.7 nm (S2A), 1610.4 nm (S2B)                                                 20m
+  B12                SWIR, 2202.4 nm (S2A), 2185.7 nm (S2B)                                                 20m
+  AOT                Aerosol Optical Thickness map, based on Sen2Cor processor                              10m
+  SCL                Scene classification data, based on Sen2Cor processor, codelist                        20m
+  SNW                Snow probability, based on Sen2Cor processor                                           20m
+  CLD                Cloud probability, based on Sen2Cor processor                                          20m
+  sunAzimuthAngles   Sun azimuth angle                                                                      5000m
+  sunZenithAngles    Sun zenith angle                                                                       5000m
+  viewAzimuthMean    Viewing azimuth angle                                                                  5000m
+  viewZenithMean     Viewing zenith angle                                                                   5000m
+  dataMask           The mask of data/no data pixels ([more](/APIs/SentinelHub/UserGuides/Datamask.qmd)).   N/A\*
+
+\*dataMask has no source resolution as it is calculated for each output
+pixel.
+
+::: callout-note
+The cirrus band B10 is excluded as it does not contain any \"bottom of
+the atmosphere\" information (Source:
+`<a href="https://step.esa.int/thirdparties/sen2cor/2.5.5/docs/S2-PDGS-MPC-L2A-SUM-V2.5.5_V2.pdf" target="_blank">`{=html}Sen2Cor
+Configuration and User Manual`</a>`{=html}).
+:::
+
+### Units
+
+The data values for each band in your custom script are presented in the
+units as specified here. In case more than one unit is available for a
+given band, you may optionally set the value of `input.units` in your
+evalscript `setup` function to one of the values in the
+`Sentinel Hub Units` column. Doing so will present data in that unit.
+The Sentinel Hub `units` parameter combines the physical quantity and
+corresponding units of measurement values. As such, some names more
+closely resemble physical quantities, others resemble units of
+measurement.
+
+The `Source Format` specifies how and with what precision the digital
+numbers (`DN`) from which the unit is derived are encoded. Bands
+requested in `DN` units contain exactly the pixel values of the source
+data (See also [Harmonize Values](#harmonize-values)). Note that
+resampling may produce interpolated values. `DN` is also used whenever a
+band is derived computationally (like dataMask); such bands can be
+identified by having `DN` units and `N/A` source format. `DN` values are
+typically not offered if they do not simply represent any physical
+quantity, in particular, when `DN` values require source-specific (i.e.
+non-global) conversion to physical quantities.
+
+Values in non-`DN` units are computed from the source (`DN`) values with
+at least float32 precision. Note that the conversion might be nonlinear,
+therefore the full value range and quantization step size of such a band
+can be hard to predict. Band values in evalscripts always behave as
+floating point numbers, regardless of the actual precision.
+
+The `Typical Range` indicates what values are common for a given band
+and unit, however outliers can be expected.
+
+For Sentinel-2 optical data, the relation between `DN` and `REFLECTANCE`
+(default unit) is: `DN = 10000 * REFLECTANCE`. See also [Harmonize
+Values](#harmonize-values).
+
+  Band               Physical Quantity (units)              Sentinel Hub Units             Source Format   Typical Range
+  ------------------ -------------------------------------- ------------------------------ --------------- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Optical bands      Reflectance (unitless)                 REFLECTANCE (default)          UINT15          0 - 0.4\*
+  Optical bands      Digital numbers (unitless)             DN                             UINT15          0 - 4000\*
+  AOT                Aerosol optical thickness (unitless)   OPTICAL_DEPTH (default) \*\*   UINT16          0 - 0.6\*\*
+  AOT                Digital numbers (unitless)             DN\*\*                         UINT16          0 - 600\*\*
+  SCL                Scene classification mask (unitless)   DN                             UINT8           0 - No data `<br/>`{=html}1 - Saturated / Defective `<br/>`{=html} 2 - Dark Area Pixels `<br/>`{=html} 3 - Cloud Shadows `<br/>`{=html} 4 - Vegetation `<br/>`{=html} 5 - Bare Soils `<br/>`{=html} 6 - Water `<br/>`{=html} 7 - Clouds low probability / Unclassified `<br/>`{=html} 8 - Clouds medium probability `<br/>`{=html} 9 - Clouds high probability `<br/>`{=html} 10 - Cirrus `<br/>`{=html} 11 - Snow / Ice
+  SNW                Snow probability (percent)             PERCENT                        UINT8           0 - 100
+  CLD                Cloud probability (percent)            PERCENT                        UINT8           0 - 100
+  sunAzimuthAngles   Angle (degrees)                        DEGREES                        FLOAT32         30 - 200
+  viewAzimuthMean    Angle (degrees)                        DEGREES                        FLOAT32         90 - 300
+  sunZenithAngles    Angle (degrees)                        DEGREES                        FLOAT32         15 - 80
+  viewZenithMean     Angle (degrees)                        DEGREES                        FLOAT32         0 - 12
+  dataMask           N/A                                    DN                             N/A             0 - no data`<br/>`{=html} 1 - data
+
+\**Higher values are expected in infrared bands. Reflectance values can
+easily be above 1.* `<br/>`{=html} \*\* *AOT = DN / 1000.*
+
+#### Harmonize Values
+
+ESA updated the Sentinel-2 processing baseline to [version
+04.00](https://scihub.copernicus.eu/news/News00931){target="_blank"} in
+[January,
+2022](https://scihub.copernicus.eu/news/News00990){target="_blank"},
+which introduced breaking changes to the interpretation of digital
+numbers (DN). The optional `harmonizeValues` parameter gives you extra
+control over the values which enter your evalscript.
+
+`harmonizeValues` can be `true` (default) or `false`, and it\'s behavior
+depends on the [units](#units) chosen:
+
+-   `REFLECTANCE`:
+    -   `harmonizeValues = true`: negative reflectance values are
+        clamped to zero. In other words, pixels with negative
+        reflectance return zero reflectance instead.
+    -   `harmonizeValues = false`: negative reflectance values can be
+        returned.
+-   `DN`:
+    -   `harmonizeValues = true`: DN values are harmonized so they are
+        comparable with data from previous baselines. Therefore it still
+        holds that `DN = 10000 * REFLECTANCE`. In addition, negative
+        values are clamped to zero.
+    -   `harmonizeValues = false`: DN values are exactly as provided in
+        the source files themselves. The \"true\" DN value, you could
+        say. Don\'t forget that values have different definitions with
+        different processing baselines, careful with mosaicking!
+
+### Mosaicking
+
+All [mosaicking](/APIs/SentinelHub/Evalscript/V3.qmd#mosaicking) types
+are supported.
+
+### Scenes Object
+
+[`scenes`](/APIs/SentinelHub/Evalscript/V3.qmd#scenes) object stores
+metadata, for an example see [`scenes` object for Sentinel-2
+L1C.](/APIs/SentinelHub/Data/S2L1C.qmd#scenes-object)
+
+### Collection Specific Constraints
+
+-   Each Sentinel-2 satellite takes [100.6
+    minutes](https://sentinel.esa.int/web/sentinel/missions/sentinel-2/satellite-description/orbit){target="_blank"}
+    for an entire orbit, with S2A and S2B orbiting 180 degree apart. By
+    setting a time interval to less than 50 minutes, there should be no
+    overlap possible between different acquisitions, even near the
+    poles.
+-   For atmospheric correction, ESA\'s official
+    [Sen2Cor](https://step.esa.int/main/third-party-plugins-2/sen2cor/){target="_blank"}
+    is used. In most cases the processing is done by ESA itself. On
+    users\' request we can also process some archive data using the same
+    processor.
+
+## Catalog API Capabilities
+
+To access Sentinel 2 L2A product metadata you need to send search
+request to our [Catalog API](/APIs/SentinelHub/Catalog.qmd). The
+requested metadata will be returned as JSON formatted response to your
+request. This chapter will help with understanding Sentinel 2 L2A
+specific parameters for search request.
+
+### Collection identifier: sentinel-2-l2a
+
+### Filter extension
+
+-   `eo:cloud_cover` cloud cover percentage
+
+### Distinct extension
+
+-   `date`
+
+## Examples
+
+[S2L2A examples](/APIs/SentinelHub/Process/Examples/S2L2A.qmd)
