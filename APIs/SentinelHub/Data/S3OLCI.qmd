@@ -1,0 +1,191 @@
+---
+title: Sentinel-3 OLCI L1B
+---
+
+## About Sentinel-3 OLCI L1B Data
+
+General information about Sentinel-3 mission can be found
+[here](/Data/Sentinel3.qmd). Sentinel Hub offers [Sentinel-3 OLCI Level
+1B](/Data/Sentinel3.qmd#sentinel-3-olci-level-1) products.
+
+## Accessing Sentinel-3 OLCI L1B Data
+
+To access data you need to send a POST request to our `process` API. The
+requested data will be returned as the response to your request. Each
+POST request can be tailored to get you exactly the data you require. To
+do this requires setting various parameters which depend on the
+datasource you are querying. This chapter will help you understand the
+parameters for S3OLCI data. To see examples of such requests go
+[here](/APIs/SentinelHub/Process/Examples/S3OLCI.qmd), and for an
+overview of all API parameters see the [API
+Reference](/APIs/SentinelHub/ApiReference.qmd).
+
+### Data type identifier: sentinel-3-olci
+
+Use `sentinel-3-olci` (previously `S3OLCI`) as the value of the
+`input.data.type` parameter in your API requests. This is mandatory and
+will ensure you get Sentinel-3 OLCI L1B data.
+
+### Filtering Options
+
+This chapter will explain the `input.data.dataFilter` object of the
+`S3OLCI` `process` API.
+
+#### mosaickingOrder
+
+Sets the order of overlapping tiles from which the output result is
+mosaicked. The tiling is based on ESA\'s [Product Dissemination
+Units](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-3/data-products/user-dissemination-concept){target="_blank"}
+for easier distribution.
+
+  Value             Description                                                       Notes
+  ----------------- ----------------------------------------------------------------- -------------------------------------------------------------------------------------------------------
+  **mostRecent**    the pixel will be selected from the most recently acquired tile   If there are multiple products with the same timestamp then NTC will be used over NRT. Default value.
+  **leastRecent**   the pixel will be selected from the oldest acquired tile          If there are multiple products with the same timestamp then NTC will be used over NRT.
+
+### Processing Options
+
+This chapter will explain the `input.data.processing` object of the
+`S3OLCI` `process` API.
+
+  Parameter      Description                                                                   Values                                                                                                                                                                                                                                                                                                                                                                                    Default
+  -------------- ----------------------------------------------------------------------------- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -------------
+  upsampling     Defines the interpolation used for processing, regardless of the resolution   **NEAREST** - [nearest neighbour interpolation](https://en.wikipedia.org/wiki/Nearest-neighbor_interpolation){target="_blank"} `<br/>`{=html} **BILINEAR** - [bilinear interpolation](https://en.wikipedia.org/wiki/Bilinear_interpolation){target="_blank"} `<br/>`{=html} **BICUBIC** - [bicubic interpolation](https://en.wikipedia.org/wiki/Bicubic_interpolation){target="_blank"}   **NEAREST**
+  downsampling   Not used, use `upsampling` instead                                            N/A                                                                                                                                                                                                                                                                                                                                                                                       Ignored
+
+### Available Bands and Data
+
+This chapter will explain the bands and data which can be set in the
+[evalscript input
+object](/APIs/SentinelHub/Evalscript/V3.qmd#input-object-properties).
+Any string listed in the column **Name** can be an element of the
+`input.bands` array in your evalscript.
+
+  Name                        Description                                                                                       Wavelength centre (nm)   Resolution (m)
+  --------------------------- ------------------------------------------------------------------------------------------------ ------------------------ ----------------
+  B01                         Aerosol correction, improved water constituent retrieval                                                   400                  300
+  B02                         Yellow substance and detrital pigments (turbidity)                                                        412.5                 300
+  B03                         Chlorophyll absorption maximum, biogeochemistry, vegetation                                               442.5                 300
+  B04                         Chlorophyll                                                                                                490                  300
+  B05                         Chlorophyll, sediment, turbidity, red tide                                                                 510                  300
+  B06                         Chlorophyll reference (minimum)                                                                            560                  300
+  B07                         Sediment loading                                                                                           620                  300
+  B08                         2nd Chlorophyll absorption maximum, sediment, yellow substance / vegetation                                665                  300
+  B09                         Improved fluorescence retrieval                                                                           673.75                300
+  B10                         Chlorophyll fluorescence peak, red edge                                                                   681.25                300
+  B11                         Chlorophyll fluorescence baseline, red edge transition                                                    708.75                300
+  B12                         O`<sub>`{=html}2`</sub>`{=html} absorption / clouds, vegetation                                           753.75                300
+  B13                         O`<sub>`{=html}2`</sub>`{=html} absorption / aerosol correction                                           761.25                300
+  B14                         Atmospheric correction                                                                                   764.375                300
+  B15                         O`<sub>`{=html}2`</sub>`{=html} absorption used for cloud top pressure, fluorescence over land            767.5                 300
+  B16                         Atmospheric / aerosol correction                                                                          778.75                300
+  B17                         Atmospheric / aerosol correction, clouds, pixel co-registration                                            865                  300
+  B18                         Water vapour absorption reference. Common reference band with SLSTR. Vegetation monitoring                 885                  300
+  B19                         Water vapour absorption, vegetation monitoring (maximum REFLECTANCE)                                       900                  300
+  B20                         Water vapour absorption, atmospheric / aerosol correction                                                  940                  300
+  B21                         Atmospheric / aerosol correction, snow grain size                                                          1020                 300
+  QUALITY_FLAGS               Classification and quality flags                                                                           N/A                  300
+  SAA                         Sun azimuth angle                                                                                          N/A                 19000
+  SZA                         Sun zenith angle                                                                                           N/A                 19000
+  VAA                         Viewing (observation) azimuth angle                                                                        N/A                 19000
+  VZA                         Viewing (observation) zenith angle                                                                         N/A                 19000
+  HUMIDITY                    Relative humidity (meteo band)                                                                             N/A                 19000
+  SEA_LEVEL_PRESSURE          Mean sea level pressure (meteo band)                                                                       N/A                 19000
+  TOTAL_COLUMN_OZONE          Total column ozone (meteo band)                                                                            N/A                 19000
+  TOTAL_COLUMN_WATER_VAPOUR   Total column water vapour (meteo band)                                                                     N/A                 19000
+  dataMask                    The mask of data/no data pixels ([more](/APIs/SentinelHub/UserGuides/Datamask.qmd)).                      N/A\*               N/A\*\*
+
+\*dataMask has no wavelength information, as it carries only boolean
+information on whether a pixel has data or not. See the chapter on Units
+for more. `<br/>`{=html} \*\*dataMask has no source resolution as it is
+calculated for each output pixel.
+
+For more about Sentinel-3 OLCI bands, visit
+`<a href="https://sentinels.copernicus.eu/web/sentinel/user-guides/sentinel-3-olci/resolutions/radiometric" target="_blank">`{=html}this
+Copernicus website`</a>`{=html}.
+
+### Units
+
+The data values for each band in your custom script are presented in the
+units as specified here. In case more than one unit is available for a
+given band, you may optionally set the value of `input.units` in your
+evalscript `setup` function to one of the values in the
+`Sentinel Hub Units` column. Doing so will present data in that unit.
+The Sentinel Hub `units` parameter combines the physical quantity and
+corresponding units of measurement values. As such, some names more
+closely resemble physical quantities, others resemble units of
+measurement.
+
+The `Source Format` specifies how and with what precision the digital
+numbers (`DN`) from which the unit is derived are encoded. Bands
+requested in `DN` units contain exactly the pixel values of the source
+data. Note that resampling may produce interpolated values. `DN` is also
+used whenever a band is derived computationally (like dataMask); such
+bands can be identified by having `DN` units and `N/A` source format.
+`DN` values are typically not offered if they do not simply represent
+any physical quantity, in particular, when `DN` values require
+source-specific (i.e. non-global) conversion to physical quantities.
+
+Values in non-`DN` units are computed from the source (`DN`) values with
+at least float32 precision. Note that the conversion might be nonlinear,
+therefore the full value range and quantization step size of such a band
+can be hard to predict. Band values in evalscripts always behave as
+floating point numbers, regardless of the actual precision.
+
+The `Typical Range` indicates what values are common for a given band
+and unit, however outliers can be expected.
+
+  Band                                   Physical Quantity (units)           Sentinel Hub Units   Source Format   Typical Range                        Notes
+  -------------------------------------- ----------------------------------- -------------------- --------------- ------------------------------------ ----------------------------------------------------------------------------------------------------------------------------------
+  Optical bands `<br/>`{=html} B01-B21   Reflectance (unitless)              REFLECTANCE          UINT16          0 - 0.4                              Higher values in infrared bands. Highly reflective pixels, such as clouds, can have reflectance values above 1.
+  VAA                                    Angle (degrees)                     DEGREES              INT16           -180 - 180                           
+  VZA                                    Angle (degrees)                     DEGREES              UINT16          0 - 180                              
+  SAA                                    Angle (degrees)                     DEGREES              INT16           -180 - 180                           
+  SZA                                    Angle (degrees)                     DEGREES              UINT16          0 - 180                              
+  HUMIDITY                               Humidity (percent)                  PERCENT              FLOAT32         0 - 100                              
+  SEA_LEVEL_PRESSURE                     Pressure (hectopascals)             HECTOPASCALS         FLOAT32         980 - 1030                           Extreme weather can be outside this range
+  TOTAL_COLUMN_OZONE                     Total column ozone (kg/m2)          KG_M2                FLOAT32         0.004 - 0.008                        
+  TOTAL_COLUMN_WATER_VAPOUR              Total column water vapour (kg/m2)   KG_M2                FLOAT32         0 - 70                               
+  QUALITY_FLAGS                          N/A                                 DN                   UINT32          0 - 4,294,967,294                    Bit packed value. Use [decodeS3OLCIQualityFlags](/APIs/SentinelHub/Evalscript/Functions.qmd#decodes3olciqualityflags) to unpack.
+  dataMask                               N/A                                 DN                   N/A             0 - no data`<br/>`{=html} 1 - data   
+
+### Mosaicking
+
+All [mosaicking](/APIs/SentinelHub/Evalscript/V3.qmd#mosaicking) types
+are supported.
+
+### Scenes Object
+
+[`scenes` object](/APIs/SentinelHub/Evalscript/V3.qmd#scenes) stores
+metadata. An example of metadata available in `scenes` object for
+Sentinel-3 OLCI when mosaicking is `ORBIT`:
+
+  Property name               Value
+  --------------------------- -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  tiles\[i\].date             `'2019-04-02T17:05:39Z'`
+  tiles\[i\].shId             `881338`
+  tiles\[i\].tileOriginalId   `'EODATA/Sentinel-3/OLCI/OL_1_EFR/2020/04/04/S3A_OL_1_EFR____20200404T093158_20200404T093458_20200405T131253_0179_056_364_2160_LN1_O_NT_002.SEN3'`
+  tiles\[i\].dataPath         `'http://data.cloudferro.com/EODATA/Sentinel-3/OLCI/OL_1_EFR/2020/04/04/S3A_OL_1_EFR____20200404T093158_20200404T093458_20200405T131253_0179_056_364_2160_LN1_O_NT_002.SEN3'`
+
+Properties of a `scenes` object can differ depending on the selected
+mosaicking and in which evalscript function the object is accessed.
+[Working with metadata in
+evalscript](/APIs/SentinelHub/UserGuides/Metadata.qmd) user guide
+explains all details and provides examples.
+
+## Catalog API Capabilities
+
+To access Sentinel 3 OLCI product metadata you need to send search
+request to our [Catalog API](/APIs/SentinelHub/Catalog.qmd). The
+requested metadata will be returned as JSON formatted response to your
+request.
+
+### Collection identifier: sentinel-3-olci
+
+### Distinct extension
+
+-   `date`
+
+## Examples
+
+[S3OLCI examples](/APIs/SentinelHub/Process/Examples/S3OLCI.qmd)
