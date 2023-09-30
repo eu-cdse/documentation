@@ -5,6 +5,7 @@ from IPython.display import display, Markdown, Latex,HTML
 from tabulate import tabulate
 
 import sys
+import os
 sys.path.append('..')
 from Datafunctions import data_availability, filter_levels
 
@@ -227,12 +228,33 @@ def baselineinfo(filename):
 ```
 
 ```{python}
+import os
+
+def collection_fly(collectionid, text):
+    directory = "collections_fly"
+    file_name = f"{directory}/{collectionid}.qmd"
+
+    # Check for directory
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+
+    # Create or replace the file
+    with open(file_name, "w") as qmd_file:
+        qmd_file.write(text)
+
+    return file_name
+```
+
+
+```{python}
 # for loop to display the content
 text = ''
 categories=[]
 
+
 for c in meta:
 
+    fly_content = ''
     additional_info = ""
     title = c["title"]
     resolution = c.get("gsd", "")
@@ -285,7 +307,7 @@ for c in meta:
     databrowser = find_link(rel="browser",title_contains="Data-Browser")
     license_url = find_link(rel="license")
     cite = find_link(rel="cite-as")
-    
+   
 
     if userguide is not None:
         userguide = f"""[![User guide](https://img.shields.io/badge/-User_guide-77cc09)]({userguide}){{target='_blank'}}"""
@@ -340,7 +362,12 @@ for c in meta:
     else:
         opensearch = ""
 
-    text = text + f"""
+    fly_content = f"""
+    <div class="{category}" style="display: block;">
+        <h2>{title}<h2>
+    </div>"""
+    file_test = collection_fly(collectionID,fly_content)
+    summary_text = f"""
 
 <div class="{category}" style="display: block;">
 
@@ -350,22 +377,15 @@ for c in meta:
 
 {thumbblock(thumb_url,userguide,opensearch,gsd,revisit_time,datatype,Updated_freq)}
 
-#### Overview
-
-{c["description"]}
-
-{offer}
-
-{detailblock(collectionID,spatial,temporal,table,link_block,license_button,cite )}
-
-{additional_info}
+<a href="{file_test}">load file here </a>
 
 </div>
 
 </div>
 
 """
-
+    text = text + summary_text
+    
 ```
 
 ```{python}
