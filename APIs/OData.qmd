@@ -17,6 +17,8 @@ import pandas as pd
 
 OData (Open Data Protocol) is a standard that specifies a variety of best practices for creating and using REST APIs. OData makes it possible to build REST-based data services that let Web clients publish and edit resources that are recognized by Uniform Resource Locators (URLs) and described in a data model using straightforward HTTP messages.
 
+# OData Products endpoint
+
 ## Query structure
 
 As a general note, OData query consists of elements which in this documentation are called "options". Interface supports the following search options:
@@ -722,3 +724,247 @@ with open(f"product.zip", 'wb') as p:
     p.write(file.content)
 ```
 :::
+
+
+# OData DeletedProducts endpoint
+
+The **DeletedProducts OData** endpoint allows users to access information about the deleted products in the 
+Copernicus Data Space Ecosystem Catalog. 
+This endpoint provides a convenient way to retrieve 
+details about the products that have been deleted 
+from the CDSE Catalog. By utilizing the supported 
+operations and filtering options, users can efficiently 
+access the required deleted products' details. 
+For the DeletedProducts OData endpoint, 
+requests should be built the same way as for 
+the OData Products endpoint [link](https://documentation.dataspace.copernicus.eu/APIs/OData.html#query-structure) with the change in the endpoint URL 'Products' to 'DeletedProducts'.
+
+## Endpoint URL
+
+The **DeletedProducts OData** endpoint can be accessed using the 
+following URL:
+
+::: {.panel-tabset}
+
+# HTTP Request
+
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/DeletedProducts`](https://catalogue.dataspace.copernicus.eu/odata/v1/DeletedProducts){target="_blank"}
+
+::: 
+
+## Query Structure
+
+The DeletedProducts OData endpoint supports the same 
+searching options as a standard OData Products endpoint.
+For more information, please go to [link](https://documentation.dataspace.copernicus.eu/APIs/OData.html#query-structure)
+
+::: {.panel-tabset}
+
+# HTTP Request
+
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/DeletedProducts?$filter=not contains(Name,'S1') and DeletionDate gt 2023-04-01T00:00:00.000Z and DeletionDate lt 2023-05-30T23:59:59.999Z&$orderby=DeletionDate&$top=20`](https://catalogue.dataspace.copernicus.eu/odata/v1/DeletedProducts?$filter=not%20contains(Name,%27S1%27)%20and%20DeletionDate%20gt%202023-04-01T00:00:00.000Z%20and%20DeletionDate%20lt%202023-05-30T23:59:59.999Z&$orderby=DeletionDate&$top=20){target="_blank"}
+
+::: 
+
+::: {.callout-note}
+
+To accelerate the query performance it is recommended to limit the query by specified dates e.g.:
+
+DeletionDate gt 2022-05-03T00:00:00.000Z and DeletionDate lt 2023-05-03T00:00:00.000Z
+
+:::
+
+## Filter option
+
+To search for products by properties a filter should be 
+built as explained [here](https://documentation.dataspace.copernicus.eu/APIs/OData.html#filter-option)
+
+The acceptable products' properties for OData DeletedProducts endpoint are:
+
+* *Name*  - search for a specific product by its exact name
+* *Id*  - search for a specific product by its id
+* *DeletionDate*  - search by deletion date
+* *DeletionCause*  - search by deletion cause
+* *Collection/Name*  - search within a specific collection
+* *OriginDate*  - search by origin date
+* *ContentDate/Start*  and *ContentDate/End*  - search by sensing date
+* *Footprint*  - search by geographic criteria
+* *Attributes*  - search by product's attributes
+
+
+### Query by name
+
+To search for a deleted product by its exact name:
+::: {.panel-tabset}
+
+# HTTP Request
+
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/DeletedProducts?$filter=Name eq 'S2A_MSIL1C_20210404T112111_N0500_R037_T31VEG_20230209T101305.SAFE'`](https://catalogue.dataspace.copernicus.eu/odata/v1/DeletedProducts?$filter=Name%20eq%20%27S2A_MSIL1C_20210404T112111_N0500_R037_T31VEG_20230209T101305.SAFE%27){target="_blank"}
+
+::: 
+
+### Query by Id
+
+To search for a deleted product by its Id:
+
+::: {.panel-tabset}
+
+# HTTP Request
+
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/DeletedProducts(29008eb1-1a51-48a8-9aec-288b00f7debe)`](https://catalogue.dataspace.copernicus.eu/odata/v1/DeletedProducts(29008eb1-1a51-48a8-9aec-288b00f7debe)){target="_blank"}
+
+::: 
+
+### Query by Deletion Date
+
+To search for products deleted between two inclusive interval dates:
+
+::: {.panel-tabset}
+
+# HTTP Request
+
+
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/DeletedProducts?$filter=DeletionDate ge 2023-04-26T00:00:00.000Z and DeletionDate le 2023-04-27T23:59:59.999Z`](https://catalogue.dataspace.copernicus.eu/odata/v1/DeletedProducts?$filter=DeletionDate%20ge%202023-04-26T00:00:00.000Z%20and%20DeletionDate%20le%202023-04-27T23:59:59.999Z){target="_blank"}
+
+::: 
+
+### Query by Deletion Cause
+
+To search for products deleted from specific reason:
+
+::: {.panel-tabset}
+
+# HTTP Request
+
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/DeletedProducts?$filter=DeletionCause eq 'Duplicated product' or DeletionCause eq 'Corrupted product'`](https://catalogue.dataspace.copernicus.eu/odata/v1/DeletedProducts?$filter=DeletionCause%20eq%20%27Duplicated%20product%27%20or%20DeletionCause%20eq%20%27Corrupted%20product%27){target="_blank"}
+
+::: 
+
+Allowed values of the `DelationCause` parameter are:
+
+* Duplicated product
+* Missing checksum
+* Corrupted product
+* Other\Obsolete product
+
+### Query by Collection of Products
+
+To search for deleted products within a specific collection:
+
+::: {.panel-tabset}
+
+# HTTP Request
+
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/DeletedProducts?$filter=Collection/Name eq 'SENTINEL-2' and DeletionDate gt 2023-04-01T00:00:00.000Z and DeletionDate lt 2023-09-30T23:59:59.999Z`](https://catalogue.dataspace.copernicus.eu/odata/v1/DeletedProducts?$filter=Collection/Name%20eq%20%27SENTINEL-2%27%20and%20DeletionDate%20gt%202023-04-01T00:00:00.000Z%20and%20DeletionDate%20lt%202023-09-30T23:59:59.999Z){target="_blank"}
+
+::: 
+
+For available collections please refer to [link](https://documentation.dataspace.copernicus.eu/APIs/OData.html#query-collection-of-products). Please also note that it is possible that none of the products have been deleted from the available collections.
+
+### Query by Sensing Date
+
+To search for deleted products acquired between two dates:
+
+::: {.panel-tabset}
+
+# HTTP Request
+
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/DeletedProducts?$filter=ContentDate/Start gt 2021-09-01T00:00:00.000Z and ContentDate/End lt 2021-09-01T00:05:00.000Z`](https://catalogue.dataspace.copernicus.eu/odata/v1/DeletedProducts?$filter=ContentDate/Start%20gt%202021-09-01T00:00:00.000Z%20and%20ContentDate/End%20lt%202021-09-01T00:05:00.000Z){target="_blank"}
+
+::: 
+
+### Query by Geographic Criteria
+
+To search for deleted products intersecting the specified polygon:
+
+::: {.panel-tabset}
+
+# HTTP Request
+
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/DeletedProducts?$filter=OData.CSC.Intersects(area=geography'SRID=4326;POLYGON ((-75.000244 -42.4521508418609, -75.000244 -43.4409190460844, -73.643585 -43.432873907284, -73.66513 -42.4443775132447, -75.000244 -42.4521508418609))') and ContentDate/Start gt 2021-01-01T00:00:00.000Z and ContentDate/End lt 2021-04-01T23:59:59.999Z`](https://catalogue.dataspace.copernicus.eu/odata/v1/DeletedProducts?$filter=OData.CSC.Intersects(area=geography%27SRID=4326;POLYGON%20((-75.000244%20-42.4521508418609,%20-75.000244%20-43.4409190460844,%20-73.643585%20-43.432873907284,%20-73.66513%20-42.4443775132447,%20-75.000244%20-42.4521508418609))%27)%20and%20ContentDate/Start%20gt%202021-01-01T00:00:00.000Z%20and%20ContentDate/End%20lt%202021-04-01T23:59:59.999Z){target="_blank"}
+
+::: 
+
+### Query by attributes
+To search for products by attributes it is necessary to 
+build a filter with the specified structure as defined [here](https://documentation.dataspace.copernicus.eu/APIs/OData.html#query-collection-of-products).
+
+::: {.panel-tabset}
+
+# HTTP Request
+
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/DeletedProducts?$filter=Attributes/OData.CSC.IntegerAttribute/any(att:att/Name eq 'orbitNumber' and att/OData.CSC.IntegerAttribute/Value eq 10844) and attributes/OData.CSC.StringAttribute/any(att:att/Name eq 'orbitDirection' and att/OData.CSC.StringAttribute/Value eq 'ASCENDING')`](https://catalogue.dataspace.copernicus.eu/odata/v1/DeletedProducts?$filter=Attributes/OData.CSC.IntegerAttribute/any(att:att/Name%20eq%20%27orbitNumber%27%20and%20att/OData.CSC.IntegerAttribute/Value%20eq%2010844)%20and%20attributes/OData.CSC.StringAttribute/any(att:att/Name%20eq%20%27orbitDirection%27%20and%20att/OData.CSC.StringAttribute/Value%20eq%20%27ASCENDING%27)){target="_blank"}
+
+::: 
+
+## Orderby option
+Orderby option works the same way as explained [here](https://documentation.dataspace.copernicus.eu/APIs/OData.html#orderby-option)
+
+For OData DeletedProducts endpoint, acceptable arguments for this option are:
+* *ContentDate/Start*
+* *ContentDate/End*
+* *DeletionDate*
+
+
+::: {.panel-tabset}
+
+# HTTP Request
+
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/DeletedProducts?$filter=contains(Name,'S1A_EW_GRD') and DeletionDate gt 2023-04-01T00:00:00.000Z and DeletionDate lt 2023-05-30T23:59:59.999Z&$orderby=DeletionDate desc`](https://catalogue.dataspace.copernicus.eu/odata/v1/DeletedProducts?$filter=contains(Name,%27S1A_EW_GRD%27)%20and%20DeletionDate%20gt%202023-04-01T00:00:00.000Z%20and%20DeletionDate%20lt%202023-05-30T23:59:59.999Z&$orderby=DeletionDate%20desc){target="_blank"}
+
+::: 
+
+## Expand option
+Expand option enables users to see full metadata of each 
+returned result.
+
+The acceptable argument for this option is:
+* *Attributes*
+
+To see the metadata of the results:
+
+
+::: {.panel-tabset}
+
+# HTTP Request
+
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/DeletedProducts?$filter=contains(Name,'S2A') and DeletionDate gt 2023-04-01T00:00:00.000Z and DeletionDate lt 2023-05-30T23:59:59.999Z&$expand=Attributes`](https://catalogue.dataspace.copernicus.eu/odata/v1/DeletedProducts?$filter=contains(Name,%27S2A%27)%20and%20DeletionDate%20gt%202023-04-01T00:00:00.000Z%20and%20DeletionDate%20lt%202023-05-30T23:59:59.999Z&$expand=Attributes){target="_blank"}
+
+::: 
+
+## Skip option
+Skip option can be used as defined [here](https://documentation.dataspace.copernicus.eu/APIs/OData.html#skip-option)
+
+
+::: {.panel-tabset}
+
+# HTTP Request
+
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/DeletedProducts?$filter=contains(Name,'S2A') and ContentDate/Start ge 2021-04-01T00:00:00.000Z and ContentDate/Start le 2021-04-30T23:59:59.999Z&$skip=30`](https://catalogue.dataspace.copernicus.eu/odata/v1/DeletedProducts?$filter=contains(Name,%27S2A%27)%20and%20ContentDate/Start%20ge%202021-04-01T00:00:00.000Z%20and%20ContentDate/Start%20le%202021-04-30T23:59:59.999Z&$skip=30){target="_blank"}
+
+::: 
+
+## Top option
+
+Top option can be used as defined [here](https://documentation.dataspace.copernicus.eu/APIs/OData.html#top-option)
+
+::: {.panel-tabset}
+
+# HTTP Request
+
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/DeletedProducts?$filter=contains(Name,'S1A_EW_GRD') and ContentDate/Start ge 2021-09-01T00:00:00.000Z and ContentDate/Start le 2021-09-30T23:59:59.999Z&$top=40`](https://catalogue.dataspace.copernicus.eu/odata/v1/DeletedProducts?$filter=contains(Name,%27S1A_EW_GRD%27)%20and%20ContentDate/Start%20ge%202021-09-01T00:00:00.000Z%20and%20ContentDate/Start%20le%202021-09-30T23:59:59.999Z&$top=40){target="_blank"}
+
+::: 
+
+## Count option
+
+Count option can be used as defined [here](https://documentation.dataspace.copernicus.eu/APIs/OData.html#count-option)
+
+
+::: {.panel-tabset}
+
+# HTTP Request
+
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/DeletedProducts?$filter=contains(Name,'S1A_EW_GRD') and DeletionDate gt 2023-04-01T00:00:00.000Z and DeletionDate lt 2023-05-30T23:59:59.999Z&$orderby=DeletionDate desc&$count=True`](https://catalogue.dataspace.copernicus.eu/odata/v1/DeletedProducts?$filter=contains(Name,%27S1A_EW_GRD%27)%20and%20DeletionDate%20gt%202023-04-01T00:00:00.000Z%20and%20DeletionDate%20lt%202023-05-30T23:59:59.999Z&$orderby=DeletionDate%20desc&$count=True){target="_blank"}
+
+::: 
