@@ -12,7 +12,7 @@ The [Service description and evolution document](/_docs/CDSE-SDE-TSY_Service%20D
 |4. |Browser| On-demand production API  | Processing API: extended Sentinel Hub APIs, OpenEO  |   |
 | 5.|Catalogue APIs: OData and OpenSearch |   | Jupyter Lab    |      |
 |6.|  |  | Marketplace | -->
-![Roadmap Summary](/_images/RoadmapSummary.png)
+![](/_images/RoadmapSummary_10_2023.png)
 
 ## Details
 
