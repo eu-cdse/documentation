@@ -7,6 +7,7 @@ The Browser is a web browser application that allows you to easily search, visua
 Currently you need a free account to use the Browser. To register for a free account, click [here](https://identity.cloudferro.com/auth/realms/CDSE/protocol/openid-connect/auth?client_id=sh-5f8b630b-b083-49ed-b340-b8f01ecb81c4&redirect_uri=https%3A%2F%2Fdataspace.copernicus.eu%2Fbrowser%2FoauthCallback.html&response_type=token&state=) to the browser. A new window will open where you can click on **New user? Click [here](https://identity.cloudferro.com/auth/realms/CDSE/login-actions/registration?client_id=sh-5f8b630b-b083-49ed-b340-b8f01ecb81c4&tab_id=kuySlol9oac){target="_blank"} to create an account and access the data**. Once you have created the account, you will automatically be logged in to the Browser. Remember to save your login credentials for the next time you want to log in to the Browser.
 
 ![Browser start screen](_images/StartScreen.png)
+
 Fig 1: Browser start screen
 
 
@@ -48,6 +49,17 @@ Fig 3: *Custom* Layers option with *Composite Index and Custom* script highlight
 
 Here you can create a custom *R/G/B* composite or _Index_ (band ratio, normalized difference index) by dragging and dropping the Sentinel-2 bands into the appropriate circles or use the _Custom script_ functionality to insert a piece of JavaScript code.
 
+
+#### Changing Configurations
+
+You can change the configuration to create your own layers and visualizations. A configuration instance acts as a separate WMS/WMTS/WFS/WCS service and each can be configured to provide a certain set of layers with different settings. It is therefore possible to create multiple configuration instances, each providing a different set of layers for different needs. The configuration instances can contain any number of layers that can be configured with the settings defined above, e.g., cloud coverage, time range, etc. Each visualizations is based on a predefined visualization option or a custom script. The configuration instance itself also has some global settings for default values on all layers, suach as image quality. 
+
+You can create your own configuration by accessing the Dashboard via the drop-down menu under your username or directly [here](https://shapps.dataspace.copernicus.eu/dashboard/). In the panel on the left you will find "Configuration Utility" where you can create, modify and delete your instances. Once you have created a configuration, you can open it in the Copernicus Browser. Alternatively, you can change the configurations directly in the Copernicus Browser by selecting your configuration from the drop-down menu as shown in the figure.
+
+<img src="_images/Configuration_dropdown.png" width="450">
+
+Fig 4: Changing the Configuration in Copernicus Browser
+
 #### Changing the Data Collection
 
 You can switch visualizing between different data collections by clicking on the arrow next to the Data Collections section in the Visualization tab. Once you click on the arrow as seen in Fig. 4, you will be able to see a drop-down menu with a list of the satellite data that is available. Let us try to visualize Sentinel-3 data of the same location and date as that of the Sentinel-2 data in Visualizing data section.
@@ -60,7 +72,7 @@ At the moment, the Data Collections available for visualization are Sentinel-2 (
 
 <img src="_images/DataCollection.png" width="450">
 
-Fig 4: Changing *Data Collection* from *Visualization* tab directly
+Fig 5: Changing *Data Collection* from *Visualization* tab directly
 
 #### Comparing Visualizations
 
@@ -68,7 +80,7 @@ To compare two (or more) visualizations you must add them to the compare panel. 
 
 <img src="_images/AddIcon.png" width="350">
 
-Fig 5: *Add to compare* and compare icon
+Fig 6: *Add to compare* and compare icon
 
 #### Saving Pins
 
@@ -76,7 +88,7 @@ To save a visualization for future viewing, you can save it as a pin by clicking
 
 <img src="_images/AddPins.png" width="350">
 
-Fig 6: *Add to pins* and Pins icon
+Fig 7: *Add to pins* and Pins icon
 
 ### Product Search for Current Visualization
 
@@ -85,7 +97,7 @@ When you are visualizing data (chapter Visualizing data), you can easily find th
 
 <img src="_images/FindProduct.png" width="350">
 
-Fig 7: *Find products for current view* button position in the sidebar.
+Fig 8: *Find products for current view* button position in the sidebar.
 
 ### 3D Visualization
 
@@ -101,7 +113,8 @@ Let us try visualizing Mont Blanc, the highest peak in the Alps.
 7. You can Reset values at any point to return to the default settings. 
 
 ![3D visualization](_images/3DViz.png)
-Fig 8: 3D visualization in the Browser with pop-up Settings windows on the right
+
+Fig 9: 3D visualization in the Browser with pop-up Settings windows on the right
 
 ## Product Search
 
@@ -111,7 +124,7 @@ The *SEARCH* tab is located in the sidebar next to the *VISUALIZE* tab (see Fig.
 
 <img src="_images/SearchTab.png" width="350">
 
-Fig 9: *SEARCH* tab with different *Data Sources, Time range and Search* button
+Fig 10: *SEARCH* tab with different *Data Sources, Time range and Search* button
 
 
 ### How to find a Product
@@ -124,7 +137,7 @@ To find products you can either use the keyword search (text input) or select on
    4. Press the _Search_ button
 
 ![Search tab](_images/SearchResult.png)
-Fig 10: *SEARCH* tab with L2A collection selected and map centred on Rome (Italy)
+Fig 11: *SEARCH* tab with L2A collection selected and map centred on Rome (Italy)
 
 You will now see the first 50 search results for your search settings (Sentinel L2A data over Italy for a time range of 2 weeks) in the sidebar and on the map. To load the next 50 results, click on the _Load more_ button at the end of the list in the sidebar. You can view the metadata of a product in the sidebar or by selecting a product on the map. In both cases you can:
 
@@ -137,18 +150,19 @@ To get more suitable results, you can also select or choose additional filters a
 1.	Select the Data Source and the appropriate instrument/ processing level.
 2.	Click on the Filter button and set the filtering parameters.
 3.	Press the Search button. 
-Here, you can choose various parameters depending on the chosen Data Source. For example, you can see the filter parameters for Sentinel-1 in Figure 11, letting you filter the results based on satellite platform, orbit direction, relative orbit number, acquisition mode, Beam ID and polarization.
+Here, you can choose various parameters depending on the chosen Data Source. For example, you can see the filter parameters for Sentinel-1 in figure below, letting you filter the results based on satellite platform, orbit direction, relative orbit number, acquisition mode, Beam ID and polarization.
 
 <img src="_images/Filters.png" width="450">
 
-Fig 11: Data filters and parameters
+Fig 12: Data filters and parameters
 
 #### Visualize the search result
 
 Once you have found a product, you can visualize the results in two ways: either by directly selecting the viszualize button ( ![visualize](_images/icons/VisualizeButton.png) ) in the sidebar or by selecting the visualize button in the results panel on the map. You can open the results panel by clicking on one of the displayed tile footprints on the map.
 
 ![Search tab](_images/VisualizeTile.png)
-Fig 12: Product metadata and visualize button
+
+Fig 13: Product metadata and visualize button
 
 ### How to download a Product
 
@@ -158,7 +172,24 @@ You can continue to use the app as normal while a product is being downloaded.
 
 <img src="_images/ProductDownload.png" width="450">
 
-Fig 13: Product download (in progress) with Download product and cancel button highlighted
+Fig 14: Product download (in progress) with Download product and cancel button highlighted
+
+#### Download single files
+
+A "product" refers to a directory containing a collection of information such as metadata, product information, the satellite image and quality data, auxiliary data and more. If downloading all of this data is not of your interest, you can opt to download single files within this directory but clicking on the single file download icon (![SFD](_images/icons/SingleFileDownload.png)). Depending on the product you are trying to download, you will get a list of files within the directory and the  ![download](_images/icons/DownloadIcon.png) icon next to them to download each file individually.
+
+### Add Product to Workspace
+
+To avoid downloading all the products, you can add the product to your workspace and give as input to your workflow on the Copernicus Dataspace Ecosystem directly. The main objective of the workspace is to:
+
+- Further process single products (with various options to select the algorithm/processing required for your application).
+- Keep track of the processed products (status, finished/queued products)
+
+To do this, click on the Add to Workspace icon (![workspace](_images/icons/AddToWorkspace.png)) appearing in your search result.  The workspace can be accessed by clicking on the dropdown menu under your username or directly [here](https://dataspace.copernicus.eu/workspace/).
+
+<img src="_images/User_DropDown.png" width="250">
+
+Fig 15: User dropdown menu to access Workspace.
 
 ## Tools
 
@@ -169,6 +200,8 @@ The Browser has several tools to help you better understand the data on the map 
 Use the **Area of Interest (AOI)** tool to draw a rectangular or polygonal area of interest by clicking on the ![polygon](_images/icons/PolygonIcon.png) icon in the upper right corner of the browser. You can also upload a KML/KMZ, GPX, WKT (in EPSG:4326) or GEOJSON/JSON file to create an AOI.
 
 Use the ![location](_images/icons/Location.png) icon to mark a location and re-centre to the **Point of Interest(POI)**
+
+Once you have selected the AOI, depending on the type of data you are looking at, you can view the spectral signature of the region using the **Spectral Explorer**(![spectral](_images/icons/Spectral_Explorer.png)) or, in case of indices, look at the change in value over time using the **Statistical Info** (![timeseries](_images/icons/HistIcon.png)) feature.
 
 ### Measure
 
@@ -209,13 +242,53 @@ Alternatively, you can select only certain months in a year using the filter by 
 6. Click on the play button to check the result and download the animation as a GIF-file using the Download button for further use online/offline.
 
 ![Timelapse](_images/Timelapse.png)
-Fig 14: Browser timelapse tool with settings highlighted
 
+Fig 16: Browser timelapse tool with settings highlighted
 
+### Statistical Ananlysis
+
+There are quite a lot of statistical analyses that can be done in the Browser itself. Depending on the type of data you are looking at, you can look at the distribution of the pixel values, view the spectral signature of the region using the **Spectral Explorer**(![spectral](_images/icons/Spectral_Explorer.png)) or, in case of indices, look at its change over time using the **Statistical Info** (![timeseries](_images/icons/HistIcon.png)) feature. 
 #### Histogram
 
 With the **Histogram** tool you can display statistical data (the distribution of values) for specific layers by clicking on the ![histogram](_images/icons/HistIcon.png) icon. The histogram is calculated for the data within your AOI, if defined or otherwise for the whole screen. This tool currently only works for index layers (e.g., the NDVI).
 
 <img src="_images/Hist.png" width="550">
 
-Fig. 15: Example of a distribution plot of NDVI values
+Fig. 17: Example of a distribution plot of NDVI values
+
+#### Spectral Explorer
+
+The **Spectral Explorer** analyses the various bands of the multi-spectral imagery to extract the spectral signature and helps to identify the scene in the region of interest. You can follow these steps to see a simple example of this feature. Note that this feature is only available for Sentinel-2 imagery at the moment.
+
+1. Go to the [location](https://sentinelshare.page.link/C7g8) and draw a bounding box in the open water like shown in the figure.
+2. Click on the **Spectral Explorer** icon (![spectral](_images/icons/Spectral_Explorer.png)) within the AOI tool.
+
+<img src="_images/Browser_Spectral_Explorer.png" width="750">
+
+Fig. 18: Screenshot of steps to follow to see an example of spectral signature of open water.
+
+By doing this, you can see a graph pop up with the spectral signature (associated with specific chemical composition) averaged over all the pixels within this box. This helps to compare the spectral signature of the scene (in light green) with other known signatures.
+
+<img src="_images/Spectral_Explorer.png" width="450">
+
+Fig. 19: Example of spectral signatures plotted in comparison to other known signatures labelled in the bottom of the graph.
+
+
+#### Time Series
+
+With the **Statistical Info** (![timeseries](_images/icons/HistIcon.png)) feature within the AOI tool, you can see how the value of an index has changed in time. To see this, it is necessary to choose a visualisation which give an index as output, (e.g., NDVI) or any single band. You can follow these steps to see an example Time Series of the NDVI of a single agricultural field. 
+ 
+ 1. Select the Normalized Difference Vegetation Index (NDVI) layer to visualise the [scene](https://sentinelshare.page.link/vPgD).
+ 2. Outline an agriculutral field with the AOI tool to select the area you want to analyse the changes in.
+
+<img src="_images/NDVI_TimeSeries.png" width="750">
+
+Fig. 20: Screenshot of steps to follow to see an example of time series of NDVI over an agricultural field.
+    
+ 3. Select the **Statistical Info** (![timeseries](_images/icons/HistIcon.png)) chart icon within the AOI tools.
+ 4. You can choose the time over which you want to see the changes at the top of the graph that pops up. Due to the clouds being in the way and distorting the NDVI considerably (cloud NDVI values are low), the growth curve isn't as orderly as one would have hoped. So you can also adjust the cloud cover to visualise the changes without distortion.
+
+<img src="_images/TimeSeries.png" width="450">
+
+Fig. 21: Example of Time Series plotted for an agricultural field over a period of 1 year with 0% cloud cover.
+  
