@@ -54,35 +54,6 @@ value to `20`, only tiles with at most 20% cloud coverage will be used.
 Note that this parameter is set per tile and might not be directly
 applicable to the chosen area of interest.
 
-#### previewMode
-
-Sentinel Hub API is optimised for full resolution data access as this is
-what most users need. There are, however, cases where low spatial
-resolution makes sense as well. To make this feasible, Sentinel Hub
-generates lower resolution files (which we call previews) with up to a
-few hours of delay after initial data availability. To enable access to
-these previews and thus reduce the resolution limit, set this property
-to `TILE_PREVIEW`, `PREVIEW` or `EXTENDED_PREVIEW`. If set, the API will
-still display full resolution data when requesting higher resolutions.
-So, aside from potentially using more requests, in general there is no
-downside to enabling this option.
-
-  Value                  Description
-  ---------------------- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  **DETAIL** (default)   This option can be used when requesting spatial resolutions from original full resolution to at most 200m per pixel. Sentinel Hub will read the data from original files.
-  **TILE_PREVIEW**       This option extends the allowable request resolution to 640m per pixel. Sentinel Hub will seamlessly switch to reading data from tile previews at low resolution. These are generated to be identical to the original files at 160 meters per pixel (or 120 meters per pixel for bands with original resolution of 60 meters per pixel).
-  **PREVIEW**            This option extends the allowable request resolution to 1500m per pixel. Sentinel Hub will switch to reading data from previews at 200m per pixel. Previews are full orbits generated at low resolution in WGS84.
-  **EXTENDED_PREVIEW**   This option behaves as PREVIEW only it allows rendering at resolutions lower than 1500m per pixel (more zoomed out), however it limits the data to one month prior to the requested \"TO\" date.
-
-::: callout-note
-[maxCloudCoverage](/APIs/SentinelHub/Data/S2L1C.qmd#maxcloudcoverage)
-filter is ignored for `PREVIEW` and `EXTENDED_PREVIEW`. If used, this
-could cause the service to return different amount of tiles for
-different extents. To avoid this, remove `maxCloudCoverage` filter from
-your requests when using `PREVIEW` and `EXTENDED_PREVIEW`, or set it to
-100 %.
-:::
-
 ### Processing Options
 
 This chapter will explain the `input.data.processing` object of the
@@ -224,7 +195,6 @@ Sentinel-2 L1C when mosaicking is `ORBIT`:
   tiles\[i\].date             `'2020-09-15T10:17:52Z'`
   tiles\[i\].shId             `11583048`
   tiles\[i\].cloudCoverage    `2.09`
-  tiles\[i\].tileOriginalId   `'S2A_OPER_MSI_L2A_TL_VGS2_20200915T130644_A027332_T33TVM_N02.14'`
   tiles\[i\].dataPath         `'s3://sentinel-s2-l2a/tiles/33/T/VM/2020/9/15/0'`
 
 Properties of a `scenes` object can differ depending on the selected
