@@ -126,71 +126,10 @@ def DataFetch(c,i):
 
     return type,status,access,product_type,specific_product,spatial,temporal,product_link,catalogue,footnotes,provider,satellite,resolution
 
-def auxillary(c):
-    tabletitle = "Offered Data"
-    try: 
-        data_offer = len(c['summaries']['DataAvailability'])
-        t = []
-        note = ""
-        empty_columns = []  # Track empty columns
-
-        for i in range(0, data_offer):
-            try:
-                product_id = c['summaries']['DataAvailability'][i]['ProductID']
-            except Exception:
-                product_id = ''
-            try:
-                content = c['summaries']['DataAvailability'][i]['Content']
-            except Exception:
-                content = ''
-            try:
-                eof = c['summaries']['DataAvailability'][i]['EOF']
-            except Exception:
-                eof = ''
-            try:
-                tqz = c['summaries']['DataAvailability'][i]['TGZ']
-            except Exception:
-                tqz = ''
-            try:
-                tar = c['summaries']['DataAvailability'][i]['tar']
-            except Exception:
-                tar = ''
-            try:
-                zip = c['summaries']['DataAvailability'][i]['zip']
-            except Exception:
-                zip = ''
-            try:
-                policy = c['summaries']['DataAvailability'][i]['RollingPolicy']
-            except Exception:
-                policy = ''
-            try:
-                footnotes = c['summaries']['DataAvailability'][i]['Note']
-            except Exception:
-                footnotes = ''
-
-            t.append([product_id, content, eof, tqz, tar, zip, policy])
-            note += footnotes
-            headers = ["Product ID", "Content", "EOF", "TGZ", "tar","zip","Rolling Policy"]
-
-        # Find empty columns and remove them
-        t,headers=removeempty(t,headers)
-
-        table = tabulate(t, headers=headers, tablefmt='html', floatfmt=".4f", stralign="left", numalign="left")
-        # Set the minimum width of each column to 100 pixels
-        table = table.replace("<table>", '<table class="table">')
-        table = f"""<h5>{tabletitle}</h5>{table}{note}"""
-    except Exception:
-        table = " "
-
-    return table
-
 ################## DEFINE GENERAL FUNCTION TO CREATE DATA AVAILABILITY TABLE for Copernicus Missions########################
 def general(c):
     tabletitle = "Offered Data"
-    type = c.get("type", "")
-    if type=="Auxillary":
-        table = auxillary(c)
-        return table
+    
     try: 
         data_offer = len(c['summaries']['DataAvailability'])
         t = []
