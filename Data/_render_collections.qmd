@@ -4,6 +4,9 @@ import json
 from IPython.display import display, Markdown, Latex,HTML
 from tabulate import tabulate
 
+import sys
+import os
+sys.path.append('..')
 from Datafunctions import data_availability, filter_levels
 
 ```
@@ -14,7 +17,7 @@ from Datafunctions import data_availability, filter_levels
 #load the collection
 
 meta = None
-with open("./collections.json") as f:
+with open("../collections.json") as f:
     meta = json.load(f)["collections"]
 
 meta = [ c for c in meta if constellation in c["constellation"] ]
@@ -225,12 +228,33 @@ def baselineinfo(filename):
 ```
 
 ```{python}
+import os
+
+def collection_fly(collectionid, text):
+    directory = "collections_fly"
+    file_name = f"{directory}/{collectionid}.qmd"
+
+    # Check for directory
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+
+    # Create or replace the file
+    with open(file_name, "w") as qmd_file:
+        qmd_file.write(text)
+
+    return file_name
+```
+
+
+```{python}
 # for loop to display the content
 text = ''
 categories=[]
 
+
 for c in meta:
 
+    fly_content = ''
     additional_info = ""
     title = c["title"]
     resolution = c.get("gsd", "")
@@ -258,7 +282,7 @@ for c in meta:
         pass
 
     if collectionID == "SENTINEL2_L2A":
-        additional_info = baselineinfo("Sentinel2_baseline.qmd")
+        additional_info = baselineinfo("../Others/Sentinel2_baseline.qmd")
     else:
         pass
 
@@ -283,7 +307,7 @@ for c in meta:
     databrowser = find_link(rel="browser",title_contains="Data-Browser")
     license_url = find_link(rel="license")
     cite = find_link(rel="cite-as")
-    
+   
 
     if userguide is not None:
         userguide = f"""[![User guide](https://img.shields.io/badge/-User_guide-77cc09)]({userguide}){{target='_blank'}}"""
@@ -338,8 +362,7 @@ for c in meta:
     else:
         opensearch = ""
 
-    text = text + f"""
-
+    fly_content = f"""
 <div class="{category}" style="display: block;">
 
 <div>
@@ -354,8 +377,6 @@ for c in meta:
 
 {offer}
 
-{detailblock(collectionID,spatial,temporal,table,link_block,license_button,cite )}
-
 {additional_info}
 
 </div>
@@ -363,12 +384,12 @@ for c in meta:
 </div>
 
 """
-
+    file_test = collection_fly(collectionID,fly_content)    
 ```
 
 ```{python}
-text = filter_levels.createcheckboxes(sorted(set(categories))) +text + togglescript()
+# text = filter_levels.createcheckboxes(sorted(set(categories))) +text + togglescript()
 
-display(Markdown(text))
+# display(Markdown(text))
 
 ```
