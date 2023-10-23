@@ -16,7 +16,7 @@ constellation = "Sentinel-1"
 ```
 
 
-The [Sentinel-1 radar imaging mission](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-1){target="_blank"} is composed of a constellation of two polar-orbiting satellites providing continous all-weather, day and night imagery for Land and Maritime Monitoring. C-band synthentic aperture radar imaging has the advantage of operating at wavelenghts that are not obstructed by clouds or lack of illumination and therefore can acquire data during day or night under all weather conditions.
+The [Sentinel-1 radar imaging mission](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-1){target="_blank"} is composed of a constellation of two polar-orbiting satellites providing continuous all-weather, day and night imagery for Land and Maritime Monitoring. C-band synthetic aperture radar imaging has the advantage of operating at wavelengths that are not obstructed by clouds or lack of illumination and therefore can acquire data during day or night under all weather conditions.
 
 **The end of mission of the Sentinel-1B satellite has been declared in July 2022**
 <br>On 23 December 2021, Copernicus Sentinel-1B experienced an anomaly related to the instrument electronics power supply provided by the satellite platform, leaving it unable to deliver radar data. Despite all investigations and recovery attempts, ESA and the European Commission had to announce that it is the end of the mission for Sentinel-1B. Copernicus Sentinel-1A remains fully operational. More information about the end of the mission for the Sentinel-1B satellite can be found on the webpage [Mission ends for Copernicus Sentinel-1B satellite](https://www.esa.int/Applications/Observing_the_Earth/Copernicus/Sentinel-1/Mission_ends_for_Copernicus_Sentinel-1B_satellite){target="_blank"}.
@@ -27,5 +27,60 @@ Sentinel data products are made available systematically and free of charge to a
 
 {{< include _render_collections.qmd >}}
 
+# Derived products & Processing options
 
+Sentinel-1 data can be accessed and processed in different ways within the Copernicus Data Space Ecosystem. Below we have compiled an overview of all the options to help you decide which one to use.
 
+## [Sentinel-1 RTC](https://documentation.dataspace.copernicus.eu/Data/Additional.html#sentinel-1-rtc) 
+[Sentinel-1 RTC](https://documentation.dataspace.copernicus.eu/Data/Additional.html#sentinel-1-rtc) (Radiometric Terrain Correction) SAR Backscatter is a product processed from Sentinel-1 GRD data and compliant with [CEOS Analysis Ready Data for Land (CARD4L) specifications](https://ceos-dev.ceos.org/ard/){target="_blank"} for Normalised Radar Backscatter (NRB) products. Orthorectification is based on Copernicus DEM and no speckle filtering is applied. ([Additional product information](https://sentinels.copernicus.eu/web/sentinel/sentinel-1-ard-normalised-radar-backscatter-nrb-product){target="_blank"})
+
+## Copernicus Sentinel-1 Mosaics
+
+Sentinel-1 GRD monthly and yearly mosaics (available soon).
+
+It is planned that the mosaics will be processed with the following Sentinel Hub processing options:
+
+- Orthorectification with Copernicus 10m/30m DEM
+- Radiometric Terrain Correction with Copernicus 10m/30m DEM
+- No speckle filtering applied 
+
+## [Sentinel Hub processing options](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Data/S1GRD.html#processing-options) 
+
+Sentinel Hub offers the following processing options in the [Sentinel-1 GRD processing chain](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Data/S1GRD.html#processing-chain):
+
+- [Backscatter coefficients](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Data/S1GRD.html#processing-options):
+
+    - **beta0 (ellipsoid)**
+    - **sigma0 (ellipsoid)**
+    - **gamma0 (ellipsoid)**
+    - **gamma0 (terrain)** &rarr; this gamma0 RTC option can only be performed if *orthorectification* is enabled
+
+- [Lee Speckle Filtering](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Data/S1GRD.html#processing-options) applied on source data after calibration and noise removal
+- [Radiometric Terrain Correction (RTC)](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Data/S1GRD.html#processing-options) can be enabled by setting the backscatter coefficient to *gamma0 (terrain)* and enabling *orthorectification*
+- [Orthorectification](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Data/S1GRD.html#processing-options) with Range-Doppler terrain correction using one of the following DEMs:
+
+    - **Copernicus 10m/30m DEM** (10m resolution inside [39 European states](https://spacedata.copernicus.eu/collections/copernicus-digital-elevation-model){target="_blank"} including islands and 30m elsewhere.)
+    - **Copernicus 30m DEM**
+    - **Copernicus 90m DEM**
+
+## openEO processing options 
+
+openEO provides the **[sar_backscatter()](https://processes.openeo.org/draft/#sar_backscatter){target="_blank"}** method to process, calibrate and normalise Sentinel-1 radar backscatter products with the following processing options:
+
+- **sigma0-ellipsoid**: ground area computed with ellipsoid earth model
+
+The product is orthorectified using the Copernicus 30m DEM. No RTC or speckle filtering is applied to this product.
+
+## [On-demand processing options](https://documentation.dataspace.copernicus.eu/APIs/On-Demand%20Production%20API.html) 
+
+Processing of CARD-BS and COH6/COH12 products can be requested [on demand](https://documentation.dataspace.copernicus.eu/APIs/On-Demand%20Production%20API.html): 
+
+- [Sentinel-1 (CARD-BS) BackScatter](https://documentation.dataspace.copernicus.eu/APIs/On-Demand%20Production%20API.html)
+
+    - This processing option contains gamma0 geometric terrain correction (orthorectification) using Copernicus 30m DEM (identical to the *gamma0 (ellipsoid)* backscatter coefficient with enabled *orthorectification* option in Sentinel Hub processing options.) No RTC or speckle filtering is applied to this product.
+    - [Additional information](https://creodias.eu/eodata/sentinel-1/sentinel-1-l2-backscatter-bs/){target="_blank"}
+
+- [Sentinel-1 (CARD-COH) Coherence](https://documentation.dataspace.copernicus.eu/APIs/On-Demand%20Production%20API.html)
+
+    - The Sentinel-1 CARD COH (Copernicus Analysis Ready Data Coherence) processor generates a Sentinel-1 Level 2 product describing the coherence of a pair of images - 12 days apart. The product is orthorectified using Copernicus 30m DEM but no RTC or speckle filtering is applied.
+    - [Additional information](https://creodias.eu/eodata/sentinel-1/sentinel-1-l3-bs-monthly-com/){target="_blank"}.
