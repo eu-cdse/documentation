@@ -1565,7 +1565,7 @@ Note
 <td data-quarto-table-cell-role="th">0</td>
 <td>b76d70b2-7dd0-5b10-8727-a5979d828f57</td>
 <td>S1B_IW_RAW__0SDV_20190515T000001_20190515T0000...</td>
-<td>NaN</td>
+<td>None</td>
 <td>{'type': 'Polygon', 'coordinates': [[[95.0159,...</td>
 </tr>
 <tr class="even">
@@ -1628,7 +1628,7 @@ Note
 <td data-quarto-table-cell-role="th">0</td>
 <td>b76d70b2-7dd0-5b10-8727-a5979d828f57</td>
 <td>S1B_IW_RAW__0SDV_20190515T000001_20190515T0000...</td>
-<td>NaN</td>
+<td>None</td>
 <td>{'type': 'Polygon', 'coordinates': [[[95.0159,...</td>
 </tr>
 <tr class="even">
@@ -2529,18 +2529,19 @@ https://catalogue.dataspace.copernicus.eu/odata/v1/Products(&lt;PRODUCT_UUID&gt;
 <div class="tab-content">
 <div id="tabset-26-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-26-1-tab">
 <pre><code>import requests
+
+url = f"https://zipper.dataspace.copernicus.eu/odata/v1/Products(a5ab498a-7b2f-4043-ae2a-f95f457e7b3b)/$value"
+
+headers = {"Authorization": f"Bearer {access_token}"}
+
 session = requests.Session()
-session.headers.update({'Authorization': f'Bearer {access_token}'})
-url = f"https://catalogue.dataspace.copernicus.eu/odata/v1/Products(db0c8ef3-8ec0-5185-a537-812dad3c58f8)/$value"
-response = session.get(url, allow_redirects=False)
-while response.status_code in (301, 302, 303, 307):
-    url = response.headers['Location']
-    response = session.get(url, allow_redirects=False)
+session.headers.update(headers)
+response = session.get(url, headers=headers, stream=True)
 
-file = session.get(url, verify=False, allow_redirects=True)
-
-with open(f"product.zip", 'wb') as p:
-    p.write(file.content)</code></pre>
+with open("product.zip", "wb") as file:
+    for chunk in response.iter_content(chunk_size=8192):
+        if chunk:
+            file.write(chunk)</code></pre>
 </div>
 </div>
 </div>
