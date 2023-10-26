@@ -16,7 +16,7 @@ import xml.etree.ElementTree as ET
 
 The OpenSearch catalogue allows you to search through Copernicus data using a standardized web service. The [OpenSearch specification](https://github.com/dewitt/opensearch/blob/master/opensearch-1-1-draft-6.md){target="_blank"} can be consulted for technical details of the standard. This web service returns results as GeoJSON feature collections. Each feature in the collection represents an earth observation 'product', referencing where the actual data can be found.
 
-We remark that this version does not implement the OGC OpenSearch standards, and a migration from other API's named OpenSearch may require significant modifications. It mainly offers compatibility for existing users of a similar API on the CreoDIAS and Wekeo platforms and with client-side tools and workflows that have implemented support for this API. For new users looking for a more standardized API, a [STAC](https://stacspec.org){target="_blank"} alternative is being developed.
+We remark that this version does not implement the OGC OpenSearch standards, and a migration from other API's named OpenSearch may require significant modifications. It mainly offers compatibility for existing users of a similar API on the CreoDIAS and Wekeo platforms and with client-side tools and workflows that have implemented support for this API.
 
 ## Using OpenSearch interface to query Data Catalogue
 
@@ -134,6 +134,8 @@ This will sort the output by observation date. The following orderings can be im
 
 **published** - the date when the product got published in our repository
 
+**updated** - the date when the product got updated in our repository
+
 :::
 
 Each of these ordering can be be accompanied by:
@@ -149,7 +151,7 @@ For example the query
 ::: {.panel-tabset}
 
 # HTTP Request
-[http://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?startDate=2021-07-01T00:00:00Z&completionDate=2021-07-31T23:59:59Z&sortParam=startDate&maxRecords=20](http://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?startDate=2021-07-01T00:00:00Z&completionDate=2021-07-31T23:59:59Z&sortParam=cloudCover&maxRecords=20){target="_blank"}
+[http://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?startDate=2021-07-01T00:00:00Z&completionDate=2021-07-31T23:59:59Z&sortParam=startDate&maxRecords=20](http://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?startDate=2021-07-01T00:00:00Z&completionDate=2021-07-31T23:59:59Z&sortParam=startDate&maxRecords=20){target="_blank"}
 
 
 # Python
@@ -208,6 +210,7 @@ The common set of parameters are:
 **publishedAfter, publishedBefore** - the date limits when the product was published in our repository
 
 **lon, lat** - geographical position, expressed in military style (EPSG:4326, as decimal fraction of degrees, positive for eastern latitude and northern longitude)
+
 **radius** - region of interest, defined as a circle with centre in point determined by the longitude and latitude with radius expressed in meters (it won't work with point manually selected in EOFinder/Data Explorer)
 
 **geometry** - region of interest, defined as WKT string (POINT, POLYGON, etc.)
@@ -292,6 +295,7 @@ To be meaningful, the cloudiness must be provided with each product, while in ma
 
 - **ONLINE**
 - **OFFLINE**
+- **ALL**
 
 :::
 
