@@ -1,6 +1,6 @@
 # openEO public service deployment
 
-The openEO deployment of the CDSE public service has the aim to protect against lock-in in various ways:
+The openEO deployment of the Copernicus Data Space Ecosystem public service has the aim to protect against lock-in in various ways:
 - The software is 100% open source, preventing dependency on a vendor. 
 - openEO is an open standard, with a web service API. Allowing to immediately switch to other API's that implement openEO.
 - openEO workflows use standardized processes. Avoiding that your worflows are strongly coupled to a specific technology. 
