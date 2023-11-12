@@ -19,7 +19,7 @@ The Copernicus Data Space Ecosystem STAC API Catalog can be accessed using the f
 
 :::
 
-## AVAILABLE COLLECTIONS
+## Available Collections
 
 The data are organized in so-called collections corresponding to various satellites.
 
@@ -58,18 +58,7 @@ To access the information about all STAC API Collections:
 :::
 
 
-To access the information about a specified STAC API Collection:
-
-::: {.panel-tabset}
-
-# HTTP Request
-
-[`https://catalogue.dataspace.copernicus.eu/stac/collections/{collectionId}`](https://catalogue.dataspace.copernicus.eu/stac/collections/{collectionId}){target="_blank"}
-
-:::
-
-
-To search for information about SENTINEL-2 collection:
+To access the information about a specified STAC API Collection (e.g. SENTINEL-2):
 
 ::: {.panel-tabset}
 
@@ -93,26 +82,6 @@ To accelerate the query performance, it is recommended to search for Items withi
 :::
 
 ### Items Search in a STAC Collection
-
-To access the information about STAC API Items:
-
-::: {.panel-tabset}
-
-# HTTP Request
-
-[`https://catalogue.dataspace.copernicus.eu/stac/collection/{collectionId}/items`](https://catalogue.dataspace.copernicus.eu/stac/collection/{collectionId}/items){target="_blank"}
-
-:::
-
-To access the information about a specified STAC API Item:
-
-::: {.panel-tabset}
-
-# HTTP Request
-
-[`https://catalogue.dataspace.copernicus.eu/stac/collection/{collectionId}/items/{itemId}`](https://catalogue.dataspace.copernicus.eu/stac/collection/{collectionId}/items/{itemId}){target="_blank"}
-
-:::
 
 #### Search for items in a collection
 
