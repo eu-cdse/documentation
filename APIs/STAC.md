@@ -45,7 +45,7 @@ The following collections are currently available via STAC API
   
 ## STAC Collections Search
 
-STAC Collections endpoint enables users to get information about collections avaiable in Copernicus Data Space Ecosystem Catalog. 
+STAC Collections endpoint enables users to get information about collections available in Copernicus Data Space Ecosystem Catalog. 
 
 To access the information about all STAC API Collections:
 
@@ -75,18 +75,18 @@ To search for information about SENTINEL-2 collection:
 
 # HTTP Request
 
-[`https://catalogue.dataspace.copernicus.eu/stac/collections/SENTINEL-2 `](https://catalogue.dataspace.copernicus.eu/stac/collections/SENTINEL-2 ){target="_blank"}
+[`https://catalogue.dataspace.copernicus.eu/stac/collections/SENTINEL-2`](https://catalogue.dataspace.copernicus.eu/stac/collections/SENTINEL-2){target="_blank"}
 
 :::
 
 
 ## STAC Items Search
 
-Search fo items is possible among all collections (Link) or in one specified collection only (Link).
+Search for items is possible among all collections [Link](https://documentation.dataspace.copernicus.eu/APIs/STAC.html#items-search-in-all-stac-collections) or in one specified collection only [Link](https://documentation.dataspace.copernicus.eu/APIs/STAC.html#items-search-in-a-stac-collection).
 
 ::: {.callout-note}
 
-To accelerate the query performance it is recommended to search for Items within one specified collection e.g.:
+To accelerate the query performance, it is recommended to search for Items within one specified collection e.g.:
 
 [`https://catalogue.dataspace.copernicus.eu/stac/collections/SENTINEL-3/items`](https://catalogue.dataspace.copernicus.eu/stac/collections/SENTINEL-3/items){target="_blank"}
 
@@ -126,7 +126,7 @@ To list items in a given collection:
 
 :::
 
-By default the catalogue will automatically limit the number of shown items to 20. It can be changed by filtering with the limit option, which is described below (Link).
+By default, the catalogue will automatically limit the number of shown items to 20. It can be changed by filtering with the limit option, which is described below [Link](https://documentation.dataspace.copernicus.eu/APIs/STAC.html#limit-option).
 
 #### Search for specific item
 
@@ -153,12 +153,13 @@ To list items with a given attribute:
 :::
 
 Currently those attributes are available:
-* bbox
-* datetime
+
+* `bbox`
+* `datetime`
 
 ##### Search Items by bbox
 
-Attribute bbox will list all products from a given collection within the Area of Interest (AOI). This attribute requires between 4 and 6 values (coordinates) where each coordinate is separated by a comma.
+Attribute `bbox` will list all products from a given collection within the Area of Interest (AOI). This attribute requires between 4 and 6 values (coordinates) where each coordinate is separated by a comma.
 
 To search for items by bbox:
 
@@ -172,7 +173,7 @@ To search for items by bbox:
 
 ##### Search Items by datetime
 
-Attribute datetime will list all products within specified time interval.
+Attribute `datetime` will list all products within specified time interval.
 
 To search for items within specified datetime:
 
@@ -204,21 +205,22 @@ Please keep in mind that those are example values and might not return anything 
 #### Search Items by two or more attributes
 
 To list items by two or more attributes:
+
 ::: {.panel-tabset}
 
 # HTTP Request
 
-[`https://catalogue.dataspace.copernicus.eu/stac/collections/SENTINEL-1/items?bbox=-80.673805,-0.52849,-78.060341,1.689651&datetime=2022-12-31T10:07:09.224Z`](https://catalogue.dataspace.copernicus.eu/stac/collections/SENTINEL-1/items?bbox=-80.673805,-0.52849,-78.060341,1.689651&datetime=2022-12-31T10:07:09.224Z){target="_blank"}
+[`https://catalogue.dataspace.copernicus.eu/stac/collections/SENTINEL-1/items?bbox=-80.673805,-0.52849,-78.060341,1.689651&datetime=2014-10-13T23:28:54.650Z`](https://catalogue.dataspace.copernicus.eu/stac/collections/SENTINEL-1/items?bbox=-80.673805,-0.52849,-78.060341,1.689651&datetime=2014-10-13T23:28:54.650Z){target="_blank"}
 
 :::
 
 #### Limit option
 
-Limit option allows users to increase or decrease the amount of items shown. 
+Limit option allows users to increase or decrease the number of items shown. 
 
 The default value is set to 20.
 
-The acceptable arguments for this option:Integer <0,1000>
+The acceptable arguments for this option: Integer <0,1000>
 
 To list a limited number of items:
 
@@ -235,9 +237,10 @@ To list a limited number of items:
 Sortby option allows users to define the fields by which to sort results.
 
 The acceptable arguments for this option are:
-* end_datetime
-* start_datetime
-* datetime
+
+* `end_datetime`
+* `start_datetime`
+* `datetime`
 
 To set the sort order the prefix should be added to sort parameter:
 
@@ -272,11 +275,13 @@ To list items in any collection:
 
 
 This endpoint enables searching with simple filtering by:
+
 * collectionId
-* datetime
-* bbox
+* `datetime`
+* `bbox`
 
 Also, the following options are supported:
+
 * limit
 * sortby
 
@@ -294,8 +299,9 @@ Listing by attributes and using the limit option works the same way as before:
 
 
 Currently those attributes are available:
-* bbox
-* datetime
+
+* `bbox`
+* `datetime`
 
 #### Search items for many collections
 
