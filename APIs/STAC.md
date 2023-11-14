@@ -7,7 +7,7 @@ All fields included in Data Space API are consistent with the [STAC Specificatio
 
 The service implements the STAC API version v1.0.0. The version exposed in the Copernicus Data Space Ecosystem is still subject to change as the quality of STAC metadata is still improving. Nevertheless, it already supports basic product search.
 
-## STAC API Endpoint URL
+## Endpoint URL
 
 The Copernicus Data Space Ecosystem STAC API Catalog can be accessed using the following URL:
 
@@ -121,7 +121,7 @@ To list items with a given attribute:
 
 :::
 
-Currently those attributes are available:
+Currently those attributes are supported:
 
 * `bbox`
 * `datetime`
@@ -228,6 +228,20 @@ To sort items within specified collection:
 
 :::
 
+#### Page option
+
+Page option determines the page of results.
+
+The acceptable arguments for this option: Integer <1,100>
+
+::: {.panel-tabset}
+
+# HTTP Request
+
+[`https://catalogue.dataspace.copernicus.eu/stac/collections/SENTINEL-1/items?datetime=2022-12-31T09:59:31.293Z/&page=32`](https://catalogue.dataspace.copernicus.eu/stac/collections/SENTINEL-1/items?datetime=2022-12-31T09:59:31.293Z/&page=32){target="_blank"}
+
+:::
+
 ### Items Search in all STAC Collections
 
 If users user would like to list items from any collection, they can use /search option, which will search all collections.
@@ -253,6 +267,7 @@ Also, the following options are supported:
 
 * limit
 * sortby
+* page
 
 #### Search by attributes
 
