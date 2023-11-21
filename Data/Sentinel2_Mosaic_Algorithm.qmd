@@ -1,0 +1,44 @@
+---
+format:
+  html:
+    code-fold: true
+execute:
+  echo: false
+  output: asis
+jupyter: python3
+
+---
+
+##### Algorithm
+
+The following algorithm was run independently for each pixel:
+
+**(1)** For each pixel: Take the three-month stack of Sentinel-2 L2A observations. Only bands `B02`, `B03`, `B04`, `B08` and `SCL` are used to create the mosaic. For bands `B02`-`B08` transform the values to reflectance.
+
+**(2)** For each observation: Mark an observation as `'invalid'` if the value of the Sentinel-2 L2A scene classification band (`SCL`) has one of the following values: 
+
+-	`1`-SATURATED_DEFECTIVE,
+-	`3`-CLOUD_SHADOW, 
+-	`7`-CLOUD_LOW_PROBA / UNCLASSIFIED, 
+-	`8`-CLOUD_MEDIUM_PROBA, 
+-	`9`-CLOUD_HIGH_PROBA, 
+-	`10`-THIN_CIRRUS
+
+**(3)** For each pixel: Discard all invalid observations, what remains is called valid observations. The number of valid observations is generally different for each pixel and is output as a positive integer in the `'observations'` output band. 
+
+**(4)** For each pixel, for each band (`B02`, `B03`, `B04`, `B08`): Sort all valid observations for each band separately. 
+
+**(5)** For each pixel, for each band (`B02`, `B03`, `B04`, `B08`): Take the value of the first quartile and multiply it by `10000` (to get a 'digital number'). This is an output value.
+
+**(6)** For each pixel, for each band (`B02`, `B03`, `B04`, `B08`): If there are no valid observations, output the value `-32768`, which represents no data. For the `'observations'` band, output the value `0`, which also represents no data. 
+
+::: {.callout-note}
+
+
+-	If multiple Sentinel-2 observations from the same day are available, only the most recent observation on that day is used.
+-	No pre-filtering (e.g. based on cloud coverage) was performed to preserve as many non-cloudy pixels as possible.
+
+
+:::
+
+[Access Sentinel-2 Level 3 Quarterly Mosaics with Sentinel Hub](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Data/Sentinel2_Mosaic_access.html)
