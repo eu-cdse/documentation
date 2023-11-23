@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -1075,7 +1109,160 @@ Note
 </ul>
 </div>
 </div>
-<p><a href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Data/S2L3QM.html" target="_blank">Access Sentinel-2 Level 3 Quarterly Mosaics with Sentinel Hub</a></p>
+<p><a class="btn btn-light" data-bs-toggle="collapse" href="#AccessBYOC" role="button" aria-expanded="false" aria-controls="AccessBYOC">Access Sentinel-2 Level 3 Quarterly Mosaics with Sentinel Hub</a></p>
+<div id="AccessBYOC" class="collapse multi-collapse">
+<section id="access-sentinel-2-level-3-quarterly-mosaics-with-sentinel-hub" class="level5">
+<h5 class="anchored" data-anchor-id="access-sentinel-2-level-3-quarterly-mosaics-with-sentinel-hub">Access Sentinel-2 Level 3 Quarterly Mosaics with Sentinel Hub</h5>
+<p>Sentinel-2 Level 3 Quarterly Mosaics are onboarded to Sentinel Hub as a BYOC data collection. To access the data, you will need the specific pieces of information listed below, for general information about how to access BYOC collection visit our <a href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Data/Byoc.html" target="_blank">Data BYOC page</a>.</p>
+<ul>
+<li>Data collection id: <code>byoc-5460de54-082e-473a-b6ea-d5cbe3c17cca</code></li>
+<li>Available Bands and Data:</li>
+</ul>
+
+<table class="available-mosaic-bands" style="margin: 10px;">
+<thead>
+<tr>
+<th style="background-color: #9ea1a5">
+Name
+</th>
+<th style="background-color: #9ea1a5">
+Description
+</th>
+<th style="background-color: #9ea1a5">
+Resolution
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td rowspan="1">
+B02
+</td>
+<td>
+Blue
+</td>
+<td>
+10 m
+</td>
+</tr>
+<tr>
+<td rowspan="1">
+B03
+</td>
+<td>
+Green
+</td>
+<td>
+10 m
+</td>
+</tr>
+<tr>
+<td rowspan="1">
+B04
+</td>
+<td>
+Red
+</td>
+<td>
+10 m
+</td>
+</tr>
+<tr>
+<td rowspan="1">
+B08
+</td>
+<td>
+Near Infrared (NIR)
+</td>
+<td>
+10 m
+</td>
+</tr>
+<tr>
+<td rowspan="1">
+observation
+</td>
+<td>
+Number of valid observations
+</td>
+<td>
+10 m
+</td>
+</tr>
+<tr>
+<td rowspan="1">
+dataMask
+</td>
+<td>
+The mask of data/no data pixels (<a href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/UserGuides/Datamask.html">more</a>).
+</td>
+<td>
+N/A*
+</td>
+</tr>
+</tbody>
+
+</table>
+<p>*dataMask has no source resolution as it is calculated for each output pixel.</p>
+<section id="example-of-requesting-mosaic-over-rome-with-processing-api-request" class="level6">
+<h6 class="anchored" data-anchor-id="example-of-requesting-mosaic-over-rome-with-processing-api-request">Example of requesting mosaic over Rome with Processing API request</h6>
+<p>The request below is written in python. To execute it, you need to create an OAuth client as is explained <a href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Overview/Authentication.html#python">here</a>. It is named <code>oauth</code> in this example.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>evalscript <span class="op">=</span> <span class="st">"""</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="st">//VERSION=3</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="st">function setup() {</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="st">  return {</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="st">    input: ["B02", "B03", "B04"],</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="st">    output: { bands: 3 }</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="st">  };</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="st">function evaluatePixel(sample) {</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="st">  return [2.5 * sample.B04/10000, 2.5 * sample.B03/10000, 2.5 * sample.B02/10000];</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>request <span class="op">=</span> {</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="st">"input"</span>: {</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="st">"bounds"</span>: {</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>      <span class="st">"bbox"</span>: [</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>        <span class="fl">12.44693</span>,</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>        <span class="fl">41.870072</span>,</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>        <span class="fl">12.541001</span>,</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>        <span class="fl">41.917096</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>      ]</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    },</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    <span class="st">"data"</span>: [</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>      {</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>        <span class="st">"dataFilter"</span>: {</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>          <span class="st">"timeRange"</span>: {</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>            <span class="st">"from"</span>: <span class="st">"2023-01-01T00:00:00Z"</span>,</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>            <span class="st">"to"</span>: <span class="st">"2023-01-02T23:59:59Z"</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>          }</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>        <span class="st">"type"</span>: <span class="st">"byoc-5460de54-082e-473a-b6ea-d5cbe3c17cca"</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>  },</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>  <span class="st">"output"</span>: {</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>    <span class="st">"width"</span>: <span class="dv">780</span>,</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>    <span class="st">"height"</span>: <span class="dv">523</span>,</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>    <span class="st">"responses"</span>: [</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>      {</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>        <span class="st">"identifier"</span>: <span class="st">"default"</span>,</span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>        <span class="st">"format"</span>: {</span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>          <span class="st">"type"</span>: <span class="st">"image/jpeg"</span></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>  },</span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>  <span class="st">"evalscript"</span>: evalscript,</span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>url <span class="op">=</span> <span class="st">"https://sh.dataspace.copernicus.eu/api/v1/process"</span></span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>response <span class="op">=</span> oauth.post(url, json<span class="op">=</span>request)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+</section>
+</div>
 
 
 
