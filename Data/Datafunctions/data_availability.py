@@ -164,13 +164,21 @@ def auxillary(c):
             except Exception:
                 policy = ''
             try:
+                catalogapi = c['summaries']['DataAvailability'][i]['Catalog API']
+            except Exception:
+                catalogapi = ''
+            try:
+                S3path = c['summaries']['DataAvailability'][i]['S3 Path']
+            except Exception:
+                S3path = ''
+            try:
                 footnotes = c['summaries']['DataAvailability'][i]['Note']
             except Exception:
                 footnotes = ''
 
-            t.append([product_id, content, eof, tqz, tar, zip, policy])
+            t.append([product_id, content, eof, tqz, tar, zip, policy, catalogapi, S3path])
             note += footnotes
-            headers = ["Product ID", "Content", "EOF", "TGZ", "tar","zip","Rolling Policy"]
+            headers = ["Product ID", "Content", "EOF", "TGZ", "tar","zip","Rolling Policy","Catalog API","S3 Path"]
 
         # Find empty columns and remove them
         t,headers=removeempty(t,headers)
