@@ -28,9 +28,12 @@ official documentation if you have any questions ([https://curl.se/docs/manual.h
 Interaction with Traceability Service directly via the Traceability Service API:
 [https://trace.dataspace.copernicus.eu/api/v1/traces/name/S2A_MSIL1C_20230420T100021_N0509_R122_T33UVP_20230420T120027.SAFE.zip](https://trace.dataspace.copernicus.eu/api/v1/traces/name/S2A_MSIL1C_20230420T100021_N0509_R122_T33UVP_20230420T120027.SAFE.zip){target="blank"}
 
-## Public Certificates
+## Digital Certificates
 
 The Traceability service uses X.509 Certificates to sign information sent to the API. This allows verification of the identity of the user who created the trace. 
+
+Use of certificates with the trace-cli tool:  
+[https://github.com/eu-cdse/trace-cli#digital-signatures](https://github.com/eu-cdse/trace-cli#digital-signatures){target="blank"}
 
 Users may use certificates issued by the trusted public authority or by the CDSE Certificate Authority.
 
@@ -46,5 +49,7 @@ Certificates are used to sign information sent to our Traceability service. By i
 
 The root certificates can be downloaded by using the links below. Once downloaded, you can install them into your operating system certificate store. The process varies depending on your operating system and browser, so please refer to their respective documentation for detailed instructions.
 
-* Link to certificate:
-* Link to certificate:
+* Link to certificate: [https://ca.cloudferro.com/certs/ca.crt](https://ca.cloudferro.com/certs/ca.crt){target="blank"}
+  
+
+  
