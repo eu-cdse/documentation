@@ -35,7 +35,7 @@ The Traceability service uses X.509 Certificates to sign information sent to the
 Use of certificates with the trace-cli tool:  
 [https://github.com/eu-cdse/trace-cli#digital-signatures](https://github.com/eu-cdse/trace-cli#digital-signatures){target="blank"}
 
-Users may use certificates issued by the trusted public authority or by the CDSE Certificate Authority.
+Users may use certificates issued by the trusted public authority or by the Copernicus Data Space Ecosystem Certificate Authority.
 
 ### About Our Certificate Authority (CA)
 
