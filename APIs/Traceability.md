@@ -49,7 +49,8 @@ Certificates are used to sign information sent to our Traceability service. By i
 
 The root certificates can be downloaded by using the links below. Once downloaded, you can install them into your operating system certificate store. The process varies depending on your operating system and browser, so please refer to their respective documentation for detailed instructions.
 
-* Link to certificate: [https://ca.cloudferro.com/certs/ca.crt](https://ca.cloudferro.com/certs/ca.crt){target="blank"}
+* Link to certificate: [https://ca.cloudferro.com/certs/ca.crt](https://ca.cloudferro.com/certs/ca.crt){target="blank"}  
+* Link to certificate revocation list: [https://ca.cloudferro.com/certs/cdse-ca.crl](https://ca.cloudferro.com/certs/cdse-ca.crl){target="blank"}
   
 
   
