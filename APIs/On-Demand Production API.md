@@ -52,7 +52,7 @@ python -m json.tool | grep "access_token" | awk -F\" '{print $4}')
 Once you have your token, you can execute request to the API including the token in the request header. For example to list available Workflows you can use the following command:
 
 ````
-curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" \ 'https://odp.dataspace.copernicus.eu/odata/v1/Workflows'
+curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" "https://odp.dataspace.copernicus.eu/odata/v1/Workflows"
 ````
 
 More information on the tokens and authentication can be found here: [https://documentation.dataspace.copernicus.eu/APIs/OData.html#product-download](https://documentation.dataspace.copernicus.eu/APIs/OData.html#product-download){target="blank"}
@@ -64,23 +64,22 @@ More information on the tokens and authentication can be found here: [https://do
 To list all processing Workflows available to the user:
 
 ````
-curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" \ 
-https://odp.dataspace.copernicus.eu/odata/v1/Workflows
+curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" \
+"https://odp.dataspace.copernicus.eu/odata/v1/Workflows"
 ````
 
 To search for specific Workflows you can use filters on the attributes. To find workflow named “coh”:
 
 ````
-curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" \ 
-https://odp.dataspace.copernicus.eu/odata/v1/Workflows?$filter=Name eq 'coh'
+curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" \
+"https://odp.dataspace.copernicus.eu/odata/v1/Workflows?$filter=Name%20eq%20coh"
 ````
 
 In a similar way to find all Workflows suitable for processing Sentinel-1 SLC products:
 
 ````
-curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" \ 
-https://odp.dataspace.copernicus.eu/odata/v1/Workflows?
-$filter=contains(InputProductType,'SL````C')
+curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" \
+"https://odp.dataspace.copernicus.eu/odata/v1/Workflows?$filter=contains(InputProductType,'SLC')"
 ````
 
 Details of the Workflow in the response list the parameters which are needed to create new Production Order:
@@ -122,8 +121,8 @@ To submit a new processing job you need to use the POST method and send the para
 
 ````
 curl -X POST -H 'Content-Type:application/json' \
--H "Authorization: Bearer $KEYCLOAK_TOKEN" \ 
-https://odp.dataspace.copernicus.eu/odata/v1/ProductionOrder/OData.CSC.Order \
+-H "Authorization: Bearer $KEYCLOAK_TOKEN" \
+"https://odp.dataspace.copernicus.eu/odata/v1/ProductionOrder/OData.CSC.Order" \
 -d '<json_message>'
 ````
 
@@ -164,8 +163,8 @@ Example: to submit an order for the Sentinel-1 CARD Backscatter product:
 
 ````
 curl -X POST -H 'Content-Type:application/json' \
--H "Authorization: Bearer $KEYCLOAK_TOKEN" \ 
-https://odp.dataspace.copernicus.eu/odata/v1/ProductionOrder/OData.CSC.Order \
+-H "Authorization: Bearer $KEYCLOAK_TOKEN" \
+"https://odp.dataspace.copernicus.eu/odata/v1/ProductionOrder/OData.CSC.Order" \
 -d '{ \
   "WorkflowName": "card_bs",
   "InputProductReference": {
@@ -205,15 +204,14 @@ To list all Production Orders requested by the user:
 
 ````
 curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" \
-https://odp.dataspace.copernicus.eu/odata/v1/ProductionOrders
+"https://odp.dataspace.copernicus.eu/odata/v1/ProductionOrders"
 ````
 
 When looking for completed orders for a specific processor:
 
 ````
 curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" \
-"https:// odp.dataspace.copernicus.eu/odata/v1/ProductionOrders?
-$filter=WorkflowName eq 'coh' and Status eq 'completed'"
+"https://odp.dataspace.copernicus.eu/odata/v1/ProductionOrders?$filter=WorkflowName%20eq%20coh%20and%20Status%20eq%20completed"
 ````
 
 #### Check the status of a single Production Order
@@ -221,7 +219,7 @@ To check details of the single order using the order Id:
 
 ````
 curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" \
-'https://odp.dataspace.copernicus.eu/odata/v1/ProductionOrders(<order_id>)'
+"https://odp.dataspace.copernicus.eu/odata/v1/ProductionOrders(<order_id>)"
 ````
 
 #### Cancel a Production Order
@@ -229,8 +227,7 @@ To cancel an existing order:
 
 ````
 curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" \
-'https://odp.dataspace.copernicus.eu/odata/v1/ProductionOrder(<order_id>)/
-OData.CSC.Cancel'
+"https://odp.dataspace.copernicus.eu/odata/v1/ProductionOrder(<order_id>)/OData.CSC.Cancel"
 ````
 
 The orders which are in the queue and not yet processed will be removed instantly. For the orders in processing, the Order Items (single item within a Production Order) being processed will complete but the remaining part of the Order will be canceled.
@@ -248,7 +245,7 @@ To download the result:
 
 ````
 curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" \
-'https://odp.dataspace.copernicus.eu/odata/v1/ProductionOrder(<order_id>)/Product/$value' \
+"https://odp.dataspace.copernicus.eu/odata/v1/ProductionOrder(<order_id>)/Product/$value" \
 -o result.zip
 ````
 
@@ -260,7 +257,7 @@ Batch Order endpoint uses the same mechanism as described for the Production Ord
 ````
 curl -X POST -H 'Content-Type:application/json' \
 -H "Authorization: Bearer $KEYCLOAK_TOKEN" \ 
-https://odp.dataspace.copernicus.eu/odata/v1/BatchOrder/OData.CSC.Order \
+"https://odp.dataspace.copernicus.eu/odata/v1/BatchOrder/OData.CSC.Order" \
 -d '<json_message>'
 ````
 
@@ -301,14 +298,14 @@ To list all Production Orders requested by the user:
 ````
 curl -X POST -H 'Content-Type:application/json' \
 -H "Authorization: Bearer $KEYCLOAK_TOKEN" \ 
-https://odp.dataspace.copernicus.eu/odata/v1/BatchOrder
+"https://odp.dataspace.copernicus.eu/odata/v1/BatchOrder"
 ````
 
-When looking for batch orders for a specific processor:
+When looking for batch orders for a specific processor (in example 'coh'):
 
 ````
 curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" \
-"https:// odp.dataspace.copernicus.eu/odata/v1/BatchOrder?$filter=WorkflowName eq 'coh'
+"https://odp.dataspace.copernicus.eu/odata/v1/BatchOrder?$filter=WorkflowName%20eq%20%coh"
 ````
 
 #### Check the status of a single Batch Order
@@ -316,7 +313,7 @@ To check details of the single order using the order Id:
 
 ````
 curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" \
-'https://odp.dataspace.copernicus.eu/odata/v1/BatchOrder(<batch_order_id>)'
+"https://odp.dataspace.copernicus.eu/odata/v1/BatchOrder(<batch_order_id>)"
 ````
 
 #### List products generated in a Batch Order
@@ -324,7 +321,7 @@ When the batch order is processed, for each input product an output is generated
 
 ````
 curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" \
-'https://odp.dataspace.copernicus.eu/odata/v1/BatchOrder(<batch_order_id>)/Products'
+"https://odp.dataspace.copernicus.eu/odata/v1/BatchOrder(<batch_order_id>)/Products"
 ````
 
 #### Display details of the results
