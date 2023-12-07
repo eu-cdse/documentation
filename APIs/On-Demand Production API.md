@@ -15,7 +15,7 @@ The API allows discovery of all available workflows which can be run in the Cope
 
 ### API Endpoint
 
-The **ODP API endpoint is [https://odp.dataspace.copernicus.eu/odata/v1](https://odp.dataspace.copernicus.eu/odata/v1){target="blank"}**. The endpoint supports both HTTP and HTTPS protocols.
+The **ODP API endpoint is [https://odp.dataspace.copernicus.eu/odata/v1](https://odp.dataspace.copernicus.eu/odata/v1){target="blank"}**.
 
 **OpenAPI documentation is located at [https://odp.dataspace.copernicus.eu/odata/docs](https://odp.dataspace.copernicus.eu/odata/docs){target="blank"}**
 
