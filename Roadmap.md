@@ -12,6 +12,11 @@ The [Service description and evolution document](/_docs/CDSE-SDE-TSY_Service%20D
 |4. |Browser| On-demand production API  | Processing API: extended Sentinel Hub APIs, OpenEO  |   |
 | 5.|Catalogue APIs: OData and OpenSearch |   | Jupyter Lab    |      |
 |6.|  |  | Marketplace | -->
+**Documentation Updates Ongoing**
+
+**Roadmap for Dec 2023-Jun 2024 is available. Updating other sections of the documentation according to the roadmap is ongoing. We appreciate your patience.**
+
+
 ![](/_images/RoadmapSummary_12_2023.png)
 
 ## Details
