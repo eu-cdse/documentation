@@ -63,42 +63,42 @@ Based on their applications user can build their model by simple drag and drop m
 
 1. Load Collection 
    
-    a. To start a task within the openEO web editor, your first step involves ensuring you have the necessary dataset for the analysis. Thus, you must ensure the required dataset exists within the openEO database. You can do this by exploring/searching the list of available datasets from the sidebar of the interface.
-    
-    b. In our example, we want to calculate the Normalized Difference Vegetation Index (NDVI), so the Sentinel 2 L2A collection will be used. Once you find this collection, the next step is to drag and drop it into the Process Editor for further operations.
+    a. To start a task within the openEO web editor, your first step is to search the necessary collections for the analysis. Thus, you must check the required collections exists within the openEO database, you can do this by exploring/searching the list of available collections from the sidebar of the interface.
+    In our example, we want to calculate the Normalized Difference Vegetation Index (NDVI), so the Sentinel 2 L2A collection will be used. So the next step is to drag and drop it into the Process Editor for further operations.
         
     ![](_images/webeditor/drag_collection.png)
 
 
-    Now, once you load collection, there are several parameters you need to specify, including the area of interest, the temporal extent, and the selection of bands. When you click on the collection, a window pops up, where you can define the necessary parameters for subsequent processing. 
+    b. Now, once you load collection, there are several parameters you need to specify, including the area of interest, the temporal extent, and the selection of bands. By clicking on `load_collection`, a window pops up, where you can define the necessary parameters for subsequent processing. 
     
-    c. To specify the area of interest, you can choose between generating a bounding box or importing your spatial extent by dragging and dropping GeoJSON or KML files onto the map view. Here, we've provided an example involving a bounding box. There is also an option to "No filter", that will include all the data in the datacube.
+    To specify the area of interest, you can choose between generating a bounding box or importing your spatial extent by dragging and dropping GeoJSON or KML files onto the map view. While this example demonstrates the use of a bounding box, we suggest experimenting with a suitably compact area for testing purposes. There is also an option to "No filter", that will include all the data in the datacube.
 
     ![](_images/webeditor/define_bbox.png)
 
-    d. Another parameter is Temporal extent, that imits the data to load from the collection to the specified  temporal interval.
+    Another parameter to consider is the temporal extent, allowing you to restrict the loaded data to a specified time window. We encourage you to choose a timeframe of 1-2 weeks for testing purposes. 
 
     ![](_images/webeditor/define_temporal.png)
 
-    e. In our case, for NDVI calculation, we have specifically chosen the Red band (B04) and the Near-Infrared (NIR) band (B08). 
+    In our case, for NDVI calculation, we have specifically chosen the Red band (B04) and the Near-Infrared (NIR) band (B08). 
         
     ![](_images/webeditor/define_bands.png)
 
 2. Apply Processes
     
-    Eventually, the next step involves implementing essential processes, ranging from straightforward operations like adding bands to more complex tasks such as importing or defining user-defined functions (UDFs). 
+    The next step involves applying essential openEO processes, ranging from straightforward mathematical operations to more complex tasks such spatial or temporal aggregations. 
 
-    In this task, we're using a specific process called `reduce_dimension` as a key part of the operation. This process helps us simplify our collection: first, we use it to reduce temporal dimension and second, to deal with the various bands.
+    In this task, we'll using a specific openEO process called `reduce_dimension` two times to simplify our data cube. First we deal with the various bands and then reduce the temporal dimension.
             
     ![](_images/webeditor/reduce_dimension.png)
 
-    In the initial process, the `reduce_dimension` algorithm eliminates the temporal dimension by selecting the maximum value using the max function.
+    In the initial process, the `reduce_dimension` algorithm is utilised to reduce the band dimension after executing a series of addition, subtraction, and division operations necessary for the NDVI calculation.
+
+    <centre><img src="_images/webeditor/reduce_bands.png"  width="80%" height="60%"></centre>
+
+    Following this, with the same `reduce_dimension` algorithm we eliminate the temporal dimension by selecting the maximum value using the max function.
             
     <centre><img src="_images/webeditor/temporal_reducer.png"  width="80%" height="60%"></centre>
 
-    Following this, the same `reduce_dimension` is utilised to reduce the band dimension after executing a series of addition, subtraction, and division operations necessary for the NDVI calculation.
-
-    <centre><img src="_images/webeditor/reduce_bands.png"  width="80%" height="60%"></centre>
 
 3. Select a format
 
@@ -106,7 +106,7 @@ Based on their applications user can build their model by simple drag and drop m
         
     ![](_images/webeditor/save_process.png)
 
-    Since our application involves simple NDVI calculation, we want to save it as a GeoTiff. 
+    Since our workflow eliminated the temporal dimension, we can keep things simple and just save the result as a GeoTiff.
 
     ![](_images/webeditor/save_as_gtiff.png)
 
