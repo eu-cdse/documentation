@@ -252,6 +252,12 @@ window.onload = function() {
  <span class="menu-text">Sentinel-5P</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Data/Sentinel6.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Sentinel-6</span></a>
+  </div>
+</li>
       </ul>
   </li>
           <li class="sidebar-item sidebar-item-section">
@@ -450,6 +456,18 @@ window.onload = function() {
  <span class="menu-text">Preprocessing &amp; merging Sentinels</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../APIs/openEO/openeo-community-examples/python/RankComposites/rank_composites.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Rank Composites</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notebook-samples/openeo/Whittaker.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Smoothening dataset using Whittaker</span></a>
+  </div>
+</li>
       </ul>
   </li>
       </ul>
@@ -518,12 +536,6 @@ window.onload = function() {
   <div class="sidebar-item-container"> 
   <a href="../APIs/SentinelHub/UserGuides/Metadata.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Working with metadata in evalscript</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../Applications/QGIS.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">QGIS Plugin</span></a>
   </div>
 </li>
       </ul>
@@ -1020,7 +1032,7 @@ window.onload = function() {
   <ul>
   <li><a href="#object-storage" id="toc-object-storage" class="nav-link" data-scroll-target="#object-storage">Object Storage</a></li>
   <li><a href="#registration" id="toc-registration" class="nav-link" data-scroll-target="#registration">Registration</a></li>
-  <li><a href="#request-for-secrets" id="toc-request-for-secrets" class="nav-link" data-scroll-target="#request-for-secrets">Request for secrets</a></li>
+  <li><a href="#generate-secrets" id="toc-generate-secrets" class="nav-link" data-scroll-target="#generate-secrets">Generate secrets</a></li>
   <li><a href="#example-access-using-s3cmd" id="toc-example-access-using-s3cmd" class="nav-link" data-scroll-target="#example-access-using-s3cmd">Example access using s3cmd</a></li>
   </ul></li>
   </ul>
@@ -1040,11 +1052,24 @@ window.onload = function() {
 </section>
 <section id="registration" class="level2">
 <h2 class="anchored" data-anchor-id="registration">Registration</h2>
-<p>To generate the necessary credentials you must have a registered account on dataspace.copernicus.eu. If you don’t have an account, you can register <a href="https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/auth?client_id=cdse-public&amp;response_type=code&amp;scope=openid&amp;redirect_uri=https%3A//dataspace.copernicus.eu/account/confirmed/1" target="blank">here</a>.</p>
+<p>To generate the necessary credentials you must have a registered account on dataspace.copernicus.eu. If you don’t have an account, you can register <a href="https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/auth?client_id=cdse-public&amp;response_type=code&amp;scope=openid&amp;redirect_uri=https%3A//dataspace.copernicus.eu/account/confirmed/1">here</a>.</p>
 </section>
-<section id="request-for-secrets" class="level2">
-<h2 class="anchored" data-anchor-id="request-for-secrets">Request for secrets</h2>
-<p>In order to obtain secrets,<a href="https://helpcenter.dataspace.copernicus.eu/hc/en-gb/requests/new" target="_blank">Submit a request</a> and provide the e-mail address of the registered Copernicus Data Space Ecosystem user for whom the credentials will be generated.</p>
+<section id="generate-secrets" class="level2">
+<h2 class="anchored" data-anchor-id="generate-secrets">Generate secrets</h2>
+<p>In order to obtain secrets,<a href="https://eodata-s3keysmanager.dataspace.copernicus.eu/">Visit page</a> and log in with Copernicus Data Space Ecosystem account for which the keys are to be generated. After successfully logging in, indicate the expiration date of the secrets using the “Add Credentials” button and click “Confirm”.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="_images/s3_cdse_1.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Add Credentials</figcaption>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="_images/s3_cdse_2.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Display Credentials</figcaption>
+</figure>
+</div>
+<p>Note that the Secret Key will be displayed only once and you will not be able to view it again after clicking the Close button. Copy your secret key and keep it in a safe place.</p>
 </section>
 <section id="example-access-using-s3cmd" class="level2">
 <h2 class="anchored" data-anchor-id="example-access-using-s3cmd">Example access using s3cmd</h2>
@@ -1063,11 +1088,13 @@ human_readable_sizes = False
 secret_key = &lt;secret_key&gt;
 use_https = true
 check_ssl_certificate = true</code></pre>
-<p>Then you can run any s3cmd command pointing to the previously created configuration file with parameter <code>-c</code>:</p>
+<p>Then you can run any s3cmd command pointing to the previously created configuration file with option <code>-c</code>:</p>
 <pre><code>s3cmd -c ~/.s3cfg ls</code></pre>
 <p>Below is an example of downloading a product from the EO data repository using s3cmd:</p>
 <pre><code>s3cmd -c ~/.s3cfg get s3://eodata/Sentinel-1/SAR/SLC/2016/12/28/S1A_IW_SLC__1SDV_20161228T044442_20161228T044509_014575_017AE8_4C26.SAFE/measurement/s1a-iw2-slc-vv-20161228t044442-20161228t044508-014575-017ae8-005.tiff</code></pre>
-<p>If the objects in the repository are archives, for example, such as <code>S1B_IW_SLC__1SDV_20191013T155948_20191013T160015_018459_022C6B_13A2.SAFE</code> use the <code>–recursive</code> parameter to download whole product.</p>
+<p>If the objects in the repository are archives, for example, such as <code>S1B_IW_SLC__1SDV_20191013T155948_20191013T160015_018459_022C6B_13A2.SAFE</code> use the resursive option <code>––recursive</code> or <code>-r</code> to download whole product.</p>
+<p>Example with the recursive option:</p>
+<pre><code>s3cmd -c ~/.s3cfg -r get s3://eodata/Sentinel-1/SAR/SLC/2019/10/13/S1B_IW_SLC__1SDV_20191013T155948_20191013T160015_018459_022C6B_13A2.SAFE/</code></pre>
 
 
 </section>

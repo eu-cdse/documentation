@@ -252,6 +252,12 @@ window.onload = function() {
  <span class="menu-text">Sentinel-5P</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Data/Sentinel6.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Sentinel-6</span></a>
+  </div>
+</li>
       </ul>
   </li>
           <li class="sidebar-item sidebar-item-section">
@@ -450,6 +456,18 @@ window.onload = function() {
  <span class="menu-text">Preprocessing &amp; merging Sentinels</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../APIs/openEO/openeo-community-examples/python/RankComposites/rank_composites.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Rank Composites</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notebook-samples/openeo/Whittaker.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Smoothening dataset using Whittaker</span></a>
+  </div>
+</li>
       </ul>
   </li>
       </ul>
@@ -518,12 +536,6 @@ window.onload = function() {
   <div class="sidebar-item-container"> 
   <a href="../APIs/SentinelHub/UserGuides/Metadata.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Working with metadata in evalscript</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../Applications/QGIS.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">QGIS Plugin</span></a>
   </div>
 </li>
       </ul>
@@ -1081,35 +1093,30 @@ window.onload = function() {
 <ol type="1">
 <li><p>Load Collection</p>
 <ol type="a">
-<li><p>To start a task within the openEO web editor, your first step involves ensuring you have the necessary dataset for the analysis. Thus, you must ensure the required dataset exists within the openEO database. You can do this by exploring/searching the list of available datasets from the sidebar of the interface.</p></li>
-<li><p>In our example, we want to calculate the Normalized Difference Vegetation Index (NDVI), so the Sentinel 2 L2A collection will be used. Once you find this collection, the next step is to drag and drop it into the Process Editor for further operations.</p></li>
+<li>To start a task within the openEO web editor, your first step is to search the necessary collections for the analysis. Thus, you must check the required collections exists within the openEO database, you can do this by exploring/searching the list of available collections from the sidebar of the interface. In our example, we want to calculate the Normalized Difference Vegetation Index (NDVI), so the Sentinel 2 L2A collection will be used. So the next step is to drag and drop it into the Process Editor for further operations.</li>
 </ol>
 <p><img src="_images/webeditor/drag_collection.png" class="img-fluid"></p>
-<p>Now, once you load collection, there are several parameters you need to specify, including the area of interest, the temporal extent, and the selection of bands. When you click on the collection, a window pops up, where you can define the necessary parameters for subsequent processing.</p>
-<ol start="3" type="a">
-<li>To specify the area of interest, you can choose between generating a bounding box or importing your spatial extent by dragging and dropping GeoJSON or KML files onto the map view. Here, we’ve provided an example involving a bounding box. There is also an option to “No filter”, that will include all the data in the datacube.</li>
+<ol start="2" type="a">
+<li>Now, once you load collection, there are several parameters you need to specify, including the area of interest, the temporal extent, and the selection of bands. By clicking on <code>load_collection</code>, a window pops up, where you can define the necessary parameters for subsequent processing.</li>
 </ol>
+<p>To specify the area of interest, you can choose between generating a bounding box or importing your spatial extent by dragging and dropping GeoJSON or KML files onto the map view. While this example demonstrates the use of a bounding box, we suggest experimenting with a suitably compact area for testing purposes. There is also an option to “No filter”, that will include all the data in the datacube.</p>
 <p><img src="_images/webeditor/define_bbox.png" class="img-fluid"></p>
-<ol start="4" type="a">
-<li>Another parameter is Temporal extent, that imits the data to load from the collection to the specified temporal interval.</li>
-</ol>
+<p>Another parameter to consider is the temporal extent, allowing you to restrict the loaded data to a specified time window. We encourage you to choose a timeframe of 1-2 weeks for testing purposes.</p>
 <p><img src="_images/webeditor/define_temporal.png" class="img-fluid"></p>
-<ol start="5" type="a">
-<li>In our case, for NDVI calculation, we have specifically chosen the Red band (B04) and the Near-Infrared (NIR) band (B08).</li>
-</ol>
+<p>In our case, for NDVI calculation, we have specifically chosen the Red band (B04) and the Near-Infrared (NIR) band (B08).</p>
 <p><img src="_images/webeditor/define_bands.png" class="img-fluid"></p></li>
 <li><p>Apply Processes</p>
-<p>Eventually, the next step involves implementing essential processes, ranging from straightforward operations like adding bands to more complex tasks such as importing or defining user-defined functions (UDFs).</p>
-<p>In this task, we’re using a specific process called <code>reduce_dimension</code> as a key part of the operation. This process helps us simplify our collection: first, we use it to reduce temporal dimension and second, to deal with the various bands.</p>
+<p>The next step involves applying essential openEO processes, ranging from straightforward mathematical operations to more complex tasks such spatial or temporal aggregations.</p>
+<p>In this task, we’ll using a specific openEO process called <code>reduce_dimension</code> two times to simplify our data cube. First we deal with the various bands and then reduce the temporal dimension.</p>
 <p><img src="_images/webeditor/reduce_dimension.png" class="img-fluid"></p>
-<p>In the initial process, the <code>reduce_dimension</code> algorithm eliminates the temporal dimension by selecting the maximum value using the max function.</p>
-<p><centre><img src="_images/webeditor/temporal_reducer.png" width="80%" height="60%"></centre></p>
-<p>Following this, the same <code>reduce_dimension</code> is utilised to reduce the band dimension after executing a series of addition, subtraction, and division operations necessary for the NDVI calculation.</p>
-<p><centre><img src="_images/webeditor/reduce_bands.png" width="80%" height="60%"></centre></p></li>
+<p>In the initial process, the <code>reduce_dimension</code> algorithm is utilised to reduce the band dimension after executing a series of addition, subtraction, and division operations necessary for the NDVI calculation.</p>
+<p><centre><img src="_images/webeditor/reduce_bands.png" width="80%" height="60%"></centre></p>
+<p>Following this, with the same <code>reduce_dimension</code> algorithm we eliminate the temporal dimension by selecting the maximum value using the max function.</p>
+<p><centre><img src="_images/webeditor/temporal_reducer.png" width="80%" height="60%"></centre></p></li>
 <li><p>Select a format</p>
 <p>As a final step in the workflow creation is to select the output format.</p>
 <p><img src="_images/webeditor/save_process.png" class="img-fluid"></p>
-<p>Since our application involves simple NDVI calculation, we want to save it as a GeoTiff.</p>
+<p>Since our workflow eliminated the temporal dimension, we can keep things simple and just save the result as a GeoTiff.</p>
 <p><img src="_images/webeditor/save_as_gtiff.png" class="img-fluid"></p></li>
 </ol>
 </section>
