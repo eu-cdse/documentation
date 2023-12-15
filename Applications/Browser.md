@@ -4,7 +4,7 @@ The Browser is a web browser application that allows you to easily search, visua
 
 [https://dataspace.copernicus.eu/browser/](https://dataspace.copernicus.eu/browser/){target="_blank"}
 
-Currently you need a free account to use the Browser. To register for a free account, click [here](https://identity.cloudferro.com/auth/realms/CDSE/protocol/openid-connect/auth?client_id=sh-5f8b630b-b083-49ed-b340-b8f01ecb81c4&redirect_uri=https%3A%2F%2Fdataspace.copernicus.eu%2Fbrowser%2FoauthCallback.html&response_type=token&state=) to the browser. A new window will open where you can click on **New user? Click [here](https://identity.cloudferro.com/auth/realms/CDSE/login-actions/registration?client_id=sh-5f8b630b-b083-49ed-b340-b8f01ecb81c4&tab_id=kuySlol9oac){target="_blank"} to create an account and access the data**. Once you have created the account, you will automatically be logged in to the Browser. Remember to save your login credentials for the next time you want to log in to the Browser.
+Currently you need a free account to use the Browser. To register for a free account, click [here](https://identity.cloudferro.com/auth/realms/CDSE/protocol/openid-connect/auth?client_id=sh-5f8b630b-b083-49ed-b340-b8f01ecb81c4&redirect_uri=https%3A%2F%2Fdataspace.copernicus.eu%2Fbrowser%2FoauthCallback.html&response_type=token&state=) to the browser. A new window will open where you can click on **New user? Click [here](https://identity.cloudferro.com/auth/realms/CDSE/login-actions/registration?client_id=sh-5f8b630b-b083-49ed-b340-b8f01ecb81c4&tab_id=kuySlol9oac){target="_blank"} to create an account and access the data**. Once you have created the account, you will automatically be logged in to the Browser. Remember to save your login credentials for the next time you want to log in to the Browser. The Copernicus Browser is also available in multiple languages. 
 
 ![Browser start screen](_images/StartScreen.png)
 
@@ -62,13 +62,13 @@ Fig 4: Changing the Configuration in Copernicus Browser
 
 #### Changing the Data Collection
 
-You can switch visualizing between different data collections by clicking on the arrow next to the Data Collections section in the Visualization tab. Once you click on the arrow as seen in Fig. 4, you will be able to see a drop-down menu with a list of the satellite data that is available. Let us try to visualize Sentinel-3 data of the same location and date as that of the Sentinel-2 data in Visualizing data section.
+You can switch visualizing between different data collections by clicking on the arrow next to the Data Collections section in the Visualization tab. Once you click on the arrow as seen in Fig. 4, you will be able to see a drop-down menu with a list of the satellite data that is available. Let us try to visualize Sentinel-2 Quarterly Mosaics data of the same location and date as that of the Sentinel-2 data in Visualizing data section.
 
 1. Click on the drop-down arrow on the right next to Pins icon. 
-2. Click on the drop-down arrow next to Sentinel-2 and select Sentinel-3.
-3. You can select the product you want to visualize. To visualize the Brightness temperature, select Sentinel-3 SLSTR L1B. You can see the predefined layers that can be visualized and click on the green button to Show latest date.
+2. Click on the drop-down arrow next to Sentinel-2 and select Sentinel-2 Mosaics. You will get two options to choose from because there are Quarterly and Annual Mosaics available. Choose `Sentinel-2 Quarterly Mosaics`. 
+3. You will get two options to choose from because there are Quarterly and Annual Mosaics available. Choose `Sentinel-2 Quarterly Mosaics` to visualise the Sentinel-2 cloudless mosaics created for each quarter of 2023. You can see the predefined layers that can be visualized and click on the green button to Show latest date.
 
-At the moment, the Data Collections available for visualization are Sentinel-2 (L1C and L2A), Sentinel-3 (OLCI Level-1 EFT, SLSTR Level-1 RBT) and Sentinel-5P.
+At the moment, the Data Collections available for visualization are Sentinel-2 (L1C and L2A), Sentinel-2 Mosaics (Quarterly Mosaics for 2023 and WorldCover Annual Cloudless Mosaics for 2020 and 2021), Sentinel-3 (OLCI Level-1 EFT, SLSTR Level-1 RBT), Sentinel-5P and Digital Elevation Model (DEM).
 
 <img src="_images/DataCollection.png" width="450">
 
@@ -118,7 +118,7 @@ Fig 9: 3D visualization in the Browser with pop-up Settings windows on the right
 
 ## Product Search
 
-With the product search you can find products from four Sentinel missions (Sentinel-1, Sentinel-2, Sentinel-3, Sentinel-5p) and the sensors on board these satellites (C-SAR, MSI, OLCI, SRAL, SLSTR, SYNERGY). You can explore the metadata for each of those products, download the raw data or visualize the data on the map (currently only Sentinel-2 L1C and L2A are supported, but more data sources will be supported here in the future).
+With the product search you can find products from Sentinel missions (Sentinel-1, Sentinel-2, Sentinel-3, Sentinel-5p) and the sensors on board these satellites (C-SAR, MSI, OLCI, SRAL, SLSTR, SYNERGY). You can also find the engineering and Auxiliary data for Sentinel-6 along with all the missions mentioned before. You can explore the metadata for each of those products, download the raw data or visualize the data on the map (at present, Sentinel-1 GRD, Sentinel-2 L1C and L2A, Sentinel-3 OLCI L1B and SLSTR L1B, Sentinel-5P L2 and DEM data can be visualized).
 
 The *SEARCH* tab is located in the sidebar next to the *VISUALIZE* tab (see Fig. 9).
 
