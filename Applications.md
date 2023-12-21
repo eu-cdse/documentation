@@ -35,7 +35,7 @@ environments and resources without burdening the users with installation and mai
 
 The Sentinel Hub QGIS plugin allows you to bring satellite imagery directly into your GIS. You can compare images directly with your GIS data to evaluate accuracy, detect change, assess land cover based on time series and more. Use your Copernicus Data Space Ecosystem user account for free authentication or your Sentinel Hub account for additional data.
 
-<!--## [Data Space Dashboard](Applications/DataSpaceDashboard.qmd)
+## [Copernicus Data Space Ecosystem Dashboard](Applications/DataSpaceDashboard.qmd)
 
-The Data Space Dashboard is your go-to tool for checking out the Copernicus Data Space Ecosystem in action. It's a free, user-friendly platform where you can easily see what’s going on with the data space.-->
+The Copernicus Data Space Ecosystem Dashboard is your go-to tool for checking out the Copernicus Data Space Ecosystem in action. It's a free, user-friendly platform where you can easily see what’s going on with the data space.
 
