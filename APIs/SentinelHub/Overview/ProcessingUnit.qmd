@@ -3,7 +3,7 @@ title: Processing Unit definition
 ---
 
 *⚠ Costs marked with \*\* are not yet applied. These will come in effect
-by June 1st 2023.*
+by September 1st 2023.*
 
 ## General data processing - applicable to Process API, OGC API, Statistical API
 
@@ -31,23 +31,23 @@ units are required for each request. The definition of 1 processing unit
 and the calculation rules are summarized in the following tables:
 
   Parameter/API            Quantity for 1 PU                            Rules for multiplication factors
-  ------------------------ -------------------------------------------- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  ------------------------ -------------------------------------------- ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   Area of interest         512 x 512 px                                 The multiplication factor is calculated by dividing requested input size (BBOX) by 512 x 512 (pixel size depends on the user-defined resolution of the request execution).`<br/>`{=html} `<br/>`{=html} The minimum value of this multiplication factor is 0.01. This corresponds to an area of 0.25 km\^2 for Sentinel-2 data at 10 m spatial resolution.
   Number of input bands    3                                            The multiplication factor is calculated by dividing the requested number of input bands by 3.`<br/>`{=html} `<br/>`{=html}An exception is requesting `dataMask` which is not counted, unless it is the only band included.
   Output format            8 bit or 16 bit`<br/>`{=html} TIFF/JPG/PNG   Requesting 32 bit float TIFF will result in a multiplication factor of 2 due to larger memory consumption and data traffic.`<br/>`{=html} `<br/>`{=html} Requesting application/octet-stream will result in a multiplication factor of 1.4 due to additional integration costs *(This is used for integration with external tools such as xcube.)*.
   Number of data samples   1                                            The multiplication factor equals the number of data samples per pixel.
-  \*\* Data fusion         N/A                                          \*\* The multiplication is only applied when data fusion is used.`<br/>`{=html} Multiplication factor is calculated as a sum of all collections within the same endpoint location and twice the sum of all remote collections, i.e. `count(local_collections) + 2x count(remote_collections)`.`<br/>`{=html}`<br/>`{=html} Example: data fusion request executed on services.sentinel-hub.com endpoint, which includes Sentinel-2 L1C, Sentinel-2 L2A and Landsat-9 would have a multiplication factor of 4 (1 + 1 + 2).
+  Data fusion              N/A                                          The multiplication is only applied when data fusion is used.`<br/>`{=html} Multiplication factor is calculated as a sum of all collections within the same endpoint location and twice the sum of all remote collections, i.e. `count(local_collections) + 2x count(remote_collections)`.`<br/>`{=html}`<br/>`{=html} Example: data fusion request executed on services.sentinel-hub.com endpoint, which includes Sentinel-2 L1C, Sentinel-2 L2A and Landsat-9 would have a multiplication factor of 4 (1 + 1 + 2).
 
 ## Sentinel-1 data processing - applicable to Process API, OGC API, Statistical API
 
 In addition to General data processing rules defined above, the
 following optional multiplicators apply as well:
 
-  Parameter/API                         Quantity for 1 PU   Rules for multiplication factors
-  ------------------------------------- ------------------- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  \*\* Orthorectification               N/A                 \*\* Requesting orthorectification will result in a multiplication factor of 2 due to additional processing requirements .
-  \*\* Radiometric Terrain Correction   N/A                 \*\* Requesting radiometric terrain correction will result in a multiplication factor of 2.5 due to additional processing requirements. The orthorectification factor is not additionally applied as it is a prerequisite.
-  \*\* Speckle Filtering                N/A                 \*\* Requesting speckle filtering will result in a multiplication factor of 2 due to additional processing requirements.
+  Parameter/API                    Quantity for 1 PU   Rules for multiplication factors
+  -------------------------------- ------------------- -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Orthorectification               N/A                 Requesting orthorectification will result in a multiplication factor of 2 due to additional processing requirements .
+  Radiometric Terrain Correction   N/A                 Requesting radiometric terrain correction will result in a multiplication factor of 2.5 due to additional processing requirements. The orthorectification factor is not additionally applied as it is a prerequisite.
+  Speckle Filtering                N/A                 Requesting speckle filtering will result in a multiplication factor of 2 due to additional processing requirements.
 
 ## Data querying - applicable to Catalog API, OGC WFS
 
@@ -75,13 +75,13 @@ In addition to this:
 \"General data processing\" and \"Sentinel-1 data processing\" rules
 apply with the following exceptions:
 
--   \*\* Minimal cost of a request is 100 PU.
+-   Minimal cost of a request is 100 PU.
 -   Processing with batch processing API will result in a multiplication
     factor of 1/3. Thus, three times more data can be processed
     comparing to process API for the same amount of PUs.
 -   \*\* When data is delivered to a bucket in other region within the
-    same system (i.e. CDAS, AWS) there is additional cost of 0.03 PU per
-    MB of data.
+    same system (i.e. Copernicus Data Space Ecosystem, AWS) there is
+    additional cost of 0.03 PU per MB of data.
 
 ## Asynchronous Processing API
 
@@ -90,8 +90,8 @@ apply with the following exceptions:
 
 -   Minimal cost of a request is 10 PU.
 -   \*\* When data is delivered to a bucket in other region within the
-    same system (i.e. CDAS, AWS) there is an additional cost of 0.03 PU
-    per MB of data.
+    same system (i.e. Copernicus Data Space Ecosystem, AWS) there is an
+    additional cost of 0.03 PU per MB of data.
 
 ## Batch Statistical API
 
@@ -100,8 +100,8 @@ apply with the following exceptions:
 
 -   Minimal cost of a request is 100 PU.
 -   \*\* When data is delivered to a bucket in other region within the
-    same system (i.e. CDAS, AWS) there is an additional cost of 0.03 PU
-    per MB of data.
+    same system (i.e. Copernicus Data Space Ecosystem, AWS) there is an
+    additional cost of 0.03 PU per MB of data.
 
 ## Third party data order - applicable to Third Party Data Import API
 
@@ -113,7 +113,7 @@ apply with the following exceptions:
 
 ## Data ingestion - applicable to Bring your own COG API and Zarr API
 
--   Each request to BYOC or Zarr API costs 1 PU.
+-   Each non-GET request to BYOC or Zarr API costs 1 PU.
 -   Usage of your BYOC and Zarr collections is billed the same as usage
     of public collections.
 

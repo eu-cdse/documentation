@@ -1,0 +1,214 @@
+---
+title: Data Fusion
+---
+
+Sentinel Hub (SH) allows you to combine the data from various data
+sources in the same request. To use this functionality you need to
+prepare a request with several data sources as explained below. Data
+fusion can be used for any data available in Sentinel Hub including
+PlanetScope, Pleiades, SPOT (TPDI) and your own data (BYOC) and with all
+SH data-processing APIs (Process, Statistical, Batch, etc).
+
+All SH endpoint locations support data fusion of collections hosted at
+that endpoint. However, only the Processing API endpoint
+sh.dataspace.copernicus.eu/api/v1/process also allows combining
+collections hosted at different SH endpoints, such as [this
+example](/APIs/SentinelHub/Process/Examples/DataFusion.qmd#pan-sharpen-landsat-8-with-sentinel-2).
+
+We invite you to read our [Data Fusion blog
+post](https://medium.com/sentinel-hub/data-fusion-combine-satellite-datasets-to-unlock-new-possibilities-26356c481169){target="_blank"},
+where you will find 6 interesting use cases and a short guide on how to
+use data fusion in Sentinel Hub.
+
+::: callout-note
+Using this functionality can consume more Processing Units since it
+processes more data. The rules listed
+[here](/APIs/SentinelHub/Overview/ProcessingUnit.qmd) apply.
+:::
+
+## Preparing a Data Fusion Request
+
+Preparing a data fusion request is very similar to preparing any
+`process` API request that uses a single data source. Thus, only the
+parts which differ when performing data fusion requests are described
+below.
+
+### Request Body
+
+In the body of the request, more specifically in the `input.data` array,
+you need to add more than one `data` object. For each of these objects
+you can optionally specify the property:
+
+-   `id` (optional) - a string of your choosing. It is used as an
+    identifier for this input so that it can be referred to in the
+    evalscript. It is not mandatory to define it but we recommend to do
+    so, see examples below. Note that the type (e.g.,
+    \"sentinel-2-l1c\") is insufficient as an identifier because you may
+    use multiple inputs from the same data collection.
+
+An example of the `input.data` array with two elements:
+
+``` default
+{
+  "input": {
+    "data": [
+      {
+        "type": "sentinel-2-l1c",
+        "id": "l1c",
+        "dataFilter": {
+          "timeRange": {
+            "from": "2018-10-01T00:00:00Z",
+            "to": "2018-11-01T00:00:00Z"
+          },
+          "mosaickingOrder": "leastRecent"
+        }
+      },
+      {
+        "type": "sentinel-2-l2a",
+        "id": "l2a",
+        "dataFilter": {
+          "timeRange": {
+            "from": "2018-10-01T00:00:00Z",
+            "to": "2018-11-01T00:00:00Z"
+          },
+          "mosaickingOrder": "leastRecent"
+        }
+      }
+    ]
+  }
+}
+```
+
+As you can see in the example above all data collection specific options
+are still available.
+
+### Evalscript
+
+#### Setup
+
+In the evalscript, under the `input` array in the `setup` function,
+specify all input collections. Optionally, match the `id` from the
+`input.data` object of the request body to the `datasource` parameter of
+each input collection. This ensures that the correct collection will be
+used for input bands. For example:
+
+``` javascript
+//VERSION=3
+function setup() {
+  return {
+    input: [
+        {datasource: "l2a", bands: ["SCL"], units: "DN"},
+        {datasource: "l1c", bands: ["B02", "B03", "B04"], units: "REFLECTANCE"}
+    ],
+    output: [
+      {bands: 3, sampleType: SampleType.AUTO}
+    ]
+  }
+}
+```
+
+Since the `datasource` parameter is optional, in case you choose to omit
+it, the order of the input objects becomes relevant and must be the same
+as in the request body.
+
+``` javascript
+//VERSION=3
+function setup() {
+  return {
+    input: [
+      {bands: ["B02", "B03", "B04"], units: "REFLECTANCE"}, // sentinel-2-l1c
+      {bands: ["SCL"], units: "DN"} // sentinel-2-l2a
+    ],
+    output: [
+      {bands: 3, sampleType: SampleType.AUTO}
+    ]
+  }
+}
+```
+
+Specifying [mosaicking](/APIs/SentinelHub/Evalscript/V3.qmd#mosaicking)
+for each input is also possible. Simply add the `mosaicking` parameter
+to each input object. This overrides the global `mosaicking` parameter
+which you typically use outside the `input` object. Combinations of both
+are therefore possible, and when present, the value within the `input`
+object is used. The default remains `SIMPLE`. In the example below, the
+global default `SIMPLE` mosaicking value is never used as `ORBIT` is
+specified for all inputs.
+
+``` javascript
+//VERSION=3
+function setup() {
+  return {
+    input: [
+      {bands: ["B02", "B03", "B04"], units: "REFLECTANCE", mosaicking: "ORBIT"}, // sentinel-2-l1c
+      {bands: ["SCL"], units: "DN", mosaicking: "ORBIT"} // sentinel-2-l2a
+    ],
+    output: [
+      {bands: 3, sampleType: SampleType.AUTO}
+    ]
+  }
+}
+```
+
+#### Data Access
+
+Data from each collection can be accessed inside the `evaluatePixel`
+function, however as now multiple inputs are accessible the syntax is
+slightly different to the single data collection case. Assuming the
+`evaluatePixel` parameter is called `samples`, this object is always a
+key-value pair (dictionary). Obtain data for each collection in one of
+two ways.
+
+If you are using the `datasource` object in your `setup` function,
+simply use its values as keys to the `samples` object. This gets an
+array of mosaicked values. Each array behaves exactly the same way as a
+non-datafusion non-`SIMPLE` mosaicking `samples` object. Note that this
+is an array even for datafusion with `SIMPLE` mosaicking, unlike
+non-datafusion requests; of course in this case the array either
+contains exactly one object or is empty.
+
+If `datasource` was specified in `setup`:
+
+``` javascript
+function evaluatePixel(samples) {
+  // "l1c" and "l2a" match the datasource values specified in the setup function
+  var l1cMosaics = samples.l1c;  // gets the array of sentinel-2-l1c mosaics
+  var l1cSample = l1cMosaics[0]; // gets the first mosaic. access bands from this object
+  var scl = samples.l2a[0].SCL;  // gets the SCL band of the first sentinel-2-l2a mosaic
+  if (2 <= scl && scl <= 7) {
+    return [l1cSample.B04, l1cSample.B03, l1cSample.B02];
+  }
+  return [0,0,0];
+}
+```
+
+If `datasource` wasn\'t specified in `setup`, you can access the data
+with keys being ordinal numbers starting with `0`. Again, the order is
+as specified in the request body.
+
+``` javascript
+function evaluatePixel(samples) {
+  // '0' is the identifier of the first input in the input.data array (sentinel-2-l1c)
+  // '1' is the identifier of the second input in the input.data array (sentinel-2-l2a)
+  var l1cMosaics = samples['0']; // gets the array of mosaics of the first input (sentinel-2-l1c)
+  var l1cSample = l1cMosaics[0]; // gets the first mosaic. access bands from this object
+  var scl = samples['1'][0].SCL; // gets the SCL band of the first mosaic of the second input (sentinel-2-l2a)
+  if (2 <= scl && scl <= 7) {
+    return [l1cSample.B04, l1cSample.B03, l1cSample.B02];
+  }
+  return [0,0,0];
+}
+```
+
+::: callout-note
+While the above example works for all mosaicking types, it makes most
+sense for `SIMPLE` mosaicking. This is because only one mosaic is
+accessed for each input in the script, any additional mosaics, which
+would get generated if `ORBIT` or `TILE` mosaicking was used, are
+ignored.
+:::
+
+## Examples
+
+-   [Data Fusion
+    Examples](/APIs/SentinelHub/Process/Examples/DataFusion.qmd)

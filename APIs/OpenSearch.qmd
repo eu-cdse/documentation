@@ -16,7 +16,7 @@ import xml.etree.ElementTree as ET
 
 The OpenSearch catalogue allows you to search through Copernicus data using a standardized web service. The [OpenSearch specification](https://github.com/dewitt/opensearch/blob/master/opensearch-1-1-draft-6.md){target="_blank"} can be consulted for technical details of the standard. This web service returns results as GeoJSON feature collections. Each feature in the collection represents an earth observation 'product', referencing where the actual data can be found.
 
-We remark that this version does not implement the OGC OpenSearch standards, and a migration from other API's named OpenSearch may require significant modifications. It mainly offers compatibility for existing users of a similar API on the CreoDIAS and Wekeo platforms and with client-side tools and workflows that have implemented support for this API. For new users looking for a more standardized API, a [STAC](https://stacspec.org){target="_blank"} alternative is being developed.
+We remark that this version does not implement the OGC OpenSearch standards, and a migration from other API's named OpenSearch may require significant modifications. It mainly offers compatibility for existing users of a similar API on the CreoDIAS and Wekeo platforms and with client-side tools and workflows that have implemented support for this API.
 
 ## Using OpenSearch interface to query Data Catalogue
 
@@ -73,13 +73,23 @@ $ wget -O - "https://catalogue.dataspace.copernicus.eu/resto/api/collections/sea
 
 As for today the following collections are defined and may be used:
 
-* **Sentinel1 or SENTINEL-1**
+* Copernicus Sentinel Mission
+  * **Sentinel1 or SENTINEL-1**
+  * **Sentinel2 or SENTINEL-2**
+  * **Sentinel3 or SENTINEL-3**
+  * **Sentinel5P or SENTINEL-5P**
+  * **Sentinel6 or SENTINEL-6**
+  * **Sentinel1RTC or SENTINEL-1-RTC** (Sentinel-1 Radiometric Terrain Corrected)
 
-* **Sentinel2 or SENTINEL-2**
-
-* **Sentinel3 or SENTINEL-3**
-
-* **Sentinel5P or SENTINEL-5P**
+* Complementary data
+  * **SMOS** (Soil Moisture and Ocean Salinity)
+  * **ENVISAT or Envisat** (ENVISAT- Medium Resolution Imaging Spectrometer - MERIS)
+  * **Landsat5 or LANDSAT-5**
+  * **Landsat7 or LANDSAT-7**
+  * **Landsat8 or LANDSAT-8**
+  * **COP-DEM** (Copernicus DEM)
+  * **TERRAAQUA** (Terra MODIS and Aqua MODIS)
+  * **S2GLC** (S2GLC 2017)
 
 ::: {.callout-note} 
 
@@ -124,9 +134,11 @@ This will sort the output by observation date. The following orderings can be im
 
 **published** - the date when the product got published in our repository
 
+**updated** - the date when the product got updated in our repository
+
 :::
 
-Eeach of these ordering can be be accompanied by:
+Each of these ordering can be be accompanied by:
 
 ::: {style="margin-left:20px"}
 
@@ -139,7 +151,7 @@ For example the query
 ::: {.panel-tabset}
 
 # HTTP Request
-[http://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?startDate=2021-07-01T00:00:00Z&completionDate=2021-07-31T23:59:59Z&sortParam=startDate&maxRecords=20](http://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?startDate=2021-07-01T00:00:00Z&completionDate=2021-07-31T23:59:59Z&sortParam=cloudCover&maxRecords=20){target="_blank"}
+[http://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?startDate=2021-07-01T00:00:00Z&completionDate=2021-07-31T23:59:59Z&sortParam=startDate&maxRecords=20](http://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?startDate=2021-07-01T00:00:00Z&completionDate=2021-07-31T23:59:59Z&sortParam=startDate&maxRecords=20){target="_blank"}
 
 
 # Python
@@ -198,6 +210,7 @@ The common set of parameters are:
 **publishedAfter, publishedBefore** - the date limits when the product was published in our repository
 
 **lon, lat** - geographical position, expressed in military style (EPSG:4326, as decimal fraction of degrees, positive for eastern latitude and northern longitude)
+
 **radius** - region of interest, defined as a circle with centre in point determined by the longitude and latitude with radius expressed in meters (it won't work with point manually selected in EOFinder/Data Explorer)
 
 **geometry** - region of interest, defined as WKT string (POINT, POLYGON, etc.)
@@ -211,12 +224,12 @@ For example the query can be:
 ::: {.panel-tabset}
 
 # HTTP Request
-[https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=[0,10]&startDate=2022-06-11T00:00:00Z&completionDate=2022-06-22T23:59:59Z&maxRecords=10&box=-1,1,-1,1](https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=[0,10]&startDate=2022-06-11T00:00:00Z&completionDate=2022-06-22T23:59:59Z&maxRecords=10&box=-1,1,-1,1){target="_blank"}
+[https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?productType=S2MSI1C&cloudCover=[0,10]&startDate=2022-06-11T00:00:00Z&completionDate=2022-06-22T23:59:59Z&maxRecords=10&box=4,51,4.5,52](https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?productType=S2MSI1C&cloudCover=[0,10]&startDate=2022-06-11T00:00:00Z&completionDate=2022-06-22T23:59:59Z&maxRecords=10&box=4,51,4.5,52){target="_blank"}
 
 
 # Python
 ```{python}
-json = requests.get("https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=[0,10]&startDate=2022-06-11T00:00:00Z&completionDate=2022-06-22T23:59:59Z&maxRecords=10&box=-1,1,-1,1").json()
+json = requests.get("https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?productType=S2MSI1C&cloudCover=[0,10]&startDate=2022-06-11T00:00:00Z&completionDate=2022-06-22T23:59:59Z&maxRecords=10&box=4,51,4.5,52").json()
 pd.DataFrame.from_dict(json['features']).head(3)
 ```
 
@@ -282,12 +295,13 @@ To be meaningful, the cloudiness must be provided with each product, while in ma
 
 - **ONLINE**
 - **OFFLINE**
+- **ALL**
 
 :::
 
 Some additional parameters are strictly satellite-specific, e.g. polarisation, which is defined only for Sentinel-1.
 
-For every satellite (collection) its set of query-able parameters may be obtained by a query like:
+For every satellite (collection) its set of query-able parameters may be obtained by a query such as:
 
 ::: {.panel-tabset}
 

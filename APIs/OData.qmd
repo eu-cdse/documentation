@@ -6,13 +6,6 @@ format:
 jupyter: python3
 ---
 
-```{python}
-#| echo: false
-#import packages
-import requests
-import pandas as pd
-```
-
 <!-- # Data catalogue API with OData interface -->
 ```{python}
 #| echo: false
@@ -24,7 +17,9 @@ import pandas as pd
 
 OData (Open Data Protocol) is a standard that specifies a variety of best practices for creating and using REST APIs. OData makes it possible to build REST-based data services that let Web clients publish and edit resources that are recognized by Uniform Resource Locators (URLs) and described in a data model using straightforward HTTP messages.
 
-## Query structure
+## OData Products endpoint
+
+### Query structure
 
 As a general note, OData query consists of elements which in this documentation are called "options". Interface supports the following search options:
 
@@ -45,10 +40,17 @@ Consecutive filters within *filter* option should be separated with *and* or *or
 
 [`https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=not contains(Name,'S2') and ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-03T00:10:00.000Z&$orderby=ContentDate/Start&$top=100`](<https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=not%20contains(Name,%27S2%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T00:10:00.000Z&$orderby=ContentDate/Start&$top=100>){target="_blank"}
 
+
 # Python
 ```{python}
+#| tbl-wrap: true
 json = requests.get("https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=not contains(Name,'S2') and ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-03T00:10:00.000Z&$orderby=ContentDate/Start&$top=100").json()
-pd.DataFrame.from_dict(json['value']).head(3)
+df = pd.DataFrame.from_dict(json['value'])
+
+# Print only specific columns
+columns_to_print = ['Id', 'Name','S3Path','GeoFootprint']  
+df[columns_to_print].head(3)
+
 ```
 
 :::
@@ -86,7 +88,12 @@ To search for products containing "S1A" in their names:
 # Python
 ```{python}
 json = requests.get("https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,'S1A') and ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-21T00:00:00.000Z").json()
-pd.DataFrame.from_dict(json['value']).head(3)
+df = pd.DataFrame.from_dict(json['value'])
+
+# Print only specific columns
+columns_to_print = ['Id', 'Name','S3Path','GeoFootprint']  
+df[columns_to_print].head(3)
+
 ```
 
 :::
@@ -127,17 +134,35 @@ To search for products within a specific collection:
 # Python
 ```{python}
 json = requests.get("https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name eq 'SENTINEL-2' and ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-03T00:11:00.000Z").json()
-pd.DataFrame.from_dict(json['value']).head(3)
+df = pd.DataFrame.from_dict(json['value'])
+
+# Print only specific columns
+columns_to_print = ['Id', 'Name','S3Path','GeoFootprint']  
+df[columns_to_print].head(3)
+
 ```
 
 :::
 
 The following collections are currently available:
 
-* SENTINEL-1
-* SENTINEL-2
-* SENTINEL-3
-* SENTINEL-5P
+* Copernicus Sentinel Mission
+  * **SENTINEL-1**
+  * **SENTINEL-2**
+  * **SENTINEL-3**
+  * **SENTINEL-5P**
+  * **SENTINEL-6**
+  * **SENTINEL-1-RTC** (Sentinel-1 Radiometric Terrain Corrected)
+
+* Complementary data
+  * **SMOS** (Soil Moisture and Ocean Salinity)
+  * **ENVISAT** (ENVISAT- Medium Resolution Imaging Spectrometer - MERIS)
+  * **LANDSAT-5**
+  * **LANDSAT-7**
+  * **LANDSAT-8**
+  * **COP-DEM** (Copernicus DEM)
+  * **TERRAAQUA** (Terra MODIS and Aqua MODIS)
+  * **S2GLC** (S2GLC 2017)
 
 ### Query by Publication Date
 
@@ -152,7 +177,12 @@ To search for products published between two dates:
 # Python
 ```{python}
 json = requests.get("https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=PublicationDate gt 2019-05-15T00:00:00.000Z and PublicationDate lt 2019-05-16T00:00:00.000Z").json()
-pd.DataFrame.from_dict(json['value']).head(3)
+df = pd.DataFrame.from_dict(json['value'])
+
+# Print only specific columns
+columns_to_print = ['Id', 'Name','S3Path','GeoFootprint']  
+df[columns_to_print].head(3)
+
 ```
 
 :::
@@ -168,7 +198,12 @@ To define inclusive interval *ge* and *le* parameters can be used:
 # Python
 ```{python}
 json = requests.get("https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=PublicationDate ge 2019-05-15T00:00:00.000Z and PublicationDate le 2019-05-16T00:00:00.000Z").json()
-pd.DataFrame.from_dict(json['value']).head(3)
+df = pd.DataFrame.from_dict(json['value'])
+
+# Print only specific columns
+columns_to_print = ['Id', 'Name','S3Path','GeoFootprint']  
+df[columns_to_print].head(3)
+
 ```
 
 :::
@@ -186,7 +221,12 @@ To search for products acquired between two dates:
 # Python
 ```{python}
 json = requests.get("https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=ContentDate/Start gt 2019-05-15T00:00:00.000Z and ContentDate/Start lt 2019-05-16T00:00:00.000Z").json()
-pd.DataFrame.from_dict(json['value']).head(3)
+df = pd.DataFrame.from_dict(json['value'])
+
+# Print only specific columns
+columns_to_print = ['Id', 'Name','S3Path','GeoFootprint']  
+df[columns_to_print].head(3)
+
 ```
 
 :::
@@ -202,7 +242,12 @@ Usually, there are two parameters describing the ContentDate (Acquisition Dates)
 # Python
 ```{python}
 json = requests.get("https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=ContentDate/Start gt 2019-05-15T00:00:00.000Z and ContentDate/End lt 2019-05-15T00:05:00.000Z").json()
-pd.DataFrame.from_dict(json['value']).head(3)
+df = pd.DataFrame.from_dict(json['value'])
+
+# Print only specific columns
+columns_to_print = ['Id', 'Name','S3Path','GeoFootprint']  
+df[columns_to_print].head(3)
+
 ```
 
 :::
@@ -220,7 +265,12 @@ To search for products intersecting the specified polygon:
 # Python
 ```{python}
 json = requests.get("https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=OData.CSC.Intersects(area=geography'SRID=4326;POLYGON((12.655118166047592 47.44667197521409,21.39065656328509 48.347694733853245,28.334291357162826 41.877123516783655,17.47086198383573 40.35854475076158,12.655118166047592 47.44667197521409))') and ContentDate/Start gt 2022-05-20T00:00:00.000Z and ContentDate/Start lt 2022-05-21T00:00:00.000Z").json()
-pd.DataFrame.from_dict(json['value']).head(3)
+df = pd.DataFrame.from_dict(json['value'])
+
+# Print only specific columns
+columns_to_print = ['Id', 'Name','S3Path','GeoFootprint']  
+df[columns_to_print].head(3)
+
 ```
 
 :::
@@ -236,7 +286,12 @@ To search for products intersecting the specified point:
 # Python
 ```{python}
 json = requests.get("https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=OData.CSC.Intersects(area=geography%27SRID=4326;POINT(-0.5319577002158441%2028.65487836189358)%27)").json()
-pd.DataFrame.from_dict(json['value']).head(3)
+df = pd.DataFrame.from_dict(json['value'])
+
+# Print only specific columns
+columns_to_print = ['Id', 'Name','S3Path','GeoFootprint']  
+df[columns_to_print].head(3)
+
 ```
 
 :::
@@ -278,7 +333,12 @@ To get products with CloudCover\<40% between two dates:
 # Python
 ```{python}
 json = requests.get("https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Attributes/OData.CSC.DoubleAttribute/any(att:att/Name eq 'cloudCover' and att/OData.CSC.DoubleAttribute/Value le 40.00) and ContentDate/Start gt 2022-01-01T00:00:00.000Z and ContentDate/Start lt 2022-01-03T00:00:00.000Z&$top=10").json()
-pd.DataFrame.from_dict(json['value']).head(3)
+df = pd.DataFrame.from_dict(json['value'])
+
+# Print only specific columns
+columns_to_print = ['Id', 'Name','S3Path','GeoFootprint']  
+df[columns_to_print].head(3)
+
 ```
 
 :::
@@ -294,7 +354,12 @@ To get products with cloudCover\< 10% and productType=S2MSI2A and ASCENDING orbi
 # Python
 ```{python}
 json = requests.get("https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Attributes/OData.CSC.DoubleAttribute/any(att:att/Name eq 'cloudCover' and att/OData.CSC.DoubleAttribute/Value lt 10.00) and Attributes/OData.CSC.StringAttribute/any(att:att/Name eq 'productType' and att/OData.CSC.StringAttribute/Value eq 'S2MSI2A') and Attributes/OData.CSC.StringAttribute/any(att:att/Name eq 'orbitDirection' and att/OData.CSC.StringAttribute/Value eq 'ASCENDING') and ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-03T04:00:00.000Z&$top=10").json()
-pd.DataFrame.from_dict(json['value']).head(3)
+df = pd.DataFrame.from_dict(json['value'])
+
+# Print only specific columns
+columns_to_print = ['Id', 'Name','S3Path','GeoFootprint']  
+df[columns_to_print].head(3)
+
 ```
 
 :::
@@ -315,7 +380,12 @@ To order products by ContentDate/Start in a descending direction:
 # Python
 ```{python}
 json = requests.get("https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,'S1A_EW_GRD') and ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-03T03:00:00.000Z&$orderby=ContentDate/Start desc").json()
-pd.DataFrame.from_dict(json['value']).head(3)
+df = pd.DataFrame.from_dict(json['value'])
+
+# Print only specific columns
+columns_to_print = ['Id', 'Name','S3Path','GeoFootprint']  
+df[columns_to_print].head(3)
+
 ```
 
 :::
@@ -339,7 +409,12 @@ To limit the number of results:
 # Python
 ```{python}
 json = requests.get("https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A_EW_GRD%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T12:00:00.000Z&$top=100").json()
-pd.DataFrame.from_dict(json['value']).head(3)
+df = pd.DataFrame.from_dict(json['value'])
+
+# Print only specific columns
+columns_to_print = ['Id', 'Name','S3Path','GeoFootprint']  
+df[columns_to_print].head(3)
+
 ```
 
 :::
@@ -363,7 +438,12 @@ To skip a specific number of results:
 # Python
 ```{python}
 json = requests.get("https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A_EW_GRD%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T12:00:00.000Z&$skip=23").json()
-pd.DataFrame.from_dict(json['value']).head(3)
+df = pd.DataFrame.from_dict(json['value'])
+
+# Print only specific columns
+columns_to_print = ['Id', 'Name','S3Path','GeoFootprint']  
+df[columns_to_print].head(3)
+
 ```
 
 :::
@@ -383,7 +463,12 @@ Whenever a query results in more products than 20 (default top value), the API p
 # Python
 ```{python}
 json = requests.get("http://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,'S1A_EW_GRD')+and+ContentDate/Start+gt+2022-05-03T00:00:00.000Z+and+ContentDate/Start+lt+2022-05-03T12:00:00.000Z&$skip=20").json()
-pd.DataFrame.from_dict(json['value']).head(3)
+df = pd.DataFrame.from_dict(json['value'])
+
+# Print only specific columns
+columns_to_print = ['Id', 'Name','S3Path','GeoFootprint']  
+df[columns_to_print].head(3)
+
 ```
 
 :::
@@ -405,7 +490,12 @@ To get the exact number of products for a given query:
 # Python
 ```{python}
 json = requests.get("https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A_EW_GRD%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T12:00:00.000Z&$count=True").json()
-pd.DataFrame.from_dict(json['value']).head(3)
+df = pd.DataFrame.from_dict(json['value'])
+
+# Print only specific columns
+columns_to_print = ['Id', 'Name','S3Path','GeoFootprint']  
+df[columns_to_print].head(3)
+
 ```
 
 :::
@@ -427,12 +517,100 @@ To see the metadata of the results:
 # Python
 ```{python}
 json = requests.get("https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A_EW_GRD%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T12:00:00.000Z&$expand=Attributes").json()
-pd.DataFrame.from_dict(json['value']).head(3)
+df = pd.DataFrame.from_dict(json['value'])
+
+# Print only specific columns
+columns_to_print = ['Id', 'Name','S3Path','GeoFootprint']  
+df[columns_to_print].head(3)
+
 ```
 
 :::
 
-The acceptable arguments for this option: *Attributes*
+The acceptable arguments for this option: *Attributes* and *Assets*
+
+### Expand assets
+
+Expand assets allows to list additional assets of a products, including quicklooks:
+
+::: {.panel-tabset}
+
+# HTTP Request
+
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%20%27SL_2_FRP___%27)&$expand=Assets`](https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%20%27SL_2_FRP___%27)&$expand=Assets){target="_blank"}
+
+# Python
+```{python}
+json = requests.get("https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%20%27SL_2_FRP___%27)&$expand=Assets").json()
+df = pd.DataFrame.from_dict(json['value'])
+
+# Print only specific columns
+columns_to_print = ['Id', 'Name','S3Path','GeoFootprint']  
+df[columns_to_print].head(3)
+
+```
+
+:::
+
+### Quicklook
+
+For example, a quicklook for product `S3A_SL_2_FRP____20200821T042815_20200821T043115_20200822T092750_0179_062_033_2340_LN2_O_NT_004.SEN3` with ID of a quicklook `f4a87522-dd81-4c40-856e-41d40510e3b6`, can be downloaded with the request:
+
+::: {.panel-tabset}
+
+# HTTP Request
+
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/Assets(f4a87522-dd81-4c40-856e-41d40510e3b6)/$value`](https://catalogue.dataspace.copernicus.eu/odata/v1/Assets(f4a87522-dd81-4c40-856e-41d40510e3b6)/$value){target="_blank"}
+
+:::
+
+Download link is also available under *DownloadLink* parameter in Assets.
+
+## Listing product nodes
+
+Product content can be listed by accessing the following URL patterns using Nodes:
+
+```
+https://zipper.dataspace.copernicus.eu/odata/v1/Products(<PRODUCT_UUID>)/Nodes
+https://zipper.dataspace.copernicus.eu/odata/v1/Products(<PRODUCT_UUID>)/Nodes(<NODE_NAME>)/Nodes
+https://zipper.dataspace.copernicus.eu/odata/v1/Products(<PRODUCT_UUID>)/Nodes(<NODE_NAME>)/Nodes(<NODE_NAME>)/Nodes
+```
+
+where:
+
+<PRODUCT_UUID> - is ID of the product obtained by search query,
+
+<NODE_NAME> - is name of element inside product returned from previous listing response.
+
+Only nodes that are folders can have their contents listed. Attempting to list Nodes for file results returning an empty list. The listing Nodes feature is available for both authorized and unauthorized users.
+
+### Example nodes listing
+
+Example URL:
+
+```
+https://zipper.dataspace.copernicus.eu/odata/v1/Products(db0c8ef3-8ec0-5185-a537-812dad3c58f8)/Nodes
+```
+
+Response:
+
+```
+{
+   "result":[
+      {
+         "Id":"S2A_MSIL1C_20180927T051221_N0206_R033_T42FXL_20180927T073143.SAFE",
+         "Name":"S2A_MSIL1C_20180927T051221_N0206_R033_T42FXL_20180927T073143.SAFE",
+         "ContentLength":0,
+         "ChildrenNumber":9,
+         "Nodes":{
+            "uri":"https://zipper.dataspace.copernicus.eu/odata/v1/Products(db0c8ef3-8ec0-5185-a537-812dad3c58f8)/Nodes(S2A_MSIL1C_20180927T051221_N0206_R033_T42FXL_20180927T073143.SAFE)/Nodes"
+         }
+      }
+   ]
+}
+```
+
+Every Listed Node has “uri” field, which lists its children.
 
 ## Product Download
 
@@ -458,7 +636,7 @@ curl --location --request POST 'https://identity.dataspace.copernicus.eu/auth/re
 or
 <!-- Following bash has been replaced by the new bash for ticket DAS-333
 ```bash
-'-d 'password=' -d 'grant_type=password' 'https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token' | python -m json.tool | grep "access_token" | awk -F\" '{print $4}')]]>
+'-d 'password=' -d 'grant_type=password' 'https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token' | python3 -m json.tool | grep "access_token" | awk -F\" '{print $4}')]]>
 ``` -->
 
 ::: {.panel-tabset}
@@ -466,7 +644,7 @@ or
 # cURL
 
 ```
-curl -d 'client_id=cdse-public' -d 'username=<LOGIN>' -d 'password=<PASSWORD>' -d 'grant_type=password' 'https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token' | python -m json.tool | grep "access_token" | awk -F\" '{print $4}'
+curl -d 'client_id=cdse-public' -d 'username=<LOGIN>' -d 'password=<PASSWORD>' -d 'grant_type=password' 'https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token' | python3 -m json.tool | grep "access_token" | awk -F\" '{print $4}'
 ```
 :::
 
@@ -510,7 +688,7 @@ Finally, you can download the product using this script:
 # cURL
 
 ```
-curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" 'https://catalogue.dataspace.copernicus.eu/odata/v1/Products(060882f4-0a34-5f14-8e25-6876e4470b0d)/$value' --location-trusted --output /tmp/product.zip
+curl -H "Authorization: Bearer $ACCESS_TOKEN" 'https://catalogue.dataspace.copernicus.eu/odata/v1/Products(060882f4-0a34-5f14-8e25-6876e4470b0d)/$value' --location-trusted --output /tmp/product.zip
 ```
 :::
 
@@ -521,7 +699,275 @@ or
 # Wget
 
 ```
-!wget  --header "Authorization: Bearer $KEYCLOAK_TOKEN" 'http://catalogue.dataspace.copernicus.eu/odata/v1/Products(db0c8ef3-8ec0-5185-a537-812dad3c58f8)/$value' -O example_odata.zip
+!wget  --header "Authorization: Bearer $ACCESS_TOKEN" 'http://catalogue.dataspace.copernicus.eu/odata/v1/Products(db0c8ef3-8ec0-5185-a537-812dad3c58f8)/$value' -O example_odata.zip
 ```
+:::
+
+::: {.panel-tabset}
+
+# Python 
+
+```
+import requests
+
+url = f"https://zipper.dataspace.copernicus.eu/odata/v1/Products(a5ab498a-7b2f-4043-ae2a-f95f457e7b3b)/$value"
+
+headers = {"Authorization": f"Bearer {access_token}"}
+
+session = requests.Session()
+session.headers.update(headers)
+response = session.get(url, headers=headers, stream=True)
+
+with open("product.zip", "wb") as file:
+    for chunk in response.iter_content(chunk_size=8192):
+        if chunk:
+            file.write(chunk)
+```
+:::
+
+
+## OData DeletedProducts endpoint
+
+The **DeletedProducts OData** endpoint allows users to access information about the deleted products in the 
+Copernicus Data Space Ecosystem Catalog. 
+This endpoint provides a convenient way to retrieve 
+details about the products that have been deleted 
+from the CDSE Catalog. By utilizing the supported 
+operations and filtering options, users can efficiently 
+access the required deleted products' details. 
+For the DeletedProducts OData endpoint, 
+requests should be built the same way as for 
+the OData Products endpoint [link](https://documentation.dataspace.copernicus.eu/APIs/OData.html#query-structure) with the change in the endpoint URL 'Products' to 'DeletedProducts'.
+
+### Endpoint URL
+
+The **DeletedProducts OData** endpoint can be accessed using the 
+following URL:
+
+::: {.panel-tabset}
+
+# HTTP Request
+
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/DeletedProducts`](https://catalogue.dataspace.copernicus.eu/odata/v1/DeletedProducts){target="_blank"}
+
+::: 
+
+### Query structure
+
+The DeletedProducts OData endpoint supports the same 
+searching options as a standard OData Products endpoint.
+For more information, please go to [link](https://documentation.dataspace.copernicus.eu/APIs/OData.html#query-structure)
+
+::: {.panel-tabset}
+
+# HTTP Request
+
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/DeletedProducts?$filter=not contains(Name,'S1') and DeletionDate gt 2023-04-01T00:00:00.000Z and DeletionDate lt 2023-05-30T23:59:59.999Z&$orderby=DeletionDate&$top=20`](https://catalogue.dataspace.copernicus.eu/odata/v1/DeletedProducts?$filter=not%20contains(Name,%27S1%27)%20and%20DeletionDate%20gt%202023-04-01T00:00:00.000Z%20and%20DeletionDate%20lt%202023-05-30T23:59:59.999Z&$orderby=DeletionDate&$top=20){target="_blank"}
+
+::: 
+
+::: {.callout-note}
+
+To accelerate the query performance, it is recommended to limit the query by specified dates, e.g.:
+
+DeletionDate gt 2022-05-03T00:00:00.000Z and DeletionDate lt 2023-05-03T00:00:00.000Z
 
 :::
+
+## Filter option
+
+To search for products by properties, a filter should be 
+built as explained [here](https://documentation.dataspace.copernicus.eu/APIs/OData.html#filter-option)
+
+The acceptable products' properties for OData DeletedProducts endpoint are:
+
+* *Name*  - search for a specific product by its exact name
+* *Id*  - search for a specific product by its id
+* *DeletionDate*  - search by deletion date
+* *DeletionCause*  - search by deletion cause
+* *Collection/Name*  - search within a specific collection
+* *OriginDate*  - search by origin date
+* *ContentDate/Start*  and *ContentDate/End*  - search by sensing date
+* *Footprint*  - search by geographic criteria
+* *Attributes*  - search by product's attributes
+
+
+### Query by name
+
+To search for a deleted product by its exact name:
+
+::: {.panel-tabset}
+
+# HTTP Request
+
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/DeletedProducts?$filter=Name eq 'S2A_MSIL1C_20210404T112111_N0500_R037_T31VEG_20230209T101305.SAFE'`](https://catalogue.dataspace.copernicus.eu/odata/v1/DeletedProducts?$filter=Name%20eq%20%27S2A_MSIL1C_20210404T112111_N0500_R037_T31VEG_20230209T101305.SAFE%27){target="_blank"}
+
+::: 
+
+### Query by Id
+
+To search for a deleted product by its Id:
+
+::: {.panel-tabset}
+
+# HTTP Request
+
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/DeletedProducts(29008eb1-1a51-48a8-9aec-288b00f7debe)`](https://catalogue.dataspace.copernicus.eu/odata/v1/DeletedProducts(29008eb1-1a51-48a8-9aec-288b00f7debe)){target="_blank"}
+
+::: 
+
+### Query by Deletion Date
+
+To search for products deleted between two inclusive interval dates:
+
+::: {.panel-tabset}
+
+# HTTP Request
+
+
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/DeletedProducts?$filter=DeletionDate ge 2023-04-26T00:00:00.000Z and DeletionDate le 2023-04-27T23:59:59.999Z`](https://catalogue.dataspace.copernicus.eu/odata/v1/DeletedProducts?$filter=DeletionDate%20ge%202023-04-26T00:00:00.000Z%20and%20DeletionDate%20le%202023-04-27T23:59:59.999Z){target="_blank"}
+
+::: 
+
+### Query by Deletion Cause
+
+To search for products deleted from specific reason:
+
+::: {.panel-tabset}
+
+# HTTP Request
+
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/DeletedProducts?$filter=DeletionCause eq 'Duplicated product' or DeletionCause eq 'Corrupted product'`](https://catalogue.dataspace.copernicus.eu/odata/v1/DeletedProducts?$filter=DeletionCause%20eq%20%27Duplicated%20product%27%20or%20DeletionCause%20eq%20%27Corrupted%20product%27){target="_blank"}
+
+::: 
+
+Allowed values of the `DelationCause` parameter are:
+
+* Duplicated product
+* Missing checksum
+* Corrupted product
+* Obsolete product or Other
+
+### Query by Collection of Products
+
+To search for deleted products within a specific collection:
+
+::: {.panel-tabset}
+
+# HTTP Request
+
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/DeletedProducts?$filter=Collection/Name eq 'SENTINEL-2' and DeletionDate gt 2023-04-01T00:00:00.000Z and DeletionDate lt 2023-09-30T23:59:59.999Z`](https://catalogue.dataspace.copernicus.eu/odata/v1/DeletedProducts?$filter=Collection/Name%20eq%20%27SENTINEL-2%27%20and%20DeletionDate%20gt%202023-04-01T00:00:00.000Z%20and%20DeletionDate%20lt%202023-09-30T23:59:59.999Z){target="_blank"}
+
+::: 
+
+For available collections, please refer to [link](https://documentation.dataspace.copernicus.eu/APIs/OData.html#query-collection-of-products). Also, please note that it is possible that none of the products have been deleted from the available collections.
+
+### Query by Sensing Date
+
+To search for deleted products acquired between two dates:
+
+::: {.panel-tabset}
+
+# HTTP Request
+
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/DeletedProducts?$filter=ContentDate/Start gt 2021-09-01T00:00:00.000Z and ContentDate/End lt 2021-09-01T00:05:00.000Z`](https://catalogue.dataspace.copernicus.eu/odata/v1/DeletedProducts?$filter=ContentDate/Start%20gt%202021-09-01T00:00:00.000Z%20and%20ContentDate/End%20lt%202021-09-01T00:05:00.000Z){target="_blank"}
+
+::: 
+
+### Query by Geographic Criteria
+
+To search for deleted products intersecting the specified polygon:
+
+::: {.panel-tabset}
+
+# HTTP Request
+
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/DeletedProducts?$filter=OData.CSC.Intersects(area=geography'SRID=4326;POLYGON ((-75.000244 -42.4521508418609, -75.000244 -43.4409190460844, -73.643585 -43.432873907284, -73.66513 -42.4443775132447, -75.000244 -42.4521508418609))') and ContentDate/Start gt 2021-01-01T00:00:00.000Z and ContentDate/End lt 2021-04-01T23:59:59.999Z`](https://catalogue.dataspace.copernicus.eu/odata/v1/DeletedProducts?$filter=OData.CSC.Intersects(area=geography%27SRID=4326;POLYGON%20((-75.000244%20-42.4521508418609,%20-75.000244%20-43.4409190460844,%20-73.643585%20-43.432873907284,%20-73.66513%20-42.4443775132447,%20-75.000244%20-42.4521508418609))%27)%20and%20ContentDate/Start%20gt%202021-01-01T00:00:00.000Z%20and%20ContentDate/End%20lt%202021-04-01T23:59:59.999Z){target="_blank"}
+
+::: 
+
+### Query by attributes
+To search for products by attributes, it is necessary to 
+build a filter with the specified structure as defined [here](https://documentation.dataspace.copernicus.eu/APIs/OData.html#query-collection-of-products).
+
+::: {.panel-tabset}
+
+# HTTP Request
+
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/DeletedProducts?$filter=Attributes/OData.CSC.IntegerAttribute/any(att:att/Name eq 'orbitNumber' and att/OData.CSC.IntegerAttribute/Value eq 10844) and attributes/OData.CSC.StringAttribute/any(att:att/Name eq 'orbitDirection' and att/OData.CSC.StringAttribute/Value eq 'ASCENDING')`](https://catalogue.dataspace.copernicus.eu/odata/v1/DeletedProducts?$filter=Attributes/OData.CSC.IntegerAttribute/any(att:att/Name%20eq%20%27orbitNumber%27%20and%20att/OData.CSC.IntegerAttribute/Value%20eq%2010844)%20and%20attributes/OData.CSC.StringAttribute/any(att:att/Name%20eq%20%27orbitDirection%27%20and%20att/OData.CSC.StringAttribute/Value%20eq%20%27ASCENDING%27)){target="_blank"}
+
+::: 
+
+## Orderby option
+Orderby option works the same way as explained [here](https://documentation.dataspace.copernicus.eu/APIs/OData.html#orderby-option).
+
+For OData DeletedProducts endpoint, acceptable arguments for this option are:
+
+* *ContentDate/Start*
+* *ContentDate/End*
+* *DeletionDate*
+
+
+::: {.panel-tabset}
+
+# HTTP Request
+
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/DeletedProducts?$filter=contains(Name,'S1A_EW_GRD') and DeletionDate gt 2023-04-01T00:00:00.000Z and DeletionDate lt 2023-05-30T23:59:59.999Z&$orderby=DeletionDate desc`](https://catalogue.dataspace.copernicus.eu/odata/v1/DeletedProducts?$filter=contains(Name,%27S1A_EW_GRD%27)%20and%20DeletionDate%20gt%202023-04-01T00:00:00.000Z%20and%20DeletionDate%20lt%202023-05-30T23:59:59.999Z&$orderby=DeletionDate%20desc){target="_blank"}
+
+::: 
+
+## Expand option
+The expand option enables users to see the full metadata of each 
+returned result.
+
+The acceptable argument for this option is:
+
+* *Attributes*
+
+To see the metadata of the results:
+
+
+::: {.panel-tabset}
+
+# HTTP Request
+
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/DeletedProducts?$filter=contains(Name,'S2A') and DeletionDate gt 2023-04-01T00:00:00.000Z and DeletionDate lt 2023-05-30T23:59:59.999Z&$expand=Attributes`](https://catalogue.dataspace.copernicus.eu/odata/v1/DeletedProducts?$filter=contains(Name,%27S2A%27)%20and%20DeletionDate%20gt%202023-04-01T00:00:00.000Z%20and%20DeletionDate%20lt%202023-05-30T23:59:59.999Z&$expand=Attributes){target="_blank"}
+
+::: 
+
+## Skip option
+Skip option can be used as defined [here](https://documentation.dataspace.copernicus.eu/APIs/OData.html#skip-option).
+
+
+::: {.panel-tabset}
+
+# HTTP Request
+
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/DeletedProducts?$filter=contains(Name,'S2A') and ContentDate/Start ge 2021-04-01T00:00:00.000Z and ContentDate/Start le 2021-04-30T23:59:59.999Z&$skip=30`](https://catalogue.dataspace.copernicus.eu/odata/v1/DeletedProducts?$filter=contains(Name,%27S2A%27)%20and%20ContentDate/Start%20ge%202021-04-01T00:00:00.000Z%20and%20ContentDate/Start%20le%202021-04-30T23:59:59.999Z&$skip=30){target="_blank"}
+
+::: 
+
+## Top option
+
+Top option can be used as defined [here](https://documentation.dataspace.copernicus.eu/APIs/OData.html#top-option).
+
+::: {.panel-tabset}
+
+# HTTP Request
+
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/DeletedProducts?$filter=contains(Name,'S1A_EW_GRD') and ContentDate/Start ge 2021-09-01T00:00:00.000Z and ContentDate/Start le 2021-09-30T23:59:59.999Z&$top=40`](https://catalogue.dataspace.copernicus.eu/odata/v1/DeletedProducts?$filter=contains(Name,%27S1A_EW_GRD%27)%20and%20ContentDate/Start%20ge%202021-09-01T00:00:00.000Z%20and%20ContentDate/Start%20le%202021-09-30T23:59:59.999Z&$top=40){target="_blank"}
+
+::: 
+
+## Count option
+
+Count option can be used as defined [here](https://documentation.dataspace.copernicus.eu/APIs/OData.html#count-option)
+
+
+::: {.panel-tabset}
+
+# HTTP Request
+
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/DeletedProducts?$filter=contains(Name,'S1A_EW_GRD') and DeletionDate gt 2023-04-01T00:00:00.000Z and DeletionDate lt 2023-05-30T23:59:59.999Z&$orderby=DeletionDate desc&$count=True`](https://catalogue.dataspace.copernicus.eu/odata/v1/DeletedProducts?$filter=contains(Name,%27S1A_EW_GRD%27)%20and%20DeletionDate%20gt%202023-04-01T00:00:00.000Z%20and%20DeletionDate%20lt%202023-05-30T23:59:59.999Z&$orderby=DeletionDate%20desc&$count=True){target="_blank"}
+
+::: 

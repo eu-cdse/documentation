@@ -1,142 +1,333 @@
+```{python}
+# import necessary packages
+import json
+from IPython.display import display, Markdown, Latex,HTML
+from tabulate import tabulate
+
+from Datafunctions import data_availability, filter_levels
+
+```
+
+
 
 ```{python}
-import json
+#load the collection
 
 meta = None
 with open("./collections.json") as f:
     meta = json.load(f)["collections"]
 
-meta = [ c for c in meta if mission in c["id"] ]
+meta = [ c for c in meta if constellation in c["constellation"] ]
 
-from IPython.display import display, Markdown, Latex,HTML
-from tabulate import tabulate
+```
 
-text = ''
-
-
+```{python}
+# fetch thumbnail 
 dummy_thumb = "https://www.esa.int/var/esa/storage/images/esa_multimedia/images/2015/06/northwest_italy_and_southern_france/15492215-1-eng-GB/Northwest_Italy_and_southern_France_pillars.jpg"
 
-def togglescript():
-    script = f"""<script>function toggleContent(id){{var x = document.getElementById(id);if (x.style.display === "none"){{x.style.display = "block";}} else {{x.style.display = "none";}}}}</script>"""
-    return script
+def get_thumbnail(c):
+    thumb_url = c.get("assets", {}).get("thumbnail",{}).get("href", "")
+    return thumb_url
 
-def thumbblock(src,userguide, opensearch, gsd, datatype):
-    thumb =  f"""<div class="row" style="display: flex; justify-content: space-around"><div class="column"><div class="badge-row">{userguide} {opensearch}</div><div class="badge-row gutter">{gsd}</div><div class="badge-row">{datatype}</div></div><div class="column" style="margin-right:10%; margin-left:auto; text-align: right;"><figure><img width="150" height="150" src={src}><figcaption align="center">{databrowser}</figcaption></figure></div></div>"""
-    return thumb
+```
 
+```{python}
+# thumbnail block 
 
-def detailblock(ID,xy,time,stacurl,src):
-    bandinfo = f"""<button onclick="toggleContent('{ID}')" class="expand-collapse">Further details about the data collection</button><div class="expand-content" id="{ID}" style="display:none;"><div>{xy}</div><div>{time}</div><div>{stacurl}</div><div>{src}</div></div>"""
-    return bandinfo
+def thumbblock(src,userguide, opensearch, gsd,revisit_time, datatype, frequency):
 
-
-for c in meta:
-
-    title = c["title"]
-    gsd = c["gsd"]
-    datatype = c["type"]
-    tabletitle = "Spectral Bands"
-
-    
-    def find_link(rel=None,href_contains=None, title_contains=None):
-        results = [ l["href"] for l in c.get("links",[]) if (rel is None or l["rel"]==rel) and (href_contains==None or href_contains in l["href"]) and (title_contains==None or title_contains in l["title"]) ]
-        if len(results) == 0:
-            return None
+    if src or userguide or opensearch or gsd or revisit_time or datatype or frequency:
+        if src:
+            thumb =  f"""<div class="row" style="display: flex; justify-content: space-around"><div class="column"><div class="badge-row">{userguide}{opensearch}</div><div class="badge-row gutter">{gsd}{revisit_time}{frequency}</div><div class="badge-row">{datatype}</div></div><div class="column" style="margin-right:10%; margin-left:auto; text-align: right;"><figure><img width="165" height="150" src={src}><figcaption align="center">{databrowser}</figcaption></figure></div></div>"""
         else:
-            return results[0]
+            thumb =  f"""<div class="row" style="display: flex; justify-content: space-around"><div class="column"><div class="badge-row">{userguide}{opensearch}</div><div class="badge-row gutter">{gsd}{revisit_time}{frequency}</div><div class="badge-row">{datatype}</div></div><div class="column" style="margin-right:10%; margin-left:auto; text-align: right;"></div></div>"""
+        return thumb
+    else:
+        return ''
 
-    # insert thumbnail
-    try:
-        thumb_url = c["assets"]["thumbnail"]["href"]
-    except:
-        thumb_url = dummy_thumb
+```
 
-    try:
-        collectionID = c["id"]
-    except:
-        collectionID = ""
+```{python}
+def necessary_links(c):
+    stac = get_stac(c)
+    wmts = get_wmts()
+    source = get_source()
+    info = get_moreinfo()
 
-    # search stac extention
+    # list of all links
+    links = [stac, wmts, source, info]
+
+    # join non-empty links using HTML list tags
+    non_empty_links = [link for link in links if link]
+    if non_empty_links:
+        link_items = [f"<li>{link}</li>" for link in non_empty_links]
+        link_block = f"""<h5>Useful Links</h5><ul>{"".join(link_items)}</ul>"""
+    else:
+        link_block = ""
+
+    return link_block
+```
+
+```{python}
+def get_stac(c):
     try:
         stac_extension = c["stac_extensions"]
         link = None  # initialize link variable to None
 
         for item in stac_extension:
             if item.startswith('http'):
-                stac_url = f'<h5>Stac Extension</h5>  <a href="{item}" target="_blank">{item}</a>'
+                stac_url = f"""STAC: <a href="{item}" target="_blank">{item}</a>"""
                 break  # exit the loop once you've found the link        
-    except:
+    except Exception:
         stac_url = ""
+    return stac_url
+```
+```{python}
+def get_wmts():
+    url = ""
+    try:
+        wmts = find_link(rel="wmts",title_contains="Web Map Tile Service")
+        if wmts is not None:
+            url = f"""WMTS:  <a href="{wmts}" target="_blank">{wmts}</a>""" 
+    except Exception:
+        url = ""
+    return url
+```
 
-    # get extents
+```{python}
+def get_source():
+    url = ""
+    try:
+        source = find_link(rel="source")
+        if source is not None:
+            url = f"""Source:  <a href="{source}" target="_blank">{source}</a>""" 
+    except Exception:
+        url = ""
+    return url
+```
+```{python}
+def get_moreinfo():
+    url = ""
+    try:
+        info = find_link(rel="MoreInformation")
+        if info is not None:
+            url = f"""More Information:  <a href="{info}" target="_blank">{info}</a>""" 
+    except:
+        url = ""
+    return url
+```
+
+```{python}
+# function to toggle detail block
+
+def togglescript():
+    script = f"""<script>function toggleContent(id){{var x = document.getElementById(id);if (x.style.display === "none"){{x.style.display = "block";}} else {{x.style.display = "none";}}}}</script>"""
+    return script
+
+```
+
+```{python}
+# include detail block
+
+def detailblock(ID,xy,time,table,link_block,license_button,cite):
+    
+    if any(val for val in (xy, time, table, link_block) if not val.isspace() and val != ""):
+        bandinfo = f"""<button onclick="toggleContent('{ID}')" class="expand-collapse">Further details about the data collection</button><div class="expand-content" id="{ID}" style="display:none;"><div class="row" style="display: flex; justify-content: space-around"><div class="column">{license_button}&nbsp;&nbsp;{cite}</div></div><div class="row" style="display: flex; justify-content: space-around"><div class="column">{xy}</div><div class="column">{time}</div></div><div>{table}</div><div>{link_block}</div></div>"""
+    else:
+        bandinfo = ""
+    return bandinfo
+
+```
+
+```{python}
+# function to search for links
+
+def find_link(rel=None,href_contains=None, title_contains=None):
+    results = [ l["href"] for l in c.get("links",[]) if (rel is None or l["rel"]==rel) and (href_contains==None or href_contains in l["href"]) and (title_contains==None or title_contains in l["title"]) ]
+    if len(results) == 0:
+        return None
+    else:
+        return results[0]
+
+```
+
+```{python}
+# get extension detail
+def get_extent(c):
     try:
         extent = c["extent"]
-        spatial = extent['spatial']['bbox'][0]
+        spatial = extent['spatial']['bbox']
         spatial = f'<h5>Spatial Extent</h5> {spatial}'
-        temporal = extent['temporal']['interval'][0]
-        temporal = f'<h5>Temporal Interval</h5> {temporal}'
-    except:
+    except Exception:
         spatial = ""
+    try:
+        temporal = extent['temporal']['interval']
+        temporal = f'<h5>Temporal Interval</h5> {temporal}'
+    except Exception:
         temporal = ""
+    return spatial,temporal
+```
 
+```{python}
+from tabulate import tabulate
 
-
-    # include band details
-    try: 
+def get_bandtable(c):
+    tabletitle = "Spectral Bands"
+    try:
         band_num = len(c['summaries']['eo:bands'])
         t = []
-        for i in range(0,band_num):
-            try:
-                band = c['summaries']['eo:bands'][i]['name'] 
-            except:
-                band = ""
-            try:
-                c_name = c['summaries']['eo:bands'][i]['common_name']
-            except:
-                c_name = ''
-            try:
-                b_gsd = c['summaries']['eo:bands'][i]['gsd']
-            except:
-                b_gsd = ''
-            try:
-                b_wavelength = c['summaries']['eo:bands'][i]['wavelength_nm']
-            except:
-                b_wavelength = ''
-            t.append([band,c_name,b_gsd,b_wavelength])
-        table = tabulate(t,headers=["Band Name", "Common Name", "GSD", "Wavelength"], tablefmt='html', floatfmt=".20f")
-        # Set the minimum width of each column to 100 pixels
-        table = table.replace("<table>", '<table class="table">')
-        table = f"""<h5>{tabletitle}</h5>{table}"""
+        headers = ["Band Name", "Common Name", "GSD(m)", "Center Wavelength(μm)"]
+        empty_columns = [True] * len(headers)  # Track empty columns
+        
+        for i in range(band_num):
+            band_data = c['summaries']['eo:bands'][i]
+            band = band_data.get("name", "")    
+            c_name = band_data.get("common_name", "")  
+            b_gsd = band_data.get("gsd", "")
+            b_wavelength = band_data.get("center_wavelength", "")               
+            row = [band, c_name, b_gsd, b_wavelength]
+            t.append(row)
+            
+            # Check for empty columns
+            for j, value in enumerate(row):
+                if value:
+                    empty_columns[j] = False
+        
+        # Remove empty columns from headers and table rows
+        headers = [header for i, header in enumerate(headers) if not empty_columns[i]]
+        t = [[row[i] for i, value in enumerate(row) if not empty_columns[i]] for row in t]
+        
+        # Check if all columns are empty
+        if len(headers) == 0:
+            table = ""
+        else:
+            table = tabulate(t, headers=headers, tablefmt='html', floatfmt=".4f", stralign="center", numalign="center")
+            # Set the minimum width of each column to 100 pixels
+            table = table.replace("<table>", '<table class="table">')
+            table = f"""<h5>{tabletitle}</h5>{table}"""
     except:
-        table = " "
+        table = ""
+    
+    return table
 
+
+
+```
+
+```{python}
+# Display the Markdown content
+def baselineinfo(filename): 
+    # Read the content of the Markdown file
+    with open(filename, 'r') as file:
+        sentinel2_baseline = file.read()
+    info = sentinel2_baseline
+    return info
+```
+
+```{python}
+# for loop to display the content
+text = ''
+categories=[]
+
+for c in meta:
+
+    additional_info = ""
+    title = c["title"]
+    resolution = c.get("gsd", "")
+    revisit = c.get("revisit", "")
+    datatype = c.get("type", "")   
+    collectionID = c.get("id", "")       
+
+    try:
+        for i in c["data_product"]:
+            levelID = c["data_product"][i]["Level_ID"]
+            about_product = c["data_product"][i]["description"]
+            levelids.append((levelID,about_product))
+    except Exception:
+        levelID = ""
+        about_product = ""
+
+
+    license_type = c.get("license", "")
+    sci_cite = c.get("sci:citation", "")
+    frequency = c.get('summaries',{}).get('Frequency',"")
+    category = c.get("Category", "")
+    if category != "":
+        categories.append(category)
+    else:
+        pass
+
+    if collectionID == "SENTINEL2_L2A":
+        additional_info = baselineinfo("Sentinel2_L2A_baseline.qmd")
+    if collectionID == "SENTINEL2_L1C":
+        additional_info = baselineinfo("Sentinel2_L1C_baseline.qmd")
+    if collectionID == "SENTINEL2_L3":
+        additional_info = baselineinfo("Sentinel2_Mosaic_Algorithm.qmd")
+    else:
+        pass
+
+    # insert thumbnail
+    thumb_url = get_thumbnail(c)
+
+    # get necessary links
+    link_block = necessary_links(c)
+
+    # get extents
+    spatial , temporal = get_extent(c)
+
+    # include spectral band table
+    table = get_bandtable(c)
+
+    # include offer table
+    offer = data_availability.main(c)
+    
     links = { l["rel"] + l.get("title",""):l["href"] for l in c.get("links",[])}
     userguide = find_link(rel="about",title_contains="User")
     opensearch = find_link(rel="opensearch")
-    datacollection = find_link(rel="about",title_contains="collection")
     databrowser = find_link(rel="browser",title_contains="Data-Browser")
+    license_url = find_link(rel="license")
+    cite = find_link(rel="cite-as")
+    
 
     if userguide is not None:
-        userguide = f"""[![User guide](https://img.shields.io/badge/-User_guide-77cc09)]({userguide})"""
+        userguide = f"""[![User guide](https://img.shields.io/badge/-User_guide-77cc09)]({userguide}){{target='_blank'}}"""
     else:
         userguide = ""
 
-    if datacollection is not None:
-        datacollection = f"""You can find a detailed description about the collection in this [link]({datacollection})"""
+    if cite is not None:
+        cite = f"""[!["Cite"](https://img.shields.io/badge/-Cite-77cc09)]({cite}){{target='_blank'}}"""
     else:
-        datacollection = ""
+        cite = ""
+
+
+    if sci_cite is not None:
+        if license_url is not None and  license_url != "":
+            license_button = f"""<a href="{license_url}" target="_blank">{sci_cite}</a>"""
+        else:
+            license_button = f"""{sci_cite}"""
+    else:
+        license_button = ""
+
 
     if databrowser is not None:
         databrowser = f"""<a class="clickable" href="{databrowser}" target="_blank">View in browser</a>"""
     else:
         databrowser = ""
 
-    if gsd is not None:
-        gsd = f"""<div><img src="https://img.shields.io/badge/resolution-{gsd}m-0A4393" />
-<img src="https://img.shields.io/badge/revisit-5--daily-0A4393"/></div>
-"""
+    if resolution is not None and  resolution != "":
+        gsd = f"""<img src="https://img.shields.io/badge/resolution-{resolution}m-0A4393" />"""
     else:
         gsd = ""
+
+    if revisit is not None and  revisit != "":
+        revisit_time = f"""<img src="https://img.shields.io/badge/revisit-{revisit}--day-0A4393"/>"""
+    else:
+        revisit_time = ""
+
+    if frequency is not None and  frequency != "":
+        Updated_freq = f"""<img src="https://img.shields.io/badge/Update_Frequency-{frequency}-0A4393"/>"""
+    else:
+        Updated_freq = ""
 
     if "ARD" in datatype:
         datatype = f"""![](https://img.shields.io/badge/{datatype}-77cc09) """
@@ -147,28 +338,40 @@ for c in meta:
 
     if opensearch is not None:
         opensearch = f"""[![Catalog API](https://img.shields.io/badge/-Catalog_API-77cc09?style=flat)
-]({opensearch})"""
+]({opensearch}){{target='_blank'}}"""
     else:
         opensearch = ""
+
     text = text + f"""
 
-## {title} 
+<div class="{category}" style="display: block;">
 
-{thumbblock(thumb_url,userguide,opensearch,gsd,datatype)}
+<div>
 
+## {title}
 
-<h4>Overview</h4>
+{thumbblock(thumb_url,userguide,opensearch,gsd,revisit_time,datatype,Updated_freq)}
+
+#### Overview
 
 {c["description"]}
 
-{datacollection}
+{offer}
 
+{detailblock(collectionID,spatial,temporal,table,link_block,license_button,cite )}
 
-{detailblock(collectionID,spatial,temporal,stac_url,table)}
+{additional_info}
 
+</div>
+
+</div>
 
 """
-text = text + togglescript()
+
+```
+
+```{python}
+text = filter_levels.createcheckboxes(sorted(set(categories))) +text + togglescript()
 
 display(Markdown(text))
 

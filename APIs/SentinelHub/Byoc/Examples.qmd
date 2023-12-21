@@ -1,0 +1,182 @@
+---
+title: BYOC API examples
+---
+
+The following API requests are written in Python. To execute them, you
+need to create an OAuth client as is explained
+[here](/APIs/SentinelHub/Overview/Authentication.qmd#python). The client
+is named `oauth` in these examples. The examples are structured in a way
+to be as separable as possible, however in many cases doing all the
+steps in each chapter makes sense.
+
+### Creating a collection
+
+To create a collection with the name `<MyCollection>` and S3 bucket
+`<MyBucket>`:
+
+``` python
+collection = {
+  'name': '<MyCollection>',
+  's3Bucket': '<MyBucket>'
+}
+
+response = oauth.post('https://sh.dataspace.copernicus.eu/api/v1/byoc/collections', json=collection)
+response.raise_for_status()
+```
+
+Extracting the collection id from the response:
+
+``` python
+import json
+
+collection = json.loads(response.text)['data']
+collection_id = collection['id']
+```
+
+### Creating a tile
+
+To create a tile with the path `<MyTile>`:
+
+``` python
+tile = {
+  'path': '<MyTile>',
+}
+
+response = oauth.post(f'https://sh.dataspace.copernicus.eu/api/v1/byoc/collections/{collection_id}/tiles', json=tile)
+response.raise_for_status()
+```
+
+If your tile has a known sensing time, e.g. October 21, 2019 at 14:51 by
+UTC time, add this information by using the following payload:
+
+``` python
+tile = {
+  'path': '<MyTile>',
+  'sensingTime': '2019-10-21T14:51:00Z'
+}
+```
+
+If you want to provide a cover geometry, set it as the value of the
+`coverGeometry` field:
+
+``` python
+tile = {
+  'path': '<MyTile>',
+  'coverGeometry': <MyCoverGeometry>
+}
+```
+
+For information on how to prepare a cover geometry, see [Preparing a
+cover
+geometry](/APIs/SentinelHub/Byoc/Examples.qmd#preparing-a-cover-geometry).
+
+To extract the tile id from the response:
+
+``` python
+import json
+
+tile = json.loads(response.text)['data']
+tile_id = tile['id']
+```
+
+### Preparing a cover geometry
+
+To obtain a cover geometry automatically, you can use the
+[gdal_trace_outline](https://github.com/gina-alaska/dans-gdal-scripts/wiki/Gdal_trace_outline){target="_blank"}
+script which gives you a cover geometry in the WKT format:
+
+``` python
+import subprocess
+
+command = f'gdal_trace_outline <MyCOG> -out-cs en -wkt-out wkt.txt'
+subprocess.run(command, shell=True, check=True)
+```
+
+Once complete, transform the geometry into the GeoJSON format:
+
+``` python
+from osgeo import ogr
+import json
+
+f = open('wkt.txt')
+geom = ogr.CreateGeometryFromWkt(f.read())
+cover_geometry = json.loads(geom.ExportToJson())
+```
+
+If the CRS is something other than WGS84, make sure to set its
+[URN](https://en.wikipedia.org/wiki/Uniform_Resource_Name){target="_blank"}
+`<CrsUrn>` under `crs.properties.name`. For example
+`urn:ogc:def:crs:EPSG::32633` for EPSG:32633.
+
+``` default
+cover_geometry['crs'] = {
+  'properties': {
+    'name': '<CrsUrn>'
+  }
+}
+```
+
+To obtain the URN automatically from a raster file you can use the
+following Python
+script[`get_crn_urn.py`](https://github.com/sentinel-hub/sh_code_snippets/blob/master/get_crs_urn.py){target="_blank"}.
+
+### Checking the tile ingestion status
+
+To check the ingestion status of the tile, first get the tile:
+
+``` python
+response = oauth.get(f'https://sh.dataspace.copernicus.eu/api/v1/byoc/collections/{collection_id}/tiles/{tile_id}')
+response.raise_for_status()
+```
+
+Then extract its status from the response:
+
+``` python
+import json
+
+tile = json.loads(response.text)['data']
+status = tile['status']
+
+if status == 'INGESTED':
+  print('Tile ingested')
+elif status == 'FAILED':
+  print('Tile failed to ingest')
+else:
+  print(status)
+```
+
+To check why a tile failed to ingest:
+
+``` python
+print(tile['additionalData']['failedIngestionCause'])
+```
+
+### Listing tiles
+
+Tiles are paginated and to traverse all pages use the link from response
+that points to the next page, which is located at `links.next`. By
+default, you get back 100 tiles per page, but you can change this using
+the query parameter `count`, however it cannot be more than 100.
+
+``` python
+import time
+
+url = f'https://sh.dataspace.copernicus.eu/api/v1/byoc/collections/{collection_id}/tiles'
+
+while url is not None:
+  response = oauth.get(url)
+  response.raise_for_status()
+
+  output = response.json()
+  tiles = output['data']
+  links = output['links']
+
+  for tile in tiles:
+    print(tile['path'])
+
+  # sets url to None if there's no link to the next set of tiles
+  url = links.get('next', None)
+
+  # waits a bit before fetching the next set
+  time.sleep(0.1)
+```

@@ -1,7 +1,7 @@
 # Service description and evolution roadmap  
 
 
-The [Service description and evolution document](/_docs/CDSE-SDE-TSY_Service%20Description%20and%20Evolution.pdf ':ignore') provides a comprehensive view of all data products and services available in the frame of the Copernicus Data Space Ecosystem, both the “Copernicus Free Services” as well as the services operated by third parties. 
+The [Service description and evolution document](/_docs/CDSE-SDE-TSY_Service%20Description%20and%20Evolution_1.2.pdf ':ignore') provides a comprehensive view of all data products and services available in the frame of the Copernicus Data Space Ecosystem, both the “Copernicus Free Services” as well as the services operated by third parties. 
 
 ## Roadmap
 <!-- |Timeline| Jan-23 | Apr-23 | Jul-23| Nov-23 
@@ -12,7 +12,7 @@ The [Service description and evolution document](/_docs/CDSE-SDE-TSY_Service%20D
 |4. |Browser| On-demand production API  | Processing API: extended Sentinel Hub APIs, OpenEO  |   |
 | 5.|Catalogue APIs: OData and OpenSearch |   | Jupyter Lab    |      |
 |6.|  |  | Marketplace | -->
-![Roadmap Summary](/_images/RoadmapSummary.png)
+![](/_images/RoadmapSummary_12122023.png)
 
 ## Details
 

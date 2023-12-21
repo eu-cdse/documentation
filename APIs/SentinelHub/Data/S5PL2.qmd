@@ -1,0 +1,208 @@
+---
+title: Sentinel-5P L2
+---
+
+## About Sentinel-5P Data
+
+General information about Sentinel-5p mission can be found
+[here](/Data/Sentinel5P.qmd). Sentinel Hub offers Sentinel-5p Level 2
+products.
+
+## Accessing Sentinel-5P Data
+
+To access data you need to send a POST request to our `process` API. The
+requested data will be returned as the response to your request. Each
+POST request can be tailored to get you exactly the data you require. To
+do this requires setting various parameters which depend on the
+datasource you are querying. This chapter will help you understand the
+parameters for S5PL2 data. To see examples of such requests go
+[here](/APIs/SentinelHub/Process/Examples/S5PL2.qmd), and for an
+overview of all API parameters see the [API
+Reference](/APIs/SentinelHub/ApiReference.qmd).
+
+### Data type identifier: sentinel-5p-l2
+
+Use `sentinel-5p-l2` (previously `S5PL2`) as the value of the
+`input.data.type` parameter in your API requests. This is mandatory and
+will ensure you get Sentinel-5P L2 data.
+
+### Filtering Options
+
+This chapter will explain the `input.data.dataFilter` object of the
+`S5PL2` `process` API.
+
+#### timeRange
+
+For simple mosaicking, the time range which is requested is clipped to
+start at most 24 hours before the `to` date-time. The reason for this is
+that Sentinel-5P covers the globe in one day therefore longer time
+ranges are not neccessary. The limitation also improves the
+responsiveness of Sentinel Hub.
+
+#### mosaickingOrder
+
+Sets the order of sources from which the output result is mosaicked. If
+there are multiple sources available for the same time, unless
+explicitly set otherwise, Sentinel Hub will take the source with the
+slowest [timeliness](#timeliness) (i.e. `RPRO` prefered to `OFFL`
+prefered to `NRTI`).
+
+  Value             Description
+  ----------------- ----------------------------------------------------------------------------
+  **mostRecent**    the pixel will be selected from the tile, which was acquired most recently
+  **leastRecent**   similar to **mostRecent** but in reverse order
+
+#### timeliness
+
+You can force the timeliness of the requested data. If not set and there
+are multiple sources available for the same time, Sentinel Hub will take
+the source with the slowest timeliness (`RPRO` prefered to `OFFL`
+prefered to `NRTI`). To explicitly set, the options are:
+
+-   **NRTI** for near realtime,
+-   **OFFL** for offline,
+-   **RPRO** for reprocessing.
+
+### Processing Options
+
+This chapter will explain the `input.data.processing` object of the
+`S5PL2` `process` API.
+
+  Parameter      Description                                                                                                                                                                                                                             Values                                                                                                                                                                                                                                                                                                                                                                                    Default
+  -------------- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -------------------------------------------------------
+  upsampling     Defines the interpolation used for processing, regardless of the resolution                                                                                                                                                             **NEAREST** - [nearest neighbour interpolation](https://en.wikipedia.org/wiki/Nearest-neighbor_interpolation){target="_blank"} `<br/>`{=html} **BILINEAR** - [bilinear interpolation](https://en.wikipedia.org/wiki/Bilinear_interpolation){target="_blank"} `<br/>`{=html} **BICUBIC** - [bicubic interpolation](https://en.wikipedia.org/wiki/Bicubic_interpolation){target="_blank"}   **NEAREST**
+  downsampling   Not used, use `upsampling` instead                                                                                                                                                                                                      N/A                                                                                                                                                                                                                                                                                                                                                                                       Ignored
+  minQa          Sentinel-5P data is flagged with quality values ("qa_value"). minQa is the minimum (inclusive) pixel quality to be displayed in percent.`<br/>`{=html} For example, setting minQa = 75 will only display pixels with qa_value \>= 75%   Values between 0 and 100.                                                                                                                                                                                                                                                                                                                                                                 **75** For NO2`<br/>`{=html}**50** for other products
+
+### Available Bands and Data
+
+Information in this chapter is useful when defining [`input`
+object](/APIs/SentinelHub/Evalscript/V3.qmd#input-object-properties) in
+evalscript: any string listed in the column **Name** can be an element
+of the `input.bands` array in your evalscript.
+
+  Name                      Description
+  ------------------------- -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  CO                        Carbon monoxide, [more.](https://sentinels.copernicus.eu/web/sentinel/data-products/-/asset_publisher/fp37fc19FN8F/content/sentinel-5-precursor-level-2-carbon-monoxide){target="_blank"}
+  HCHO                      Formaldehyde, [more.](https://sentinels.copernicus.eu/web/sentinel/data-products/-/asset_publisher/fp37fc19FN8F/content/sentinel-5-precursor-level-2-formaldehyde){target="_blank"}
+  NO2                       Nitrogen oxide, [more.](https://sentinels.copernicus.eu/web/sentinel/data-products/-/asset_publisher/fp37fc19FN8F/content/sentinel-5-precursor-level-2-nitrogen-dioxide){target="_blank"}
+  O3                        Ozone, [more.](https://sentinels.copernicus.eu/web/sentinel/data-products/-/asset_publisher/fp37fc19FN8F/content/sentinel-5-precursor-level-2-ozone){target="_blank"}
+  SO2                       Sulphur dioxide, [more.](https://sentinels.copernicus.eu/web/sentinel/data-products/-/asset_publisher/fp37fc19FN8F/content/sentinel-5-precursor-level-2-sulphur-dioxide){target="_blank"}
+  CH4                       Methane, [more.](https://sentinels.copernicus.eu/web/sentinel/data-products/-/asset_publisher/fp37fc19FN8F/content/tropomi-level-2-methane){target="_blank"}
+  AER_AI_340_380            UV (Ultraviolet) Aerosol Index calculated based on wavelengths of 340 nm and 380 nm. [More.](https://sentinels.copernicus.eu/web/sentinel/data-products/-/asset_publisher/fp37fc19FN8F/content/sentinel-5-precursor-level-2-ultraviolet-aerosol-index){target="_blank"}
+  AER_AI_354_388            UV (Ultraviolet) Aerosol Index calculated based on wavelengths of 354 nm and 388 nm. [More.](https://sentinels.copernicus.eu/web/sentinel/data-products/-/asset_publisher/fp37fc19FN8F/content/sentinel-5-precursor-level-2-ultraviolet-aerosol-index){target="_blank"}
+  CLOUD_BASE_PRESSURE       Cloud base pressure, [more.](https://sentinels.copernicus.eu/web/sentinel/data-products/-/asset_publisher/fp37fc19FN8F/content/sentinel-5-precursor-level-2-cloud){target="_blank"}
+  CLOUD_TOP_PRESSURE        Cloud top pressure, [more.](https://sentinels.copernicus.eu/web/sentinel/data-products/-/asset_publisher/fp37fc19FN8F/content/sentinel-5-precursor-level-2-cloud){target="_blank"}
+  CLOUD_BASE_HEIGHT         Cloud base height, [more.](https://sentinels.copernicus.eu/web/sentinel/data-products/-/asset_publisher/fp37fc19FN8F/content/sentinel-5-precursor-level-2-cloud){target="_blank"}
+  CLOUD_TOP_HEIGHT          Cloud top height, [more.](https://sentinels.copernicus.eu/web/sentinel/data-products/-/asset_publisher/fp37fc19FN8F/content/sentinel-5-precursor-level-2-cloud){target="_blank"}
+  CLOUD_OPTICAL_THICKNESS   Cloud optical thickness, [more.](https://sentinels.copernicus.eu/web/sentinel/data-products/-/asset_publisher/fp37fc19FN8F/content/sentinel-5-precursor-level-2-cloud){target="_blank"}
+  CLOUD_FRACTION            Effective radiometric cloud fraction, [more.](https://sentinels.copernicus.eu/web/sentinel/data-products/-/asset_publisher/fp37fc19FN8F/content/sentinel-5-precursor-level-2-cloud){target="_blank"}
+  dataMask                  The mask of data/no data pixels, [more](/APIs/SentinelHub/UserGuides/Datamask.qmd).
+
+### Units
+
+The data values for each band in your custom script are presented in the
+units as specified here. In case more than one unit is available for a
+given band, you may optionally set the value of `input.units` in your
+evalscript `setup` function to one of the values in the
+`Sentinel Hub Units` column. Doing so will present data in that unit.
+The Sentinel Hub `units` parameter combines the physical quantity and
+corresponding units of measurement values. As such, some names more
+closely resemble physical quantities, others resemble units of
+measurement.
+
+The `Source Format` specifies how and with what precision the digital
+numbers (`DN`) from which the unit is derived are encoded. Bands
+requested in `DN` units contain exactly the pixel values of the source
+data. Note that resampling may produce interpolated values. `DN` is also
+used whenever a band is derived computationally (like dataMask); such
+bands can be identified by having `DN` units and `N/A` source format.
+`DN` values are typically not offered if they do not simply represent
+any physical quantity, in particular, when `DN` values require
+source-specific (i.e. non-global) conversion to physical quantities.
+
+Values in non-`DN` units are computed from the source (`DN`) values with
+at least float32 precision. Note that the conversion might be nonlinear,
+therefore the full value range and quantization step size of such a band
+can be hard to predict. Band values in evalscripts always behave as
+floating point numbers, regardless of the actual precision.
+
+The `Typical Range` indicates what values are common for a given band
+and unit, however outliers can be expected.
+
+  Product/Band              Physical Quantity (units)                                             Sentinel Hub Units   Source Format   Typical Range                        Notes
+  ------------------------- --------------------------------------------------------------------- -------------------- --------------- ------------------------------------ -----------------------------------------------------------------------------------------------------------
+  CO                        Carbon monoxide total column (mol/m\^2)                               MOL_M2               FLOAT32         0 - 0.1                              Certain events (wildfires) may cause these limits to be exceeded.
+  HCHO                      Formaldehyde troposheric vertical column (mol/m\^2)                   MOL_M2               FLOAT32         0 - 0.001                            Certain events (wildfires) may cause these limits to be exceeded.
+  NO2                       Nitrogen dioxide tropospheric column (mol/m\^2)                       MOL_M2               FLOAT32         0 - 0.0003                           Peak values for polluted cities may reach two or three times the upper value.
+  O3                        Ozone total column (mol/m\^2)                                         MOL_M2               FLOAT32         0 - 0.36                             
+  SO2                       Sulfur dioxide total column (mol/m\^2)                                MOL_M2               FLOAT32         0 - 0.01                             Explosive volcanic eruptions can exceed 0.35 mol/m\^2 and instrumental noise can produce negative values.
+  CH4                       Column averaged dry air mixing ratio of methane (parts per billion)   PPB                  FLOAT32         1,600 - 2,000                        
+  AER_AI_340_380            UV aerosol index from 380 and 340 nm (unitless)                       INDEX                FLOAT32         -1 - 5                               
+  AER_AI_354_388            UV aerosol index from 388 and 354 nm (unitless)                       INDEX                FLOAT32         -1 - 5                               
+  CLOUD_BASE_PRESSURE       Cloud base pressure (pascals)                                         PASCALS              FLOAT32         1,000 - 110,000                      
+  CLOUD_TOP_PRESSURE        Cloud top pressure (pascals)                                          PASCALS              FLOAT32         1,000 - 110,000                      
+  CLOUD_BASE_HEIGHT         Cloud base height (meters)                                            METERS               FLOAT32         0 - 20,000                           
+  CLOUD_TOP_HEIGHT          Cloud top height (meters)                                             METERS               FLOAT32         0 - 20,000                           
+  CLOUD_OPTICAL_THICKNESS   Cloud optical thickness (unitless)                                    OPTICAL_DEPTH        FLOAT32         0 - 250                              
+  CLOUD_FRACTION            Effective radiometric cloud fraction (unitless)                       FRACTION             FLOAT32         0 - 1                                
+  dataMask                  N/A                                                                   DN                   N/A             0 - no data`<br/>`{=html} 1 - data   
+
+### Mosaicking
+
+`SIMPLE` and `ORBIT`
+[mosaicking](/APIs/SentinelHub/Evalscript/V3.qmd#mosaicking) types are
+supported.
+
+### Scenes Object
+
+[`scenes` object](/APIs/SentinelHub/Evalscript/V3.qmd#scenes) stores
+metadata. An example of metadata available in `scenes` object for
+Sentinel-5p L2 when mosaicking is `ORBIT`:
+
+  Property name               Value
+  --------------------------- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  tiles\[i\].date             `'2018-12-30T10:43:00Z'`
+  tiles\[i\].shId             `1900340`
+  tiles\[i\].dataPath         `'http://data.cloudferro.com/EODATA/Sentinel-5P/TROPOMI/L2__CO____/2018/12/30/S5P_OFFL_L2__CO_____20181230T104300_20181230T122430_06286_01_010202_20190105T100707/S5P_OFFL_L2__CO_____20181230T104300_20181230T122430_06286_01_010202_20190105T100707.nc'`
+
+Properties of a `scenes` object can differ depending on the selected
+mosaicking and in which evalscript function the object is accessed.
+[Working with metadata in
+evalscript](/APIs/SentinelHub/UserGuides/Metadata.qmd) user guide
+explains all details and provide examples.
+
+### Collection Specific Constraints
+
+The raw data is encoded as 32-bit float samples. For scientific usage it
+is best to set `tiff` as an output format and
+`sampleType: SampleType.FLOAT32`.
+
+Sentinel-5P data can potentially contain many no data pixels which is a
+consequence of the way it is measured. We therefore suggest using the
+[`dataMask`](/APIs/SentinelHub/UserGuides/Datamask.qmd) band to
+differentiate between actual zero values and no data.
+
+## Catalog API Capabilities
+
+To access Sentinel 5P L2 product metadata you need to send search
+request to our [Catalog API](/APIs/SentinelHub/Catalog.qmd). The
+requested metadata will be returned as JSON formatted response to your
+request.
+
+### Collection identifier: sentinel-5p-l2
+
+### Filter extension
+
+-   `sat:absolute_orbit`
+-   `s5p:type` ([available types](#available-bands-and-data))
+-   `s5p:timeliness` ([possible values](#timeliness))
+
+### Distinct extension
+
+-   `date`
+-   `s5p:type` ([available types](#available-bands-and-data))
+
+### Examples
+
+[S5PL2 Examples](/APIs/SentinelHub/Process/Examples/S5PL2.qmd)

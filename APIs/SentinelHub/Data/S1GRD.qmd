@@ -1,0 +1,350 @@
+---
+title: Sentinel-1 GRD
+---
+
+## About Sentinel-1 GRD Data
+
+General information about Sentinel-1 mission can be found
+[here](/Data/Sentinel1.qmd). Sentinel Hub offers [Sentinel-1 Level 1
+Ground Range Detected
+products](/Data/Sentinel1.qmd#sentinel-1-level-1-ground-range-detected-grd).
+For spatio-temporal availability refer to "Packed or Unpacked, SAFE with
+Cloud optimized GeoTIFF" in [this
+table](/Data/Sentinel1.qmd#offered-data).
+
+## Processing Chain
+
+The following describes the way Sentinel-1 GRD data is processed in
+Sentinel Hub. For information on how to set processing parameters, see
+[Processing Options](#processing-options).
+
+1.  Original or multilooked source chosen (depending on the resolution
+    level; multilooking is done in ground range. Also
+    [see](#differences-in-capabilities).)
+2.  Calibration to the chosen backscatter coefficient and thermal noise
+    removal applied.
+3.  (Optional) [Speckle filtering](#speckle-filtering) on the source
+    data (see the
+    [example](/APIs/SentinelHub/Process/Examples/S1GRD.qmd#s1grd-non-orthorectified-lee-speckle-filtered-decibel-gamma0-hh-between--20-db-and-10-db-png)).
+4.  (Optional) Radiometric terrain correction using [area
+    integration](https://www.geo.uzh.ch/microsite/rsl-documents/research/publications/peer-reviewed-articles/201108-TGRS-Small-tcGamma-3809999360/201108-TGRS-Small-tcGamma.pdf){target="_blank"}
+    is performed. The [Mapzen or Copernicus
+    DEM](/APIs/SentinelHub/Data/DEM.qmd) is used (see the
+    [example](/APIs/SentinelHub/Process/Examples/S1GRD.qmd#s1grd-radiometrically-terrain-corrected-linear-gamma0-vv-between-0-and-05-png)).
+5.  (Optional) Orthorectification using Range-Doppler terrain correction
+    using the [Mapzen or Copernicus
+    DEM](/APIs/SentinelHub/Data/DEM.qmd).
+
+Notes:
+
+-   The orbit files used are the ones bundled in the products
+    themselves. We find these more than sufficient for GRD use.
+    Non-realtime products typically contain restituted orbit
+    information.
+-   The areas of border noise are not displayed by Sentinel Hub.
+-   Radiometric terrain correction can only be performed if
+    orthorectification is enabled. The DEM oversampling parameter is by
+    default set to 2 and can be user adjusted. For low resolution
+    requests (many meters per pixel) increasing it to 3, for example,
+    can be worthwhile to reduce artifacts. Integer values are
+    recommended. See also the S1GRD [API
+    Reference](/APIs/SentinelHub/ApiReference.qmd).
+-   The DEM, if used, is resampled using bilinear interpolation, and the
+    same DEM is used for both radiometric terrain correction and
+    orthorectification, provided both are enabled.
+
+## Accessing Sentinel-1 GRD Data
+
+To access data you need to send a POST request to our `process` API. The
+requested data will be returned as the response to your request. Each
+POST request can be tailored to get you exactly the data you require. To
+do this requires setting various parameters which depend on the data
+collection you are querying. This chapter will help you understand the
+parameters for S1GRD data. To see examples of such requests go
+[here](/APIs/SentinelHub/Process/Examples/S1GRD.qmd), and for an
+overview of all API parameters see the S1GRD [API
+Reference](/APIs/SentinelHub/ApiReference.qmd#operation/process).
+
+### Data type identifier: sentinel-1-grd
+
+Use `sentinel-1-grd` (previously `S1GRD`) as the value of the
+`input.data.type` parameter in your API requests. This is mandatory and
+will ensure you get Sentinel-1 GRD data.
+
+### Filtering Options
+
+This chapter will explain the `input.data.dataFilter` object of the
+`S1GRD` `process` API.
+
+#### mosaickingOrder
+
+[The same as for
+S2L1C.](/APIs/SentinelHub/Data/S2L1C.qmd#mosaickingorder)
+
+#### resolution (pixel spacing)
+
+  Value        Description
+  ------------ ---------------------------------
+  **HIGH**     10m/px for IW and 25m/px for EW
+  **MEDIUM**   40m/px for IW and EW
+
+A full table of resolutions is available
+([here](https://sentinel.esa.int/web/sentinel/user-guides/sentinel-1-sar/resolutions/level-1-ground-range-detected){target="_blank"})
+
+#### acquisitionMode
+
+Sentinel-1 operates in four different acquisition modes
+([more](https://sentinel.esa.int/web/sentinel/user-guides/sentinel-1-sar/acquisition-modes){target="_blank"}).
+
+  Value    Description                                                                                                                                                                      Polarization options
+  -------- -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- ----------------------
+  **SM**   Stripmap mode ([more](https://sentinel.esa.int/web/sentinel/user-guides/sentinel-1-sar/acquisition-modes/stripmap){target="_blank"}).                                            HH+HV, VV+VH, HH, VV
+  **IW**   Interferometric Wide (IW) swath mode ([more](https://sentinel.esa.int/web/sentinel/user-guides/sentinel-1-sar/acquisition-modes/interferometric-wide-swath){target="_blank"}).   HH+HV, VV+VH, HH, VV
+  **EW**   Extra Wide (EW) swath mode ([more](https://sentinel.esa.int/web/sentinel/user-guides/sentinel-1-sar/acquisition-modes/extra-wide-swath){target="_blank"}).                       HH+HV, VV+VH, HH, VV
+  **WV**   Wave mode ([more](https://sentinel.esa.int/web/sentinel/user-guides/sentinel-1-sar/acquisition-modes/wave){target="_blank"}).                                                    HH, VV
+
+#### polarization
+
+This table contains information about the polarization two letter code
+used by ESA and the product\'s contained polarizations.
+
+  Value    Description             Notes
+  -------- ----------------------- ----------------------------------------------------------
+  **SH**   HH                      
+  **SV**   VV                      
+  **DH**   HH+HV                   Typical for EW acquisitions
+  **DV**   VV+VH                   Typical for IW acquisitions
+  **HH**   Partial Dual, HH only   HH+HV was acquired, only HH is available in this product
+  **HV**   Partial Dual, HV only   HH+HV was acquired, only HV is available in this product
+  **VV**   Partial Dual, VV only   VV+VH was acquired, only VV is available in this product
+  **VH**   Partial Dual, VH only   VV+VH was acquired, only VH is available in this product
+
+#### orbitDirection
+
+  Value            Description
+  ---------------- -----------------------------------------------------------------------------------------
+  **ASCENDING**    Data acquired when the satellite was traveling approx. towards the Earth\'s North pole.
+  **DESCENDING**   Data acquired when the satellite was traveling approx. towards the Earth\'s South pole.
+
+#### timeliness
+
+  Value
+  --------------
+  NRT10m
+  NRT1h
+  NRT3h
+  Fast24h
+  Offline
+  Reprocessing
+  ArchNormal
+
+### Processing Options
+
+This chapter will explain the `input.data.processing` object of the
+`S1GRD` `process` API.
+
+  Parameter                        Description                                                                                           Values                                                                                                                                                                                                                                                                                                                                                                                    Default
+  -------------------------------- ----------------------------------------------------------------------------------------------------- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- ----------------------
+  upsampling                       Defines the interpolation used for processing, regardless of the resolution                           **NEAREST** - [nearest neighbour interpolation](https://en.wikipedia.org/wiki/Nearest-neighbor_interpolation){target="_blank"} `<br/>`{=html} **BILINEAR** - [bilinear interpolation](https://en.wikipedia.org/wiki/Bilinear_interpolation){target="_blank"} `<br/>`{=html} **BICUBIC** - [bicubic interpolation](https://en.wikipedia.org/wiki/Bicubic_interpolation){target="_blank"}   **NEAREST**
+  downsampling                     Not used, use `upsampling` instead                                                                    N/A                                                                                                                                                                                                                                                                                                                                                                                       Ignored
+  backCoeff \[1\]                  Backscatter coefficient                                                                               **BETA0**`<br/>`{=html}**SIGMA0_ELLIPSOID** `<br/>`{=html}**GAMMA0_ELLIPSOID**`<br/>`{=html} **GAMMA0_TERRAIN**                                                                                                                                                                                                                                                                           **GAMMA0_ELLIPSOID**
+  orthorectify \[2\]               Enables/disables orthorectification                                                                   **TRUE** - Orthorectified`<br/>`{=html}**FALSE** - non-Orthorectified`<br/>`{=html}                                                                                                                                                                                                                                                                                                       **FALSE**
+  demInstance                      The DEM used for orthorectification                                                                   **COPERNICUS** - Copernicus DEM 10m and 30m \[4\]\[5\] `<br/>`{=html} **COPERNICUS_30** - Copernicus DEM 30m \[5\] `<br/>`{=html} **COPERNICUS_90** - Copernicus DEM 90m                                                                                                                                                                                                                  **COPERNICUS**
+  radiometricTerrainOversampling   Sets the DEM oversampling parameter for radiometric terrain correction. Integer values recommended.   1 to 4                                                                                                                                                                                                                                                                                                                                                                                    2
+  speckleFilter                    Defines the speckle filtering method and parameters to use.                                           See [Speckle Filtering](#speckle-filtering)                                                                                                                                                                                                                                                                                                                                               NONE
+
+\[1\]: `gamma0_ellipsoid` and `sigma0_ellipsoid` use an ellipsoid earth
+model. Radiometric terrain correction can be enabled by setting the
+backscatter coefficient to `gamma0_terrain`; orthorectification must be
+enabled in this case.
+
+\[2\]: For orthorectification, we use the DEM instance specified in the
+demInstance field or the default DEM instance if this is not set. The
+Copernicus DEM is generally of higher quality and recommended in most
+cases. The non-orthorectified products use a simple earth model as
+provided in the products themselves. This may be sufficient for very
+flat target areas and is faster to process.
+
+\[4\]: It has 10m resolution inside [39 European states including
+islands](https://spacedata.copernicus.eu/collections/copernicus-digital-elevation-model){target="_blank"}
+and 30m elsewhere. The 30m DEM is used exclusively if the request
+resolution is lower (more zoomed out) than 120m/px.
+
+\[5\]: The Copernicus 30m DEM has global coverage if used for the
+processing of Sentinel-1 data.
+
+#### Speckle Filtering
+
+Speckle filtering is applied right after calibration and noise removal
+and done on source data. To enable speckle filtering, add the speckle
+filter object with the correct type and parameters to your processing
+options, as shown in [this
+example](/APIs/SentinelHub/Process/Examples/S1GRD.qmd#s1grd-non-orthorectified-lee-speckle-filtered-decibel-gamma0-hh-between--20-db-and-10-db-png)).
+
+Available filters:
+
+1.  The `NONE` filter, which as the name implies, does nothing, and is
+    equivalent to not having the filter defined at all.
+
+``` default
+"speckleFilter": {
+   "type": "NONE"
+}
+```
+
+2.  The LEE speckle filter. Window sizes from 1 to 7 are supported in
+    each dimension. Odd valued window sizes are recommended. Processing
+    time rapidly increases as window size increases. Note also that the
+    effect of the filter depends on the resolution/zoom level; it is
+    most pronounced at native resolution and gets reduced as you zoom
+    out. We therefore suggest you use it at or near native resolution
+    and switch it off at low resolution to save processing time. The
+    effect of the filter is negligible if greatly zoomed out. An example
+    with a 5x5 window:
+
+``` default
+"speckleFilter": {
+   "type": "LEE",
+   "windowSizeX": 5,
+   "windowSizeY": 5
+}
+```
+
+::: callout-note
+As an alternative or in addition to this, you can also perform
+[multitemporal
+averaging](/APIs/SentinelHub/Process/Examples/S1GRD.qmd#s1grd-orthorectified-gamma0-two-month-temporal-averaged-decibel-vv-between--20-db-and-0-db-png)
+to reduce speckle.
+:::
+
+### Available Bands and Data
+
+Information in this chapter is useful when defining [`input`
+object](/APIs/SentinelHub/Evalscript/V3.qmd#input-object-properties) in
+evalscript. Any string listed in the column **Name** can be an element
+of the `input.bands` array in your evalscript.
+
+  Name                  Description
+  --------------------- ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  VV                    Present when the product polarization type is one of SV, DV or VV.
+  VH                    Present when the product polarization type is VH or DV.
+  HV                    Present when the product polarization type is HV or DH.
+  HH                    Present when the product polarization type is one of SH, DH or HH.
+  localIncidenceAngle   The local incidence angle for each output pixel. Only available if orthorectification is enabled.
+  scatteringArea        The normalized scattering area for each output pixel. Used for conversion of beta0 to terrain corrected gamma0. Only available if radiometric terrain correction is performed.
+  shadowMask            Flags output pixels which are in or near radar shadow. Is `true` if the nearest GRD source pixel is at most one GRD pixel away from a GRD pixel with a scatteringArea of less than 0.05. Only available if radiometric terrain correction is performed.
+  dataMask              The mask of data/nodata pixels ([more](/APIs/SentinelHub/UserGuides/Datamask.qmd)).
+
+### Units
+
+The data values for each band in your custom script are presented in the
+units as specified here. In case more than one unit is available for a
+given band, you may optionally set the value of `input.units` in your
+evalscript `setup` function to one of the values in the
+`Sentinel Hub Units` column. Doing so will present data in that unit.
+The Sentinel Hub `units` parameter combines the physical quantity and
+corresponding units of measurement values. As such, some names more
+closely resemble physical quantities, others resemble units of
+measurement.
+
+The `Source Format` specifies how and with what precision the digital
+numbers (`DN`) from which the unit is derived are encoded. Bands
+requested in `DN` units contain exactly the pixel values of the source
+data. Note that resampling may produce interpolated values. `DN` is also
+used whenever a band is derived computationally (like dataMask); such
+bands can be identified by having `DN` units and `N/A` source format.
+`DN` values are typically not offered if they do not simply represent
+any physical quantity, in particular, when `DN` values require
+source-specific (i.e. non-global) conversion to physical quantities.
+
+Values in non-`DN` units are computed from the source (`DN`) values with
+at least float32 precision. Note that the conversion might be nonlinear,
+therefore the full value range and quantization step size of such a band
+can be hard to predict. Band values in evalscripts always behave as
+floating point numbers, regardless of the actual precision.
+
+The `Typical Range` indicates what values are common for a given band
+and unit, however outliers can be expected.
+
+For Sentinel-1, data values are linear power in the chosen backscatter
+coefficient. To specify the backscatter coefficient, set `BETA0`,
+`SIGMA0_ELLIPSOID`, `GAMMA0_ELLIPSOID` (default) or `GAMMA0_TERRAIN` as
+the value of `input.data.processing.backCoeff` in your request. The
+default is `GAMMA0_ELLIPSOID`.
+
+  Band                                        Physical Quantity (units)                                       Sentinel Hub Units   Source Format   Typical Range                                                                Notes
+  ------------------------------------------- --------------------------------------------------------------- -------------------- --------------- ---------------------------------------------------------------------------- ----------------------------------------------------------------------------------------------------------------------------------------------------
+  Polarization `<br/>`{=html}VV, HH, VH, HV   Linear power in the chosen backscatter coefficient (unitless)   LINEAR_POWER         UINT16          0 - 0.5                                                                      Can reach very high values (such as 1000); for visualizing a large dynamic range consider converting to decibels: `decibel = 10 * log10 (linear)`.
+  localIncidenceAngle                         Angle (degrees)                                                 DN                   N/A             0 - 180                                                                      Computed for each output pixel. Requires orthorectification.
+  scatteringArea                              Normalized area (unitless)                                      DN                   N/A             0 - 2                                                                        Can reach high values on foreslopes. Requires radiometric terrain correction.
+  shadowMask                                  N/A                                                             DN                   N/A             0 - likely not radar shadow `<br/>`{=html} 1 - likely in/near radar shadow   Requires radiometric terrain correction.
+  dataMask                                    N/A                                                             DN                   N/A             0 - no data`<br/>`{=html} 1 - data                                           
+
+### Scenes Object
+
+[`scenes` object](/APIs/SentinelHub/Evalscript/V3.qmd#scenes) stores
+metadata. An example of metadata available in `scenes` object for
+Sentinel-1 GRD when mosaicking is `ORBIT`:
+
+  Property name               Value
+  --------------------------- -----------------------------------------------------------------------------------------------------------------
+  dateFrom                    `'2019-04-02T00:00:00Z'`
+  dateTo                      `'2019-04-02T23:59:59Z'`
+  tiles\[i\].date             `'2019-04-02T17:05:39Z'`
+  tiles\[i\].shId             `881338`
+  tiles\[i\].dataPath         `'s3://sentinel-s1-l1c/GRD/2019/4/2/IW/DV/S1A_IW_GRDH_1SDV_20190402T170539_20190402T170604_026614_02FC31_7D8E'`
+
+Properties of a `scenes` object can differ depending on the selected
+mosaicking and in which evalscript function the object is accessed.
+[Working with metadata in
+evalscript](/APIs/SentinelHub/UserGuides/Metadata.qmd) user guide
+explains all details and provide examples.
+
+### Mosaicking
+
+`SIMPLE` and `ORBIT`
+[mosaicking](/APIs/SentinelHub/Evalscript/V3.qmd#mosaicking) types are
+supported.
+
+## Collection specific constraints
+
+-   **Noise**: All products on both services have thermal noise
+    reduction applied.
+-   **Decibel units**: For decibel outputs, a conversion is necessary
+    within your evalscript, see an example
+    [here](/APIs/SentinelHub/Process/Examples/S1GRD.qmd#s1grd-orthorectified-decibel-gamma0-vh-between--20-db-and-0-db-png).
+    We offer pre-defined evalscripts, which return S1GRD values in
+    decibel units, as products in the Configuration Utility for your
+    convenience.
+-   **Orbit state vectors**: We currently use the orbit state vectors
+    provided in the products themselves as we find these sufficient for
+    GRD use.
+
+## Catalog API Capabilities
+
+To access Sentinel-1 GRD product metadata you need to send search
+request to our [Catalog API](/APIs/SentinelHub/Catalog.qmd). The
+requested metadata will be returned as JSON formatted response to your
+request. This chapter will help with understanding Sentinel 1 GRD
+specific parameters for search request.
+
+### Collection identifier: sentinel-1-grd
+
+### Filter extension
+
+-   `sar:instrument_mode` ([possible values](#acquisitionmode))
+-   `sat:orbit_state` ([possible values](#orbitdirection))
+-   `s1:polarization` ([possible values](#polarization))
+-   `s1:resolution` ([possible values](#resolution-pixel-spacing))
+-   `s1:timeliness` ([possible values](#timeliness))
+
+### Distinct extension
+
+-   `date`
+-   `sar:instrument_mode`
+-   `sat:orbit_state`
+-   `s1:polarization`
+
+## Examples
+
+[S1 GRD examples](/APIs/SentinelHub/Process/Examples/S1GRD.qmd)

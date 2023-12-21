@@ -1,7 +1,7 @@
 
 ## Introduction
 
-On-demand processing capability for CARD-BS, CARD-COH6/12 is available on the Copernicus Data Space Ecosystem. This service is offered free to the use via a limited pool of resources, shared across all users, which can be used for processing the data free of charge. This is suitable for users who need to process smaller batches of products. There is no guarantee that processing will be completed in certain time.  For commercial use the price list is available from the Creodias portal [https://creodias.eu/billing-models](https://creodias.eu/billing-models){target="blank"}.The service is available via an On Demand Processing API allows the users to interact with the service to issue and control the orders. It provides functionalities like creation, update, cancellation, pausing and monitoring of orders. This allows the users to have a better control over the workflow execution process. 
+On-demand processing capability for CARD-BS and CARD-COH6/12 is available in the Copernicus Data Space Ecosystem. This service is offered via a limited pool of resources, shared across all users, and can be used for processing the data free of charge. This is suitable for users who need to process smaller batches of products. There is no guarantee that processing will be completed in certain time. For commercial use, the [price list](https://creodias.eu/pricing/eo-data-hub-services/){target="blank"} is available in the CREODIAS portal. The service is available via an On Demand Processing API that allows the users to interact with the service to issue and control the orders. It provides functionalities such as creating, updating, canceling, pausing and monitoring of orders. This allows the users to have a better control over the workflow execution process. 
 
 ## OnDemand Processing API with OData interface
 
@@ -11,11 +11,11 @@ The OnDemand Processing API allows the users to interact with the service to iss
 
 This documentation provides an overview of the OnDemand Processing (ODP) API, which is based on the Open Data Protocol (OData) standard. The ODP API provides a RESTful interface for accessing data and metadata from the Copernicus data catalogue.
 Access to the API is limited by the Authentication service. Quotas are assigned according to the user typology and include limits on number of concurrent orders and available processing workflows.
-The API allows discovery of all available workflows which can be run in the CDSE platform, indicating which data types can be processed, what are the available parameters and output modes.
+The API allows discovery of all available workflows which can be run in the Copernicus Data Space Ecosystem platform, indicating which data types can be processed, what are the available parameters and output modes.
 
 ### API Endpoint
 
-The **ODP API endpoint is [https://odp.dataspace.copernicus.eu/odata/v1](https://odp.dataspace.copernicus.eu/odata/v1){target="blank"}**. The endpoint supports both HTTP and HTTPS protocols.
+The **ODP API endpoint is [https://odp.dataspace.copernicus.eu/odata/v1](https://odp.dataspace.copernicus.eu/odata/v1){target="blank"}**.
 
 **OpenAPI documentation is located at [https://odp.dataspace.copernicus.eu/odata/docs](https://odp.dataspace.copernicus.eu/odata/docs){target="blank"}**
 
@@ -52,7 +52,7 @@ python -m json.tool | grep "access_token" | awk -F\" '{print $4}')
 Once you have your token, you can execute request to the API including the token in the request header. For example to list available Workflows you can use the following command:
 
 ````
-curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" \ 'https://odp.dataspace.copernicus.eu/odata/v1/Workflows'
+curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" "https://odp.dataspace.copernicus.eu/odata/v1/Workflows"
 ````
 
 More information on the tokens and authentication can be found here: [https://documentation.dataspace.copernicus.eu/APIs/OData.html#product-download](https://documentation.dataspace.copernicus.eu/APIs/OData.html#product-download){target="blank"}
@@ -64,23 +64,22 @@ More information on the tokens and authentication can be found here: [https://do
 To list all processing Workflows available to the user:
 
 ````
-curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" \ 
-https://odp.dataspace.copernicus.eu/odata/v1/Workflows
+curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" \
+"https://odp.dataspace.copernicus.eu/odata/v1/Workflows"
 ````
 
 To search for specific Workflows you can use filters on the attributes. To find workflow named “coh”:
 
 ````
-curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" \ 
-https://odp.dataspace.copernicus.eu/odata/v1/Workflows?$filter=Name eq 'coh'
+curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" \
+"https://odp.dataspace.copernicus.eu/odata/v1/Workflows?$filter=Name%20eq%20coh"
 ````
 
 In a similar way to find all Workflows suitable for processing Sentinel-1 SLC products:
 
 ````
-curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" \ 
-https://odp.dataspace.copernicus.eu/odata/v1/Workflows?
-$filter=contains(InputProductType,'SL````C')
+curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" \
+"https://odp.dataspace.copernicus.eu/odata/v1/Workflows?$filter=contains(InputProductType,'SLC')"
 ````
 
 Details of the Workflow in the response list the parameters which are needed to create new Production Order:
@@ -122,8 +121,8 @@ To submit a new processing job you need to use the POST method and send the para
 
 ````
 curl -X POST -H 'Content-Type:application/json' \
--H "Authorization: Bearer $KEYCLOAK_TOKEN" \ 
-https://odp.dataspace.copernicus.eu/odata/v1/ProductionOrder/OData.CSC.Order \
+-H "Authorization: Bearer $KEYCLOAK_TOKEN" \
+"https://odp.dataspace.copernicus.eu/odata/v1/ProductionOrder/OData.CSC.Order" \
 -d '<json_message>'
 ````
 
@@ -164,8 +163,8 @@ Example: to submit an order for the Sentinel-1 CARD Backscatter product:
 
 ````
 curl -X POST -H 'Content-Type:application/json' \
--H "Authorization: Bearer $KEYCLOAK_TOKEN" \ 
-https://odp.dataspace.copernicus.eu/odata/v1/ProductionOrder/OData.CSC.Order \
+-H "Authorization: Bearer $KEYCLOAK_TOKEN" \
+"https://odp.dataspace.copernicus.eu/odata/v1/ProductionOrder/OData.CSC.Order" \
 -d '{ \
   "WorkflowName": "card_bs",
   "InputProductReference": {
@@ -205,15 +204,14 @@ To list all Production Orders requested by the user:
 
 ````
 curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" \
-https://odp.dataspace.copernicus.eu/odata/v1/ProductionOrders
+"https://odp.dataspace.copernicus.eu/odata/v1/ProductionOrders"
 ````
 
 When looking for completed orders for a specific processor:
 
 ````
 curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" \
-"https:// odp.dataspace.copernicus.eu/odata/v1/ProductionOrders?
-$filter=WorkflowName eq 'coh' and Status eq 'completed'"
+"https://odp.dataspace.copernicus.eu/odata/v1/ProductionOrders?$filter=WorkflowName%20eq%20coh%20and%20Status%20eq%20completed"
 ````
 
 #### Check the status of a single Production Order
@@ -221,7 +219,7 @@ To check details of the single order using the order Id:
 
 ````
 curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" \
-'https://odp.dataspace.copernicus.eu/odata/v1/ProductionOrders(<order_id>)'
+"https://odp.dataspace.copernicus.eu/odata/v1/ProductionOrders(<order_id>)"
 ````
 
 #### Cancel a Production Order
@@ -229,8 +227,7 @@ To cancel an existing order:
 
 ````
 curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" \
-'https://odp.dataspace.copernicus.eu/odata/v1/ProductionOrder(<order_id>)/
-OData.CSC.Cancel'
+"https://odp.dataspace.copernicus.eu/odata/v1/ProductionOrder(<order_id>)/OData.CSC.Cancel"
 ````
 
 The orders which are in the queue and not yet processed will be removed instantly. For the orders in processing, the Order Items (single item within a Production Order) being processed will complete but the remaining part of the Order will be canceled.
@@ -248,7 +245,7 @@ To download the result:
 
 ````
 curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" \
-'https://odp.dataspace.copernicus.eu/odata/v1/ProductionOrder(<order_id>)/Product/$value' \
+"https://odp.dataspace.copernicus.eu/odata/v1/ProductionOrder(<order_id>)/Product/$value" \
 -o result.zip
 ````
 
@@ -260,7 +257,7 @@ Batch Order endpoint uses the same mechanism as described for the Production Ord
 ````
 curl -X POST -H 'Content-Type:application/json' \
 -H "Authorization: Bearer $KEYCLOAK_TOKEN" \ 
-https://odp.dataspace.copernicus.eu/odata/v1/BatchOrder/OData.CSC.Order \
+"https://odp.dataspace.copernicus.eu/odata/v1/BatchOrder/OData.CSC.Order" \
 -d '<json_message>'
 ````
 
@@ -301,14 +298,14 @@ To list all Production Orders requested by the user:
 ````
 curl -X POST -H 'Content-Type:application/json' \
 -H "Authorization: Bearer $KEYCLOAK_TOKEN" \ 
-https://odp.dataspace.copernicus.eu/odata/v1/BatchOrder
+"https://odp.dataspace.copernicus.eu/odata/v1/BatchOrder"
 ````
 
-When looking for batch orders for a specific processor:
+When looking for batch orders for a specific processor (in example 'coh'):
 
 ````
 curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" \
-"https:// odp.dataspace.copernicus.eu/odata/v1/BatchOrder?$filter=WorkflowName eq 'coh'
+"https://odp.dataspace.copernicus.eu/odata/v1/BatchOrder?$filter=WorkflowName%20eq%20%coh"
 ````
 
 #### Check the status of a single Batch Order
@@ -316,7 +313,7 @@ To check details of the single order using the order Id:
 
 ````
 curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" \
-'https://odp.dataspace.copernicus.eu/odata/v1/BatchOrder(<batch_order_id>)'
+"https://odp.dataspace.copernicus.eu/odata/v1/BatchOrder(<batch_order_id>)"
 ````
 
 #### List products generated in a Batch Order
@@ -324,7 +321,7 @@ When the batch order is processed, for each input product an output is generated
 
 ````
 curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" \
-'https://odp.dataspace.copernicus.eu/odata/v1/BatchOrder(<batch_order_id>)/Products'
+"https://odp.dataspace.copernicus.eu/odata/v1/BatchOrder(<batch_order_id>)/Products"
 ````
 
 #### Display details of the results
