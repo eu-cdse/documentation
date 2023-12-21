@@ -291,6 +291,12 @@ window.onload = function() {
  <span class="menu-text">Sentinel-5P</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Data/Sentinel6.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Sentinel-6</span></a>
+  </div>
+</li>
       </ul>
   </li>
           <li class="sidebar-item sidebar-item-section">
@@ -489,6 +495,18 @@ window.onload = function() {
  <span class="menu-text">Preprocessing &amp; merging Sentinels</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/openEO/openeo-community-examples/python/RankComposites/rank_composites.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Rank Composites</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notebook-samples/openeo/Whittaker.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Smoothening dataset using Whittaker</span></a>
+  </div>
+</li>
       </ul>
   </li>
       </ul>
@@ -496,7 +514,7 @@ window.onload = function() {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../APIs/STAC.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">STAC product catalog</span></a>
+ <span class="menu-text">STAC product catalogue</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -557,12 +575,6 @@ window.onload = function() {
   <div class="sidebar-item-container"> 
   <a href="../../APIs/SentinelHub/UserGuides/Metadata.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Working with metadata in evalscript</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../Applications/QGIS.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">QGIS Plugin</span></a>
   </div>
 </li>
       </ul>
@@ -1063,7 +1075,7 @@ window.onload = function() {
   <li><a href="#visualize-the-result" id="toc-visualize-the-result" class="nav-link" data-scroll-target="#visualize-the-result">Visualize the result</a></li>
   </ul></li>
   </ul>
-<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/eu-cdse/documentation/issues" class="toc-action">Report an issue</a></p></div></div></nav>
+</nav>
     </div>
 <!-- main -->
 <main class="content column-body" id="quarto-document-content">
@@ -1090,18 +1102,18 @@ window.onload = function() {
 <section id="set-up" class="level2">
 <h2 class="anchored" data-anchor-id="set-up">Set up</h2>
 <p>Import a couple of packages and establish an authenticated connection</p>
-<div class="cell" data-execution_count="1">
+<div class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> openeo</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> openeo.api.process <span class="im">import</span> Parameter</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-execution_count="2">
+<div class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>connection <span class="op">=</span> openeo.<span class="ex">connect</span>(url<span class="op">=</span><span class="st">"openeo.dataspace.copernicus.eu"</span>)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>connection.authenticate_oidc()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Authenticated using refresh token.</code></pre>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="2">
+<div class="cell-output cell-output-display" data-execution_count="5">
 <pre><code>&lt;Connection to 'https://openeo.dataspace.copernicus.eu/openeo/1.1/' with OidcBearerAuth&gt;</code></pre>
 </div>
 </div>
@@ -1109,7 +1121,7 @@ window.onload = function() {
 <section id="building-a-parameterized-datacube" class="level2">
 <h2 class="anchored" data-anchor-id="building-a-parameterized-datacube">Building a parameterized datacube</h2>
 <p>The openEO Python client lets you define parameters as <code>Parameter</code> instances (from <code>openeo.api.process</code> subpackage). In general you have to specify at least the parameter name, a description and a schema.</p>
-<div class="cell" data-execution_count="3">
+<div class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>temporal_extent_param <span class="op">=</span> Parameter(</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">"date_range"</span>,</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    description<span class="op">=</span><span class="st">"The date range to load."</span>,</span>
@@ -1123,23 +1135,24 @@ window.onload = function() {
 <span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Use the parameters directly as arguments to <code>load_collection</code> to build in initial data cube with <code>SENTINEL2_L2A</code> data.</p>
-<div class="cell" data-execution_count="4">
+<div class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>band <span class="op">=</span> [<span class="st">"B03"</span>, <span class="st">"B08"</span>]</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>cube <span class="op">=</span> connection.load_collection(</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"SENTINEL2_L2A"</span>,</span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    temporal_extent<span class="op">=</span>temporal_extent_param,</span>
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    spatial_extent<span class="op">=</span>spatial_extent_param,</span>
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    bands<span class="op">=</span>band,</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    max_cloud_cover<span class="op">=</span><span class="dv">80</span>,</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The NDWI is a vegetation index sensitive to the water content of vegetation and is complementary to the NDVI. High NDWI values show a high water content of the vegetation. <span class="math display">\[ \mathrm{NDWI} = \frac{\mathrm{Green} - \mathrm{NIR}}{\mathrm{Green} + \mathrm{NIR}} \]</span></p>
-<div class="cell" data-execution_count="5">
+<div class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>green <span class="op">=</span> cube.band(<span class="st">"B03"</span>)</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>nir <span class="op">=</span> cube.band(<span class="st">"B08"</span>)</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>ndwi <span class="op">=</span> (green <span class="op">-</span> nir) <span class="op">/</span> (green <span class="op">+</span> nir)</span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>ndwi</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="5">
+<div class="cell-output cell-output-display" data-execution_count="8">
 
     <script>
     if (!window.customElements || !window.customElements.get('openeo-model-builder')) {
@@ -1156,26 +1169,26 @@ window.onload = function() {
     }
     </script>
     <openeo-model-builder>
-        <script type="application/json">{"id": "9e308357495747e994646e19de56de87", "explicit-zoom": true, "height": "400px", "value": {"process_graph": {"loadcollection1": {"process_id": "load_collection", "arguments": {"bands": ["B03", "B08"], "id": "SENTINEL2_L2A", "spatial_extent": {"from_parameter": "bbox"}, "temporal_extent": {"from_parameter": "date_range"}}}, "reducedimension1": {"process_id": "reduce_dimension", "arguments": {"data": {"from_node": "loadcollection1"}, "dimension": "bands", "reducer": {"process_graph": {"arrayelement1": {"process_id": "array_element", "arguments": {"data": {"from_parameter": "data"}, "index": 0}}, "arrayelement2": {"process_id": "array_element", "arguments": {"data": {"from_parameter": "data"}, "index": 1}}, "subtract1": {"process_id": "subtract", "arguments": {"x": {"from_node": "arrayelement1"}, "y": {"from_node": "arrayelement2"}}}, "add1": {"process_id": "add", "arguments": {"x": {"from_node": "arrayelement1"}, "y": {"from_node": "arrayelement2"}}}, "divide1": {"process_id": "divide", "arguments": {"x": {"from_node": "subtract1"}, "y": {"from_node": "add1"}}, "result": true}}}}, "result": true}}}}</script>
+        <script type="application/json">{"id": "6d3ceb5ed944458a88b7e8f77d0e89c5", "explicit-zoom": true, "height": "400px", "value": {"process_graph": {"loadcollection1": {"process_id": "load_collection", "arguments": {"bands": ["B03", "B08"], "id": "SENTINEL2_L2A", "properties": {"eo:cloud_cover": {"process_graph": {"lte1": {"process_id": "lte", "arguments": {"x": {"from_parameter": "value"}, "y": 80}, "result": true}}}}, "spatial_extent": {"from_parameter": "bbox"}, "temporal_extent": {"from_parameter": "date_range"}}}, "reducedimension1": {"process_id": "reduce_dimension", "arguments": {"data": {"from_node": "loadcollection1"}, "dimension": "bands", "reducer": {"process_graph": {"arrayelement1": {"process_id": "array_element", "arguments": {"data": {"from_parameter": "data"}, "index": 0}}, "arrayelement2": {"process_id": "array_element", "arguments": {"data": {"from_parameter": "data"}, "index": 1}}, "subtract1": {"process_id": "subtract", "arguments": {"x": {"from_node": "arrayelement1"}, "y": {"from_node": "arrayelement2"}}}, "add1": {"process_id": "add", "arguments": {"x": {"from_node": "arrayelement1"}, "y": {"from_node": "arrayelement2"}}}, "divide1": {"process_id": "divide", "arguments": {"x": {"from_node": "subtract1"}, "y": {"from_node": "add1"}}, "result": true}}}}, "result": true}}}}</script>
     </openeo-model-builder>
     
 </div>
 </div>
 <p>Now, let’s produce a temporal aggregation by taking the temporal maximum value.</p>
-<div class="cell" data-execution_count="6">
+<div class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>ndwi <span class="op">=</span> ndwi.max_time()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="store-as-user-defined-process-udp" class="level2">
 <h2 class="anchored" data-anchor-id="store-as-user-defined-process-udp">Store as User-Defined Process (UDP)</h2>
 <p>We can now store this parametarized data cube representation as a user-defined process called NDWI on the back-end.</p>
-<div class="cell" data-execution_count="7">
+<div class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>connection.save_user_defined_process(</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    user_defined_process_id<span class="op">=</span><span class="st">"NDWI"</span>,</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    process_graph<span class="op">=</span>ndwi,</span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    parameters<span class="op">=</span>[temporal_extent_param, spatial_extent_param],</span>
 <span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="7">
+<div class="cell-output cell-output-display" data-execution_count="10">
 
     <script>
     if (!window.customElements || !window.customElements.get('openeo-process')) {
@@ -1192,7 +1205,7 @@ window.onload = function() {
     }
     </script>
     <openeo-process>
-        <script type="application/json">{"show-graph": true, "provide-download": false, "process": {"id": "NDWI", "parameters": [{"description": "The date range to load.", "name": "date_range", "schema": {"subtype": "temporal-interval", "type": "array"}}, {"description": "The bounding box to load.", "name": "bbox", "schema": {"subtype": "geojson", "type": "object"}}], "process_graph": {"loadcollection1": {"arguments": {"bands": ["B03", "B08"], "id": "SENTINEL2_L2A", "spatial_extent": {"from_parameter": "bbox"}, "temporal_extent": {"from_parameter": "date_range"}}, "process_id": "load_collection"}, "reducedimension1": {"arguments": {"data": {"from_node": "loadcollection1"}, "dimension": "bands", "reducer": {"process_graph": {"add1": {"arguments": {"x": {"from_node": "arrayelement1"}, "y": {"from_node": "arrayelement2"}}, "process_id": "add"}, "arrayelement1": {"arguments": {"data": {"from_parameter": "data"}, "index": 0}, "process_id": "array_element"}, "arrayelement2": {"arguments": {"data": {"from_parameter": "data"}, "index": 1}, "process_id": "array_element"}, "divide1": {"arguments": {"x": {"from_node": "subtract1"}, "y": {"from_node": "add1"}}, "process_id": "divide", "result": true}, "subtract1": {"arguments": {"x": {"from_node": "arrayelement1"}, "y": {"from_node": "arrayelement2"}}, "process_id": "subtract"}}}}, "process_id": "reduce_dimension"}, "reducedimension2": {"arguments": {"data": {"from_node": "reducedimension1"}, "dimension": "t", "reducer": {"process_graph": {"max1": {"arguments": {"data": {"from_parameter": "data"}}, "process_id": "max", "result": true}}}}, "process_id": "reduce_dimension", "result": true}}, "public": false}}</script>
+        <script type="application/json">{"show-graph": true, "provide-download": false, "process": {"id": "NDWI", "parameters": [{"description": "The date range to load.", "name": "date_range", "schema": {"subtype": "temporal-interval", "type": "array"}}, {"description": "The bounding box to load.", "name": "bbox", "schema": {"subtype": "geojson", "type": "object"}}], "process_graph": {"loadcollection1": {"arguments": {"bands": ["B03", "B08"], "id": "SENTINEL2_L2A", "properties": {"eo:cloud_cover": {"process_graph": {"lte1": {"arguments": {"x": {"from_parameter": "value"}, "y": 80}, "process_id": "lte", "result": true}}}}, "spatial_extent": {"from_parameter": "bbox"}, "temporal_extent": {"from_parameter": "date_range"}}, "process_id": "load_collection"}, "reducedimension1": {"arguments": {"data": {"from_node": "loadcollection1"}, "dimension": "bands", "reducer": {"process_graph": {"add1": {"arguments": {"x": {"from_node": "arrayelement1"}, "y": {"from_node": "arrayelement2"}}, "process_id": "add"}, "arrayelement1": {"arguments": {"data": {"from_parameter": "data"}, "index": 0}, "process_id": "array_element"}, "arrayelement2": {"arguments": {"data": {"from_parameter": "data"}, "index": 1}, "process_id": "array_element"}, "divide1": {"arguments": {"x": {"from_node": "subtract1"}, "y": {"from_node": "add1"}}, "process_id": "divide", "result": true}, "subtract1": {"arguments": {"x": {"from_node": "arrayelement1"}, "y": {"from_node": "arrayelement2"}}, "process_id": "subtract"}}}}, "process_id": "reduce_dimension"}, "reducedimension2": {"arguments": {"data": {"from_node": "reducedimension1"}, "dimension": "t", "reducer": {"process_graph": {"max1": {"arguments": {"data": {"from_parameter": "data"}}, "process_id": "max", "result": true}}}}, "process_id": "reduce_dimension", "result": true}}}}</script>
     </openeo-process>
     
 </div>
@@ -1201,19 +1214,19 @@ window.onload = function() {
 <section id="use-the-udp" class="level2">
 <h2 class="anchored" data-anchor-id="use-the-udp">Use the UDP</h2>
 <p>Now, let’s evaluate our freshly created user-defined processes “NDWI”. We can using <code>datacube_from_process()</code> to create a <code>DataCube</code> from this process and only have to provide concrete temporal and spatial extents:</p>
-<div class="cell" data-execution_count="9">
+<div class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>ndwi2022 <span class="op">=</span> connection.datacube_from_process(</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    process_id<span class="op">=</span><span class="st">"NDWI"</span>,</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    date_range<span class="op">=</span>[<span class="st">"2022-06-01"</span>, <span class="st">"2022-09-01"</span>],</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    date_range<span class="op">=</span>[<span class="st">"2022-07-19"</span>, <span class="st">"2022-07-19"</span>],</span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    bbox<span class="op">=</span>{<span class="st">"west"</span>: <span class="fl">5.09</span>, <span class="st">"south"</span>: <span class="fl">51.18</span>, <span class="st">"east"</span>: <span class="fl">5.15</span>, <span class="st">"north"</span>: <span class="fl">51.21</span>},</span>
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-execution_count="10">
+<div class="cell" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>ndwi2022.download(<span class="st">"ndwi2022.tiff"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <section id="visualize-the-result" class="level3">
 <h3 class="anchored" data-anchor-id="visualize-the-result">Visualize the result</h3>
-<div class="cell" data-execution_count="11">
+<div class="cell" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> rasterio</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -1224,8 +1237,8 @@ window.onload = function() {
 <span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>img <span class="op">=</span> ax.imshow(data[<span class="dv">0</span>], vmin<span class="op">=</span>np.percentile(data, <span class="dv">1</span>), vmax<span class="op">=</span>np.percentile(data, <span class="dv">99</span>))</span>
 <span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">"NDWI"</span>)</span>
 <span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>plt.colorbar(img)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="11">
-<pre><code>&lt;matplotlib.colorbar.Colorbar at 0x7f3e35c1b690&gt;</code></pre>
+<div class="cell-output cell-output-display" data-execution_count="15">
+<pre><code>&lt;matplotlib.colorbar.Colorbar at 0x7f21ae661a90&gt;</code></pre>
 </div>
 <div class="cell-output cell-output-display">
 <p><img src="UDP_files/figure-html/cell-11-output-2.png" class="img-fluid"></p>
