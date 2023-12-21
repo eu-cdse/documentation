@@ -1,4 +1,4 @@
-# STAC product catalog
+# STAC product catalogue
 
 **STAC** (SpatioTemporal Asset Catalog) is a relatively new web service specification for catalogs that is increasingly used and supported.
 
@@ -23,7 +23,7 @@ The Copernicus Data Space Ecosystem STAC API Catalog can be accessed using the f
 
 The data are organized in so-called collections corresponding to various satellites.
 
-The following collections are currently available via STAC API
+The following collections are currently available via STAC API:
 
 * Copernicus Sentinel Mission
   * **SENTINEL-1**
@@ -45,7 +45,7 @@ The following collections are currently available via STAC API
   
 ## STAC Collections Search
 
-STAC Collections endpoint enables users to get information about collections available in Copernicus Data Space Ecosystem Catalog. 
+STAC Collections endpoint lets users get information about collections available in the Copernicus Data Space Ecosystem catalogue. 
 
 To access the information about all STAC API Collections:
 
@@ -75,7 +75,7 @@ Search for items is possible among all collections [Link](https://documentation.
 
 ::: {.callout-note}
 
-To accelerate the query performance, it is recommended to search for Items within one specified collection e.g.:
+To accelerate the query performance, it is recommended to search for Items within one specified collection, e.g.:
 
 [`https://catalogue.dataspace.copernicus.eu/stac/collections/SENTINEL-3/items`](https://catalogue.dataspace.copernicus.eu/stac/collections/SENTINEL-3/items){target="_blank"}
 
@@ -95,9 +95,9 @@ To list items in a given collection:
 
 :::
 
-By default, the catalogue will automatically limit the number of shown items to 20. It can be changed by filtering with the limit option, which is described below [Link](https://documentation.dataspace.copernicus.eu/APIs/STAC.html#limit-option).
+By default, the catalogue will limit the number of shown items to 20. It can be changed by filtering with the limit option as described below [Link](https://documentation.dataspace.copernicus.eu/APIs/STAC.html#limit-option).
 
-#### Search for specific item
+#### Search for a specific item
 
 To list a specific item in a collection:
 
@@ -121,14 +121,14 @@ To list items with a given attribute:
 
 :::
 
-Currently those attributes are supported:
+Currently, those attributes are supported:
 
 * `bbox`
 * `datetime`
 
 ##### Search Items by bbox
 
-Attribute `bbox` will list all products from a given collection within the Area of Interest (AOI). This attribute requires between 4 and 6 values (coordinates) where each coordinate is separated by a comma.
+Attribute `bbox` will list all products from a given collection within the Area of Interest (AOI). This attribute requires between 4 and 6 values (coordinates) where a comma separates each coordinate.
 
 To search for items by bbox:
 
@@ -142,7 +142,7 @@ To search for items by bbox:
 
 ##### Search Items by datetime
 
-Attribute `datetime` will list all products within specified time interval.
+Attribute `datetime` will list all products within a specified time interval.
 
 To search for items within specified datetime:
 
@@ -169,7 +169,7 @@ Attribute `datetime` can search for several different formats:
 * 2021-12-31T23:59:59Z/ (open end interval)
 * 2022-12-30T00:00:00Z/2022-12-31T23:59:59Z (closed interval)
 
-Please keep in mind that those are example values and might not return anything if input.
+Please note that those are example values and might not return anything if input.
 
 #### Search Items by two or more attributes
 
@@ -185,7 +185,7 @@ To list items by two or more attributes:
 
 #### Limit option
 
-Limit option allows users to increase or decrease the number of items shown. 
+The limit option allows users to increase or decrease the number of items shown. 
 
 The default value is set to 20.
 
@@ -203,7 +203,7 @@ To list a limited number of items:
 
 #### Sortby option
 
-Sortby option allows users to define the fields by which to sort results.
+The sortby option allows users to define the fields by which to sort results.
 
 The acceptable arguments for this option are:
 
@@ -211,14 +211,14 @@ The acceptable arguments for this option are:
 * `start_datetime`
 * `datetime`
 
-To set the sort order the prefix should be added to sort parameter:
+To set the sort order, the prefix should be added to the sort parameter:
 
 * **+** for ascending (in http standard **+** sign should be encoded with **%2B**)
 * **-** for descending
 
 If no prefix is provided, ascending order is assumed.
 
-To sort items within specified collection:
+To sort items within a specified collection:
 
 ::: {.panel-tabset}
 
@@ -230,7 +230,7 @@ To sort items within specified collection:
 
 #### Page option
 
-Page option determines the page of results.
+The page option determines the page of results.
 
 The acceptable arguments for this option: Integer <1,100>
 
@@ -244,7 +244,7 @@ The acceptable arguments for this option: Integer <1,100>
 
 ### Items Search in all STAC Collections
 
-If users user would like to list items from any collection, they can use /search option, which will search all collections.
+If users would like to list items from any collection, they can use search option, which will search all collections.
 
 To list items in any collection:
 
