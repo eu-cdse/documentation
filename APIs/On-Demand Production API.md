@@ -5,13 +5,13 @@ On-demand processing capability for CARD-BS and CARD-COH6/12 is available in the
 
 ## OnDemand Processing API with OData interface
 
-The OnDemand Processing API allows the users to interact with the service to issue and control the orders. It provides functionalities like creation, update, cancellation, pausing and monitoring of orders. This allows the users to have a better control over the workflow execution process.
+The OnDemand Processing API allows the users to interact with the service to issue and control the orders. It provides functionalities like creation, update, cancellation, pausing and monitoring of orders. This allows the users to have better control over the workflow execution process.
 
 ## General information
 
-This documentation provides an overview of the OnDemand Processing (ODP) API, which is based on the Open Data Protocol (OData) standard. The ODP API provides a RESTful interface for accessing data and metadata from the Copernicus data catalogue.
-Access to the API is limited by the Authentication service. Quotas are assigned according to the user typology and include limits on number of concurrent orders and available processing workflows.
-The API allows discovery of all available workflows which can be run in the Copernicus Data Space Ecosystem platform, indicating which data types can be processed, what are the available parameters and output modes.
+This documentation provides an overview of the OnDemand Processing (ODP) API based on the Open Data Protocol (OData) standard. The ODP API provides a RESTful interface for accessing data and metadata from the Copernicus data catalogue.
+Access to the API is limited by the Authentication service. Quotas are assigned according to the user typology and include limits on the number of concurrent orders and available processing workflows.
+The API allows the discovery of all available workflows that can be run in the Copernicus Data Space Ecosystem platform, indicating which data types can be processed and what the available parameters and output modes are.
 
 ### API Endpoint
 
@@ -22,23 +22,23 @@ The **ODP API endpoint is [https://odp.dataspace.copernicus.eu/odata/v1](https:/
 ### API Operations
 
 The ODP API supports the following operations:
-- GET: This operation is used to retrieve data and metadata from the ODP. The GET operation supports various query options to filter, order, and limit the data retrieved.
-- POST: This operation is used to create new entities in the ODP. The POST operation requires a payload in JSON format that specifies the properties of the new entity.
-- PATCH: This operation is used to update existing entities in the ODP. The PATCH operation requires a payload in JSON format that specifies the properties of the entity to update.
-- DELETE: This operation is used to delete existing entities from the ODP. The DELETE operation requires the URL of the entity to delete.
-- 
+- GET: This operation retrieves data and metadata from the ODP. The GET operation supports various query options to filter, order, and limit the data retrieved.
+- POST: This operation creates new entities in the ODP. The POST operation requires a payload in JSON format that specifies the properties of the new entity.
+- PATCH: This operation is used to update existing entities in the ODP. The PATCH operation requires a JSON payload that specifies the entity's properties to update.
+- DELETE: This operation deletes existing entities from the ODP. The DELETE operation requires the URL of the entity to be deleted.
+
 ### API Resources
 
 The ODP API provides access to the following resources:
-- Workflow: predefined processor which creates a single output product or series of products based on the input parameters provided by the user. Typical inputs are name of the source product and parameters specific to the processing chain.
+- Workflow: predefined processor which creates a single output product or series of products based on the input parameters provided by the user. Typical inputs are the name of the source product and parameters specific to the processing chain.
 - Production Order: request for production using a Workflow chosen by the user.
-- Batch Order: request for production of multiple products using a chosen Workflow.
-- Order Item: single processing job within and Production Order or Batch Order.
+- Batch Order: request to produce multiple products using a chosen Workflow.
+- Order Item: single processing job within and a Production Order or Batch Order.
 
 ### Authentication
 
-To access the ODP API you need an authorization token as only authorized users are allowed to interact with the processing service.
-To get the token you can use the following script:
+To access the ODP API, you need an authorization token, as only authorized users are allowed to interact with the processing service.
+To get the token, you can use the following script:
 
 ````
 export KEYCLOAK_TOKEN=$(curl -d 'client_id=cdse-public' \
@@ -49,7 +49,7 @@ export KEYCLOAK_TOKEN=$(curl -d 'client_id=cdse-public' \
 python -m json.tool | grep "access_token" | awk -F\" '{print $4}')
 ````
 
-Once you have your token, you can execute request to the API including the token in the request header. For example to list available Workflows you can use the following command:
+Once you have your token, you can execute a request to the API, including the token in the request header. For example, to list available Workflows, you can use the following command:
 
 ````
 curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" "https://odp.dataspace.copernicus.eu/odata/v1/Workflows"
@@ -82,7 +82,7 @@ curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" \
 "https://odp.dataspace.copernicus.eu/odata/v1/Workflows?$filter=contains(InputProductType,'SLC')"
 ````
 
-Details of the Workflow in the response list the parameters which are needed to create new Production Order:
+Details of the Workflow in the response list the parameters which are needed to create a new Production Order:
 
 ````
         {
@@ -117,7 +117,7 @@ Details of the Workflow in the response list the parameters which are needed to 
 ### Production Orders
 
 #### Create a new Production Order
-To submit a new processing job you need to use the POST method and send the parameters as a JSON message according to the requirements of a specific Workflows:
+To submit a new processing job, you need to use the POST method and send the parameters as a JSON message according to the requirements of a specific Workflows:
 
 ````
 curl -X POST -H 'Content-Type:application/json' \
@@ -230,7 +230,7 @@ curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" \
 "https://odp.dataspace.copernicus.eu/odata/v1/ProductionOrder(<order_id>)/OData.CSC.Cancel"
 ````
 
-The orders which are in the queue and not yet processed will be removed instantly. For the orders in processing, the Order Items (single item within a Production Order) being processed will complete but the remaining part of the Order will be canceled.
+The orders that are in the queue and have not yet been processed will be removed instantly. For the orders in processing, the Order Items (single item within a Production Order) being processed will complete but the remaining part of the Order will be cancelled.
 #### Display details of the result
 The order generates a new product which can be downloaded from the public repository or private storage. To check the details of the result:
 
@@ -240,7 +240,7 @@ curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" \
 ````
 
 #### Download the result
-Once the order is successfully processed the status changes to completed and the result is ready for download. The user may choose to instruct the service to put the results in a specified location (mandatory if custom parameters have been passed to the Workflow), and standard results (for Workflows like CARD-BS or CARD-COH12) are stored in the CDSE public repository and can be retrieved through the API.
+Once the order is successfully processed, the status changes to complete, and the result is ready for download. The user may choose to instruct the service to put the results in a specified location (mandatory if custom parameters have been passed to the Workflow), and standard results (for Workflows like CARD-BS or CARD-COH12) are stored in the CDSE public repository and can be retrieved through the API.
 To download the result:
 
 ````
@@ -251,7 +251,7 @@ curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" \
 
 ### Batch Orders
 #### Create a new Batch Order
-In a way similar to single Production Order you can request processing of multiple input products as a Batch Order. The Batch Order will run a selected Workflow with the same parameters for all inputs and output the results to the same location. Using Batch Orders makes it easier to process time series or large AOIs.
+In a way similar to a single Production Order, you can request processing of multiple input products as a Batch Order. The Batch Order will run a selected Workflow with the same parameters for all inputs and output the results to the same location. Using Batch Orders makes it easier to process time series or large AOIs.
 Batch Order endpoint uses the same mechanism as described for the Production Order:
 
 ````
