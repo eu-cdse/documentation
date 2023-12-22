@@ -1037,6 +1037,7 @@ window.onload = function() {
   <li><a href="#getting-started" id="toc-getting-started" class="nav-link active" data-scroll-target="#getting-started">Getting Started</a></li>
   <li><a href="#create-a-workflow" id="toc-create-a-workflow" class="nav-link" data-scroll-target="#create-a-workflow">Create a workflow</a></li>
   <li><a href="#execute-the-workflow" id="toc-execute-the-workflow" class="nav-link" data-scroll-target="#execute-the-workflow">Execute the workflow</a></li>
+  <li><a href="#data-download-using-wizard" id="toc-data-download-using-wizard" class="nav-link" data-scroll-target="#data-download-using-wizard">Data Download using Wizard</a></li>
   <li><a href="#monitor-the-workflow" id="toc-monitor-the-workflow" class="nav-link" data-scroll-target="#monitor-the-workflow">Monitor the workflow</a></li>
   </ul>
 </nav>
@@ -1066,7 +1067,7 @@ window.onload = function() {
 <section id="getting-started" class="level2">
 <h2 class="anchored" data-anchor-id="getting-started">Getting Started</h2>
 <p>Upon initial access to the provided link, users are presented with the following screen which is further explained below in refernce to the given numbering:</p>
-<p><img src="_images/webeditor.png" class="img-fluid"></p>
+<p><img src="_images/webeditor/webeditor.png" class="img-fluid"></p>
 <ol type="1">
 <li><p><strong>Service Offering</strong></p>
 <p>The sidebar offers users the ability to navigate through the available collections, processes, UDF Runtimes and Export file formats. At the top of the sidebar, there is a search feature that allows for direct searching.</p>
@@ -1089,7 +1090,7 @@ window.onload = function() {
 <p>The area on it’s right will later be used for previewing collections or inspecting the results of batch jobs, web services or other computations. It will also be used to display log messages, if available.</p></li>
 <li><p><strong>Log in</strong></p>
 <p>As previously mentioned, it is necessary to log in to interact with the server. A new window will appear when attempting to log in, as demonstrated below. While other options are sometimes available, the recommended authentication choice is the “Copernicus Data Space Ecosystem”. For further information regarding various authentication methods or to seek assistance, you can always click on the “help” option at the top or contact us.</p>
-<p><centre><img src="_images/login.PNG" width="80%" height="60%"></centre></p></li>
+<p><centre><img src="_images/webeditor/editor_login.PNG" width="80%" height="60%"></centre></p></li>
 </ol>
 </section>
 <section id="create-a-workflow" class="level2">
@@ -1097,36 +1098,60 @@ window.onload = function() {
 <p>Based on their applications user can build their model by simple drag and drop method. Some processes may necessitate input parameters, which must be carefully considered. As an illustration, we present a simple case of creating a workflow to calculate NDVI using the Sentinel 2 L2A collection. Three main steps involved in using openEO for Earth Observation data processing is shown below.</p>
 <ol type="1">
 <li><p>Load Collection</p>
-<p>In order to load the required collection make sure it is available by searching in the sidebar. Once you find your collection you can simply drag and drop it for carrying out further actions. In the following clip, you can observe the sequential actions are taken to accomplish the following tasks: choosing a collection of interest, defining the spatial and temporal boundaries, and filtering the necessary bands for subsequent processing. Specifically, for calculating the NDVI, the Red band (B04) and Near-Infrared (NIR) band (B08) have been selected.</p></li>
+<ol type="a">
+<li>To start a task within the openEO web editor, your first step is to search the necessary collections for the analysis. Thus, you must check the required collections exists within the openEO database, you can do this by exploring/searching the list of available collections from the sidebar of the interface. In our example, we want to calculate the Normalized Difference Vegetation Index (NDVI), so the Sentinel 2 L2A collection will be used. So the next step is to drag and drop it into the Process Editor for further operations.</li>
 </ol>
-<p><img src="_images/gif/load_collection.gif" class="img-fluid"></p>
-<ol start="2" type="1">
+<p><img src="_images/webeditor/drag_collection.png" class="img-fluid"></p>
+<ol start="2" type="a">
+<li><p>Now, once you load collection, there are several parameters you need to specify, including the area of interest, the temporal extent, and the selection of bands. By clicking on <code>load_collection</code>, a window pops up, where you can define the necessary parameters for subsequent processing.</p>
+<p>To specify the area of interest, you can choose between generating a bounding box or importing your spatial extent by dragging and dropping GeoJSON or KML files onto the map view. While this example demonstrates the use of a bounding box, we suggest experimenting with a suitably compact area for testing purposes. There is also an option to “No filter”, that will include all the data in the datacube.</p></li>
+</ol>
+<p><img src="_images/webeditor/define_bbox.png" class="img-fluid"></p>
+<pre><code> Another parameter to consider is the temporal extent, allowing you to restrict the loaded data to a specified time window. We encourage you to choose a timeframe of 1-2 weeks for testing purposes. </code></pre>
+<p><img src="_images/webeditor/define_temporal.png" class="img-fluid"></p>
+<pre><code> In our case, for NDVI calculation, we have specifically chosen the Red band (B04) and the Near-Infrared (NIR) band (B08). </code></pre>
+<p><img src="_images/webeditor/define_bands.png" class="img-fluid"></p></li>
 <li><p>Apply Processes</p>
-<p>Eventually, the next step involves implementing essential processes, ranging from straightforward operations like adding bands to more complex tasks such as importing or defining user-defined functions (UDFs). In the following clip, a reduce_dimension() process is employed to eliminate the temporal dimension by selecting the maximum value. The same process is utilised to reduce the band dimension after executing a series of addition, subtraction, and division operations necessary for the NDVI calculation.</p></li>
-</ol>
-<p><img src="_images/gif/apply_process.gif" class="img-fluid"></p>
-<ol start="3" type="1">
+<p>The next step involves applying essential openEO processes, ranging from straightforward mathematical operations to more complex tasks such spatial or temporal aggregations.</p>
+<p>In this task, we’ll using a specific openEO process called <code>reduce_dimension</code> two times to simplify our data cube. First we deal with the various bands and then reduce the temporal dimension.</p>
+<p><img src="_images/webeditor/reduce_dimension.png" class="img-fluid"></p>
+<p>In the initial process, the <code>reduce_dimension</code> algorithm is utilised to reduce the band dimension after executing a series of addition, subtraction, and division operations necessary for the NDVI calculation.</p>
+<p><centre><img src="_images/webeditor/reduce_bands.png" width="80%" height="60%"></centre></p>
+<p>Following this, with the same <code>reduce_dimension</code> algorithm we eliminate the temporal dimension by selecting the maximum value using the max function.</p>
+<p><centre><img src="_images/webeditor/temporal_reducer.png" width="80%" height="60%"></centre></p></li>
 <li><p>Select a format</p>
-<p>As a final step in the workflow creation, the following clip demonstrates selecting the output format. Since our application involves simple NDVI calculation, we want to save it as a GeoTiff.</p></li>
+<p>As a final step in the workflow creation is to select the output format.</p>
+<p><img src="_images/webeditor/save_process.png" class="img-fluid"></p>
+<p>Since our workflow eliminated the temporal dimension, we can keep things simple and just save the result as a GeoTiff.</p>
+<p><img src="_images/webeditor/save_as_gtiff.png" class="img-fluid"></p></li>
 </ol>
-<p><img src="_images/gif/save_result.gif" class="img-fluid"></p>
 </section>
 <section id="execute-the-workflow" class="level2">
 <h2 class="anchored" data-anchor-id="execute-the-workflow">Execute the workflow</h2>
 <p>To complete the data analysis process, the final step involves executing the created workflow. This can be done in two ways: synchronously or through batch job-based method. Synchronous method allows the user to download the data directly, whereas batch job-based method enables the user to execute process as a batch. The choice of method depends on the user’s preference and the size of the dataset.</p>
-<p><img src="_images/jobs.png" class="img-fluid"></p>
+<p><img src="_images/webeditor/execute_jobs.png" class="img-fluid"></p>
 <p>In the above figure, the red box includes the two methods possible for executing the process. In this example, I used the synchronus method by directly clicking on <em>Run now</em>, which popped up a box in the bottom right corner.</p>
 <p>Once the execution process is completed, the result is automatically saved locally. It can also be visualised in the parallel window as shown in the image below:</p>
-<p><img src="_images/result.PNG" class="img-fluid"></p>
+<p><img src="_images/webeditor/webeditor_result.PNG" class="img-fluid"></p>
 <p>Furthermore, if you have created Batch Job, you can monitor its action from the same window.</p>
+</section>
+<section id="data-download-using-wizard" class="level2">
+<h2 class="anchored" data-anchor-id="data-download-using-wizard">Data Download using Wizard</h2>
+<p>The Wizard feature at the top navigation bar allows easy creation of process graphs for common, basic use cases without having to drag and drop processes as done earlier.</p>
+<div class="{callout-warning}">
+<p>This feature is experimental and it’s not guaranteed that the generated process graphs are fully functional.</p>
+</div>
+<p>At the time of this documentation release, two cases are currently available through the Wizard feature: direct downloading of data for a selected area and downloading computed spectral indices as shown in the figure below:</p>
+<p><img src="_images/webeditor/wizard.png" class="img-fluid"></p>
+<p>You have the option to choose any one of them and enter the necessary parameters as instructed. This method makes the task considerably more straightforward than the previously mentioned workflow creation approach, as the structure is already established and you only need to input the essential parameters.</p>
 </section>
 <section id="monitor-the-workflow" class="level2">
 <h2 class="anchored" data-anchor-id="monitor-the-workflow">Monitor the workflow</h2>
 <p>When a batch job is created, openEO’s logs feature can help with <em>monitoring and debugging</em> of workflows. The back-end typically uses this to dump information during data processing that may be relevant for the user (e.g.&nbsp;warnings, resource stats, …). Like many other processes, job logs can be visualized programmatically as well as in the web editor.</p>
 <p>As shown in the following image, you have the option to access the job logs by clicking on the icon located next to the job ID at the bottom of the interface.</p>
-<p><img src="./_images/joblist.png" class="img-fluid"></p>
+<p><img src="./_images/webeditor/joblist.png" class="img-fluid"></p>
 <p>When clicking on it, a pane emerges on the right, as shown below:</p>
-<p><img src="./_images/joblogs.png" class="img-fluid"></p>
+<p><img src="./_images/webeditor/joblogs.png" class="img-fluid"></p>
 <p>Moreover, users can use openEO processes like <code>inspect</code>, this will allow you to log your own information to be displayed in the job logs.</p>
 
 
