@@ -70,7 +70,7 @@ You can switch visualizing between different data collections by clicking on the
 
 You can now see the latest Sentinel-2 Quarterly Mosaic.
 
-At the moment, the Data Collections available for visualization are Sentinel-2 (L1C and L2A), Sentinel-2 Mosaics (Quarterly Mosaics for 2023 and WorldCover Annual Cloudless Mosaics for 2020 and 2021), Sentinel-3 (OLCI Level-1 EFT, SLSTR Level-1 RBT), Sentinel-5P and Digital Elevation Model (DEM).
+At the moment, the Data Collections available for visualization are Sentinel-1 (SW, IW and EW mode), Sentinel-2 (L1C and L2A), Sentinel-2 Mosaics (Quarterly Mosaics for 2023 and WorldCover Annual Cloudless Mosaics for 2020 and 2021), Sentinel-3 (OLCI Level-1 EFT, SLSTR Level-1 RBT), Sentinel-5P and two Digital Elevation Models (Copernicus 30, Copernicus 90).
 
 <img src="_images/DataCollection.png" width="450">
 
