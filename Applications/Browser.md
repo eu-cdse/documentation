@@ -66,7 +66,9 @@ You can switch visualizing between different data collections by clicking on the
 
 1. Click on the drop-down arrow on the right next to Pins icon. 
 2. Click on the drop-down arrow next to Sentinel-2 and select Sentinel-2 Mosaics. You will get two options to choose from because there are Quarterly and Annual Mosaics available. Choose `Sentinel-2 Quarterly Mosaics`. 
-3. You will get two options to choose from because there are Quarterly and Annual Mosaics available. Choose `Sentinel-2 Quarterly Mosaics` to visualise the Sentinel-2 cloudless mosaics created for each quarter of 2023. You can see the predefined layers that can be visualized and click on the green button to Show latest date.
+3. You will get two options to choose from because there are Quarterly and Annual Mosaics available. Choose `Sentinel-2 Quarterly Mosaics` to visualise the Sentinel-2 cloudless mosaics created for each quarter of 2023.
+
+You can now see the latest Sentinel-2 Quarterly Mosaic.
 
 At the moment, the Data Collections available for visualization are Sentinel-2 (L1C and L2A), Sentinel-2 Mosaics (Quarterly Mosaics for 2023 and WorldCover Annual Cloudless Mosaics for 2020 and 2021), Sentinel-3 (OLCI Level-1 EFT, SLSTR Level-1 RBT), Sentinel-5P and Digital Elevation Model (DEM).
 
