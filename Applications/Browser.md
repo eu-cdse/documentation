@@ -120,7 +120,7 @@ Fig 9: 3D visualization in the Browser with pop-up Settings windows on the right
 
 ## Product Search
 
-With the product search you can find products from Sentinel missions (Sentinel-1, Sentinel-2, Sentinel-3, Sentinel-5p) and the sensors on board these satellites (C-SAR, MSI, OLCI, SRAL, SLSTR, SYNERGY). You can also find the engineering and Auxiliary data for Sentinel-6 along with all the missions mentioned before. You can explore the metadata for each of those products, download the raw data or visualize the data on the map (at present, Sentinel-1 GRD, Sentinel-2 L1C and L2A, Sentinel-3 OLCI L1B and SLSTR L1B, Sentinel-5P L2 and DEM data can be visualized).
+With the product search you can find products from Sentinel missions (Sentinel-1, Sentinel-2, Sentinel-3, Sentinel-5p) and the sensors on board these satellites (C-SAR, MSI, OLCI, SRAL, SLSTR, SYNERGY). You can also find engineering and auxiliary data for all Sentinels (including Sentinel-6). You can explore the metadata for each of those products, download the raw data or visualize the data on the map (at present, Sentinel-1 GRD, Sentinel-2 L1C and L2A, Sentinel-3 OLCI L1B and SLSTR L1B, Sentinel-5P L2 and DEM data can be visualized).
 
 The *SEARCH* tab is located in the sidebar next to the *VISUALIZE* tab (see Fig. 9).
 
