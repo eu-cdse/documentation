@@ -12,15 +12,15 @@ ___
   *  [Sentinel 3](Data/Sentinel3.md)
   *  [Sentinel 5P](Data/Sentinel5P.md)
 
-* [APIs](APIs.md)
+* [APIs](APIs.qmd)
   *  [OData](APIs/OData.md)
   *  [OpenSearch](/APIs/OpenSearch.qmd)
-  <!-- *  [STAC API](/APIs.md) -->
-  <!-- *  [Sentinel Hub Catalog API](APIs.md) -->
+  <!-- *  [STAC API](/APIs.qmd) -->
+  <!-- *  [Sentinel Hub Catalog API](APIs.qmd) -->
 * [Applications](Applications.md) 
   * [Browser](Applications/Browser.md)
 ___
-* [FAQ](FAQ.md)
+* [FAQ](FAQ.qmd)
 * [Support](Support.md)
   
 
