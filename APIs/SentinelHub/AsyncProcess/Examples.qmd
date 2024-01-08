@@ -1,0 +1,103 @@
+---
+title: Async API examples
+---
+
+The requests below are written in Python. To execute them you need to
+create an OAuth client as is explained
+[here](/APIs/SentinelHub/Overview/Authentication.qmd#python). It is
+named `oauth` in these examples.
+
+### Create an asynchronous processing request
+
+Before running the example, you will have to replace placeholders
+`<your-bucket>/<path>`, `<your-bucket-access-key>`, and
+`<your-bucket-access-key-secret>` with your values.
+
+``` python
+url = 'https://sh.dataspace.copernicus.eu/api/v1/async/process'
+
+evalscript = """
+//VERSION=3
+
+function setup() {
+  return {
+    input: [{
+      bands: [
+        "B04",
+        "B08"
+      ]
+    }],
+    output: {
+      bands: 3
+    }
+  }
+}
+
+let viz = ColorGradientVisualizer.createWhiteGreen();
+
+function evaluatePixel(samples) {
+    let ndvi = index(samples.B08, samples.B04);
+    vizualizedNdvi = viz.process(ndvi);
+    return vizualizedNdvi;
+}
+
+"""
+
+payload = {
+  "input" : {
+    "bounds" : {
+      "bbox" : [ 426000, 3960000, 462000, 3994000 ],
+      "properties" : {
+        "crs" : "http://www.opengis.net/def/crs/EPSG/0/32633"
+      }
+    },
+    "data" : [ {
+      "dataFilter" : {
+        "timeRange" : {
+          "from" : "2022-06-20T00:00:00Z",
+          "to" : "2022-06-30T23:59:59Z"
+        }
+      },
+      "type" : "S2L2A"
+    } ]
+  },
+  "output" : {
+    "resx" : 10,
+    "resy" : 10,
+    "responses" : [ {
+      "identifier" : "default",
+      "format" : {
+        "type" : "image/tiff"
+      }
+    } ],
+    "delivery" : {
+      "s3" : {
+        "url": "s3://<your-bucket>/<path>",
+        "accessKey": "<your-bucket-access-key>",
+        "secretAccessKey": "<your-bucket-access-key-secret>"
+      }
+    }
+  },
+  "evalscript" : evalscript
+}
+
+headers = {
+  'Content-Type': 'application/json'
+}
+
+response = oauth.post(url, headers=headers, json=payload)
+response.json()
+```
+
+Extracting the asynchronous request id from the response:
+
+``` python
+request_id = response.json()['id']
+```
+
+### Get information about your asynchronous processing request
+
+``` python
+response = oauth.get(url=f"{url}/{request_id}")
+response.json()
+```

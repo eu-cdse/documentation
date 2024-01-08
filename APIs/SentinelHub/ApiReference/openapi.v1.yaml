@@ -444,6 +444,14 @@ components:
         $ref: '#/components/schemas/CatalogGeometryGeoJSON'
       style: form
       explode: false
+    AsyncProcessRequestId:
+      name: requestId
+      description: Request ID
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
     BatchRequestId:
       name: requestId
       description: Request ID
@@ -490,6 +498,82 @@ components:
       schema:
         type: string
         format: uuid
+    OrderId:
+      name: orderId
+      description: Order ID
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    OrderStatus:
+      name: status
+      description: Filter orders by status. Omit to get all orders.
+      in: query
+      schema:
+        $ref: '#/components/schemas/OrderStatus'
+    SubscriptionId:
+      name: subscriptionId
+      description: Subscription ID
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    SubscriptionStatus:
+      name: status
+      description: Filter subscriptions by status. Omit to get all subscriptions.
+      in: query
+      schema:
+        $ref: '#/components/schemas/SubscriptionStatus'
+    DeliveryId:
+      name: deliveryId
+      description: Delivery ID
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    TileId:
+      name: tileId
+      description: Tile ID
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    TpdiCollectionId:
+      name: collectionId
+      description: Collection ID
+      in: path
+      required: true
+      schema:
+        type: string
+        enum:
+          - AIRBUS_PLEIADES
+          - AIRBUS_SPOT
+          - PLANET_SCOPE
+          - PLANET_SKYSAT
+          - MAXAR_WORLDVIEW
+    DeliveryStatus:
+      name: status
+      description: Filter deliveries by status. Omit to get all deliveries.
+      in: query
+      schema:
+        $ref: '#/components/schemas/DeliveryStatus'
+    DeliveryFile:
+      name: file
+      description: File with full path as returned by the "List delivery files" endpoint.
+      in: path
+      required: true
+      schema:
+        type: string
+    DeliveryArchiveFormat:
+      name: format
+      description: One of supported archive formats. Currently only `zip` is supported.
+      in: query
+      schema:
+        $ref: '#/components/schemas/DeliveryArchiveFormat'
     ConfigurationDatasetType:
       name: datasetType
       description: Dataset type
@@ -566,6 +650,18 @@ components:
             $ref: '#/components/schemas/RestErrorWrapper'
     CatalogError:
       description: An error occurred.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CatalogException'
+    CatalogAccessControlIllegalCollection:
+      description: Illegal collection.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CatalogException'
+    CatalogAccessControlInsufficientPermissions:
+      description: Insufficient permissions.
       content:
         application/json:
           schema:
@@ -4078,6 +4174,161 @@ components:
 
         the extent or all relevant temporal properties.
       example: 2018-02-12T00:00:00Z/2018-03-18T12:31:12Z
+    AsyncProcessRequest:
+      type: object
+      required:
+        - input
+        - output
+      properties:
+        input:
+          $ref: '#/components/schemas/ProcessRequestInput'
+        output:
+          $ref: '#/components/schemas/AsyncProcessRequestOutput'
+        evalscript:
+          description: >
+            Your evalscript. For details, click
+
+            <a
+            href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Evalscript/V3.html"
+            target="_blank">here</a>.
+
+
+            Either this or `evalscriptReference` parameter is required.
+          type: string
+        evalscriptReference:
+          description: >
+            Reference to your evalscript stored in an object storage. For
+            details, click
+
+            <a
+            href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Evalscript/V3.html"
+            target="_blank">here</a>.
+
+
+            Either this or `evalscript` parameter is required.
+          $ref: '#/components/schemas/ObjectStorageInfo'
+    AsyncProcessRequestOutput:
+      type: object
+      required:
+        - delivery
+      properties:
+        width:
+          description: >
+            The request image width. Must be an integer between 1 and 10000.
+
+            <br />*Only one pair of parameters "width"/"height" or "resx"/"resy"
+            must
+
+            be set at the same time.*
+          type: integer
+          format: int32
+          minimum: 1
+          maximum: 10000
+          example: 512
+        height:
+          description: >
+            The request image height. Must be an integer between 1 and 10000.
+
+            <br />*Only one pair of parameters "width"/"height" or "resx"/"resy"
+            must
+
+            be set at the same time.*
+          type: integer
+          format: int32
+          minimum: 1
+          maximum: 10000
+          example: 512
+        resx:
+          description: >
+            Spatial resolution of the request image in a horizontal direction.
+
+            Its units are defined by the CRS given in
+            "input.bounds.properties.crs"
+
+            parameter. <br />*Only one pair of parameters "width"/"height" or
+            "resx"/"resy"
+
+            must be set at the same time.*
+          type: number
+          format: double
+        resy:
+          description: >
+            Spatial resolution of the request image in a vertical direction.
+
+            Its units are defined by the CRS given in
+            "input.bounds.properties.crs"
+
+            parameter. <br />*Only one pair of parameters "width"/"height" or
+            "resx"/"resy"
+
+            must be set at the same time.*
+          type: number
+          format: double
+        responses:
+          type: array
+          description: |
+            Response object(s). <br/>
+          items:
+            $ref: '#/components/schemas/ProcessRequestOutputResponse'
+        delivery:
+          $ref: '#/components/schemas/AsyncProcessOutputDelivery'
+    AsyncStatusResponse:
+      type: object
+      properties:
+        id:
+          description: UUID of the submitted request
+          format: UUID
+          type: string
+        status:
+          description: Status of the request
+          type: string
+          enum:
+            - RUNNING
+    AsyncProcessOutputDelivery:
+      type: object
+      required:
+        - s3
+      properties:
+        s3:
+          $ref: '#/components/schemas/AsyncProcessS3BucketInfoTemplated'
+    AsyncProcessS3BucketInfoTemplated:
+      type: object
+      required:
+        - url
+      properties:
+        url:
+          type: string
+          description: >-
+            A URL or URL template specifying where the results shall be written.
+            Supported formats: <ul> <li>a valid S3 URL, e.g.
+            `s3://my-personal-bucket/some-folder`. A subdirectory will be
+            created for this statistical batch request, named after the request
+            ID, and output JSON files will be stored there. This is equivalent
+            to the template
+            `s3://my-personal-bucket/some-folder/<REQUEST_ID>/<ID>.json`. </li>
+            <li>a templated S3 URL, e.g.
+            `s3://my-personal-bucket/some-folder/<ID>.json`. Templating allows
+            custom organization of the output files. Templates can contain the
+            following placeholders, which are replaced by respective actual
+            values when writing results: <ul> <li> `<REQUEST_ID>` - the ID of
+            your statistical batch request,</li> <li> `<ID>` - the `id` property
+            of the feature,</li> <li> `<IDENTIFIER>` - the `identifier` property
+            of the feature.</li> </ul> The template must contain `<ID>` or
+            `<IDENTIFIER>` in order to ensure unique output files. </li> </ul>
+        accessKey:
+          type: string
+          description: >-
+            access key, which allows programmatic access to the S3 bucket
+            specified in the `url` field.
+        secretAccessKey:
+          type: string
+          description: secret access key which must correspond to the access key.
+        region:
+          type: string
+          description: >-
+            The region where the S3 bucket is located. If omitted, the region of
+            the Sentinel Hub deployment that the request is submitted to is
+            assumed.
     BatchProcessRequest:
       required:
         - processRequest
@@ -5552,6 +5803,14 @@ components:
           format: date-time
           description: The sensing time in ISO 8601 of the most recent tile.
           readOnly: true
+        storageIdentifier:
+          type: string
+          description: >
+            The identifier of the storage where the bucket resides.
+
+
+            For the default storage, you don't have to set this. The possible
+            values are deployment-specific.
     BYOCFormat:
       type: object
       required:
@@ -5745,6 +6004,1253 @@ components:
 
             If "additionalData" is omitted, the bands will not be changed.
           $ref: '#/components/schemas/BYOCCollectionAdditionalData'
+    ZarrCollection:
+      type: object
+      format: ZarrCollection
+      required:
+        - name
+        - s3Bucket
+        - path
+        - crs
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        userId:
+          type: string
+          format: uuid
+          readOnly: true
+        accountId:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+        created:
+          description: The date and time when the collection was created.
+          type: string
+          format: date-time
+          readOnly: true
+        s3Bucket:
+          type: string
+          description: The S3 bucket where the Zarr is stored.
+        path:
+          type: string
+          description: >
+            The prefix within the bucket where the Zarr is stored. Must end with
+            '/' but not start with it and must contain a Zarr group.
+        status:
+          type: string
+          enum:
+            - CREATED
+            - INGESTING
+            - INGESTED
+            - FAILED
+          description: Only INGESTED collections can be used in Process API.
+          readOnly: true
+        ingestionErrors:
+          type:
+            - string
+            - 'null'
+          description: >-
+            Error message in case ingestion of the Zarr or any of its arrays
+            failed.
+          readOnly: true
+        crs:
+          type: string
+          description: >
+            Native CRS of the Zarr. See also [Sentinel Hub CRS
+            support](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Process/Crs.html).
+        envelope:
+          description: >
+            The area of coverage of the ingested Zarr collection, defined in its
+            native CRS.
+          type:
+            - object
+            - 'null'
+          readOnly: true
+          $ref: '#/components/schemas/Polygon'
+        width:
+          type:
+            - number
+            - 'null'
+          description: Width of the ingested Zarr collection in pixels.
+          readOnly: true
+        height:
+          type:
+            - number
+            - 'null'
+          description: Height of the ingested Zarr collection in pixels.
+          readOnly: true
+        zattrs:
+          $ref: '#/components/schemas/ZAttrs'
+        additionalData:
+          $ref: '#/components/schemas/ZarrCollectionAdditionalData'
+    ZarrCollectionAdditionalData:
+      type: object
+      readOnly: true
+      properties:
+        bands:
+          type: object
+          additionalProperties:
+            x-additionalPropertiesName: band
+            $ref: '#/components/schemas/BYOCFormat'
+        maxMetersPerPixel:
+          type: number
+          readOnly: true
+          description: >
+            How many meters per pixel can you request with Process/OGC/Batch
+            requests for this collection.
+    ZarrSingleResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/ZarrCollection'
+    ZarrQueryCollectionsResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ZarrCollection'
+    ZarrCollectionUpdatePayload:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+    ZarrArray:
+      type: object
+      format: ZarrArray
+      properties:
+        name:
+          type: string
+        s3Bucket:
+          type: string
+        path:
+          type: string
+        zarray:
+          $ref: '#/components/schemas/ZArray'
+        zattrs:
+          $ref: '#/components/schemas/ZAttrs'
+    ZArray:
+      type: object
+      description: |
+        A subset of the metadata as read from the array's `.zarray` file.
+      externalDocs:
+        description: Zarr storage specification version 2, Array metadata
+        url: https://zarr.readthedocs.io/en/stable/spec/v2.html#metadata
+    ZarrQueryArraysResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ZarrArray'
+    ZarrGetSingleArrayResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/ZarrArray'
+    ZAttrs:
+      type:
+        - object
+        - 'null'
+      description: Custom attributes as read from the `.zattrs` file.
+      externalDocs:
+        description: Zarr storage specification version 2, Attributes
+        url: https://zarr.readthedocs.io/en/stable/spec/v2.html#attributes
+      readOnly: true
+    TpdiCollectionId:
+      description: Collection ID
+      type: string
+      readOnly: true
+      enum:
+        - AIRBUS_PLEIADES
+        - AIRBUS_SPOT
+        - PLANET_SCOPE
+        - PLANET_SKYSAT
+        - MAXAR_WORLDVIEW
+    NativeSearchQuery:
+      oneOf:
+        - $ref: '#/components/schemas/AirbusNativeSearchQuery'
+        - $ref: '#/components/schemas/PlanetNativeSearchQuery'
+        - $ref: '#/components/schemas/MaxarNativeSearchQuery'
+    SearchQuery:
+      oneOf:
+        - $ref: '#/components/schemas/AirbusSearchQuery'
+        - $ref: '#/components/schemas/PlanetSearchQuery'
+        - $ref: '#/components/schemas/MaxarSearchQuery'
+    SearchResults:
+      oneOf:
+        - $ref: '#/components/schemas/AirbusSearchResults'
+        - $ref: '#/components/schemas/PlanetSearchResults'
+        - $ref: '#/components/schemas/MaxarSearchResults'
+    SearchQueryBase:
+      required:
+        - provider
+        - bounds
+        - data
+      properties:
+        provider:
+          type: string
+        bounds:
+          description: >
+            Defines the request bounds by specifying the bounding box and/or
+            geometry for the request.
+
+            If both are given, a request is made for a geometry and bbox is
+            ignored.
+          $ref: '#/components/schemas/ProcessRequestInputBounds'
+        data:
+          type: array
+          minItems: 1
+          maxItems: 1
+          items:
+            type: object
+            properties:
+              dataFilter:
+                type: object
+                properties:
+                  timeRange:
+                    $ref: '#/components/schemas/TimeRange'
+                  maxCloudCoverage:
+                    $ref: '#/components/schemas/MaxCloudCoverage'
+    SearchResultBase:
+      properties:
+        links:
+          $ref: '#/components/schemas/View'
+    OrderRequest:
+      oneOf:
+        - $ref: '#/components/schemas/AirbusOrderRequest'
+        - $ref: '#/components/schemas/PlanetOrderRequest'
+        - $ref: '#/components/schemas/MaxarOrderRequest'
+    Order:
+      type: object
+      properties:
+        id:
+          description: Order ID
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          description: >-
+            Order name. It's also used as a name for a new BYOC collection, if
+            no collection is given in collectionId field.
+          type: string
+        accountId:
+          description: Account ID
+          type: string
+          format: uuid
+          readOnly: true
+        userId:
+          description: User ID
+          type: string
+          format: uuid
+          readOnly: true
+        collectionId:
+          description: >
+            BYOC collection ID. If given at order creation, requested data is
+            imported into referenced collection, which must be compatible with
+            the data being ordered - that is, must either be empty or contain
+            the same bands as the data being ordered.
+
+
+            If not given at order creation, a new BYOC collection is created and
+            its ID is returned in the response.
+          type: string
+          format: uuid
+        status:
+          $ref: '#/components/schemas/OrderStatus'
+        sqkm:
+          description: >-
+            Total size of the order in km<sup>2</sup> or minimum order area,
+            whichever is greater
+          type: number
+          readOnly: true
+        input:
+          type: object
+          description: Specification of the ordered data
+    OrderStatus:
+      description: Order status
+      type: string
+      readOnly: true
+      enum:
+        - CREATED
+        - CANCELLED
+        - RUNNING
+        - DONE
+        - PARTIAL
+        - FAILED
+    SubscriptionRequest:
+      oneOf:
+        - $ref: '#/components/schemas/PlanetSubscriptionRequest'
+    Subscription:
+      type: object
+      properties:
+        id:
+          description: Subscription ID
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          description: >-
+            Subscription name. It's also used as a name for a new BYOC
+            collection, if no collection is given in collectionId field.
+          type: string
+        accountId:
+          description: Account ID
+          type: string
+          format: uuid
+          readOnly: true
+        userId:
+          description: User ID
+          type: string
+          format: uuid
+          readOnly: true
+        collectionId:
+          description: >
+            BYOC collection ID. If given at subscription creation, the data is
+            imported into referenced collection, which must be compatible with
+            the data being subscribed - that is, must either be empty or contain
+            the same bands as the data being subscribed.
+
+
+            If not given at subscription creation, a new BYOC collection is
+            created and its ID is returned in the response.
+          type: string
+          format: uuid
+        status:
+          $ref: '#/components/schemas/SubscriptionStatus'
+        sqkm:
+          description: Area of the subscriptions's `input.bounds` in km<sup>2</sup>
+          type: number
+          readOnly: true
+        input:
+          type: object
+          description: Specification of the subscribed data
+    SubscriptionStatus:
+      description: Subscription status
+      type: string
+      readOnly: true
+      enum:
+        - CREATED
+        - RUNNING
+        - CANCELLED
+        - COMPLETED
+        - FAILED
+    OrderDelivery:
+      oneOf:
+        - $ref: '#/components/schemas/OrderAirbusDelivery'
+        - $ref: '#/components/schemas/OrderPlanetDelivery'
+        - $ref: '#/components/schemas/OrderMaxarDelivery'
+    SubscriptionDelivery:
+      oneOf:
+        - $ref: '#/components/schemas/SubscriptionPlanetDelivery'
+    OrderDeliveryBase:
+      type: object
+      properties:
+        id:
+          description: Delivery ID
+          type: string
+          format: uuid
+        sqkm:
+          description: Size of the delivery in km<sup>2</sup>.
+          type: number
+        status:
+          $ref: '#/components/schemas/DeliveryStatus'
+        errorMessage:
+          description: >-
+            Error message if status = "DELIVERY_FAILED", "NON_INGESTIBLE" or
+            "IMPORT_FAILED".
+          type: string
+    SubscriptionDeliveryBase:
+      type: object
+      properties:
+        id:
+          description: Delivery ID
+          type: string
+          format: uuid
+        status:
+          $ref: '#/components/schemas/DeliveryStatus'
+        errorMessage:
+          description: >-
+            Error message if status = "DELIVERY_FAILED", "NON_INGESTIBLE" or
+            "IMPORT_FAILED".
+          type: string
+    DeliveryStatus:
+      description: Delivery status
+      type: string
+      readOnly: true
+      enum:
+        - WAITING
+        - DELIVERED
+        - DELIVERY_FAILED
+        - PREPARING
+        - INGESTING
+        - DONE
+        - IMPORT_FAILED
+        - NON_INGESTIBLE
+    DeliveryTile:
+      type: object
+      properties:
+        id:
+          description: Tile ID
+          type: string
+          format: uuid
+        deliveryId:
+          description: Tile ID
+          type: string
+          format: uuid
+        status:
+          $ref: '#/components/schemas/TileStatus'
+    TileStatus:
+      description: The status of the tile.
+      type: string
+      enum:
+        - WAITING
+        - QUEUED
+        - INGESTING
+        - INGESTED
+        - FAILED
+      readOnly: true
+    Quota:
+      type: object
+      properties:
+        collectionId:
+          $ref: '#/components/schemas/TpdiCollectionId'
+        quotaSqkm:
+          type: number
+          description: >-
+            This is total purchased quota. Available quota is quotaSqkm -
+            quotaUsed.
+          readOnly: true
+        quotaUsed:
+          type: number
+          description: >
+            Quota used in square kilometers. Note that for PlanetScope's
+            *Hectares under Management* pricing model this field does not apply
+            and may contain arbitrary values.
+          readOnly: true
+    QuotaExceededError:
+      allOf:
+        - $ref: '#/components/schemas/Boom'
+        - type: object
+          properties:
+            errors:
+              type: object
+              properties:
+                availableQuota:
+                  type: number
+                  description: Currently available quota for the provider of the order
+                requiredQuota:
+                  type: number
+                  description: >-
+                    Quota that would be required for successful confirmation of
+                    the order
+    DeliveryArchiveFormat:
+      description: One of supported archive formats. Currently only `zip` is supported.
+      type: string
+      default: zip
+      enum:
+        - zip
+    DeliveryArchiveStatus:
+      description: >-
+        Status of archive creation. Only archives with status `DONE` can be
+        downloaded.
+      type: string
+      enum:
+        - WAITING
+        - PREPARING
+        - DONE
+        - FAILED
+    DeliveryArchive:
+      type: object
+      properties:
+        deliveryId:
+          type: string
+          format: uuid
+        format:
+          $ref: '#/components/schemas/DeliveryArchiveFormat'
+        requested:
+          type: string
+          format: date-time
+          description: Time of archiving request in ISO 8601
+        status:
+          $ref: '#/components/schemas/DeliveryArchiveStatus'
+        size:
+          type: integer
+          description: >-
+            Size of archive in bytes. Only provided for archives with status
+            `DONE`.
+    PlanetSearchRequestBase:
+      type: object
+      required:
+        - provider
+      properties:
+        provider:
+          description: Specify this value to use data provider Planet.
+          type: string
+          enum:
+            - PLANET
+        planetApiKey:
+          description: >
+            Your Planet API key. Get one from Planet https://www.planet.com.
+
+            Providing it is optional and will filter search results based on the
+            permissions of your Planet API key.
+          type: string
+    PlanetOrderRequestBase:
+      type: object
+      required:
+        - provider
+        - planetApiKey
+      properties:
+        provider:
+          description: Specify this value to use data provider Planet.
+          type: string
+          enum:
+            - PLANET
+        planetApiKey:
+          description: Your Planet API key. Get one from Planet https://www.planet.com.
+          type: string
+    PlanetNativeSearchQuery:
+      allOf:
+        - $ref: '#/components/schemas/PlanetSearchRequestBase'
+        - type: object
+          example:
+            provider: PLANET
+            item_types:
+              - PSScene
+            filter:
+              type: AndFilter
+              config:
+                - type: GeometryFilter
+                  field_name: geometry
+                  config:
+                    type: Polygon
+                    coordinates:
+                      - - - 15.786
+                          - 46.7008
+                        - - 15.786
+                          - 46.7234
+                        - - 15.8473
+                          - 46.7234
+                        - - 15.8473
+                          - 46.7008
+                        - - 15.786
+                          - 46.7008
+                - type: DateRangeFilter
+                  field_name: acquired
+                  config:
+                    gte: '2019-04-27T00:00:00.000Z'
+                    lte: '2019-04-30T00:00:00.000Z'
+                - type: RangeFilter
+                  field_name: cloud_cover
+                  config:
+                    lte: 0.3
+          additionalProperties:
+            externalDocs:
+              description: Fields from Request body of Planet Quick search.
+              url: >-
+                https://developers.planet.com/docs/apis/data/reference/#tag/Item-Search/operation/QuickSearch
+    PlanetSearchQuery:
+      allOf:
+        - $ref: '#/components/schemas/PlanetSearchRequestBase'
+        - $ref: '#/components/schemas/SearchQueryBase'
+        - type: object
+          properties:
+            data:
+              type: array
+              minItems: 1
+              maxItems: 1
+              items:
+                type: object
+                required:
+                  - itemType
+                  - productBundle
+                properties:
+                  itemType:
+                    type: string
+                    enum:
+                      - PSScene
+                      - SkySatCollect
+                    description: >
+                      The item type of data to search for or order:
+
+                      * Use
+                      [PSScene](https://developers.planet.com/docs/data/psscene/)
+                      to order PlanetScope data.
+
+                      [PSScene4Band](https://developers.planet.com/docs/data/psscene4band/)
+                      is deprecated and cannot be ordered since November 1st
+                      2022.
+
+                      * Use
+                      [SkySatCollect](https://developers.planet.com/docs/data/skysatcollect/)
+                      to order SkySat archive data.
+                    externalDocs:
+                      description: Item Types Documentation
+                      url: >-
+                        https://developers.planet.com/docs/apis/data/items-assets/#item-types
+                  productBundle:
+                    type: string
+                    enum:
+                      - analytic_udm2
+                      - analytic_sr_udm2
+                      - analytic_8b_udm2
+                      - analytic_8b_sr_udm2
+                      - analytic
+                      - analytic_sr
+                      - panchromatic
+                    description: >
+                      When ordering, selects the product bundle (that is, the
+                      group of assets) to order.
+
+
+                      When searching, limits search to products available as the
+                      specified product bundle.
+
+
+                      Supported values depend on item type:
+
+                      * for `PSScene`, the product bundles containing "*udm2*"
+                      are supported,
+
+                      * for `SkySatCollect`, `analytic_udm2`, `analytic_sr_udm2`
+                      and `panchromatic` are supported.
+
+
+                      Other values used by Planet but not listed here are not
+                      supported.
+                    externalDocs:
+                      description: Product Bundles Reference
+                      url: >-
+                        https://developers.planet.com/apis/orders/product-bundles-reference/
+                  dataFilter:
+                    type: object
+                    properties:
+                      nativeFilter:
+                        type: object
+                        description: Planet Data API search filters
+                        externalDocs:
+                          description: >-
+                            Link to the Planet documentation page about search
+                            filters.
+                          url: >-
+                            https://developers.planet.com/docs/data/searches-filtering/#search-filters
+                        example:
+                          type: RangeFilter
+                          field_name: snow_ice_percent
+                          config:
+                            gte: 10
+    PlanetSearchResults:
+      allOf:
+        - $ref: '#/components/schemas/SearchResultBase'
+        - type: object
+          properties:
+            features:
+              type: array
+              externalDocs:
+                description: Search results as returned by Planet Quick search
+                url: >-
+                  https://developers.planet.com/docs/apis/data/reference/#tag/Item-Search/operation/QuickSearch
+            <other fields>:
+              description: >-
+                Other fields returned by Planet Quick search may be included in
+                the response.
+    PlanetOrderRequest:
+      allOf:
+        - $ref: '#/components/schemas/Order'
+        - type: object
+          required:
+            - input
+          properties:
+            input:
+              allOf:
+                - $ref: '#/components/schemas/PlanetOrderRequestBase'
+                - $ref: '#/components/schemas/PlanetSearchQuery'
+                - type: object
+                  properties:
+                    data:
+                      type: array
+                      description: >
+                        To order specific Planet items, list their IDs in
+                        itemIds field. Otherwise, provide search criteria in the
+                        dataFilter field to order all items matching the
+                        criteria. Omitting both will order all items within the
+                        specified bounds.
+
+
+                        In both cases, at most 500 items can be ordered at once,
+                        i.e. orders listing too many item IDs will fail, as will
+                        search-based orders that match too many items. Instead
+                        of larger search-based orders we recommend to use <a
+                        href="#tag/dataimport_subscription">subscriptions</a>.
+                      items:
+                        type: object
+                        required:
+                          - harmonizeTo
+                        properties:
+                          harmonizeTo:
+                            type: string
+                            enum:
+                              - NONE
+                              - Sentinel-2
+                            description: >
+                              Sensing instrument whose values the data should be
+                              harmonized to. Supported values:
+
+                              * `NONE` to disable harmonization,
+
+                              * `Sentinel-2` only for *PSScene* item type and
+                              surface reflectance product bundles,
+                            externalDocs:
+                              description: Details on PlanetScope instruments
+                              url: https://developers.planet.com/docs/data/sensors/
+                          itemIds:
+                            type: array
+                            minItems: 1
+                            maxItems: 250
+                            description: >
+                              List of itemIds to order, if dataFilter is not
+                              provided. The itemId list is typically obtained
+                              from a previous search request.
+                            items:
+                              type: string
+    PlanetSubscriptionRequest:
+      allOf:
+        - $ref: '#/components/schemas/Subscription'
+        - type: object
+          required:
+            - input
+          properties:
+            input:
+              type: object
+              required:
+                - provider
+                - bounds
+                - data
+                - planetApiKey
+              properties:
+                provider:
+                  description: Specify this value to use data provider Planet.
+                  type: string
+                  enum:
+                    - PLANET
+                planetApiKey:
+                  description: >-
+                    Your Planet API key. Get one from Planet
+                    https://www.planet.com.
+                  type: string
+                bounds:
+                  description: >
+                    Defines the bounds of the subscribed area by specifying a
+                    bounding box and/or a geometry.
+
+                    If both are given, the subscription will use  the geometry
+                    and the bbox is ignored.
+                  $ref: '#/components/schemas/ProcessRequestInputBounds'
+                data:
+                  type: array
+                  minItems: 1
+                  maxItems: 1
+                  description: |
+                    Specification of the data to subscribe to.
+                  items:
+                    $ref: '#/components/schemas/PlanetSubscriptionDataSpec'
+    PlanetSubscriptionDataSpec:
+      oneOf:
+        - $ref: '#/components/schemas/PSSceneDataSpec'
+    PlanetSubscriptionDataSpecBase:
+      type: object
+      required:
+        - dataFilter
+      properties:
+        dataFilter:
+          type: object
+          required:
+            - timeRange
+          description: >
+            Selection criteria for the data the subscription should cover. At
+            the minimum, `timeRange.from` must be included because subscriptions
+            must have a start time.
+          properties:
+            timeRange:
+              allOf:
+                - $ref: '#/components/schemas/TimeRange'
+                - required:
+                    - from
+                - description: >
+                    A time interval to filter data by the **publish** date (in
+                    contrast to orders, where the data is filtered by the
+                    acquisition date). It is defined by a start and end date and
+                    time, e.g. 2019-01-31T14:00:00+01:00. A date representation
+                    without time (e.g. 2019-01-31) will not work. Both the start
+                    and end of a time interval are inclusive and can be equal.
+            maxCloudCoverage:
+              $ref: '#/components/schemas/MaxCloudCoverage'
+            nativeFilter:
+              type: object
+              description: |
+                Planet Data API search filters
+              externalDocs:
+                description: Link to the Planet documentation page about search filters.
+                url: >-
+                  https://developers.planet.com/docs/data/searches-filtering/#search-filters
+              example:
+                type: RangeFilter
+                field_name: snow_ice_percent
+                config:
+                  gte: 10
+    PSSceneDataSpec:
+      allOf:
+        - $ref: '#/components/schemas/PlanetSubscriptionDataSpecBase'
+        - type: object
+          required:
+            - itemType
+            - productBundle
+            - harmonizeTo
+          properties:
+            itemType:
+              type: string
+              enum:
+                - PSScene
+              description: >
+                The item type to subscribe to. Only
+                [PSScene](https://developers.planet.com/docs/data/psscene/) is
+                supported. Subscribing to
+                [PSScene4Band](https://developers.planet.com/docs/data/psscene4band/)
+                data is not possible since November 1st 2022.
+              externalDocs:
+                description: Item Types Documentation
+                url: >-
+                  https://developers.planet.com/docs/apis/data/items-assets/#item-types
+            productBundle:
+              type: string
+              enum:
+                - analytic_udm2
+                - analytic_sr_udm2
+                - analytic_8b_udm2
+                - analytic_8b_sr_udm2
+              description: |
+                The product bundle to subscribe to.
+              externalDocs:
+                description: Product Bundles Reference
+                url: >-
+                  https://developers.planet.com/docs/orders/product-bundles-reference/
+            harmonizeTo:
+              type: string
+              enum:
+                - NONE
+                - Sentinel-2
+              description: >
+                Sensing instrument whose values the data should be harmonized
+                to, or `NONE` to disable harmonization.
+              externalDocs:
+                description: Details on PlanetScope instruments
+                url: https://developers.planet.com/docs/data/sensors/
+    PlanetDeliveryProvider:
+      type: object
+      properties:
+        provider:
+          description: Provider of the delivery
+          type: string
+          enum:
+            - PLANET
+    OrderPlanetDelivery:
+      allOf:
+        - $ref: '#/components/schemas/PlanetDeliveryProvider'
+        - $ref: '#/components/schemas/OrderDeliveryBase'
+        - type: object
+          properties:
+            itemId:
+              description: Planet's Item ID for PlanetScope and SkySat deliveries.
+              type: string
+    SubscriptionPlanetDelivery:
+      allOf:
+        - $ref: '#/components/schemas/PlanetDeliveryProvider'
+        - $ref: '#/components/schemas/SubscriptionDeliveryBase'
+        - type: object
+          properties:
+            itemId:
+              description: Planet's item ID for PlanetScope and SkySat deliveries.
+              type: string
+    AirbusRequestBase:
+      type: object
+      required:
+        - provider
+      properties:
+        provider:
+          description: Specify this value to use data provider Airbus OneAtlas.
+          type: string
+          enum:
+            - AIRBUS
+    AirbusDeliveryProvider:
+      type: object
+      properties:
+        provider:
+          description: Provider of the delivery
+          type: string
+          enum:
+            - AIRBUS
+    AirbusNativeSearchQuery:
+      allOf:
+        - $ref: '#/components/schemas/AirbusRequestBase'
+        - type: object
+          example:
+            provider: AIRBUS
+            geometry:
+              type: Polygon
+              coordinates:
+                - - - 14.458696
+                    - 45.996878
+                  - - 14.458696
+                    - 46.002617
+                  - - 14.463096
+                    - 46.002617
+                  - - 14.463096
+                    - 45.996878
+                  - - 14.458696
+                    - 45.996878
+            constellation: PHR
+            processingLevel: SENSOR
+            acquisitionDate: '[2018-06-01T00:00:00.000Z,2018-09-01T00:00:00.000Z]'
+            cloudCover: '[0,30]'
+            snowCover: '[0,10]'
+            incidenceAngle: '[0,10]'
+          additionalProperties:
+            externalDocs:
+              description: Fields from Request body of Airbus OneAtlas search.
+              url: http://www.geoapi-airbusds.com/guides/oneatlas-data/g-search/
+    AirbusSearchQuery:
+      allOf:
+        - $ref: '#/components/schemas/AirbusRequestBase'
+        - $ref: '#/components/schemas/SearchQueryBase'
+        - type: object
+          properties:
+            data:
+              type: array
+              minItems: 1
+              maxItems: 1
+              items:
+                type: object
+                required:
+                  - constellation
+                properties:
+                  constellation:
+                    type: string
+                    description: |
+                      Set to PHR to get Pleiades data or to SPOT for SPOT data.
+                    enum:
+                      - PHR
+                      - SPOT
+                  dataFilter:
+                    type: object
+                    properties:
+                      processingLevel:
+                        $ref: '#/components/schemas/AirbusProcessingLevel'
+                      maxSnowCoverage:
+                        $ref: '#/components/schemas/MaxSnowCoverage'
+                      maxIncidenceAngle:
+                        $ref: '#/components/schemas/MaxIncidenceAngle'
+                      expirationDate:
+                        $ref: '#/components/schemas/TimeRange'
+    AirbusProcessingLevel:
+      type: string
+      description: >
+        When searching, you will receive results from the full catalog as well
+        as the Living Library, which holds images that have cloud cover under
+        30% and Incidence angle under 40°. If you want to search only Living
+        Library results, you will need to filter using processingLevel. This
+        value could be equal to SENSOR (images which meet Living Library
+        criteria) and ALBUM (images that do not meeting Living Library criteria
+        in terms of incidence angle and cloud cover).
+      enum:
+        - SENSOR
+        - ALBUM
+    MaxSnowCoverage:
+      description: The maximum allowable snow coverage in percent.
+      type: number
+      format: double
+      minimum: 0
+      maximum: 100
+      default: 100
+    MaxIncidenceAngle:
+      description: The maximum allowable incidence angle in degrees.
+      type: number
+      format: double
+      minimum: 0
+      maximum: 90
+      default: 90
+    AirbusSearchResults:
+      allOf:
+        - $ref: '#/components/schemas/SearchResultBase'
+        - type: object
+          properties:
+            features:
+              type: array
+              externalDocs:
+                description: Search results as returned by Airbus OneAtlas search
+                url: http://www.geoapi-airbusds.com/guides/oneatlas-data/g-search/
+            <other fields>:
+              description: >-
+                Other fields returned by Airbus OneAtlas search may be included
+                in the response.
+    AirbusOrderRequest:
+      allOf:
+        - $ref: '#/components/schemas/Order'
+        - type: object
+          required:
+            - input
+          properties:
+            input:
+              allOf:
+                - $ref: '#/components/schemas/AirbusSearchQuery'
+                - type: object
+                  properties:
+                    data:
+                      type: array
+                      description: >
+                        To order specific Airbus OneAtlas products, list them in
+                        products field. Otherwise, provide search criteria in
+                        the dataFilter field to order all items matching the
+                        criteria. Omitting both will order all products within
+                        the specified bounds.
+
+
+                        In both cases, at most 10 products can be ordered at
+                        once, i.e. orders listing too many product IDs will
+                        fail, as will search-based orders that match too many
+                        products.
+                      items:
+                        type: object
+                        properties:
+                          products:
+                            type: array
+                            minItems: 1
+                            maxItems: 10
+                            description: >
+                              Only provide this field when ordering specific
+                              Airbus OneAtlas products -- leave out when
+                              ordering via search criteria.
+                            items:
+                              type: object
+                              description: TODO2
+                              required:
+                                - id
+                              properties:
+                                id:
+                                  type: string
+                                  format: uuid
+                                  description: The ID of product to order
+    OrderAirbusDelivery:
+      allOf:
+        - $ref: '#/components/schemas/AirbusDeliveryProvider'
+        - $ref: '#/components/schemas/OrderDeliveryBase'
+        - type: object
+          properties:
+            productId:
+              description: Airbus Product ID.
+              type: string
+              format: uuid
+    MaxarRequestBase:
+      type: object
+      required:
+        - provider
+      properties:
+        provider:
+          description: Specify this value to use data provider Maxar.
+          type: string
+          enum:
+            - MAXAR
+    MaxarDeliveryProvider:
+      type: object
+      properties:
+        provider:
+          description: Provider of the delivery
+          type: string
+          enum:
+            - MAXAR
+    MaxarNativeSearchQuery:
+      allOf:
+        - $ref: '#/components/schemas/MaxarRequestBase'
+        - type: object
+          example:
+            provider: MAXAR
+            startDate: '2020-11-06T00:00:00.0Z'
+            endDate: '2020-11-06T23:59:59.0Z'
+            sensor: WV03
+            aoiInGeoJson:
+              type: Polygon
+              coordinates:
+                - - - 15.81
+                    - 46.7
+                  - - 15.84
+                    - 46.7
+                  - - 15.84
+                    - 46.72
+                  - - 15.81
+                    - 46.72
+                  - - 15.81
+                    - 46.7
+              crs:
+                type: name
+                properties:
+                  name: EPSG:4326
+          additionalProperties:
+            description: Fields from request body of MAXAR search.
+    MaxarSearchQuery:
+      allOf:
+        - $ref: '#/components/schemas/MaxarRequestBase'
+        - $ref: '#/components/schemas/SearchQueryBase'
+        - type: object
+          properties:
+            data:
+              type: array
+              minItems: 1
+              maxItems: 1
+              items:
+                type: object
+                required:
+                  - productBands
+                properties:
+                  productBands:
+                    type: string
+                    description: |
+                      Band Bundle
+                    enum:
+                      - 4BB
+                  dataFilter:
+                    type: object
+                    properties:
+                      minOffNadir:
+                        $ref: '#/components/schemas/MaxarMinOffNadir'
+                      maxOffNadir:
+                        $ref: '#/components/schemas/MaxarMaxOffNadir'
+                      minSunElevation:
+                        $ref: '#/components/schemas/MaxarMinSunElevation'
+                      maxSunElevation:
+                        $ref: '#/components/schemas/MaxarMaxSunElevation'
+                      sensor:
+                        $ref: '#/components/schemas/MaxarSensor'
+    MaxarMinOffNadir:
+      type: number
+      format: int
+      minimum: 0
+      maximum: 45
+      default: 0
+    MaxarMaxOffNadir:
+      type: number
+      format: int
+      minimum: 0
+      maximum: 45
+      default: 45
+    MaxarMinSunElevation:
+      description: The minimum allowable sun elevation in degrees
+      type: number
+      format: int
+      minimum: 0
+      maximum: 90
+      default: 0
+    MaxarMaxSunElevation:
+      description: The maximum allowable sun elevation in degrees
+      type: number
+      format: int
+      minimum: 0
+      maximum: 90
+      default: 90
+    MaxarSensor:
+      description: >
+        If specified, limits search results to a single sensor (satellite).
+
+        Results are also filtered to include only sensors that support the
+        requested `productBands`. Thus, if a sensor that does not support all
+        bands is specified, no results will be returned.
+      type: string
+      enum:
+        - WV01
+        - WV02
+        - WV03
+        - WV04
+        - GE01
+    MaxarSearchResults:
+      properties:
+        features:
+          type: array
+          description: >
+            Search results as returned by MAXAR search.
+
+            Note thate MAXAR search does not support paging. Thus, the `count`
+            and `viewtoken` query parameters are ignored and a plain list of
+            results is returned.
+    MaxarOrderRequest:
+      allOf:
+        - $ref: '#/components/schemas/Order'
+        - type: object
+          required:
+            - input
+          properties:
+            input:
+              allOf:
+                - $ref: '#/components/schemas/MaxarSearchQuery'
+                - type: object
+                  properties:
+                    data:
+                      type: array
+                      description: >
+                        To order specific MAXAR products, list them in the
+                        `selectedImages` field. Otherwise, provide search
+                        criteria in the dataFilter field to order all items
+                        matching the criteria.
+
+                        In both cases, at most 10 products can be ordered at
+                        once, i.e. orders listing too many product IDs will
+                        fail, as will search-based orders that match too many
+                        products.
+
+                        Minimum order of 5 km^2 applies to each product, i.e. if
+                        the intersection of order's bounds and products's bounds
+                        is smaller, the order will fail.
+                      items:
+                        type: object
+                        properties:
+                          productKernel:
+                            type: string
+                            default: CC
+                            enum:
+                              - CC
+                              - NN
+                              - MTF
+                            description: >
+                              Selects the resampling kernel to use: 4x4 cubic
+                              convolution (CC), nearest neighbour (NN), or the
+                              proprietary MTF kernel (MTF).
+                          selectedImages:
+                            type: array
+                            minItems: 1
+                            maxItems: 10
+                            description: >
+                              Only provide this field when ordering specific
+                              MAXAR products -- leave out when ordering via
+                              search criteria.
+                            items:
+                              type: string
+                              description: The ID of product (strip) to order
+    OrderMaxarDelivery:
+      allOf:
+        - $ref: '#/components/schemas/MaxarDeliveryProvider'
+        - $ref: '#/components/schemas/OrderDeliveryBase'
+        - type: object
+          properties:
+            selectedImages:
+              description: MAXAR product IDs.
+              type: array
+              minItems: 1
+              items:
+                type: string
     ResolvableDataProduct:
       type: object
       properties:
@@ -5998,6 +7504,10 @@ tags:
     description: >-
       This is an OpenAPI definition of the SpatioTemporal Asset Catalog API -
       Item Search specification.
+  - name: async_process
+    x-displayName: Async Process
+    description: |
+      **NOTE:** _Asynchronous Processing API is currently in beta release._
   - name: batch_process
     x-displayName: Process
   - name: batch_collection
@@ -6014,6 +7524,32 @@ tags:
     x-displayName: Collection
   - name: byoc_tile
     x-displayName: Tile
+  - name: zarr_collection
+    x-displayName: Collection
+  - name: zarr_array
+    x-displayName: Arrays
+  - name: dataimport_search
+    x-displayName: Search
+  - name: dataimport_product
+    x-displayName: Product
+  - name: dataimport_order
+    x-displayName: Order
+  - name: dataimport_delivery
+    x-displayName: Order delivery
+  - name: dataimport_tile_delivery
+    x-displayName: Order delivery tile
+  - name: dataimport_subscription
+    x-displayName: Subscription
+  - name: dataimport_subscription_delivery
+    x-displayName: Subscription delivery
+  - name: dataimport_subscription_tile_delivery
+    x-displayName: Subscription delivery tile
+  - name: dataimport_quota
+    x-displayName: Quota
+    description: >
+      Quotas are managed centrally at the main Sentinel Hub deployment, thus the
+      quota API is only available at the https://sh.dataspace.copernicus.eu
+      endpoint.
   - name: configuration_data_product
     x-displayName: Data product
   - name: configuration_dataset
@@ -6038,6 +7574,9 @@ x-tagGroups:
       - catalog_collections
       - catalog_features
       - catalog_item_search
+  - name: Async API
+    tags:
+      - async_process
   - name: Batch API
     tags:
       - batch_process
@@ -6054,6 +7593,21 @@ x-tagGroups:
     tags:
       - byoc_collection
       - byoc_tile
+  - name: Zarr Import API
+    tags:
+      - zarr_collection
+      - zarr_array
+  - name: TPDI
+    tags:
+      - dataimport_search
+      - dataimport_product
+      - dataimport_order
+      - dataimport_delivery
+      - dataimport_tile_delivery
+      - dataimport_subscription
+      - dataimport_subscription_delivery
+      - dataimport_subscription_tile_delivery
+      - dataimport_quota
   - name: Configuration
     tags:
       - configuration_data_product
@@ -6352,6 +7906,8 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/CatalogCollectionsCollections'
+        '403':
+          $ref: '#/components/responses/CatalogAccessControlInsufficientPermissions'
         '500':
           $ref: '#/components/responses/CatalogCollectionsServerError'
       security:
@@ -6372,6 +7928,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/CatalogCollectionsCollection'
+        '400':
+          $ref: '#/components/responses/CatalogAccessControlIllegalCollection'
+        '403':
+          $ref: '#/components/responses/CatalogAccessControlInsufficientPermissions'
         '404':
           $ref: '#/components/responses/CatalogCollectionsNotFound'
         '500':
@@ -6404,6 +7964,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/CatalogCollectionQueryables'
+        '400':
+          $ref: '#/components/responses/CatalogAccessControlIllegalCollection'
+        '403':
+          $ref: '#/components/responses/CatalogAccessControlInsufficientPermissions'
         '404':
           $ref: '#/components/responses/CatalogCollectionsNotFound'
         '500':
@@ -6431,7 +7995,9 @@ paths:
         '200':
           $ref: '#/components/responses/CatalogFeaturesFeatures'
         '400':
-          $ref: '#/components/responses/CatalogFeaturesInvalidParameter'
+          $ref: '#/components/responses/CatalogAccessControlIllegalCollection'
+        '403':
+          $ref: '#/components/responses/CatalogAccessControlInsufficientPermissions'
         '404':
           $ref: '#/components/responses/CatalogFeaturesNotFound'
         '500':
@@ -6453,6 +8019,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/CatalogFeaturesFeature'
+        '400':
+          $ref: '#/components/responses/CatalogAccessControlIllegalCollection'
+        '403':
+          $ref: '#/components/responses/CatalogAccessControlInsufficientPermissions'
         '404':
           $ref: '#/components/responses/CatalogFeaturesNotFound'
         '500':
@@ -6552,6 +8122,10 @@ paths:
                   next: 1
                   limit: 1
                   returned: 1
+        '400':
+          $ref: '#/components/responses/CatalogAccessControlIllegalCollection'
+        '403':
+          $ref: '#/components/responses/CatalogAccessControlInsufficientPermissions'
         '500':
           $ref: '#/components/responses/CatalogError'
       security:
@@ -6676,8 +8250,67 @@ paths:
                   next: 1
                   limit: 1
                   returned: 1
+        '400':
+          $ref: '#/components/responses/CatalogAccessControlIllegalCollection'
+        '403':
+          $ref: '#/components/responses/CatalogAccessControlInsufficientPermissions'
         '500':
           $ref: '#/components/responses/CatalogError'
+      security:
+        - OAuth2: []
+  /api/v1/async/process:
+    post:
+      operationId: createNewAsyncProcessRequest
+      summary: Submit a new async process request
+      tags:
+        - async_process
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AsyncProcessRequest'
+      responses:
+        '200':
+          description: Request submitted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AsyncStatusResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '429':
+          description: Maximum number of concurrent async requests reached.
+      security:
+        - OAuth2: []
+  /api/v1/async/process/{requestId}:
+    get:
+      operationId: getStatusAsyncRequest
+      summary: Get status of the request
+      description: >-
+        The status of the request will only be returned while it's running.
+        After completion (either succeed or failure) this endpoint will return
+        404.
+      tags:
+        - async_process
+      parameters:
+        - $ref: '#/components/parameters/AsyncProcessRequestId'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AsyncStatusResponse'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
       security:
         - OAuth2: []
   /api/v1/batch/process:
@@ -6715,12 +8348,6 @@ paths:
       tags:
         - batch_process
       parameters:
-        - name: userid
-          description: User ID
-          in: query
-          schema:
-            type: string
-            format: uuid
         - name: collectionId
           description: >
             Filter batch process requests by the collectionId of batch
@@ -7707,6 +9334,1438 @@ paths:
           $ref: '#/components/responses/401'
         '403':
           $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+      security:
+        - OAuth2: []
+  /api/v1/zarr/collections:
+    post:
+      summary: Create a Zarr collection
+      tags:
+        - zarr_collection
+      operationId: createZarrCollection
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ZarrCollection'
+      responses:
+        '201':
+          description: Collection created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ZarrSingleResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+      security:
+        - OAuth2: []
+    get:
+      summary: Query Zarr collections
+      tags:
+        - zarr_collection
+      operationId: getZarrCollections
+      parameters:
+        - $ref: '#/components/parameters/SearchBeanCount'
+        - $ref: '#/components/parameters/SearchBeanViewtoken'
+        - name: search
+          in: query
+          description: >
+            Optional query to search Zarr collections by name. If omitted, all
+            items are returned.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            aplication/json:
+              schema:
+                $ref: '#/components/schemas/ZarrQueryCollectionsResponse'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+      security:
+        - OAuth2: []
+  /api/v1/zarr/collections/{collectionId}:
+    get:
+      summary: Get a Zarr collection
+      tags:
+        - zarr_collection
+      operationId: getZarrCollection
+      parameters:
+        - $ref: '#/components/parameters/ByocCollectionId'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ZarrSingleResponse'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+      security:
+        - OAuth2: []
+    put:
+      summary: Update Zarr collection
+      operationId: updateZarrCollectionById
+      tags:
+        - zarr_collection
+      parameters:
+        - $ref: '#/components/parameters/ByocCollectionId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ZarrCollectionUpdatePayload'
+      responses:
+        '204':
+          description: Collection updated
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+      security:
+        - OAuth2: []
+    delete:
+      summary: Delete Zarr collection
+      operationId: deleteZarrCollectionById
+      tags:
+        - zarr_collection
+      parameters:
+        - $ref: '#/components/parameters/ByocCollectionId'
+      responses:
+        '204':
+          description: Collection deleted
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+      security:
+        - OAuth2: []
+  /api/v1/zarr/collections/{collectionId}/reingest:
+    put:
+      summary: Reingest a Zarr collection
+      tags:
+        - zarr_collection
+      operationId: reingestZarrCollectionById
+      parameters:
+        - $ref: '#/components/parameters/ByocCollectionId'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ZarrSingleResponse'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+      security:
+        - OAuth2: []
+  /api/v1/zarr/collections/{collectionId}/arrays:
+    get:
+      summary: Query Zarr collection's arrays
+      operationId: getZarrArrays
+      tags:
+        - zarr_array
+      parameters:
+        - $ref: '#/components/parameters/ByocCollectionId'
+        - $ref: '#/components/parameters/SearchBeanCount'
+        - $ref: '#/components/parameters/SearchBeanViewtoken'
+        - name: search
+          in: query
+          description: >
+            Optional query to search arrays by name. If omitted, all items are
+            returned.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ZarrQueryArraysResponse'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+  /api/v1/zarr/collections/{collectionId}/arrays/{arrayName}:
+    get:
+      summary: Get a single Zarr array
+      operationId: getSingleZarrArray
+      tags:
+        - zarr_array
+      parameters:
+        - $ref: '#/components/parameters/ByocCollectionId'
+        - name: arrayName
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ZarrGetSingleArrayResponse'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+  /api/v1/dataimport/search:
+    post:
+      summary: Search data
+      description: Search data with Process API-like interface.
+      operationId: dataImport_searchData
+      tags:
+        - dataimport_search
+      parameters:
+        - name: count
+          description: |
+            Number of items to retrieve.
+
+            Maximum value is provider dependent.
+          in: query
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+        - $ref: '#/components/parameters/SearchBeanViewtoken'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchQuery'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResults'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+      security:
+        - OAuth2: []
+  /api/v1/dataimport/nativesearch:
+    post:
+      summary: Native search
+      description: >
+        Proxy search. All the fields not listed as <span
+        style="color:red">required</span> are passed verbatim to the data
+        provider's search API, and the result from the latter is returned
+        verbatim.
+      operationId: dataImport_nativeSearch
+      tags:
+        - dataimport_search
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NativeSearchQuery'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResults'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+      security:
+        - OAuth2: []
+  /api/v1/dataimport/collections/{collectionId}/products/{productId}/thumbnail:
+    get:
+      summary: Get thumbnail of data product
+      description: Get a scaled-down, non-geolocated, non-clipped image of the data product
+      operationId: dataImport_getProductThumbnail
+      tags:
+        - dataimport_product
+      parameters:
+        - $ref: '#/components/parameters/TpdiCollectionId'
+        - name: productId
+          description: >-
+            ID of the product to get thumbnail of, typically returned by a
+            previous search
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response (image)
+      security:
+        - OAuth2: []
+  /api/v1/dataimport/orders:
+    post:
+      summary: Create an order
+      description: >
+        Create a non-confirmed data order object, equivalent to a quote. After
+        creation you can review the contents of the order and its quota
+        requirements, and then choose to confirm it or not.
+
+
+        Data can be ordered by specifying a query (all items matching the query
+        will be ordered) or item IDs (the specified items will be ordered).
+      operationId: dataImport_createOrder
+      tags:
+        - dataimport_order
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderRequest'
+      responses:
+        '200':
+          description: Order created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+      security:
+        - OAuth2: []
+    get:
+      summary: Query orders
+      operationId: dataImport_getOrders
+      tags:
+        - dataimport_order
+      parameters:
+        - $ref: '#/components/parameters/OrderStatus'
+        - name: collectionId
+          description: Filter orders by collectionId. Omit to get all orders.
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - $ref: '#/components/parameters/SearchBeanCount'
+        - $ref: '#/components/parameters/SearchBeanViewtoken'
+        - $ref: '#/components/parameters/SearchBeanSearch'
+        - name: deleted
+          description: >-
+            If set to `true` the response will only return those orders that had
+            been deleted by the user.
+          in: query
+          schema:
+            default: false
+            type: boolean
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Order'
+                  links:
+                    $ref: '#/components/schemas/View'
+        '401':
+          $ref: '#/components/responses/401'
+      security:
+        - OAuth2: []
+  /api/v1/dataimport/orders/{orderId}:
+    get:
+      summary: Get an order
+      operationId: dataImport_getOrder
+      tags:
+        - dataimport_order
+      parameters:
+        - $ref: '#/components/parameters/OrderId'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+      security:
+        - OAuth2: []
+    delete:
+      summary: Delete an order
+      operationId: dataImport_deleteOrder
+      description: |-
+        `CREATED` orders will be permanently deleted.
+
+         `CANCELLED` , `DONE` or `FAILED` ones will be deleted for normal querying but will still be available.
+
+         `PARTIAL` or `RUNNING` orders cannot be deleted.
+      tags:
+        - dataimport_order
+      parameters:
+        - $ref: '#/components/parameters/OrderId'
+      responses:
+        '204':
+          description: Successful response - order deleted
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          description: >-
+            Conflict - order cannot be deleted because it is currently being
+            processed.
+      security:
+        - OAuth2: []
+  /api/v1/dataimport/orders/{orderId}/confirm:
+    post:
+      summary: Confirm an order
+      description: >
+        Confirm the order and start executing it. Requires sufficient quota for
+        the order. Only orders with status CREATED can be confirmed.
+      operationId: dataImport_confirmOrder
+      tags:
+        - dataimport_order
+      parameters:
+        - $ref: '#/components/parameters/OrderId'
+      responses:
+        '200':
+          description: Successful response - order confirmed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          description: Insufficient quota for the order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuotaExceededError'
+        '409':
+          description: >-
+            Conflict - order cannot be confirmed because its status is not
+            CREATED.
+      security:
+        - OAuth2: []
+  /api/v1/dataimport/orders/{orderId}/deliveries:
+    get:
+      summary: Get order deliveries
+      operationId: dataImport_getOrderDeliveries
+      tags:
+        - dataimport_delivery
+      parameters:
+        - $ref: '#/components/parameters/OrderId'
+        - $ref: '#/components/parameters/DeliveryStatus'
+        - $ref: '#/components/parameters/SearchBeanCount'
+        - $ref: '#/components/parameters/SearchBeanViewtoken'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/OrderDelivery'
+                  links:
+                    $ref: '#/components/schemas/View'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+      security:
+        - OAuth2: []
+  /api/v1/dataimport/orders/{orderId}/deliveries/{deliveryId}:
+    get:
+      summary: Get an order delivery
+      operationId: dataImport_getOrderDelivery
+      tags:
+        - dataimport_delivery
+      parameters:
+        - $ref: '#/components/parameters/OrderId'
+        - $ref: '#/components/parameters/DeliveryId'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderDelivery'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+      security:
+        - OAuth2: []
+  /api/v1/dataimport/orders/{orderId}/deliveries/{deliveryId}/files:
+    get:
+      summary: List files of an order delivery
+      description: >
+        Lists all files delivered by the data provider. The file list and
+        contents is provider-specific.
+      operationId: dataImport_getOrderDeliveryFiles
+      tags:
+        - dataimport_delivery
+      parameters:
+        - $ref: '#/components/parameters/OrderId'
+        - $ref: '#/components/parameters/DeliveryId'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                items:
+                  type: string
+                  format: filename with path
+                example:
+                  - VOL_PHR.XML
+                  - INDEX.HTM
+                  - >-
+                    IMG_PHR1A_P_001/IMG_PHR1A_P_202102240924289_ORT_15c5eeb9-53a1-4cdd-cca6-d265fb1bf0c6-001_R1C1.J2W
+                  - ...
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          description: Delivery status is not `DONE`
+      security:
+        - OAuth2: []
+  /api/v1/dataimport/orders/{orderId}/deliveries/{deliveryId}/files/{file}:
+    get:
+      summary: Retrieve a delivery file
+      description: Download a single file delivered by the data provider.
+      operationId: dataImport_getOrderDeliveryFile
+      tags:
+        - dataimport_delivery
+      parameters:
+        - $ref: '#/components/parameters/OrderId'
+        - $ref: '#/components/parameters/DeliveryId'
+        - $ref: '#/components/parameters/DeliveryFile'
+        - in: header
+          name: Range
+          schema:
+            type: string
+            format: RFC 7223
+          description: >
+            Optional byte range to retrieve part of a file according to [RFC
+            7233](https://datatracker.ietf.org/doc/html/rfc7233#section-3.1).
+            Typically used with large files to resume interrupted downloads.
+          example: bytes=16384-23473
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/octet-stream:
+              schema:
+                title: file contents as delivered by data provider
+                type: string
+                format: binary
+        '206':
+          description: >-
+            Partial response in case partial retrieval was requested with the
+            `Range` request header
+          content:
+            application/octet-stream:
+              schema:
+                title: partial file contents as delivered by data provider
+                type: string
+                format: binary
+          headers:
+            Content-Range:
+              schema:
+                type: string
+                format: RFC 7223
+              description: >
+                Byte range of the returned part of the file according to [RFC
+                7233](https://datatracker.ietf.org/doc/html/rfc7233#section-4.2).
+              example: bytes 16384-23473/23474
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          description: Delivery status is not `DONE`
+      security:
+        - OAuth2: []
+    head:
+      summary: Get delivery file size
+      operationId: dataImport_headOrderDeliveryFile
+      tags:
+        - dataimport_delivery
+      parameters:
+        - $ref: '#/components/parameters/OrderId'
+        - $ref: '#/components/parameters/DeliveryId'
+        - $ref: '#/components/parameters/DeliveryFile'
+      responses:
+        '200':
+          description: Successful response
+          headers:
+            Content-Length:
+              schema:
+                type: integer
+              description: File length in bytes
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          description: Delivery status is not `DONE`
+      security:
+        - OAuth2: []
+  /api/v1/dataimport/orders/{orderId}/deliveries/{deliveryId}/archive/create:
+    post:
+      summary: Request creation of delivery archive
+      operationId: dataImport_postOrderDeliveryArchiveCreate
+      tags:
+        - dataimport_delivery
+      parameters:
+        - $ref: '#/components/parameters/OrderId'
+        - $ref: '#/components/parameters/DeliveryId'
+        - $ref: '#/components/parameters/DeliveryArchiveFormat'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeliveryArchive'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          description: >
+            Delivery status is not `DONE` or archival of the same delivery in
+            the same format has already been requested
+      security:
+        - OAuth2: []
+  /api/v1/dataimport/orders/{orderId}/deliveries/{deliveryId}/archive:
+    get:
+      summary: Retrieve delivery archive
+      operationId: dataImport_getOrderDeliveryArchive
+      tags:
+        - dataimport_delivery
+      parameters:
+        - $ref: '#/components/parameters/OrderId'
+        - $ref: '#/components/parameters/DeliveryId'
+        - $ref: '#/components/parameters/DeliveryArchiveFormat'
+        - in: header
+          name: Range
+          schema:
+            type: string
+            format: RFC 7223
+          description: >
+            Optional byte range to retrieve part of the archive according to
+            [RFC
+            7233](https://datatracker.ietf.org/doc/html/rfc7233#section-3.1).
+            Typically used to resume interrupted downloads.
+          example: bytes=16384-23473
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/octet-stream:
+              schema:
+                title: archive contents
+                type: string
+                format: binary
+        '206':
+          description: >-
+            Partial response in case partial retrieval was requested with the
+            `Range` request header
+          content:
+            application/octet-stream:
+              schema:
+                title: partial archive contents
+                type: string
+                format: binary
+          headers:
+            Content-Range:
+              schema:
+                type: string
+                format: RFC 7223
+              description: >
+                Byte range of the returned part of the archive according to [RFC
+                7233](https://datatracker.ietf.org/doc/html/rfc7233#section-4.2).
+              example: bytes 16384-23473/23474
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+      security:
+        - OAuth2: []
+    head:
+      summary: Get size of delivery archive
+      operationId: dataImport_headOrderDeliveryArchive
+      tags:
+        - dataimport_delivery
+      parameters:
+        - $ref: '#/components/parameters/OrderId'
+        - $ref: '#/components/parameters/DeliveryId'
+        - $ref: '#/components/parameters/DeliveryArchiveFormat'
+      responses:
+        '200':
+          description: Successful response
+          headers:
+            Content-Length:
+              schema:
+                type: integer
+              description: Archive length in bytes
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+      security:
+        - OAuth2: []
+  /api/v1/dataimport/orders/{orderId}/deliveries/{deliveryId}/archive/status:
+    get:
+      summary: Get status of delivery archive creation
+      operationId: dataImport_getOrderDeliveryArchiveStatus
+      tags:
+        - dataimport_delivery
+      parameters:
+        - $ref: '#/components/parameters/OrderId'
+        - $ref: '#/components/parameters/DeliveryId'
+        - $ref: '#/components/parameters/DeliveryArchiveFormat'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeliveryArchive'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+      security:
+        - OAuth2: []
+  /api/v1/dataimport/orders/{orderId}/deliveries/{deliveryId}/tiles:
+    get:
+      summary: Get the tiles of an order delivery
+      description: >
+        The delivery tiles correspond to BYOC tiles that were created during the
+        ingestion of this delivery. Thus their corresponding IDs will match.
+        While for most deliveries just one tile is created, for the largest ones
+        there can be tens of tiles.
+      operationId: dataImport_getTileDeliveries
+      tags:
+        - dataimport_tile_delivery
+      parameters:
+        - $ref: '#/components/parameters/OrderId'
+        - $ref: '#/components/parameters/DeliveryId'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/DeliveryTile'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+      security:
+        - OAuth2: []
+  /api/v1/dataimport/orders/{orderId}/deliveries/{deliveryId}/tiles/{tileId}:
+    get:
+      summary: Get an order delivery tile
+      operationId: dataImport_getTileDelivery
+      tags:
+        - dataimport_tile_delivery
+      parameters:
+        - $ref: '#/components/parameters/OrderId'
+        - $ref: '#/components/parameters/DeliveryId'
+        - $ref: '#/components/parameters/TileId'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeliveryTile'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+      security:
+        - OAuth2: []
+  /api/v1/dataimport/subscriptions:
+    post:
+      summary: Create a subscription
+      description: >
+        Create a non-confirmed data subscription object. After creation you can
+        review the parameters of the subscription and then choose to confirm it
+        or not.
+      operationId: dataImport_createSubscription
+      tags:
+        - dataimport_subscription
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubscriptionRequest'
+      responses:
+        '200':
+          description: Subscription created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subscription'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+      security:
+        - OAuth2: []
+    get:
+      summary: Query subscriptions
+      operationId: dataImport_getSubscriptions
+      tags:
+        - dataimport_subscription
+      parameters:
+        - $ref: '#/components/parameters/SubscriptionStatus'
+        - name: collectionId
+          description: Filter subscriptions by collectionId. Omit to get all subscriptions.
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - $ref: '#/components/parameters/SearchBeanCount'
+        - $ref: '#/components/parameters/SearchBeanViewtoken'
+        - $ref: '#/components/parameters/SearchBeanSearch'
+        - name: deleted
+          description: >-
+            If set to `true` the response will only return those subscriptions
+            that had been deleted by the user.
+          in: query
+          schema:
+            default: false
+            type: boolean
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Subscription'
+                  links:
+                    $ref: '#/components/schemas/View'
+        '401':
+          $ref: '#/components/responses/401'
+      security:
+        - OAuth2: []
+  /api/v1/dataimport/subscriptions/{subscriptionId}:
+    get:
+      summary: Get a subscription
+      operationId: dataImport_getSubscription
+      tags:
+        - dataimport_subscription
+      parameters:
+        - $ref: '#/components/parameters/SubscriptionId'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subscription'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+      security:
+        - OAuth2: []
+    delete:
+      summary: Delete a non-running subscription
+      operationId: dataImport_deleteSubscription
+      description: |-
+        `CREATED` subscriptions will be permanently deleted.
+
+         `CANCELLED` , `COMPLETED` or `FAILED` ones will be deleted for normal querying but will still be available.
+
+         `RUNNING` subscriptions cannot be deleted.
+      tags:
+        - dataimport_subscription
+      parameters:
+        - $ref: '#/components/parameters/SubscriptionId'
+      responses:
+        '204':
+          description: Successful response - subscription deleted
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          description: >-
+            Conflict - subscription cannot be deleted because it is currently
+            being processed.
+      security:
+        - OAuth2: []
+  /api/v1/dataimport/subscriptions/{subscriptionId}/confirm:
+    post:
+      summary: Confirm a subscription
+      description: >
+        Confirm the subscription and start executing it. Only subscription with
+        status CREATED can be confirmed.
+      operationId: dataImport_confirmSubscription
+      tags:
+        - dataimport_subscription
+      parameters:
+        - $ref: '#/components/parameters/SubscriptionId'
+      responses:
+        '200':
+          description: Successful response - subscription confirmed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subscription'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          description: Insufficient quota for the order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuotaExceededError'
+        '409':
+          description: >-
+            Conflict - subscription cannot be confirmed because its status is
+            not CREATED.
+      security:
+        - OAuth2: []
+  /api/v1/dataimport/subscriptions/{subscriptionId}/cancel:
+    post:
+      summary: Cancel a subscription
+      description: >
+        Cancel a RUNNING subscription so that it will stop executing. Already
+        imported data will be kept. Only subscription with status RUNNING can be
+        cancelled.
+      operationId: dataImport_cancelSubscription
+      tags:
+        - dataimport_subscription
+      parameters:
+        - $ref: '#/components/parameters/SubscriptionId'
+      responses:
+        '200':
+          description: Successful response - subscription cancelled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subscription'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '409':
+          description: >-
+            Conflict - subscription cannot be cancelled because its status is
+            not RUNNING.
+      security:
+        - OAuth2: []
+  /api/v1/dataimport/subscriptions/{subscriptionId}/deliveries:
+    get:
+      summary: Get subscription deliveries
+      operationId: dataImport_getSubscriptionDeliveries
+      tags:
+        - dataimport_subscription_delivery
+      parameters:
+        - $ref: '#/components/parameters/SubscriptionId'
+        - $ref: '#/components/parameters/DeliveryStatus'
+        - $ref: '#/components/parameters/SearchBeanCount'
+        - $ref: '#/components/parameters/SearchBeanViewtoken'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SubscriptionDelivery'
+                  links:
+                    $ref: '#/components/schemas/View'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+      security:
+        - OAuth2: []
+  /api/v1/dataimport/subscriptions/{subscriptionId}/deliveries/{deliveryId}:
+    get:
+      summary: Get a subscription delivery
+      operationId: dataImport_getSubscriptionDelivery
+      tags:
+        - dataimport_subscription_delivery
+      parameters:
+        - $ref: '#/components/parameters/SubscriptionId'
+        - $ref: '#/components/parameters/DeliveryId'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriptionDelivery'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+      security:
+        - OAuth2: []
+  /api/v1/dataimport/subscriptions/{subscriptionId}/deliveries/{deliveryId}/files:
+    get:
+      summary: List files of a subscription delivery
+      description: >
+        Lists all files delivered by the data provider. The file list and
+        contents is provider-specific.
+      operationId: dataImport_getSubscriptionDeliveryFiles
+      tags:
+        - dataimport_subscription_delivery
+      parameters:
+        - $ref: '#/components/parameters/SubscriptionId'
+        - $ref: '#/components/parameters/DeliveryId'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                items:
+                  type: string
+                  format: filename with path
+                example:
+                  - 20211208_095127_54_2416_3B_AnalyticMS_SR_clip.tif
+                  - 20211208_095127_54_2416_metadata.json
+                  - 20211208_095127_54_2416_3B_AnalyticMS_metadata_clip.xml
+                  - 20211208_095127_54_2416_3B_udm2_clip.tif
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          description: Delivery status is not `DONE`
+      security:
+        - OAuth2: []
+  /api/v1/dataimport/subscriptions/{subscriptionId}/deliveries/{deliveryId}/files/{file}:
+    get:
+      summary: Retrieve a delivery file
+      description: Download a single file delivered by the data provider.
+      operationId: dataImport_getSubscriptionDeliveryFile
+      tags:
+        - dataimport_subscription_delivery
+      parameters:
+        - $ref: '#/components/parameters/SubscriptionId'
+        - $ref: '#/components/parameters/DeliveryId'
+        - $ref: '#/components/parameters/DeliveryFile'
+        - in: header
+          name: Range
+          schema:
+            type: string
+            format: RFC 7223
+          description: >
+            Optional byte range to retrieve part of a file according to [RFC
+            7233](https://datatracker.ietf.org/doc/html/rfc7233#section-3.1).
+            Typically used with large files to resume interrupted downloads.
+          example: bytes=16384-23473
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/octet-stream:
+              schema:
+                title: file contents as delivered by data provider
+                type: string
+                format: binary
+        '206':
+          description: >-
+            Partial response in case partial retrieval was requested with the
+            `Range` request header
+          content:
+            application/octet-stream:
+              schema:
+                title: partial file contents as delivered by data provider
+                type: string
+                format: binary
+          headers:
+            Content-Range:
+              schema:
+                type: string
+                format: RFC 7223
+              description: >
+                Byte range of the returned part of the file according to [RFC
+                7233](https://datatracker.ietf.org/doc/html/rfc7233#section-4.2).
+              example: bytes 16384-23473/23474
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          description: Delivery status is not `DONE`
+      security:
+        - OAuth2: []
+    head:
+      summary: Get delivery file size
+      operationId: dataImport_headSubscriptionDeliveryFile
+      tags:
+        - dataimport_subscription_delivery
+      parameters:
+        - $ref: '#/components/parameters/SubscriptionId'
+        - $ref: '#/components/parameters/DeliveryId'
+        - $ref: '#/components/parameters/DeliveryFile'
+      responses:
+        '200':
+          description: Successful response
+          headers:
+            Content-Length:
+              schema:
+                type: integer
+              description: File length in bytes
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          description: Delivery status is not `DONE`
+      security:
+        - OAuth2: []
+  /api/v1/dataimport/subscriptions/{subscriptionId}/deliveries/{deliveryId}/archive/create:
+    post:
+      summary: Request creation of delivery archive
+      operationId: dataImport_postSubscriptionDeliveryArchiveCreate
+      tags:
+        - dataimport_subscription_delivery
+      parameters:
+        - $ref: '#/components/parameters/SubscriptionId'
+        - $ref: '#/components/parameters/DeliveryId'
+        - $ref: '#/components/parameters/DeliveryArchiveFormat'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeliveryArchive'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          description: >
+            Delivery status is not `DONE` or archival of the same delivery in
+            the same format has already been requested
+      security:
+        - OAuth2: []
+  /api/v1/dataimport/subscriptions/{subscriptionId}/deliveries/{deliveryId}/archive:
+    get:
+      summary: Retrieve delivery archive
+      operationId: dataImport_getSubscriptionDeliveryArchive
+      tags:
+        - dataimport_subscription_delivery
+      parameters:
+        - $ref: '#/components/parameters/SubscriptionId'
+        - $ref: '#/components/parameters/DeliveryId'
+        - $ref: '#/components/parameters/DeliveryArchiveFormat'
+        - in: header
+          name: Range
+          schema:
+            type: string
+            format: RFC 7223
+          description: >
+            Optional byte range to retrieve part of the archive according to
+            [RFC
+            7233](https://datatracker.ietf.org/doc/html/rfc7233#section-3.1).
+            Typically used to resume interrupted downloads.
+          example: bytes=16384-23473
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/octet-stream:
+              schema:
+                title: archive contents
+                type: string
+                format: binary
+        '206':
+          description: >-
+            Partial response in case partial retrieval was requested with the
+            `Range` request header
+          content:
+            application/octet-stream:
+              schema:
+                title: partial archive contents
+                type: string
+                format: binary
+          headers:
+            Content-Range:
+              schema:
+                type: string
+                format: RFC 7223
+              description: >
+                Byte range of the returned part of the archive according to [RFC
+                7233](https://datatracker.ietf.org/doc/html/rfc7233#section-4.2).
+              example: bytes 16384-23473/23474
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+      security:
+        - OAuth2: []
+    head:
+      summary: Get size of delivery archive
+      operationId: dataImport_headSubscriptionDeliveryArchive
+      tags:
+        - dataimport_subscription_delivery
+      parameters:
+        - $ref: '#/components/parameters/SubscriptionId'
+        - $ref: '#/components/parameters/DeliveryId'
+        - $ref: '#/components/parameters/DeliveryArchiveFormat'
+      responses:
+        '200':
+          description: Successful response
+          headers:
+            Content-Length:
+              schema:
+                type: integer
+              description: Archive length in bytes
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+      security:
+        - OAuth2: []
+  /api/v1/dataimport/subscriptions/{subscriptionId}/deliveries/{deliveryId}/archive/status:
+    get:
+      summary: Get status of delivery archive creation
+      operationId: dataImport_getSubscriptionDeliveryArchiveStatus
+      tags:
+        - dataimport_subscription_delivery
+      parameters:
+        - $ref: '#/components/parameters/SubscriptionId'
+        - $ref: '#/components/parameters/DeliveryId'
+        - $ref: '#/components/parameters/DeliveryArchiveFormat'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeliveryArchive'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+      security:
+        - OAuth2: []
+  /api/v1/dataimport/subscriptions/{subscriptionId}/deliveries/{deliveryId}/tiles:
+    get:
+      summary: Get the tiles of a subscription delivery
+      description: >
+        The delivery tiles correspond to BYOC tiles that were created during the
+        ingestion of this delivery. Thus their corresponding IDs will match.
+        While for most deliveries just one tile is created, for the largest ones
+        there can be tens of tiles.
+      operationId: dataImport_getSubscriptionTileDeliveries
+      tags:
+        - dataimport_subscription_tile_delivery
+      parameters:
+        - $ref: '#/components/parameters/SubscriptionId'
+        - $ref: '#/components/parameters/DeliveryId'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/DeliveryTile'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+      security:
+        - OAuth2: []
+  /api/v1/dataimport/subscriptions/{subscriptionId}/deliveries/{deliveryId}/tiles/{tileId}:
+    get:
+      summary: Get a subscription delivery tile
+      operationId: dataImport_getSubscriptionTileDelivery
+      tags:
+        - dataimport_subscription_tile_delivery
+      parameters:
+        - $ref: '#/components/parameters/SubscriptionId'
+        - $ref: '#/components/parameters/DeliveryId'
+        - $ref: '#/components/parameters/TileId'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeliveryTile'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+      security:
+        - OAuth2: []
+  /api/v1/dataimport/accountquotas:
+    get:
+      summary: Get import quotas
+      description: Get the list of your import quotas for all providers and collections
+      operationId: dataImport_getQuotas
+      tags:
+        - dataimport_quota
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Quota'
+        '401':
+          $ref: '#/components/responses/401'
+      security:
+        - OAuth2: []
+  /api/v1/dataimport/accountquotas/{collectionId}:
+    get:
+      summary: Get import quota
+      description: Get the import quota for the specified collection
+      operationId: dataImport_getQuota
+      tags:
+        - dataimport_quota
+      parameters:
+        - $ref: '#/components/parameters/TpdiCollectionId'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quota'
+        '401':
+          $ref: '#/components/responses/401'
         '404':
           $ref: '#/components/responses/404'
       security:

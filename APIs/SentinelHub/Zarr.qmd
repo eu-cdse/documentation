@@ -1,0 +1,165 @@
+---
+resources:
+- Zarr/resources/python/cdse_set_bucket_policy.py
+title: Zarr Import API
+---
+
+**Zarr Import API is only available for users with Copernicus Service
+accounts.** Please refer to our [FAQ](/FAQ.qmd) on account typology
+change and [Submit A
+Request](https://helpcenter.dataspace.copernicus.eu/hc/en-gb/requests/new){target="_blank"}
+to our Copernicus Data Space Ecosystem Support Team to request your
+Copernicus Service account accordingly.
+
+## Overview
+
+Zarr Import API (or shortly \"Zarr\") enables you to import your own
+Zarr data in Sentinel Hub and access it just like any other data when
+some conditions are met.
+
+These are:
+
+-   Store your raster data in the Zarr
+    [format](https://zarr.readthedocs.io/en/stable/spec/v2.html){target="_blank"}
+    on your own S3 bucket in the supported region.
+-   Zarr data must conform to Sentinel Hub data
+    [constraints](#data-constraints).
+-   Configure the bucket\'s permissions so that Sentinel Hub can read
+    them.
+
+## Data constraints
+
+Since Zarr is a generic data format, there are additional constraints in
+order to ingest the data to Sentinel Hub:
+
+-   Data must be stored as a single [Zarr
+    group](https://zarr.readthedocs.io/en/stable/spec/v2.html#groups){target="_blank"}
+    that contains coordinate arrays and data arrays.
+-   Data array names should be valid JavaScript identifiers so they can
+    be safely used in evalscripts; valid identifiers are case-sensitive,
+    can contain Unicode letters, \$, \_, and digits (0-9), but may not
+    start with a digit, and should not be one of the reserved JavaScript
+    keywords.
+-   Data arrays must have two or three dimensions. There must be exactly
+    two spatial coordinate arrays, named either `x` and `y` or `lat` and
+    `lon`, and an optional `time` coordinate array.
+-   Data arrays must be stored in row-major order (`"order": "C"`, i.e.,
+    the last dimension varies fastest). The ordering of the dimensions
+    has to be `[time, lat, lon]` or `[time, y, x]` for 3 dimensional
+    data, and `[lat, lon]` or `[y, x]` for 2 dimensional data.
+-   All data, including the spatial and the optional `time` coordinate
+    arrays, must consist of 32-bit or 64-bit integers and floats (Zarr
+    data types `u4`, `i4`, `i8`, `f4`, `f8`).
+-   The chunk size in the two spatial dimensions must be less than or
+    equal to 3072, but does not need to be the same for all data arrays.
+-   For 3 dimensional data:
+    -   the `time` array must include the `units` attribute in its
+        `zattrs`, which has to be in the format
+        `<unit> since <instant>`. Where supported units are
+        days/hours/minutes/seconds/millis/micros/nanos and `instant`
+        should either be in the format
+        [ISO8601](https://en.wikipedia.org/wiki/ISO_8601){target="_blank"}
+        or should follow the definition of the `time:units` field of the
+        [CF time coordinate
+        convention](https://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/build/ch04s04.html){target="_blank"}.
+        As an example, unix epoch could be encoded as
+        `seconds since 1970-01-01 00:00:00`,
+    -   the chunk size in time dimension must be the same for all data
+        arrays and must be less than or equal to 50.
+-   Data must not cross any of the two poles.
+-   Data must use an equidistant spatial grid, that is, the two spatial
+    coordinate arrays must be equidistant. The time coordinate array can
+    be non-equidistant.
+-   The projection needs to be one of: WGS84 (EPSG:4326), WebMercator
+    (EPGS:3857), any UTM zone (EPSG:32601-32660, 32701-32760), or Europe
+    LAEA (EPSG:3035).
+-   Subgroups within the Zarr group will be ignored, but may be ingested
+    separately.
+
+Please refer to [Zarr
+specification](https://zarr.readthedocs.io/en/stable/spec/v2.html){target="_blank"}
+for explanation of various Zarr format properties.
+
+## Bucket settings
+
+If you do not yet have a bucket at Copernicus Data Space Ecosystem,
+please follow [these
+steps](https://creodias.docs.cloudferro.com/en/latest/s3/Create-S3-bucket-and-use-it-in-Sentinel-Hub-requests.html){target="_blank"}
+to get one.
+
+You will have to configure your bucket to allow read access to Sentinel
+Hub. To do this, [update your bucket
+policy](https://creodias.docs.cloudferro.com/en/latest/s3/Bucket-sharing-using-s3-bucket-policy-on-Creodias.html#setting-a-policy-on-the-bucket){target="_blank"}
+to include the following statement (don't forget to replace
+`<bucket_name>` with your actual bucket name):
+
+``` default
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "Sentinel Hub permissions",
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": "arn:aws:iam::ddf4c98b5e6647f0a246f0624c8341d9:root"
+            },
+            "Action": [
+                "s3:GetBucketLocation",
+                "s3:ListBucket",
+                "s3:GetObject"
+            ],
+            "Resource": [
+                "arn:aws:s3:::<bucket_name>",
+                "arn:aws:s3:::<bucket_name>/*"
+            ]
+        }
+    ]
+}
+```
+
+A python script to set a bucket policy can be downloaded
+[here](/APIs/SentinelHub/Zarr/resources/python/cdse_set_bucket_policy.py).
+
+## Creating Zarr collections
+
+Each Zarr collection will correspond to a single Zarr group. When
+creating a collection, you need to provide:
+
+-   the S3 bucket where you data is located,
+-   the path in the bucket where the Zarr group resides, that is, the
+    directory containing the `.zgroup` file,
+-   the CRS in which your data is defined,
+-   a name for the collection.
+
+## Ingesting the arrays
+
+After a collection is created, the ingestion will start automatically.
+The service will try to ingest every data array found in the group in
+the given S3 bucket and path. If the Zarr data does not fulfill any of
+the above [constraints](#data-constraints), the ingestion will either
+fail entirely or the offending data arrays will be skipped.
+
+Zarr service automatically configures collection bands named after the
+data arrays of the Zarr group, that is, the folder names of the arrays.
+For example, in a Zarr file that contains `B1` and `B2` array folders,
+the resulting arrays will be named `B1` and `B2`.
+
+The no data value will be read from data arrays\' metadata, that is,
+from the `fill_value` property inside the array\'s `.zarray` file.
+
+### Querying ingestion status
+
+Querying a collection will return the status of the ingestion as well as
+an error message if something went wrong. If the returned status is
+`INGESTED` you can start using your new zarr data with Sentinel Hub
+services.
+
+## Reingesting the Zarr collection
+
+When reingesting the Zarr, the data already ingested **cannot** be
+changed, but new chunks can be added to the existing data arrays and the
+temporal array can be expanded accordingly.
+
+## Examples
+
+[Zarr Import API Examples](/APIs/SentinelHub/Zarr/Examples.qmd)

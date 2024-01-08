@@ -73,14 +73,14 @@ curl --request POST --url https://identity.dataspace.copernicus.eu/auth/realms/C
 #### Postman
 
 In the Postman request `Authorization` tab set the `Type` to `OAuth 2.0`
-and `Add the authorization data` to `Request Headers`. Then click the
-`Get New Access Token` button. Set the `Grant Type` to
+and `Add auth data to` to `Request Headers`. Set the `Grant Type` to
 `Client Credentials`, the access token URL to the token endpoint, then
 set the `Client ID` and `Client Secret` to the values of your OAuth
-Client. `Scope` can be blank. Keep `Client Authentication` as
-`Send As Basic Auth Header`. Click `Request Token`. You should get a new
-one immediately. To use this token to authorize your request, click
-`Use Token`. For more information see the Postman [authorization
+Client. `Scope` can be blank. Set `Client Authentication` to
+`Send client credentials in body`. Click `Get New Access Token` button.
+You should get a new one immediately. To use this token to authorize
+your request, click `Use Token`. For more information see the Postman
+[authorization
 documentation](https://learning.getpostman.com/docs/postman/sending_api_requests/authorization/#oauth-20){target="_blank"}
 
 #### Python
@@ -104,7 +104,7 @@ oauth = OAuth2Session(client=client)
 
 # Get token for the session
 token = oauth.fetch_token(token_url='https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token',
-                          client_secret=client_secret)
+                          client_secret=client_secret, include_client_id=True)
 
 # All requests using this session will have an access token automatically added
 resp = oauth.get("...")
