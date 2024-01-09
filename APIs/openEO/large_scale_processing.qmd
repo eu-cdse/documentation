@@ -3,10 +3,10 @@ title: "Large scale processing"
 ---
 
 Processing of larger areas extending to a global scale is one of the more challenging tasks in earth observation, 
-but certainly one that this platform aims to tackle. In this page we describe one of the best practice based on the example of [processing a croptype map for all 27 countries in the European Union](https://github.com/openEOPlatform/openeo-classification){target="_blank"}. We do recommend you to reaching out to backend providers regarding your particular case, as workflows can vary, and adequate processing resources may require some advanced planning.
+but certainly one that this platform aims to tackle. In this page we describe one of the best practice based on the example of [processing a croptype map for all 27 countries in the European Union](https://github.com/openEOPlatform/openeo-classification){target="_blank"}. We do recommend you to reaching out on the forum or helpdesk regarding your particular case, as workflows can vary, and adequate processing resources may require some advanced planning.
 
 
-![EU27 croptype map, processed on openEO platform](https://raw.githubusercontent.com/openEOPlatform/openeo-classification/60aa7a869f9000b1795afe2c9dde0d7977bcdbc6/docs/full_europe.png)
+![EU27 croptype map, processed on openEO](https://raw.githubusercontent.com/openEOPlatform/openeo-classification/60aa7a869f9000b1795afe2c9dde0d7977bcdbc6/docs/full_europe.png)
 
 The approach described here is based on local files to track the production. This is a low-cost approach that does not require special IT knowledge but comes with some risks, such as losing your local files. A more robust approach for production-grade projects would typically rely on some sort of database or STAC catalogue service to monitor processing. Such a setup is, however quite similar in many aspects.
 
@@ -66,7 +66,7 @@ In this step, you may also want to make sure to determine the correct tile exten
 
 Before kicking off large processing, you want to be very sure that the correct output is generated and that you have sufficient credits and resources available to finish your job in time. This can be done by simply running various jobs and using the statistics reported in the metadata to determine average parameters. (The map production section below shows a way to collect these parameters in a CSV.)
 
-For instance, for the case of processing the EU27 croptype map, consisting of ~11000 20km tiles, we made the following calculations op front:
+For instance, for the case of processing the EU27 croptype map, consisting of ~11000 20km tiles, we made the following calculations up front:
 
 - The average runtime was 30 minutes, which means that it would take ~15 days of continuous processing with 15 parallel jobs.
 - The average cost was below 100 credits, so we would be able to process with a budget of 1100000 credits.
@@ -75,7 +75,7 @@ To achieve these numbers, we did have to optimize batch job settings and the ove
 
 A common bottleneck to parallelization is memory consumption, and it can be useful to know the maximum memory allocation on a single machine in your backend of choice. For instance, in a cloud environment with 16GB per machine and 4 CPUs, using slightly less than 4GB per worker is efficient as you can fit 4 parallel workers on a single VM while requiring 6GB would fit only 2 workers and leave about 4GB unused.
 
-In our example, we used the Geotrellis backends, which had similar execution options to [this](https://documentation.dataspace.copernicus.eu/APIs/openEO/job_config.html#customizing-batch-job-resources).
+In our example, we used the openEO backend running on the Copernicus dataspace, which is based on Geotrellis, the execution options are documented [here](https://documentation.dataspace.copernicus.eu/APIs/openEO/job_config.html#customizing-batch-job-resources).
 
 ## Starting map production
 
