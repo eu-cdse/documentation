@@ -1074,7 +1074,7 @@ window.onload = function() {
   <li><a href="#odata" id="toc-odata" class="nav-link active" data-scroll-target="#odata">OData</a>
   <ul>
   <li><a href="#setting-our-search-parameters" id="toc-setting-our-search-parameters" class="nav-link" data-scroll-target="#setting-our-search-parameters">Setting our search parameters</a></li>
-  <li><a href="#retrieving-your-keycloak-token" id="toc-retrieving-your-keycloak-token" class="nav-link" data-scroll-target="#retrieving-your-keycloak-token">Retrieving your Keycloak Token</a></li>
+  <li><a href="#retrieving-your-access-token" id="toc-retrieving-your-access-token" class="nav-link" data-scroll-target="#retrieving-your-access-token">Retrieving your Access Token</a></li>
   </ul></li>
   <li><a href="#accessing-data-via-sentinel-hub-apis" id="toc-accessing-data-via-sentinel-hub-apis" class="nav-link" data-scroll-target="#accessing-data-via-sentinel-hub-apis">Accessing data via Sentinel Hub APIs</a>
   <ul>
@@ -1136,6 +1136,10 @@ window.onload = function() {
 <span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> utils <span class="im">import</span> plot_image</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/Users/williamray/miniconda3/envs/sentinelhub_base/lib/python3.9/site-packages/tqdm/auto.py:21: TqdmWarning: IProgress not found. Please update jupyter and ipywidgets. See https://ipywidgets.readthedocs.io/en/stable/user_install.html
+  from .autonotebook import tqdm as notebook_tqdm</code></pre>
+</div>
 </div>
 <section id="odata" class="level2">
 <h2 class="anchored" data-anchor-id="odata">OData</h2>
@@ -1145,17 +1149,17 @@ window.onload = function() {
 <h3 class="anchored" data-anchor-id="setting-our-search-parameters">Setting our search parameters</h3>
 <p>Firstly, we need to define our <code>start_date</code> and <code>end_date</code>, the <code>data_collection</code> and the area of interest (<code>aoi</code>). We define them in the next cell and will insert them into our request as string variables.</p>
 <div class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>start_date <span class="op">=</span> <span class="st">"2022-06-01"</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>end_date <span class="op">=</span> <span class="st">"2022-06-10"</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>data_collection <span class="op">=</span> <span class="st">"SENTINEL-2"</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>aoi <span class="op">=</span> <span class="st">"POLYGON((4.220581 50.958859,4.521264 50.953236,4.545977 50.906064,4.541858 50.802029,4.489685 50.763825,4.23843 50.767734,4.192435 50.806369,4.189689 50.907363,4.220581 50.958859))'"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>start_date <span class="op">=</span> <span class="st">"2022-06-01"</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>end_date <span class="op">=</span> <span class="st">"2022-06-10"</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>data_collection <span class="op">=</span> <span class="st">"SENTINEL-2"</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>aoi <span class="op">=</span> <span class="st">"POLYGON((4.220581 50.958859,4.521264 50.953236,4.545977 50.906064,4.541858 50.802029,4.489685 50.763825,4.23843 50.767734,4.192435 50.806369,4.189689 50.907363,4.220581 50.958859))'"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>To search the catalogue we use the following code block:</p>
 <div class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name eq '</span><span class="sc">{</span>data_collection<span class="sc">}</span><span class="ss">' and OData.CSC.Intersects(area=geography'SRID=4326;</span><span class="sc">{</span>aoi<span class="sc">}</span><span class="ss">) and ContentDate/Start gt </span><span class="sc">{</span>start_date<span class="sc">}</span><span class="ss">T00:00:00.000Z and ContentDate/Start lt </span><span class="sc">{</span>end_date<span class="sc">}</span><span class="ss">T00:00:00.000Z"</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>).json()</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>pd.DataFrame.from_dict(json[<span class="st">"value"</span>]).head(<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name eq '</span><span class="sc">{</span>data_collection<span class="sc">}</span><span class="ss">' and OData.CSC.Intersects(area=geography'SRID=4326;</span><span class="sc">{</span>aoi<span class="sc">}</span><span class="ss">) and ContentDate/Start gt </span><span class="sc">{</span>start_date<span class="sc">}</span><span class="ss">T00:00:00.000Z and ContentDate/Start lt </span><span class="sc">{</span>end_date<span class="sc">}</span><span class="ss">T00:00:00.000Z"</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>).json()</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>pd.DataFrame.from_dict(json[<span class="st">"value"</span>]).head(<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="3">
 <div>
 
@@ -1185,6 +1189,24 @@ window.onload = function() {
 <tr class="odd">
 <td data-quarto-table-cell-role="th">0</td>
 <td>application/octet-stream</td>
+<td>4b4c6531-ad85-588d-8088-102e7ac30abc</td>
+<td>S2B_MSIL1C_20220604T104619_N0400_R051_T31UES_2...</td>
+<td>application/octet-stream</td>
+<td>0</td>
+<td>2022-06-04T14:48:01.546Z</td>
+<td>2022-06-04T14:55:02.871Z</td>
+<td>2022-06-04T14:55:02.871Z</td>
+<td>True</td>
+<td></td>
+<td>/eodata/Sentinel-2/MSI/L1C/2022/06/04/S2B_MSIL...</td>
+<td>[]</td>
+<td>{'Start': '2022-06-04T10:46:19.024Z', 'End': '...</td>
+<td>geography'SRID=4326;POLYGON ((2.9997121758513 ...</td>
+<td>{'type': 'Polygon', 'coordinates': [[[2.999712...</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>application/octet-stream</td>
 <td>acdd7b9a-a5d4-5d10-9ac8-554623b8a0c9</td>
 <td>S2B_MSIL2A_20220604T104619_N0400_R051_T31UES_2...</td>
 <td>application/octet-stream</td>
@@ -1200,26 +1222,44 @@ window.onload = function() {
 <td>geography'SRID=4326;POLYGON ((2.9997121758513 ...</td>
 <td>{'type': 'Polygon', 'coordinates': [[[2.999712...</td>
 </tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">1</td>
-<td>application/octet-stream</td>
-<td>f367d684-efc8-524c-8f6c-c1ba5f98e194</td>
-<td>S2B_MSIL1C_20220604T104619_N0400_R051_T31UFS_2...</td>
-<td>application/octet-stream</td>
-<td>0</td>
-<td>2022-06-04T14:52:03.991Z</td>
-<td>2022-06-04T14:58:26.701Z</td>
-<td>2022-06-04T14:58:26.701Z</td>
-<td>True</td>
-<td></td>
-<td>/eodata/Sentinel-2/MSI/L1C/2022/06/04/S2B_MSIL...</td>
-<td>[]</td>
-<td>{'Start': '2022-06-04T10:46:19.024Z', 'End': '...</td>
-<td>geography'SRID=4326;POLYGON ((5.9668999503726 ...</td>
-<td>{'type': 'Polygon', 'coordinates': [[[5.966899...</td>
-</tr>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">2</td>
+<td>application/octet-stream</td>
+<td>f2790789-52f5-571a-9a61-17650852d9bd</td>
+<td>S2A_MSIL1C_20220609T104631_N0400_R051_T31UES_2...</td>
+<td>application/octet-stream</td>
+<td>0</td>
+<td>2022-06-09T17:48:40.156Z</td>
+<td>2022-06-09T17:56:27.164Z</td>
+<td>2022-06-09T17:56:27.164Z</td>
+<td>True</td>
+<td></td>
+<td>/eodata/Sentinel-2/MSI/L1C/2022/06/09/S2A_MSIL...</td>
+<td>[]</td>
+<td>{'Start': '2022-06-09T10:46:31.024Z', 'End': '...</td>
+<td>geography'SRID=4326;POLYGON ((2.9997121758513 ...</td>
+<td>{'type': 'Polygon', 'coordinates': [[[2.999712...</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>application/octet-stream</td>
+<td>a5f89f85-362d-5bb3-a321-403044ca872e</td>
+<td>S2A_MSIL2A_20220609T104631_N0400_R051_T31UES_2...</td>
+<td>application/octet-stream</td>
+<td>0</td>
+<td>2022-06-09T19:18:07.672Z</td>
+<td>2022-06-10T06:39:41.624Z</td>
+<td>2022-06-10T06:39:41.624Z</td>
+<td>True</td>
+<td></td>
+<td>/eodata/Sentinel-2/MSI/L2A/2022/06/09/S2A_MSIL...</td>
+<td>[]</td>
+<td>{'Start': '2022-06-09T10:46:31.024Z', 'End': '...</td>
+<td>geography'SRID=4326;POLYGON ((2.9997121758513 ...</td>
+<td>{'type': 'Polygon', 'coordinates': [[[2.999712...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
 <td>application/octet-stream</td>
 <td>f83b6e00-8669-5f6c-96e1-f8c82dd98909</td>
 <td>S2B_MSIL1C_20220601T103629_N0400_R008_T31UES_2...</td>
@@ -1236,42 +1276,6 @@ window.onload = function() {
 <td>geography'SRID=4326;POLYGON ((4.0716897587579 ...</td>
 <td>{'type': 'Polygon', 'coordinates': [[[4.071689...</td>
 </tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">3</td>
-<td>application/octet-stream</td>
-<td>6db4f178-b416-5fe7-98d4-1cef9214a1fb</td>
-<td>S2A_MSIL2A_20220606T103631_N0400_R008_T31UES_2...</td>
-<td>application/octet-stream</td>
-<td>0</td>
-<td>2022-06-06T20:23:16.212Z</td>
-<td>2022-06-06T20:53:41.413Z</td>
-<td>2022-06-06T20:53:41.413Z</td>
-<td>True</td>
-<td></td>
-<td>/eodata/Sentinel-2/MSI/L2A/2022/06/06/S2A_MSIL...</td>
-<td>[]</td>
-<td>{'Start': '2022-06-06T10:36:31.024Z', 'End': '...</td>
-<td>geography'SRID=4326;POLYGON ((4.0740131839748 ...</td>
-<td>{'type': 'Polygon', 'coordinates': [[[4.074013...</td>
-</tr>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">4</td>
-<td>application/octet-stream</td>
-<td>4b4c6531-ad85-588d-8088-102e7ac30abc</td>
-<td>S2B_MSIL1C_20220604T104619_N0400_R051_T31UES_2...</td>
-<td>application/octet-stream</td>
-<td>0</td>
-<td>2022-06-04T14:48:01.546Z</td>
-<td>2022-06-04T14:55:02.870Z</td>
-<td>2022-06-04T14:55:02.870Z</td>
-<td>True</td>
-<td></td>
-<td>/eodata/Sentinel-2/MSI/L1C/2022/06/04/S2B_MSIL...</td>
-<td>[]</td>
-<td>{'Start': '2022-06-04T10:46:19.024Z', 'End': '...</td>
-<td>geography'SRID=4326;POLYGON ((2.9997121758513 ...</td>
-<td>{'type': 'Polygon', 'coordinates': [[[2.999712...</td>
-</tr>
 </tbody>
 </table>
 
@@ -1279,55 +1283,62 @@ window.onload = function() {
 </div>
 </div>
 </section>
-<section id="retrieving-your-keycloak-token" class="level3">
-<h3 class="anchored" data-anchor-id="retrieving-your-keycloak-token">Retrieving your Keycloak Token</h3>
-<p>Whilst no credentials are needed to search the catalogue; in order to download products from Copernicus Data Space Ecosystem catalogue using OData and OpenSearch API users are required to have a Keycloak token. This token can be generated in both Linux and Window OS using either <code>cURL</code> or <code>python</code> script. You can generate this token using the following code block (more information can be found in our <a href="https://documentation.dataspace.copernicus.eu/APIs/Token.html">documentation</a>).</p>
-<p>To obtain your token, you are required to provide your Copernicus Data Space Ecosystem <code>username</code> and <code>password</code>. In this example, we import them from a Python file called <code>creds.py</code> and import the credentials as variables into the <code>get_keycloak()</code> function (To run the following cell yourself, you will need to create this file yourself.).</p>
-<div class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Import credentials</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># from creds import *</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_keycloak(username: <span class="bu">str</span>, password: <span class="bu">str</span>) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    data <span class="op">=</span> {</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"client_id"</span>: <span class="st">"cdse-public"</span>,</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">"username"</span>: username,</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">"password"</span>: password,</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>        <span class="st">"grant_type"</span>: <span class="st">"password"</span>,</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>:</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>        r <span class="op">=</span> requests.post(</span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>            <span class="st">"https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token"</span>,</span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>            data<span class="op">=</span>data,</span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>        )</span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>        r.raise_for_status()</span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">except</span> <span class="pp">Exception</span> <span class="im">as</span> e:</span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> <span class="pp">Exception</span>(</span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>            <span class="ss">f"Keycloak token creation failed. Reponse from the server was: </span><span class="sc">{</span>r<span class="sc">.</span>json()<span class="sc">}</span><span class="ss">"</span></span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>        )</span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> r.json()[<span class="st">"access_token"</span>]</span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>keycloak_token <span class="op">=</span> get_keycloak(</span>
-<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>    getpass.getpass(<span class="st">"Enter your username"</span>),</span>
-<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>    getpass.getpass(<span class="st">"Enter your password"</span>),</span>
-<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="retrieving-your-access-token" class="level3">
+<h3 class="anchored" data-anchor-id="retrieving-your-access-token">Retrieving your Access Token</h3>
+<p>Whilst no credentials are needed to search the catalogue; in order to download products from Copernicus Data Space Ecosystem catalogue using OData and OpenSearch API users are required to have an Access token. This token can be generated in both Linux and Window OS using either <code>cURL</code> or <code>python</code> script. You can generate this token using the following code block (more information can be found in our <a href="https://documentation.dataspace.copernicus.eu/APIs/Token.html">documentation</a>).</p>
+<p>To obtain your token, you are required to provide your Copernicus Data Space Ecosystem <code>username</code> and <code>password</code>. In this example, we import them from a Python file called <code>creds.py</code> and import the credentials as variables into the <code>get_access_token()</code> function (To run the following cell yourself, you will need to create this file yourself).</p>
+<div class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Import credentials</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># from creds import *</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_access_token(username: <span class="bu">str</span>, password: <span class="bu">str</span>) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    data <span class="op">=</span> {</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"client_id"</span>: <span class="st">"cdse-public"</span>,</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">"username"</span>: username,</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">"password"</span>: password,</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>        <span class="st">"grant_type"</span>: <span class="st">"password"</span>,</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>:</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>        r <span class="op">=</span> requests.post(</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>            <span class="st">"https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token"</span>,</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>            data<span class="op">=</span>data,</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>        r.raise_for_status()</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">except</span> <span class="pp">Exception</span> <span class="im">as</span> e:</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> <span class="pp">Exception</span>(</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>            <span class="ss">f"Access token creation failed. Reponse from the server was: </span><span class="sc">{</span>r<span class="sc">.</span>json()<span class="sc">}</span><span class="ss">"</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> r.json()[<span class="st">"access_token"</span>]</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>access_token <span class="op">=</span> get_access_token(<span class="st">"USERNAME"</span>, <span class="st">"PASSWORD"</span>)</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>access_token <span class="op">=</span> get_access_token(</span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>    getpass.getpass(<span class="st">"Enter your username"</span>),</span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>    getpass.getpass(<span class="st">"Enter your password"</span>),</span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Enter your username ········
+Enter your password ········</code></pre>
+</div>
 </div>
 <p>Once you have your token, you require a product Id which can be found in the response of the products search: https://catalogue.dataspace.copernicus.eu/odata/v1/Products. This can either be parsed or copied from the json response we have already generated. We insert the product Id into the url parameter in the below cell.</p>
 <p>Running the cell will download the zipped Sentinel-2 L2A Granule to the same directory as the Jupyter Notebook:</p>
-<div class="cell" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>session <span class="op">=</span> requests.Session()</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>session.headers.update({<span class="st">"Authorization"</span>: <span class="ss">f"Bearer </span><span class="sc">{</span>keycloak_token<span class="sc">}</span><span class="ss">"</span>})</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>url <span class="op">=</span> <span class="ss">f"https://catalogue.dataspace.copernicus.eu/odata/v1/Products(acdd7b9a-a5d4-5d10-9ac8-554623b8a0c9)/$value"</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>response <span class="op">=</span> session.get(url, allow_redirects<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> response.status_code <span class="kw">in</span> (<span class="dv">301</span>, <span class="dv">302</span>, <span class="dv">303</span>, <span class="dv">307</span>):</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    url <span class="op">=</span> response.headers[<span class="st">"Location"</span>]</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    response <span class="op">=</span> session.get(url, allow_redirects<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="bu">file</span> <span class="op">=</span> session.get(url, verify<span class="op">=</span><span class="va">False</span>, allow_redirects<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> <span class="bu">open</span>(<span class="ss">f"product.zip"</span>, <span class="st">"wb"</span>) <span class="im">as</span> p:</span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    p.write(<span class="bu">file</span>.content)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>url <span class="op">=</span> <span class="ss">f"https://zipper.dataspace.copernicus.eu/odata/v1/Products(acdd7b9a-a5d4-5d10-9ac8-554623b8a0c9)/$value"</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>headers <span class="op">=</span> {<span class="st">"Authorization"</span>: <span class="ss">f"Bearer </span><span class="sc">{</span>access_token<span class="sc">}</span><span class="ss">"</span>}</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>session <span class="op">=</span> requests.Session()</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>session.headers.update(headers)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>response <span class="op">=</span> session.get(url, headers<span class="op">=</span>headers, stream<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> <span class="bu">open</span>(<span class="st">"product.zip"</span>, <span class="st">"wb"</span>) <span class="im">as</span> <span class="bu">file</span>:</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> chunk <span class="kw">in</span> response.iter_content(chunk_size<span class="op">=</span><span class="dv">8192</span>):</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> chunk:</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>            <span class="bu">file</span>.write(chunk)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
@@ -1338,22 +1349,22 @@ window.onload = function() {
 <p>To successfully run this notebook, make sure that you install or upgrade to at least Version <code>3.9.1</code>.</p>
 <section id="credentials" class="level3">
 <h3 class="anchored" data-anchor-id="credentials">Credentials</h3>
-<p>Credentials for Sentinel Hub services (<code>client_id</code> &amp; <code>client_secret</code>) can be obtained in your <a href="https://shapps.dataspace.copernicus.eu/dashboard/#/">Dashboard</a>. In the User Settings you can create a new OAuth Client to generate these credentials. For more detailed instructions, visit the relevent <a href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Overview/Authentication.html">documentation page</a>.</p>
+<p>Credentials for Sentinel Hub services (<code>client_id</code> &amp; <code>client_secret</code>) can be obtained in your <a href="https://shapps.dataspace.copernicus.eu/dashboard/#/">Dashboard</a>. In the User Settings you can create a new OAuth Client to generate these credentials. For more detailed instructions, visit the relevant <a href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Overview/Authentication.html">documentation page</a>.</p>
 <p>Now that you have your <code>client_id</code> &amp; <code>client_secret</code>, it is recommended to configure a new profile in your Sentinel Hub Python package. Instructions on how to configure your Sentinel Hub Python package can be found <a href="https://sentinelhub-py.readthedocs.io/en/latest/configure.html">here</a>. Using these instructions you can create a profile specific to using the package for accessing Copernicus Data Space Ecosystem data collections. This is useful as changes to the the config class are usually only temporary in your notebook and by saving the configuration to your profile you won’t need to generate new credentials or overwrite/change the default profile each time you rerun or write a new Jupyter Notebook.</p>
 <p>If you are a first time user of the Sentinel Hub Python package for Copernicus Data Space Ecosystem, you should create a profile specific to the Copernicus Data Space Ecosystem. You can do this in the following cell:</p>
 <div class="cell" data-tags="[]">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Only run this cell if you have not created a configuration.</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>config <span class="op">=</span> SHConfig()</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co"># config.sh_client_id = getpass.getpass("Enter your SentinelHub client id")</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co"># config.sh_client_secret = getpass.getpass("Enter your SentinelHub client secret")</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>config.sh_token_url <span class="op">=</span> <span class="st">"https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token"</span></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>config.sh_base_url <span class="op">=</span> <span class="st">"https://sh.dataspace.copernicus.eu"</span></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="co"># config.save("cdse")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Only run this cell if you have not created a configuration.</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>config <span class="op">=</span> SHConfig()</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># config.sh_client_id = getpass.getpass("Enter your SentinelHub client id")</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co"># config.sh_client_secret = getpass.getpass("Enter your SentinelHub client secret")</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>config.sh_token_url <span class="op">=</span> <span class="st">"https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token"</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>config.sh_base_url <span class="op">=</span> <span class="st">"https://sh.dataspace.copernicus.eu"</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="co"># config.save("cdse")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>However, if you have already configured a profile in Sentinel Hub Python for the Copernicus Data Space Ecosystem, then you can run the below cell entering the profile name as a string replacing <code>profile_name</code>.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># config = SHConfig("profile_name")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># config = SHConfig("profile_name")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="setting-an-area-of-interest" class="level3">
@@ -1361,15 +1372,15 @@ window.onload = function() {
 <p>The bounding box in <code>WGS84</code> coordinate system is <code>[(longitude and latitude coordinates of lower left and upper right corners)]</code>. You can get the bbox for a different area at the <a href="http://bboxfinder.com/">bboxfinder</a> website.</p>
 <p>All requests require a bounding box to be given as an instance of <code>sentinelhub.geometry.BBox</code> with corresponding Coordinate Reference System (<code>sentinelhub.constants.CRS</code>). In our case it is in WGS84 and we can use the predefined WGS84 coordinate reference system from <code>sentinelhub.constants.CRS</code>.</p>
 <div class="cell" data-execution_count="7">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>aoi_coords_wgs84 <span class="op">=</span> [<span class="fl">4.20762</span>, <span class="fl">50.764694</span>, <span class="fl">4.487708</span>, <span class="fl">50.916455</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>aoi_coords_wgs84 <span class="op">=</span> [<span class="fl">4.20762</span>, <span class="fl">50.764694</span>, <span class="fl">4.487708</span>, <span class="fl">50.916455</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>When the bounding box bounds have been defined, you can initialize the <code>BBox</code> of the area of interest. Using the <code>bbox_to_dimensions</code> utility function, you can provide the desired resolution parameter of the image in meters and obtain the output image shape.</p>
 <div class="cell" data-execution_count="8">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>resolution <span class="op">=</span> <span class="dv">10</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>aoi_bbox <span class="op">=</span> BBox(bbox<span class="op">=</span>aoi_coords_wgs84, crs<span class="op">=</span>CRS.WGS84)</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>aoi_size <span class="op">=</span> bbox_to_dimensions(aoi_bbox, resolution<span class="op">=</span>resolution)</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Image shape at </span><span class="sc">{</span>resolution<span class="sc">}</span><span class="ss"> m resolution: </span><span class="sc">{</span>aoi_size<span class="sc">}</span><span class="ss"> pixels"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>resolution <span class="op">=</span> <span class="dv">10</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>aoi_bbox <span class="op">=</span> BBox(bbox<span class="op">=</span>aoi_coords_wgs84, crs<span class="op">=</span>CRS.WGS84)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>aoi_size <span class="op">=</span> bbox_to_dimensions(aoi_bbox, resolution<span class="op">=</span>resolution)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Image shape at </span><span class="sc">{</span>resolution<span class="sc">}</span><span class="ss"> m resolution: </span><span class="sc">{</span>aoi_size<span class="sc">}</span><span class="ss"> pixels"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Image shape at 10 m resolution: (1941, 1723) pixels</code></pre>
 </div>
@@ -1379,24 +1390,24 @@ window.onload = function() {
 <h3 class="anchored" data-anchor-id="catalog-api">Catalog API</h3>
 <p>To search and discover data, you can use the Catalog API. Sentinel Hub Catalog API (or shortly “Catalog”) is an API implementing the STAC Specification, providing geospatial information for data available in Sentinel Hub. Firstly, to initialise the <code>SentinelHubCatalog</code> class we will use:</p>
 <div class="cell" data-execution_count="9">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>catalog <span class="op">=</span> SentinelHubCatalog(config<span class="op">=</span>config)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>catalog <span class="op">=</span> SentinelHubCatalog(config<span class="op">=</span>config)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Now we can build the Catalog API request; to do this we use the <code>aoi_bbox</code> we defined earlier as well as <code>time_interval</code> and insert these into the request:</p>
 <div class="cell" data-execution_count="10">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>aoi_bbox <span class="op">=</span> BBox(bbox<span class="op">=</span>aoi_coords_wgs84, crs<span class="op">=</span>CRS.WGS84)</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>time_interval <span class="op">=</span> <span class="st">"2022-07-01"</span>, <span class="st">"2022-07-20"</span></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>search_iterator <span class="op">=</span> catalog.search(</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    DataCollection.SENTINEL2_L2A,</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    bbox<span class="op">=</span>aoi_bbox,</span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    time<span class="op">=</span>time_interval,</span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    fields<span class="op">=</span>{<span class="st">"include"</span>: [<span class="st">"id"</span>, <span class="st">"properties.datetime"</span>], <span class="st">"exclude"</span>: []},</span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>results <span class="op">=</span> <span class="bu">list</span>(search_iterator)</span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Total number of results:"</span>, <span class="bu">len</span>(results))</span>
-<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>results</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>aoi_bbox <span class="op">=</span> BBox(bbox<span class="op">=</span>aoi_coords_wgs84, crs<span class="op">=</span>CRS.WGS84)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>time_interval <span class="op">=</span> <span class="st">"2022-07-01"</span>, <span class="st">"2022-07-20"</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>search_iterator <span class="op">=</span> catalog.search(</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    DataCollection.SENTINEL2_L2A,</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    bbox<span class="op">=</span>aoi_bbox,</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    time<span class="op">=</span>time_interval,</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    fields<span class="op">=</span>{<span class="st">"include"</span>: [<span class="st">"id"</span>, <span class="st">"properties.datetime"</span>], <span class="st">"exclude"</span>: []},</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>results <span class="op">=</span> <span class="bu">list</span>(search_iterator)</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Total number of results:"</span>, <span class="bu">len</span>(results))</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>results</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Total number of results: 16</code></pre>
 </div>
@@ -1445,66 +1456,66 @@ window.onload = function() {
 <p>The evalscript in the example is used to select the appropriate bands. We return the RGB (B04, B03, B02) Sentinel-2 L2A bands.</p>
 <p>The least cloudy image from the time period is downloaded. Without any additional parameters in the evalscript, the downloaded data will correspond to reflectance values in <code>UINT8</code> format (values in 0-255 range).</p>
 <div class="cell" data-execution_count="11">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>evalscript_true_color <span class="op">=</span> <span class="st">"""</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="st">    //VERSION=3</span></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="st">    function setup() {</span></span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="st">        return {</span></span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="st">            input: [{</span></span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="st">                bands: ["B02", "B03", "B04"]</span></span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="st">            }],</span></span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="st">            output: {</span></span>
-<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="st">                bands: 3</span></span>
-<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="st">            }</span></span>
-<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="st">        };</span></span>
-<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a><span class="st">    }</span></span>
-<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a><span class="st">    function evaluatePixel(sample) {</span></span>
-<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a><span class="st">        return [sample.B04, sample.B03, sample.B02];</span></span>
-<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a><span class="st">    }</span></span>
-<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span>
-<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>request_true_color <span class="op">=</span> SentinelHubRequest(</span>
-<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>    evalscript<span class="op">=</span>evalscript_true_color,</span>
-<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>    input_data<span class="op">=</span>[</span>
-<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>        SentinelHubRequest.input_data(</span>
-<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a>            data_collection<span class="op">=</span>DataCollection.SENTINEL2_L2A.define_from(</span>
-<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a>                name<span class="op">=</span><span class="st">"s2"</span>, service_url<span class="op">=</span><span class="st">"https://sh.dataspace.copernicus.eu"</span></span>
-<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a>            ),</span>
-<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a>            time_interval<span class="op">=</span>(<span class="st">"2022-07-01"</span>, <span class="st">"2022-07-20"</span>),</span>
-<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a>            other_args<span class="op">=</span>{<span class="st">"dataFilter"</span>: {<span class="st">"mosaickingOrder"</span>: <span class="st">"leastCC"</span>}},</span>
-<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a>        )</span>
-<span id="cb15-30"><a href="#cb15-30" aria-hidden="true" tabindex="-1"></a>    ],</span>
-<span id="cb15-31"><a href="#cb15-31" aria-hidden="true" tabindex="-1"></a>    responses<span class="op">=</span>[SentinelHubRequest.output_response(<span class="st">"default"</span>, MimeType.PNG)],</span>
-<span id="cb15-32"><a href="#cb15-32" aria-hidden="true" tabindex="-1"></a>    bbox<span class="op">=</span>aoi_bbox,</span>
-<span id="cb15-33"><a href="#cb15-33" aria-hidden="true" tabindex="-1"></a>    size<span class="op">=</span>aoi_size,</span>
-<span id="cb15-34"><a href="#cb15-34" aria-hidden="true" tabindex="-1"></a>    config<span class="op">=</span>config,</span>
-<span id="cb15-35"><a href="#cb15-35" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>evalscript_true_color <span class="op">=</span> <span class="st">"""</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="st">    //VERSION=3</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="st">    function setup() {</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="st">        return {</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="st">            input: [{</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="st">                bands: ["B02", "B03", "B04"]</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="st">            }],</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="st">            output: {</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="st">                bands: 3</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a><span class="st">            }</span></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a><span class="st">        };</span></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a><span class="st">    }</span></span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a><span class="st">    function evaluatePixel(sample) {</span></span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a><span class="st">        return [sample.B04, sample.B03, sample.B02];</span></span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a><span class="st">    }</span></span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a>request_true_color <span class="op">=</span> SentinelHubRequest(</span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a>    evalscript<span class="op">=</span>evalscript_true_color,</span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a>    input_data<span class="op">=</span>[</span>
+<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a>        SentinelHubRequest.input_data(</span>
+<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a>            data_collection<span class="op">=</span>DataCollection.SENTINEL2_L2A.define_from(</span>
+<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a>                name<span class="op">=</span><span class="st">"s2"</span>, service_url<span class="op">=</span><span class="st">"https://sh.dataspace.copernicus.eu"</span></span>
+<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a>            ),</span>
+<span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a>            time_interval<span class="op">=</span>(<span class="st">"2022-07-01"</span>, <span class="st">"2022-07-20"</span>),</span>
+<span id="cb17-28"><a href="#cb17-28" aria-hidden="true" tabindex="-1"></a>            other_args<span class="op">=</span>{<span class="st">"dataFilter"</span>: {<span class="st">"mosaickingOrder"</span>: <span class="st">"leastCC"</span>}},</span>
+<span id="cb17-29"><a href="#cb17-29" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb17-30"><a href="#cb17-30" aria-hidden="true" tabindex="-1"></a>    ],</span>
+<span id="cb17-31"><a href="#cb17-31" aria-hidden="true" tabindex="-1"></a>    responses<span class="op">=</span>[SentinelHubRequest.output_response(<span class="st">"default"</span>, MimeType.PNG)],</span>
+<span id="cb17-32"><a href="#cb17-32" aria-hidden="true" tabindex="-1"></a>    bbox<span class="op">=</span>aoi_bbox,</span>
+<span id="cb17-33"><a href="#cb17-33" aria-hidden="true" tabindex="-1"></a>    size<span class="op">=</span>aoi_size,</span>
+<span id="cb17-34"><a href="#cb17-34" aria-hidden="true" tabindex="-1"></a>    config<span class="op">=</span>config,</span>
+<span id="cb17-35"><a href="#cb17-35" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The method <code>get_data()</code> will always return a list of length 1 with the available image from the requested time interval in the form of numpy arrays.</p>
 <div class="cell" data-execution_count="12">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>true_color_imgs <span class="op">=</span> request_true_color.get_data()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>true_color_imgs <span class="op">=</span> request_true_color.get_data()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell" data-execution_count="13">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"Returned data is of type = </span><span class="sc">{</span><span class="bu">type</span>(true_color_imgs)<span class="sc">}</span><span class="ss"> and length </span><span class="sc">{</span><span class="bu">len</span>(true_color_imgs)<span class="sc">}</span><span class="ss">."</span></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(</span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"Single element in the list is of type </span><span class="sc">{</span><span class="bu">type</span>(true_color_imgs[<span class="op">-</span><span class="dv">1</span>])<span class="sc">}</span><span class="ss"> and has shape </span><span class="sc">{</span>true_color_imgs[<span class="op">-</span><span class="dv">1</span>]<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">"</span></span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"Returned data is of type = </span><span class="sc">{</span><span class="bu">type</span>(true_color_imgs)<span class="sc">}</span><span class="ss"> and length </span><span class="sc">{</span><span class="bu">len</span>(true_color_imgs)<span class="sc">}</span><span class="ss">."</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"Single element in the list is of type </span><span class="sc">{</span><span class="bu">type</span>(true_color_imgs[<span class="op">-</span><span class="dv">1</span>])<span class="sc">}</span><span class="ss"> and has shape </span><span class="sc">{</span>true_color_imgs[<span class="op">-</span><span class="dv">1</span>]<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">"</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Returned data is of type = &lt;class 'list'&gt; and length 1.
 Single element in the list is of type &lt;class 'numpy.ndarray'&gt; and has shape (1723, 1941, 3)</code></pre>
 </div>
 </div>
 <div class="cell" data-execution_count="14">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>image <span class="op">=</span> true_color_imgs[<span class="dv">0</span>]</span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Image type: </span><span class="sc">{</span>image<span class="sc">.</span>dtype<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="co"># plot function</span></span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="co"># factor 1/255 to scale between 0-1</span></span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="co"># factor 3.5 to increase brightness</span></span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>plot_image(image, factor<span class="op">=</span><span class="fl">3.5</span> <span class="op">/</span> <span class="dv">255</span>, clip_range<span class="op">=</span>(<span class="dv">0</span>, <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>image <span class="op">=</span> true_color_imgs[<span class="dv">0</span>]</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Image type: </span><span class="sc">{</span>image<span class="sc">.</span>dtype<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="co"># plot function</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="co"># factor 1/255 to scale between 0-1</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="co"># factor 3.5 to increase brightness</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>plot_image(image, factor<span class="op">=</span><span class="fl">3.5</span> <span class="op">/</span> <span class="dv">255</span>, clip_range<span class="op">=</span>(<span class="dv">0</span>, <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Image type: uint8</code></pre>
 </div>
@@ -1517,74 +1528,74 @@ Single element in the list is of type &lt;class 'numpy.ndarray'&gt; and has shap
 <h4 class="anchored" data-anchor-id="example-2-ndvi-image">Example 2: NDVI Image</h4>
 <p>Secondly, we will also show you an example of how to calculate and visualise NDVI using the same API. NDVI calculation is a very commonly used spectral vegetation index for vegetation monitoring, for example, monitoring crop growth and yields. As you will notice in the codeblock below, the evalscript has changed substantially: - we are only using Band 4 and Band 8 as an input into our script. - The <code>ColorGradientVisualizer</code> function has also been utilised in this script. More about this can be found in the documentation <a href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Evalscript/Functions.html#colorgradientvisualizer">here</a>.</p>
 <div class="cell" data-execution_count="15">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>evalscript_ndvi <span class="op">=</span> <span class="st">"""</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="st">//VERSION=3</span></span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="st">function setup() {</span></span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="st">  return {</span></span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="st">    input: [{</span></span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="st">      bands: [</span></span>
-<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="st">        "B04",</span></span>
-<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a><span class="st">        "B08",</span></span>
-<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a><span class="st">        "dataMask"</span></span>
-<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a><span class="st">      ]</span></span>
-<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a><span class="st">    }],</span></span>
-<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a><span class="st">    output: {</span></span>
-<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a><span class="st">      bands: 4</span></span>
-<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a><span class="st">    }</span></span>
-<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a><span class="st">  }</span></span>
-<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
-<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a><span class="st">  </span></span>
-<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a><span class="st">let viz = ColorGradientVisualizer.createWhiteGreen(-1.0, 1.0);</span></span>
-<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a><span class="st">function evaluatePixel(samples) {</span></span>
-<span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a><span class="st">    let val = (samples.B08 - samples.B04) / (samples.B08 + samples.B04);</span></span>
-<span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a><span class="st">    val = viz.process(val);</span></span>
-<span id="cb21-23"><a href="#cb21-23" aria-hidden="true" tabindex="-1"></a><span class="st">    val.push(samples.dataMask);</span></span>
-<span id="cb21-24"><a href="#cb21-24" aria-hidden="true" tabindex="-1"></a><span class="st">    return val;</span></span>
-<span id="cb21-25"><a href="#cb21-25" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
-<span id="cb21-26"><a href="#cb21-26" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span>
-<span id="cb21-27"><a href="#cb21-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-28"><a href="#cb21-28" aria-hidden="true" tabindex="-1"></a>request_ndvi_img <span class="op">=</span> SentinelHubRequest(</span>
-<span id="cb21-29"><a href="#cb21-29" aria-hidden="true" tabindex="-1"></a>    evalscript<span class="op">=</span>evalscript_ndvi,</span>
-<span id="cb21-30"><a href="#cb21-30" aria-hidden="true" tabindex="-1"></a>    input_data<span class="op">=</span>[</span>
-<span id="cb21-31"><a href="#cb21-31" aria-hidden="true" tabindex="-1"></a>        SentinelHubRequest.input_data(</span>
-<span id="cb21-32"><a href="#cb21-32" aria-hidden="true" tabindex="-1"></a>            data_collection<span class="op">=</span>DataCollection.SENTINEL2_L2A.define_from(</span>
-<span id="cb21-33"><a href="#cb21-33" aria-hidden="true" tabindex="-1"></a>                name<span class="op">=</span><span class="st">"s2"</span>, service_url<span class="op">=</span><span class="st">"https://sh.dataspace.copernicus.eu"</span></span>
-<span id="cb21-34"><a href="#cb21-34" aria-hidden="true" tabindex="-1"></a>            ),</span>
-<span id="cb21-35"><a href="#cb21-35" aria-hidden="true" tabindex="-1"></a>            time_interval<span class="op">=</span>(<span class="st">"2022-07-01"</span>, <span class="st">"2022-07-20"</span>),</span>
-<span id="cb21-36"><a href="#cb21-36" aria-hidden="true" tabindex="-1"></a>            other_args<span class="op">=</span>{<span class="st">"dataFilter"</span>: {<span class="st">"mosaickingOrder"</span>: <span class="st">"leastCC"</span>}},</span>
-<span id="cb21-37"><a href="#cb21-37" aria-hidden="true" tabindex="-1"></a>        )</span>
-<span id="cb21-38"><a href="#cb21-38" aria-hidden="true" tabindex="-1"></a>    ],</span>
-<span id="cb21-39"><a href="#cb21-39" aria-hidden="true" tabindex="-1"></a>    responses<span class="op">=</span>[SentinelHubRequest.output_response(<span class="st">"default"</span>, MimeType.PNG)],</span>
-<span id="cb21-40"><a href="#cb21-40" aria-hidden="true" tabindex="-1"></a>    bbox<span class="op">=</span>aoi_bbox,</span>
-<span id="cb21-41"><a href="#cb21-41" aria-hidden="true" tabindex="-1"></a>    size<span class="op">=</span>aoi_size,</span>
-<span id="cb21-42"><a href="#cb21-42" aria-hidden="true" tabindex="-1"></a>    config<span class="op">=</span>config,</span>
-<span id="cb21-43"><a href="#cb21-43" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>evalscript_ndvi <span class="op">=</span> <span class="st">"""</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="st">//VERSION=3</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="st">function setup() {</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="st">  return {</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="st">    input: [{</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="st">      bands: [</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a><span class="st">        "B04",</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a><span class="st">        "B08",</span></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a><span class="st">        "dataMask"</span></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a><span class="st">      ]</span></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a><span class="st">    }],</span></span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a><span class="st">    output: {</span></span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a><span class="st">      bands: 4</span></span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a><span class="st">    }</span></span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a><span class="st">  }</span></span>
+<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a><span class="st">  </span></span>
+<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a><span class="st">let viz = ColorGradientVisualizer.createWhiteGreen(-1.0, 1.0);</span></span>
+<span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-20"><a href="#cb23-20" aria-hidden="true" tabindex="-1"></a><span class="st">function evaluatePixel(samples) {</span></span>
+<span id="cb23-21"><a href="#cb23-21" aria-hidden="true" tabindex="-1"></a><span class="st">    let val = (samples.B08 - samples.B04) / (samples.B08 + samples.B04);</span></span>
+<span id="cb23-22"><a href="#cb23-22" aria-hidden="true" tabindex="-1"></a><span class="st">    val = viz.process(val);</span></span>
+<span id="cb23-23"><a href="#cb23-23" aria-hidden="true" tabindex="-1"></a><span class="st">    val.push(samples.dataMask);</span></span>
+<span id="cb23-24"><a href="#cb23-24" aria-hidden="true" tabindex="-1"></a><span class="st">    return val;</span></span>
+<span id="cb23-25"><a href="#cb23-25" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb23-26"><a href="#cb23-26" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span>
+<span id="cb23-27"><a href="#cb23-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-28"><a href="#cb23-28" aria-hidden="true" tabindex="-1"></a>request_ndvi_img <span class="op">=</span> SentinelHubRequest(</span>
+<span id="cb23-29"><a href="#cb23-29" aria-hidden="true" tabindex="-1"></a>    evalscript<span class="op">=</span>evalscript_ndvi,</span>
+<span id="cb23-30"><a href="#cb23-30" aria-hidden="true" tabindex="-1"></a>    input_data<span class="op">=</span>[</span>
+<span id="cb23-31"><a href="#cb23-31" aria-hidden="true" tabindex="-1"></a>        SentinelHubRequest.input_data(</span>
+<span id="cb23-32"><a href="#cb23-32" aria-hidden="true" tabindex="-1"></a>            data_collection<span class="op">=</span>DataCollection.SENTINEL2_L2A.define_from(</span>
+<span id="cb23-33"><a href="#cb23-33" aria-hidden="true" tabindex="-1"></a>                name<span class="op">=</span><span class="st">"s2"</span>, service_url<span class="op">=</span><span class="st">"https://sh.dataspace.copernicus.eu"</span></span>
+<span id="cb23-34"><a href="#cb23-34" aria-hidden="true" tabindex="-1"></a>            ),</span>
+<span id="cb23-35"><a href="#cb23-35" aria-hidden="true" tabindex="-1"></a>            time_interval<span class="op">=</span>(<span class="st">"2022-07-01"</span>, <span class="st">"2022-07-20"</span>),</span>
+<span id="cb23-36"><a href="#cb23-36" aria-hidden="true" tabindex="-1"></a>            other_args<span class="op">=</span>{<span class="st">"dataFilter"</span>: {<span class="st">"mosaickingOrder"</span>: <span class="st">"leastCC"</span>}},</span>
+<span id="cb23-37"><a href="#cb23-37" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb23-38"><a href="#cb23-38" aria-hidden="true" tabindex="-1"></a>    ],</span>
+<span id="cb23-39"><a href="#cb23-39" aria-hidden="true" tabindex="-1"></a>    responses<span class="op">=</span>[SentinelHubRequest.output_response(<span class="st">"default"</span>, MimeType.PNG)],</span>
+<span id="cb23-40"><a href="#cb23-40" aria-hidden="true" tabindex="-1"></a>    bbox<span class="op">=</span>aoi_bbox,</span>
+<span id="cb23-41"><a href="#cb23-41" aria-hidden="true" tabindex="-1"></a>    size<span class="op">=</span>aoi_size,</span>
+<span id="cb23-42"><a href="#cb23-42" aria-hidden="true" tabindex="-1"></a>    config<span class="op">=</span>config,</span>
+<span id="cb23-43"><a href="#cb23-43" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The same method as before is used to request and then visualise the data. In the visualisation, the lighter greens indicate a higher NDVI value (vegetation, forest) and the darker greens (urban areas and water bodies) represent areas with lower NDVI values.</p>
 <div class="cell" data-execution_count="16">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>ndvi_img <span class="op">=</span> request_ndvi_img.get_data()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>ndvi_img <span class="op">=</span> request_ndvi_img.get_data()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell" data-execution_count="17">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(</span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"Returned data is of type = </span><span class="sc">{</span><span class="bu">type</span>(true_color_imgs)<span class="sc">}</span><span class="ss"> and length </span><span class="sc">{</span><span class="bu">len</span>(true_color_imgs)<span class="sc">}</span><span class="ss">."</span></span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(</span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"Single element in the list is of type </span><span class="sc">{</span><span class="bu">type</span>(true_color_imgs[<span class="op">-</span><span class="dv">1</span>])<span class="sc">}</span><span class="ss"> and has shape </span><span class="sc">{</span>true_color_imgs[<span class="op">-</span><span class="dv">1</span>]<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">"</span></span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"Returned data is of type = </span><span class="sc">{</span><span class="bu">type</span>(true_color_imgs)<span class="sc">}</span><span class="ss"> and length </span><span class="sc">{</span><span class="bu">len</span>(true_color_imgs)<span class="sc">}</span><span class="ss">."</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"Single element in the list is of type </span><span class="sc">{</span><span class="bu">type</span>(true_color_imgs[<span class="op">-</span><span class="dv">1</span>])<span class="sc">}</span><span class="ss"> and has shape </span><span class="sc">{</span>true_color_imgs[<span class="op">-</span><span class="dv">1</span>]<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">"</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Returned data is of type = &lt;class 'list'&gt; and length 1.
 Single element in the list is of type &lt;class 'numpy.ndarray'&gt; and has shape (1723, 1941, 3)</code></pre>
 </div>
 </div>
 <div class="cell" data-execution_count="18">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>image <span class="op">=</span> ndvi_img[<span class="dv">0</span>]</span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Image type: </span><span class="sc">{</span>image<span class="sc">.</span>dtype<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="co"># plot function</span></span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="co"># factor 1/255 to scale between 0-1</span></span>
-<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="co"># factor 3.5 to increase brightness</span></span>
-<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>plot_image(image, factor<span class="op">=</span><span class="dv">1</span> <span class="op">/</span> <span class="dv">255</span>, clip_range<span class="op">=</span>(<span class="op">-</span><span class="dv">1</span>, <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>image <span class="op">=</span> ndvi_img[<span class="dv">0</span>]</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Image type: </span><span class="sc">{</span>image<span class="sc">.</span>dtype<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="co"># plot function</span></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="co"># factor 1/255 to scale between 0-1</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a><span class="co"># factor 3.5 to increase brightness</span></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>plot_image(image, factor<span class="op">=</span><span class="dv">1</span> <span class="op">/</span> <span class="dv">255</span>, clip_range<span class="op">=</span>(<span class="op">-</span><span class="dv">1</span>, <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Image type: uint8</code></pre>
 </div>
