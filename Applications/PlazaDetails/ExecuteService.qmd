@@ -1,32 +1,36 @@
 ---
 title: "Execute a service"
+aliases: 
+  - '/Applications/PlazaDetails/ExecuteService.html'
 ---
 
 <div style="text-align: justify">
 
-Services can be executed through the tools that are provided by the different orchestrators. 
-The table below shows a short summary of the different tools that are available for each orchestrator.
+Services can be executed using the tools provided by openEO. The table below provides a brief summary of the different tools available:
 
-| openEO |
-| --- |
-| Online user interface - web editor <br/> Client Libraries (JavaScript, Python, R) <br />API |
+| Tool | Description | 
+| --- | --- |
+| openEO Web Editor | A web-based interface for executing openEO processes. | 
+| Command Line Interface (CLI)	 | Allows execution of openEO processes through the command line. | 
+| Python Client | 	A Python library facilitating interaction with openEO services programmatically. | 
+| R Client	 | An R library for integrating openEO services into R scripts. | 
 
-There are several ways to discover how a service can be executed. When publishing a service on the openEO algorithm plaza, a service provider can choose to provide the following information in the service details:
+When publishing a service on the openEO algorithm plaza, a service provider can choose to provide the following information in the service details:
 
-* An executable link which redirects the user to the online orchestrator's user interface. If this is the case, an **Access service** button will appear when opening an openEO algorithm plaza service.
+* An executable link which redirects the user to the online orchestrator's user interface. If this is the case, an `ACCESS SERVICE` button will appear when opening an openEO algorithm plaza service.
 
-* Sample code in the service description on how to execute a service. 
+* Sample code in the service description on how to execute a service programmatically. 
 
 
 ::: {.callout-important}
 
-There is a limitation when executing a service (User Defined Processes) with Copernicus Dataspace Ecosystem, that it only works from 2017 or so onwards. Moreover, it is recommended to test it for multiple consecutive years.
+There is a limitation when executing a service (User Defined Processes) in Copernicus Dataspace Ecosystem, that it only works collection from 2017 or so onwards. Moreover, it is recommended to test it for multiple consecutive years.
 
 :::
 
 ## Online user interface
 
-Both orchestrators provide an online user interface where users can execute services directly in a web browser. 
+openEO provide an online user interface where users can execute services directly in a [web-editor](https://openeo.dataspace.copernicus.eu/){target='_blank'}. 
 Through these graphical user interfaces, users can execute, link, and configure different services. More information on the usage of the online applications is presented in the table below.
 
 |openEO|
@@ -82,28 +86,16 @@ aoi = {
 date = '2020-06-01'
 
 # Setup connection with OpenEO
-eoconn = openeo.connect("https://openeo.vito.be").authenticate_oidc("egi")
+eoconn = openeo.connect("https://openeo.dataspace.copernicus.eu").authenticate_oidc("egi")
 
 # Create a processing graph from the BIOMASS process using an active openEO connection
-taskmap = eoconn.datacube_from_process("taskmap_generate", namespace="https://openeo.vito.be/openeo/1.0/processes/u:EOplaza_tps/taskmap_generate", aoi=aoi,
+taskmap = eoconn.datacube_from_process("taskmap_generate", namespace="https://openeo.dataspace.copernicus.eu/openeo/1.0/processes/u:123456/taskmap_generate", aoi=aoi,
                                        date=date)
 
 # Execute the openEO request as a batch job
-taskmap_job = taskmap.save_result(format='gtiff').send_job()
-taskmap_job.start_and_wait().get_results()
+taskmap_job = taskmap.download('task.nc')
 ```
 
-To execute a service from the openEO algorithm plaza through one of the OpenEO client libraries, it is important to use the *datacube_from_process* function. 
-This accepts the ID and namespace of the service. 
+To execute a service from the openEO algorithm plaza through one of the OpenEO client libraries, it is important to use the *datacube_from_process* function. It accepts the ID and namespace of the service. 
 Both are made available in the service description on the openEO algorithm plaza. 
 The full documentation on using the function is available on the official [openEO documentation](https://open-eo.github.io/openeo-python-client/datacube_construction.html#datacube-from-process){target="_blank"}.
-
-More examples are available in the [openEO GitHub repository](https://github.com/Open-EO/openeo-python-client/tree/master/examples){target="_blank"}.
-
-## API
-
-Both openEO provide a fully documented API as a more advanced way to integrate features of both orchestrators in any existing application or workflow. These APIs can also be used to execute openEO algorithm plaza services. The documentation of these services is available at:
-
-| openEO |
-|---|
-| [Documentation](https://documentation.dataspace.copernicus.eu/APIs/openEO/openEO.html){target="_blank"} |
