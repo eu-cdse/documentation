@@ -108,9 +108,47 @@ window.onload = function() {
   };
 </script>
 
+<script>
+  function handleQuestionClick(questionId) {
+      // Update the hash in the URL
+      window.location.hash = questionId;
+      
+      // Scroll to the target element and adjust its position
+      scrollToQuestion(questionId);
+  }
 
+  function scrollToQuestion(questionId) {
+      // Get the element with the ID specified in the hash
+      var targetElement = document.querySelector(questionId);
 
+      // Scroll to the target element and adjust its position
+      if (targetElement) {
+          // Calculate the position of the target element relative to the viewport
+          var rect = targetElement.getBoundingClientRect();
+          var offsetTop = rect.top + window.scrollY;
+          var targetPosition = offsetTop - (window.innerHeight / 19);
 
+          // Scroll to the adjusted position
+          window.scrollTo({
+              top: targetPosition,
+              behavior: 'smooth'
+          });
+
+          // Open the details element
+          targetElement.open = true;
+      }
+  }
+
+  document.addEventListener("DOMContentLoaded", function() {
+      // Check if there is a hash in the URL
+      if (window.location.hash) {
+          // Scroll to the target element and adjust its position after a short delay
+          setTimeout(function() {
+              scrollToQuestion(window.location.hash);
+          }, 100);
+      }
+  });
+</script>
 
 
 <link rel="stylesheet" href="../../custom.css">
@@ -472,19 +510,19 @@ window.onload = function() {
  <span class="menu-text">Smoothening dataset using Whittaker</span></a>
   </div>
 </li>
-      </ul>
-  </li>
-      </ul>
-  </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/STAC.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">STAC product catalog</span></a>
+  <a href="../../notebook-samples/openeo/NO2Covid.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">NO2 emission due to COVID lockdown effect</span></a>
   </div>
 </li>
+      </ul>
+  </li>
+      </ul>
+  </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/S3.html" class="sidebar-item-text sidebar-link">
+  <a href="../../APIs/S3.qmd" class="sidebar-item-text sidebar-link">
  <span class="menu-text">S3 Access</span></a>
   </div>
 </li>
@@ -1053,7 +1091,8 @@ window.onload = function() {
 <div style="text-align: justify">
 <section id="provide-your-organisation-details" class="level2">
 <h2 class="anchored" data-anchor-id="provide-your-organisation-details">Provide your organisation details</h2>
-<p>Organisations are core elements of the openEO algorithm plaza Portal, as they are the entities that relate users, accesses, services, data, etc. One can think of an organisation as a company in most cases, although users can be a one-man organisation. By default, when a registration is made through the Portal, an organisation is always created with the user that made the registration as the sole user, even if unnamed and with no data. In a user’s Profile page, they can click on the Organisation option in sub-navigation and arrive at the Organisation page, where they can view and edit the organisation’s details, such as:</p>
+<p>Organisations are core elements of the openEO algorithm plaza Portal, as they are the entities that relate users, accesses, services, data, etc. One can think of an organisation as a company in most cases, although users can be a one-man organisation.</p>
+<p>By default, when a registration is made through the Portal, a personal organisation is always created. On your profile page, you can click on the Organisation option in sub-navigation and arrive at the Organisation page, where they can view and edit the organisation’s details, such as:</p>
 <ul>
 <li>Organisation name (mandatory)</li>
 <li>Organisation Identity registration (optional)</li>
@@ -1066,7 +1105,7 @@ window.onload = function() {
 </section>
 <section id="invite-team-members" class="level2">
 <h2 class="anchored" data-anchor-id="invite-team-members">Invite Team members</h2>
-<p>You have arrived here after triggering the <code>Invite User</code> flow through the team screen. You can see a content block to add a new user that contains:</p>
+<p>You can invite new members to your organisation by clicking on the <code>Invite member</code> button available within the <code>Team</code> sub-menu of your profile. This will prompt a form where you will need to provide some more information for adding a new user to your organization. This block contains the following fields:</p>
 <ul>
 <li>Email address (Mandatory)</li>
 <li>Name (Optional)</li>
@@ -1074,6 +1113,37 @@ window.onload = function() {
 <li>Submit button</li>
 </ul>
 <p>You can fill out the fields accordingly and submit the form to invite the new User to your Team and expect a success / error feedback message upon sending it. The form should also disappear after successful submission. You can see the newly invited user in the user list, however, without a Role dropdown and clearly flagged with an “Invitation Pending” message.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../_images/PlazaInviteTeam.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Invite member</figcaption>
+</figure>
+</div>
+<p>Once you click on the <code>SEND</code> button, a message that the invitation was send will pop up at the top of the page. The invitee will receive an email with a link to accept the invitation.</p>
+<div style="width: 100%; text-align: center">
+<p><img src="../_images/PlazaInvited.png" width="450" height="100"></p>
+</div>
+<p>Once the invitation is accepted, the new member will be added to the organisation and will be able to access the organisation’s resources.</p>
+</section>
+<section id="accept-the-invitation" class="level2">
+<h2 class="anchored" data-anchor-id="accept-the-invitation">Accept the invitation</h2>
+<p>To be a part of an existing organisation, you need to be invited by the organisation owner or admin. As mentioned above, an invitation can be sent to any user within the platform. You will receive an email with the invitation link; however, if you are not registered on the platform, you will be asked to register and accept the invitation. If you already have an account, we recommend you sign in first and then accept the invitation by simply confirming the link. When you click on the confirm invitation, you will see the following screen:</p>
+<div style="width: 100%; text-align: center">
+<p><img src="../_images/PlazaAcceptInvitation.PNG" width="300" height="300"></p>
+</div>
+<p>Once you click on the <code>ACCEPT INVITATION</code> button, you will be see a message that you have successfully accepted the invitation appearing at the top of the screen.</p>
+<div style="width: 100%; text-align: center">
+<p><img src="../_images/PlazaAccepted.PNG" width="450" height="100"></p>
+</div>
+<p>You can now close the invitation from the top right corner.</p>
+</section>
+<section id="switch-between-organisation" class="level2">
+<h2 class="anchored" data-anchor-id="switch-between-organisation">Switch between organisation</h2>
+<p>Once you have accepted the invitation to join the organisation, upon returing to your profile, you’ll find the organisation you have joined listed under the <code>Linked organisation</code> dropdown menu. To switch to the new organisation, simply select it from the dropdown menu and click on the <code>SWITCH</code> button.</p>
+<div style="width: 100%; text-align: center">
+<p><img src="../_images/PlazaSwitchOrg.PNG"></p>
+</div>
+<p>Once you switch the organisation, you’ll be able to see all the team members and their roles. However, please note that if you have a <em>Developer</em> role, you won’t be able to invite new members to your organisation. Only the <em>Organisation owner</em> will be able to invite new members to the organisation.</p>
 </section>
 </div>
 
