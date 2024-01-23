@@ -47,6 +47,44 @@ window.onload = function() {
   };
 </script>
 
+<script>
+  function handleQuestionClick(questionId) {
+      // Update the hash in the URL
+      window.location.hash = questionId;
+      
+      // Scroll to the target element and adjust its position
+      scrollToQuestion(questionId);
+  }
 
+  function scrollToQuestion(questionId) {
+      // Get the element with the ID specified in the hash
+      var targetElement = document.querySelector(questionId);
 
+      // Scroll to the target element and adjust its position
+      if (targetElement) {
+          // Calculate the position of the target element relative to the viewport
+          var rect = targetElement.getBoundingClientRect();
+          var offsetTop = rect.top + window.scrollY;
+          var targetPosition = offsetTop - (window.innerHeight / 16);
 
+          // Scroll to the adjusted position
+          window.scrollTo({
+              top: targetPosition,
+              behavior: 'smooth'
+          });
+
+          // Open the details element
+          targetElement.open = true;
+      }
+  }
+
+  document.addEventListener("DOMContentLoaded", function() {
+      // Check if there is a hash in the URL
+      if (window.location.hash) {
+          // Scroll to the target element and adjust its position after a short delay
+          setTimeout(function() {
+              scrollToQuestion(window.location.hash);
+          }, 100);
+      }
+  });
+</script>
