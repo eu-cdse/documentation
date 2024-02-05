@@ -1,0 +1,135 @@
+---
+title: "Access through Research Network"
+---
+
+This section provides the most important information for users intending to access the Copernicus Data Space Ecosystem data repository through the GEANT network.
+
+## Introduction
+
+To ease your first steps in the new Copernicus Data Space Ecosystem environment, we prepared a Step-by-Step guide for your reference. It is addressed to users who want to use data retrieval services for downloading products using the research networks (GEANT connectivity). 
+
+We would like to inform that the current setup for downloading Copernicus Data utilising research network connectivity (via NREN+GEANT) is still in a process of optimisation to achieve best possible performance. This primarily concerns the load balancing mechanism which is based on a Global Service Load Balancer (GSLB) using the requesting party’s DNS resolver as a criterion where to direct the request.
+
+## Instructions
+
+####  1. Introduction to Copernicus Data Space environment
+
+Discover the new services on the [Copernicus Data Space Ecosystem](https://dataspace.copernicus.eu/#/){target="_blank"} portal.
+
+Use the [documentation](https://documentation.dataspace.copernicus.eu/Home.html){target="_blank"} portal.
+
+####  2. Become a registered user
+
+If you don’t have an account, you need to register as a new user.
+Follow the steps on [User registration and authentication](https://documentation.dataspace.copernicus.eu/Registration.html){target="_blank"}.
+
+####  3. Request a KeyCloak token
+This is required to access to OData catalogue API.
+
+To get the token you can follow the steps on [Access token](https://documentation.dataspace.copernicus.eu/APIs/Token.html){target="_blank"}.
+
+
+#### 4. Use OData catalogue API to search the products
+
+As a default configuration you can use the general URL [https://catalogue.dataspace.copernicus.eu/odata/v1/Products](https://catalogue.dataspace.copernicus.eu/odata/v1/Products){target="_blank"}.
+
+The prerequisite for using this URL is the correct set up of the DNS resolver as described below in *Verification of data download via the research network*. This is the recommended setup as it will take advantage of the Global Service Load Balancer (GSLB) mechanism. 
+
+ 
+**Alternatively, you can also use** [https://catalogue.ams.dataspace.copernicus.eu/odata/v1/Products](https://catalogue.ams.dataspace.copernicus.eu/odata/v1/Products){target="_blank"}.
+
+This URL directs you to the designated endpoint utilizing GEANT connectivity. 
+ 
+ 
+####  5. Use script for data download
+Once you have your token and product Id, you can download the product using a script:
+
+::: {.panel-tabset}
+
+# cURL
+
+```
+curl -O -J -k --header "Authorization: Bearer ${KEYCLOAK_TOKEN}" 'https://catalogue.ams.dataspace.copernicus.eu/odata/v1/Products(d7e6cd54-7d53-5569-8a9e-d148bcb8917e)/$value' 
+```
+:::
+
+**alternative download is possible**
+
+::: {.panel-tabset}
+
+# cURL
+
+```
+curl -O -J -k --header "Authorization: Bearer ${KEYCLOAK_TOKEN}" 'https://download.ams.dataspace.copernicus.eu/odata/v1/Products(d7e6cd54-7d53-5569-8a9e-d148bcb8917e)/$value' 
+```
+:::
+
+
+## Verification of data download via the research network
+
+
+To verify that your service has been set up correctly, please perform following steps:
+
+::: {.panel-tabset}
+
+# command
+
+```
+host catalogue.ams.dataspace.copernicus.eu
+```
+:::
+
+ 
+Should resolve IP addresses to  
+
+> download.ams.dataspace.copernicus.eu has address 80.158.97.159
+
+> download.ams.dataspace.copernicus.eu has address 80.158.97.12
+
+> download.ams.dataspace.copernicus.eu has address 80.158.97.1
+
+> download.ams.dataspace.copernicus.eu has address 80.158.97.169 
+
+If your DNS resolver is utilizing an IPv4 assigned to the Geant network, you should expect to receive an identical set of IP addresses. However, if this is not the case, it indicates that the resolver needs to be added to our service configuration. 
+
+
+## Global Service Load Balancer 
+
+To ensure proper routing of user traffic through the Geant network to the designated endpoint, it is essential for the DNS resolver to be operational within the Geant network. Alternatively, we kindly request you to provide us with the public address of your resolver to enhance our configuration. It is essential to emphasize that it is not recommended to utilize widely known resolvers such as Google's 8.8.8.8 or CloudFlare's 1.1.1.1 in this particular context. In such cases, traffic directed to those resolvers will be routed to public endpoints via the Internet rather than through the Geant connectivity. 
+
+Once the DNS set up has been configured in line with above requirements the following general URL should be used to access the OData catalogue.  
+
+[https://catalogue.dataspace.copernicus.eu/odata/v1/Products](https://catalogue.dataspace.copernicus.eu/odata/v1/Products){target="_blank"}
+
+The GSLB automatically routes users to the foreseen endpoint. The mechanism will also be used for failover in case of outages on one of the cloud platforms (Open Telekom Cloud or Cloud Ferro Cloud). 
+
+##  Relevant IP Addresses 
+
+
+In case your firewall setting blocks IP addresses relevant for the data download function please find following IP Address ranges which are relevant. You may have to change your firewall rules to allow traffic from those Addresses. 
+
+❯ host catalogue.ams.dataspace.copernicus.eu 
+
+> catalogue.ams.dataspace.copernicus.eu has address 80.158.97.1 
+
+> catalogue.ams.dataspace.copernicus.eu has address 80.158.97.159 
+
+> catalogue.ams.dataspace.copernicus.eu has address 80.158.97.12 
+
+> catalogue.ams.dataspace.copernicus.eu has address 80.158.97.169
+
+❯ host download.ams.dataspace.copernicus.eu
+
+> catalogue.ams.dataspace.copernicus.eu has address 80.158.97.1 
+
+> catalogue.ams.dataspace.copernicus.eu has address 80.158.97.159 
+
+> catalogue.ams.dataspace.copernicus.eu has address 80.158.97.12 
+
+> catalogue.ams.dataspace.copernicus.eu has address 80.158.97.169
+
+❯ host eodata.ams.dataspace.copernicus.eu
+
+> eodata.ams.dataspace.copernicus.eu has address 80.158.97.24 
+
+> eodata.ams.dataspace.copernicus.eu has address 80.158.97.202
