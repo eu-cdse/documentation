@@ -96,6 +96,12 @@ When the processing finishes, the status of the request changes to
 
 #### Stopping the request
 
+A request might be stopped for following reasons:
+
+-   it\'s requested by a user (user action)
+-   user is out of processing units (see chapter below)
+-   something is wrong with the processing of the request
+
 A user may stop the request in following states: `ANALYSING`,
 `ANALYSIS_DONE` and `PROCESSING`. However:
 
@@ -104,6 +110,12 @@ A user may stop the request in following states: `ANALYSING`,
     been processed or are being processed at that moment are charged
     for,
 -   user is not allowed to restart the request in the next 30 minutes.
+
+The service itself may also stop the request when processing of a lot of
+features is repeatedly failing. `stoppedStatusReason` of such requests
+will be `UNHEALTHY`. This can happen if the service is unstable or
+something is wrong with the request. If former, the request should
+eventually be restarted by Sentinel Hub team.
 
 #### Processing unit costs
 
