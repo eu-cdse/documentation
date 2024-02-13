@@ -1,5 +1,4 @@
 ```{python}
-# import necessary packages
 import json
 from IPython.display import display, Markdown, Latex,HTML
 from tabulate import tabulate
@@ -13,7 +12,7 @@ from Datafunctions import data_availability, filter_levels
 
 
 ```{python}
-#load the collection
+#load the json metadata file
 
 meta = None
 with open("../collections.json") as f:
@@ -24,17 +23,102 @@ meta = [ c for c in meta if constellation in c["constellation"] ]
 ```
 
 ```{python}
-# fetch thumbnail 
-dummy_thumb = "https://www.esa.int/var/esa/storage/images/esa_multimedia/images/2015/06/northwest_italy_and_southern_france/15492215-1-eng-GB/Northwest_Italy_and_southern_France_pillars.jpg"
+# function to fetch thumbnail url
 
-def get_thumbnail(c):
+def get_thumbnail():
     thumb_url = c.get("assets", {}).get("thumbnail",{}).get("href", "")
     return thumb_url
 
 ```
 
 ```{python}
-# thumbnail block 
+#function to fetch the stac url for the dataset
+def get_stac():
+    try:
+        stac_extension = c["stac_extensions"]
+        link = None  # initialize link variable to None
+
+        for item in stac_extension:
+            if item.startswith('http'):
+                stac_url = f"""STAC: <a href="{item}" target="_blank">{item}</a>"""
+                break  # exit the loop once you've found the link        
+    except Exception:
+        stac_url = ""
+    return stac_url
+```
+
+```{python}
+# function to search for finding links within the metadata based on specific keyword
+
+def find_link(rel=None,href_contains=None, title_contains=None):
+    results = [ l["href"] for l in c.get("links",[]) if (rel is None or l["rel"]==rel) and (href_contains==None or href_contains in l["href"]) and (title_contains==None or title_contains in l["title"]) ]
+    if len(results) == 0:
+        return None
+    else:
+        return results[0]
+
+```
+
+```{python}
+#get link for wmts
+def get_wmts():
+    url = ""
+    try:
+        wmts = find_link(rel="wmts",title_contains="Web Map Tile Service")
+        if wmts is not None:
+            url = f"""WMTS:  <a href="{wmts}" target="_blank">{wmts}</a>""" 
+    except Exception:
+        url = ""
+    return url
+```
+
+```{python}
+#get link for source
+def get_source():
+    url = ""
+    try:
+        source = find_link(rel="source")
+        if source is not None:
+            url = f"""Source:  <a href="{source}" target="_blank">{source}</a>""" 
+    except Exception:
+        url = ""
+    return url
+```
+
+```{python}
+#get link for more information of the collection
+def get_moreinfo():
+    url = ""
+    try:
+        info = find_link(rel="MoreInformation")
+        if info is not None:
+            url = f"""More Information:  <a href="{info}" target="_blank">{info}</a>""" 
+    except:
+        url = ""
+    return url
+```
+
+```{python}
+#function to combine all the fetched links under the detailed block
+
+def necessary_links():
+
+    # list of all links
+    links = [get_stac(), get_wmts(), get_source(), get_moreinfo()]
+
+    # join non-empty links using HTML list tags
+    non_empty_links = [link for link in links if link]
+    if non_empty_links:
+        link_items = [f"<li>{link}</li>" for link in non_empty_links]
+        link_block = f"""<h5>Useful Links</h5><ul>{"".join(link_items)}</ul>"""
+    else:
+        link_block = ""
+
+    return link_block
+```
+
+```{python}
+# function enclosing thumbnail block 
 
 def thumbblock(src,userguide, opensearch, gsd,revisit_time, datatype, frequency):
 
@@ -50,112 +134,8 @@ def thumbblock(src,userguide, opensearch, gsd,revisit_time, datatype, frequency)
 ```
 
 ```{python}
-def necessary_links(c):
-    stac = get_stac(c)
-    wmts = get_wmts()
-    source = get_source()
-    info = get_moreinfo()
-
-    # list of all links
-    links = [stac, wmts, source, info]
-
-    # join non-empty links using HTML list tags
-    non_empty_links = [link for link in links if link]
-    if non_empty_links:
-        link_items = [f"<li>{link}</li>" for link in non_empty_links]
-        link_block = f"""<h5>Useful Links</h5><ul>{"".join(link_items)}</ul>"""
-    else:
-        link_block = ""
-
-    return link_block
-```
-
-```{python}
-def get_stac(c):
-    try:
-        stac_extension = c["stac_extensions"]
-        link = None  # initialize link variable to None
-
-        for item in stac_extension:
-            if item.startswith('http'):
-                stac_url = f"""STAC: <a href="{item}" target="_blank">{item}</a>"""
-                break  # exit the loop once you've found the link        
-    except Exception:
-        stac_url = ""
-    return stac_url
-```
-```{python}
-def get_wmts():
-    url = ""
-    try:
-        wmts = find_link(rel="wmts",title_contains="Web Map Tile Service")
-        if wmts is not None:
-            url = f"""WMTS:  <a href="{wmts}" target="_blank">{wmts}</a>""" 
-    except Exception:
-        url = ""
-    return url
-```
-
-```{python}
-def get_source():
-    url = ""
-    try:
-        source = find_link(rel="source")
-        if source is not None:
-            url = f"""Source:  <a href="{source}" target="_blank">{source}</a>""" 
-    except Exception:
-        url = ""
-    return url
-```
-```{python}
-def get_moreinfo():
-    url = ""
-    try:
-        info = find_link(rel="MoreInformation")
-        if info is not None:
-            url = f"""More Information:  <a href="{info}" target="_blank">{info}</a>""" 
-    except:
-        url = ""
-    return url
-```
-
-```{python}
-# function to toggle detail block
-
-def togglescript():
-    script = f"""<script>function toggleContent(id){{var x = document.getElementById(id);if (x.style.display === "none"){{x.style.display = "block";}} else {{x.style.display = "none";}}}}</script>"""
-    return script
-
-```
-
-```{python}
-# include detail block
-
-def detailblock(ID,xy,time,table,link_block,license_button,cite):
-    
-    if any(val for val in (xy, time, table, link_block) if not val.isspace() and val != ""):
-        bandinfo = f"""<button onclick="toggleContent('{ID}')" class="expand-collapse">Further details about the data collection</button><div class="expand-content" id="{ID}" style="display:none;"><div class="row" style="display: flex; justify-content: space-around"><div class="column">{license_button}&nbsp;&nbsp;{cite}</div></div><div class="row" style="display: flex; justify-content: space-around"><div class="column">{xy}</div><div class="column">{time}</div></div><div>{table}</div><div>{link_block}</div></div>"""
-    else:
-        bandinfo = ""
-    return bandinfo
-
-```
-
-```{python}
-# function to search for links
-
-def find_link(rel=None,href_contains=None, title_contains=None):
-    results = [ l["href"] for l in c.get("links",[]) if (rel is None or l["rel"]==rel) and (href_contains==None or href_contains in l["href"]) and (title_contains==None or title_contains in l["title"]) ]
-    if len(results) == 0:
-        return None
-    else:
-        return results[0]
-
-```
-
-```{python}
 # get extension detail
-def get_extent(c):
+def get_extent():
     try:
         extent = c["extent"]
         spatial = extent['spatial']['bbox']
@@ -171,9 +151,8 @@ def get_extent(c):
 ```
 
 ```{python}
-from tabulate import tabulate
 
-def get_bandtable(c):
+def get_bandtable():
     tabletitle = "Spectral Bands"
     try:
         band_num = len(c['summaries']['eo:bands'])
@@ -217,13 +196,43 @@ def get_bandtable(c):
 ```
 
 ```{python}
-# Display the Markdown content
+#function encloding detail block (block under **Further details about the collection**)
+
+def detailblock(ID,license_button,cite):
+    #get temporal and spatial extent
+    spatial, temporal = get_extent()
+    
+    # include spectral band table
+    table = get_bandtable()
+
+    # get necessary links
+    link_block = necessary_links()
+
+    #combine all the details to be shown within the detailed block
+    if any(val for val in (table, link_block) if not val.isspace() and val != ""):
+        bandinfo = f"""<button onclick="toggleContent('{ID}')" class="expand-collapse">Further details about the data collection</button><div class="expand-content" id="{ID}" style="display:none;"><div class="row" style="display: flex; justify-content: space-around"><div class="column">{license_button}&nbsp;&nbsp;{cite}</div></div><div class="row" style="display: flex; justify-content: space-around"><div class="column">{spatial}</div><div class="column">{temporal}</div></div><div>{table}</div><div>{link_block}</div></div>"""
+    else:
+        bandinfo = ""
+    return bandinfo
+
+```
+
+```{python}
+# Display the baseline details of the collections
 def baselineinfo(filename): 
     # Read the content of the Markdown file
     with open(filename, 'r') as file:
         sentinel2_baseline = file.read()
     info = sentinel2_baseline
     return info
+```
+
+```{python}
+# function to toggle detail block
+
+def togglescript():
+    script = f"""<script>function toggleContent(id){{var x = document.getElementById(id);if (x.style.display === "none"){{x.style.display = "block";}} else {{x.style.display = "none";}}}}</script>"""
+    return script
 ```
 
 ```{python}
@@ -249,7 +258,6 @@ for c in meta:
         levelID = ""
         about_product = ""
 
-
     license_type = c.get("license", "")
     sci_cite = c.get("sci:citation", "")
     frequency = c.get('summaries',{}).get('Frequency',"")
@@ -268,17 +276,6 @@ for c in meta:
     else:
         pass
 
-    # insert thumbnail
-    thumb_url = get_thumbnail(c)
-
-    # get necessary links
-    link_block = necessary_links(c)
-
-    # get extents
-    spatial , temporal = get_extent(c)
-
-    # include spectral band table
-    table = get_bandtable(c)
 
     # include offer table
     offer = data_availability.main(c)
@@ -290,18 +287,20 @@ for c in meta:
     license_url = find_link(rel="license")
     cite = find_link(rel="cite-as")
     
+    # create a button for userguide
 
     if userguide is not None:
         userguide = f"""[![User guide](https://img.shields.io/badge/-User_guide-77cc09)]({userguide}){{target='_blank'}}"""
     else:
         userguide = ""
 
+    # create a button for cite
     if cite is not None:
         cite = f"""[!["Cite"](https://img.shields.io/badge/-Cite-77cc09)]({cite}){{target='_blank'}}"""
     else:
         cite = ""
 
-
+    # create a button for license 
     if sci_cite is not None:
         if license_url is not None and  license_url != "":
             license_button = f"""<a href="{license_url}" target="_blank">{sci_cite}</a>"""
@@ -310,27 +309,31 @@ for c in meta:
     else:
         license_button = ""
 
-
+    # create a button to the browser 
     if databrowser is not None:
         databrowser = f"""<a class="clickable" href="{databrowser}" target="_blank">View in browser</a>"""
     else:
         databrowser = ""
 
+    # create a button showing the resolution of the collection
     if resolution is not None and  resolution != "":
         gsd = f"""<img src="https://img.shields.io/badge/resolution-{resolution}m-0A4393" />"""
     else:
         gsd = ""
 
+    # create a button showing the revisit time of the collection
     if revisit is not None and  revisit != "":
         revisit_time = f"""<img src="https://img.shields.io/badge/revisit-{revisit}--day-0A4393"/>"""
     else:
         revisit_time = ""
 
+    # create a button showing the frquency of the product
     if frequency is not None and  frequency != "":
         Updated_freq = f"""<img src="https://img.shields.io/badge/Update_Frequency-{frequency}-0A4393"/>"""
     else:
         Updated_freq = ""
 
+    # create a button specifying if it is Analysis ready data or unprojected
     if "ARD" in datatype:
         datatype = f"""![](https://img.shields.io/badge/{datatype}-77cc09) """
     elif "Unprojected" in datatype:
@@ -338,6 +341,7 @@ for c in meta:
     else:
         datatype = ""
 
+    # create a button to api url
     if opensearch is not None:
         opensearch = f"""[![Catalog API](https://img.shields.io/badge/-Catalog_API-77cc09?style=flat)
 ]({opensearch}){{target='_blank'}}"""
@@ -352,7 +356,7 @@ for c in meta:
 
 ## {title}
 
-{thumbblock(thumb_url,userguide,opensearch,gsd,revisit_time,datatype,Updated_freq)}
+{thumbblock(get_thumbnail(),userguide,opensearch,gsd,revisit_time,datatype,Updated_freq)}
 
 #### Overview
 
@@ -360,7 +364,7 @@ for c in meta:
 
 {offer}
 
-{detailblock(collectionID,spatial,temporal,table,link_block,license_button,cite )}
+{detailblock(collectionID,license_button,cite)}
 
 {additional_info}
 
