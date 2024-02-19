@@ -5688,9 +5688,6 @@ components:
           properties:
             request:
               $ref: '#/components/schemas/BatchStatisticalRequest'
-            userId:
-              type: string
-              format: uuid
             userAction:
               description: Last user action on the request.
               type: string
@@ -6258,8 +6255,9 @@ components:
             the same bands as the data being ordered.
 
 
-            If not given at order creation, a new BYOC collection is created and
-            its ID is returned in the response.
+            If not given at order creation, a new BYOC collection is created
+            when the order is confirmed and its ID is returned in the response
+            from the `confirm` endpoint.
           type: string
           format: uuid
         status:
@@ -6319,7 +6317,8 @@ components:
 
 
             If not given at subscription creation, a new BYOC collection is
-            created and its ID is returned in the response.
+            created when the subscription is confirmed and its ID is returned in
+            the response from the `confirm` endpoint.
           type: string
           format: uuid
         status:
@@ -6499,8 +6498,11 @@ components:
           description: >
             Your Planet API key. Get one from Planet https://www.planet.com.
 
-            Providing it is optional and will filter search results based on the
-            permissions of your Planet API key.
+            It is required unless you purchased your Planet data plan through
+            Sentinel Hub,
+
+            in which case it is optional and will filter search results based on
+            the permissions of the key.
           type: string
     PlanetOrderRequestBase:
       type: object
@@ -6572,6 +6574,13 @@ components:
                   - itemType
                   - productBundle
                 properties:
+                  type:
+                    type: string
+                    enum:
+                      - catalog
+                    default: catalog
+                    description: |
+                      Use `catalog` for PlanetScope and SkySat data.
                   itemType:
                     type: string
                     enum:
@@ -6760,98 +6769,101 @@ components:
                   description: |
                     Specification of the data to subscribe to.
                   items:
-                    $ref: '#/components/schemas/PlanetSubscriptionDataSpec'
-    PlanetSubscriptionDataSpec:
-      oneOf:
-        - $ref: '#/components/schemas/PSSceneDataSpec'
-    PlanetSubscriptionDataSpecBase:
+                    $ref: '#/components/schemas/PSSceneDataSpec'
+    PlanetSubscriptionDataFilterBase:
+      type: object
+      required:
+        - timeRange
+      description: >
+        Selection criteria for the data the subscription should cover. At the
+        minimum, `timeRange.from` must be included because subscriptions must
+        have a start time.
+      properties:
+        timeRange:
+          allOf:
+            - $ref: '#/components/schemas/TimeRange'
+            - required:
+                - from
+            - description: >
+                A time interval to filter data by the **publish** date (in
+                contrast to orders, where the data is filtered by the
+                acquisition date). It is defined by a start and end date and
+                time, e.g. 2019-01-31T14:00:00+01:00. A date representation
+                without time (e.g. 2019-01-31) will not work. Both the start and
+                end of a time interval are inclusive and can be equal.
+    PSSceneDataSpec:
       type: object
       required:
         - dataFilter
+        - itemType
+        - productBundle
+        - harmonizeTo
       properties:
         dataFilter:
-          type: object
-          required:
-            - timeRange
+          allOf:
+            - $ref: '#/components/schemas/PlanetSubscriptionDataFilterBase'
+            - type: object
+              properties:
+                nativeFilter:
+                  type: object
+                  description: |
+                    Planet Data API search filters
+                  externalDocs:
+                    description: >-
+                      Link to the Planet documentation page about search
+                      filters.
+                    url: >-
+                      https://developers.planet.com/docs/data/searches-filtering/#search-filters
+                  example:
+                    type: RangeFilter
+                    field_name: snow_ice_percent
+                    config:
+                      gte: 10
+        type:
+          type: string
+          enum:
+            - catalog
+          default: catalog
+          description: |
+            Use `catalog` to subscribe to PlanetScope data.
+        itemType:
+          type: string
+          enum:
+            - PSScene
           description: >
-            Selection criteria for the data the subscription should cover. At
-            the minimum, `timeRange.from` must be included because subscriptions
-            must have a start time.
-          properties:
-            timeRange:
-              allOf:
-                - $ref: '#/components/schemas/TimeRange'
-                - required:
-                    - from
-                - description: >
-                    A time interval to filter data by the **publish** date (in
-                    contrast to orders, where the data is filtered by the
-                    acquisition date). It is defined by a start and end date and
-                    time, e.g. 2019-01-31T14:00:00+01:00. A date representation
-                    without time (e.g. 2019-01-31) will not work. Both the start
-                    and end of a time interval are inclusive and can be equal.
-            maxCloudCoverage:
-              $ref: '#/components/schemas/MaxCloudCoverage'
-            nativeFilter:
-              type: object
-              description: |
-                Planet Data API search filters
-              externalDocs:
-                description: Link to the Planet documentation page about search filters.
-                url: >-
-                  https://developers.planet.com/docs/data/searches-filtering/#search-filters
-              example:
-                type: RangeFilter
-                field_name: snow_ice_percent
-                config:
-                  gte: 10
-    PSSceneDataSpec:
-      allOf:
-        - $ref: '#/components/schemas/PlanetSubscriptionDataSpecBase'
-        - type: object
-          required:
-            - itemType
-            - productBundle
-            - harmonizeTo
-          properties:
-            itemType:
-              type: string
-              enum:
-                - PSScene
-              description: >
-                The item type to subscribe to. Only
-                [PSScene](https://developers.planet.com/docs/data/psscene/) is
-                supported. Subscribing to
-                [PSScene4Band](https://developers.planet.com/docs/data/psscene4band/)
-                data is not possible since November 1st 2022.
-              externalDocs:
-                description: Item Types Documentation
-                url: >-
-                  https://developers.planet.com/docs/apis/data/items-assets/#item-types
-            productBundle:
-              type: string
-              enum:
-                - analytic_udm2
-                - analytic_sr_udm2
-                - analytic_8b_udm2
-                - analytic_8b_sr_udm2
-              description: |
-                The product bundle to subscribe to.
-              externalDocs:
-                description: Product Bundles Reference
-                url: >-
-                  https://developers.planet.com/docs/orders/product-bundles-reference/
-            harmonizeTo:
-              type: string
-              enum:
-                - NONE
-                - Sentinel-2
-              description: >
-                Sensing instrument whose values the data should be harmonized
-                to, or `NONE` to disable harmonization.
-              externalDocs:
-                description: Details on PlanetScope instruments
-                url: https://developers.planet.com/docs/data/sensors/
+            The item type to subscribe to. Only
+            [PSScene](https://developers.planet.com/docs/data/psscene/) is
+            supported. Subscribing to
+            [PSScene4Band](https://developers.planet.com/docs/data/psscene4band/)
+            data is not possible since November 1st 2022.
+          externalDocs:
+            description: Item Types Documentation
+            url: >-
+              https://developers.planet.com/docs/apis/data/items-assets/#item-types
+        productBundle:
+          type: string
+          enum:
+            - analytic_udm2
+            - analytic_sr_udm2
+            - analytic_8b_udm2
+            - analytic_8b_sr_udm2
+          description: |
+            The product bundle to subscribe to.
+          externalDocs:
+            description: Product Bundles Reference
+            url: >-
+              https://developers.planet.com/docs/orders/product-bundles-reference/
+        harmonizeTo:
+          type: string
+          enum:
+            - NONE
+            - Sentinel-2
+          description: >
+            Sensing instrument whose values the data should be harmonized to, or
+            `NONE` to disable harmonization.
+          externalDocs:
+            description: Details on PlanetScope instruments
+            url: https://developers.planet.com/docs/data/sensors/
     PlanetDeliveryProvider:
       type: object
       properties:
@@ -9622,6 +9634,14 @@ paths:
             previous search
           in: path
           required: true
+          schema:
+            type: string
+        - name: planetApiKey
+          description: |
+            Your Planet API key. Get one from Planet https://www.planet.com.
+            It is required in order to get thumbnails of Planet data products
+            unless you purchased your Planet data plan through Sentinel Hub.
+          in: query
           schema:
             type: string
       responses:
