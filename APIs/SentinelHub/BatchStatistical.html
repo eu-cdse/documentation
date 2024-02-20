@@ -1175,12 +1175,19 @@ window.onload = function() {
 <p>When the processing finishes, the status of the request changes to <code>DONE</code>.</p>
 <section id="stopping-the-request" class="level4">
 <h4 class="anchored" data-anchor-id="stopping-the-request">Stopping the request</h4>
+<p>A request might be stopped for following reasons:</p>
+<ul>
+<li>it's requested by a user (user action)</li>
+<li>user is out of processing units (see chapter below)</li>
+<li>something is wrong with the processing of the request</li>
+</ul>
 <p>A user may stop the request in following states: <code>ANALYSING</code>, <code>ANALYSIS_DONE</code> and <code>PROCESSING</code>. However:</p>
 <ul>
 <li>if the status is <code>ANALYSING</code>, the analysis will complete,</li>
 <li>if the status is <code>PROCESSING</code>, all features (polygons) that have been processed or are being processed at that moment are charged for,</li>
 <li>user is not allowed to restart the request in the next 30 minutes.</li>
 </ul>
+<p>The service itself may also stop the request when processing of a lot of features is repeatedly failing. <code>stoppedStatusReason</code> of such requests will be <code>UNHEALTHY</code>. This can happen if the service is unstable or something is wrong with the request. If former, the request should eventually be restarted by Sentinel Hub team.</p>
 </section>
 <section id="processing-unit-costs" class="level4">
 <h4 class="anchored" data-anchor-id="processing-unit-costs">Processing unit costs</h4>
