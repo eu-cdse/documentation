@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Documentation - Classification of Ice and Open Water in Nizhnesvirsky Lower Bay using Sentinel-1 IW Product</title>
+<title>Documentation - How to access Sentinel-2 Level 3 Cloudless Quarterly Mosaics using the Process API</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -212,7 +212,7 @@ window.onload = function() {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Classification of Ice and Open Water in Nizhnesvirsky Lower Bay using Sentinel-1 IW Product</li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">How to access Sentinel-2 Level 3 Cloudless Quarterly Mosaics using the Process API</li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
@@ -1069,10 +1069,11 @@ window.onload = function() {
    
   <ul>
   <li><a href="#credentials" id="toc-credentials" class="nav-link active" data-scroll-target="#credentials">Credentials</a></li>
-  <li><a href="#defining-the-bounds" id="toc-defining-the-bounds" class="nav-link" data-scroll-target="#defining-the-bounds">Defining the Bounds</a></li>
-  <li><a href="#requesting-sentinel-1-sar-data" id="toc-requesting-sentinel-1-sar-data" class="nav-link" data-scroll-target="#requesting-sentinel-1-sar-data">Requesting Sentinel-1 (SAR) Data</a></li>
-  <li><a href="#estimating-a-threshold" id="toc-estimating-a-threshold" class="nav-link" data-scroll-target="#estimating-a-threshold">Estimating a threshold</a></li>
-  <li><a href="#creating-a-timeseries-of-the-area-covered-by-ice" id="toc-creating-a-timeseries-of-the-area-covered-by-ice" class="nav-link" data-scroll-target="#creating-a-timeseries-of-the-area-covered-by-ice">Creating a Timeseries of the area covered by ice</a></li>
+  <li><a href="#setting-an-area-of-interest" id="toc-setting-an-area-of-interest" class="nav-link" data-scroll-target="#setting-an-area-of-interest">Setting an area of interest</a></li>
+  <li><a href="#process-api-request-for-cloudless-mosaics-as-a-byoc" id="toc-process-api-request-for-cloudless-mosaics-as-a-byoc" class="nav-link" data-scroll-target="#process-api-request-for-cloudless-mosaics-as-a-byoc">Process API request for Cloudless mosaics as a BYOC</a>
+  <ul>
+  <li><a href="#example-1-true-color-image" id="toc-example-1-true-color-image" class="nav-link" data-scroll-target="#example-1-true-color-image">Example 1: True Color Image</a></li>
+  </ul></li>
   <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
   </ul>
 </nav>
@@ -1082,7 +1083,7 @@ window.onload = function() {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Classification of Ice and Open Water in Nizhnesvirsky Lower Bay using Sentinel-1 IW Product</h1>
+<h1 class="title">How to access Sentinel-2 Level 3 Cloudless Quarterly Mosaics using the Process API</h1>
 </div>
 
 
@@ -1097,36 +1098,33 @@ window.onload = function() {
 
 </header>
 
-<p>The Nizhnesvirsky lower bay is a vital part of a river system characterized by a dynamic freeze-thaw cycle. Understanding the extent of ice coverage and open water in this region is crucial for various applications, including navigation, ecosystem monitoring, and climate research. In this Jupyter notebook, we will leverage satellite imagery from the Sentinel-1 Interferometric Wide (IW) product, along with remote sensing principles, to classify ice and open water over a period of 8 months, from September 2022 to May 2023.</p>
-<p>The Sentinel-1 satellite offers reliable and frequent radar imaging capabilities, making it ideal for monitoring ice and water bodies. The Sentinel-1 IW product provides Synthetic Aperture Radar (SAR) data, which is unaffected by weather conditions, daylight, or cloud cover. SAR data measures the backscattered electromagnetic waves, allowing us to distinguish between different surface types.</p>
-<p>First, let us import all the necessary libraries.</p>
+<p>For more details on the individual steps in this notebook, compare with the “Introduction to Sentinel Hub API-s” notebook <a href="https://github.com/eu-cdse/notebook-samples/blob/main/sentinelhub/introduction_to_SH_APIs.ipynb">here</a>: First we import dependencies:</p>
 <div class="cell" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> datetime</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> getpass</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib.patches <span class="im">import</span> Patch</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> geopandas <span class="im">as</span> gpd</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> ipyleaflet <span class="im">import</span> Map, GeoJSON, basemaps</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sentinelhub <span class="im">import</span> (</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    SHConfig,</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    Geometry,</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    DataCollection,</span>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Utilities</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> getpass</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sentinelhub <span class="im">import</span> (</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    SHConfig,</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    DataCollection,</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    SentinelHubCatalog,</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    SentinelHubRequest,</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    SentinelHubStatistical,</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    BBox,</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    bbox_to_dimensions,</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    CRS,</span>
 <span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    MimeType,</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    SentinelHubDownloadClient,</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    SentinelHubRequest,</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    bbox_to_dimensions,</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    Geometry,</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> utils <span class="im">import</span> plot_image</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<section id="credentials" class="level3">
-<h3 class="anchored" data-anchor-id="credentials">Credentials</h3>
+<section id="credentials" class="level2">
+<h2 class="anchored" data-anchor-id="credentials">Credentials</h2>
 <p>Credentials for Sentinel Hub services (<code>client_id</code> &amp; <code>client_secret</code>) can be obtained in your <a href="https://shapps.dataspace.copernicus.eu/dashboard/#/">Dashboard</a>. In the User Settings you can create a new OAuth Client to generate these credentials. For more detailed instructions, visit the relevant <a href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Overview/Authentication.html">documentation page</a>.</p>
-<p>Now that you have your <code>client_id</code> &amp; <code>client_secret</code>, it is recommended to configure a new profile in your Sentinel Hub Python package. Instructions on how to configure your Sentinel Hub Python package can be found <a href="https://sentinelhub-py.readthedocs.io/en/latest/configure.html">here</a>. Using these instructions you can create a profile specific to using the package for accessing Copernicus Data Space Ecosystem data collections. This is useful as changes to the the config class are usually only temporary in your notebook and by saving the configuration to your profile you won’t need to generate new credentials or overwrite/change the default profile each time you rerun or write a new Jupyter Notebook.</p>
 <p>If you are a first time user of the Sentinel Hub Python package for Copernicus Data Space Ecosystem, you should create a profile specific to the Copernicus Data Space Ecosystem. You can do this in the following cell:</p>
-<div class="cell" data-tags="[]">
+<div class="cell" data-tags="[]" data-execution_count="24">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Only run this cell if you have not created a configuration.</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>config <span class="op">=</span> SHConfig()</span>
@@ -1137,370 +1135,155 @@ window.onload = function() {
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># config.save("cdse")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>However, if you have already configured a profile in Sentinel Hub Python for the Copernicus Data Space Ecosystem, then you can run the below cell entering the profile name as a string replacing <code>profile_name</code>.</p>
-<div class="cell">
+<div class="cell" data-execution_count="25">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># config = SHConfig("profile_name")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="defining-the-bounds" class="level3">
-<h3 class="anchored" data-anchor-id="defining-the-bounds">Defining the Bounds</h3>
-<p>We can define the bounds of the area of interest by considering a geojson file of the part of the river Svir.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>SHAPE_PATH <span class="op">=</span> <span class="st">"./data/Nizhnesvirsky_lower_bay.geojson"</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>river_gdf <span class="op">=</span> gpd.read_file(SHAPE_PATH)</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert to EPSG 3035</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>river_gdf <span class="op">=</span> river_gdf.to_crs(<span class="st">"EPSG:3035"</span>)</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Geometry of an entire area</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>resolution <span class="op">=</span> <span class="dv">20</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> json.load(<span class="bu">open</span>(SHAPE_PATH, <span class="st">"r"</span>))</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Set center and zoom level</span></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>center <span class="op">=</span> [<span class="fl">60.78</span>, <span class="fl">33.68</span>]</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>zoom <span class="op">=</span> <span class="dv">12</span></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Add OSM background</span></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>m <span class="op">=</span> Map(basemap<span class="op">=</span>basemaps.OpenStreetMap.Mapnik, center<span class="op">=</span>center, zoom<span class="op">=</span>zoom)</span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Add geojson data</span></span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>geo_json <span class="op">=</span> GeoJSON(data<span class="op">=</span>data)</span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>m.add_layer(geo_json)</span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Display</span></span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>m</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="setting-an-area-of-interest" class="level2">
+<h2 class="anchored" data-anchor-id="setting-an-area-of-interest">Setting an area of interest</h2>
+<p>The bounding box in <code>WGS84</code> coordinate system is <code>[(longitude and latitude coordinates of lower left and upper right corners)]</code>. You can get the bbox for a different area at the <a href="http://bboxfinder.com/">bboxfinder</a> website.</p>
+<p>All requests require a bounding box to be given as an instance of <code>sentinelhub.geometry.BBox</code> with corresponding Coordinate Reference System (<code>sentinelhub.constants.CRS</code>). In our case it is in WGS84 and we can use the predefined WGS84 coordinate reference system from <code>sentinelhub.constants.CRS</code>.</p>
+<div class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>aoi_coords_wgs84 <span class="op">=</span> [<span class="fl">12.292349</span>, <span class="fl">47.810849</span>, <span class="fl">12.569037</span>, <span class="fl">47.967123</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Here, we can split the entire time period into 24 slots so that we can get 2 acquisitions every month to capture the freeze-thaw dynamics adequately.</p>
+<p>When the bounding box bounds have been defined, you can initialize the <code>BBox</code> of the area of interest. Using the <code>bbox_to_dimensions</code> utility function, you can provide the desired resolution parameter of the image in meters and obtain the output image shape. For a Process API request, the limit is 2500*2500 pixels, if the output below has larger values, you have to limit the bouding box or reduce the resolution.</p>
 <div class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>start <span class="op">=</span> datetime.datetime(<span class="dv">2022</span>, <span class="dv">9</span>, <span class="dv">1</span>)</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>end <span class="op">=</span> datetime.datetime(<span class="dv">2023</span>, <span class="dv">4</span>, <span class="dv">30</span>)</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>n_chunks <span class="op">=</span> <span class="dv">17</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>tdelta <span class="op">=</span> (end <span class="op">-</span> start) <span class="op">/</span> n_chunks</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>edges <span class="op">=</span> [(start <span class="op">+</span> i <span class="op">*</span> tdelta).date().isoformat() <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(n_chunks)]</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>slots <span class="op">=</span> [(edges[i], edges[i <span class="op">+</span> <span class="dv">1</span>]) <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(edges) <span class="op">-</span> <span class="dv">1</span>)]</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Monthly time windows:</span><span class="ch">\n</span><span class="st">"</span>)</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> slot <span class="kw">in</span> slots:</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(slot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>resolution <span class="op">=</span> <span class="dv">100</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>aoi_bbox <span class="op">=</span> BBox(bbox<span class="op">=</span>aoi_coords_wgs84, crs<span class="op">=</span>CRS.WGS84)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>aoi_size <span class="op">=</span> bbox_to_dimensions(aoi_bbox, resolution<span class="op">=</span>resolution)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Image shape at </span><span class="sc">{</span>resolution<span class="sc">}</span><span class="ss"> m resolution: </span><span class="sc">{</span>aoi_size<span class="sc">}</span><span class="ss"> pixels"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Monthly time windows:
-
-('2022-09-01', '2022-09-15')
-('2022-09-15', '2022-09-29')
-('2022-09-29', '2022-10-13')
-('2022-10-13', '2022-10-27')
-('2022-10-27', '2022-11-10')
-('2022-11-10', '2022-11-25')
-('2022-11-25', '2022-12-09')
-('2022-12-09', '2022-12-23')
-('2022-12-23', '2023-01-06')
-('2023-01-06', '2023-01-20')
-('2023-01-20', '2023-02-03')
-('2023-02-03', '2023-02-18')
-('2023-02-18', '2023-03-04')
-('2023-03-04', '2023-03-18')
-('2023-03-18', '2023-04-01')
-('2023-04-01', '2023-04-15')</code></pre>
+<pre><code>Image shape at 100 m resolution: (213, 167) pixels</code></pre>
 </div>
 </div>
 </section>
-<section id="requesting-sentinel-1-sar-data" class="level3">
-<h3 class="anchored" data-anchor-id="requesting-sentinel-1-sar-data">Requesting Sentinel-1 (SAR) Data</h3>
-<p>We now obtain Sentinel-1 IW SAR images covering the Nizhnesvirsky lower bay in the above mentioned time periods. An evalscript is used to describe the processing that needs to be performed on the SAR imagery. This script defines the input and output expected in the <code>setup()</code> function and <code>evaluatePixel()</code> function defines operations applied at the pixel level.</p>
-<p>Note 1: The default output sample type is ‘AUTO’. In this case all the values between 0 to 1 are stretched to (0,255) and the values lying outside (0,1) are clipped.</p>
-<p>The SAR imagery needs to be preprocessed before it can be used. The following pre-processing techniques must be performed to mitigate any noise and errors. - Radiometric calibration to normalize the SAR image intensities (by setting the backscatter coefficient to <code>SIGMA0_ELLPSOID</code>).&nbsp; &nbsp; - Apply <code>LEE</code> speckle filtering techniques to reduce noise and enhance the visual quality of the images (Window size is set to <code>3x3</code>).&nbsp; &nbsp; - Apply geometric correction to ensure geometric accuracy and spatial alignment between the images (by applying <code>COPERNICUS</code> DEM).</p>
-<p>The images are filtered according to the ascending orbit and the resolution is set to <code>HIGH</code> (20m x 20m)</p>
-<p>Note 2: Here, we need to be careful about the units. THe units of geometry with WGS84 are degrees. To get a 20m resolution, the geometry must be transformed to <code>EPSG:3035</code>.</p>
-<div class="cell" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>evalscript_sar <span class="op">=</span> <span class="st">"""</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="st">  function setup() {</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="st">    return {</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="st">      input: ["VV", "dataMask"],</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="st">      output: { bands: 2, sampleType: "FLOAT32"}                  // Refer to Note 1</span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="st">    }</span></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="st">  }</span></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="st">// visualizes decibels from -20 to +10</span></span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="st">function toDb(linear) {</span></span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="st">  var log = 10 * Math.log(linear) / Math.LN10</span></span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="st">  return Math.max(0, (log + 20) / 30)</span></span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="st">function evaluatePixel(sample) {</span></span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="st">  var VV = sample.VV;</span></span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a><span class="st">  return [toDb(VV),sample.dataMask];</span></span>
-<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
-<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span>
-<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_sar_request(time_interval):</span>
-<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> SentinelHubRequest(</span>
-<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>        evalscript<span class="op">=</span>evalscript_sar,</span>
-<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>        input_data<span class="op">=</span>[</span>
-<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>            SentinelHubRequest.input_data(</span>
-<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>                data_collection<span class="op">=</span>DataCollection.SENTINEL1_IW.define_from(</span>
-<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"s1iw"</span>, service_url<span class="op">=</span>config.sh_base_url</span>
-<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>                ),</span>
-<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>                time_interval<span class="op">=</span>time_interval,</span>
-<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>                other_args<span class="op">=</span>{</span>
-<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"dataFilter"</span>: {</span>
-<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"resolution"</span>: <span class="st">"HIGH"</span>,</span>
-<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"mosaickingOrder"</span>: <span class="st">"mostRecent"</span>,</span>
-<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"orbitDirection"</span>: <span class="st">"ASCENDING"</span>,</span>
-<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>                    },</span>
-<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"processing"</span>: {</span>
-<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"backCoeff"</span>: <span class="st">"SIGMA0_ELLIPSOID"</span>,</span>
-<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"orthorectify"</span>: <span class="va">True</span>,</span>
-<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"demInstance"</span>: <span class="st">"COPERNICUS"</span>,</span>
-<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"speckleFilter"</span>: {</span>
-<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a>                            <span class="st">"type"</span>: <span class="st">"LEE"</span>,</span>
-<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a>                            <span class="st">"windowSizeX"</span>: <span class="dv">3</span>,</span>
-<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a>                            <span class="st">"windowSizeY"</span>: <span class="dv">3</span>,</span>
-<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a>                        },</span>
-<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a>                    },</span>
-<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a>                },</span>
-<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a>            )</span>
-<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a>        ],</span>
-<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a>        responses<span class="op">=</span>[SentinelHubRequest.output_response(<span class="st">"default"</span>, MimeType.TIFF)],</span>
-<span id="cb7-53"><a href="#cb7-53" aria-hidden="true" tabindex="-1"></a>        geometry<span class="op">=</span>Geometry(river_gdf.geometry.values[<span class="dv">0</span>], crs<span class="op">=</span>river_gdf.crs),</span>
-<span id="cb7-54"><a href="#cb7-54" aria-hidden="true" tabindex="-1"></a>        resolution<span class="op">=</span>[<span class="dv">20</span>, <span class="dv">20</span>],  <span class="co"># Refer to Note 2</span></span>
-<span id="cb7-55"><a href="#cb7-55" aria-hidden="true" tabindex="-1"></a>        config<span class="op">=</span>config,</span>
-<span id="cb7-56"><a href="#cb7-56" aria-hidden="true" tabindex="-1"></a>        data_folder<span class="op">=</span><span class="st">"./results"</span>,</span>
-<span id="cb7-57"><a href="#cb7-57" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>We can create a list of all the requests for each of the time slots and run them together.</p>
-<div class="cell" data-execution_count="6">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create a list of requests</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>list_of_requests <span class="op">=</span> [get_sar_request(slot) <span class="cf">for</span> slot <span class="kw">in</span> slots]</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>list_of_requests <span class="op">=</span> [request.download_list[<span class="dv">0</span>] <span class="cf">for</span> request <span class="kw">in</span> list_of_requests]</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co"># download data with multiple threads</span></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> SentinelHubDownloadClient(config<span class="op">=</span>config).download(</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    list_of_requests, max_threads<span class="op">=</span><span class="dv">5</span></span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>Below are a series of maps that show the SAR imagery in VV mode. This means that the electromagnetic waves are transmitted and received by the Radar on board Sentinel-1 are both oriented to the vertical plane.</p>
-<div class="cell" data-execution_count="7">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>ncols <span class="op">=</span> <span class="dv">4</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>nrows <span class="op">=</span> <span class="dv">4</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>aspect_ratio <span class="op">=</span> <span class="fl">1.5</span></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>subplot_kw <span class="op">=</span> {<span class="st">"xticks"</span>: [], <span class="st">"yticks"</span>: [], <span class="st">"frame_on"</span>: <span class="va">False</span>}</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    ncols<span class="op">=</span>ncols,</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    nrows<span class="op">=</span>nrows,</span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    figsize<span class="op">=</span>(<span class="dv">2</span> <span class="op">*</span> ncols <span class="op">*</span> aspect_ratio, <span class="dv">5</span> <span class="op">*</span> nrows),</span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    subplot_kw<span class="op">=</span>subplot_kw,</span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> idx, image <span class="kw">in</span> <span class="bu">enumerate</span>(data):</span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>    ax <span class="op">=</span> axs[idx <span class="op">//</span> ncols][idx <span class="op">%</span> ncols]</span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>    ax.imshow(np.clip((image[:, :, <span class="dv">0</span>]) <span class="op">*</span> <span class="fl">3.5</span> <span class="op">/</span> <span class="dv">255</span>, <span class="dv">0</span>, <span class="dv">1</span>))</span>
-<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>    ax.set_title(<span class="ss">f"</span><span class="sc">{</span>slots[idx][<span class="dv">0</span>]<span class="sc">}</span><span class="ss">  -  </span><span class="sc">{</span>slots[idx][<span class="dv">1</span>]<span class="sc">}</span><span class="ss">"</span>, fontsize<span class="op">=</span><span class="dv">10</span>)</span>
-<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display">
-<p><img src="ice_monitoring_files/figure-html/cell-9-output-1.png" class="img-fluid"></p>
-</div>
-</div>
-</section>
-<section id="estimating-a-threshold" class="level3">
-<h3 class="anchored" data-anchor-id="estimating-a-threshold">Estimating a threshold</h3>
-<p>If we look at the images for all time slots, we can see that the pixels in the river become brighter as the winter months approach. This is because the water acts like a mirror and very little backscatter reaches the sensor. However, if there is a structure or disturbance in the water (in this case ice), the electromagnetic waves are scattered in all directions and the chance of detecting this backscatter is higher (<a href="https://www.mdpi.com/remotesensing/remotesensing-12-02228/article_deploy/html/images/remotesensing-12-02228-g004-550.jpg">Reference</a>). It is possible that not all bright pixels are ice, which can be verified by in-situ measurements.</p>
-<p>To determine what a good threshold would be to differentiate the water pixels from ice, we can plot the distribution of pixel values within the entire range <code>(0,255)</code>.</p>
-<div class="cell" data-execution_count="8">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>ncols <span class="op">=</span> <span class="dv">4</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>nrows <span class="op">=</span> <span class="dv">4</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>aspect_ratio <span class="op">=</span> <span class="dv">15</span> <span class="op">/</span> <span class="dv">10</span></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>subplot_kw <span class="op">=</span> {<span class="st">"xticks"</span>: <span class="bu">range</span>(<span class="dv">0</span>, <span class="dv">255</span>, <span class="dv">25</span>), <span class="st">"yticks"</span>: [], <span class="st">"frame_on"</span>: <span class="va">True</span>}</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(</span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    ncols<span class="op">=</span>ncols,</span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    nrows<span class="op">=</span>nrows,</span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    figsize<span class="op">=</span>(<span class="dv">5</span> <span class="op">*</span> ncols <span class="op">*</span> aspect_ratio, <span class="dv">5</span> <span class="op">*</span> nrows),</span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    subplot_kw<span class="op">=</span>subplot_kw,</span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> idx, image <span class="kw">in</span> <span class="bu">enumerate</span>(data):</span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>    histogram, bin_edges <span class="op">=</span> np.histogram(</span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>        <span class="fl">2.5</span> <span class="op">*</span> image[:, :, <span class="dv">0</span>], bins<span class="op">=</span><span class="dv">50</span>, <span class="bu">range</span><span class="op">=</span>(<span class="fl">0.0000001</span>, <span class="dv">1</span>)</span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>    ax <span class="op">=</span> axs[idx <span class="op">//</span> ncols][idx <span class="op">%</span> ncols]</span>
-<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>    ax.plot(bin_edges[<span class="dv">0</span>:<span class="op">-</span><span class="dv">1</span>], histogram)</span>
-<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>    ax.set_xlabel(<span class="st">"VV value"</span>)</span>
-<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>    ax.set_ylabel(<span class="st">"Number of Pixels (K)"</span>)</span>
-<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>    ax.set_xlim((<span class="dv">0</span>, <span class="dv">1</span>))</span>
-<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>    ax.set_ylim((<span class="dv">0</span>, <span class="dv">500</span>))</span>
-<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>    ax.set_title(<span class="ss">f"</span><span class="sc">{</span>slots[idx][<span class="dv">0</span>]<span class="sc">}</span><span class="ss">  -  </span><span class="sc">{</span>slots[idx][<span class="dv">1</span>]<span class="sc">}</span><span class="ss">"</span>, fontsize<span class="op">=</span><span class="dv">10</span>)</span>
-<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display">
-<p><img src="ice_monitoring_files/figure-html/cell-10-output-1.png" class="img-fluid"></p>
-</div>
-</div>
-<p>Considering the historic <a href="https://www.meteoblue.com/de/wetter/historyclimate/weatherarchive/svir%27stroy_russland_485557?fcstlength=1y&amp;year=2022&amp;month=5">weather information</a> of the region and interpreting the SAR imagery, we can see that the appearance of ice in the river Svir started at the end of November and continued on till mid-March. By looking at the distribution plots above, we can set a threshold at a pixel value 50.</p>
-<p>The evalscript below creates a visualisation of the ice mask directly after processing the SAR data and checking for the threshold. If the pixel value is more than 50/255, then it is classified at an icy pixel and the <code>iceMask = 1</code>.</p>
-<div class="cell" data-execution_count="9">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>evalscript_mask <span class="op">=</span> <span class="st">"""</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="st">  function setup() {</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="st">    return {</span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="st">      input: ["VV", "dataMask"],</span></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="st">      output: { bands: 5 , sampleType: "UINT8"}</span></span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="st">    }</span></span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="st">  }</span></span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="st">// visualizes decibels from -20 to +10</span></span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="st">function toDb(linear) {</span></span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="st">  var log = 10 * Math.log(linear) / Math.LN10</span></span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="st">  return Math.max(0, (log + 20) / 30)</span></span>
-<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
-<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a><span class="st">function evaluatePixel(sample) {</span></span>
-<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a><span class="st">  var VV = sample.VV;</span></span>
-<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a><span class="st">  var iceMask = 0;</span></span>
-<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a><span class="st">  VVdB = toDb(VV);</span></span>
-<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a><span class="st">  if (VVdB &gt;-0.001 &amp;&amp; VVdB &lt; 0.2) {</span></span>
-<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a><span class="st">    iceMask = 0;</span></span>
-<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a><span class="st">    return [0, 0, 255, sample.dataMask, iceMask]; // Water mask</span></span>
-<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a><span class="st">  } else if (VVdB &gt; 0.2 &amp;&amp; VVdB &lt;1) {</span></span>
-<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a><span class="st">    iceMask = 1;</span></span>
-<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a><span class="st">    return [0, 255, 255,sample.dataMask, iceMask];</span></span>
-<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a><span class="st">  } else {</span></span>
-<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a><span class="st">  iceMask = 0;</span></span>
-<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a><span class="st">  return [0,0,0,sample.dataMask,iceMask];</span></span>
-<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a><span class="st">  }</span></span>
-<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
-<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span>
-<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_ice_mask_request(time_interval):</span>
-<span id="cb11-34"><a href="#cb11-34" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> SentinelHubRequest(</span>
-<span id="cb11-35"><a href="#cb11-35" aria-hidden="true" tabindex="-1"></a>        evalscript<span class="op">=</span>evalscript_mask,</span>
-<span id="cb11-36"><a href="#cb11-36" aria-hidden="true" tabindex="-1"></a>        input_data<span class="op">=</span>[</span>
-<span id="cb11-37"><a href="#cb11-37" aria-hidden="true" tabindex="-1"></a>            SentinelHubRequest.input_data(</span>
-<span id="cb11-38"><a href="#cb11-38" aria-hidden="true" tabindex="-1"></a>                data_collection<span class="op">=</span>DataCollection.SENTINEL1_IW.define_from(</span>
-<span id="cb11-39"><a href="#cb11-39" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"s1iw"</span>, service_url<span class="op">=</span>config.sh_base_url</span>
-<span id="cb11-40"><a href="#cb11-40" aria-hidden="true" tabindex="-1"></a>                ),</span>
-<span id="cb11-41"><a href="#cb11-41" aria-hidden="true" tabindex="-1"></a>                time_interval<span class="op">=</span>time_interval,</span>
-<span id="cb11-42"><a href="#cb11-42" aria-hidden="true" tabindex="-1"></a>                other_args<span class="op">=</span>{</span>
-<span id="cb11-43"><a href="#cb11-43" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"dataFilter"</span>: {</span>
-<span id="cb11-44"><a href="#cb11-44" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"resolution"</span>: <span class="st">"HIGH"</span>,</span>
-<span id="cb11-45"><a href="#cb11-45" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"mosaickingOrder"</span>: <span class="st">"mostRecent"</span>,</span>
-<span id="cb11-46"><a href="#cb11-46" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"orbitDirection"</span>: <span class="st">"ASCENDING"</span>,</span>
-<span id="cb11-47"><a href="#cb11-47" aria-hidden="true" tabindex="-1"></a>                    },</span>
-<span id="cb11-48"><a href="#cb11-48" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"processing"</span>: {</span>
-<span id="cb11-49"><a href="#cb11-49" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"backCoeff"</span>: <span class="st">"SIGMA0_ELLIPSOID"</span>,</span>
-<span id="cb11-50"><a href="#cb11-50" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"orthorectify"</span>: <span class="va">True</span>,</span>
-<span id="cb11-51"><a href="#cb11-51" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"demInstance"</span>: <span class="st">"COPERNICUS"</span>,</span>
-<span id="cb11-52"><a href="#cb11-52" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"speckleFilter"</span>: {</span>
-<span id="cb11-53"><a href="#cb11-53" aria-hidden="true" tabindex="-1"></a>                            <span class="st">"type"</span>: <span class="st">"LEE"</span>,</span>
-<span id="cb11-54"><a href="#cb11-54" aria-hidden="true" tabindex="-1"></a>                            <span class="st">"windowSizeX"</span>: <span class="dv">3</span>,</span>
-<span id="cb11-55"><a href="#cb11-55" aria-hidden="true" tabindex="-1"></a>                            <span class="st">"windowSizeY"</span>: <span class="dv">3</span>,</span>
-<span id="cb11-56"><a href="#cb11-56" aria-hidden="true" tabindex="-1"></a>                        },</span>
-<span id="cb11-57"><a href="#cb11-57" aria-hidden="true" tabindex="-1"></a>                    },</span>
-<span id="cb11-58"><a href="#cb11-58" aria-hidden="true" tabindex="-1"></a>                },</span>
-<span id="cb11-59"><a href="#cb11-59" aria-hidden="true" tabindex="-1"></a>            )</span>
-<span id="cb11-60"><a href="#cb11-60" aria-hidden="true" tabindex="-1"></a>        ],</span>
-<span id="cb11-61"><a href="#cb11-61" aria-hidden="true" tabindex="-1"></a>        responses<span class="op">=</span>[SentinelHubRequest.output_response(<span class="st">"default"</span>, MimeType.TIFF)],</span>
-<span id="cb11-62"><a href="#cb11-62" aria-hidden="true" tabindex="-1"></a>        geometry<span class="op">=</span>Geometry(river_gdf.geometry.values[<span class="dv">0</span>], crs<span class="op">=</span>river_gdf.crs),</span>
-<span id="cb11-63"><a href="#cb11-63" aria-hidden="true" tabindex="-1"></a>        resolution<span class="op">=</span>[<span class="dv">20</span>, <span class="dv">20</span>],</span>
-<span id="cb11-64"><a href="#cb11-64" aria-hidden="true" tabindex="-1"></a>        config<span class="op">=</span>config,</span>
-<span id="cb11-65"><a href="#cb11-65" aria-hidden="true" tabindex="-1"></a>        data_folder<span class="op">=</span><span class="st">"./results_mask"</span>,</span>
-<span id="cb11-66"><a href="#cb11-66" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell" data-execution_count="10">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create a list of requests</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>list_of_requests <span class="op">=</span> [get_ice_mask_request(slot) <span class="cf">for</span> slot <span class="kw">in</span> slots]</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>list_of_requests <span class="op">=</span> [request.download_list[<span class="dv">0</span>] <span class="cf">for</span> request <span class="kw">in</span> list_of_requests]</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="co"># download data with multiple threads</span></span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>mask_data <span class="op">=</span> SentinelHubDownloadClient(config<span class="op">=</span>config).download(</span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    list_of_requests, max_threads<span class="op">=</span><span class="dv">5</span></span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>The <code>mask_data</code> maps can be plotted as below to visualize the ice pixels and open water pixels.</p>
-<div class="cell" data-execution_count="11">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>ncols <span class="op">=</span> <span class="dv">4</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>nrows <span class="op">=</span> <span class="dv">4</span></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>aspect_ratio <span class="op">=</span> <span class="dv">1131</span> <span class="op">/</span> <span class="dv">1819</span></span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>subplot_kw <span class="op">=</span> {<span class="st">"xticks"</span>: [], <span class="st">"yticks"</span>: [], <span class="st">"frame_on"</span>: <span class="va">False</span>}</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>legend_elements <span class="op">=</span> [</span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    Patch(facecolor<span class="op">=</span><span class="st">"cyan"</span>, edgecolor<span class="op">=</span><span class="st">"c"</span>, label<span class="op">=</span><span class="st">"Ice"</span>),</span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    Patch(facecolor<span class="op">=</span><span class="st">"blue"</span>, edgecolor<span class="op">=</span><span class="st">"b"</span>, label<span class="op">=</span><span class="st">"Water"</span>),</span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>]</span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(</span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    ncols<span class="op">=</span>ncols,</span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>    nrows<span class="op">=</span>nrows,</span>
-<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>    figsize<span class="op">=</span>(<span class="dv">5</span> <span class="op">*</span> ncols <span class="op">*</span> aspect_ratio, <span class="dv">5</span> <span class="op">*</span> nrows),</span>
-<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>    subplot_kw<span class="op">=</span>subplot_kw,</span>
-<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> idx, image <span class="kw">in</span> <span class="bu">enumerate</span>(mask_data):</span>
-<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>    ax <span class="op">=</span> axs[idx <span class="op">//</span> ncols][idx <span class="op">%</span> ncols]</span>
-<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>    ax.imshow(np.clip((image[:, :, :<span class="dv">3</span>]), <span class="dv">0</span>, <span class="dv">255</span>))</span>
-<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>    ax.set_title(<span class="ss">f"</span><span class="sc">{</span>slots[idx][<span class="dv">0</span>]<span class="sc">}</span><span class="ss">  -  </span><span class="sc">{</span>slots[idx][<span class="dv">1</span>]<span class="sc">}</span><span class="ss">"</span>, fontsize<span class="op">=</span><span class="dv">10</span>)</span>
-<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>    ax.legend(handles<span class="op">=</span>legend_elements, loc<span class="op">=</span><span class="st">"lower right"</span>)</span>
-<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display">
-<p><img src="ice_monitoring_files/figure-html/cell-13-output-1.png" class="img-fluid"></p>
-</div>
-</div>
-</section>
-<section id="creating-a-timeseries-of-the-area-covered-by-ice" class="level3">
-<h3 class="anchored" data-anchor-id="creating-a-timeseries-of-the-area-covered-by-ice">Creating a Timeseries of the area covered by ice</h3>
-<p>Next, we can claculate the area covered by ice by considering the number of pixels classified as ice and multiplying with the initial resolution of the downloaded image, which is 20m x 20m in our case. This is done by counting the number of pixels that have the value <code>1</code> in the <code>iceMask</code> band.</p>
-<div class="cell" data-execution_count="12">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> count_ice_pixels(image):</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    ice_mask <span class="op">=</span> image[:, :, <span class="dv">4</span>]</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Count the number of blue pixels</span></span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    ice_pixel_count <span class="op">=</span> np.<span class="bu">sum</span>(ice_mask)</span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># print(ice_pixel_count)</span></span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> ice_pixel_count</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell" data-execution_count="13">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>resolution_s1 <span class="op">=</span> <span class="dv">20</span> <span class="op">*</span> <span class="dv">20</span>  <span class="co"># meters</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>area_covered_ice <span class="op">=</span> []</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> idx, image <span class="kw">in</span> <span class="bu">enumerate</span>(mask_data):</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Count the number of icy pixels</span></span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    ice_pixels_count <span class="op">=</span> count_ice_pixels(image)</span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    area_covered_ice.append(ice_pixels_count <span class="op">*</span> resolution_s1 <span class="op">/</span> <span class="dv">1000000</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>The calculated area can be plotted over time to determine the months with peak ice cover over the river.</p>
-<div class="cell" data-execution_count="14">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>xlabels <span class="op">=</span> [</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"September"</span>,</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"October"</span>,</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"November"</span>,</span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"December"</span>,</span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"January"</span>,</span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"February"</span>,</span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"March"</span>,</span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"April"</span>,</span>
-<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>]</span>
-<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> <span class="bu">range</span>(<span class="bu">len</span>(slots))</span>
-<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>plt.plot(<span class="bu">range</span>(<span class="bu">len</span>(slots)), area_covered_ice)</span>
-<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Time Series of area covered by ice"</span>)</span>
-<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>plt.xticks(np.arange(<span class="dv">0</span>, <span class="dv">16</span>, step<span class="op">=</span><span class="dv">2</span>), xlabels, rotation<span class="op">=</span><span class="dv">30</span>, ha<span class="op">=</span><span class="st">"center"</span>)</span>
-<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"Time slots"</span>)</span>
-<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"Area covered by ice (in $km^2$)"</span>)</span>
-<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display">
-<p><img src="ice_monitoring_files/figure-html/cell-16-output-1.png" class="img-fluid"></p>
-</div>
-</div>
-<p>This confirms the hypothesis of the ice formation beginning in mid-to-end of November and the amount of ice cover increasing as the winter progressed. We can also notice that once the ice starts breaking up in mid March, the ice clears out very quickly.</p>
-</section>
-<section id="summary" class="level3">
-<h3 class="anchored" data-anchor-id="summary">Summary</h3>
+<section id="process-api-request-for-cloudless-mosaics-as-a-byoc" class="level2">
+<h2 class="anchored" data-anchor-id="process-api-request-for-cloudless-mosaics-as-a-byoc">Process API request for Cloudless mosaics as a BYOC</h2>
+<section id="example-1-true-color-image" class="level3">
+<h3 class="anchored" data-anchor-id="example-1-true-color-image">Example 1: True Color Image</h3>
+<p>We build the request according to the <a href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/ApiReference.html">API Reference</a>, using the <code>SentinelHubRequest</code> class. Each Process API request also needs an <a href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Evalscript.html">evalscript</a>.</p>
+<p>The information that we specify in the <code>SentinelHubRequest</code> object is: - an evalscript, - a list of input data collections with time interval, - a format of the response, - a bounding box and its size (size or resolution). .</p>
+<p>The evalscript in the example is used to select the appropriate bands. We return the RGB (B04, B03, B02) Sentinel-2 L2A bands with some contrast enhancement.</p>
 <ul>
-<li>The classification results will provide temporal information about the freeze-thaw cycle in the Nizhnesvirsky lower bay.</li>
-<li>By analyzing the classified maps, we can observe the progression of ice formation, ice breakup, and the duration of open water periods.</li>
-<li>Quantitative analysis of ice coverage and open water duration can be derived from the classified maps, aiding in the assessment of seasonal changes and long-term trends.</li>
+<li>Here the data collection is defined as a <a href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Byoc.html">BYOC (Bring Your own COG)</a>. The collection ID for this collection can be found <a href="https://documentation.dataspace.copernicus.eu/Data/SentinelMissions/Sentinel2.html#access-sentinel-2-level-3-quarterly-mosaics-with-sentinel-hub">here</a>:</li>
+</ul>
+<div class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>S2l3_cloudless_mosaic <span class="op">=</span> DataCollection.define_byoc(</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    collection_id<span class="op">=</span><span class="st">"5460de54-082e-473a-b6ea-d5cbe3c17cca"</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Then, we define the evalscript. The evalscript can be copied directly from the browser, eg. <a href="https://link.dataspace.copernicus.eu/o2e">this scene</a> (click on the <code>&lt;/&gt;</code> icon for the selected layer): It is different from the generic true color evalscript for a single Sentinel-2 image, since it has to take care of contrast enhancement to provide a visually pleasing image for a large area.</p>
+<div class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>evalscript_true_color <span class="op">=</span> <span class="st">"""</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="st">//VERSION=3</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="st">function setup() {</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="st">  return {</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="st">    input: ["B04","B03","B02", "dataMask"],</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="st">    output: { bands: 4 }</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="st">  };</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="st">// Contrast enhance / highlight compress</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="st">const maxR = 3.0; // max reflectance</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="st">const midR = 0.13;</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="st">const sat = 1.2;</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="st">const gamma = 1.8;</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="st">const scalefac = 10000;</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="st">function evaluatePixel(smp) {</span></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a><span class="st">  const rgbLin = satEnh(sAdj(smp.B04/scalefac), sAdj(smp.B03/scalefac), sAdj(smp.B02/scalefac));</span></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a><span class="st">  return [sRGB(rgbLin[0]), sRGB(rgbLin[1]), sRGB(rgbLin[2]), smp.dataMask];</span></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a><span class="st">function sAdj(a) {</span></span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a><span class="st">  return adjGamma(adj(a, midR, 1, maxR));</span></span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a><span class="st">const gOff = 0.01;</span></span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a><span class="st">const gOffPow = Math.pow(gOff, gamma);</span></span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a><span class="st">const gOffRange = Math.pow(1 + gOff, gamma) - gOffPow;</span></span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a><span class="st">function adjGamma(b) {</span></span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a><span class="st">  return (Math.pow((b + gOff), gamma) - gOffPow)/gOffRange;</span></span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a><span class="st">// Saturation enhancement</span></span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a><span class="st">function satEnh(r, g, b) {</span></span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a><span class="st">  const avgS = (r + g + b) / 3.0 * (1 - sat);</span></span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a><span class="st">  return [clip(avgS + r * sat), clip(avgS + g * sat), clip(avgS + b * sat)];</span></span>
+<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a><span class="st">function clip(s) {</span></span>
+<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a><span class="st">  return s &lt; 0 ? 0 : s &gt; 1 ? 1 : s;</span></span>
+<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a><span class="st">//contrast enhancement with highlight compression</span></span>
+<span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a><span class="st">function adj(a, tx, ty, maxC) {</span></span>
+<span id="cb8-47"><a href="#cb8-47" aria-hidden="true" tabindex="-1"></a><span class="st">  var ar = clip(a / maxC, 0, 1);</span></span>
+<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a><span class="st">  return ar * (ar * (tx/maxC + ty -1) - ty) / (ar * (2 * tx/maxC - 1) - tx/maxC);</span></span>
+<span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb8-50"><a href="#cb8-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-51"><a href="#cb8-51" aria-hidden="true" tabindex="-1"></a><span class="st">const sRGB = (c) =&gt; c &lt;= 0.0031308 ? (12.92 * c) : (1.055 * Math.pow(c, 0.41666666666) - 0.055);"""</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now we run the Process API Request. We set - the evalscript to the script we defined in the cell above, - the input data - collection to the cloudless mosaic BYOC collection we defined in the previous cell, - the time of interest directly in the request parameter - responses of the script - the bounding box and AOI size as defined above - and finally the credentials as defined in the config (the second cell) - optionally, you can also give a location to save data by mentioning the path (<code>data_folder='./data'</code>)</p>
+<div class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>request_true_color <span class="op">=</span> SentinelHubRequest(</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    evalscript<span class="op">=</span>evalscript_true_color,</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    input_data<span class="op">=</span>[</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>        SentinelHubRequest.input_data(</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>            data_collection<span class="op">=</span>S2l3_cloudless_mosaic,</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>            time_interval<span class="op">=</span>(<span class="st">"2023-04-01"</span>, <span class="st">"2023-04-02"</span>),</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    ],</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    responses<span class="op">=</span>[SentinelHubRequest.output_response(<span class="st">"default"</span>, MimeType.PNG)],</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    bbox<span class="op">=</span>aoi_bbox,</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    size<span class="op">=</span>aoi_size,</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    config<span class="op">=</span>config,</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    data_folder<span class="op">=</span><span class="st">"./data"</span>,</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The method <code>get_data()</code> will always return a list of length 1 with the available image from the requested time interval in the form of numpy arrays.If you want to save the data, make sure to set <code>save_data=True</code></p>
+<div class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>true_color_imgs <span class="op">=</span> request_true_color.get_data(save_data<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"Returned data is of type = </span><span class="sc">{</span><span class="bu">type</span>(true_color_imgs)<span class="sc">}</span><span class="ss"> and length </span><span class="sc">{</span><span class="bu">len</span>(true_color_imgs)<span class="sc">}</span><span class="ss">."</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"Single element in the list is of type </span><span class="sc">{</span><span class="bu">type</span>(true_color_imgs[<span class="op">-</span><span class="dv">1</span>])<span class="sc">}</span><span class="ss"> and has shape </span><span class="sc">{</span>true_color_imgs[<span class="op">-</span><span class="dv">1</span>]<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">"</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Returned data is of type = &lt;class 'list'&gt; and length 1.
+Single element in the list is of type &lt;class 'numpy.ndarray'&gt; and has shape (167, 213, 4)</code></pre>
+</div>
+</div>
+<p>Now we call the plot function to print the image that we defined above.</p>
+<div class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>image <span class="op">=</span> true_color_imgs[<span class="dv">0</span>]</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Image type: </span><span class="sc">{</span>image<span class="sc">.</span>dtype<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co"># plot function</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="co"># factor 1/255 to scale between 0-1</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="co"># factor 1 to keep brightness scaling that was already handled in the evalscript</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>plot_image(image, factor<span class="op">=</span><span class="dv">1</span> <span class="op">/</span> <span class="dv">255</span>, clip_range<span class="op">=</span>(<span class="dv">0</span>, <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Image type: uint8</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="cloudless_process_api_files/figure-html/cell-12-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+</section>
+<section id="summary" class="level2">
+<h2 class="anchored" data-anchor-id="summary">Summary</h2>
+<p>So what have we learnt in this notebook?</p>
+<ul>
+<li>How to modify a Process API request to access a BYOC dataset such as Sentinel-2 Level3 Cloud Free Mosaics.</li>
+<li>Visualising the derived image in a simple way</li>
 </ul>
 
 
