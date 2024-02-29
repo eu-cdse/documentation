@@ -18,6 +18,14 @@ import pandas as pd
 OData is an SO/IEC approved, OASIS standard , which is based on https RESTful Application Programming Interfaces. It enables resources, which are identified by URLs and defined in a data model, to be created and edited using simple HTTPS messages.  OData makes it possible to build REST-based data services that let Web clients publish and edit resources that are recognized by Uniform Resource Locators (URLs) and described in a data model using straightforward HTTPS messages.
 
 ## OData Products endpoint
+::: {.callout-tip} 
+Crucial for the search performance is specifying the collection name. 
+Example: Collection/Name eq 'SENTINEL-3'
+
+The additional efficient way to accelerate the query performance is limiting the query by acquisition dates, e.g.:
+ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-21T00:00:00.000Z
+
+:::
 
 ### Query structure
 
@@ -38,13 +46,13 @@ Consecutive filters within *filter* option should be separated with *and* or *or
 
 # HTTPS Request
 
-[`https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=not contains(Name,'S2') and ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-03T00:10:00.000Z&$orderby=ContentDate/Start&$top=100`](<https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=not%20contains(Name,%27S2%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T00:10:00.000Z&$orderby=ContentDate/Start&$top=100>){target="_blank"}
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=not (Collection/Name eq 'SENTINEL-2') and not contains(Name,'OPER_AUX') and ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-03T00:10:00.000Z&$orderby=ContentDate/Start&$top=100`](<https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=not%20contains(Name,%27S2%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T00:10:00.000Z&$orderby=ContentDate/Start&$top=100>){target="_blank"}
 
 
 # Python
 ```{python}
 #| tbl-wrap: true
-json = requests.get("https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=not contains(Name,'S2') and ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-03T00:10:00.000Z&$orderby=ContentDate/Start&$top=100").json()
+json = requests.get("https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=not (Collection/Name eq 'SENTINEL-2') and not contains(Name,'OPER_AUX') and ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-03T00:10:00.000Z&$orderby=ContentDate/Start&$top=100").json()
 df = pd.DataFrame.from_dict(json['value'])
 
 # Print only specific columns
@@ -56,13 +64,6 @@ df[columns_to_print].head(3)
 :::
 
 
-::: {.callout-note} 
-
-To accelerate the query performance, it is recommended to limit the query by acquisition dates, e.g.:
-
-ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-21T00:00:00.000Z
-
-:::
 
 ## Filter option
 
@@ -77,17 +78,17 @@ To search for a specific product by its exact name:
 
 :::
 
-To search for products containing "S1A" in their names:
+To search for Sentinel-1 products containing "COG" in their names:
 
 ::: {.panel-tabset}
 
 # HTTPS Request
 
-[`https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,'S1A') and ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-21T00:00:00.000Z`](https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-21T00:00:00.000Z){target="_blank"}
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name eq 'SENTINEL-1' and contains(Name,'COG') and ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-21T00:00:00.000Z`](https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name%20eq%20%27SENTINEL-1%27%20and%20contains(Name,%27COG%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-21T00:00:00.000Z){target="_blank"}
 
 # Python
 ```{python}
-json = requests.get("https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,'S1A') and ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-21T00:00:00.000Z").json()
+json = requests.get("https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name eq 'SENTINEL-1' and contains(Name,'COG') and ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-21T00:00:00.000Z").json()
 df = pd.DataFrame.from_dict(json['value'])
 
 # Print only specific columns
@@ -98,7 +99,7 @@ df[columns_to_print].head(3)
 
 :::
 
-Alternatively *contains*, *endswith* and *startswith* can be used to search for products ending or starting with provided string.
+Alternatively *contains*, *endswith* and *startswith* can be used to search for products ending or starting with provided string. You should use *Collection/Name* filter even if it overlaps with *startswith* or *contains* clause.
 
 ### Query by list
 
@@ -253,6 +254,11 @@ df[columns_to_print].head(3)
 
 :::
 
+::: {.callout-tip} 
+Filtering by ContentDate/Start is much faster than by ContentDate/End for big collections. Narrowing ContentDate/Start gives the best performance boost for *SENTINEL-2* collection.
+
+:::
+
 ### Query by Geographic Criteria
 
 To search for products intersecting the specified polygon:
@@ -323,17 +329,17 @@ where
 - *[Attribute.Value]* is the specific value that the user is searching for
 
 
-To get products with CloudCover\<40% between two dates:
+To get Sentinel-2 products with CloudCover\<40% between two dates:
 
 ::: {.panel-tabset}
 
 # HTTPS Request
 
-[`https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Attributes/OData.CSC.DoubleAttribute/any(att:att/Name eq 'cloudCover' and att/OData.CSC.DoubleAttribute/Value le 40.00) and ContentDate/Start gt 2022-01-01T00:00:00.000Z and ContentDate/Start lt 2022-01-03T00:00:00.000Z&$top=10`](https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Attributes/OData.CSC.DoubleAttribute/any(att:att/Name%20eq%20%27cloudCover%27%20and%20att/OData.CSC.DoubleAttribute/Value%20le%2040.00)%20and%20ContentDate/Start%20gt%202022-01-01T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-01-03T00:00:00.000Z&$top=10){target="_blank"}
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name eq 'SENTINEL-2' and Attributes/OData.CSC.DoubleAttribute/any(att:att/Name eq 'cloudCover' and att/OData.CSC.DoubleAttribute/Value le 40.00) and ContentDate/Start gt 2022-01-01T00:00:00.000Z and ContentDate/Start lt 2022-01-03T00:00:00.000Z&$top=10`](https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name%20eq%20%27SENTINEL-2%27%20and%20Attributes/OData.CSC.DoubleAttribute/any(att:att/Name%20eq%20%27cloudCover%27%20and%20att/OData.CSC.DoubleAttribute/Value%20le%2040.00)%20and%20ContentDate/Start%20gt%202022-01-01T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-01-03T00:00:00.000Z&$top=10){target="_blank"}
 
 # Python
 ```{python}
-json = requests.get("https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Attributes/OData.CSC.DoubleAttribute/any(att:att/Name eq 'cloudCover' and att/OData.CSC.DoubleAttribute/Value le 40.00) and ContentDate/Start gt 2022-01-01T00:00:00.000Z and ContentDate/Start lt 2022-01-03T00:00:00.000Z&$top=10").json()
+json = requests.get("https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name%20eq%20%27SENTINEL-2%27%20and%20Attributes/OData.CSC.DoubleAttribute/any(att:att/Name eq 'cloudCover' and att/OData.CSC.DoubleAttribute/Value le 40.00) and ContentDate/Start gt 2022-01-01T00:00:00.000Z and ContentDate/Start lt 2022-01-03T00:00:00.000Z&$top=10").json()
 df = pd.DataFrame.from_dict(json['value'])
 
 # Print only specific columns
@@ -350,11 +356,11 @@ To get products with cloudCover\< 10% and productType=S2MSI2A and ASCENDING orbi
 
 # HTTPS Request
 
-[`https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Attributes/OData.CSC.DoubleAttribute/any(att:att/Name eq 'cloudCover' and att/OData.CSC.DoubleAttribute/Value lt 10.00) and Attributes/OData.CSC.StringAttribute/any(att:att/Name eq 'productType' and att/OData.CSC.StringAttribute/Value eq 'S2MSI2A') and Attributes/OData.CSC.StringAttribute/any(att:att/Name eq 'orbitDirection' and att/OData.CSC.StringAttribute/Value eq 'ASCENDING') and ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-03T04:00:00.000Z&$top=10`](https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Attributes/OData.CSC.DoubleAttribute/any(att:att/Name%20eq%20%27cloudCover%27%20and%20att/OData.CSC.DoubleAttribute/Value%20lt%2010.00)%20and%20Attributes/OData.CSC.StringAttribute/any(att:att/Name%20eq%20%27productType%27%20and%20att/OData.CSC.StringAttribute/Value%20eq%20%27S2MSI2A%27)%20and%20Attributes/OData.CSC.StringAttribute/any(att:att/Name%20eq%20%27orbitDirection%27%20and%20att/OData.CSC.StringAttribute/Value%20eq%20%27ASCENDING%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T04:00:00.000Z&$top=10){target="_blank"}
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name eq 'SENTINEL-2' and Attributes/OData.CSC.DoubleAttribute/any(att:att/Name eq 'cloudCover' and att/OData.CSC.DoubleAttribute/Value lt 10.00) and Attributes/OData.CSC.StringAttribute/any(att:att/Name eq 'productType' and att/OData.CSC.StringAttribute/Value eq 'S2MSI2A') and Attributes/OData.CSC.StringAttribute/any(att:att/Name eq 'orbitDirection' and att/OData.CSC.StringAttribute/Value eq 'ASCENDING') and ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-03T04:00:00.000Z&$top=10`](https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name%20eq%20%27SENTINEL-2%27%20and%20Attributes/OData.CSC.DoubleAttribute/any(att:att/Name%20eq%20%27cloudCover%27%20and%20att/OData.CSC.DoubleAttribute/Value%20lt%2010.00)%20and%20Attributes/OData.CSC.StringAttribute/any(att:att/Name%20eq%20%27productType%27%20and%20att/OData.CSC.StringAttribute/Value%20eq%20%27S2MSI2A%27)%20and%20Attributes/OData.CSC.StringAttribute/any(att:att/Name%20eq%20%27orbitDirection%27%20and%20att/OData.CSC.StringAttribute/Value%20eq%20%27ASCENDING%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T04:00:00.000Z&$top=10){target="_blank"}
 
 # Python
 ```{python}
-json = requests.get("https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Attributes/OData.CSC.DoubleAttribute/any(att:att/Name eq 'cloudCover' and att/OData.CSC.DoubleAttribute/Value lt 10.00) and Attributes/OData.CSC.StringAttribute/any(att:att/Name eq 'productType' and att/OData.CSC.StringAttribute/Value eq 'S2MSI2A') and Attributes/OData.CSC.StringAttribute/any(att:att/Name eq 'orbitDirection' and att/OData.CSC.StringAttribute/Value eq 'ASCENDING') and ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-03T04:00:00.000Z&$top=10").json()
+json = requests.get("https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name eq 'SENTINEL-2' and Attributes/OData.CSC.DoubleAttribute/any(att:att/Name eq 'cloudCover' and att/OData.CSC.DoubleAttribute/Value lt 10.00) and Attributes/OData.CSC.StringAttribute/any(att:att/Name eq 'productType' and att/OData.CSC.StringAttribute/Value eq 'S2MSI2A') and Attributes/OData.CSC.StringAttribute/any(att:att/Name eq 'orbitDirection' and att/OData.CSC.StringAttribute/Value eq 'ASCENDING') and ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-03T04:00:00.000Z&$top=10").json()
 df = pd.DataFrame.from_dict(json['value'])
 
 # Print only specific columns
@@ -376,11 +382,11 @@ To order products by ContentDate/Start in a descending direction:
 
 # HTTPS Request
 
-[`https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,'S1A_EW_GRD') and ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-03T03:00:00.000Z&$orderby=ContentDate/Start desc`](https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A_EW_GRD%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T03:00:00.000Z&$orderby=ContentDate/Start%20desc){target="_blank"}
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name eq 'SENTINEL-1' and contains(Name,'S1A_EW_GRD') and ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-03T03:00:00.000Z&$orderby=ContentDate/Start desc`](https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name%20eq%20%27SENTINEL-1%27%20and%20contains(Name,%27S1A_EW_GRD%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T03:00:00.000Z&$orderby=ContentDate/Start%20desc){target="_blank"}
 
 # Python
 ```{python}
-json = requests.get("https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,'S1A_EW_GRD') and ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-03T03:00:00.000Z&$orderby=ContentDate/Start desc").json()
+json = requests.get("https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name eq 'SENTINEL-1' and contains(Name,'S1A_EW_GRD') and ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-03T03:00:00.000Z&$orderby=ContentDate/Start desc").json()
 df = pd.DataFrame.from_dict(json['value'])
 
 # Print only specific columns
@@ -405,11 +411,11 @@ To limit the number of results:
 
 # HTTPS Request
 
-[`https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A_EW_GRD%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T12:00:00.000Z&$top=100`](https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A_EW_GRD%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T12:00:00.000Z&$top=100){target="_blank"}
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name eq 'SENTINEL-1' and startswith(Name,'S1A_EW_GRD') and ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-03T12:00:00.000Z&$top=100`](https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name%20eq%20%27SENTINEL-1%27%20and%20startswith(Name,%27S1A_EW_GRD%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T12:00:00.000Z&$top=100){target="_blank"}
 
 # Python
 ```{python}
-json = requests.get("https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A_EW_GRD%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T12:00:00.000Z&$top=100").json()
+json = requests.get("https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name%20eq%20%27SENTINEL-1%27%20and%20startswith(Name,%27S1A_EW_GRD%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T12:00:00.000Z&$top=100").json()
 df = pd.DataFrame.from_dict(json['value'])
 
 # Print only specific columns
@@ -434,11 +440,11 @@ To skip a specific number of results:
 
 # HTTPS Request
 
-[`https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A_EW_GRD%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T12:00:00.000Z&$skip=23`](https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A_EW_GRD%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T12:00:00.000Z&$skip=23){target="_blank"}
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name eq 'SENTINEL-1' and startswith(Name,'S1A_EW_GRD') and ContentDate/Start gt 2022-05-03T00:00:00.000Z and ContentDate/Start lt 2022-05-03T12:00:00.000Z&$skip=23`](https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name%20eq%20%27SENTINEL-1%27%20and%20startswith(Name,%27S1A_EW_GRD%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T12:00:00.000Z&$skip=23){target="_blank"}
 
 # Python
 ```{python}
-json = requests.get("https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A_EW_GRD%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T12:00:00.000Z&$skip=23").json()
+json = requests.get("https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name%20eq%20%27SENTINEL-1%27%20and%20startswith(Name,%27S1A_EW_GRD%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T12:00:00.000Z&$skip=23").json()
 df = pd.DataFrame.from_dict(json['value'])
 
 # Print only specific columns
@@ -459,11 +465,11 @@ Whenever a query results in more products than 20 (default top value), the API p
 
 # HTTPS Request
 
-[`https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,'S1A_EW_GRD')+and+ContentDate/Start+gt+2022-05-03T00:00:00.000Z+and+ContentDate/Start+lt+2022-05-03T12:00:00.000Z&$skip=20`](https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A_EW_GRD%27)+and+ContentDate/Start+gt+2022-05-03T00:00:00.000Z+and+ContentDate/Start+lt+2022-05-03T12:00:00.000Z&$skip=20){target="_blank"}
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name eq 'SENTINEL-1' and startswith(Name,'S1A_EW_GRD')+and+ContentDate/Start+gt+2022-05-03T00:00:00.000Z+and+ContentDate/Start+lt+2022-05-03T12:00:00.000Z&$skip=20`](https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name%20eq%20%27SENTINEL-1%27%20and%20startswith(Name,%27S1A_EW_GRD%27)+and+ContentDate/Start+gt+2022-05-03T00:00:00.000Z+and+ContentDate/Start+lt+2022-05-03T12:00:00.000Z&$skip=20){target="_blank"}
 
 # Python
 ```{python}
-json = requests.get("https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,'S1A_EW_GRD')+and+ContentDate/Start+gt+2022-05-03T00:00:00.000Z+and+ContentDate/Start+lt+2022-05-03T12:00:00.000Z&$skip=20").json()
+json = requests.get("https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name%20eq%20%27SENTINEL-1%27%20and%20startswith(Name,'S1A_EW_GRD')+and+ContentDate/Start+gt+2022-05-03T00:00:00.000Z+and+ContentDate/Start+lt+2022-05-03T12:00:00.000Z&$skip=20").json()
 df = pd.DataFrame.from_dict(json['value'])
 
 # Print only specific columns
@@ -480,17 +486,22 @@ The acceptable arguments for this option: *Integer \<0,10000\>*
 
 The count option lets users get the exact number of products matching the query. This option is disabled by default to accelerate the query performance.
 
+::: {.callout-tip} 
+Don't use *count* option if not necessary, it slows down the execution of the request.
+:::
+
 To get the exact number of products for a given query:
 
 ::: {.panel-tabset}
 
 # HTTPS Request
 
-[`https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A_EW_GRD%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T12:00:00.000Z&$count=True`](https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A_EW_GRD%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T12:00:00.000Z&$count=True){target="_blank"}
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name eq 'SENTINEL-1' and 
+contains(Name,%27S1A_EW_GRD%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T12:00:00.000Z&$count=True`](https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name%20eq%20%27SENTINEL-1%27%20and%20contains(Name,%27S1A_EW_GRD%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T12:00:00.000Z&$count=True){target="_blank"}
 
 # Python
 ```{python}
-json = requests.get("https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A_EW_GRD%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T12:00:00.000Z&$count=True").json()
+json = requests.get("https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name%20eq%20%27SENTINEL-1%27%20and%20contains(Name,%27S1A_EW_GRD%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T12:00:00.000Z&$count=True").json()
 df = pd.DataFrame.from_dict(json['value'])
 
 # Print only specific columns
@@ -513,11 +524,11 @@ To see the metadata of the results:
 
 # HTTPS Request
 
-[`https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A_EW_GRD%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T12:00:00.000Z&$expand=Attributes`](https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A_EW_GRD%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T12:00:00.000Z&$expand=Attributes){target="_blank"}
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name%20eq%20%27SENTINEL-1%27%20and%20startswith(Name,%27S1A_EW_GRD%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T12:00:00.000Z&$expand=Attributes`](https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name%20eq%20%27SENTINEL-1%27%20and%20startswith(Name,%27S1A_EW_GRD%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T12:00:00.000Z&$expand=Attributes){target="_blank"}
 
 # Python
 ```{python}
-json = requests.get("https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%27S1A_EW_GRD%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T12:00:00.000Z&$expand=Attributes").json()
+json = requests.get("https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name%20eq%20%27SENTINEL-1%27%20and%20startswith(Name,%27S1A_EW_GRD%27)%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T12:00:00.000Z&$expand=Attributes").json()
 df = pd.DataFrame.from_dict(json['value'])
 
 # Print only specific columns
@@ -538,11 +549,11 @@ Expand assets allows to list additional assets of products, including quicklooks
 
 # HTTPS Request
 
-[`https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%20%27SL_2_FRP___%27)&$expand=Assets`](https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%20%27SL_2_FRP___%27)&$expand=Assets){target="_blank"}
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name%20eq%20%27SENTINEL-3%27%20and%20contains(Name,%20%27SL_2_FRP___%27)&$expand=Assets`](https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name%20eq%20%27SENTINEL-3%27%20and%20contains(Name,%20%27SL_2_FRP___%27)&$expand=Assets){target="_blank"}
 
 # Python
 ```{python}
-json = requests.get("https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=contains(Name,%20%27SL_2_FRP___%27)&$expand=Assets").json()
+json = requests.get("https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name%20eq%20%27SENTINEL-3%27%20and%20contains(Name,%20%27SL_2_FRP___%27)&$expand=Assets").json()
 df = pd.DataFrame.from_dict(json['value'])
 
 # Print only specific columns
@@ -767,7 +778,7 @@ For more information, please go to [OData Query structure](https://documentation
 
 ::: 
 
-::: {.callout-note}
+::: {.callout-tip}
 
 To accelerate the query performance, it is recommended to limit the query by specified dates, e.g.:
 
