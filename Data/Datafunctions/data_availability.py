@@ -10,7 +10,7 @@ tabletitle = "Offered Data"
 def main(c):
     constellation = c["constellation"]
     cases = {
-        "SMOS": ComplementaryOffer,
+        "SMOS": SMOSOffer,
         "MERIS": ComplementaryOffer,
         "Landsat-5": ComplementaryOffer,
         "Landsat-7": ComplementaryOffer,
@@ -121,10 +121,17 @@ def DataFetch(c,i):
         resolution = c['summaries']['DataAvailability'][i]['Resolution']
     except Exception:
         resolution = ''
+    try:
+        opensearch = c['summaries']['DataAvailability'][i]['OpenSearch']
+    except Exception:
+        opensearch = ''
+    try:
+        odata = c['summaries']['DataAvailability'][i]['OData']
+    except Exception:
+        odata = ''
 
 
-
-    return type,status,access,product_type,specific_product,spatial,temporal,product_link,catalogue,footnotes,provider,satellite,resolution
+    return type,status,access,product_type,specific_product,spatial,temporal,product_link,catalogue,footnotes,provider,satellite,resolution,opensearch,odata
 
 def auxillary(c):
     tabletitle = "Offered Data"
@@ -267,7 +274,7 @@ def ComplementaryOffer(c):
         empty_columns = []  # Track empty columns
 
         for i in range(0, data_offer):
-            type,status,access,product_type,specific_product,spatial,temporal,product_link,catalogue,footnotes,provider,satellite,resolution = DataFetch(c,i)
+            type,status,access,product_type,specific_product,spatial,temporal,product_link,catalogue,footnotes,provider,satellite,resolution,opensearch,odata = DataFetch(c,i)
             t.append([type,status, access, spatial, temporal,catalogue])
             note += footnotes
             headers = ["Product","Archive Status", "Access Type", "Spatial Extent", "Temporal Extent","Catalogue"]
@@ -284,6 +291,31 @@ def ComplementaryOffer(c):
     
     return table
 
+def SMOSOffer(c):
+    
+    try: 
+        data_offer = len(c['summaries']['DataAvailability'])
+        t = []
+        note = ""
+        empty_columns = []  # Track empty columns
+
+        for i in range(0, data_offer):
+            type,status,access,product_type,specific_product,spatial,temporal,product_link,catalogue,footnotes,provider,satellite,resolution,opensearch,odata = DataFetch(c,i)
+            t.append([type,status, access, spatial, temporal,catalogue,opensearch,odata])
+            note += footnotes
+            headers = ["Product","Archive Status", "Access Type", "Spatial Extent", "Temporal Extent","Catalogue", "OpenSearch", "OData"]
+
+        # Find and remove empty columns
+        t,headers=removeempty(t,headers)
+
+        table = tabulate(t, headers=headers, tablefmt='html', floatfmt=".4f", stralign="left", numalign="left")
+        # Set the minimum width of each column to 100 pixels
+        table = table.replace("<table>", '<table class="table">')
+        table = f"""<h5>{tabletitle}</h5>{table}{note}"""
+    except Exception:
+        table = " "
+    
+    return table
 
 ########################## DEFINE FUNCTION TO CREATE DATA AVAILABILITY TABLE FOR ADDITIONAL ########################
 def Additional(c):
@@ -295,7 +327,7 @@ def Additional(c):
         empty_columns = []  # Track empty columns
 
         for i in range(0, data_offer):
-            type,status,access,product_type,specific_product,spatial,temporal,product_link,catalogue,footnotes,provider,satellite,resolution = DataFetch(c,i)
+            type,status,access,product_type,specific_product,spatial,temporal,product_link,catalogue,footnotes,provider,satellite,resolution,opensearch,odata = DataFetch(c,i)
             t.append([specific_product, spatial, temporal,catalogue])
             note += footnotes
             headers = ["Specific Products", "Spatial Extext","Temporal Extent","Catalogue"]
@@ -323,7 +355,7 @@ def CAMSOffer(c):
         empty_columns = []  # Track empty columns
 
         for i in range(0, data_offer): 
-            type,status,access,product_type,specific_product,spatial,temporal,product_link,catalogue,footnotes,provider,satellite,resolution = DataFetch(c,i)
+            type,status,access,product_type,specific_product,spatial,temporal,product_link,catalogue,footnotes,provider,satellite,resolution,opensearch,odata = DataFetch(c,i)
             t.append([product_type, specific_product, spatial, temporal, catalogue,product_link])
             note += footnotes
             headers = ["Product Type", "Specific Products", "Spatial Extext","Temporal Extent","Catalogue","Product Detail"]
@@ -353,7 +385,7 @@ def CEMSOffer(c):
                 event_list = c['summaries']['DataAvailability'][i]['Details']
             except:
                 event_list = ""
-            Type,Status,Access,Product_type,SpecificProduct,Spatial,Temporal,ProductLink,Catalogue,footnotes,Provider,Satellite,Resolution = DataFetch(c,i)
+            type,status,access,product_type,specific_product,spatial,temporal,product_link,catalogue,footnotes,provider,satellite,resolution,opensearch,odata = DataFetch(c,i)
             t.append([Product_type, Catalogue, event_list])
             note += footnotes
             headers = ["Product Type", "Catalogue", "Events"]
@@ -381,7 +413,7 @@ def VHROffer(c):
         empty_columns = []  # Track empty columns
 
         for i in range(0, data_offer):
-            type,status,access,product_type,specific_product,spatial,temporal,product_link,catalogue,footnotes,provider,satellite,resolution = DataFetch(c,i)
+            type,status,access,product_type,specific_product,spatial,temporal,product_link,catalogue,footnotes,provider,satellite,resolution,opensearch,odata = DataFetch(c,i)
 
             t.append([provider, satellite, product_type, resolution, access])
             note += footnotes

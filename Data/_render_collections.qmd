@@ -120,13 +120,13 @@ def necessary_links():
 ```{python}
 # function enclosing thumbnail block 
 
-def thumbblock(src,userguide, opensearch, gsd,revisit_time, datatype, frequency):
+def thumbblock(src,userguide, opensearch, odata, gsd,revisit_time, datatype, frequency):
 
-    if src or userguide or opensearch or gsd or revisit_time or datatype or frequency:
+    if src or userguide or opensearch or odata or gsd or revisit_time or datatype or frequency:
         if src:
-            thumb =  f"""<div class="row" style="display: flex; justify-content: space-around"><div class="column"><div class="badge-row">{userguide}{opensearch}</div><div class="badge-row gutter">{gsd}{revisit_time}{frequency}</div><div class="badge-row">{datatype}</div></div><div class="column" style="margin-right:10%; margin-left:auto; text-align: right;"><figure><img width="165" height="150" src={src}><figcaption align="center">{databrowser}</figcaption></figure></div></div>"""
+            thumb =  f"""<div class="row" style="display: flex; justify-content: space-around"><div class="column"><div class="badge-row">{userguide}{opensearch}{odata}</div><div class="badge-row gutter">{gsd}{revisit_time}{frequency}</div><div class="badge-row">{datatype}</div></div><div class="column" style="margin-right:10%; margin-left:auto; text-align: right;"><figure><img width="165" height="150" src={src}><figcaption align="center">{databrowser}</figcaption></figure></div></div>"""
         else:
-            thumb =  f"""<div class="row" style="display: flex; justify-content: space-around"><div class="column"><div class="badge-row">{userguide}{opensearch}</div><div class="badge-row gutter">{gsd}{revisit_time}{frequency}</div><div class="badge-row">{datatype}</div></div><div class="column" style="margin-right:10%; margin-left:auto; text-align: right;"></div></div>"""
+            thumb =  f"""<div class="row" style="display: flex; justify-content: space-around"><div class="column"><div class="badge-row">{userguide}{opensearch}{odata}</div><div class="badge-row gutter">{gsd}{revisit_time}{frequency}</div><div class="badge-row">{datatype}</div></div><div class="column" style="margin-right:10%; margin-left:auto; text-align: right;"></div></div>"""
         return thumb
     else:
         return ''
@@ -283,6 +283,7 @@ for c in meta:
     links = { l["rel"] + l.get("title",""):l["href"] for l in c.get("links",[])}
     userguide = find_link(rel="about",title_contains="User")
     opensearch = find_link(rel="opensearch")
+    odata = find_link(rel="odata")
     databrowser = find_link(rel="browser",title_contains="Data-Browser")
     license_url = find_link(rel="license")
     cite = find_link(rel="cite-as")
@@ -343,10 +344,16 @@ for c in meta:
 
     # create a button to api url
     if opensearch is not None:
-        opensearch = f"""[![Catalog API](https://img.shields.io/badge/-Catalog_API-77cc09?style=flat)
+        opensearch = f"""[![Catalog API:OpenSearch](https://img.shields.io/badge/-Catalog_API:OpenSearch-77cc09?style=flat)
 ]({opensearch}){{target='_blank'}}"""
     else:
         opensearch = ""
+    
+    if odata is not None:
+        odata = f"""[![Catalog API:OData](https://img.shields.io/badge/-Catalog_API:OData-77cc09?style=flat)
+]({odata}){{target='_blank'}}"""
+    else:
+        odata = ""
 
     text = text + f"""
 
@@ -356,7 +363,7 @@ for c in meta:
 
 ## {title}
 
-{thumbblock(get_thumbnail(),userguide,opensearch,gsd,revisit_time,datatype,Updated_freq)}
+{thumbblock(get_thumbnail(),userguide,opensearch,odata,gsd,revisit_time,datatype,Updated_freq)}
 
 #### Overview
 
