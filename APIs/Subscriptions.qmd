@@ -1,0 +1,486 @@
+---
+title: Subscriptions 
+---
+## Push subscriptions
+
+**Subscription** service allows users to receive notifications in an automated way about the Event that has taken place in the Copernicus Data Space Ecosystem Catalogue. Currently, it informs users about newly added products to the DAS Catalogue via PUSH notifications. 
+
+For **PUSH notifications**, the nominal scenario can be describes as follows:
+
+* Creation of the subscription
+
+The client submits a subscription create request to Subscription Service. The user's request needs to contain an endpoint URL to which the notifications will be sent and endpoint's credentials (if client's endpoint requires authentication). The user's endpoint credentials are stored safely in the dedicated vault. The request is processed by the Subscription Service, and a response is returned which includes a unique identifier assigned to the subscription (subscription's Id), subscription status (initially set to running), subscription request submission date, and client's endpoint URL.
+
+* Product Notification 
+
+After a new product is added to the DAS Catalogue, the Subscription Service sends the notification to the client's endpoint. In case of user's endpoint unavailability, the PUSH notification is retried three times and then it fails. The notifications are sent to user's endpoint until the subscription is paused or deleted.
+
+Please note that the functionalities of the Subscriptions API are planned to be expanded gradually and more types of the Events (e.g. deletion or modification of the products) will be able to be monitored in the future. It is also planned to support PULL notifications.  
+
+### List of Terms
+The terms used within the Subscriptions documentation are defined below.
+
+**Subscription Service** - HTTP API capable of manipulating subscriptions
+
+**Subscription** - a client request for receiving notifications of future product published on Data Space Catalogue
+
+**Notification** - OData message automatically sent to client's endpoint every time the new product is published on Data Space Catalogue
+
+### Subscription Entity Description
+Below please find the description of the Subscription Entity. 
+
+```{=html}
+
+<div class="table-responsive">
+    <table class="table-quotas">
+        <thead>
+            <tr>
+                    <th style="text-align: center; vertical-align: middle; width:48%">Subscription Properties</th>
+                    <th style="text-align: center; vertical-align: middle; width:35%">Type</th>
+                    <th style="text-align: center; vertical-align: middle; width:5%">M</th>
+                    <th style="text-align: center; vertical-align: middle; width:80%">Description</th>
+                    <th style="text-align: center; vertical-align: middle; width:30%">Example</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="text-align: center; vertical-align: middle">Id</td>
+                <td style="text-align: center; vertical-align: middle">Guid</td>
+                <td style="text-align: center; vertical-align: middle">Y</td>
+                <td style="text-align: left; vertical-align: middle">It is a universally unique identifier (UUID). The Id is a local identifier for the Subscription instance within the Catalogue, assigned upon Subscription creation.</td>
+                <td style="text-align: center; vertical-align: middle">9249dde5-4838-4a34-8925-bac8c1d53f09</td>
+            </tr>
+            <tr>
+                <td style="text-align: center; vertical-align: middle">Status</td>
+                <td style="text-align: center; vertical-align: middle">Subscription Status enumeration</td>
+                <td style="text-align: center; vertical-align: middle">Y</td>
+                <td style="text-align: left; vertical-align: middle">The allowed values of the subscription status are:
+			<li>running</li>
+			<li>paused</li>
+			<li>cancelled</li>
+		<BR>The default value set to 'Status', if not provided by user, is 'running'.</td>
+                <td style="text-align: center; vertical-align: middle">running</td>
+            </tr>
+            <tr>
+                <td style="text-align: center; vertical-align: middle">SubscriptionEvent</td>
+                <td style="text-align: center; vertical-align: middle">Subscription Event enumeration</td>
+                <td style="text-align: center; vertical-align: middle">N</td>
+                <td style="text-align: left; vertical-align: middle">The subscription event to be monitored and for which notification is provided:
+				<li>created</li>
+				The default value set to "SubscriptionEvent", if not provided by user, is "created".<BR><BR>For "SubscriptionEvent" = "created" the notifications about newly added products to the Data Space Catalogue will be sent to the user's endpoint.</td>
+                <td style="text-align: center; vertical-align: middle">created</td>
+            </tr>
+            <tr>
+                <td style="text-align: center; vertical-align: middle">SubmissionDate</td>
+                <td style="text-align: center; vertical-align: middle">DateTimeOffset</td>
+                <td style="text-align: center; vertical-align: middle">Y</td>
+                <td style="text-align: left; vertical-align: middle">Date and time at which the Subscription was received by the Catalogue. Time is in UTC in the format YYYY-MMDDThh:mm:ss.sssZ</td>
+                <td style="text-align: center; vertical-align: middle">2024-01-17T09:13:04.654Z</td>
+            </tr>
+            <tr>
+                <td style="text-align: center; vertical-align: middle">LastNotificationDate</td>
+                <td style="text-align: center; vertical-align: middle">DateTimeOffset</td>
+                <td style="text-align: center; vertical-align: middle">N</td>
+                <td style="text-align: left; vertical-align: middle">Date and time corresponding to the last time the Subscription Service sent a Notification to the user's endpoint. Time is in UTC in the format YYYY-MMDDThh:mm:ss.sssZ</td>
+                <td style="text-align: center; vertical-align: middle">2024-01-17T09:50:10.654Z</td>
+            </tr>
+			<tr>
+                <td style="text-align: center; vertical-align: middle">StageOrder</td>
+                <td style="text-align: center; vertical-align: middle">Boolean</td>
+                <td style="text-align: center; vertical-align: middle">N</td>
+                <td style="text-align: left; vertical-align: middle">Automatically orders the staging of products fulfilling the subscription.
+				<BR><BR>Only used if SubscriptionEvent = created
+				<b><BR><BR>Currently, the order of staging products is not feasible as all new products in Data Space Catalogue have status set to 'Online' and can be accessed immediately without setting an order.</b></td>
+                <td style="text-align: center; vertical-align: middle">true</td>
+            </tr>
+			<tr>
+                <td style="text-align: center; vertical-align: middle">Priority</td>
+                <td style="text-align: center; vertical-align: middle">Int64</td>
+                <td style="text-align: center; vertical-align: middle">N</td>
+                <td style="text-align: left; vertical-align: middle">Priority of the created orders resulting from the subscription. Currently automatically fixed to '1' without the possibility to change the value.
+				Within further development of the Subscription Service it is possible to enable Priority function which will determine the priority of the user's orders.</td>
+                <td style="text-align: center; vertical-align: middle">1</td>
+            </tr>
+			<tr>
+                <td style="text-align: center; vertical-align: middle">NotificationEndpoint</td>
+                <td style="text-align: center; vertical-align: middle">String</td>
+                <td style="text-align: center; vertical-align: middle">N</td>
+                <td style="text-align: left; vertical-align: middle">User's Endpoint URI used by the Data Space Catalogue for subscription notifications.</td>
+                <td style="text-align: center; vertical-align: middle">Any URI, e.g. https://myservice/notification</td>
+            </tr>
+			<tr>
+                <td style="text-align: center; vertical-align: middle">NotificationEpUsername</td>
+                <td style="text-align: center; vertical-align: middle">String</td>
+                <td style="text-align: center; vertical-align: middle">N</td>
+                <td style="text-align: left; vertical-align: middle">The username associated with the Endpoint URI. It is mandatory if NotificationEndpoint requires authentication.</td>
+                <td style="text-align: center; vertical-align: middle">myserviceusername</td>
+            </tr>
+			<tr>
+                <td style="text-align: center; vertical-align: middle">NotificationEpPassword</td>
+                <td style="text-align: center; vertical-align: middle">String</td>
+                <td style="text-align: center; vertical-align: middle">N</td>
+                <td style="text-align: left; vertical-align: middle">The password associated with the Endpoint URI. It is mandatory if NotificationEndpoint requires authentication.</td>
+                <td style="text-align: center; vertical-align: middle">***********</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+```
+
+### User Authorization
+For using Subscription Service you need an authorization token as only authorized users are allowed to create a subscription and access the subscription endpoints - all Subscription Service endpoints needs token.
+
+To get the token you can use the following scripts:
+
+::: {.panel-tabset}
+
+# cURL
+
+```
+curl --location --request POST 'https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token' \
+  --header 'Content-Type: application/x-www-form-urlencoded' \
+  --data-urlencode 'grant_type=password' \
+  --data-urlencode 'username=<LOGIN>' \
+  --data-urlencode 'password=<PASSWORD>' \
+  --data-urlencode 'client_id=cdse-public'
+```
+:::
+
+or
+
+::: {.panel-tabset}
+
+# cURL
+
+```
+curl -d 'client_id=cdse-public' -d 'username=<LOGIN>' -d 'password=<PASSWORD>' -d 'grant_type=password' 'https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token' | python3 -m json.tool | grep "access_token" | awk -F\" '{print $4}'
+```
+:::
+
+Along with the Access Token, you will be returned a Refresh Token, the latter is used to generate a new Access Token without the need to specify a Username or Password; this helps to make requests less vulnerable to your credentials being exposed.
+
+To re-generate the Access Token from the Refresh Token, it can be done with the following request:
+
+::: {.panel-tabset}
+
+# cURL
+
+```
+curl --location --request POST 'https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token' \
+  --header 'Content-Type: application/x-www-form-urlencoded' \
+  --data-urlencode 'grant_type=refresh_token' \
+  --data-urlencode 'refresh_token=<REFRESH_TOKEN>' \
+  --data-urlencode 'client_id=cdse-public'
+```
+:::
+
+### Subscription Service
+
+#### Create Subscription
+
+To create subscription users should specify the notification endpoint to which push notifications from the Subscription Service will be sent.
+
+While creating a subscription, users can specify the Event they would like to be notified. For now, the following Event can be chosen:
+
+* Created
+
+The Subscription Service will then send the notification to the user's endpoint about newly added products to the Copernicus Data Space Ecosystem Catalogue.
+
+To create a Subscription a request to the Subscription Service service should be submitted:
+
+::: {.panel-tabset}
+
+# HTTP request
+
+```{json}
+POST \
+https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions
+{
+  "StageOrder": true,
+  "Priority": 1,
+  "NotificationEndpoint": "https://myservice/notification",
+  "Status": "running",
+  "NotificationEpUsername": "myusername",
+  "NotificationEpPassword": "********",
+  "SubscriptionEvent": [
+    "created"
+  ]
+}
+```
+
+# Response example
+
+```{json}
+[
+    {
+        "Id": "7ca682c3-7b21-4e9b-952e-874798101340",
+        "StageOrder": true,
+        "Priority": 1,
+        "Status": "running",
+        "NotificationEndpoint": "https://myservice/notification",
+        "SubscriptionEvent": [
+            "created"
+        ],
+        "SubmissionDate": "2024-01-18T09:47:34.2672",
+        "@odata.context": "$metadata#Subscriptions/$entity"
+    }
+]
+```
+
+:::
+
+::: {.callout-note} 
+
+Please note that the limit of the running subscriptions for one user is 1. The overall limit of the subscriptions (running and paused) for one user is 10.
+
+:::
+
+
+#### Notification sender
+
+After creating the subscription, the notifications about new products entering the Data Space Catalogue should be automatically sent to user's endpoint:
+
+::: {.panel-tabset}
+
+# Notification example
+
+```{json}
+{
+    "@odata.context": "$metadata#Notification/$entity",
+    "SubscriptionEvent": "created",
+    "ProductId": "8d654e59-d7b6-4a53-b086-c9de764e506b",
+    "ProductName": "S2A_MSIL2A_20240129T062121_N0510_R034_T44VMN_20240129T093752.SAFE",
+    "SubscriptionId": "c06f2e68-fb9e-4e22-ac57-49566e8621fb",
+    "NotificationDate": "2024-01-29T10:59:08.698Z",
+    "value": {
+        "@odata.context": "$metadata#Products(Attributes())(Assets())",
+        "@odata.mediaContentType": "application/octet-stream",
+        "Id": "8d654e59-d7b6-4a53-b086-c9de764e506b",
+        "Name": "S2A_MSIL2A_20240129T062121_N0510_R034_T44VMN_20240129T093752.SAFE",
+        "ContentType": "application/octet-stream",
+        "ContentLength": 769373106,
+        "OriginDate": "2024-01-29T10:42:05.000Z",
+        "Checksum": [
+            {
+                "Value": "902d7e7e85b7392618a957f3e9f94168",
+                "Algorithm": "MD5",
+                "ChecksumDate": "2024-01-29T10:59:06.907635Z"
+            },
+            {
+                "Value": "949f14ebf523a07e722cc50047df89d2f60c2a5bc581d7dbc0c0458d4ae32133",
+                "Algorithm": "BLAKE3",
+                "ChecksumDate": "2024-01-29T10:59:08.095992Z"
+            }
+        ],
+        "ContentDate": {
+            "Start": "2024-01-29T06:21:21.024Z",
+            "End": "2024-01-29T06:21:21.024Z"
+        },
+        "Footprint": "geography'SRID=4326;POLYGON ((80.89747740096813 61.3325521177604, 79.13124823455819 61.3215912623266, 79.1878753803679 60.33630031682041, 80.0736808744782 60.34174571197013, 80.08271516161926 60.35300228895745, 80.19618187051994 60.4932042236609, 80.31061087184456 60.63330859780532, 80.4259343524467 60.7733392028608, 80.54233622006822 60.91328820862503, 80.65958672113561 61.05317537011384, 80.77810533703949 61.19290341271132, 80.89747740096813 61.3325521177604))'",
+        "GeoFootprint": {
+            "type": "Polygon",
+            "coordinates": [
+                [...
+            ]
+        },
+        "Attributes": [...
+        ],
+        "ModificationDate": "2024-01-29T10:59:08.201Z",
+        "PublicationDate": "2024-01-29T10:58:20.247Z",
+        "Online": true,
+        "EvictionDate": "",
+        "S3Path": "/eodata/Sentinel-2/MSI/L2A/2024/01/29/S2A_MSIL2A_20240129T062121_N0510_R034_T44VMN_20240129T093752.SAFE",
+        "Assets": [
+            {
+                "Type": "QUICKLOOK",
+                "Id": "31cef3a2-65e2-4f94-bd0f-138a2897e5cd",
+                "DownloadLink": "https://catalogue.dataspace.copernicus.eu/odata/v1/Assets(31cef3a2-65e2-4f94-bd0f-138a2897e5cd)/$value",
+                "S3Path": "/eodata/Sentinel-2/MSI/L2A/2024/01/29/S2A_MSIL2A_20240129T062121_N0510_R034_T44VMN_20240129T093752.SAFE"
+            }
+        ]
+    }
+}
+```
+:::
+
+#### Get Subscription
+
+##### User's subscriptions Info
+
+Users are able to check their existing subscriptions.
+
+To get information about the user's subscriptions use following endpoint:
+
+::: {.panel-tabset}
+
+# HTTP request
+
+```{json}
+GET \
+https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions/Info
+```
+
+# Response example
+
+```{json}
+[
+    {
+        "Id": "7ca682c3-7b21-4e9b-952e-874798101340",
+        "StageOrder": true,
+        "Priority": 1,
+        "Status": "running",
+        "NotificationEndpoint": "https://myservice/notification",
+        "LastNotificationDate": "2024-01-18T09:47:45.540Z",
+        "SubscriptionEvent": [
+            "created"
+        ],
+        "SubmissionDate": "2024-01-18T09:47:34.267Z",
+        "@odata.context": "$metadata#Subscriptions/$entity"
+    }
+]
+```
+:::
+
+##### Subscription Info
+
+Users are also able to get information about the specified subscription by its Id.
+
+To get information about the specified subscription:
+
+::: {.panel-tabset}
+
+# HTTP request
+
+```{json}
+GET \
+https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions(subscription_id)
+```
+:::
+
+::: {.panel-tabset}
+
+# Request example
+
+```{json}
+GET \  
+https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions(7ca682c3-7b21-4e9b-95 2e-874798101340)
+```
+# Response example
+
+```{json}
+{
+    "Id": "7ca682c3-7b21-4e9b-952e-874798101340",
+    "StageOrder": true,
+    "Priority": 1,
+    "Status": "running",
+    "NotificationEndpoint": "https://myservice/notification",
+    "LastNotificationDate": "2024-01-18T09:48:40.398Z",
+    "SubscriptionEvent": [
+        "created"
+    ],
+    "SubmissionDate": "2024-01-18T09:47:34.267Z",
+    "@odata.context": "$metadata#Subscriptions/$entity"
+}
+```
+
+:::
+
+#### Update Subscription
+
+Within the subscription update, the following parameters can be modified:
+
+* Status
+* NotificationEndpoint
+* NotificationEpUsername
+* NotificationEpPassword
+
+The subscription status can be changed to:
+
+* running (subscription will be working and push notifications will be sent),
+* paused (subscription will be stopped and push notifications will not be sent),
+* cancelled (subscription will be deleted).
+
+To update an existing subscription:
+
+::: {.panel-tabset}
+
+# HTTP request
+
+```{json}
+PATCH \
+https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions(subscription_id)
+```
+:::
+
+To change the status of the subscription ('running'→'paused' or 'paused'→'running'):
+
+::: {.panel-tabset}
+
+# Request example
+
+```{json}
+PATCH \
+https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions(7ca682c3-7b21-4e9b-952e-874798181340)
+{
+  "Status": "paused"
+}
+```
+
+# Response example
+
+```{json}
+{
+    "Id": "7ca682c3-7b21-4e9b-952e-874798181340",
+    "StageOrder": true,
+    "Priority": 1,
+    "Status": "paused",
+    "NotificationEndpoint": "https://myservice/notification",
+    "LastNotificationDate": "2024-01-18T09:49:29.918Z",
+    "SubscriptionEvent": [
+        "created"
+    ],
+    "SubmissionDate": "2024-01-18T09:47:34.267Z",
+    "@odata.context": "$metadata#Subscriptions/Sentity"
+}
+```
+:::
+
+To change the subscription's status from 'running'/'paused' to 'cancelled' (Deletion of the Subscription):
+
+::: {.panel-tabset}
+
+# Request example
+
+```{json}
+PATCH \
+https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions(7ca682c3-7b21-4e9b-952e-874798181340)
+{
+  "Status": "cancelled"
+}
+```
+:::
+
+#### Delete Subscription
+
+In case of the subscription deletion, it is requested to provide subscription Id.
+
+To delete an existing subscription:
+
+::: {.panel-tabset}
+
+# HTTP request
+
+```{json}
+DELETE \
+https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions(subscription_id)
+```
+
+# Request example
+
+```{json}
+DELETE \
+https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions(7ca682c3-7b21-4e9b-952e-874798181340)
+```
+
+:::
