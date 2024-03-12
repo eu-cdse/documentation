@@ -1160,7 +1160,7 @@ window.onload = function() {
 <p><em>On Linux</em>:</p>
 <p>In this example, the output is filtered by grep and awk commands to obtain a token. In the Linux operating system, it’s seen as an environmental variable <strong>ACCESS_TOKEN</strong>.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" aria-current="page">cURL</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" aria-current="page">cURL</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">cURL with 2FA</a></li></ul>
 <div class="tab-content">
 <div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
 <pre class="{bash}"><code>export ACCESS_TOKEN=$(curl -d 'client_id=cdse-public' \
@@ -1168,8 +1168,16 @@ window.onload = function() {
                     -d "password=&lt;password&gt;" \
                     -d 'grant_type=password' \
                     'https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token' | \
-                    python3 -m json.tool | grep "access_token" | awk -F\" '{print $4}')
-</code></pre>
+                    python3 -m json.tool | grep "access_token" | awk -F\" '{print $4}')</code></pre>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<pre class="{bash}"><code>export ACCESS_TOKEN=$(curl -d 'client_id=cdse-public' \
+                    -d "username=&lt;username&gt;" \
+                    -d "password=&lt;password&gt;" \
+                    -d 'grant_type=password' \
+                    -d 'totp=&lt;2FA_token&gt;' \
+                    'https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token' | \
+                    python3 -m json.tool | grep "access_token" | awk -F\" '{print $4}')</code></pre>
 </div>
 </div>
 </div>
@@ -1177,11 +1185,14 @@ window.onload = function() {
 <pre class="{bash}"><code>printenv ACCESS_TOKEN</code></pre>
 <p><em>On Windows</em>:</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">cURL</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">cURL</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">cURL with 2FA</a></li></ul>
 <div class="tab-content">
 <div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
 <pre class="{bash}"><code>curl -s -X POST https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token -H "Content-Type: application/x-www-form-urlencoded" -d "username=&lt;username&gt;" -d "password=&lt;password&gt;" -d "grant_type=password" -d "client_id=cdse-public"
 </code></pre>
+</div>
+<div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
+<pre class="{bash}"><code>curl -s -X POST https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token -H "Content-Type: application/x-www-form-urlencoded" -d "username=&lt;username&gt;" -d "password=&lt;password&gt;" -d "totp=&lt;2FA_token&gt;" -d "grant_type=password" -d "client_id=cdse-public"</code></pre>
 </div>
 </div>
 </div>
