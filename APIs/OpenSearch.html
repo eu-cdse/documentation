@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.551">
+<meta name="generator" content="quarto-1.3.450">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -22,7 +22,7 @@ ul.task-list li input[type="checkbox"] {
 }
 /* CSS for syntax highlighting */
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -57,13 +57,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </style>
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="../site_libs/clipboard/clipboard.min.js"></script>
 <script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../APIs/openEO/openEO.html" rel="next">
+<link href="../APIs/STAC.html" rel="next">
 <link href="../APIs/OData.html" rel="prev">
 <link href="../_images/logos/favicon.png" rel="icon" type="image/png">
 <script src="../site_libs/quarto-html/quarto.js"></script>
@@ -81,12 +81,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   "collapse-after": 3,
   "panel-placement": "start",
   "type": "textbox",
-  "limit": 50,
-  "keyboard-shortcut": [
-    "f",
-    "/",
-    "s"
-  ],
+  "limit": 20,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -95,14 +90,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
-    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
     "search-submit-button-title": "Submit",
     "search-label": "Search"
   }
 }</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
 <script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 <meta name="zd-site-verification" content="xj9koofr1crilmoclgxsjd">
 <script type="text/javascript">
@@ -153,9 +147,47 @@ window.onload = function() {
   };
 </script>
 
+<script>
+  function handleQuestionClick(questionId) {
+      // Update the hash in the URL
+      window.location.hash = questionId;
+      
+      // Scroll to the target element and adjust its position
+      scrollToQuestion(questionId);
+  }
 
+  function scrollToQuestion(questionId) {
+      // Get the element with the ID specified in the hash
+      var targetElement = document.querySelector(questionId);
 
+      // Scroll to the target element and adjust its position
+      if (targetElement) {
+          // Calculate the position of the target element relative to the viewport
+          var rect = targetElement.getBoundingClientRect();
+          var offsetTop = rect.top + window.scrollY;
+          var targetPosition = offsetTop - (window.innerHeight / 16);
 
+          // Scroll to the adjusted position
+          window.scrollTo({
+              top: targetPosition,
+              behavior: 'smooth'
+          });
+
+          // Open the details element
+          targetElement.open = true;
+      }
+  }
+
+  document.addEventListener("DOMContentLoaded", function() {
+      // Check if there is a hash in the URL
+      if (window.location.hash) {
+          // Scroll to the target element and adjust its position after a short delay
+          setTimeout(function() {
+              scrollToQuestion(window.location.hash);
+          }, 100);
+      }
+  });
+</script>
 
 
 <link rel="stylesheet" href="../custom.css">
@@ -163,11 +195,12 @@ window.onload = function() {
 
 <body class="nav-sidebar floating nav-fixed">
 
+
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
-    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
       <div class="navbar-container container-fluid">
-      <div class="navbar-brand-container mx-auto">
+      <div class="navbar-brand-container">
     <a href="https://dataspace.copernicus.eu/" class="navbar-brand navbar-brand-logo">
     <img src="../_images/logos/combinedLogo.svg" alt="" class="navbar-logo">
     </a>
@@ -175,18 +208,18 @@ window.onload = function() {
     <span class="navbar-title">Documentation</span>
     </a>
   </div>
-        <div class="quarto-navbar-tools tools-end">
+        <div class="quarto-navbar-tools ms-auto">
 </div>
       </div> <!-- /container-fluid -->
     </nav>
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../APIs.html">APIs</a></li><li class="breadcrumb-item"><a href="../APIs/OpenSearch.html">OpenSearch</a></li></ol></nav>
-        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
-        </a>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../APIs.html">APIs</a></li><li class="breadcrumb-item"><a href="../APIs/OpenSearch.html">OpenSearch</a></li></ol></nav>
+      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+      </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
         <i class="bi bi-search"></i>
       </button>
@@ -196,7 +229,7 @@ window.onload = function() {
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
         <div class="mt-2 flex-shrink-0 align-items-center">
         <div class="sidebar-search">
         <div id="quarto-search" class="" title="Search"></div>
@@ -257,7 +290,7 @@ window.onload = function() {
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../Data/Dashboard.html" class="sidebar-item-text sidebar-link">
+  <a href="../Data/Others/Dashboard.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Copernicus Operations Dashboard</span></a>
   </div>
 </li>
@@ -272,31 +305,31 @@ window.onload = function() {
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../Data/Sentinel1.html" class="sidebar-item-text sidebar-link">
+  <a href="../Data/SentinelMissions/Sentinel1.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Sentinel-1</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../Data/Sentinel2.html" class="sidebar-item-text sidebar-link">
+  <a href="../Data/SentinelMissions/Sentinel2.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Sentinel-2</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../Data/Sentinel3.html" class="sidebar-item-text sidebar-link">
+  <a href="../Data/SentinelMissions/Sentinel3.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Sentinel-3</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../Data/Sentinel5P.html" class="sidebar-item-text sidebar-link">
+  <a href="../Data/SentinelMissions/Sentinel5P.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Sentinel-5P</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../Data/Sentinel6.html" class="sidebar-item-text sidebar-link">
+  <a href="../Data/SentinelMissions/Sentinel6.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Sentinel-6</span></a>
   </div>
 </li>
@@ -313,61 +346,61 @@ window.onload = function() {
       <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../Data/SMOS.html" class="sidebar-item-text sidebar-link">
+  <a href="../Data/ComplementaryData/SMOS.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Soil Moisture and Ocean Salinity (SMOS)</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../Data/MERIS.html" class="sidebar-item-text sidebar-link">
+  <a href="../Data/ComplementaryData/MERIS.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">ENVISAT- Medium Resolution Imaging Spectrometer (MERIS)</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../Data/Landsat5.html" class="sidebar-item-text sidebar-link">
+  <a href="../Data/ComplementaryData/Landsat5.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Landsat-5</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../Data/Landsat7.html" class="sidebar-item-text sidebar-link">
+  <a href="../Data/ComplementaryData/Landsat7.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Landsat-7</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../Data/Landsat8.html" class="sidebar-item-text sidebar-link">
+  <a href="../Data/ComplementaryData/Landsat8.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Landsat-8</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../Data/CLMS.html" class="sidebar-item-text sidebar-link">
+  <a href="../Data/ComplementaryData/CLMS.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Copernicus Land Monitoring Service (CLMS)</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../Data/CMEMS.html" class="sidebar-item-text sidebar-link">
+  <a href="../Data/ComplementaryData/CMEMS.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Copernicus Marine Service (CMEMS)</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../Data/CEMS.html" class="sidebar-item-text sidebar-link">
+  <a href="../Data/ComplementaryData/CEMS.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Copernicus Emergency Management Service (CEMS)</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../Data/CAMS.html" class="sidebar-item-text sidebar-link">
+  <a href="../Data/ComplementaryData/CAMS.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Copernicus Atmosphere Monitoring Service (CAMS)</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../Data/Additional.html" class="sidebar-item-text sidebar-link">
+  <a href="../Data/ComplementaryData/Additional.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Additional Complementary Data</span></a>
   </div>
 </li>
@@ -402,6 +435,24 @@ window.onload = function() {
  <span class="menu-text">OpenSearch</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../APIs/STAC.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">STAC product catalogue</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../APIs/Subscriptions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Subscriptions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../APIs/S3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">S3 Access</span></a>
+  </div>
+</li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="../APIs/openEO/openEO.html" class="sidebar-item-text sidebar-link">
@@ -411,6 +462,35 @@ window.onload = function() {
           </a> 
       </div>
       <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="false">
+ <span class="menu-text">Getting Started</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth3 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../APIs/openEO/Python_Client/Python.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Python</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../APIs/openEO/R_Client/R.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">R</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../APIs/openEO/JavaScript_Client/JavaScript.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">JavaScript</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../APIs/openEO/Glossary.html" class="sidebar-item-text sidebar-link">
@@ -437,20 +517,14 @@ window.onload = function() {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../APIs/openEO/Python_Client/Python.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Using Python client</span></a>
+  <a href="https://open-eo.github.io/openeo-python-client" class="sidebar-item-text sidebar-link" target="&quot;_blank&quot;">
+ <span class="menu-text">Python documentation</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../APIs/openEO/R_Client/R.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Using R client</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../APIs/openEO/JavaScript_Client/JavaScript.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Using JavaScript client</span></a>
+  <a href="https://openeo.org/documentation/1.0/datacubes.html" class="sidebar-item-text sidebar-link" target="&quot;_blank&quot;">
+ <span class="menu-text">Datacubes explained</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -459,73 +533,20 @@ window.onload = function() {
  <span class="menu-text">Job configuration</span></a>
   </div>
 </li>
-          <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="false">
- <span class="menu-text">Jupyter notebooks</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="false" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth3 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../notebook-samples/openeo/NDVI_Timeseries.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Zonal statistics over time</span></a>
+  <a href="https://openeo.org/documentation/1.0/developers/api/reference.html" class="sidebar-item-text sidebar-link" target="&quot;_blank&quot;">
+ <span class="menu-text">REST API Reference</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../notebook-samples/openeo/Load_Collection.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Load Sentinel-2 data</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../notebook-samples/openeo/UDF.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">User defined functions</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../notebook-samples/openeo/UDP.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Publishing workflow as a service</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../APIs/openEO/openeo-community-examples/python/BasicSentinelMerge/sentinel_merge.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Preprocessing &amp; merging Sentinels</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../APIs/openEO/openeo-community-examples/python/RankComposites/rank_composites.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Rank Composites</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../notebook-samples/openeo/Whittaker.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Smoothening dataset using Whittaker</span></a>
+  <a href="../APIs/openEO/fair.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">FAIR &amp; open science</span></a>
   </div>
 </li>
       </ul>
   </li>
-      </ul>
-  </li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../APIs/STAC.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">STAC product catalog</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../APIs/S3.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">S3 Access</span></a>
-  </div>
-</li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../APIs/Traceability.html" class="sidebar-item-text sidebar-link">
@@ -637,6 +658,12 @@ window.onload = function() {
   <div class="sidebar-item-container"> 
   <a href="../APIs/SentinelHub/Data/Byoc.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Bring Your Own COG / Batch</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../APIs/SentinelHub/Data/Zarr.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Zarr</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -783,13 +810,30 @@ window.onload = function() {
   </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="../APIs/SentinelHub/Catalog.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Catalog API</span></a>
+            <a href="../APIs/SentinelHub/AsyncProcess.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Asynchronous Processing API</span></a>
           <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-15" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-15" class="collapse list-unstyled sidebar-section depth3 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../APIs/SentinelHub/AsyncProcess/Examples.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Examples for Asynchronous Processing API</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../APIs/SentinelHub/Catalog.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Catalog API</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-16" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-16" class="collapse list-unstyled sidebar-section depth3 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../APIs/SentinelHub/Catalog/Examples.html" class="sidebar-item-text sidebar-link">
@@ -802,11 +846,11 @@ window.onload = function() {
       <div class="sidebar-item-container"> 
             <a href="../APIs/SentinelHub/Batch.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Batch Processing API</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-16" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-17" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-16" class="collapse list-unstyled sidebar-section depth3 ">  
+      <ul id="quarto-sidebar-section-17" class="collapse list-unstyled sidebar-section depth3 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../APIs/SentinelHub/Batch/Crs.html" class="sidebar-item-text sidebar-link">
@@ -825,11 +869,11 @@ window.onload = function() {
       <div class="sidebar-item-container"> 
             <a href="../APIs/SentinelHub/Statistical.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Statistical API</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-17" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-18" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-17" class="collapse list-unstyled sidebar-section depth3 ">  
+      <ul id="quarto-sidebar-section-18" class="collapse list-unstyled sidebar-section depth3 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../APIs/SentinelHub/Statistical/Examples.html" class="sidebar-item-text sidebar-link">
@@ -842,11 +886,11 @@ window.onload = function() {
       <div class="sidebar-item-container"> 
             <a href="../APIs/SentinelHub/BatchStatistical.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Batch Statistical API</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-18" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-19" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-18" class="collapse list-unstyled sidebar-section depth3 ">  
+      <ul id="quarto-sidebar-section-19" class="collapse list-unstyled sidebar-section depth3 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../APIs/SentinelHub/BatchStatistical/Examples.html" class="sidebar-item-text sidebar-link">
@@ -859,11 +903,11 @@ window.onload = function() {
       <div class="sidebar-item-container"> 
             <a href="../APIs/SentinelHub/Byoc.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Bring Your Own COG API</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-19" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-20" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-19" class="collapse list-unstyled sidebar-section depth3 ">  
+      <ul id="quarto-sidebar-section-20" class="collapse list-unstyled sidebar-section depth3 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../APIs/SentinelHub/Byoc/Examples.html" class="sidebar-item-text sidebar-link">
@@ -874,13 +918,30 @@ window.onload = function() {
   </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="../APIs/SentinelHub/OGC.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">OGC</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-20" aria-expanded="false" aria-label="Toggle section">
+            <a href="../APIs/SentinelHub/Zarr.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Zarr Import API</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-21" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-20" class="collapse list-unstyled sidebar-section depth3 ">  
+      <ul id="quarto-sidebar-section-21" class="collapse list-unstyled sidebar-section depth3 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../APIs/SentinelHub/Zarr/Examples.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Zarr Import API examples</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../APIs/SentinelHub/OGC.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">OGC</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-22" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-22" class="collapse list-unstyled sidebar-section depth3 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../APIs/SentinelHub/OGC/WMS.html" class="sidebar-item-text sidebar-link">
@@ -933,13 +994,13 @@ window.onload = function() {
 </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-21" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-23" aria-expanded="false">
  <span class="menu-text">Jupyter notebooks</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-21" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-23" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-21" class="collapse list-unstyled sidebar-section depth3 ">  
+      <ul id="quarto-sidebar-section-23" class="collapse list-unstyled sidebar-section depth3 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../notebook-samples/sentinelhub/migration_from_scihub_guide.html" class="sidebar-item-text sidebar-link">
@@ -948,19 +1009,19 @@ window.onload = function() {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../notebook-samples/sentinelhub/data_download_process_request.html" class="sidebar-item-text sidebar-link">
+  <a href="../notebook-samples/sentinelhub/process_request.ipynb" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Sentinel Hub Process API</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../notebook-samples/sentinelhub/ice_monitoring.html" class="sidebar-item-text sidebar-link">
+  <a href="../notebook-samples/sentinelhub/lake_ice_monitoring.ipynb" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Classification of Ice and Open Water</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../notebook-samples/sentinelhub/air_pollution_statistics.html" class="sidebar-item-text sidebar-link">
+  <a href="../notebook-samples/sentinelhub/pollution.ipynb" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Measuring NO2 concentrations</span></a>
   </div>
 </li>
@@ -974,11 +1035,11 @@ window.onload = function() {
       <div class="sidebar-item-container"> 
             <a href="../Applications.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Applications</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-22" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-24" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-22" class="collapse list-unstyled sidebar-section depth1 ">  
+      <ul id="quarto-sidebar-section-24" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../Applications/Browser.html" class="sidebar-item-text sidebar-link">
@@ -991,12 +1052,64 @@ window.onload = function() {
  <span class="menu-text">About Data Workspace</span></a>
   </div>
 </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../Applications/AlgorithmPlaza.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">openEO Algorithm Plaza</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../Applications/AlgorithmPlaza.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">openEO algorithm plaza</span></a>
+  <a href="../Applications/PlazaDetails/ManageOrg.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Manage your Organisation</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Applications/PlazaDetails/PublishService.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Publish a Service</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Applications/PlazaDetails/ExecuteService.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Execute a Service</span></a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../Applications/PlazaDetails/ManageService.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Manage a Service</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-25" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-25" class="collapse list-unstyled sidebar-section depth3 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Applications/PlazaDetails/ServiceMaturity.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Service Maturity</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Applications/PlazaDetails/Strength.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Service credit strength</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Applications/PlazaDetails/Reporting.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Reporting</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../Applications/WebEditor.html" class="sidebar-item-text sidebar-link">
@@ -1015,12 +1128,30 @@ window.onload = function() {
  <span class="menu-text">QGIS Plugin</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Applications/DataSpaceDashboard.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Copernicus Data Space Ecosystem Dashboard</span></a>
+  </div>
+</li>
       </ul>
   </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../Quotas.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Quotas and Limitations</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../ResearchNetwork.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Access through Research Network</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Usecase.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Jupyter Notebook Samples</span></a>
   </div>
 </li>
         <li class="px-0"><hr class="sidebar-divider hi "></li>
@@ -1039,22 +1170,22 @@ window.onload = function() {
         <li class="px-0"><hr class="sidebar-divider hi "></li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-23" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-26" aria-expanded="false">
  <span class="menu-text">Catalog APIs news</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-23" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-26" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-23" class="collapse list-unstyled sidebar-section depth1 ">  
+      <ul id="quarto-sidebar-section-26" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../APIs/UpcomingChanges.html" class="sidebar-item-text sidebar-link">
+  <a href="../APIs/Others/UpcomingChanges.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Upcoming changes</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../APIs/ReleaseNotes.html" class="sidebar-item-text sidebar-link">
+  <a href="../APIs/Others/ReleaseNotes.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Release notes</span></a>
   </div>
 </li>
@@ -1063,7 +1194,7 @@ window.onload = function() {
     </ul>
     </div>
 </nav>
-<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
@@ -1081,19 +1212,19 @@ window.onload = function() {
   <li><a href="#satellite-features" id="toc-satellite-features" class="nav-link" data-scroll-target="#satellite-features">Satellite features</a></li>
   </ul></li>
   </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/eu-cdse/documentation/issues" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
+</nav>
     </div>
 <!-- main -->
 <main class="content column-body" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../APIs.html">APIs</a></li><li class="breadcrumb-item"><a href="../APIs/OpenSearch.html">OpenSearch</a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">OpenSearch Catalog web service</h1>
 </div>
 
 
 
-<div class="quarto-title-meta column-body">
+<div class="quarto-title-meta">
 
     
   
@@ -1101,34 +1232,31 @@ window.onload = function() {
   </div>
   
 
-
 </header>
 
-
 <p>The OpenSearch catalogue allows you to search through Copernicus data using a standardized web service. The <a href="https://github.com/dewitt/opensearch/blob/master/opensearch-1-1-draft-6.md" target="_blank">OpenSearch specification</a> can be consulted for technical details of the standard. This web service returns results as GeoJSON feature collections. Each feature in the collection represents an earth observation ‘product’, referencing where the actual data can be found.</p>
-<p>We remark that this version does not implement the OGC OpenSearch standards, and a migration from other API’s named OpenSearch may require significant modifications. It mainly offers compatibility for existing users of a similar API on the CreoDIAS and Wekeo platforms and with client-side tools and workflows that have implemented support for this API.</p>
+<p>We remark that this version does not implement the OGC OpenSearch standards, and a migration from other APIs named OpenSearch may require significant modifications. It mainly offers compatibility for existing users of a similar API on the CreoDIAS and Wekeo platforms and with client-side tools and workflows that have implemented support for this API.</p>
 <section id="using-opensearch-interface-to-query-data-catalogue" class="level2">
 <h2 class="anchored" data-anchor-id="using-opensearch-interface-to-query-data-catalogue">Using OpenSearch interface to query Data Catalogue</h2>
-<p>Due to the fact that offset is not a recommended form of searching repository pages, we had to implement a limit to a maximum of 200k. The requests over the limit will be rejected with the code 400. Therefore, we encourage you to limit your inquiries by geographic or temporal area.</p>
-<p>All queries may be executed as simple HTTP-Get calls by typing the query in the web browser address line, by using any HTTP client, e.g.&nbsp;curl or wget, or from inside of the users’ program. The database is accessible free and anonymously (open for anonymous access for everyone, no authorization is used). It may be accessed both from the internal network (virtual machines in Creodias) and from outside, e.g.&nbsp;your home computer. Note that the actual EO data are restricted to authorized users; only the Data Catalogue is open.</p>
+<p>Since offset is not a recommended form of searching repository pages, we had to implement a limit to a maximum of 200k. The requests over the limit will be rejected with the code 400. Therefore, we encourage you to limit your inquiries by geographic or temporal area.</p>
+<p>All queries may be executed as simple HTTPS-Get calls by typing the query in the web browser address line, using any HTTPS client, e.g., curl or wget, or from inside the users’ program. The database is accessible free and anonymously (open for anonymous access for everyone; no authorization is used). It may be accessed both from the internal network (virtual machines in Creodias) and from outside, e.g.&nbsp;your home computer. Note that the actual EO data are restricted to authorized users; only the Data Catalogue is open.</p>
 <section id="general-rules" class="level3">
 <h3 class="anchored" data-anchor-id="general-rules">General Rules</h3>
-<p>The queries produce results in JSON format. Base url:</p>
+<p>The queries produce results in JSON format. Base URL:</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" aria-current="page">HTTP Request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">Python</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" aria-current="page">HTTPS Request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">Python</a></li></ul>
 <div class="tab-content">
 <div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
-<p><a href="http://catalogue.dataspace.copernicus.eu/resto/api/collections/search.json?" target="_blank">http://catalogue.dataspace.copernicus.eu/resto/api/collections/search.json?</a></p>
+<p><a href="https://catalogue.dataspace.copernicus.eu/resto/api/collections/search.json?" target="_blank">https://catalogue.dataspace.copernicus.eu/resto/api/collections/search.json?</a></p>
 </div>
 <div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
-<div id="7d2162bc" class="cell" data-execution_count="2">
-<details class="code-fold">
+<div class="cell" data-execution_count="2">
+<details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(<span class="st">"http://catalogue.dataspace.copernicus.eu/resto/api/collections/search.json?"</span>).json()</span>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(<span class="st">"https://catalogue.dataspace.copernicus.eu/resto/api/collections/search.json?"</span>).json()</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame.from_dict(json[<span class="st">'features'</span>]).head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display" data-execution_count="2">
-<div>
 <div>
 
 
@@ -1173,7 +1301,6 @@ window.onload = function() {
 </div>
 </div>
 </div>
-</div>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -1190,12 +1317,12 @@ Note
 </section>
 <section id="collections" class="level3">
 <h3 class="anchored" data-anchor-id="collections">Collections</h3>
-<p>The data are organized in so-called collections corresponding to various satellites. A query may search for data in all collections or in one particular collection only. If only one satellite is in the field of interest, the second approach is faster and more efficient than filtering the general query. For example, to find the ten most recent Sentinel-2 products with cloud cover below 10%, the query should look like:</p>
+<p>The data are organized in so-called collections corresponding to various satellites. A query may search for data in all collections or one particular collection only. If only one satellite is in the field of interest, the second approach is faster and more efficient than filtering the general query. For example, to find the ten most recent Sentinel-2 products with cloud cover below 10%, the query should look like:</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">CLI</a></li></ul>
 <div class="tab-content">
 <div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
-<pre class="{bash}"><code>$ wget -O - "http://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=[0,10]&amp;startDate=2022-06-11T00:00:00Z&amp;completionDate=2022-06-22T23:59:59Z&amp;maxRecords=10"</code></pre>
+<pre class="{bash}"><code>$ wget -O - "https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=[0,10]&amp;startDate=2022-06-11T00:00:00Z&amp;completionDate=2022-06-22T23:59:59Z&amp;maxRecords=10"</code></pre>
 </div>
 </div>
 </div>
@@ -1208,7 +1335,7 @@ Note
 </div>
 </div>
 </div>
-<p>As for today the following collections are defined and may be used:</p>
+<p>As for today, the following collections are defined and may be used:</p>
 <ul>
 <li>Copernicus Sentinel Mission
 <ul>
@@ -1221,6 +1348,7 @@ Note
 </ul></li>
 <li>Complementary data
 <ul>
+<li><strong>GLOBAL-MOSAICS</strong> (Sentinel-1 and Sentinel-2 Global Mosaics)</li>
 <li><strong>SMOS</strong> (Soil Moisture and Ocean Salinity)</li>
 <li><strong>ENVISAT or Envisat</strong> (ENVISAT- Medium Resolution Imaging Spectrometer - MERIS)</li>
 <li><strong>Landsat5 or LANDSAT-5</strong></li>
@@ -1241,17 +1369,17 @@ Note
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Note, that collection names vary a bit from satellite names, as they are used in EO Data repository. For example, the collection is named <strong>Sentinel2,</strong> while in the repository its data are located within <strong>/eodata/Sentinel-2/….</strong> branch of the repository tree.</p>
+<p>Note that collection names vary slightly from satellite names, as they are used in the EO Data repository. For example, the collection is named <strong>Sentinel2,</strong> while in the repository, its data are located within <strong>/eodata/Sentinel-2/….</strong> branch of the repository tree.</p>
 </div>
 </div>
 </section>
 <section id="output-sorting-and-limiting" class="level3">
 <h3 class="anchored" data-anchor-id="output-sorting-and-limiting">Output sorting and limiting</h3>
-<p>By default, maximum of 20 products are returned. You may change the limit (beware of long execution time for queries about thousands of products) using the phrase:</p>
+<p>By default, a maximum of 20 products are returned. You may change the limit (beware of long execution time for queries about thousands of products) using the phrase:</p>
 <div style="margin-left:20px">
 <p><strong>maxRecords=nnn</strong></p>
 </div>
-<p>If the query is very general and the number of matching products is large, the next pages of products can be retrieved using:</p>
+<p>If the query is very general and the number of matching products is large, the following pages of products can be retrieved using:</p>
 <div style="margin-left:20px">
 <p><strong>page=nnn</strong></p>
 </div>
@@ -1266,26 +1394,25 @@ Note
 <p><strong>published</strong> - the date when the product got published in our repository</p>
 <p><strong>updated</strong> - the date when the product got updated in our repository</p>
 </div>
-<p>Each of these ordering can be be accompanied by:</p>
+<p>Each of these orders can be accompanied by:</p>
 <div style="margin-left:20px">
 <p><strong>sortOrder=ascending or sortOrder=descending</strong></p>
 </div>
-<p>For example the query</p>
+<p>For example, the query</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true">HTTP Request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false">Python</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true">HTTPS Request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false">Python</a></li></ul>
 <div class="tab-content">
 <div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
-<p><a href="http://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?startDate=2021-07-01T00:00:00Z&amp;completionDate=2021-07-31T23:59:59Z&amp;sortParam=startDate&amp;maxRecords=20" target="_blank">http://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?startDate=2021-07-01T00:00:00Z&amp;completionDate=2021-07-31T23:59:59Z&amp;sortParam=startDate&amp;maxRecords=20</a></p>
+<p><a href="https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?startDate=2021-07-01T00:00:00Z&amp;completionDate=2021-07-31T23:59:59Z&amp;sortParam=startDate&amp;maxRecords=20" target="_blank">https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?startDate=2021-07-01T00:00:00Z&amp;completionDate=2021-07-31T23:59:59Z&amp;sortParam=startDate&amp;maxRecords=20</a></p>
 </div>
 <div id="tabset-4-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
-<div id="ad9cd20b" class="cell" data-execution_count="3">
-<details class="code-fold">
+<div class="cell" data-execution_count="3">
+<details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(<span class="st">"http://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?startDate=2021-07-01T00:00:00Z&amp;completionDate=2021-07-31T23:59:59Z&amp;sortParam=startDate&amp;maxRecords=20"</span>).json()</span>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(<span class="st">"https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?startDate=2021-07-01T00:00:00Z&amp;completionDate=2021-07-31T23:59:59Z&amp;sortParam=startDate&amp;maxRecords=20"</span>).json()</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame.from_dict(json[<span class="st">'features'</span>]).head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display" data-execution_count="3">
-<div>
 <div>
 
 
@@ -1330,23 +1457,21 @@ Note
 </div>
 </div>
 </div>
-</div>
 <p>The above request will return 20 products from July 2021, whereas the next query will return the next 20:</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-5-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-1" role="tab" aria-controls="tabset-5-1" aria-selected="true">HTTP Request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-2" role="tab" aria-controls="tabset-5-2" aria-selected="false">Python</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-5-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-1" role="tab" aria-controls="tabset-5-1" aria-selected="true">HTTPS Request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-2" role="tab" aria-controls="tabset-5-2" aria-selected="false">Python</a></li></ul>
 <div class="tab-content">
 <div id="tabset-5-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-5-1-tab">
-<p><a href="http://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?startDate=2021-07-01T00:00:00Z&amp;completionDate=2021-07-31T23:59:59Z&amp;sortParam=startDate&amp;maxRecords=20&amp;page=2" target="_blank">http://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?startDate=2021-07-01T00:00:00Z&amp;completionDate=2021-07-31T23:59:59Z&amp;sortParam=startDate&amp;maxRecords=20&amp;page=2</a></p>
+<p><a href="https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?startDate=2021-07-01T00:00:00Z&amp;completionDate=2021-07-31T23:59:59Z&amp;sortParam=startDate&amp;maxRecords=20&amp;page=2" target="_blank">https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?startDate=2021-07-01T00:00:00Z&amp;completionDate=2021-07-31T23:59:59Z&amp;sortParam=startDate&amp;maxRecords=20&amp;page=2</a></p>
 </div>
 <div id="tabset-5-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-2-tab">
-<div id="6db88ee4" class="cell" data-execution_count="4">
-<details class="code-fold">
+<div class="cell" data-execution_count="4">
+<details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(<span class="st">"http://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?startDate=2021-07-01T00:00:00Z&amp;completionDate=2021-07-31T23:59:59Z&amp;sortParam=startDate&amp;maxRecords=20&amp;page=2"</span>).json()</span>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(<span class="st">"https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?startDate=2021-07-01T00:00:00Z&amp;completionDate=2021-07-31T23:59:59Z&amp;sortParam=startDate&amp;maxRecords=20&amp;page=2"</span>).json()</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame.from_dict(json[<span class="st">'features'</span>]).head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display" data-execution_count="4">
-<div>
 <div>
 
 
@@ -1391,27 +1516,25 @@ Note
 </div>
 </div>
 </div>
-</div>
 </section>
 <section id="formal-queries" class="level3">
 <h3 class="anchored" data-anchor-id="formal-queries">Formal queries</h3>
-<p>The formal query is invoked as a sequence of sub phrases, separated by &amp;. The result is a conjunction of all sub phrases. It is impossible to use an alternative in the question. The query must be specified as a formal query.</p>
-<p>The example of formal query - about cloudless (cloud cover lower or equal to 10%) products for a specific location:</p>
+<p>The formal query is invoked as a sub-phrase sequence, separated by &amp;. The result is a conjunction of all sub-phrases. It is impossible to use an alternative in the question. The query must be specified as a formal query.</p>
+<p>An example of a formal query - about cloudless (cloud cover lower or equal to 10%) products for a specific location:</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-6-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-1" role="tab" aria-controls="tabset-6-1" aria-selected="true">HTTP Request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-2" role="tab" aria-controls="tabset-6-2" aria-selected="false">Python</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-6-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-1" role="tab" aria-controls="tabset-6-1" aria-selected="true">HTTPS Request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-2" role="tab" aria-controls="tabset-6-2" aria-selected="false">Python</a></li></ul>
 <div class="tab-content">
 <div id="tabset-6-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-6-1-tab">
 <p><a href="https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=%5B0,10%5D&amp;startDate=2021-06-21T00:00:00Z&amp;completionDate=2021-09-22T23:59:59Z&amp;lon=21.01&amp;lat=52.22" target="_blank">https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=[0,10]&amp;startDate=2021-06-21T00:00:00Z&amp;completionDate=2021-09-22T23:59:59Z&amp;lon=21.01&amp;lat=52.22</a></p>
 </div>
 <div id="tabset-6-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-2-tab">
-<div id="2ae7c856" class="cell" data-execution_count="5">
-<details class="code-fold">
+<div class="cell" data-execution_count="5">
+<details>
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(<span class="st">"https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=[0,10]&amp;startDate=2021-06-21T00:00:00Z&amp;completionDate=2021-09-22T23:59:59Z&amp;lon=21.01&amp;lat=52.22"</span>).json()</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame.from_dict(json[<span class="st">'features'</span>]).head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display" data-execution_count="5">
-<div>
 <div>
 
 
@@ -1429,22 +1552,22 @@ Note
 <tr class="odd">
 <td data-quarto-table-cell-role="th">0</td>
 <td>Feature</td>
-<td>86500fef-db1e-55fc-812f-e1e96010b3d4</td>
-<td>{'type': 'Polygon', 'coordinates': [[[21.96013...</td>
+<td>5fe10705-3b67-59ca-bd14-64d9edd61b63</td>
+<td>{'type': 'Polygon', 'coordinates': [[[21.95587...</td>
 <td>{'collection': 'SENTINEL-2', 'status': 'ONLINE...</td>
 </tr>
 <tr class="even">
 <td data-quarto-table-cell-role="th">1</td>
 <td>Feature</td>
-<td>aa18dd2a-e5af-56fa-9532-3997945d9ddb</td>
-<td>{'type': 'Polygon', 'coordinates': [[[19.91605...</td>
+<td>86500fef-db1e-55fc-812f-e1e96010b3d4</td>
+<td>{'type': 'Polygon', 'coordinates': [[[21.96013...</td>
 <td>{'collection': 'SENTINEL-2', 'status': 'ONLINE...</td>
 </tr>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">2</td>
 <td>Feature</td>
-<td>f6c85a4d-0d95-5bbe-b9ab-02b647a385cc</td>
-<td>{'type': 'Polygon', 'coordinates': [[[22.45053...</td>
+<td>a65aa1eb-da2e-5a21-a4e0-0a5184a9cce4</td>
+<td>{'type': 'Polygon', 'coordinates': [[[19.91605...</td>
 <td>{'collection': 'SENTINEL-2', 'status': 'ONLINE...</td>
 </tr>
 </tbody>
@@ -1456,8 +1579,7 @@ Note
 </div>
 </div>
 </div>
-</div>
-<p>The queries are in form <strong>param=value or param=[minvalue,maxvalue]</strong>. Most of the parameters are common for all collections, but some are specific for some them (e.g.&nbsp;<strong>cloudCover</strong> applies to optical satellites, but polarisation applies to radar ones), or just single one.</p>
+<p>The queries are in the form <strong>param=value or param=[minvalue,maxvalue]</strong>. Most of the parameters are common for all collections. Still, some are specific for some of them (e.g.&nbsp;<strong>cloudCover</strong> applies to optical satellites, but polarisation applies to radar ones), or just a single one.</p>
 </section>
 <section id="geography-and-time-frame" class="level3">
 <h3 class="anchored" data-anchor-id="geography-and-time-frame">Geography and time-frame</h3>
@@ -1465,27 +1587,26 @@ Note
 <div style="margin-left:20px">
 <p><strong>startDate, completionDate</strong> - the date limits of the observation. The time may also be specified, e.g.&nbsp;2021-10-01T21:37:00Z</p>
 <p><strong>publishedAfter, publishedBefore</strong> - the date limits when the product was published in our repository</p>
-<p><strong>lon, lat</strong> - geographical position, expressed in military style (EPSG:4326, as decimal fraction of degrees, positive for eastern latitude and northern longitude)</p>
-<p><strong>radius</strong> - region of interest, defined as a circle with centre in point determined by the longitude and latitude with radius expressed in meters (it won’t work with point manually selected in EOFinder/Data Explorer)</p>
+<p><strong>lon, lat</strong> - geographical position, expressed in military style (EPSG:4326, as a decimal fraction of degrees, positive for eastern latitude and northern longitude)</p>
+<p><strong>radius</strong> - a region of interest, defined as a circle with centre in point determined by the longitude and latitude with radius expressed in meters (it won’t work with point manually selected in EOFinder/Data Explorer)</p>
 <p><strong>geometry</strong> - region of interest, defined as WKT string (POINT, POLYGON, etc.)</p>
-<p><strong>box</strong> - region of interest, defined as the rectangle with given (west,south,east,north) values. It should be defined this way: &amp;box=west,south,east,north</p>
+<p><strong>box</strong> - a region of interest, defined as the rectangle with given (west, south, east, north) values. It should be defined this way: &amp;box=west,south,east,north</p>
 </div>
-<p>For example the query can be:</p>
+<p>For example, the query can be:</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-7-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-1" role="tab" aria-controls="tabset-7-1" aria-selected="true">HTTP Request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-2" role="tab" aria-controls="tabset-7-2" aria-selected="false">Python</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-7-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-1" role="tab" aria-controls="tabset-7-1" aria-selected="true">HTTPS Request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-2" role="tab" aria-controls="tabset-7-2" aria-selected="false">Python</a></li></ul>
 <div class="tab-content">
 <div id="tabset-7-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-7-1-tab">
 <p><a href="https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?productType=S2MSI1C&amp;cloudCover=%5B0,10%5D&amp;startDate=2022-06-11T00:00:00Z&amp;completionDate=2022-06-22T23:59:59Z&amp;maxRecords=10&amp;box=4,51,4.5,52" target="_blank">https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?productType=S2MSI1C&amp;cloudCover=[0,10]&amp;startDate=2022-06-11T00:00:00Z&amp;completionDate=2022-06-22T23:59:59Z&amp;maxRecords=10&amp;box=4,51,4.5,52</a></p>
 </div>
 <div id="tabset-7-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-2-tab">
-<div id="59260249" class="cell" data-execution_count="6">
-<details class="code-fold">
+<div class="cell" data-execution_count="6">
+<details>
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(<span class="st">"https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?productType=S2MSI1C&amp;cloudCover=[0,10]&amp;startDate=2022-06-11T00:00:00Z&amp;completionDate=2022-06-22T23:59:59Z&amp;maxRecords=10&amp;box=4,51,4.5,52"</span>).json()</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame.from_dict(json[<span class="st">'features'</span>]).head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display" data-execution_count="6">
-<div>
 <div>
 
 
@@ -1510,15 +1631,15 @@ Note
 <tr class="even">
 <td data-quarto-table-cell-role="th">1</td>
 <td>Feature</td>
-<td>b666c8a2-0308-5154-ae5a-5b0b310a3ed4</td>
-<td>{'type': 'Polygon', 'coordinates': [[[5.968072...</td>
+<td>e6c08c26-60a9-59aa-bc7e-222875703aef</td>
+<td>{'type': 'Polygon', 'coordinates': [[[4.064090...</td>
 <td>{'collection': 'SENTINEL-2', 'status': 'ONLINE...</td>
 </tr>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">2</td>
 <td>Feature</td>
-<td>b2debfff-f569-5a7f-8a30-801ffaebe328</td>
-<td>{'type': 'Polygon', 'coordinates': [[[4.325617...</td>
+<td>5fff7c82-7c4f-50d9-ac21-c1f40855ad74</td>
+<td>{'type': 'Polygon', 'coordinates': [[[4.436811...</td>
 <td>{'collection': 'SENTINEL-2', 'status': 'ONLINE...</td>
 </tr>
 </tbody>
@@ -1530,23 +1651,21 @@ Note
 </div>
 </div>
 </div>
-</div>
 <p>or</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-8-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-1" role="tab" aria-controls="tabset-8-1" aria-selected="true">HTTP Request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-8-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-2" role="tab" aria-controls="tabset-8-2" aria-selected="false">Python</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-8-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-1" role="tab" aria-controls="tabset-8-1" aria-selected="true">HTTPS Request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-8-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-2" role="tab" aria-controls="tabset-8-2" aria-selected="false">Python</a></li></ul>
 <div class="tab-content">
 <div id="tabset-8-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-8-1-tab">
 <p><a href="https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=%5B0,10%5D&amp;startDate=2022-06-11T00:00:00Z&amp;completionDate=2022-06-22T23:59:59Z&amp;maxRecords=10&amp;box=-21,23,-24,15" target="_blank">https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=[0,10]&amp;startDate=2022-06-11T00:00:00Z&amp;completionDate=2022-06-22T23:59:59Z&amp;maxRecords=10&amp;box=-21,23,-24,15</a></p>
 </div>
 <div id="tabset-8-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-8-2-tab">
-<div id="617f4953" class="cell" data-execution_count="7">
-<details class="code-fold">
+<div class="cell" data-execution_count="7">
+<details>
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>json <span class="op">=</span> requests.get(<span class="st">"https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?cloudCover=[0,10]&amp;startDate=2022-06-11T00:00:00Z&amp;completionDate=2022-06-22T23:59:59Z&amp;maxRecords=10&amp;box=-21,23,-24,15"</span>).json()</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame.from_dict(json[<span class="st">'features'</span>]).head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display" data-execution_count="7">
-<div>
 <div>
 
 
@@ -1591,11 +1710,10 @@ Note
 </div>
 </div>
 </div>
-</div>
 </section>
 <section id="volatile-features" class="level3">
 <h3 class="anchored" data-anchor-id="volatile-features">Volatile features</h3>
-<p>Some terrain-like feature masks are not permanent but describing a single scene only. The most commonly used such feature is cloudiness, or cloudCover, which is defined for most of the products coming from optical sensors. For example:</p>
+<p>Some terrain-like feature masks are not permanent but describe a single scene only. The most commonly used feature is cloudiness, or cloudCover, which is defined for most of the products coming from optical sensors. For example:</p>
 <div style="margin-left:20px">
 <p><strong>cloudCover=[0,10]</strong></p>
 </div>
@@ -1610,7 +1728,7 @@ Caution
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>To be meaningful, the cloudiness must be provided with each product, while in many products is missing. If the cloudiness is unknown for the scene, it is marked by a value of 0 or -1. cloudCover=0 is therefore ambiguous: it may either mean totally cloudless sky or the cloudy scene for which cloud cover had not been estimated during original data processing.</p>
+<p>To be meaningful, the cloudiness must be provided with each product, while in many products is missing. If the cloudiness is unknown for the scene, it is marked by a value of 0 or -1. cloudCover=0 is therefore ambiguous: it may either mean a totally cloudless sky or a cloudy scene for which cloud cover had not been estimated during original data processing.</p>
 </div>
 </div>
 </section>
@@ -1634,14 +1752,14 @@ Caution
 <p>Some additional parameters are strictly satellite-specific, e.g.&nbsp;polarisation, which is defined only for Sentinel-1.</p>
 <p>For every satellite (collection) its set of query-able parameters may be obtained by a query such as:</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-9-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-9-1" role="tab" aria-controls="tabset-9-1" aria-selected="true">HTTP Request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-9-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-9-2" role="tab" aria-controls="tabset-9-2" aria-selected="false">Python</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-9-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-9-1" role="tab" aria-controls="tabset-9-1" aria-selected="true">HTTPS Request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-9-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-9-2" role="tab" aria-controls="tabset-9-2" aria-selected="false">Python</a></li></ul>
 <div class="tab-content">
 <div id="tabset-9-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-9-1-tab">
 <p><a href="https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel1/describe.xml" target="_blank">https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel1/describe.xml</a></p>
 </div>
 <div id="tabset-9-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-9-2-tab">
-<div id="aff1f8f0" class="cell" data-execution_count="8">
-<details class="code-fold">
+<div class="cell" data-execution_count="8">
+<details>
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>url <span class="op">=</span> <span class="st">'https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel1/describe.xml'</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>response <span class="op">=</span> requests.get(url)</span>
@@ -1660,7 +1778,7 @@ Caution
 </div>
 </div>
 </div>
-<p>The resulting XML file provides full list of the parameters for the collection, with their very brief descriptions.</p>
+<p>The resulting XML file provides a complete list of the collection parameters, with their brief descriptions.</p>
 
 
 </section>
@@ -1746,27 +1864,10 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     // clear code selection
     e.clearSelection();
   });
-    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
-    var mailtoRegex = new RegExp(/^mailto:/);
-      var filterRegex = new RegExp("https:\/\/documentation\.dataspace\.copernicus\.eu\/");
-    var isInternal = (href) => {
-        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
-    }
-    // Inspect non-navigation links and adorn them if external
- 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
-    for (var i=0; i<links.length; i++) {
-      const link = links[i];
-      if (!isInternal(link.href)) {
-        // undo the damage that might have been done by quarto-nav.js in the case of
-        // links that we want to consider external
-        if (link.dataset.originalHref !== undefined) {
-          link.href = link.dataset.originalHref;
-        }
-      }
-    }
-  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+  function tippyHover(el, contentFn) {
     const config = {
       allowHTML: true,
+      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -1776,17 +1877,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start',
+      placement: 'bottom-start'
     };
-    if (contentFn) {
-      config.content = contentFn;
-    }
-    if (onTriggerFn) {
-      config.onTrigger = onTriggerFn;
-    }
-    if (onUntriggerFn) {
-      config.onUntrigger = onUntriggerFn;
-    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -1798,130 +1890,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      if (note) {
-        return note.innerHTML;
-      } else {
-        return "";
-      }
-    });
-  }
-  const xrefs = window.document.querySelectorAll('a.quarto-xref');
-  const processXRef = (id, note) => {
-    // Strip column container classes
-    const stripColumnClz = (el) => {
-      el.classList.remove("page-full", "page-columns");
-      if (el.children) {
-        for (const child of el.children) {
-          stripColumnClz(child);
-        }
-      }
-    }
-    stripColumnClz(note)
-    if (id === null || id.startsWith('sec-')) {
-      // Special case sections, only their first couple elements
-      const container = document.createElement("div");
-      if (note.children && note.children.length > 2) {
-        container.appendChild(note.children[0].cloneNode(true));
-        for (let i = 1; i < note.children.length; i++) {
-          const child = note.children[i];
-          if (child.tagName === "P" && child.innerText === "") {
-            continue;
-          } else {
-            container.appendChild(child.cloneNode(true));
-            break;
-          }
-        }
-        if (window.Quarto?.typesetMath) {
-          window.Quarto.typesetMath(container);
-        }
-        return container.innerHTML
-      } else {
-        if (window.Quarto?.typesetMath) {
-          window.Quarto.typesetMath(note);
-        }
-        return note.innerHTML;
-      }
-    } else {
-      // Remove any anchor links if they are present
-      const anchorLink = note.querySelector('a.anchorjs-link');
-      if (anchorLink) {
-        anchorLink.remove();
-      }
-      if (window.Quarto?.typesetMath) {
-        window.Quarto.typesetMath(note);
-      }
-      // TODO in 1.5, we should make sure this works without a callout special case
-      if (note.classList.contains("callout")) {
-        return note.outerHTML;
-      } else {
-        return note.innerHTML;
-      }
-    }
-  }
-  for (var i=0; i<xrefs.length; i++) {
-    const xref = xrefs[i];
-    tippyHover(xref, undefined, function(instance) {
-      instance.disable();
-      let url = xref.getAttribute('href');
-      let hash = undefined; 
-      if (url.startsWith('#')) {
-        hash = url;
-      } else {
-        try { hash = new URL(url).hash; } catch {}
-      }
-      if (hash) {
-        const id = hash.replace(/^#\/?/, "");
-        const note = window.document.getElementById(id);
-        if (note !== null) {
-          try {
-            const html = processXRef(id, note.cloneNode(true));
-            instance.setContent(html);
-          } finally {
-            instance.enable();
-            instance.show();
-          }
-        } else {
-          // See if we can fetch this
-          fetch(url.split('#')[0])
-          .then(res => res.text())
-          .then(html => {
-            const parser = new DOMParser();
-            const htmlDoc = parser.parseFromString(html, "text/html");
-            const note = htmlDoc.getElementById(id);
-            if (note !== null) {
-              const html = processXRef(id, note);
-              instance.setContent(html);
-            } 
-          }).finally(() => {
-            instance.enable();
-            instance.show();
-          });
-        }
-      } else {
-        // See if we can fetch a full url (with no hash to target)
-        // This is a special case and we should probably do some content thinning / targeting
-        fetch(url)
-        .then(res => res.text())
-        .then(html => {
-          const parser = new DOMParser();
-          const htmlDoc = parser.parseFromString(html, "text/html");
-          const note = htmlDoc.querySelector('main.content');
-          if (note !== null) {
-            // This should only happen for chapter cross references
-            // (since there is no id in the URL)
-            // remove the first header
-            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
-              note.children[0].remove();
-            }
-            const html = processXRef(null, note);
-            instance.setContent(html);
-          } 
-        }).finally(() => {
-          instance.enable();
-          instance.show();
-        });
-      }
-    }, function(instance) {
+      return note.innerHTML;
     });
   }
       let selectedAnnoteEl;
@@ -1965,7 +1934,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
-            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -1991,32 +1959,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         });
         selectedAnnoteEl = undefined;
       };
-        // Handle positioning of the toggle
-    window.addEventListener(
-      "resize",
-      throttle(() => {
-        elRect = undefined;
-        if (selectedAnnoteEl) {
-          selectCodeLines(selectedAnnoteEl);
-        }
-      }, 10)
-    );
-    function throttle(fn, ms) {
-    let throttle = false;
-    let timer;
-      return (...args) => {
-        if(!throttle) { // first call gets through
-            fn.apply(this, args);
-            throttle = true;
-        } else { // all the others get throttled
-            if(timer) clearTimeout(timer); // cancel #2
-            timer = setTimeout(() => {
-              fn.apply(this, args);
-              timer = throttle = false;
-            }, ms);
-        }
-      };
-    }
       // Attach click handler to the DT
       const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
       for (const annoteDlNode of annoteDls) {
@@ -2074,17 +2016,33 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       });
     }
   }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var filterRegex = new RegExp("^(?:http:|https:)\/\/documentation.*dataspace.copernicus\/custom");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+          // target, if specified
+          link.setAttribute("target", "_blank");
+          // default icon
+          link.classList.add("external");
+      }
+    }
 });
 </script>
 <nav class="page-navigation column-body">
   <div class="nav-page nav-page-previous">
-      <a href="../APIs/OData.html" class="pagination-link" aria-label="OData">
+      <a href="../APIs/OData.html" class="pagination-link">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">OData</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../APIs/openEO/openEO.html" class="pagination-link" aria-label="openEO">
-        <span class="nav-page-text">openEO</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../APIs/STAC.html" class="pagination-link">
+        <span class="nav-page-text">STAC product catalogue</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
@@ -2092,5 +2050,4 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 
 
 
-
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/eu-cdse/documentation/issues" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>
+</body></html>
