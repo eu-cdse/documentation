@@ -1,6 +1,6 @@
 # Support
 
-If you don't find answer to your questions in the documentation portal, this page describes how to ask for support. 
+If you don't find answer to your questions in the documentation portal, this page guides you to request for support. 
 
 ## Prerequisites
 
