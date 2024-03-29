@@ -16,7 +16,6 @@ The current criteria are:
 3. Full-archive collections, or collections that fully cover a specific region. This to avoid 'demo' collections that only offer a marginal part of the actual dataset.
 
 
-
 ## Collection availability
 
 The collections are a key asset of the federation, and users need to know what they can expect from a certain collection.

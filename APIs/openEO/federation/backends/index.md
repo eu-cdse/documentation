@@ -31,3 +31,40 @@ Nevertheless, these requirements are negotiable if there are good arguments for 
 - [Collections](./collections.md)
 - [File Formats](./fileformats.md)
 - [Processes](./processes.md)
+
+## Benefits of joining the federation
+
+This federated concept provides a unique opportunity for smaller organizations to join strengths, allowing to build an
+offer that matches or even exceeds capabilities of well-known large scale cloud providers. This is a key element for long
+term sustainability of participants. There are however also short term benefits: 
+
+1. **Increased visibility**: the federation is a single endpoint for users to access multiple services, increasing the visibility of your service.
+2. **Increased user base**: users of the federation can access your service without the need to register, increasing the potential user base.
+3. **Joint outreach**: outreach and promotion activities are performed together with other members of the federation, significantly reducing effort to attract new users.
+4. **Shared account management**: credit usage is tracked in a central manner, commercial usage is compensated in an efficient manner.
+
+## How to join the federation
+
+1. Perform a basic check if you believe to be compliant with the above requirements. Determine the collections you believe to be eligible.
+2. Contact the federation via CDSE support, showing your interest and detailing your offering.
+3. Integrate the CDSE identity provider: you will need to accept CDSE users on your openEO service.
+4. Integrate with the accounting component: report usage by CDSE users via a JSON HTTP API. API details will be provided upon request.
+
+Finally, an agreement will need to be put in place to ensure that the service provider agrees with the federation contract and SLA.
+
+## Providing user support
+
+The forum of the Copernicus Dataspace ecosystem is considered the main support channel for users, and for service providers
+to post news about updates or service events.
+Service providers are requested to provide an email address, to which support questions arriving at the CDSE support center 
+can be forwarded.
+
+## Credit reporting
+
+As specified, service providers will log credit usage in the central accounting service, allowing to be compensated for 
+incurred usage.
+The value of a credit is fixed, and service providers are free to choose the resources they log.
+Typical examples include memory and cpu hours, but it can also be determined based on a more complex logic, like amount of
+input data or specific processes that are used. Service providers are requested to document this.
+
+

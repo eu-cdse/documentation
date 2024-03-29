@@ -21,7 +21,33 @@ The use of processing capacity in the federation is likely to lead to credit con
 openEO algorithm plaza dashboards. External providers will allow a limited amount of credits, just like the public service.
 Usage of those external providers will not lead to a reduction in credits of the public service. 
 
+## Getting help
+
+We encourage users to use the CDSE forum to ask questions about the federation. The CDSE support team is not required to
+help with issues related to non-CDSE openEO services, so the forum is a place where service providers and users can meet.
+When using free credits offered by the service provider, the support is not considered to be included. The CDSE openEO endpoint 
+does include support under the normal conditions.
+
+## Long term continuity
+
+Members in the federation may not have the same long term guarantees as the CDSE service. Members may discontinue their 
+service, or may be removed from the federation if they become non-compliant with agreements or SLA's.
+If this is of importance for your project or organization, we recommend to contact the service provider(s) directly to discuss
+their long term commitment. 
+
 ## Federation members
+
+We list the members of the federation here. Collections in the federated endpoint are offered by one or more of these members.
 
 ### Terrascope
 
+The [Terrascope](https://terrascope.be) platform is a Belgian initiative that offers access to Copernicus products, the
+full archive of the PROBA-V mission, and a range of other interesting datasets. It also provides its own processing 
+capacity close to the datasets, and is an early implementor of the openEO open standard. 
+
+Terrascope is operated by [VITO Remote Sensing](https://remotesensing.vito.be/), an independent research and technology leader.
+It's lifetime is currently guaranteed until 2028.
+
+Credit usage on Terrascope is similar to the CDSE openEO service, as it is based on consumed cpu and memory hours. This does
+mean that their may be differences in actual costs for similar jobs, as the performance characteristics of the underlying
+datacenters differ. 
