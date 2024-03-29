@@ -2,6 +2,21 @@
 This page describes requirements on STAC collection metadata for backend providers in the openEO federation.
 These requirements should be considered an addition to what is already required by the [openEO API](https://api.openeo.org/#tag/EO-Data-Discovery/operation/describe-collection) and the [API profiles](./api.md#profiles).
 
+## Criteria for eligible collections
+
+The Copernicus Dataspace ecosystem federation is looking for collections that match certain criteria.
+In the initial phase of the federation, the focus is on having a stable service, and thus on avoiding complex situations
+that are known to potentially cause issues. This means these criteria are expected to be relaxed going forward, allowing 
+to gradually integrate and enable more complex situations.
+
+The current criteria are:
+
+1. Collections should be complementary to the already available offer. This avoids collections with the same name, or collections with differents names but similar content.
+2. Only non-experimental collections
+3. Full-archive collections, or collections that fully cover a specific region. This to avoid 'demo' collections that only offer a marginal part of the actual dataset.
+
+
+
 ## Collection availability
 
 The collections are a key asset of the federation, and users need to know what they can expect from a certain collection.
