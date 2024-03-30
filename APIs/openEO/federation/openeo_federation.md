@@ -15,6 +15,8 @@ that make up the federation, as well as to accept the terms and conditions. Thes
 regulations of the federation, but are not necessarily part of the CDSE service. You can withdraw your consent at any time, via
 your CDSE account dashboard.
 
+The technical design is described [here](./backends/design.md). There's also a more detailed [overview of federation governance](./backends/index.md).
+
 ## Federation credit usage
 
 The use of processing capacity in the federation is likely to lead to credit consumption, that will be reported in the 
