@@ -1,31 +1,31 @@
 # Federation Contract
 
-For a federation to work, all providers need to come up with a federation contract to agree on. 
-For the Copernicus Dataspace Ecosystem, the proposed contract is derived from prior work in the ESA openEO platform, which
-has done a lot of groundwork in this area.
+For a federation to work, all providers need to agree with a common federation contract.
+For the Copernicus Data Space Ecosystem, the proposed contract is based upon the groundwork established through ESA's openEO platform.
 
 This contract has 2 main goals:
-1. Achieve user satisfaction, which can be measured in terms of user growth and number of complaints versus the usage of a specific feature.
-2. Agree on interfaces and harmonization rules to align the different services in the federation.
 
-The federation aims to be inclusive towards onboarding new features and components,
-to stimulate growth and innovation. To allow this in an environment that also supports 
-user-critical workflows such functionality needs to be clearly marked, for instance by setting 
-an 'experimental' property on a process, collection or backend, and by indicating it in descriptions or the documentation. 
+1. Boost user satisfaction, which can be measured in terms of user growth and number of complaints versus the usage of a specific feature.
+2. Agree on interfaces and harmonization rules to align the different services within the federation.
 
-We assume that most often, an implementor knows when a feature is mature enough. However, when there is doubt about indicating a feature as experimental:
-- By default or if unsure, it is probably experimental.
-- If a feature is new or it hasn't been used, it's experimental.
+The federation aims to be inclusive towards onboarding new features and components to stimulate growth and innovation.
+In an environment supporting user-critical workflows, such new features need to be distinctly identified. 
+For example, designating a process, collection, or backend as 'experimental' and indicating this in descriptions or official documentation.
+
+Generally, we assume that an implementor can determine when a feature is mature enough.
+However, in case of any uncertainty, we provide the following guidelines:
+- By default, or if unsure, the feature is considered experimental.
+- If a feature is new or unused, designate it as experimental.
 - If still in doubt, consult with partner providers.
 
-If a non-experimental component exceeds the [error budget](https://sre.google/workbook/implementing-slos/), for instance when downtime exceeds the objective, 
-the provider is expected to stop working on new features and improve reliability, or to mark the component 
-as experimental. Reverting a 'stable' feature to 'experimental' should be considered a backwards incompatible change, requiring communication towards the user and proper consideration of the impact.
+Suppose a non-experimental component exceeds the [error budget](https://sre.google/workbook/implementing-slos/), such as when downtime exceeds the objectives.
+In this case, the provider is expected to stop working on new features and improve reliability or to mark the component as experimental. 
+Reverting a 'stable' feature to 'experimental' should be considered as a backwards incompatible change, requiring communication towards the user and proper consideration of the impact.
 
-::: tip Note
-To join the federation, it is required to (mostly) fulfill these requirements and document differences for users in the "[Federation Aspects and Known Issues](../index.md)".
-Nevertheless, these requirements are negotiable if there are good arguments for a change as the current state of the "contract" is just the compromise that the existing providers have agreed upon and if a new back-end joins the federation new compromises may need to be made.
-:::
+> To join the federation, providers are expected to fulfill these requirements and document differences for users in the "[Federation Aspects and Known Issues](../index.md)".
+However, to accommodate and encourage new backend entries into the federation, these requirements are open to negotiation if there are good arguments for changing the current contract agreements.
+
+For more detailed information, please refer to the different parts of the federation contract:
 
 - [API](./api.md)
 - [Collections](./collections.md)
@@ -34,38 +34,36 @@ Nevertheless, these requirements are negotiable if there are good arguments for 
 
 ## Benefits of joining the federation
 
-This federated concept provides a unique opportunity for smaller organizations to join strengths, allowing to build an
-offer that matches or even exceeds capabilities of well-known large scale cloud providers. This is a key element for long
-term sustainability of participants. There are however also short term benefits: 
+The federation provides a unique opportunity for smaller organizations to join strengths, allowing them to build an offering that matches or even exceeds capabilities of well-known large scale cloud providers. 
+This collaboration is a key element for the long term sustainability of participants. 
+The short-term benefits of joining the federation include:
 
-1. **Increased visibility**: the federation is a single endpoint for users to access multiple services, increasing the visibility of your service.
+1. **Increased visibility**: the federation serves a single endpoint for users to access multiple services, increasing the visibility of your service.
 2. **Increased user base**: users of the federation can access your service without the need to register, increasing the potential user base.
-3. **Joint outreach**: outreach and promotion activities are performed together with other members of the federation, significantly reducing effort to attract new users.
+3. **Joint outreach**: outreach and promotion activities are performed together with other members of the federation, significantly reducing the effort to attract new users.
 4. **Shared account management**: credit usage is tracked in a central manner, commercial usage is compensated in an efficient manner.
 
 ## How to join the federation
 
-1. Perform a basic check if you believe to be compliant with the above requirements. Determine the collections you believe to be eligible.
-2. Contact the federation via CDSE support, showing your interest and detailing your offering.
-3. Integrate the CDSE identity provider: you will need to accept CDSE users on your openEO service.
-4. Integrate with the accounting component: report usage by CDSE users via a JSON HTTP API. API details will be provided upon request.
+1. Assess if your system is compliant with the above requirements and identify the eligible collections. 
+2. Contact the federation through [our support team](https://helpcenter.dataspace.copernicus.eu/hc/en-gb), showing your interest and detailing your offering.
+3. Integrate the CDSE identity provider as your openEO service will need to accept CDSE users.
+4. Integrate with the accounting component by reporting the usage of CDSE users through a JSON HTTP API. The API details will be provided upon request.
 
-Finally, an agreement will need to be put in place to ensure that the service provider agrees with the federation contract and SLA.
+Finally, an official agreement will need to be established confirming that the service provider agrees with the federation contract and SLA.
 
 ## Providing user support
 
-The forum of the Copernicus Dataspace ecosystem is considered the main support channel for users, and for service providers
-to post news about updates or service events.
-Service providers are requested to provide an email address, to which support questions arriving at the CDSE support center 
-can be forwarded.
+The Copernicus Data Space Ecosystem [forum](https://forum.dataspace.copernicus.eu/) is considered the main support channel for users and service providers to post updates or service events.
+Service providers are also requested to provide an email address, to which support questions from users can be forwarded.
 
 ## Credit reporting
 
-As specified, service providers will log credit usage in the central accounting service, allowing to be compensated for 
-incurred usage.
+As specified, service providers need to log the resource usage in the federation's central accounting service.
+This will allow them to be compensated for incurred usage.
 The value of a credit is fixed, and service providers are free to choose the resources they log.
-Typical examples include memory and cpu hours, but it can also be determined based on a more complex logic, like amount of
-input data or specific processes that are used. Service providers are requested to document this.
+Typical examples include memory and cpu hours, but it can also be based on a more complex logic, such as amount of input data or specific processes that are used. 
+To ensure full transparency, service providers are requested to document this logic.
 
 
 
