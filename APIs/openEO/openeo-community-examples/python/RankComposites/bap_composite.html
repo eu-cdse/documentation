@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Documentation - Best Available Pixel Composite in OpenEO (experimental)</title>
+<title>Documentation - Best available pixel composite</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -215,7 +215,7 @@ window.onload = function() {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Best Available Pixel Composite in OpenEO (experimental)</li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Best available pixel composite</li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
@@ -1181,13 +1181,11 @@ window.onload = function() {
   <li><a href="#bap-composites-assessment" id="toc-bap-composites-assessment" class="nav-link" data-scroll-target="#bap-composites-assessment">BAP composites assessment</a></li>
   <li><a href="#bap-process-background" id="toc-bap-process-background" class="nav-link" data-scroll-target="#bap-process-background">BAP process background:</a></li>
   </ul></li>
-  <li><a href="#coverage-score" id="toc-coverage-score" class="nav-link" data-scroll-target="#coverage-score">Coverage score</a>
-  <ul>
+  <li><a href="#coverage-score" id="toc-coverage-score" class="nav-link" data-scroll-target="#coverage-score">Coverage score</a></li>
   <li><a href="#date-score" id="toc-date-score" class="nav-link" data-scroll-target="#date-score">Date Score</a></li>
   <li><a href="#distance-to-cloud-score" id="toc-distance-to-cloud-score" class="nav-link" data-scroll-target="#distance-to-cloud-score">Distance to Cloud Score</a></li>
   <li><a href="#aggregating-scores" id="toc-aggregating-scores" class="nav-link" data-scroll-target="#aggregating-scores">Aggregating Scores</a></li>
   <li><a href="#masking-and-compositing" id="toc-masking-and-compositing" class="nav-link" data-scroll-target="#masking-and-compositing">Masking and Compositing</a></li>
-  </ul></li>
   </ul>
 </nav>
     </div>
@@ -1196,7 +1194,7 @@ window.onload = function() {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Best Available Pixel Composite in OpenEO (experimental)</h1>
+<h1 class="title">Best available pixel composite</h1>
 </div>
 
 
@@ -1211,8 +1209,14 @@ window.onload = function() {
 
 </header>
 
-<p>In this notebook a composite image is created based on the Best Available Pixel (BAP) method in OpenEO. The BAP score is a weighted average of three (four) scores: - <strong>Distance-to-Cloud Score</strong>: Pixels that are clouds are given score 0. Pixels that are more than 150 pixels - calculated with the Manhattan distance measure, assuming a resolution of 20m - away from a cloud pixel are given score 1. The pixels in between are given a score versus distance-to-cloud that follows a Gaussian shape. - <strong>Coverage Score</strong>: Per date, the percentage of all pixels that are classified as a cloud over the entire spatial extent is calculated. The Coverage Score is then equal to 1 - the cloud percentage. - <strong>Date Score</strong>: In order to favor pixels that are observed in the middle of a month, a date score is calculated, which follows a Gaussian shape. I.e. the largest scores are given for days in the middle of the month, the lowest scores are given for days at the beginning and end of the month.</p>
+<p>In this notebook a composite image is created based on the Best Available Pixel (BAP) method in OpenEO. The BAP score is a weighted average of three (four) scores:</p>
+<ul>
+<li><strong>Distance-to-Cloud Score</strong>: Pixels that are clouds are given score 0. Pixels that are more than 150 pixels - calculated with the Manhattan distance measure, assuming a resolution of 20m - away from a cloud pixel are given score 1. The pixels in between are given a score versus distance-to-cloud that follows a Gaussian shape.</li>
+<li><strong>Coverage Score</strong>: Per date, the percentage of all pixels that are classified as a cloud over the entire spatial extent is calculated. The Coverage Score is then equal to 1 - the cloud percentage.</li>
+<li><strong>Date Score</strong>: In order to favor pixels that are observed in the middle of a month, a date score is calculated, which follows a Gaussian shape. I.e. the largest scores are given for days in the middle of the month, the lowest scores are given for days at the beginning and end of the month.</li>
+</ul>
 <p>The final BAP score is a weighted average of the three aforementioned scores. The weights are 1, 0.5 and 0.8 for the Distance-to-Cloud, Coverage and Date Score respectively.</p>
+<p>The current implementation and the various parameters are still subject to change, and</p>
 <section id="references" class="level2">
 <h2 class="anchored" data-anchor-id="references">References</h2>
 <p>The approach described here was originally applied to Landsat, and adapted here for Sentinel-2.</p>
@@ -1268,14 +1272,21 @@ window.onload = function() {
 </div>
 </section>
 </section>
-<section id="coverage-score" class="level1">
-<h1>Coverage score</h1>
-<p>First of all, the coverage score is calculated, which is equal to 1 - the percentage of pixels in the spatial_extent that are classified as cloud in SCL. - A polygon is created that is slighty larger than the original spatial_extent - The cloud coverage percentage is calculated by taking the average of the cloud binary (defined above), by using the <code>aggregate_spatial</code> process - Since the <code>aggregate_spatial</code> process results in vectordata, the data is rasterized again to the original dimensions, using the <code>vector_to_raster</code> process - The coverage score is then equal to 1 - the cloud coverage percentage. I.e. a smaller cloud coverage percentage indicates a larger score</p>
+<section id="coverage-score" class="level2">
+<h2 class="anchored" data-anchor-id="coverage-score">Coverage score</h2>
+<p>First of all, the coverage score is calculated, which is equal to 1 - the percentage of pixels in the spatial_extent that are classified as cloud in SCL.</p>
+<ul>
+<li>A polygon is created that is slighty larger than the original spatial_extent</li>
+<li>The cloud coverage percentage is calculated by taking the average of the cloud binary (defined above), by using the <code>aggregate_spatial</code> process</li>
+<li>Since the <code>aggregate_spatial</code> process results in vectordata, the data is rasterized again to the original dimensions, using the (experimental) <code>vector_to_raster</code> process</li>
+<li>The coverage score is then equal to 1 - the cloud coverage percentage. I.e. a smaller cloud coverage percentage indicates a larger score</li>
+</ul>
 <div class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>cloud_coverage <span class="op">=</span> (<span class="dv">1</span> <span class="op">-</span> binary).aggregate_spatial(geometries <span class="op">=</span> area, reducer <span class="op">=</span> <span class="st">'mean'</span>)</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>coverage_score <span class="op">=</span> cloud_coverage.vector_to_raster(scl)  <span class="co"># This rasterizes the vectorcube and results in the same spatial dimensions as the scl cube</span></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>coverage_score <span class="op">=</span> coverage_score.rename_labels(<span class="st">'bands'</span>, [<span class="st">'score'</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+</section>
 <section id="date-score" class="level2">
 <h2 class="anchored" data-anchor-id="date-score">Date Score</h2>
 <p>Both the date and distance-to-cloud score are calculated via a UDF.</p>
@@ -2245,7 +2256,6 @@ Coordinates:
 </div>
 
 
-</section>
 </section>
 
 </main> <!-- /main -->
