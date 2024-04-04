@@ -1,21 +1,17 @@
 # Processes
 
-The openEO project defines a large number of processes, which can be found at <https://processes.openeo.org>.
-Due to the number of processes, we need to define a profile (i.e. a subset of processes) that must be implemented on each back-end so that a certain level of interoperability can be achieved.
+The openEO project defines a large number of processes, which can be found at [https://processes.openeo.org](https://processes.openeo.org).
+Given the multitude of processes, it is necessary to define a subset of processes (known as a profile) that must be implemented on each backend to ensure a certain level of interoperability.
 
-In addition to the general openEO Processes specification and their [Processes Profiles](https://openeo.org/documentation/1.0/developers/profiles/processes.html),
-the CDSE openEO federation requires to implement an additional Process profile:
-*L2P: Required - openEO*, which requires one of the openEO profiles *L2A: Recommended (Raster)* or *L2B: Recommended (Vector)*.
-There are two additional openEO Platform specific profiles with additional requirements: *L3P: Advanced - openEO * and *L4P: Complete - openEO Platform*.
+In addition to the general openEO Processes specification and their [Processes Profiles](https://openeo.org/documentation/1.0/developers/profiles/processes.html), the CDSE openEO federation requires to implement an additional Process profile, namely *L2P: Required - openEO*.
+This requires one of the following openEO profiles *L2A: Recommended (Raster)* or *L2B: Recommended (Vector)*.
+Additionally, there are two openEO Platform specific profiles with additional requirements: *L3P: Advanced - openEO * and *L4P: Complete - openEO Platform*.
 
-<figure>
-    <img src="./profiles/processes.png" alt="The hierarchy of openEO and openEO federation Processes profiles.">
-    <figcaption>An overview of the openEO and CDSE openEO Federation Processes profiles.</figcaption>
-</figure>
+![An overview of the openEO and CDSE openEO Federation Processes profiles.](./profiles/processes.png)
 
 ### Requirements per Profile
 
-The profiles below only lists requirements that are not covered by the corresponding openEO profiles yet.
+The profiles below only contain the requirements that are not covered by their corresponding openEO profiles.
 
 Although in the openEO Profiles experimental processes shall only lead to a "warning", experimental processes in profiles that *L2P* depends on are required to be available (which currently are `inspect` and `nan`).
 
