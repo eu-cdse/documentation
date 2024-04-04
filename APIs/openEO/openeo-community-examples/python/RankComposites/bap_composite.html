@@ -1181,6 +1181,7 @@ window.onload = function() {
   <li><a href="#bap-composites-assessment" id="toc-bap-composites-assessment" class="nav-link" data-scroll-target="#bap-composites-assessment">BAP composites assessment</a></li>
   <li><a href="#bap-process-background" id="toc-bap-process-background" class="nav-link" data-scroll-target="#bap-process-background">BAP process background:</a></li>
   </ul></li>
+  <li><a href="#loading-sentinel-2-scene-classification" id="toc-loading-sentinel-2-scene-classification" class="nav-link" data-scroll-target="#loading-sentinel-2-scene-classification">Loading Sentinel-2 scene classification</a></li>
   <li><a href="#coverage-score" id="toc-coverage-score" class="nav-link" data-scroll-target="#coverage-score">Coverage score</a></li>
   <li><a href="#date-score" id="toc-date-score" class="nav-link" data-scroll-target="#date-score">Date Score</a></li>
   <li><a href="#distance-to-cloud-score" id="toc-distance-to-cloud-score" class="nav-link" data-scroll-target="#distance-to-cloud-score">Distance to Cloud Score</a></li>
@@ -1209,24 +1210,31 @@ window.onload = function() {
 
 </header>
 
-<p>In this notebook a composite image is created based on the Best Available Pixel (BAP) method in OpenEO. The BAP score is a weighted average of three (four) scores:</p>
+<p>In this notebook a monthly composite image is created based on the Best Available Pixel (BAP) method in OpenEO. This is a scientifically sound method of generating composites, which minimizes the mixing of pixels from different observations. Also for each pixel, all bands will be taken from a single observation. As a result, the spectral signature in the composite is observed rather than being a combination of multiple observations.</p>
+<p>We refer to the scientific references for a full discussion of this method, but can generally recommend it both for its correctness and performance. We do still observe some residual cloud (shadow) in certain cases, which can be attributed to the quality of the SCL band.</p>
+<p>The BAP score is a weighted average of three (four) scores:</p>
 <ul>
 <li><strong>Distance-to-Cloud Score</strong>: Pixels that are clouds are given score 0. Pixels that are more than 150 pixels - calculated with the Manhattan distance measure, assuming a resolution of 20m - away from a cloud pixel are given score 1. The pixels in between are given a score versus distance-to-cloud that follows a Gaussian shape.</li>
 <li><strong>Coverage Score</strong>: Per date, the percentage of all pixels that are classified as a cloud over the entire spatial extent is calculated. The Coverage Score is then equal to 1 - the cloud percentage.</li>
 <li><strong>Date Score</strong>: In order to favor pixels that are observed in the middle of a month, a date score is calculated, which follows a Gaussian shape. I.e. the largest scores are given for days in the middle of the month, the lowest scores are given for days at the beginning and end of the month.</li>
 </ul>
 <p>The final BAP score is a weighted average of the three aforementioned scores. The weights are 1, 0.5 and 0.8 for the Distance-to-Cloud, Coverage and Date Score respectively.</p>
-<p>The current implementation and the various parameters are still subject to change, and</p>
-<section id="references" class="level2">
-<h2 class="anchored" data-anchor-id="references">References</h2>
+<p>The current implementation and the various parameters are still subject to change, so please do evaluate the correctness when using this method in your project.</p>
+<section id="references" class="level3">
+<h3 class="anchored" data-anchor-id="references">References</h3>
 <p>The approach described here was originally applied to Landsat, and adapted here for Sentinel-2.</p>
-<section id="bap-composites-assessment" class="level3">
-<h3 class="anchored" data-anchor-id="bap-composites-assessment">BAP composites assessment</h3>
+<section id="bap-composites-assessment" class="level4">
+<h4 class="anchored" data-anchor-id="bap-composites-assessment">BAP composites assessment</h4>
 <p>Francini, S., Hermosilla, T., Coops, N. C., Wulder, M. A., White, J. C., &amp; Chirici, G. (2023). An assessment approach for pixel-based image composites. ISPRS Journal of Photogrammetry and Remote Sensing, 202, 1–12, <a href="https://doi.org/10.1016/j.isprsjprs.2023.06.002">doi:10.1016/j.isprsjprs.2023.06.002</a></p>
 </section>
-<section id="bap-process-background" class="level3">
-<h3 class="anchored" data-anchor-id="bap-process-background">BAP process background:</h3>
+<section id="bap-process-background" class="level4">
+<h4 class="anchored" data-anchor-id="bap-process-background">BAP process background:</h4>
 <p>White, J.C.; Wulder, M.A.; Hobart, G.W.; Luther, J.E.; Hermosilla, T.; Griffiths, P.; Coops, N.C.; Hall, R.J.; Hostert, P.; Dyk, A.; et al.&nbsp;Pixel-based image compositing for large-area dense time series applications and science. Can. J. Remote Sens. 2014, 40, 192–212, <a href="https://doi.org/10.1080/07038992.2014.945827">doi:10.1080/07038992.2014.945827</a>.</p>
+</section>
+</section>
+<section id="loading-sentinel-2-scene-classification" class="level2">
+<h2 class="anchored" data-anchor-id="loading-sentinel-2-scene-classification">Loading Sentinel-2 scene classification</h2>
+<p>The score is calculated based on the ‘SCL’ band only. This is very efficient because it’s a lower resolution (20m) band, which is relatively quick to read. All other bands are read based on the score, which allows openEO to avoid loading data that is not used in the composite.</p>
 <p>First a sample period and region are defined. It’s is necessary to specify your region of interest as a Polygon.</p>
 <div class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> geopandas <span class="im">as</span> gpd</span>
@@ -1270,7 +1278,6 @@ window.onload = function() {
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>binary <span class="op">=</span> (classification <span class="op">==</span> <span class="dv">3</span>) <span class="op">|</span> (classification <span class="op">==</span> <span class="dv">8</span>) <span class="op">|</span> (classification <span class="op">==</span> <span class="dv">9</span>) <span class="op">|</span> (classification <span class="op">==</span> <span class="dv">10</span>)</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>binary <span class="op">=</span> binary.add_dimension(name<span class="op">=</span><span class="st">"bands"</span>, label<span class="op">=</span><span class="st">"score"</span>, <span class="bu">type</span><span class="op">=</span><span class="st">"bands"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</section>
 </section>
 <section id="coverage-score" class="level2">
 <h2 class="anchored" data-anchor-id="coverage-score">Coverage score</h2>
