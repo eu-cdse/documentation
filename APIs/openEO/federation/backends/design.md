@@ -2,33 +2,35 @@
 
 ### openEO Aggregator
 
-The openEO Aggregator is the central component that receives all incoming openEO requests for the federation. It mainly
-contains the logic that decides to which backends requests need to be forwarded. It does not perform any processing. Data
-transfers to the user or between backends do not pass through the aggregator, to avoid bottlenecks.
+The openEO Aggregator is the central component that receives all incoming openEO requests for the federation. 
+It mainly contains the logic that decides to which backends requests need to be forwarded. 
+It does not perform any processing. 
+To prevent bottlenecks, the aggregator does not handle any data transfers, either to the user or between backends.
 
-The aggregator is an open source component maintained by the openEO community. It's code is hosted on GitHub:
+Maintained by the openEO community, the aggregator is an open source component with its code hosted on GitHub:
 
-https://github.com/Open-EO/openeo-aggregator/
+[https://github.com/Open-EO/openeo-aggregator/](https://github.com/Open-EO/openeo-aggregator/)
 
 ### How does the aggregator route requests?
 
-The current logic is simply based on the collections and processes involved in a request. In almost all cases, this combination
-will allow to select a single backend. When there would be more than one potential candidate, the aggregator simply uses
-selects backends according to a fixed preference, which makes it very deterministic. It is however possible for the user
-to indicate a preferred backend in the openEO process graph.
+The current routing logic is based on the collections and processes involved in a request. 
+In almost all cases, this combination will allow the system to select a single backend. 
+If more than one backend can manage the request, the aggregator will select backends according to a fixed preference, which makes the overall system deterministic. 
+However, users have the option to indicate a preferred backend in their openEO process graph.
 
-This means that there's currently no mechanism to evenly distribute load. Such more advanced mechanisms are certainly 
-possible, and can be implemented by the community or anyone who is interested in such a feature.
+Currently, there's no established way to evenly distribute load within the federation. 
+However, such more advanced mechanisms are certainly possible and can be implemented by the community or anyone who is interested in such a feature.
 
 ### What if a request uses collections from multiple backends?
 
-By default, this request will not be accpeted, but there is an experimental setting that allows to enable this.
-When enabled, the process graph will be split in multiple parts. Subgraphs without dependencies will be submitted, resulting
-in STAC collections that are not yet finished (as the processing will take some time). These results are called 'partial',
-and can already be used in a 'load_stac' process. Hence a process graph is created where load_collections with unavailable 
-data are replaced with 'load_stac' with a partial result.
+By default, this request will not be accepted.
+However, an experimental setting can be enabled to activate this feature.
+When enabled, the process graph will be split into independent subgraphs.
+These subgraphs will be submitted, resulting in STAC collections that are not considered finished (as the processing will take some time). 
+These results, called 'partials', can be used in a `load_stac` process. 
+This approach regenerates the initial process graph where `load_collection` processes with unavailable data are replaced with `load_stac` containing a partial result.
 
-This final process graph is also submitted, and the receiving backend will wait for partial results to become available before
-finishing the full computation.
+This final process graph also gets submitted.
+The receiving backend will wait for partial results to become available before finishing the full computation.
 
 
