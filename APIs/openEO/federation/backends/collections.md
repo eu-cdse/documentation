@@ -90,12 +90,12 @@ These are often distributed by the institution, or a service of an institution, 
 
 | Attribute | Type |Description | Examples |
 |-----------|------|------------|----------|
-| Provider | string | Often used for derived collections produced or order by the listed provider. | `ESA`, `CNSE`, `EMODNET`, `TERRASCOPE`. `CAMS`, `CGLS` |
+| Provider | string | Often used for derived collections produced or ordered by the listed provider. | `ESA`, `CNSE`, `EMODNET`, `TERRASCOPE`. `CAMS`, `CGLS` |
 | Satellite/Platform | string | Name of the satellite/platform that acquired the data in the collection. | `SENTINEL2`, `LANDSAT8`, `PALSAR2` |
 | Processing level | string | Name of the level to which the data was processed (often processed raw data). | `L2A`, `L3`, `L2_1` |
 | Version | string | Often used for derived collections that are produced in several versions. | `V1`, `V2`|
 | Resolution | string (`number + unit` or `string`) | Usually added if the resolution is of particular importance for the collection (e.g., novel product with this resolution). | `10M`, `120M`, `EUROPE`, `GLOBAL` |
-| Product Description | string | Human readable description of the data within the collection. Can also be an abbreviation or acronym. | `LAND_COVER_MAP`, `WORLDCOVER`, `NDVI`, `LAI` |
+| Product Description | string | Human readable label of the data within the collection. Can also be an abbreviation or acronym. | `LAND_COVER_MAP`, `WORLDCOVER`, `NDVI`, `LAI` |
 | Year | number | Often used for derived products that were updated in the specified year or created based on data of the specified year. | `2022` |
 
 > Collections containing raw data or processing levels of that data often use a combination of satellite/platform and processing level (e.g., `SENTINEL2_L1C` ). 
