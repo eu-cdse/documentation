@@ -10,9 +10,9 @@ These criteria will likely relax over time, allowing to gradually integrate and 
 
 The current criteria are:
 
-1. Collections should be complementary to the existing offer, avoiding collections with the same name or similar content.
+1. Collections must be complementary to the existing offer, avoiding collections with the same name or similar content.
 2. Only non-experimental collections will be considered.
-3. Full-archive collections, or collections that fully cover a specific region are encouraged to avoid 'demo' collections that only offer a marginal part of the actual dataset.
+3. Full-archive collections, or collections that fully cover a specific region are encouraged. The intention is to avoid 'demo' collections that only offer a marginal part of the actual dataset.
 
 
 ## Collection availability
