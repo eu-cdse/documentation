@@ -51,5 +51,3 @@ Defaults:
 - The openEO dimension metadata is preserved in the netCDF file. 
 - CF conventions ([https://cfconventions.org/](https://cfconventions.org/)) are used where applicable.
 - Data is chunked and compressed.
-
-More information on all supported file formats, can be found [here](../../file-formats).
