@@ -41,7 +41,7 @@ The short-term benefits of joining the federation include:
 1. **Increased visibility**: the federation serves a single endpoint for users to access multiple services, increasing the visibility of your service.
 2. **Increased user base**: thanks to the common authentication within the federation, users can access your service without any additional registration. This opens your service up to the larger openEO user community.
 3. **Joint outreach**: outreach and promotion activities are performed together with other members of the federation, significantly reducing the effort to attract new users.
-4. **Shared account management**: credit usage is tracked in a central manner, commercial usage is compensated in an efficient manner.
+4. **Shared accounting**: credit usage is centrally tracked, allowing for efficient and transparent use of your service in commercial settings.
 
 ## How to join the federation
 
