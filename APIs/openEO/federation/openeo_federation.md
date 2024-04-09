@@ -13,9 +13,11 @@ As a result, we are offering this feature as a 'beta' service at first.
 This approach allows us to still adjust the configuration based on your feedback.
 
 When using the federated endpoint, you will be asked to give your consent to share basic user information with the other providers of the federation.
-Additionally, you will be requested to accept the new terms and conditions. 
-All external providers comply with the regulations of the federation, but are not necessarily part of the CDSE service. 
-You can withdraw your consent at any time through your CDSE account dashboard.
+Additionally, you will be requested to accept the new terms and conditions. You can withdraw your consent at any time through your CDSE account dashboard.
+
+All external providers comply with the regulations of the federation, but are not necessarily part of the CDSE service. This means that while they are part of the 
+broader Copernicus ecosystem, they are either fully independent providers, or are governed and/or funded by other parties. This mainly impacts their currently foreseen lifetime, but also 
+how they handle aspects that are not part of federation governance.
 
 You can find a description of the technical design [here](./backends/design.md), as well as a more extensive [overview of federation governance](./backends/index.md).
 
