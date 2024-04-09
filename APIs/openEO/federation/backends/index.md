@@ -22,7 +22,7 @@ Suppose a non-experimental component exceeds the [error budget](https://sre.goog
 In this case, the provider is expected to stop working on new features and improve reliability or to mark the component as experimental. 
 Reverting a 'stable' feature to 'experimental' should be considered as a backwards incompatible change, requiring communication towards the user and proper consideration of the impact.
 
-> To join the federation, providers are expected to fulfill these requirements and document differences for users in the "[Federation Aspects and Known Issues](../index.md)".
+> To join the federation, providers are expected to fulfill these requirements.
 However, to accommodate and encourage new backend entries into the federation, these requirements are open to negotiation if there are good arguments for changing the current contract agreements.
 
 For more detailed information, please refer to the different parts of the federation contract:
