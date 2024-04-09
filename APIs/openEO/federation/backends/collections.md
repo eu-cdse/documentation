@@ -20,9 +20,9 @@ The current criteria are:
 Collections are key assets of the federation.
 It is important for users to know what they can expect from any given collection.
 The federation relies on openEO collection metadata following the STAC specification to communicate this to the user. 
-Backend providers need to comply with these requirements for each of their collections:
+Backend providers need to comply with these requirements for each of their collections.
 
-The 'experimental' flag from https://stac-extensions.github.io/version/v1.1.0/schema.json is required for experimental collections. 
+The 'experimental' field available in the STAC [version](https://stac-extensions.github.io/version/v1.2.0/schema.json) extension is required for experimental collections. 
 A collection can be experimental either due to issues with the actual data or catalog or backend specific issues that make the use of the collection unstable. 
 Experimental collections do not need to comply with further requirements. 
 
@@ -45,7 +45,7 @@ By default, 99% of the items in these collections should be available within 48 
 This gives users a basic guarantee with respect to timeliness of products. 
 
 4. Collection metadata should be valid STAC metadata and must include all extensions in `stac_extensions`. 
-Tools like [STAC-validator](https://github.com/stac-utils/stac-validator) can indentify obvious issues.
+Tools like [STAC-validator](https://github.com/stac-utils/stac-validator) can identify obvious issues.
 
 5. FAIR principle R1: [(Meta)data are richly described with a plurality of accurate and relevant attributes](https://www.go-fair.org/fair-principles/r1-metadata-richly-described-plurality-accurate-relevant-attributes/)
 6. Collections must follow harmonization guidelines specified below, if applicable.
