@@ -50,7 +50,7 @@ Tools like [STAC-validator](https://github.com/stac-utils/stac-validator) can in
 5. FAIR principle R1: [(Meta)data are richly described with a plurality of accurate and relevant attributes](https://www.go-fair.org/fair-principles/r1-metadata-richly-described-plurality-accurate-relevant-attributes/)
 6. Collections must follow harmonization guidelines specified below, if applicable.
 7. Collections naming (id, dimensions, bands) should remain constant. 
-8. Backwards incompatible changes or removal need to be announced with a lead time of 6 months, together with a migration path.
+8. Backwards incompatible changes or removal need to be announced with a lead time of 3 months, together with a migration path, as described in @sec-openeoannounce.
 9. Minimum availability for non-experimental collections must be 98% on a monthly basis. 
 Users must be notified of backwards incompatible changes or removals six months in advance, alongside a migration path.
 In the case it is not possible to measure the availability per collection, the overall backend availability is used.
