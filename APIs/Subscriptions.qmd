@@ -1,7 +1,7 @@
 ---
 title: Subscriptions 
 ---
-This section provides the detailed description of push and pull subscriptions within the Copernicus Data Space Ecosystem Catalogue, its workflows and exemplary requests.
+This section provides the detailed description of PUSH and PULL subscriptions within the Copernicus Data Space Ecosystem Catalogue, its workflows and exemplary requests.
 
 **Subscription** services allow users to receive notifications in an automated way about the Event that has taken place in the Copernicus Data Space Ecosystem Catalogue. Currently, they inform users about newly added products to the Data Space Catalogue according to the set of filter parameters supplied within the subscription request.
 
@@ -87,7 +87,7 @@ The client submits a subscription create request to Subscription Service. With t
 
 After a new product is added to the Data Space Catalogue, the Subscription Service sends the notification to the client's queue. Therefore users should read and acknowledge the notifications on the queue regularly. In case the maximum size of the queue is exceeded, the oldest products notifications will be automatically removed with no possibility to be retrieved. If the subscription is paused, the new products' availability notifications will not be sent to the queue. 
 
-## PULL Subscription Entity Description
+### PULL Subscription Entity Description
 Below please find the description of the PULL Subscription Entity. 
 
 ```{=html}
@@ -99,7 +99,7 @@ Below please find the description of the PULL Subscription Entity.
                     <th style="text-align: center; vertical-align: middle; width:48%">Subscription Properties</th>
                     <th style="text-align: center; vertical-align: middle; width:35%">Type</th>
                     <th style="text-align: center; vertical-align: middle; width:80%">Description</th>
-                    <th style="text-align: center; vertical-align: middle; width:30%">Example</th>
+                    <th style="text-align: center; vertical-align: middle; width:40%">Example</th>
             </tr>
         </thead>
         <tbody>
@@ -143,7 +143,6 @@ Below please find the description of the PULL Subscription Entity.
             <tr>
                 <td style="text-align: center; vertical-align: middle">LastNotificationDate</td>
                 <td style="text-align: center; vertical-align: middle">DateTimeOffset</td>
-                <td style="text-align: center; vertical-align: middle">N</td>
                 <td style="text-align: left; vertical-align: middle">Date and time corresponding to the last time the Subscription Ack endpoint was queried by the client. Time is in UTC in the format YYYY-MMDDThh:mm:ss.sssZ</td>
                 <td style="text-align: center; vertical-align: middle">2024-01-17T09:50:10.654Z</td>
             </tr>
@@ -275,6 +274,8 @@ https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions(991c4730-cf6f-4
 ```
 
 :::
+
+**Response example**
 
 * If Subscription is `Active` or `Paused`
 
@@ -466,7 +467,7 @@ https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions(991c4730-cf6f-4
 
 ::: {.panel-tabset}
 
-# HTTP Request
+# Request example
 
 ```{json}
 POST \
@@ -523,6 +524,7 @@ For PUSH notifications, the nominal scenario can be described as follows:
 
 The client submits a subscription create request to Subscription Service. The user's request needs to contain an endpoint URL to which the notifications will be sent and endpoint's credentials (if client's endpoint requires authentication). The user's endpoint credentials are stored safely in the dedicated vault. The request is processed by the Subscription Service, and a response is returned which includes a unique identifier assigned to the subscription (subscription's Id), subscription status (initially set to running), subscription request submission date, filtering parameters, stage order, priority of the subscription, subscription event to be monitored and client's endpoint URL.
 If client' notification endpoint is not submitted, then [PULL subscription](https://documentation.dataspace.copernicus.eu/APIs/Subscriptions.html#pull-subscriptions) will be created.
+
 2. Product Notification 
 
 After a new product is added to the Copernicus Data Space Ecosystem Catalogue, the Subscription Service sends the notification to the client's endpoint. In case of user's endpoint unavailability, the PUSH notification is retried three times and then it fails. The notifications are sent to user's endpoint until the subscription is paused or deleted.
@@ -539,7 +541,7 @@ Below please find the description of the Subscription Entity.
                     <th style="text-align: center; vertical-align: middle; width:48%">Subscription Properties</th>
                     <th style="text-align: center; vertical-align: middle; width:35%">Type</th>
                     <th style="text-align: center; vertical-align: middle; width:80%">Description</th>
-                    <th style="text-align: center; vertical-align: middle; width:30%">Example</th>
+                    <th style="text-align: center; vertical-align: middle; width:40%">Example</th>
             </tr>
         </thead>
         <tbody>
@@ -582,14 +584,12 @@ Below please find the description of the Subscription Entity.
             <tr>
                 <td style="text-align: center; vertical-align: middle">LastNotificationDate</td>
                 <td style="text-align: center; vertical-align: middle">DateTimeOffset</td>
-                <td style="text-align: center; vertical-align: middle">N</td>
                 <td style="text-align: left; vertical-align: middle">Date and time corresponding to the last time the Subscription Service sent a Notification to the user's endpoint. Time is in UTC in the format YYYY-MMDDThh:mm:ss.sssZ</td>
                 <td style="text-align: center; vertical-align: middle">2024-01-17T09:50:10.654Z</td>
             </tr>
 			<tr>
                 <td style="text-align: center; vertical-align: middle">StageOrder</td>
                 <td style="text-align: center; vertical-align: middle">Boolean</td>
-                <td style="text-align: center; vertical-align: middle">N</td>
                 <td style="text-align: left; vertical-align: middle">Automatically orders the staging of products fulfilling the subscription.
 				<BR><BR>Only used if SubscriptionEvent = created
 				<b><BR><BR>Currently, the order of staging products is not feasible as all new products in Data Space Catalogue have status set to 'Online' and can be accessed immediately without setting an order.</b></td>
@@ -598,7 +598,6 @@ Below please find the description of the Subscription Entity.
 			<tr>
                 <td style="text-align: center; vertical-align: middle">Priority</td>
                 <td style="text-align: center; vertical-align: middle">Int64</td>
-                <td style="text-align: center; vertical-align: middle">N</td>
                 <td style="text-align: left; vertical-align: middle">Priority of the created orders resulting from the subscription. Currently automatically fixed to '1' without the possibility to change the value.
 				Within further development of the Subscription Service it is possible to enable Priority function which will determine the priority of the user's orders.</td>
                 <td style="text-align: center; vertical-align: middle">1</td>
@@ -606,21 +605,18 @@ Below please find the description of the Subscription Entity.
 			<tr>
                 <td style="text-align: center; vertical-align: middle">NotificationEndpoint</td>
                 <td style="text-align: center; vertical-align: middle">String</td>
-                <td style="text-align: center; vertical-align: middle">N</td>
                 <td style="text-align: left; vertical-align: middle">User's Endpoint URI used by the Data Space Catalogue for subscription notifications.</td>
                 <td style="text-align: center; vertical-align: middle">Any URI, e.g. https://myservice/notification</td>
             </tr>
 			<tr>
                 <td style="text-align: center; vertical-align: middle">NotificationEpUsername</td>
                 <td style="text-align: center; vertical-align: middle">String</td>
-                <td style="text-align: center; vertical-align: middle">N</td>
                 <td style="text-align: left; vertical-align: middle">The username associated with the Endpoint URI. It is mandatory if NotificationEndpoint requires authentication.</td>
                 <td style="text-align: center; vertical-align: middle">myserviceusername</td>
             </tr>
 			<tr>
                 <td style="text-align: center; vertical-align: middle">NotificationEpPassword</td>
                 <td style="text-align: center; vertical-align: middle">String</td>
-                <td style="text-align: center; vertical-align: middle">N</td>
                 <td style="text-align: left; vertical-align: middle">The password associated with the Endpoint URI. It is mandatory if NotificationEndpoint requires authentication.</td>
                 <td style="text-align: center; vertical-align: middle">***********</td>
             </tr>
@@ -637,7 +633,7 @@ While creating a subscription, users can specify the Event they would like to be
 
 * Created
 
-Within the Subscription create request, users can also provide the filtering parameters (e.g. productType, collection, geofootprint). The Subscription Service will then send the notification to the user about newly added products to the Copernicus Data Space Ecosystem Catalogue according to the set of filter parameters supplied within the subscription request. If 'FilterParam' is not provided within the subscription request body, it will be automatically set to empty and then the notifications about all newly added products will be sent to user's endpoint. 
+Within the Subscription create request, users can also provide the filtering parameters (e.g. productType, collection, geofootprint). The Subscription Service will then send the notification to the user about newly added products to the Copernicus Data Space Ecosystem Catalogue according to the set of filter parameters supplied within the subscription request. If `FilterParam` is not provided within the subscription request body, it will be automatically set to empty and then the notifications about all newly added products will be sent to user's endpoint. 
 
 Subscriptions enables the same filtering parameters as described for [OData Data Sapce Catalogue](https://documentation.dataspace.copernicus.eu/APIs/OData.html#filter-option). All filters should be provided in `FilterParam` field.
 
@@ -689,7 +685,7 @@ https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions
 
 ### Notification sender
 
-After creating the subscription, the notifications about new products entering the Data Space Catalogue should be automatically sent to user's endpoint:
+After creating the subscription, the notifications about new products entering the Data Space Catalogue according to the set of subscription's filter parameters should be automatically sent to user's endpoint:
 
 ::: {.panel-tabset}
 
@@ -824,6 +820,7 @@ To get information about the specified subscription:
 GET \
 https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions(subscription_id)
 ```
+
 :::
 
 ::: {.panel-tabset}
@@ -834,6 +831,7 @@ https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions(subscription_id
 GET \  
 https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions(7ca682c3-7b21-4e9b-95 2e-874798101340)
 ```
+
 # Response example
 
 ```{json}
@@ -874,7 +872,7 @@ Within the PULL Subscription update, the following parameter can be modified:
 The Subscription status can be changed to:
 
 * running (subscription will be working, for PUSH subscriptions notifications will be sent to user's endpoint and for PULL subscriptions notifications will be saved to subscription queue),
-* paused (subscription will be stopped and push notifications will not be sent, notifications sent before the change of status to paused will still be available),
+* paused (subscription will be stopped and push notifications will not be sent, notifications sent before the change of the status to paused will still be available),
 * cancelled (subscription will be deleted).
 
 To update an existing subscription:
@@ -954,6 +952,10 @@ To delete an existing subscription:
 DELETE \
 https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions(subscription_id)
 ```
+
+:::
+
+::: {.panel-tabset}
 
 # Request example
 
