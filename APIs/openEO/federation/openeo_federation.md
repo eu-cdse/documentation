@@ -27,6 +27,12 @@ To support basic processing within the federation, external providers can allow 
 It is important to note that there is clear separation of your credits amongst the external providers.
 This means that using an external provider will not lead to a reduction in the free credits supplied by CDSE. 
 
+## Latest news & important announcements {#sec-openeoannounce}
+
+All providers in the federation will post important information about changes to their service in the openEO category of the forum: [forum](https://forum.dataspace.copernicus.eu/c/openeo), 
+We encourage users to subscribe to this topic to receive important updates via email. 
+Important breaking changes are announced here with a lead time of 3 months, allowing users to adjust their workflows if needed.
+
 ## Getting help
 
 We encourage users to use the [forum](https://forum.dataspace.copernicus.eu/), a place where service providers and users can meet, to ask questions about the federation.
