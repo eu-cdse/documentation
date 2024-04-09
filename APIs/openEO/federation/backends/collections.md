@@ -55,7 +55,7 @@ Tools like [STAC-validator](https://github.com/stac-utils/stac-validator) can in
 Users must be notified of backwards incompatible changes or removals six months in advance, alongside a migration path.
 In the case it is not possible to measure the availability per collection, the overall backend availability is used.
 
-10. Collections may require special conditions to work, for instance in the case of commercial data.
+10. Collections may require special conditions to work, for instance in the case of commercial data. Note that a [separate extension](https://github.com/Open-EO/openeo-api/blob/master/extensions/commercial-data/README.md) is available for commercial data that requires ordering.
 11. Collection metadata uses the [datacube](https://github.com/stac-extensions/datacube) extension to advertise available dimensions and dimension labels.
 
 
