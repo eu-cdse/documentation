@@ -1176,27 +1176,16 @@ window.onload = function() {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#list-of-terms" id="toc-list-of-terms" class="nav-link active" data-scroll-target="#list-of-terms">List of Terms</a></li>
+  <li><a href="#push-subscriptions" id="toc-push-subscriptions" class="nav-link active" data-scroll-target="#push-subscriptions">Push subscriptions</a>
+  <ul>
+  <li><a href="#list-of-terms" id="toc-list-of-terms" class="nav-link" data-scroll-target="#list-of-terms">List of Terms</a></li>
+  <li><a href="#subscription-entity-description" id="toc-subscription-entity-description" class="nav-link" data-scroll-target="#subscription-entity-description">Subscription Entity Description</a></li>
   <li><a href="#user-authorization" id="toc-user-authorization" class="nav-link" data-scroll-target="#user-authorization">User Authorization</a></li>
-  <li><a href="#pull-subscriptions" id="toc-pull-subscriptions" class="nav-link" data-scroll-target="#pull-subscriptions">PULL Subscriptions</a>
-  <ul>
-  <li><a href="#pull-subscription-entity-description" id="toc-pull-subscription-entity-description" class="nav-link" data-scroll-target="#pull-subscription-entity-description">PULL Subscription Entity Description</a></li>
-  <li><a href="#create-subscription" id="toc-create-subscription" class="nav-link" data-scroll-target="#create-subscription">Create Subscription</a></li>
-  <li><a href="#read-subscription" id="toc-read-subscription" class="nav-link" data-scroll-target="#read-subscription">Read Subscription</a></li>
-  <li><a href="#ack-subscription" id="toc-ack-subscription" class="nav-link" data-scroll-target="#ack-subscription">Ack Subscription</a></li>
-  </ul></li>
-  <li><a href="#push-subscriptions" id="toc-push-subscriptions" class="nav-link" data-scroll-target="#push-subscriptions">PUSH Subscriptions</a>
-  <ul>
-  <li><a href="#push-subscription-entity-description" id="toc-push-subscription-entity-description" class="nav-link" data-scroll-target="#push-subscription-entity-description">PUSH Subscription Entity Description</a></li>
-  <li><a href="#create-subscription-1" id="toc-create-subscription-1" class="nav-link" data-scroll-target="#create-subscription-1">Create Subscription</a></li>
-  <li><a href="#notification-sender" id="toc-notification-sender" class="nav-link" data-scroll-target="#notification-sender">Notification sender</a></li>
-  </ul></li>
-  <li><a href="#pull-and-push-subscriptions-operations" id="toc-pull-and-push-subscriptions-operations" class="nav-link" data-scroll-target="#pull-and-push-subscriptions-operations">PULL and PUSH Subscriptions Operations</a>
-  <ul>
-  <li><a href="#get-subscriptions" id="toc-get-subscriptions" class="nav-link" data-scroll-target="#get-subscriptions">Get Subscriptions</a>
+  <li><a href="#subscription-service" id="toc-subscription-service" class="nav-link" data-scroll-target="#subscription-service">Subscription Service</a>
   <ul class="collapse">
-  <li><a href="#users-subscriptions-info" id="toc-users-subscriptions-info" class="nav-link" data-scroll-target="#users-subscriptions-info">User’s subscriptions Info</a></li>
-  <li><a href="#subscription-info" id="toc-subscription-info" class="nav-link" data-scroll-target="#subscription-info">Subscription Info</a></li>
+  <li><a href="#create-subscription" id="toc-create-subscription" class="nav-link" data-scroll-target="#create-subscription">Create Subscription</a></li>
+  <li><a href="#notification-sender" id="toc-notification-sender" class="nav-link" data-scroll-target="#notification-sender">Notification sender</a></li>
+  <li><a href="#get-subscription" id="toc-get-subscription" class="nav-link" data-scroll-target="#get-subscription">Get Subscription</a></li>
   <li><a href="#update-subscription" id="toc-update-subscription" class="nav-link" data-scroll-target="#update-subscription">Update Subscription</a></li>
   <li><a href="#delete-subscription" id="toc-delete-subscription" class="nav-link" data-scroll-target="#delete-subscription">Delete Subscription</a></li>
   </ul></li>
@@ -1224,33 +1213,139 @@ window.onload = function() {
 
 </header>
 
-<p>This section provides the detailed description of PUSH and PULL subscriptions within the Copernicus Data Space Ecosystem Catalogue, its workflows and exemplary requests.</p>
-<p><strong>Subscription</strong> services allow users to receive notifications in an automated way about the Event that has taken place in the Copernicus Data Space Ecosystem Catalogue. Currently, they inform users about newly added products to the Data Space Catalogue according to the set of filter parameters supplied within the subscription request.</p>
-<p>There two types of Subscriptions available for users:</p>
-<ol type="1">
-<li><p>PULL Subscription - for PULL Subscription the service sends the notification to the individual user queue every time the new product is added to the Data Sapce Catalogue according to the set of filter parameters supplied within the subscription request. The notifications are stored in the queue until they are acknowledged by the client or until the limit of the messages on the queue for the client is exceeded. <strong>The maximum length of the queue is 100 000 notifications.</strong> For PULL Subscription, it is necessary to Read and Acknowledge notifications regularly to not exceed the queue limit.</p></li>
-<li><p>PUSH Subscription - for PUSH Subscription the service sends the notification to the user’s endpoint every time the new product is added to the Data Space Catalogue according to the set of filter parameters supplied within the subscription request. For PUSH Subscription, it is mandatory to provide the user’s endpoint for which the notifications are to be sent.</p></li>
-</ol>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Note
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Please note that the limit of the <strong>running Subscriptions</strong> (PUSH and PULL) for one user is <strong>1</strong>. The overall limit of the Subscriptions (running and paused) for one user is 10.</p>
-</div>
-</div>
+<section id="push-subscriptions" class="level2">
+<h2 class="anchored" data-anchor-id="push-subscriptions">Push subscriptions</h2>
+<p><strong>Subscription</strong> service allows users to receive notifications in an automated way about the Event that has taken place in the Copernicus Data Space Ecosystem Catalogue. Currently, it informs users about newly added products to the CDSE Catalogue via PUSH notifications.</p>
+<p>For <strong>PUSH notifications</strong>, the nominal scenario can be describes as follows:</p>
+<ul>
+<li>Creation of the subscription</li>
+</ul>
+<p>The client submits a subscription create request to Subscription Service. The user’s request needs to contain an endpoint URL to which the notifications will be sent and endpoint’s credentials (if client’s endpoint requires authentication). The user’s endpoint credentials are stored safely in the dedicated vault. The request is processed by the Subscription Service, and a response is returned which includes a unique identifier assigned to the subscription (subscription’s Id), subscription status (initially set to running), subscription request submission date, and client’s endpoint URL.</p>
+<ul>
+<li>Product Notification</li>
+</ul>
+<p>After a new product is added to the CDSE Catalogue, the Subscription Service sends the notification to the client’s endpoint. In case of user’s endpoint unavailability, the PUSH notification is retried three times and then it fails. The notifications are sent to user’s endpoint until the subscription is paused or deleted.</p>
+<p>Please note that the functionalities of the Subscriptions API are planned to be expanded gradually and more types of the Events (e.g.&nbsp;deletion or modification of the products) will be able to be monitored in the future. It is also planned to support PULL notifications.</p>
 <section id="list-of-terms" class="level3">
 <h3 class="anchored" data-anchor-id="list-of-terms">List of Terms</h3>
 <p>The terms used within the Subscriptions documentation are defined below.</p>
 <p><strong>Subscription Service</strong> - HTTP API capable of manipulating subscriptions</p>
-<p><strong>PULL Subscription</strong> - a client request for receiving PULL notifications of future product published on Data Space Catalogue.</p>
-<p><strong>PUSH Subscription</strong> - a client request for receiving PUSH notifications of future product published on Data Space Catalogue.</p>
-<p><strong>Notification</strong> - OData message automatically sent to client’s endpoint (for PUSH subscriptions) or individual client’s queue (for PULL notifications) every time the new product is published on Data Space Catalogue.</p>
+<p><strong>Subscription</strong> - a client request for receiving notifications of future product published on Data Space Catalogue</p>
+<p><strong>Notification</strong> - OData message automatically sent to client’s endpoint every time the new product is published on Data Space Catalogue</p>
+</section>
+<section id="subscription-entity-description" class="level3">
+<h3 class="anchored" data-anchor-id="subscription-entity-description">Subscription Entity Description</h3>
+<p>Below please find the description of the Subscription Entity.</p>
+
+
+<div class="table-responsive">
+    
+<table class="table-quotas table" data-quarto-postprocess="true">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: center; vertical-align: middle; width: 48%;">Subscription Properties</th>
+<th data-quarto-table-cell-role="th" style="text-align: center; vertical-align: middle; width: 35%;">Type</th>
+<th data-quarto-table-cell-role="th" style="text-align: center; vertical-align: middle; width: 5%;">M</th>
+<th data-quarto-table-cell-role="th" style="text-align: center; vertical-align: middle; width: 80%;">Description</th>
+<th data-quarto-table-cell-role="th" style="text-align: center; vertical-align: middle; width: 30%;">Example</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center; vertical-align: middle;">Id</td>
+<td style="text-align: center; vertical-align: middle;">Guid</td>
+<td style="text-align: center; vertical-align: middle;">Y</td>
+<td style="text-align: left; vertical-align: middle;">It is a universally unique identifier (UUID). The Id is a local identifier for the Subscription instance within the Catalogue, assigned upon Subscription creation.</td>
+<td style="text-align: center; vertical-align: middle;">9249dde5-4838-4a34-8925-bac8c1d53f09</td>
+</tr>
+<tr class="even">
+<td style="text-align: center; vertical-align: middle;">Status</td>
+<td style="text-align: center; vertical-align: middle;">Subscription Status enumeration</td>
+<td style="text-align: center; vertical-align: middle;">Y</td>
+<td style="text-align: left; vertical-align: middle;">The allowed values of the subscription status are:
+running
+paused
+cancelled
+<br>
+The default value set to 'Status', if not provided by user, is 'running'.</td>
+<td style="text-align: center; vertical-align: middle;">running</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center; vertical-align: middle;">SubscriptionEvent</td>
+<td style="text-align: center; vertical-align: middle;">Subscription Event enumeration</td>
+<td style="text-align: center; vertical-align: middle;">N</td>
+<td style="text-align: left; vertical-align: middle;">The subscription event to be monitored and for which notification is provided:
+created
+The default value set to "SubscriptionEvent", if not provided by user, is "created".<br>
+<br>
+For "SubscriptionEvent" = "created" the notifications about newly added products to the Data Space Catalogue will be sent to the user's endpoint.</td>
+<td style="text-align: center; vertical-align: middle;">created</td>
+</tr>
+<tr class="even">
+<td style="text-align: center; vertical-align: middle;">SubmissionDate</td>
+<td style="text-align: center; vertical-align: middle;">DateTimeOffset</td>
+<td style="text-align: center; vertical-align: middle;">Y</td>
+<td style="text-align: left; vertical-align: middle;">Date and time at which the Subscription was received by the Catalogue. Time is in UTC in the format YYYY-MMDDThh:mm:ss.sssZ</td>
+<td style="text-align: center; vertical-align: middle;">2024-01-17T09:13:04.654Z</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center; vertical-align: middle;">LastNotificationDate</td>
+<td style="text-align: center; vertical-align: middle;">DateTimeOffset</td>
+<td style="text-align: center; vertical-align: middle;">N</td>
+<td style="text-align: left; vertical-align: middle;">Date and time corresponding to the last time the Subscription Service sent a Notification to the user's endpoint. Time is in UTC in the format YYYY-MMDDThh:mm:ss.sssZ</td>
+<td style="text-align: center; vertical-align: middle;">2024-01-17T09:50:10.654Z</td>
+</tr>
+<tr class="even">
+<td style="text-align: center; vertical-align: middle;">StageOrder</td>
+<td style="text-align: center; vertical-align: middle;">Boolean</td>
+<td style="text-align: center; vertical-align: middle;">N</td>
+<td style="text-align: left; vertical-align: middle;">Automatically orders the staging of products fulfilling the subscription.<br>
+<br>
+Only used if SubscriptionEvent = created <strong><br>
+<br>
+Currently, the order of staging products is not feasible as all new products in Data Space Catalogue have status set to 'Online' and can be accessed immediately without setting an order.</strong></td>
+<td style="text-align: center; vertical-align: middle;">true</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center; vertical-align: middle;">Priority</td>
+<td style="text-align: center; vertical-align: middle;">Int64</td>
+<td style="text-align: center; vertical-align: middle;">N</td>
+<td style="text-align: left; vertical-align: middle;">Priority of the created orders resulting from the subscription. Currently automatically fixed to '1' without the possibility to change the value. Within further development of the Subscription Service it is possible to enable Priority function which will determine the priority of the user's orders.</td>
+<td style="text-align: center; vertical-align: middle;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: center; vertical-align: middle;">NotificationEndpoint</td>
+<td style="text-align: center; vertical-align: middle;">String</td>
+<td style="text-align: center; vertical-align: middle;">N</td>
+<td style="text-align: left; vertical-align: middle;">User's Endpoint URI used by the Data Space Catalogue for subscription notifications.</td>
+<td style="text-align: center; vertical-align: middle;">Any URI, e.g. https://myservice/notification</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center; vertical-align: middle;">NotificationEpUsername</td>
+<td style="text-align: center; vertical-align: middle;">String</td>
+<td style="text-align: center; vertical-align: middle;">N</td>
+<td style="text-align: left; vertical-align: middle;">The username associated with the Endpoint URI. It is mandatory if NotificationEndpoint requires authentication.</td>
+<td style="text-align: center; vertical-align: middle;">myserviceusername</td>
+</tr>
+<tr class="even">
+<td style="text-align: center; vertical-align: middle;">NotificationEpPassword</td>
+<td style="text-align: center; vertical-align: middle;">String</td>
+<td style="text-align: center; vertical-align: middle;">N</td>
+<td style="text-align: left; vertical-align: middle;">The password associated with the Endpoint URI. It is mandatory if NotificationEndpoint requires authentication.</td>
+<td style="text-align: center; vertical-align: middle;">***********</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+
 </section>
 <section id="user-authorization" class="level3">
 <h3 class="anchored" data-anchor-id="user-authorization">User Authorization</h3>
@@ -1293,603 +1388,74 @@ Note
 </div>
 </div>
 </section>
-<section id="pull-subscriptions" class="level2">
-<h2 class="anchored" data-anchor-id="pull-subscriptions">PULL Subscriptions</h2>
-<p>For PULL notifications, the nominal scenario can be described as follows:</p>
-<ol type="1">
-<li>Creation of the subscription</li>
-</ol>
-<p>The client submits a subscription create request to Subscription Service. With the creation request, users can specify the filtering parameters for the products within the subscription, status of the subscription, stage order, priority and subscription event to be monitored. All of the parameters are optional. If not provided by the client, the default values will be assigned. The request is then processed by the Subscription Service, and a response is returned which includes a unique identifier assigned to the subscription (subscription’s Id), subscription status (initially set to running), subscription request submission date, filtering parameters, stage order, priority of the subscription and subscription event to be monitored.</p>
-<ol start="2" type="1">
-<li>Product Notification</li>
-</ol>
-<p>After a new product is added to the Data Space Catalogue, the Subscription Service sends the notification to the client’s queue. Therefore users should read and acknowledge the notifications on the queue regularly. In case the maximum size of the queue is exceeded, the oldest products notifications will be automatically removed with no possibility to be retrieved. If the subscription is paused, the new products’ availability notifications will not be sent to the queue.</p>
-<section id="pull-subscription-entity-description" class="level3">
-<h3 class="anchored" data-anchor-id="pull-subscription-entity-description">PULL Subscription Entity Description</h3>
-<p>Below please find the description of the PULL Subscription Entity.</p>
-
-
-<div class="table-responsive">
-    
-<table class="table-quotas table" data-quarto-postprocess="true">
-<colgroup>
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 25%">
-</colgroup>
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th" style="text-align: center; vertical-align: middle; width: 48%;">Subscription Properties</th>
-<th data-quarto-table-cell-role="th" style="text-align: center; vertical-align: middle; width: 35%;">Type</th>
-<th data-quarto-table-cell-role="th" style="text-align: center; vertical-align: middle; width: 80%;">Description</th>
-<th data-quarto-table-cell-role="th" style="text-align: center; vertical-align: middle; width: 40%;">Example</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: center; vertical-align: middle;">Id</td>
-<td style="text-align: center; vertical-align: middle;">Guid</td>
-<td style="text-align: left; vertical-align: middle;">It is a universally unique identifier (UUID). The Id is a local identifier for the Subscription instance within the Catalogue, assigned upon Subscription creation.</td>
-<td style="text-align: center; vertical-align: middle;">991c4730-cf6f-432a-9f6c-47be0230ff45</td>
-</tr>
-<tr class="even">
-<td style="text-align: center; vertical-align: middle;">Status</td>
-<td style="text-align: center; vertical-align: middle;">Subscription Status enumeration</td>
-<td style="text-align: left; vertical-align: middle;">The allowed values of the subscription status are:
-running
-paused
-cancelled
-<br>
-The default value set to 'Status', if not provided by user, is 'running'.</td>
-<td style="text-align: center; vertical-align: middle;">running</td>
-</tr>
-<tr class="odd">
-<td style="text-align: center; vertical-align: middle;">SubscriptionEvent</td>
-<td style="text-align: center; vertical-align: middle;">Subscription Event enumeration</td>
-<td style="text-align: left; vertical-align: middle;">The subscription event to be monitored and for which notification is provided:
-created
-The default value set to "SubscriptionEvent", if not provided by user, is "created".<br>
-<br>
-For "SubscriptionEvent" = "created" the notifications about newly added products to the Data Space Catalogue will be sent to the user's endpoint.</td>
-<td style="text-align: center; vertical-align: middle;">created</td>
-</tr>
-<tr class="even">
-<td style="text-align: center; vertical-align: middle;">FilterParam</td>
-<td style="text-align: center; vertical-align: middle;">String</td>
-<td style="text-align: left; vertical-align: middle;">The filter parameters of the Subscription (refers to the $filter= parameter of any Products? query). The same filtering parameters as described for [OData Data Sapce Catalogue](https://documentation.dataspace.copernicus.eu/APIs/OData.html#filter-option) are available.</td>
-<td style="text-align: center; vertical-align: middle;">Collection/Name eq 'SENTINEL-1' and Attributes/OData.CSC.StringAttribute/any (att:att/Name eq 'productType' and att/OData.CSC.StringAttribute/Value eq 'IW_SLC__1S')</td>
-</tr>
-<tr class="odd">
-<td style="text-align: center; vertical-align: middle;">SubmissionDate</td>
-<td style="text-align: center; vertical-align: middle;">DateTimeOffset</td>
-<td style="text-align: left; vertical-align: middle;">Date and time at which the Subscription was received by the Catalogue. Time is in UTC in the format YYYY-MMDDThh:mm:ss.sssZ</td>
-<td style="text-align: center; vertical-align: middle;">2024-01-17T09:13:04.654Z</td>
-</tr>
-<tr class="even">
-<td style="text-align: center; vertical-align: middle;">LastNotificationDate</td>
-<td style="text-align: center; vertical-align: middle;">DateTimeOffset</td>
-<td style="text-align: left; vertical-align: middle;">Date and time corresponding to the last time the Subscription Ack endpoint was queried by the client. Time is in UTC in the format YYYY-MMDDThh:mm:ss.sssZ</td>
-<td style="text-align: center; vertical-align: middle;">2024-01-17T09:50:10.654Z</td>
-</tr>
-<tr class="odd">
-<td style="text-align: center; vertical-align: middle;">StageOrder</td>
-<td style="text-align: center; vertical-align: middle;">Boolean</td>
-<td style="text-align: left; vertical-align: middle;">Automatically orders the staging of products fulfilling the subscription.<br>
-<br>
-Only used if SubscriptionEvent = created <strong><br>
-<br>
-Currently, the order of staging products is not feasible as all new products in Data Space Catalogue have status set to 'Online' and can be accessed immediately without setting an order.</strong></td>
-<td style="text-align: center; vertical-align: middle;">true</td>
-</tr>
-<tr class="even">
-<td style="text-align: center; vertical-align: middle;">Priority</td>
-<td style="text-align: center; vertical-align: middle;">Int64</td>
-<td style="text-align: left; vertical-align: middle;">Priority of the created orders resulting from the subscription. Currently automatically fixed to '1' without the possibility to change the value. Within further development of the Subscription Service it is possible to enable Priority function which will determine the priority of the user's orders.</td>
-<td style="text-align: center; vertical-align: middle;">1</td>
-</tr>
-<tr class="odd">
-<td style="text-align: center; vertical-align: middle;">AckId</td>
-<td style="text-align: center; vertical-align: middle;">String</td>
-<td style="text-align: left; vertical-align: middle;">Acknowledge Id assigned to each product notification. Required for acknowledging the notification messages from the client's queue.</td>
-<td style="text-align: center; vertical-align: middle;">MTcxMDc1NjcwNjUzMi0wOjk5MWM0NzMwLWNmNmYtNDMyYS05ZjZjLTQ3YmUwMjMwZmY0NQ==</td>
-</tr>
-<tr class="even">
-<td style="text-align: center; vertical-align: middle;">AckMessagesNum</td>
-<td style="text-align: center; vertical-align: middle;">Int64</td>
-<td style="text-align: left; vertical-align: middle;">The number of the notifications that were acknowledged.</td>
-<td style="text-align: center; vertical-align: middle;">20</td>
-</tr>
-<tr class="odd">
-<td style="text-align: center; vertical-align: middle;">CurrentQueueLength</td>
-<td style="text-align: center; vertical-align: middle;">Int64</td>
-<td style="text-align: left; vertical-align: middle;">Current length of the individual user's queue.</td>
-<td style="text-align: center; vertical-align: middle;">2115</td>
-</tr>
-<tr class="even">
-<td style="text-align: center; vertical-align: middle;">MaxQueueLength</td>
-<td style="text-align: center; vertical-align: middle;">Int64</td>
-<td style="text-align: left; vertical-align: middle;">The maximum number of notifications on the individual user's queue.</td>
-<td style="text-align: center; vertical-align: middle;">100000</td>
-</tr>
-</tbody>
-</table>
-
-</div>
-
-</section>
-<section id="create-subscription" class="level3">
-<h3 class="anchored" data-anchor-id="create-subscription">Create Subscription</h3>
-<p>To create PULL Subscription users need to submit a subscription create request to the Subscription endpoint.</p>
+<section id="subscription-service" class="level3">
+<h3 class="anchored" data-anchor-id="subscription-service">Subscription Service</h3>
+<section id="create-subscription" class="level4">
+<h4 class="anchored" data-anchor-id="create-subscription">Create Subscription</h4>
+<p>To create subscription users should specify the notification endpoint to which push notifications from the Subscription Service will be sent.</p>
 <p>While creating a subscription, users can specify the Event they would like to be notified. For now, the following Event can be chosen:</p>
 <ul>
 <li>Created</li>
 </ul>
-<p>Within the Subscription create request, users can also provide the filtering parameters (e.g.&nbsp;productType, collection, geofootprint). The Subscription Service will then provide the notifications about newly added products to the Copernicus Data Space Ecosystem Catalogue according to the set of filter parameters supplied within the subscription request. If <code>FilterParam</code> is not provided within the subscription request body, it will be automatically set to empty and then the notifications about all newly added products will be generated.</p>
-<p>Subscriptions enables the same filtering parameters as described for <a href="https://documentation.dataspace.copernicus.eu/APIs/OData.html#filter-option">OData Data Sapce Catalogue</a>. All filters should be provided in <code>FilterParam</code> field.</p>
-<p>To create PULL Subscription a request to the Data Space service should be submitted:</p>
+<p>The Subscription Service will then send the notification to the user’s endpoint about newly added products to the Copernicus Data Space Ecosystem Catalogue.</p>
+<p>To create a Subscription a request to the Subscription Service service should be submitted:</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true">HTTP request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false">Response example</a></li></ul>
 <div class="tab-content">
 <div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
 <pre class="{json}"><code>POST \
 https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions
- 
-{
-    "StageOrder": true,
-    "FilterParam": "Collection/Name eq 'SENTINEL-1' and Attributes/OData.CSC.StringAttribute/any(att:att/Name eq 'productType' and att/OData.CSC.StringAttribute/Value eq 'IW_SLC__1S')",
-    "Priority": 1,
-    "Status": "running",
-    "SubscriptionEvent": [
-        "created"
-    ]
-}</code></pre>
-</div>
-<div id="tabset-4-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
-<pre class="{json}"><code>201 Created
- 
-{
-    "Id": "991c4730-cf6f-432a-9f6c-47be0230ff45",
-    "FilterParam": "Collection/Name eq 'SENTINEL-1' and Attributes/OData.CSC.StringAttribute/any(att:att/Name eq 'productType' and att/OData.CSC.StringAttribute/Value eq 'IW_SLC__1S')",
-    "StageOrder": true,
-    "Priority": 1,
-    "Status": "running",
-    "SubscriptionEvent": [
-        "created"
-    ],
-    "SubmissionDate": "2024-03-13T09:39:49.404Z",
-    "@odata.context": "$metadata#Subscriptions/$entity"
-}</code></pre>
-</div>
-</div>
-</div>
-</section>
-<section id="read-subscription" class="level3">
-<h3 class="anchored" data-anchor-id="read-subscription">Read Subscription</h3>
-<p>To read the subscription notifications from the client’s queue, the request to subscription Read endpoint should be submitted:</p>
-<div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-5-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-1" role="tab" aria-controls="tabset-5-1" aria-selected="true">HTTP request</a></li></ul>
-<div class="tab-content">
-<div id="tabset-5-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-5-1-tab">
-<pre class="{json}"><code>GET \
-https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions(subscription_id)/Read</code></pre>
-</div>
-</div>
-</div>
-<p>While requesting subscription Read endpoint, by default top one notifications will be read. Users can specify to read <strong>maxiumum 20</strong> top notifications by adding $top parameter to their request.</p>
-<div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-6-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-1" role="tab" aria-controls="tabset-6-1" aria-selected="true">Example request</a></li></ul>
-<div class="tab-content">
-<div id="tabset-6-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-6-1-tab">
-<pre class="{json}"><code>GET \
-https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions(991c4730-cf6f-432a-9f6c-47be0230ff45)/Read?$top=2</code></pre>
-</div>
-</div>
-</div>
-<p><strong>Response example</strong></p>
-<ul>
-<li>If Subscription is <code>Active</code> or <code>Paused</code></li>
-</ul>
-<p>The whole response from the Subscripton Read endpoint is kept on the indivdual user’s queue for three days. After three days, only the endpoint response without <code>value</code> and <code>ProductName</code> is available (as provided below).</p>
-<div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-7-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-1" role="tab" aria-controls="tabset-7-1" aria-selected="true">Response example</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-2" role="tab" aria-controls="tabset-7-2" aria-selected="false">Response example after 3 days</a></li></ul>
-<div class="tab-content">
-<div id="tabset-7-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-7-1-tab">
-<pre class="{json}"><code>200 OK
- 
-[
-    {
-        "@odata.context": "$metadata#Notification/$entity",
-        "SubscriptionEvent": "created",
-        "ProductId": "d2ff986b-9454-43d6-95e0-1a0ae27019d7",
-        "ProductName": "S1A_IW_SLC__1SDV_20240313T054626_20240313T054653_052959_066921_3759.SAFE",
-        "SubscriptionId": "991c4730-cf6f-432a-9f6c-47be0230ff45",
-        "NotificationDate": "2024-03-13T13:39:59.000Z",
-        "AckId": "MTcxMDc1NjcwNjUzMi0wOjk5MWM0NzMwLWNmNmYtNDMyYS05ZjZjLTQ3YmUwMjMwZmY0NQ==",
-        "value": {
-            "@odata.context": "$metadata#Products(Assets())(Attributes())/$entity",
-            "@odata.mediaContentType": "application/octet-stream",
-            "Id": "d2ff986b-9454-43d6-95e0-1a0ae27019d7",
-            "Name": "S1A_IW_SLC__1SDV_20240313T054626_20240313T054653_052959_066921_3759.SAFE",
-            "ContentType": "application/octet-stream",
-            "ContentLength": 8217756705,
-            "OriginDate": "2024-03-13T06:47:17.308Z",
-            "PublicationDate": "2024-03-13T06:56:59.293Z",
-            "ModificationDate": "2024-03-13T10:47:57.429Z",
-            "Online": true,
-            "EvictionDate": "",
-            "S3Path": "/eodata/Sentinel-1/SAR/IW_SLC__1S/2024/03/13/S1A_IW_SLC__1SDV_20240313T054626_20240313T054653_052959_066921_3759.SAFE",
-            "Checksum": [
-                {
-                    "Value": "a7443f2e7186a5c114c951c9a24979ea",
-                    "Algorithm": "MD5",
-                    "ChecksumDate": "2024-03-13T10:47:45.298465Z"
-                },
-                {
-                    "Value": "62768a5a51dd61ad4f3f92d3c9926b66fafb1ee945f0e30b0e6ecd0c1590822d",
-                    "Algorithm": "BLAKE3",
-                    "ChecksumDate": "2024-03-13T10:47:57.259964Z"
-                }
-            ],
-            "ContentDate": {
-                "Start": "2024-03-13T05:46:26.715Z",
-                "End": "2024-03-13T05:46:53.707Z"
-            },
-            "Footprint": "geography'SRID=4326;POLYGON ((13.873887 65.505287, 14.91091 67.090202, 8.940076 67.587387, 8.268893 65.983887, 13.873887 65.505287))'",
-            "GeoFootprint": {
-                "type": "Polygon",
-                "coordinates": [...
-                ]
-            },
-            "Attributes": [...
-            ],
-            "Assets": [
-                {
-                    "Type": "QUICKLOOK",
-                    "Id": "b43f60cb-3869-4c1d-b1e5-336e0d057f43",
-                    "DownloadLink": "https://catalogue.dataspace.copernicus.eu/odata/v1/Assets(b43f60cb-3869-4c1d-b1e5-336e0d057f43)/$value",
-                    "S3Path": "/eodata/Sentinel-1/SAR/IW_SLC__1S/2024/03/13/S1A_IW_SLC__1SDV_20240313T054626_20240313T054653_052959_066921_3759.SAFE"
-                }
-            ]
-        }
-    },
-    {
-        "@odata.context": "$metadata#Notification/$entity",
-        "SubscriptionEvent": "created",
-        "ProductId": "33ad5694-9208-4001-ae4f-6d7cd0579ce0",
-        "ProductName": "S1A_IW_SLC__1SDV_20240313T092716_20240313T092732_052961_066935_89F2.SAFEE",
-        "SubscriptionId": "991c4730-cf6f-432a-9f6c-47be0230ff45",
-        "NotificationDate": "2024-03-13T13:39:59.000Z",
-        "AckId": "MTcxMDc1NjcwNjY2NC0wOjk5MWM0NzMwLWNmNmYtNDMyYS05ZjZjLTQ3YmUwMjMwZmY0NQ==",
-        "value": {
-            "@odata.context": "$metadata#Products(Assets())(Attributes())/$entity",
-            "@odata.mediaContentType": "application/octet-stream",
-            "Id": "33ad5694-9208-4001-ae4f-6d7cd0579ce0",
-            "Name": "S1A_IW_SLC__1SDV_20240313T092716_20240313T092732_052961_066935_89F2.SAFE",
-            "ContentType": "application/octet-stream",
-            "ContentLength": 4355824564,
-            "OriginDate": "2024-03-13T11:15:44.930Z",
-            "PublicationDate": "2024-03-13T11:23:27.577Z",
-            "ModificationDate": "2024-03-13T11:24:14.138Z",
-            "Online": true,
-            "EvictionDate": "",
-            "S3Path": "/eodata/Sentinel-1/SAR/IW_SLC__1S/2024/03/13/S1A_IW_SLC__1SDV_20240313T092716_20240313T092732_052961_066935_89F2.SAFE",
-            "Checksum": [
-                {
-                    "Value": "2aa3dd4d604166d9937d1e2ea33d1a84",
-                    "Algorithm": "MD5",
-                    "ChecksumDate": "2024-03-13T11:24:04.717777Z"
-                },
-                {
-                    "Value": "b60f11d44ee700736ceb16bdacf25af89c878b6d2b370ca6e801743fb127e1dc",
-                    "Algorithm": "BLAKE3",
-                    "ChecksumDate": "2024-03-13T11:24:13.985182Z"
-                }
-            ],
-            "ContentDate": {
-                "Start": "2024-03-13T09:27:16.441Z",
-                "End": "2024-03-13T09:27:32.471Z"
-            },
-            "Footprint": "geography'SRID=4326;POLYGON ((-57.645779 -18.073198, -57.413177 -17.107573, -59.767452 -16.559637, -60.01339 -17.520658, -57.645779 -18.073198))'",
-            "GeoFootprint": {
-                "type": "Polygon",
-                "coordinates": [...
-                ]
-            },
-            "Attributes": [...
-            ],
-            "Assets": [
-                {
-                    "Type": "QUICKLOOK",
-                    "Id": "f4cfe4c9-5b56-47c2-87ce-05b090c7a4ba",
-                    "DownloadLink": "https://catalogue.dataspace.copernicus.eu/odata/v1/Assets(f4cfe4c9-5b56-47c2-87ce-05b090c7a4ba)/$value",
-                    "S3Path": "/eodata/Sentinel-1/SAR/IW_SLC__1S/2024/03/13/S1A_IW_SLC__1SDV_20240313T092716_20240313T092732_052961_066935_89F2.SAFE"
-                }
-            ]
-        }
-    }
-]</code></pre>
-</div>
-<div id="tabset-7-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-2-tab">
-<pre class="{json}"><code>200 OK
- 
-[
-    {
-        "@odata.context": "$metadata#Notification/$entity",
-        "SubscriptionEvent": "created",
-        "ProductId": "d2ff986b-9454-43d6-95e0-1a0ae27019d7",
-        "SubscriptionId": "991c4730-cf6f-432a-9f6c-47be0230ff45",
-        "NotificationDate": "2024-03-13T13:39:59.000Z",
-        "AckId": "MTcxMDc1NjcwNjUzMi0wOjk5MWM0NzMwLWNmNmYtNDMyYS05ZjZjLTQ3YmUwMjMwZmY0NQ=="
-    },
-    {
-        "@odata.context": "$metadata#Notification/$entity",
-        "SubscriptionEvent": "created",
-        "ProductId": "33ad5694-9208-4001-ae4f-6d7cd0579ce0",
-        "SubscriptionId": "991c4730-cf6f-432a-9f6c-47be0230ff45",
-        "NotificationDate": "2024-03-13T13:39:59.000Z",
-        "AckId": "MTcxMDc1NjcwNjY2NC0wOjk5MWM0NzMwLWNmNmYtNDMyYS05ZjZjLTQ3YmUwMjMwZmY0NQ=="
-    }
-]</code></pre>
-</div>
-</div>
-</div>
-<ul>
-<li>If Subscription is <code>Cancelled</code></li>
-</ul>
-<div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-8-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-1" role="tab" aria-controls="tabset-8-1" aria-selected="true">Response example</a></li></ul>
-<div class="tab-content">
-<div id="tabset-8-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-8-1-tab">
-<pre class="{json}"><code>404 Not Found
- 
-{
-    "detail": {
-        "message": "Subscription with id 991c4730-cf6f-432a-9f6c-47be0230ff45 not found.",
-        "request_id": "aed89ead-b495-4f76-b6e9-51870973a44e"
-    }
-}</code></pre>
-</div>
-</div>
-</div>
-</section>
-<section id="ack-subscription" class="level3">
-<h3 class="anchored" data-anchor-id="ack-subscription">Ack Subscription</h3>
-<p>All notifications, after reading by the client, should be acknowledged to not exceed the limit of the queue. For acknowledging the notifications, the assigned parametr is added to the notification - ‘AckId’. Each product notification has its own AckId token, which should be used to acknowledge the notifications messages on the client’s queue. <strong>Using the ‘AckId’ token for a specific notification means acknowledging receipt of the notification for which the ‘AckId’ was assigned, along with all preceding messages.</strong> For example if user use READ endpoint with top parameter set to 10 and then use the AckID of 10th message in Ack endpoint then all 10 messages will be acknowledged and removed from subscription queue.</p>
-<p>To ack the notifications on the queue:</p>
-<div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-9-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-9-1" role="tab" aria-controls="tabset-9-1" aria-selected="true">HTTP Request</a></li></ul>
-<div class="tab-content">
-<div id="tabset-9-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-9-1-tab">
-<pre class="{json}"><code>POST \
-https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions(991c4730-cf6f-432a-9f6c-47be0230ff45)/Ack?$ackid=token</code></pre>
-</div>
-</div>
-</div>
-<div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-10-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-10-1" role="tab" aria-controls="tabset-10-1" aria-selected="true">Request example</a></li></ul>
-<div class="tab-content">
-<div id="tabset-10-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-10-1-tab">
-<pre class="{json}"><code>POST \
-https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions(991c4730-cf6f-432a-9f6c-47be0230ff45)/Ack?$ackid=MTcxMDc1NjcwNjY2NC0wOjk5MWM0NzMwLWNmNmYtNDMyYS05ZjZjLTQ3YmUwMjMwZmY0NQ==</code></pre>
-</div>
-</div>
-</div>
-<p><strong>Response example</strong></p>
-<ul>
-<li>If Subscription is <code>Active</code> or <code>Paused</code></li>
-</ul>
-<div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-11-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-11-1" role="tab" aria-controls="tabset-11-1" aria-selected="true">Response example</a></li></ul>
-<div class="tab-content">
-<div id="tabset-11-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-11-1-tab">
-<pre class="{json}"><code>200 OK
- 
-{
-    "@odata.context": "$metadata#Notification/$entity",
-    "AckMessagesNum": 2,
-    "CurrentQueueLength": 2115,
-    "MaxQueueLength": 100000
-}</code></pre>
-</div>
-</div>
-</div>
-<ul>
-<li>If Subscription is <code>Cancelled</code></li>
-</ul>
-<div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-12-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-12-1" role="tab" aria-controls="tabset-12-1" aria-selected="true">Response example</a></li></ul>
-<div class="tab-content">
-<div id="tabset-12-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-12-1-tab">
-<pre class="{json}"><code>404 Not Found
- 
-{
-    "detail": {
-        "message": "Subscription with id 991c4730-cf6f-432a-9f6c-47be0230ff4 not found.",
-        "request_id": "ae19864a-5bda-4893-9f02-a62eba95fd7a"
-    }
-}</code></pre>
-</div>
-</div>
-</div>
-</section>
-</section>
-<section id="push-subscriptions" class="level2">
-<h2 class="anchored" data-anchor-id="push-subscriptions">PUSH Subscriptions</h2>
-<p>For PUSH notifications, the nominal scenario can be described as follows:</p>
-<ol type="1">
-<li>Creation of the subscription</li>
-</ol>
-<p>The client submits a subscription create request to Subscription Service. The user’s request needs to contain an endpoint URL to which the notifications will be sent and endpoint’s credentials (if client’s endpoint requires authentication). The user’s endpoint credentials are stored safely in the dedicated vault. The request is processed by the Subscription Service, and a response is returned which includes a unique identifier assigned to the subscription (subscription’s Id), subscription status (initially set to running), subscription request submission date, filtering parameters, stage order, priority of the subscription, subscription event to be monitored and client’s endpoint URL. If client’ notification endpoint is not submitted, then <a href="https://documentation.dataspace.copernicus.eu/APIs/Subscriptions.html#pull-subscriptions">PULL subscription</a> will be created.</p>
-<ol start="2" type="1">
-<li>Product Notification</li>
-</ol>
-<p>After a new product is added to the Copernicus Data Space Ecosystem Catalogue, the Subscription Service sends the notification to the client’s endpoint. In case of user’s endpoint unavailability, the PUSH notification is retried three times and then it fails. The notifications are sent to user’s endpoint until the subscription is paused or deleted.</p>
-<section id="push-subscription-entity-description" class="level3">
-<h3 class="anchored" data-anchor-id="push-subscription-entity-description">PUSH Subscription Entity Description</h3>
-<p>Below please find the description of the Subscription Entity.</p>
-
-
-<div class="table-responsive">
-    
-<table class="table-quotas table" data-quarto-postprocess="true">
-<colgroup>
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 25%">
-</colgroup>
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th" style="text-align: center; vertical-align: middle; width: 48%;">Subscription Properties</th>
-<th data-quarto-table-cell-role="th" style="text-align: center; vertical-align: middle; width: 35%;">Type</th>
-<th data-quarto-table-cell-role="th" style="text-align: center; vertical-align: middle; width: 80%;">Description</th>
-<th data-quarto-table-cell-role="th" style="text-align: center; vertical-align: middle; width: 40%;">Example</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: center; vertical-align: middle;">Id</td>
-<td style="text-align: center; vertical-align: middle;">Guid</td>
-<td style="text-align: left; vertical-align: middle;">It is a universally unique identifier (UUID). The Id is a local identifier for the Subscription instance within the Catalogue, assigned upon Subscription creation.</td>
-<td style="text-align: center; vertical-align: middle;">9249dde5-4838-4a34-8925-bac8c1d53f09</td>
-</tr>
-<tr class="even">
-<td style="text-align: center; vertical-align: middle;">Status</td>
-<td style="text-align: center; vertical-align: middle;">Subscription Status enumeration</td>
-<td style="text-align: left; vertical-align: middle;">The allowed values of the subscription status are:
-running
-paused
-cancelled
-<br>
-The default value set to 'Status', if not provided by user, is 'running'.</td>
-<td style="text-align: center; vertical-align: middle;">running</td>
-</tr>
-<tr class="odd">
-<td style="text-align: center; vertical-align: middle;">SubscriptionEvent</td>
-<td style="text-align: center; vertical-align: middle;">Subscription Event enumeration</td>
-<td style="text-align: left; vertical-align: middle;">The subscription event to be monitored and for which notification is provided:
-created
-The default value set to "SubscriptionEvent", if not provided by user, is "created".<br>
-<br>
-For "SubscriptionEvent" = "created" the notifications about newly added products to the Data Space Catalogue will be sent to the user's endpoint.</td>
-<td style="text-align: center; vertical-align: middle;">created</td>
-</tr>
-<tr class="even">
-<td style="text-align: center; vertical-align: middle;">FilterParam</td>
-<td style="text-align: center; vertical-align: middle;">String</td>
-<td style="text-align: left; vertical-align: middle;">The filter parameters of the Subscription (refers to the $filter= parameter of any Products? query). The same filtering parameters as described for [OData Data Sapce Catalogue](https://documentation.dataspace.copernicus.eu/APIs/OData.html#filter-option) are available.</td>
-<td style="text-align: center; vertical-align: middle;">Collection/Name eq 'SENTINEL-2' and Attributes/OData.CSC.StringAttribute/any(att:att/Name eq 'productType' and att/OData.CSC.StringAttribute/Value eq 'S2MSI2A')</td>
-</tr>
-<tr class="odd">
-<td style="text-align: center; vertical-align: middle;">SubmissionDate</td>
-<td style="text-align: center; vertical-align: middle;">DateTimeOffset</td>
-<td style="text-align: left; vertical-align: middle;">Date and time at which the Subscription was received by the Catalogue. Time is in UTC in the format YYYY-MMDDThh:mm:ss.sssZ</td>
-<td style="text-align: center; vertical-align: middle;">2024-01-17T09:13:04.654Z</td>
-</tr>
-<tr class="even">
-<td style="text-align: center; vertical-align: middle;">LastNotificationDate</td>
-<td style="text-align: center; vertical-align: middle;">DateTimeOffset</td>
-<td style="text-align: left; vertical-align: middle;">Date and time corresponding to the last time the Subscription Service sent a Notification to the user's endpoint. Time is in UTC in the format YYYY-MMDDThh:mm:ss.sssZ</td>
-<td style="text-align: center; vertical-align: middle;">2024-01-17T09:50:10.654Z</td>
-</tr>
-<tr class="odd">
-<td style="text-align: center; vertical-align: middle;">StageOrder</td>
-<td style="text-align: center; vertical-align: middle;">Boolean</td>
-<td style="text-align: left; vertical-align: middle;">Automatically orders the staging of products fulfilling the subscription.<br>
-<br>
-Only used if SubscriptionEvent = created <strong><br>
-<br>
-Currently, the order of staging products is not feasible as all new products in Data Space Catalogue have status set to 'Online' and can be accessed immediately without setting an order.</strong></td>
-<td style="text-align: center; vertical-align: middle;">true</td>
-</tr>
-<tr class="even">
-<td style="text-align: center; vertical-align: middle;">Priority</td>
-<td style="text-align: center; vertical-align: middle;">Int64</td>
-<td style="text-align: left; vertical-align: middle;">Priority of the created orders resulting from the subscription. Currently automatically fixed to '1' without the possibility to change the value. Within further development of the Subscription Service it is possible to enable Priority function which will determine the priority of the user's orders.</td>
-<td style="text-align: center; vertical-align: middle;">1</td>
-</tr>
-<tr class="odd">
-<td style="text-align: center; vertical-align: middle;">NotificationEndpoint</td>
-<td style="text-align: center; vertical-align: middle;">String</td>
-<td style="text-align: left; vertical-align: middle;">User's Endpoint URI used by the Data Space Catalogue for subscription notifications.</td>
-<td style="text-align: center; vertical-align: middle;">Any URI, e.g. https://userservice/notification</td>
-</tr>
-<tr class="even">
-<td style="text-align: center; vertical-align: middle;">NotificationEpUsername</td>
-<td style="text-align: center; vertical-align: middle;">String</td>
-<td style="text-align: left; vertical-align: middle;">The username associated with the Endpoint URI. It is mandatory if NotificationEndpoint requires authentication.</td>
-<td style="text-align: center; vertical-align: middle;">serviceusername</td>
-</tr>
-<tr class="odd">
-<td style="text-align: center; vertical-align: middle;">NotificationEpPassword</td>
-<td style="text-align: center; vertical-align: middle;">String</td>
-<td style="text-align: left; vertical-align: middle;">The password associated with the Endpoint URI. It is mandatory if NotificationEndpoint requires authentication.</td>
-<td style="text-align: center; vertical-align: middle;">***********</td>
-</tr>
-</tbody>
-</table>
-
-</div>
-
-</section>
-<section id="create-subscription-1" class="level3">
-<h3 class="anchored" data-anchor-id="create-subscription-1">Create Subscription</h3>
-<p>To create PUSH Subscription users should specify the notification endpoint to which PUSH notifications from the Subscription Service will be sent.</p>
-<p>While creating a subscription, users can specify the Event they would like to be notified. For now, the following Event can be chosen:</p>
-<ul>
-<li>Created</li>
-</ul>
-<p>Within the Subscription create request, users can also provide the filtering parameters (e.g.&nbsp;productType, collection, geofootprint). The Subscription Service will then send the notification to the user about newly added products to the Copernicus Data Space Ecosystem Catalogue according to the set of filter parameters supplied within the subscription request. If <code>FilterParam</code> is not provided within the subscription request body, it will be automatically set to empty and then the notifications about all newly added products will be sent to user’s endpoint.</p>
-<p>Subscriptions enables the same filtering parameters as described for <a href="https://documentation.dataspace.copernicus.eu/APIs/OData.html#filter-option">OData Data Sapce Catalogue</a>. All filters should be provided in <code>FilterParam</code> field.</p>
-<p>To create a PUSH Subscription a request to the Subscription Service service should be submitted:</p>
-<div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-13-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-13-1" role="tab" aria-controls="tabset-13-1" aria-selected="true">HTTP request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-13-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-13-2" role="tab" aria-controls="tabset-13-2" aria-selected="false">Response example</a></li></ul>
-<div class="tab-content">
-<div id="tabset-13-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-13-1-tab">
-<pre class="{json}"><code>POST \
-https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions
- 
 {
   "StageOrder": true,
-  "FilterParam": "Collection/Name eq 'SENTINEL-2' and Attributes/OData.CSC.StringAttribute/any(att:att/Name eq 'productType' and att/OData.CSC.StringAttribute/Value eq 'S2MSI2A')",
   "Priority": 1,
-  "NotificationEndpoint": "https://userservice/notification",
-  "NotificationEpUsername": "serviceusername",
-  "NotificationEpPassword": "********",
+  "NotificationEndpoint": "https://myservice/notification",
   "Status": "running",
+  "NotificationEpUsername": "myusername",
+  "NotificationEpPassword": "********",
   "SubscriptionEvent": [
     "created"
   ]
 }</code></pre>
 </div>
-<div id="tabset-13-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-13-2-tab">
-<pre class="{json}"><code>201 Created
- 
-{
-    "Id": "7ca682c3-7b21-4e9b-952e-874798101340",
-    "FilterParam": "Collection/Name eq 'SENTINEL-2' and Attributes/OData.CSC.StringAttribute/any(att:att/Name eq 'productType' and att/OData.CSC.StringAttribute/Value eq 'S2MSI2A')",
-    "StageOrder": true,
-    "Priority": 1,
-    "Status": "running",
-    "NotificationEndpoint": "https://userservice/notification",
-    "SubscriptionEvent": [
-        "created"
-    ],
-    "SubmissionDate": "2024-01-18T09:47:34.2672",
-    "@odata.context": "$metadata#Subscriptions/$entity"
-}</code></pre>
+<div id="tabset-4-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
+<pre class="{json}"><code>[
+    {
+        "Id": "7ca682c3-7b21-4e9b-952e-874798101340",
+        "StageOrder": true,
+        "Priority": 1,
+        "Status": "running",
+        "NotificationEndpoint": "https://myservice/notification",
+        "SubscriptionEvent": [
+            "created"
+        ],
+        "SubmissionDate": "2024-01-18T09:47:34.2672",
+        "@odata.context": "$metadata#Subscriptions/$entity"
+    }
+]</code></pre>
 </div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Please note that the limit of the running subscriptions for one user is 1. The overall limit of the subscriptions (running and paused) for one user is 10.</p>
 </div>
 </div>
 </section>
-<section id="notification-sender" class="level3">
-<h3 class="anchored" data-anchor-id="notification-sender">Notification sender</h3>
-<p>After creating the subscription, the notifications about new products entering the Data Space Catalogue according to the set of subscription’s filter parameters should be automatically sent to user’s endpoint:</p>
+<section id="notification-sender" class="level4">
+<h4 class="anchored" data-anchor-id="notification-sender">Notification sender</h4>
+<p>After creating the subscription, the notifications about new products entering the Data Space Catalogue should be automatically sent to user’s endpoint:</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-14-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-14-1" role="tab" aria-controls="tabset-14-1" aria-selected="true">Notification example</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-5-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-1" role="tab" aria-controls="tabset-5-1" aria-selected="true">Notification example</a></li></ul>
 <div class="tab-content">
-<div id="tabset-14-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-14-1-tab">
+<div id="tabset-5-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-5-1-tab">
 <pre class="{json}"><code>{
     "@odata.context": "$metadata#Notification/$entity",
     "SubscriptionEvent": "created",
@@ -1949,51 +1515,32 @@ https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions
 </div>
 </div>
 </section>
-</section>
-<section id="pull-and-push-subscriptions-operations" class="level2">
-<h2 class="anchored" data-anchor-id="pull-and-push-subscriptions-operations">PULL and PUSH Subscriptions Operations</h2>
-<section id="get-subscriptions" class="level3">
-<h3 class="anchored" data-anchor-id="get-subscriptions">Get Subscriptions</h3>
-<section id="users-subscriptions-info" class="level4">
-<h4 class="anchored" data-anchor-id="users-subscriptions-info">User’s subscriptions Info</h4>
+<section id="get-subscription" class="level4">
+<h4 class="anchored" data-anchor-id="get-subscription">Get Subscription</h4>
+<section id="users-subscriptions-info" class="level5">
+<h5 class="anchored" data-anchor-id="users-subscriptions-info">User’s subscriptions Info</h5>
 <p>Users are able to check their existing subscriptions.</p>
-<p>To get information about the user’s Subscriptions (PUSH and PULL) the following endpoint should be used:</p>
+<p>To get information about the user’s subscriptions use following endpoint:</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-15-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-15-1" role="tab" aria-controls="tabset-15-1" aria-selected="true">HTTP request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-15-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-15-2" role="tab" aria-controls="tabset-15-2" aria-selected="false">Response example</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-6-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-1" role="tab" aria-controls="tabset-6-1" aria-selected="true">HTTP request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-2" role="tab" aria-controls="tabset-6-2" aria-selected="false">Response example</a></li></ul>
 <div class="tab-content">
-<div id="tabset-15-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-15-1-tab">
+<div id="tabset-6-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-6-1-tab">
 <pre class="{json}"><code>GET \
 https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions/Info</code></pre>
 </div>
-<div id="tabset-15-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-15-2-tab">
-<pre class="{json}"><code>200 OK
-
-[
+<div id="tabset-6-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-2-tab">
+<pre class="{json}"><code>[
     {
         "Id": "7ca682c3-7b21-4e9b-952e-874798101340",
-        "FilterParam": "Collection/Name eq 'SENTINEL-2' and Attributes/OData.CSC.StringAttribute/any(att:att/Name eq 'productType' and att/OData.CSC.StringAttribute/Value eq 'S2MSI2A')",
         "StageOrder": true,
         "Priority": 1,
         "Status": "running",
-        "NotificationEndpoint": "https://userservice/notification",
+        "NotificationEndpoint": "https://myservice/notification",
         "LastNotificationDate": "2024-01-18T09:47:45.540Z",
         "SubscriptionEvent": [
             "created"
         ],
         "SubmissionDate": "2024-01-18T09:47:34.267Z",
-        "@odata.context": "$metadata#Subscriptions/$entity"
-    },
-    {
-        "Id": "991c4730-cf6f-432a-9f6c-47be0230ff45",
-        "FilterParam": "Collection/Name eq 'SENTINEL-1' and Attributes/OData.CSC.StringAttribute/any(att:att/Name eq 'productType' and att/OData.CSC.StringAttribute/Value eq 'IW_SLC__1S')",
-        "StageOrder": true,
-        "Priority": 1,
-        "Status": "paused",
-        "LastNotificationDate": "2024-03-20T09:49:29.918Z",
-        "SubscriptionEvent": [
-            "created"
-        ],
-        "SubmissionDate": "2024-03-13T09:33:51.371Z",
         "@odata.context": "$metadata#Subscriptions/$entity"
     }
 ]</code></pre>
@@ -2001,37 +1548,34 @@ https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions/Info</code></pr
 </div>
 </div>
 </section>
-<section id="subscription-info" class="level4">
-<h4 class="anchored" data-anchor-id="subscription-info">Subscription Info</h4>
+<section id="subscription-info" class="level5">
+<h5 class="anchored" data-anchor-id="subscription-info">Subscription Info</h5>
 <p>Users are also able to get information about the specified subscription by its Id.</p>
 <p>To get information about the specified subscription:</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-16-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-16-1" role="tab" aria-controls="tabset-16-1" aria-selected="true">HTTP request</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-7-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-1" role="tab" aria-controls="tabset-7-1" aria-selected="true">HTTP request</a></li></ul>
 <div class="tab-content">
-<div id="tabset-16-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-16-1-tab">
+<div id="tabset-7-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-7-1-tab">
 <pre class="{json}"><code>GET \
 https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions(subscription_id)</code></pre>
 </div>
 </div>
 </div>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-17-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-17-1" role="tab" aria-controls="tabset-17-1" aria-selected="true">Request example</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-17-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-17-2" role="tab" aria-controls="tabset-17-2" aria-selected="false">Response example</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-8-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-1" role="tab" aria-controls="tabset-8-1" aria-selected="true">Request example</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-8-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-2" role="tab" aria-controls="tabset-8-2" aria-selected="false">Response example</a></li></ul>
 <div class="tab-content">
-<div id="tabset-17-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-17-1-tab">
+<div id="tabset-8-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-8-1-tab">
 <pre class="{json}"><code>GET \  
 https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions(7ca682c3-7b21-4e9b-95 2e-874798101340)</code></pre>
 </div>
-<div id="tabset-17-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-17-2-tab">
-<pre class="{json}"><code>200 OK
-
-{
+<div id="tabset-8-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-8-2-tab">
+<pre class="{json}"><code>{
     "Id": "7ca682c3-7b21-4e9b-952e-874798101340",
-    "FilterParam": "Collection/Name eq 'SENTINEL-2' and Attributes/OData.CSC.StringAttribute/any(att:att/Name eq 'productType' and att/OData.CSC.StringAttribute/Value eq 'S2MSI2A')",
     "StageOrder": true,
     "Priority": 1,
     "Status": "running",
-    "NotificationEndpoint": "https://userservice/notification",
-    "LastNotificationDate": "2024-01-18T09:47:45.540Z",
+    "NotificationEndpoint": "https://myservice/notification",
+    "LastNotificationDate": "2024-01-18T09:48:40.398Z",
     "SubscriptionEvent": [
         "created"
     ],
@@ -2042,56 +1586,50 @@ https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions(7ca682c3-7b21-4
 </div>
 </div>
 </section>
+</section>
 <section id="update-subscription" class="level4">
 <h4 class="anchored" data-anchor-id="update-subscription">Update Subscription</h4>
-<p>Within the PUSH Subscription update, the following parameters can be modified:</p>
+<p>Within the subscription update, the following parameters can be modified:</p>
 <ul>
 <li>Status</li>
 <li>NotificationEndpoint</li>
 <li>NotificationEpUsername</li>
 <li>NotificationEpPassword</li>
 </ul>
-<p>Within the PULL Subscription update, the following parameter can be modified:</p>
+<p>The subscription status can be changed to:</p>
 <ul>
-<li>Status</li>
-</ul>
-<p>The Subscription status can be changed to:</p>
-<ul>
-<li>running (subscription will be working, for PUSH subscriptions notifications will be sent to user’s endpoint and for PULL subscriptions notifications will be saved to subscription queue),</li>
-<li>paused (subscription will be stopped and push notifications will not be sent, notifications sent before the change of the status to paused will still be available),</li>
+<li>running (subscription will be working and push notifications will be sent),</li>
+<li>paused (subscription will be stopped and push notifications will not be sent),</li>
 <li>cancelled (subscription will be deleted).</li>
 </ul>
 <p>To update an existing subscription:</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-18-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-18-1" role="tab" aria-controls="tabset-18-1" aria-selected="true">HTTP request</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-9-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-9-1" role="tab" aria-controls="tabset-9-1" aria-selected="true">HTTP request</a></li></ul>
 <div class="tab-content">
-<div id="tabset-18-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-18-1-tab">
+<div id="tabset-9-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-9-1-tab">
 <pre class="{json}"><code>PATCH \
 https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions(subscription_id)</code></pre>
 </div>
 </div>
 </div>
-<p>To change the status of the subscription (<code>running</code>→<code>paused</code> or <code>paused</code>→<code>running</code>):</p>
+<p>To change the status of the subscription (‘running’→‘paused’ or ‘paused’→‘running’):</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-19-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-19-1" role="tab" aria-controls="tabset-19-1" aria-selected="true">Request example</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-19-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-19-2" role="tab" aria-controls="tabset-19-2" aria-selected="false">Response example</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-10-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-10-1" role="tab" aria-controls="tabset-10-1" aria-selected="true">Request example</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-10-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-10-2" role="tab" aria-controls="tabset-10-2" aria-selected="false">Response example</a></li></ul>
 <div class="tab-content">
-<div id="tabset-19-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-19-1-tab">
+<div id="tabset-10-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-10-1-tab">
 <pre class="{json}"><code>PATCH \
 https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions(7ca682c3-7b21-4e9b-952e-874798181340)
 {
   "Status": "paused"
 }</code></pre>
 </div>
-<div id="tabset-19-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-19-2-tab">
-<pre class="{json}"><code>200 OK
- 
-{
+<div id="tabset-10-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-10-2-tab">
+<pre class="{json}"><code>{
     "Id": "7ca682c3-7b21-4e9b-952e-874798181340",
-    "FilterParam": "Collection/Name eq 'SENTINEL-2' and Attributes/OData.CSC.StringAttribute/any(att:att/Name eq 'productType' and att/OData.CSC.StringAttribute/Value eq 'S2MSI2A')",
     "StageOrder": true,
     "Priority": 1,
     "Status": "paused",
-    "NotificationEndpoint": "https://userservice/notification",
+    "NotificationEndpoint": "https://myservice/notification",
     "LastNotificationDate": "2024-01-18T09:49:29.918Z",
     "SubscriptionEvent": [
         "created"
@@ -2102,11 +1640,11 @@ https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions(7ca682c3-7b21-4
 </div>
 </div>
 </div>
-<p>To change the subscription’s status from <code>running</code>/<code>paused</code> to <code>cancelled</code> <strong>(Deletion of the Subscription)</strong>:</p>
+<p>To change the subscription’s status from ‘running’/‘paused’ to ‘cancelled’ (Deletion of the Subscription):</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-20-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-20-1" role="tab" aria-controls="tabset-20-1" aria-selected="true">Request example</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-11-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-11-1" role="tab" aria-controls="tabset-11-1" aria-selected="true">Request example</a></li></ul>
 <div class="tab-content">
-<div id="tabset-20-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-20-1-tab">
+<div id="tabset-11-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-11-1-tab">
 <pre class="{json}"><code>PATCH \
 https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions(7ca682c3-7b21-4e9b-952e-874798181340)
 {
@@ -2118,26 +1656,18 @@ https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions(7ca682c3-7b21-4
 </section>
 <section id="delete-subscription" class="level4">
 <h4 class="anchored" data-anchor-id="delete-subscription">Delete Subscription</h4>
-<p>In case of the Subscription deletion (PUSH or PULL), it is requested to provide subscription Id.</p>
+<p>In case of the subscription deletion, it is requested to provide subscription Id.</p>
 <p>To delete an existing subscription:</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-21-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-21-1" role="tab" aria-controls="tabset-21-1" aria-selected="true">HTTP request</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-12-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-12-1" role="tab" aria-controls="tabset-12-1" aria-selected="true">HTTP request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-12-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-12-2" role="tab" aria-controls="tabset-12-2" aria-selected="false">Request example</a></li></ul>
 <div class="tab-content">
-<div id="tabset-21-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-21-1-tab">
+<div id="tabset-12-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-12-1-tab">
 <pre class="{json}"><code>DELETE \
 https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions(subscription_id)</code></pre>
 </div>
-</div>
-</div>
-<div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-22-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-22-1" role="tab" aria-controls="tabset-22-1" aria-selected="true">Request example</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-22-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-22-2" role="tab" aria-controls="tabset-22-2" aria-selected="false">Response example</a></li></ul>
-<div class="tab-content">
-<div id="tabset-22-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-22-1-tab">
+<div id="tabset-12-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-12-2-tab">
 <pre class="{json}"><code>DELETE \
 https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions(7ca682c3-7b21-4e9b-952e-874798181340)</code></pre>
-</div>
-<div id="tabset-22-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-22-2-tab">
-<pre class="{json}"><code>204 No Content</code></pre>
 </div>
 </div>
 </div>
