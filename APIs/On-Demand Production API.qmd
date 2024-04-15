@@ -2,16 +2,109 @@
 title: On-Demand Production API
 ---
 
+On-Demand Production API provides access to two sets of data processing workflows:
+- production of the Sentinel-1/2/3 products from Level-0 data to Level-1 and Level-2. The service allows generation of products using different versions of the processors and parameters than the ones used by the Production Service.
+- processing of additional products including Sentinel-1 backscatter and interferometric coherence.
 
-On-demand processing capability for CARD-BS and CARD-COH6/12 is available in the Copernicus Data Space Ecosystem. This service is offered via a limited pool of resources, shared across all users, and can be used to process the data free of charge. This is suitable for users who need to process smaller batches of products. There is no guarantee that processing will be completed in a specific time. For commercial use, the [price list](https://creodias.eu/pricing/eo-data-hub-services/){target="blank"} is available in the CREODIAS portal. The service is available via an On-Demand Processing API that allows the users to interact with the service to issue and control the orders. It provides functionalities such as creating, updating, cancelling, pausing and monitoring of orders. This allows the users to have better control over the workflow execution process. 
+Both production and processing workflows are available through the OData API described below, and the [Data Workspace](https://dataspace.copernicus.eu/analyse/data-workspace){target="blank"} which provided a graphical user interface to the service.
+Basic interaction with the On-Demand Production service is following: 
+- user sends a request including the name of the workflow (the processor to be executed), the identifier of the reference product (product from which the processing should start or product which should be reprocessed) and workflow options (parameters) specific to the selected workflow.
+- system runs the requested workflows and the result is made available for retrieval.
 
-## OnDemand Processing API with OData interface
+## On-Demand Production
+
+The production of the Copernicus products is done using the recent IPF (Instrument Processing Facility) processor sets, used by the Production Services.
+Users can request production of any Sentinel-1 or Sentinel-3 product using the existing output product as reference. Using the metadata of the reference product, the service identifies the necessary Level-0 and Auxiliary products to run the IPF. The input products are retrieved from the Copernicus LTA (Long Term Archive) and submitted to a processing engine.
+The output of the production is stored in the temporary data storage and available to download for a period of 14 days.
+Initially the production workflows are available for Sentinel-1 and Sentinel-3. The Sentinel-2 workflows will follow.
+
+### Sentinel-1
+
+All Sentinel-1 workflows start from Level-0 RAW products.  
+
+*** The available workflows *** 
+
+|Workflow name|Input product type|Output product type|
+|--|--|--|
+|Sentinel-1-L0-EW_GRDM_1S|EW_RAW__0|EW_GRDM_1S|
+|Sentinel-1-L0-EW_OCN__2S|EW_RAW__0|EW_OCN__2S|
+|Sentinel-1-L0-EW_SLC__2S|EW_RAW__0|EW_SLC__2S|
+|Sentinel-1-L0-IW_GRDH_1S|IW_RAW__0|IW_GRDH_1S|
+|Sentinel-1-L0-IW_OCN__2S|IW_RAW__0|IW_OCN__2S|
+|Sentinel-1-L0-IW_SLC__1S|IW_RAW__0|IW_SLC__1S|
+|Sentinel-1-L0-S1_GRDH_1S|S1_RAW__0|S1_GRDH_1S|
+|Sentinel-1-L0-S1_OCN__2S|S1_RAW__0|S1_OCN_2S|
+|Sentinel-1-L0-S1_SLC__1S|S1_RAW__0|S1_SLC__1S|
+|Sentinel-1-L0-S2_GRDH_1S|S2_RAW__0|S2_GRDH_1S|
+|Sentinel-1-L0-S2_OCN__2S|S2_RAW__0|S2_OCN__2S|
+|Sentinel-1-L0-S2_SLC__1S|S2_RAW__0|S2_SLC__1S|
+|Sentinel-1-L0-S3_GRDH_1S|S3_RAW__0|S3_GRDH_1S|
+|Sentinel-1-L0-S3_OCN__2S|S3_RAW__0|S3_OCN__2S|
+|Sentinel-1-L0-S3_SLC__1S|S3_RAW__0|S3_SLC__1S|
+|Sentinel-1-L0-S4_GRDH_1S|S4_RAW__0|S4_GRDH_1S|
+|Sentinel-1-L0-S4_OCN__2S|S4_RAW__0|S4_OCN__2S|
+|Sentinel-1-L0-S4_SLC__1S|S4_RAW__0|S4_SLC__1S|
+|Sentinel-1-L0-S5_GRDH_1S|S5_RAW__0|S5_GRDH_1S|
+|Sentinel-1-L0-S5_OCN__2S|S5_RAW__0|S5_OCN__2S|
+|Sentinel-1-L0-S5_SLC__1S|S5_RAW__0|S5_SLC__1S|
+|Sentinel-1-L0-S6_GRDH_1S|S6_RAW__0|S6_GRDH_1S|
+|Sentinel-1-L0-S6_OCN__2S|S6_RAW__0|S6_OCN__2S|
+|Sentinel-1-L0-S6_SLC__1S|S6_RAW__0|S6_SLC__1S|
+|Sentinel-1-L0-WV_OCN__2S|WV_RAW__0|WV_OCN__2S|
+|Sentinel-1-L0-WV_SLC__1S|WV_RAW__0|WV_SLC__1S|
+
+*** Workflow options for Sentinel-1 *** 
+
+|Option name|Description|Values|
+|--|--|--|
+|DEM|Identifier of the digital elevation model to use for processing.|"coarse", "getasse30v1", "getasse30v2"|
+|output_storage|Location of output product.|“TEMPORARY”|
+
+### Sentinel-3
+
+The Sentinel-3 workflows run from Level-0 products.
+
+*** The available workflows *** 
+
+|Workflow name|Input product type|Output product type|
+|--|--|--|
+|Sentinel-3-L0-OL_1_EFR|OL_0_EFR___|OL_1_EFR___|
+|Sentinel-3-L0-OL_1_ERR|OL_0_EFR___|OL_1_ERR___|
+|Sentinel-3-L0-OL_2_LFR|OL_0_EFR___|OL_2_LFR___|
+|Sentinel-3-L0-OL_2_LRR|OL_0_EFR___|OL_2_LRR___|
+|Sentinel-3-L0-SL_1_RBT|SL_0_SLT___|SL_1_RBT___|
+|Sentinel-3-L0-SL_2_FRP|SL_0_SLT___|SL_2_FRP___|
+|Sentinel-3-L0-SL_2_LST|SL_0_SLT___|SL_2_LST___|
+|Sentinel-3-L0-SR_1_SRA|SR_0_SRA___|SR_1_SRA___|
+|Sentinel-3-L0-SR_2_LAN|SR_0_SRA___, MW_0_MWR___|SR_2_LAN___|
+|Sentinel-3-L0-SY_2_AOD|OL_0_EFR___, SL_0_SLT___|SY_2_AOD___|
+|Sentinel-3-L0-SY_2_SYN|OL_0_EFR___, SL_0_SLT___|SY_2_SYN___|
+|Sentinel-3-L0-SY_2_VG1|OL_1_EFR___, SL_1_RBT___|SY_2_VG1___|
+|Sentinel-3-L0-SR_2_LAN_LI|SR_0_SRA___, MW_0_MWR___|SR_2_LAN_LI|
+|Sentinel-3-L0-SR_2_LAN_HY|SR_0_SRA___, MW_0_MWR___|SR_2_LAN_HY|
+|Sentinel-3-L0-SR_2_LAN_SI|SR_0_SRA___, MW_0_MWR___|SR_2_LAN_SI|
+
+*** Workflow options for Sentinel-3 *** 
+
+|Option name|Description|Values|
+|--|--|--|
+|Baseline|Version number of the processor and static auxiliary files.|dependent on the specific workflow|
+|Mode|Timeliness condition : NTC (Non-Time Critical), STC (Short-Time Critical).|“NTC”, “STC”|
+|output_storage|Location of output product.|“TEMPORARY”|
+
+
+## On-Demand Processing 
+
+On-demand processing capability for CARD-BS and CARD-COH6/12 is available in the Copernicus Data Space Ecosystem. This service is offered via a limited pool of resources, shared across all users, and can be used to process the data free of charge. This is suitable for users who need to process smaller batches of products. There is no guarantee that processing will be completed in a specific time. For commercial use, the [price list](https://creodias.eu/pricing/eo-data-hub-services/){target="blank"} is available in the CREODIAS portal. The service is available via an On-Demand Processing API and Data Workspace.
+
+## OnDemand Production API with OData interface
 
 The OnDemand Processing API allows the users to interact with the service to issue and control the orders. It provides functionalities like creation, update, cancellation, pausing and monitoring of orders. This allows the users to have better control over the workflow execution process.
+The API is based on the Production Interface Delivery Point ICD, extended to provide more flexibility and additional functionality.
 
 ## General information
 
-This documentation provides an overview of the OnDemand Processing (ODP) API based on the Open Data Protocol (OData) standard. The ODP API provides a RESTful interface for accessing data and metadata from the Copernicus data catalogue.
+This documentation provides an overview of the OnDemand Processing (ODP) API based on the Open Data Protocol (OData) standard. The ODP API complements the Catalogue API used for accessing data and metadata from the Copernicus data catalogue.
 Access to the API is limited by the Authentication service. Quotas are assigned according to the user typology and include limits on the number of concurrent orders and available processing workflows.
 The API allows the discovery of all available workflows that can be run in the Copernicus Data Space Ecosystem platform, indicating which data types can be processed and what the available parameters and output modes are.
 
@@ -333,6 +426,3 @@ Each item in the batch is an individual Production Order. To check the details o
 curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" \
 "https://odp.dataspace.copernicus.eu/odata/v1/BatchOrder(<batch_order_id>)/Product(<order_id>)"
 ````
-
-
-
