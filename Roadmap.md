@@ -1,7 +1,7 @@
 # Service description and evolution roadmap  
 
 
-The [Service description and evolution document](/_docs/CDSE-SDE-TSY_Service%20Description%20and%20Evolution_1.2.pdf) provides a comprehensive view of all data products and services available in the frame of the Copernicus Data Space Ecosystem, both the “Copernicus Free Services” as well as the services operated by third parties. 
+The [Service description and evolution document](/_docs/CDSE-SDE-TSY_Service%20Description%20and%20Evolution_1.2.pdf ':ignore') provides a comprehensive view of all data products and services available in the frame of the Copernicus Data Space Ecosystem, both the “Copernicus Free Services” as well as the services operated by third parties. 
 
 ## Roadmap
 <!-- |Timeline| Jan-23 | Apr-23 | Jul-23| Nov-23 
