@@ -988,7 +988,7 @@ window.onload = function() {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../Catalogue-csv.html" class="sidebar-item-text sidebar-link">
+  <a href="../Applications/Catalogue-csv.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Catalogue CSV</span></a>
   </div>
 </li>
@@ -1173,6 +1173,7 @@ window.onload = function() {
   <li><a href="#check-list-of-production-orders" id="toc-check-list-of-production-orders" class="nav-link" data-scroll-target="#check-list-of-production-orders">Check list of Production Orders</a></li>
   <li><a href="#check-the-status-of-a-single-production-order" id="toc-check-the-status-of-a-single-production-order" class="nav-link" data-scroll-target="#check-the-status-of-a-single-production-order">Check the status of a single Production Order</a></li>
   <li><a href="#cancel-a-production-order" id="toc-cancel-a-production-order" class="nav-link" data-scroll-target="#cancel-a-production-order">Cancel a Production Order</a></li>
+  <li><a href="#display-details-of-the-result" id="toc-display-details-of-the-result" class="nav-link" data-scroll-target="#display-details-of-the-result">Display details of the result</a></li>
   <li><a href="#download-the-result" id="toc-download-the-result" class="nav-link" data-scroll-target="#download-the-result">Download the result</a></li>
   </ul></li>
   <li><a href="#batch-orders" id="toc-batch-orders" class="nav-link" data-scroll-target="#batch-orders">Batch Orders</a>
@@ -1540,7 +1541,13 @@ window.onload = function() {
 </section>
 <section id="api-operations" class="level3">
 <h3 class="anchored" data-anchor-id="api-operations">API Operations</h3>
-<p>The ODP API supports the following operations: - GET: This operation retrieves data and metadata from the ODP. The GET operation supports various query options to filter, order, and limit the data retrieved. - POST: This operation creates new entities in the ODP. The POST operation requires a payload in JSON format that specifies the properties of the new entity. - PATCH: This operation is used to update existing entities in the ODP. The PATCH operation requires a JSON payload that specifies the entity’s properties to update. - DELETE: This operation deletes existing entities from the ODP. The DELETE operation requires the URL of the entity to be deleted.</p>
+<p>The ODP API supports the following operations:</p>
+<ul>
+<li>GET: This operation retrieves data and metadata from the ODP. The GET operation supports various query options to filter, order, and limit the data retrieved</li>
+<li>POST: This operation creates new entities in the ODP. The POST operation requires a payload in JSON format that specifies the properties of the new entity</li>
+<li>PATCH: This operation is used to update existing entities in the ODP. The PATCH operation requires a JSON payload that specifies the entity’s properties to update</li>
+<li>DELETE: This operation deletes existing entities from the ODP. The DELETE operation requires the URL of the entity to be deleted</li>
+</ul>
 </section>
 <section id="api-resources" class="level3">
 <h3 class="anchored" data-anchor-id="api-resources">API Resources</h3>
@@ -1620,7 +1627,20 @@ python -m json.tool | grep "access_token" | awk -F\" '{print $4}')</code></pre>
 -H "Authorization: Bearer $KEYCLOAK_TOKEN" \
 "https://odp.dataspace.copernicus.eu/odata/v1/ProductionOrder/OData.CSC.Order" \
 -d '&lt;json_message&gt;'</code></pre>
-<p>Production orders accept the following general parameters: - WorkflowName: the identifier of the workflow – “Name” attribute in the /Workflows response - InputProductReference: information about the input data to be used by the processor - Reference: identifier of a single input product or multiple products (example – mosaicking processors) - ContentDate: time period which should be used by the Workflows (example - time-series based processors) - WorkflowOptions: parameters specific to the Workflows (example – DEM version, cloud coverage) - Priority: priority of the order in the users job queue. Orders with higher priority will be processed first - NotificationEndpoint: (not used) URL of the endpoint which should receive the information once the order is completed (done or failed) - Name: non-unique name for the order to help identify the orders The structure of the JSON message:</p>
+<p>Production orders accept the following general parameters:</p>
+<ul>
+<li>WorkflowName: the identifier of the workflow – “Name” attribute in the /Workflows response</li>
+<li>InputProductReference: information about the input data to be used by the processor
+<ul>
+<li>Reference: identifier of a single input product or multiple products (example – mosaicking processors)</li>
+<li>ContentDate: time period which should be used by the Workflows (example - time-series based processors)</li>
+</ul></li>
+<li>WorkflowOptions: parameters specific to the Workflows (example – DEM version, cloud coverage)</li>
+<li>Priority: priority of the order in the users job queue. Orders with higher priority will be processed first</li>
+<li>NotificationEndpoint: (not used) URL of the endpoint which should receive the information once the order is completed (done or failed)</li>
+<li>Name: non-unique name for the order to help identify the orders</li>
+</ul>
+<p>The structure of the JSON message:</p>
 <pre><code>{
   "WorkflowName": "string",
   "InputProductReference": {
@@ -1693,13 +1713,18 @@ python -m json.tool | grep "access_token" | awk -F\" '{print $4}')</code></pre>
 <p>To cancel an existing order:</p>
 <pre><code>curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" \
 "https://odp.dataspace.copernicus.eu/odata/v1/ProductionOrder(&lt;order_id&gt;)/OData.CSC.Cancel"</code></pre>
-<p>The orders that are in the queue and have not yet been processed will be removed instantly. For the orders in processing, the Order Items (single item within a Production Order) being processed will complete but the remaining part of the Order will be cancelled. #### Display details of the result The order generates a new product which can be downloaded from the public repository or private storage. To check the details of the result:</p>
+<p>The orders that are in the queue and have not yet been processed will be removed instantly. For the orders in processing, the Order Items (single item within a Production Order) being processed will complete but the remaining part of the Order will be cancelled.</p>
+</section>
+<section id="display-details-of-the-result" class="level4">
+<h4 class="anchored" data-anchor-id="display-details-of-the-result">Display details of the result</h4>
+<p>The order generates a new product which can be downloaded from the public repository or private storage. To check the details of the result:</p>
 <pre><code>curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" \
 "https://odp.dataspace.copernicus.eu/odata/v1/ProductionOrder(&lt;order_id&gt;)/Product"</code></pre>
 </section>
 <section id="download-the-result" class="level4">
 <h4 class="anchored" data-anchor-id="download-the-result">Download the result</h4>
-<p>Once the order is successfully processed, the status changes to complete, and the result is ready for download. The user may choose to instruct the service to put the results in a specified location (mandatory if custom parameters have been passed to the Workflow), and standard results (for Workflows like CARD-BS or CARD-COH12) are stored in the CDSE public repository and can be retrieved through the API. To download the result:</p>
+<p>Once the order is successfully processed, the status changes to complete, and the result is ready for download. The user may choose to instruct the service to put the results in a specified location (mandatory if custom parameters have been passed to the Workflow), and standard results (for Workflows like CARD-BS or CARD-COH12) are stored in the CDSE public repository and can be retrieved through the API.<br>
+To download the result:</p>
 <pre><code>curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" \
 "https://odp.dataspace.copernicus.eu/odata/v1/ProductionOrder(&lt;order_id&gt;)/Product/$value" \
 -o result.zip</code></pre>
@@ -1709,12 +1734,24 @@ python -m json.tool | grep "access_token" | awk -F\" '{print $4}')</code></pre>
 <h3 class="anchored" data-anchor-id="batch-orders">Batch Orders</h3>
 <section id="create-a-new-batch-order" class="level4">
 <h4 class="anchored" data-anchor-id="create-a-new-batch-order">Create a new Batch Order</h4>
-<p>In a way similar to a single Production Order, you can request processing of multiple input products as a Batch Order. The Batch Order will run a selected Workflow with the same parameters for all inputs and output the results to the same location. Using Batch Orders makes it easier to process time series or large AOIs. Batch Order endpoint uses the same mechanism as described for the Production Order:</p>
+<p>In a way similar to a single Production Order, you can request processing of multiple input products as a Batch Order. The Batch Order will run a selected Workflow with the same parameters for all inputs and output the results to the same location. Using Batch Orders makes it easier to process time series or large AOIs.<br>
+Batch Order endpoint uses the same mechanism as described for the Production Order:</p>
 <pre><code>curl -X POST -H 'Content-Type:application/json' \
 -H "Authorization: Bearer $KEYCLOAK_TOKEN" \ 
 "https://odp.dataspace.copernicus.eu/odata/v1/BatchOrder/OData.CSC.Order" \
 -d '&lt;json_message&gt;'</code></pre>
-<p>Batch Orders accept the following general parameters: - WorkflowName: the identifier of the workflow – “Name” attribute in the /Workflows response - IdentifierList: information about the input data to be used by the processor - identifiers of products - WorkflowOptions: parameters specific to the Workflows (example – DEM version, cloud coverage) - Priority: priority of the order in the users job queue. Orders with higher priority will be processed first - Callback: (not used) URL of the endpoint which should receive the information once the order is completed (done or failed) - Name: non-unique name for the order to help identify the orders - BatchSize: maximum number of items in the batch - BatchVolume: maximum size of output data The structure of the JSON message:</p>
+<p>Batch Orders accept the following general parameters:</p>
+<ul>
+<li>WorkflowName: the identifier of the workflow – “Name” attribute in the /Workflows response</li>
+<li>IdentifierList: information about the input data to be used by the processor - identifiers of products</li>
+<li>WorkflowOptions: parameters specific to the Workflows (example – DEM version, cloud coverage)</li>
+<li>Priority: priority of the order in the users job queue. Orders with higher priority will be processed first</li>
+<li>Callback: (not used) URL of the endpoint which should receive the information once the order is completed (done or failed)</li>
+<li>Name: non-unique name for the order to help identify the orders</li>
+<li>BatchSize: maximum number of items in the batch</li>
+<li>BatchVolume: maximum size of output data</li>
+</ul>
+<p>The structure of the JSON message:</p>
 <pre><code>{
   "Name": "string",
   "Priority": 0,
