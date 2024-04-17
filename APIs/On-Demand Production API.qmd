@@ -123,11 +123,12 @@ The **ODP API endpoint is [https://odp.dataspace.copernicus.eu/odata/v1](https:/
 
 ### API Operations
 
-The ODP API supports the following operations:
-- GET: This operation retrieves data and metadata from the ODP. The GET operation supports various query options to filter, order, and limit the data retrieved.
-- POST: This operation creates new entities in the ODP. The POST operation requires a payload in JSON format that specifies the properties of the new entity.
-- PATCH: This operation is used to update existing entities in the ODP. The PATCH operation requires a JSON payload that specifies the entity's properties to update.
-- DELETE: This operation deletes existing entities from the ODP. The DELETE operation requires the URL of the entity to be deleted.
+The ODP API supports the following operations: 
+
+* GET: This operation retrieves data and metadata from the ODP. The GET operation supports various query options to filter, order, and limit the data retrieved
+* POST: This operation creates new entities in the ODP. The POST operation requires a payload in JSON format that specifies the properties of the new entity
+* PATCH: This operation is used to update existing entities in the ODP. The PATCH operation requires a JSON payload that specifies the entity's properties to update
+* DELETE: This operation deletes existing entities from the ODP. The DELETE operation requires the URL of the entity to be deleted 
 
 ### API Resources
 
@@ -229,15 +230,17 @@ curl -X POST -H 'Content-Type:application/json' \
 -d '<json_message>'
 ````
 
-Production orders accept the following general parameters:
-- WorkflowName: the  identifier of the workflow – “Name” attribute in the /Workflows response
-- InputProductReference: information about the input data to be used by the processor
-    - Reference: identifier of a single input product or multiple products (example – mosaicking processors)
-    - ContentDate: time period which should be used by the Workflows (example - time-series based processors)
-- WorkflowOptions: parameters specific to the Workflows (example – DEM version, cloud coverage)
-- Priority: priority of the order in the users job queue. Orders with higher priority will be processed first
-- NotificationEndpoint: (not used) URL of the endpoint which should receive the information once the order is completed (done or failed)
-- Name: non-unique name for the order to help identify the orders
+Production orders accept the following general parameters: 
+
+* WorkflowName: the  identifier of the workflow – “Name” attribute in the /Workflows response
+* InputProductReference: information about the input data to be used by the processor
+  * Reference: identifier of a single input product or multiple products (example – mosaicking processors)
+  * ContentDate: time period which should be used by the Workflows (example - time-series based processors)
+* WorkflowOptions: parameters specific to the Workflows (example – DEM version, cloud coverage)
+* Priority: priority of the order in the users job queue. Orders with higher priority will be processed first
+* NotificationEndpoint: (not used) URL of the endpoint which should receive the information once the order is completed (done or failed)
+* Name: non-unique name for the order to help identify the orders 
+
 The structure of the JSON message:
 
 ````
@@ -334,6 +337,7 @@ curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" \
 ````
 
 The orders that are in the queue and have not yet been processed will be removed instantly. For the orders in processing, the Order Items (single item within a Production Order) being processed will complete but the remaining part of the Order will be cancelled.
+
 #### Display details of the result
 The order generates a new product which can be downloaded from the public repository or private storage. To check the details of the result:
 
@@ -343,7 +347,7 @@ curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" \
 ````
 
 #### Download the result
-Once the order is successfully processed, the status changes to complete, and the result is ready for download. The user may choose to instruct the service to put the results in a specified location (mandatory if custom parameters have been passed to the Workflow), and standard results (for Workflows like CARD-BS or CARD-COH12) are stored in the CDSE public repository and can be retrieved through the API.
+Once the order is successfully processed, the status changes to complete, and the result is ready for download. The user may choose to instruct the service to put the results in a specified location (mandatory if custom parameters have been passed to the Workflow), and standard results (for Workflows like CARD-BS or CARD-COH12) are stored in the CDSE public repository and can be retrieved through the API.  
 To download the result:
 
 ````
@@ -354,7 +358,7 @@ curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" \
 
 ### Batch Orders
 #### Create a new Batch Order
-In a way similar to a single Production Order, you can request processing of multiple input products as a Batch Order. The Batch Order will run a selected Workflow with the same parameters for all inputs and output the results to the same location. Using Batch Orders makes it easier to process time series or large AOIs.
+In a way similar to a single Production Order, you can request processing of multiple input products as a Batch Order. The Batch Order will run a selected Workflow with the same parameters for all inputs and output the results to the same location. Using Batch Orders makes it easier to process time series or large AOIs.  
 Batch Order endpoint uses the same mechanism as described for the Production Order:
 
 ````
@@ -364,15 +368,17 @@ curl -X POST -H 'Content-Type:application/json' \
 -d '<json_message>'
 ````
 
-Batch Orders accept the following general parameters:
-- WorkflowName: the  identifier of the workflow – “Name” attribute in the /Workflows response
-- IdentifierList: information about the input data to be used by the processor - identifiers of products
-- WorkflowOptions: parameters specific to the Workflows (example – DEM version, cloud coverage)
-- Priority: priority of the order in the users job queue. Orders with higher priority will be processed first
-- Callback: (not used) URL of the endpoint which should receive the information once the order is completed (done or failed)
-- Name: non-unique name for the order to help identify the orders
-- BatchSize: maximum number of items in the batch
-- BatchVolume: maximum size of output data
+Batch Orders accept the following general parameters: 
+
+* WorkflowName: the  identifier of the workflow – “Name” attribute in the /Workflows response
+* IdentifierList: information about the input data to be used by the processor - identifiers of products
+* WorkflowOptions: parameters specific to the Workflows (example – DEM version, cloud coverage)
+* Priority: priority of the order in the users job queue. Orders with higher priority will be processed first
+* Callback: (not used) URL of the endpoint which should receive the information once the order is completed (done or failed)
+* Name: non-unique name for the order to help identify the orders
+* BatchSize: maximum number of items in the batch
+* BatchVolume: maximum size of output data 
+
 The structure of the JSON message:
 
 ````
