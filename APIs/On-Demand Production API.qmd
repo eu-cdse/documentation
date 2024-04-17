@@ -3,13 +3,17 @@ title: On-Demand Production API
 ---
 
 On-Demand Production API provides access to two sets of data processing workflows:
-- production of the Sentinel-1/2/3 products from Level-0 data to Level-1 and Level-2. The service allows generation of products using different versions of the processors and parameters than the ones used by the Production Service.
-- processing of additional products including Sentinel-1 backscatter and interferometric coherence.
+* production of the Sentinel-1/2/3 products from Level-0 data to Level-1 and Level-2. The production workflows use the IPF processors and the versions are aligned with the Production Service. The service allows generation of products using different versions of the processors and parameters than the ones used in the systematic production. This allows reprocessing of the historical data with the recent IPF version which enables creation of coherent timeseries
+* processing of additional products using custom processors or workflows based on SNAP graphs. Available workflows include the Sentinel-1 backscatter and interferometric coherence 
 
 Both production and processing workflows are available through the OData API described below, and the [Data Workspace](https://dataspace.copernicus.eu/analyse/data-workspace){target="blank"} which provided a graphical user interface to the service.
 Basic interaction with the On-Demand Production service is following: 
-- user sends a request including the name of the workflow (the processor to be executed), the identifier of the reference product (product from which the processing should start or product which should be reprocessed) and workflow options (parameters) specific to the selected workflow.
-- system runs the requested workflows and the result is made available for retrieval.
+* user sends a request including the name of the workflow (the processor to be executed), the identifier of the reference product (product from which the processing should start or product which should be reprocessed) and workflow options (parameters) specific to the selected workflow
+* system runs the requested workflows and the result is made available for retrieval
+
+Access to the On-Demand Production service is subject to [Quotas and Limitations](https://documentation.dataspace.copernicus.eu/Quotas.html){target="blank"}. 
+* "Concurrent Processing" - number of products which can be processed simultaneously. If the users submits more orders to the system, the orders will be queued and gradually processed
+* "Processed Products per month" - number of orders which can be submitted in the current calendar month (count of ordered products from the first day of the current month)
 
 ## On-Demand Production
 
@@ -22,7 +26,7 @@ Initially the production workflows are available for Sentinel-1 and Sentinel-3. 
 
 All Sentinel-1 workflows start from Level-0 RAW products.  
 
-*** The available workflows *** 
+**Available workflows** 
 
 |Workflow name|Input product type|Output product type|
 |--|--|--|
@@ -53,7 +57,7 @@ All Sentinel-1 workflows start from Level-0 RAW products.
 |Sentinel-1-L0-WV_OCN__2S|WV_RAW__0|WV_OCN__2S|
 |Sentinel-1-L0-WV_SLC__1S|WV_RAW__0|WV_SLC__1S|
 
-*** Workflow options for Sentinel-1 *** 
+**Workflow options for Sentinel-1** 
 
 |Option name|Description|Values|
 |--|--|--|
@@ -64,7 +68,7 @@ All Sentinel-1 workflows start from Level-0 RAW products.
 
 The Sentinel-3 workflows run from Level-0 products.
 
-*** The available workflows *** 
+**Available workflows** 
 
 |Workflow name|Input product type|Output product type|
 |--|--|--|
@@ -84,7 +88,7 @@ The Sentinel-3 workflows run from Level-0 products.
 |Sentinel-3-L0-SR_2_LAN_HY|SR_0_SRA___, MW_0_MWR___|SR_2_LAN_HY|
 |Sentinel-3-L0-SR_2_LAN_SI|SR_0_SRA___, MW_0_MWR___|SR_2_LAN_SI|
 
-*** Workflow options for Sentinel-3 *** 
+**Workflow options for Sentinel-3** 
 
 |Option name|Description|Values|
 |--|--|--|
