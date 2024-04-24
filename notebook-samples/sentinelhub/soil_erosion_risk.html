@@ -1142,7 +1142,7 @@ window.onload = function() {
   </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../Catalogue-csv.html" class="sidebar-item-text sidebar-link">
+  <a href="../../Catalogue-csv.qmd" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Catalogue CSV</span></a>
   </div>
 </li>
@@ -1280,7 +1280,13 @@ window.onload = function() {
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># config = SHConfig("cdse")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Here we define the bounding box for our analysis. This area of interest is a network of agricultural fields on complex topography near Somogybabod, south-west Hungary. The area is affected by erosion, occasionally forming spectacular gullies (<a href="https://link.springer.com/chapter/10.1007/978-3-319-08997-3_12">Jakab &amp; Szalai 2015</a>). The area of interest is the blue rectangle in the right center. You can take a closer look of the place in Copernicus Browser at <a href="https://link.dataspace.copernicus.eu/o4y">this link</a>. Of course, you can define an different bounding box for your own area of interest in <a href="https://browser.dataspace.copernicus.eu/">Copernicus Browser</a> or <a href="http://bboxfinder.com">bbox finder</a>. <img src=".\img\erosion_aoi_location.jpg" class="img-fluid" alt="Sentinel-2 Quarterly Mosaic, June 2023"></p>
+<p>Here we define the bounding box for our analysis. This area of interest is a network of agricultural fields on complex topography near Somogybabod, south-west Hungary. The area is affected by erosion, occasionally forming spectacular gullies (<a href="https://link.springer.com/chapter/10.1007/978-3-319-08997-3_12">Jakab &amp; Szalai 2015</a>). The area of interest is the blue rectangle in the right center. You can take a closer look of the place in Copernicus Browser at <a href="https://link.dataspace.copernicus.eu/o4y">this link</a>. Of course, you can define an different bounding box for your own area of interest in <a href="https://browser.dataspace.copernicus.eu/">Copernicus Browser</a> or <a href="http://bboxfinder.com">bbox finder</a>.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="./img/erosion_aoi_location_res.jpg" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Sentinel-2 Quarterly Mosaic, June 2023</figcaption>
+</figure>
+</div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>bbox <span class="op">=</span> BBox((<span class="fl">17.768669</span>, <span class="fl">46.629812</span>, <span class="fl">17.851925</span>, <span class="fl">46.719976</span>), crs<span class="op">=</span>CRS.WGS84).transform(<span class="dv">3035</span>)</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>time_interval <span class="op">=</span> <span class="st">"2023-04-01"</span>, <span class="st">"2023-09-01"</span></span>
@@ -1462,7 +1468,7 @@ window.onload = function() {
 <div class="cell">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># First we define a colormap. White for risk of zero, green for low risk, yellow for moderate, red for high.</span></span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>cmap <span class="op">=</span> mpl.colors.LinearSegmentedColormap.from_list(</span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"custom blue"</span>,</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"green yellow red"</span>,</span>
 <span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    [</span>
 <span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>        (<span class="dv">0</span>, (<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>)),</span>
 <span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>        (<span class="fl">0.001</span>, (<span class="dv">0</span>, <span class="fl">0.5</span>, <span class="dv">0</span>)),</span>
@@ -1475,11 +1481,7 @@ window.onload = function() {
 <span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">12</span>))</span>
 <span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>plt.imshow(relative_erosion_risk, cmap<span class="op">=</span>cmap)</span>
-<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a><span class="co"># plt.figure(figsize=(12, 12))</span></span>
-<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a><span class="co"># plt.imshow(relative_erosion_risk, cmap="copper", vmin=0.0, vmax=0.025);</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>plt.imshow(relative_erosion_risk, cmap<span class="op">=</span>cmap)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="49">
 <pre><code>&lt;matplotlib.image.AxesImage at 0x11159653b90&gt;</code></pre>
 </div>
@@ -1952,13 +1954,13 @@ window.onload = function() {
 <div class="cell">
 <div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>fig_stat, ax_stat <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">6</span>))</span>
 <span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>t1 <span class="op">=</span> result_df1[<span class="st">"date"</span>]</span>
-<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>ndvi_mean_field1 <span class="op">=</span> result_df1[<span class="st">"erosion_risk_mean"</span>]</span>
-<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>ndvi_std_field1 <span class="op">=</span> result_df1[<span class="st">"erosion_risk_stDev"</span>]</span>
-<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>ax_stat.plot(t1, ndvi_mean_field1, label<span class="op">=</span><span class="st">"field 1 mean"</span>)</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>mean_field1 <span class="op">=</span> result_df1[<span class="st">"erosion_risk_mean"</span>]</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>std_field1 <span class="op">=</span> result_df1[<span class="st">"erosion_risk_stDev"</span>]</span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>ax_stat.plot(t1, mean_field1, label<span class="op">=</span><span class="st">"field 1 mean"</span>)</span>
 <span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>ax_stat.fill_between(</span>
 <span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>    t1,</span>
-<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>    ndvi_mean_field1 <span class="op">-</span> ndvi_std_field1,</span>
-<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a>    ndvi_mean_field1 <span class="op">+</span> ndvi_std_field1,</span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>    mean_field1 <span class="op">-</span> std_field1,</span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a>    mean_field1 <span class="op">+</span> std_field1,</span>
 <span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a>    alpha<span class="op">=</span><span class="fl">0.3</span>,</span>
 <span id="cb39-11"><a href="#cb39-11" aria-hidden="true" tabindex="-1"></a>    label<span class="op">=</span><span class="st">"field 1 stDev"</span>,</span>
 <span id="cb39-12"><a href="#cb39-12" aria-hidden="true" tabindex="-1"></a>)</span>
