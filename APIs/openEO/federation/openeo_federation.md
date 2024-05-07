@@ -53,6 +53,14 @@ If this continuity is important to your project or your organization, we recomme
 We list the members of the federation here. 
 Collections in the federated endpoint are offered by one or more of these members.
 
+### Copernicus Dataspace Ecosystem
+
+The CDSE openEO instance is also part of the federated instance, ensuring that users can combine the core CDSE offering
+with data and processing offered at various other providers. 
+
+This is currently the 'default' provider, so many requests to the federation will simply run on the CDSE openEO instance.
+This should make it possible for users to easily switch to the federation.
+
 ### Terrascope
 
 The [Terrascope](https://terrascope.be) platform is a Belgian initiative that offers access to Copernicus products, the full archive of the PROBA-V mission, and a range of other interesting datasets. 
