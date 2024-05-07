@@ -57,7 +57,7 @@ Finally, an official agreement will need to be established confirming that the s
 The Copernicus Data Space Ecosystem [forum](https://forum.dataspace.copernicus.eu/) is considered the main support channel for users and service providers to post updates or service events.
 Service providers are also requested to provide an email address, to which support questions from users can be forwarded.
 
-For communicating important changes towards users, service providers are required to comply with the announcement procedure described in: [@sec-openeoannounce].
+For communicating important changes towards users, service providers are required to comply with the announcement procedure described  [here](../openeo_federation.md#openeoannounce).
 The overall lead time for the announcement of planned breaking changes is 3 months.
 
 Downtime (planned or unplanned) is also announced in the same manner.
