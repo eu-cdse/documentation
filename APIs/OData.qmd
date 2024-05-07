@@ -855,6 +855,53 @@ with open("product.zip", "wb") as file:
 ```
 :::
 
+### Compressed Product Download
+
+For downloading products in their native format (as zipped files) you need to proceed with the standard authorization as for [Product Download](https://documentation.dataspace.copernicus.eu/APIs/OData.html#product-download).
+
+The access to compressed products (stored in native format):
+
+::: {.panel-tabset}
+
+# cURL
+
+```
+curl -H "Authorization: Bearer $ACCESS_TOKEN" 'https://catalogue.dataspace.copernicus.eu/odata/v1/Products(060882f4-0a34-5f14-8e25-6876e4470b0d)/$zip' --location-trusted --output /tmp/product.zip
+```
+:::
+
+or
+
+::: {.panel-tabset}
+
+# Wget
+
+```
+wget  --header "Authorization: Bearer $ACCESS_TOKEN" 'https://catalogue.dataspace.copernicus.eu/odata/v1/Products(db0c8ef3-8ec0-5185-a537-812dad3c58f8)/$zip' -O example_odata.zip
+```
+:::
+
+::: {.panel-tabset}
+
+# Python 
+
+```
+import requests
+
+url = f"https://download.dataspace.copernicus.eu/odata/v1/Products(a5ab498a-7b2f-4043-ae2a-f95f457e7b3b)/$zip"
+
+headers = {"Authorization": f"Bearer {access_token}"}
+
+session = requests.Session()
+session.headers.update(headers)
+response = session.get(url, headers=headers, stream=True)
+
+with open("product.zip", "wb") as file:
+    for chunk in response.iter_content(chunk_size=8192):
+        if chunk:
+            file.write(chunk)
+```
+:::
 
 ## OData DeletedProducts endpoint
 
