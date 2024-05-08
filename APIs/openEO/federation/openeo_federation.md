@@ -53,7 +53,7 @@ If this continuity is important to your project or your organization, we recomme
 We list the members of the federation here. 
 Collections in the federated endpoint are offered by one or more of these members.
 
-### Copernicus Dataspace Ecosystem
+### Copernicus Data Space Ecosystem
 
 The CDSE openEO instance is also part of the federated instance, ensuring that users can combine the core CDSE offering
 with data and processing offered at various other providers. 
