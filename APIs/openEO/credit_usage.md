@@ -13,9 +13,9 @@ Currently, credits can be deducted based on:
 
 
 For example, let's say we compute a Sentinel-2 based NDWI for an area of 10 hectares to a series of GeoTiffs (one per observation). 
-When running this example, the batch job reports the usage, which can be seen in the [OpenEO Web Editor](https://openeo.dataspace.copernicus.eu/) by clicking the ![](_images/batch_info.png) button for an individual batch job:
+When running this example, the batch job reports the usage, which can be seen in the [OpenEO Web Editor](https://openeo.dataspace.copernicus.eu/) by clicking the ![](./_images/batch_info.png) button for an individual batch job:
 
-![](_images/batchjob_metrics.png)
+![](./_images/batchjob_metrics.png)
 
 Usage metrics shown in the OpenEO Web Editor for an example batch job:
 
