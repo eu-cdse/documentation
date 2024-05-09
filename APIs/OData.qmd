@@ -631,9 +631,9 @@ df[columns_to_print].head(3)
 
 :::
 
-The acceptable arguments for this option: *Attributes* and *Assets*
+The acceptable arguments for this option: *Attributes*, *Assets* and *Locations*.
 
-### Expand assets
+### Expand Assets
 
 Expand assets allows to list additional assets of products, including quicklooks:
 
@@ -655,6 +655,20 @@ df[columns_to_print].head(3)
 ```
 
 :::
+
+### Expand Locations
+
+Expand Locations allows users to see full list of available products' forms (compressed/uncompressed) and locations from which they can be downloaded:
+
+::: {.panel-tabset}
+
+# HTTPS Request
+
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name%20eq%20%27SENTINEL-1%27%20and%20contains(Name,%27RAW%27)&$orderby=ContentDate/Start%20desc&$top=10&$expand=Locations`](https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name%20eq%20%27SENTINEL-1%27%20and%20contains(Name,%27RAW%27)&$orderby=ContentDate/Start%20desc&$top=10&$expand=Locations){target="_blank"}
+
+:::
+
+The information about data storage locations and storage forms (compressed/uncompressed) are specified under expand=Locations.
 
 ### Quicklook
 
@@ -841,6 +855,53 @@ with open("product.zip", "wb") as file:
 ```
 :::
 
+### Compressed Product Download
+
+For downloading products in their native format (as zipped files) you need to proceed with the standard authorization as for [Product Download](https://documentation.dataspace.copernicus.eu/APIs/OData.html#product-download).
+
+The access to compressed products (stored in native format):
+
+::: {.panel-tabset}
+
+# cURL
+
+```
+curl -H "Authorization: Bearer $ACCESS_TOKEN" 'https://catalogue.dataspace.copernicus.eu/odata/v1/Products(94e41dc6-e375-4b4d-be7d-dbbcf1261710)/$zip' --location-trusted --output /tmp/product.zip
+```
+:::
+
+or
+
+::: {.panel-tabset}
+
+# Wget
+
+```
+wget  --header "Authorization: Bearer $ACCESS_TOKEN" 'https://catalogue.dataspace.copernicus.eu/odata/v1/Products(94e41dc6-e375-4b4d-be7d-dbbcf1261710)/$zip' -O example_odata.zip
+```
+:::
+
+::: {.panel-tabset}
+
+# Python 
+
+```
+import requests
+
+url = f"https://download.dataspace.copernicus.eu/odata/v1/Products(94e41dc6-e375-4b4d-be7d-dbbcf1261710)/$zip"
+
+headers = {"Authorization": f"Bearer {access_token}"}
+
+session = requests.Session()
+session.headers.update(headers)
+response = session.get(url, headers=headers, stream=True)
+
+with open("product.zip", "wb") as file:
+    for chunk in response.iter_content(chunk_size=8192):
+        if chunk:
+            file.write(chunk)
+```
+:::
 
 ## OData DeletedProducts endpoint
 
