@@ -19,25 +19,23 @@ As such, the federation's listing of available processes is the _intersection_
 of the process sets of each of the underlying back-ends.
 This is the most straightforward combination with the least surprise.
 
-::: tip Advanced/experimental usage
-A savvy user that knows which underlying back-end will execute their job
-can however still submit process graphs with processes that are available
-on that back-end but fall outside the intersection,
-as the federation will just forward the process graph as-is to that back-end.
-:::
+> **Advanced/experimental usage**<br/>
+> A savvy user that knows which underlying back-end will execute their job
+> can however still submit process graphs with processes that are available
+> on that back-end but fall outside the intersection,
+> as the federation will just forward the process graph as-is to that back-end.
 
-::: tip Note
-For the technical discussion on process federation, see [Open-EO/openeo-aggregator#4](https://github.com/Open-EO/openeo-aggregator/issues/4)
-:::
+
+> **Note**<br/>
+>For the technical discussion on process federation, see [Open-EO/openeo-aggregator#4](https://github.com/Open-EO/openeo-aggregator/issues/4)
 
 ### File formats
 
 The federation currently lists the _union_ of import/export file formats available
 at each of the underlying back-ends.
 
-::: tip Note
-For the technical discussion on file format federation, see [Open-EO/openeo-aggregator#1](https://github.com/Open-EO/openeo-aggregator/issues/1)
-:::
+> **Note**<br/>
+>For the technical discussion on file format federation, see [Open-EO/openeo-aggregator#1](https://github.com/Open-EO/openeo-aggregator/issues/1)
 
 
 ### How does the aggregator route requests?
