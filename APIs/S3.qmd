@@ -110,3 +110,95 @@ def download(bucket, product: str, target: str = "") -> None:
 # path to the product to download
 download(s3.Bucket("eodata"), "Sentinel-1/SAR/SLC/2019/10/13/S1B_IW_SLC__1SDV_20191013T155948_20191013T160015_018459_022C6B_13A2.SAFE/")
 ```
+
+## Accessing EOData via AWS CLI
+
+In this tutorial, you will access EOData resources using a Linux OS using **AWS Command Line Interface (AWS CLI)**.
+
+### Prerequirements:
+
+**Check for system updates:**
+```
+$ sudo apt-get update -y
+```
+**Install prerequirements:**
+```
+$ sudo apt-get install unzip groff less -y
+```
+**Generate S3 credentials at CDSE:**
+In order to access EODATA via S3 you must obtain secrets (**access** and **secret** key). Please visit following page: (https://eodata-s3keysmanager.dataspace.copernicus.eu/) and log in with Copernicus Data Space Ecosystem account for which the keys are to be generated.
+
+If you dont have an account, you can register via following link: (https://documentation.dataspace.copernicus.eu/Registration.html). 
+### Install or update the AWS CLI:
+To update your current installation of AWS CLI, download a new installer each time you update to overwrite previous versions. Follow these steps from the command line to install the AWS CLI on Linux.
+```
+$ curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
+```
+Verify if client is installed:
+```
+$ aws --version
+aws-cli/2.13.32 Python/3.11.6 Linux/5.15.0-75-generic exe/x86_64.ubuntu.22 prompt/off
+```
+### Configuration:
+Enter the following command:
+```
+$ aws configure
+```
+You will be prompted for providing certain connection details. Below are the values which you should use during the configuration. Replace **accesskey** and **secretkey** with appropriate keys you obtained previously.
+
+AWS Access Key ID [None]: accesskey
+AWS Secret Key ID [None]: secretkey
+Default region name [None]: default
+Default output format [None]: text
+
+### List and download products:
+Now you can use AWS CLI commands (documentation available via following link: https://aws.amazon.com/cli/)
+
+**Specify the CDSE endpoint:**
+Use following line to specify endpoint.
+```
+export AWS_ENDPOINT_URL=https://eodata.dataspace.copernicus.eu/
+```
+**List available buckets:**
+```
+$ aws s3 ls
+
+2017-11-15 10:40:52 DIAS
+2017-11-15 10:40:52 EODATA
+
+$ aws s3 ls s3://EODATA/
+eouser@aws-cli:~$ aws s3 ls s3://EODATA/
+                           PRE C3S/
+                           PRE CAMS/
+                           PRE CEMS/
+                           PRE CLMS/
+                           PRE CMEMS/
+                           PRE Envisat/
+                           PRE Envisat-ASAR/
+                           PRE Global-Mosaics/
+                           PRE Jason-3/
+                           PRE Landsat-5/
+                           PRE Landsat-7/
+                           PRE Landsat-8/
+                           PRE SMOS/
+                           PRE Sentinel-1/
+                           PRE Sentinel-1-COG/
+                           PRE Sentinel-1-RTC/
+                           PRE Sentinel-2/
+                           PRE Sentinel-3/
+                           PRE Sentinel-5P/
+                           PRE Sentinel-6/
+                           PRE auxdata/
+```
+**Downloading products:**
+In order to download products from repository follow the steps. 
+
+Below example is downloading product from Sentinel-2 named "S2B_MSIL2A_20220130T115209_N0400_R123_T28SFB_20220130T125446.SAFE" and saving it at user's home location.
+```
+$ aws s3 cp s3://EODATA/Sentinel-2/MSI/L2A/2022/01/30/S2B_MSIL2A_20220130T115209_N0400_R123_T28SFB_20220130T125446.SAFE/ /home/eouser/S2B_MSIL2A_20220130T115209_N0400_R123_T28SFB_20220130T125446.SAFE
+
+download: s3://EODATA/Sentinel-2/MSI/L2A/2022/01/30/S2B_MSIL2A_20220130T115209_N0400_R123_T28SFB_20220130T125446.SAFE/ to ./S2B_MSIL2A_20220130T115209_N0400_R123_T28SFB_20220130T125446.SAFE
+```
+After this operation, you should downloaded product in specified path.
