@@ -28,9 +28,9 @@ To generate the necessary credentials, you must have a registered account on dat
 
 In order to obtain secrets, <a href="https://eodata-s3keysmanager.dataspace.copernicus.eu/">visit page</a> and log in with the Copernicus Data Space Ecosystem account for which the keys are to be generated. After successfully logging in, indicate the expiration date of the secrets using the "Add Credentials" button and click "Confirm".
 
-![Add Credentials](_images/s3_cdse_1.png)
+![](_images/s3_cdse_1.png)
 
-![Display Credentials](_images/s3_cdse_2.png)
+![](_images/s3_cdse_2.png)
 
 Note that the Secret Key will be displayed only once, and you cannot view it again after clicking the Close button. Copy your secret key and keep it in a safe place.
 
@@ -60,7 +60,7 @@ check_ssl_certificate = true
 ```
 Then you can run any s3cmd command pointing to the previously created configuration file with option `-c`:
 ```
-s3cmd -c ~/.s3cfg ls
+$ s3cmd -c .s3cfg ls s3://eodata/
 ```
 Below is an example of downloading a product from the EO data repository using s3cmd:
 ```
@@ -110,3 +110,100 @@ def download(bucket, product: str, target: str = "") -> None:
 # path to the product to download
 download(s3.Bucket("eodata"), "Sentinel-1/SAR/SLC/2019/10/13/S1B_IW_SLC__1SDV_20191013T155948_20191013T160015_018459_022C6B_13A2.SAFE/")
 ```
+
+## Accessing EOData via AWS CLI
+
+In this section, you will access EOData resources using a Linux OS using **AWS Command Line Interface (AWS CLI)**.
+
+### Prerequirements
+
+**Check for system updates:**
+```
+$ sudo apt-get update -y
+```
+**Install prerequirements:**
+```
+$ sudo apt-get install unzip groff less -y
+```
+**Generate S3 credentials at CDSE:**
+
+In order to access EOData via S3 you must obtain secrets (**access** and **secret** key). Please visit following <a href="https://eodata-s3keysmanager.dataspace.copernicus.eu/">page</a> and log in with Copernicus Data Space Ecosystem account for which the keys are to be generated.
+
+If you dont have an account, you can register via following <a href="https://documentation.dataspace.copernicus.eu/Registration.html">link</a>.
+
+### Install or update the AWS CLI
+
+To update your current installation of AWS CLI, download a new installer each time you update to overwrite previous versions. Follow these steps from the command line to install the AWS CLI on Linux.
+```
+$ curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
+```
+Verify if client is installed:
+```
+$ aws --version
+aws-cli/2.13.32 Python/3.11.6 Linux/5.15.0-75-generic exe/x86_64.ubuntu.22 prompt/off
+```
+### Configuration
+
+Enter the following command:
+```
+$ aws configure
+```
+You will be prompted for providing certain connection details. Below are the values which you should use during the configuration. Replace **access_key** and **secret_key** with appropriate keys you obtained previously.
+
+```
+AWS Access Key ID [None]: <access_key>
+AWS Secret Key ID [None]: <secret_key>
+Default region name [None]: default
+Default output format [None]: text
+```
+
+### List and download products
+
+Now you can use AWS CLI commands (documentation available via following link: https://aws.amazon.com/cli/)
+
+**Specify the CDSE endpoint:**
+
+Use following line to specify endpoint.
+```
+export AWS_ENDPOINT_URL=https://eodata.dataspace.copernicus.eu/
+```
+**List available buckets:**
+
+```
+$ aws s3 ls s3://eodata/
+eouser@aws-cli:~$ aws s3 ls s3://eodata/
+                           PRE C3S/
+                           PRE CAMS/
+                           PRE CEMS/
+                           PRE CLMS/
+                           PRE CMEMS/
+                           PRE Envisat/
+                           PRE Envisat-ASAR/
+                           PRE Global-Mosaics/
+                           PRE Jason-3/
+                           PRE Landsat-5/
+                           PRE Landsat-7/
+                           PRE Landsat-8/
+                           PRE SMOS/
+                           PRE Sentinel-1/
+                           PRE Sentinel-1-COG/
+                           PRE Sentinel-1-RTC/
+                           PRE Sentinel-2/
+                           PRE Sentinel-3/
+                           PRE Sentinel-5P/
+                           PRE Sentinel-6/
+                           PRE auxdata/
+```
+**Downloading products:**
+
+In order to download products from repository follow the steps. 
+
+Below example is downloading product from Sentinel-2 named "S2A_MSIL2A_20240115T235221_N0510_R130_T55HGS_20240116T021554.SAFE" and saving it at user's home location.
+```
+$ aws s3 cp s3://eodata/Sentinel-2/MSI/L2A/2024/01/15/S2A_MSIL2A_20240115T235221_N0510_R130_T55HGS_20240116T021554.SAFE/ /home/eouser/S2A_MSIL2A_20240115T235221_N0510_R130_T55HGS_20240116T021554.SAFE
+
+download: s3://eodata/Sentinel-2/MSI/L2A/2024/01/15/S2A_MSIL2A_20240115T235221_N0510_R130_T55HGS_20240116T021554.SAFE/ to ./S2A_MSIL2A_20240115T235221_N0510_R130_T55HGS_20240116T021554.SAFE
+```
+After this operation, you should downloaded product in specified path.
