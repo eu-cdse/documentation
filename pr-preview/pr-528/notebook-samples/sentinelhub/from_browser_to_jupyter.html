@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Documentation - openEO Basics: How to load a data cube from a data collection?</title>
+<title>Documentation - Observing increase in damage done by Wildfires in Greece - from browsing to coding</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -212,7 +212,7 @@ window.onload = function() {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">openEO Basics: How to load a data cube from a data collection?</li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Observing increase in damage done by Wildfires in Greece - from browsing to coding</li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
@@ -1185,10 +1185,20 @@ window.onload = function() {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#setup" id="toc-setup" class="nav-link active" data-scroll-target="#setup">Setup</a></li>
-  <li><a href="#data-loading" id="toc-data-loading" class="nav-link" data-scroll-target="#data-loading">Data Loading</a></li>
-  <li><a href="#data-processing" id="toc-data-processing" class="nav-link" data-scroll-target="#data-processing">Data Processing</a></li>
-  <li><a href="#cloud-masking" id="toc-cloud-masking" class="nav-link" data-scroll-target="#cloud-masking">Cloud masking</a></li>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#where-to-start---our-use-case" id="toc-where-to-start---our-use-case" class="nav-link" data-scroll-target="#where-to-start---our-use-case">Where to start - our use case</a></li>
+  <li><a href="#step-1-copernicus-browser" id="toc-step-1-copernicus-browser" class="nav-link" data-scroll-target="#step-1-copernicus-browser">Step 1: Copernicus Browser</a>
+  <ul>
+  <li><a href="#visualizing-wildfire-effects-with-the-burnt-area-visualization-custom-script" id="toc-visualizing-wildfire-effects-with-the-burnt-area-visualization-custom-script" class="nav-link" data-scroll-target="#visualizing-wildfire-effects-with-the-burnt-area-visualization-custom-script">Visualizing wildfire effects with the Burnt Area Visualization Custom Script</a></li>
+  </ul></li>
+  <li><a href="#step-2-request-builder" id="toc-step-2-request-builder" class="nav-link" data-scroll-target="#step-2-request-builder">Step 2: Request Builder</a></li>
+  <li><a href="#step-3-jupyter-notebooks" id="toc-step-3-jupyter-notebooks" class="nav-link" data-scroll-target="#step-3-jupyter-notebooks">Step 3: Jupyter notebooks</a>
+  <ul>
+  <li><a href="#importing-necessary-libraries" id="toc-importing-necessary-libraries" class="nav-link" data-scroll-target="#importing-necessary-libraries">Importing necessary libraries</a></li>
+  <li><a href="#credentials" id="toc-credentials" class="nav-link" data-scroll-target="#credentials">Credentials</a></li>
+  </ul></li>
+  <li><a href="#defining-time-slots" id="toc-defining-time-slots" class="nav-link" data-scroll-target="#defining-time-slots">Defining time slots</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
   </ul>
 </nav>
     </div>
@@ -1197,7 +1207,7 @@ window.onload = function() {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">openEO Basics: How to load a data cube from a data collection?</h1>
+<h1 class="title">Observing increase in damage done by Wildfires in Greece - from browsing to coding</h1>
 </div>
 
 
@@ -1212,136 +1222,391 @@ window.onload = function() {
 
 </header>
 
-<p>This notebook provides a detailed guide on how to load a <code>DataCube</code> from a data collection. Additionally, it will cover how to authenticate in order to process and download data.</p>
-<section id="setup" class="level2">
-<h2 class="anchored" data-anchor-id="setup">Setup</h2>
-<p>Import the <code>openeo</code> package and connect to the Copernicus Data Space Ecosystem openEO back-end.</p>
-<div class="cell" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> openeo</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> xarray</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>connection <span class="op">=</span> openeo.<span class="ex">connect</span>(url<span class="op">=</span><span class="st">"openeo.dataspace.copernicus.eu"</span>)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>connection</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="4">
-<pre><code>&lt;Connection to 'https://openeo.dataspace.copernicus.eu/openeo/1.1/' with NullAuth&gt;</code></pre>
-</div>
-</div>
-<p>Note the <code>NullAuth</code> in the representation of the connection, which indicates that we are not logged in yet.</p>
-<p>The canonical way to log in is using the <code>authenticate_oidc()</code> method. This might, depending on your situation, trigger an authentication procedure. Follow the instructions, if any.</p>
-<div class="cell" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>connection.authenticate_oidc()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Authenticated using refresh token.</code></pre>
-</div>
-<div class="cell-output cell-output-display" data-execution_count="5">
-<pre><code>&lt;Connection to 'https://openeo.dataspace.copernicus.eu/openeo/1.1/' with OidcBearerAuth&gt;</code></pre>
-</div>
-</div>
-<p>Note that the connection is now authenticated now through <code>OidcBearerAuth</code>.</p>
+<section id="introduction" class="level3">
+<h3 class="anchored" data-anchor-id="introduction">Introduction</h3>
+<p>The Copernicus Data Space Ecosystem supports learning programming for Earth Observation data analysis in series of incremental steps. This notebook takes you from viewing satellite imagery and experimenting with different visualizations through understanding API requests in a graphical interface, to writing and editing your own code in Jupyter Notebooks.</p>
 </section>
-<section id="data-loading" class="level2">
-<h2 class="anchored" data-anchor-id="data-loading">Data Loading</h2>
-<p>With our authenticated connection, we can now start loading a data collection data to build a <code>DataCube</code>, filtered according to specific spatio-temporal constraints:</p>
-<div class="cell" data-execution_count="6">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>s2_cube <span class="op">=</span> connection.load_collection(</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"SENTINEL2_L2A"</span>,</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    temporal_extent<span class="op">=</span>(<span class="st">"2022-05-01"</span>, <span class="st">"2022-05-30"</span>),</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    spatial_extent<span class="op">=</span>{</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">"west"</span>: <span class="fl">3.20</span>,</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"south"</span>: <span class="fl">51.18</span>,</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"east"</span>: <span class="fl">3.25</span>,</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">"north"</span>: <span class="fl">51.21</span>,</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">"crs"</span>: <span class="st">"EPSG:4326"</span>,</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    },</span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    bands<span class="op">=</span>[<span class="st">"B04"</span>, <span class="st">"B03"</span>, <span class="st">"B02"</span>, <span class="st">"SCL"</span>],</span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    max_cloud_cover<span class="op">=</span><span class="dv">50</span>,</span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>Let’s download this slice of data in netCDF format to give it an initial inspection.</p>
-<div class="cell" data-execution_count="8">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>s2_cube.download(<span class="st">"load-raw.nc"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>Quick visualisation of first and last observation in the timeseries.</p>
-<div class="cell" data-execution_count="7">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>ds <span class="op">=</span> xarray.load_dataset(<span class="st">"load-raw.nc"</span>)</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert xarray DataSet to a (bands, t, x, y) DataArray</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> ds[[<span class="st">"B04"</span>, <span class="st">"B03"</span>, <span class="st">"B02"</span>]].to_array(dim<span class="op">=</span><span class="st">"bands"</span>)</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(ncols<span class="op">=</span><span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">3</span>), dpi<span class="op">=</span><span class="dv">90</span>, sharey<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>data[{<span class="st">"t"</span>: <span class="dv">0</span>}].plot.imshow(vmin<span class="op">=</span><span class="dv">0</span>, vmax<span class="op">=</span><span class="dv">2000</span>, ax<span class="op">=</span>axes[<span class="dv">0</span>])</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>data[{<span class="st">"t"</span>: <span class="op">-</span><span class="dv">1</span>}].plot.imshow(vmin<span class="op">=</span><span class="dv">0</span>, vmax<span class="op">=</span><span class="dv">2000</span>, ax<span class="op">=</span>axes[<span class="dv">1</span>])<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display">
-<p><img src="Load_Collection_files/figure-html/cell-7-output-1.png" class="img-fluid"></p>
-</div>
-</div>
-<p>Notice how the observation on the right suffers from clouds and cloud shadows.</p>
+<section id="where-to-start---our-use-case" class="level3">
+<h3 class="anchored" data-anchor-id="where-to-start---our-use-case">Where to start - our use case</h3>
+<p>In our example, we want to analyse the effects of wildfires. Wildfires are becoming more frequent in the wake of climate change, and Earth observation offers far-reaching possibilities for identifying wildfires and quantifying their impact. For this, first we will first look into spectral indices that highlight vegetation fires and burnt areas, then we will find ways to download raster map data of burnt areas, and finally, we will calculate the extent of burnt area the JupyterLab to visualise changes over time.</p>
 </section>
-<section id="data-processing" class="level2">
-<h2 class="anchored" data-anchor-id="data-processing">Data Processing</h2>
-<p>Let’s include a bit of extra data processing. We’ll build a naive composite image by taking the temporal maximum:</p>
-<div class="cell" data-execution_count="8">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>composite <span class="op">=</span> s2_cube.max_time()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="step-1-copernicus-browser" class="level2">
+<h2 class="anchored" data-anchor-id="step-1-copernicus-browser">Step 1: Copernicus Browser</h2>
+<p>To get first impression of what wildfires look like on Sentinel-2 imagery, take a look at the extensive forest fires in Canada <a href="https://link.dataspace.copernicus.eu/shk">here</a> - the link will take you directly to the same scene as the image below, in the Copernicus Browser.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="./img/copernicus_browser_canada_wildfire.jpg" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">True Color Sentinel-2 image of Wildfires near Lac de la Frégate, Quebec, Canada</figcaption>
+</figure>
 </div>
-<p>Download this composite and visualize it:</p>
-<div class="cell" data-execution_count="9">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>composite.download(<span class="st">"load-composite.nc"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>You can experiment with different visualizations in the layer list in the sidebar. Which one provides the most intuitive view of the fire activity? Probably the <a href="https://link.dataspace.copernicus.eu/sl6">SWIR visualisation</a>, which is based on bands B12, B8A and B4. It shows the thermal activity of the fire and partly avoids the obscuring effect of the smoke.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="./img/copernicus_browser_canada_wildfire_swir.jpg" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">SWIR composite Sentinel-2 image of wildfires near Lac de la Frégate, Quebec, Canada</figcaption>
+</figure>
 </div>
-<div class="cell" data-execution_count="10">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>ds <span class="op">=</span> xarray.load_dataset(<span class="st">"load-composite.nc"</span>)</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert xarray DataSet to a (bands, x, y) DataArray</span></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> ds[[<span class="st">"B04"</span>, <span class="st">"B03"</span>, <span class="st">"B02"</span>]].to_array(dim<span class="op">=</span><span class="st">"bands"</span>)</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(ncols<span class="op">=</span><span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">4</span>, <span class="dv">4</span>), dpi<span class="op">=</span><span class="dv">90</span>)</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>data.plot.imshow(vmin<span class="op">=</span><span class="dv">0</span>, vmax<span class="op">=</span><span class="dv">2000</span>, ax<span class="op">=</span>ax)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="10">
-<pre><code>&lt;matplotlib.image.AxesImage at 0x7f5288567fd0&gt;</code></pre>
+<p>It is also possible to create new custom visualisations using the Browser’s composite tool: Here you can drag and drop individual image bands onto the Red, Green and Blue channels or the operands of a spectral index.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="./img/copernicus_browser_canada_wildfire_swir_drag_and_drop.jpg" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Here you can test various visualizations in a graphical interface</figcaption>
+</figure>
 </div>
-<div class="cell-output cell-output-display">
-<p><img src="Load_Collection_files/figure-html/cell-10-output-2.png" class="img-fluid"></p>
+<p>Finally, you can edit the actual visualisation code in Javascript by using the Custom Script window. Custom scripts - or <a href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Evalscript.html">evalscripts</a> as we call them when editing API requests - are short pieces of code that combine a mathematical operation performed on each pixel of the image (essentially a spectral index) and a visualisation that we perform on the results (a palette). Each visualisation layer has its own custom script that can be read and written directly in the Browser.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="./img/copernicus_browser_canada_wildfire_swir_custom_script.jpg" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Here you can edit the visualization code directly</figcaption>
+</figure>
 </div>
+<p>In addition, there is a large repository of <a href="https://custom-scripts.sentinel-hub.com/">Custom Scripts</a> that contains evalscript code for many different use cases across a range of satellite datasets and application areas.</p>
+<section id="visualizing-wildfire-effects-with-the-burnt-area-visualization-custom-script" class="level3">
+<h3 class="anchored" data-anchor-id="visualizing-wildfire-effects-with-the-burnt-area-visualization-custom-script">Visualizing wildfire effects with the Burnt Area Visualization Custom Script</h3>
+<p>The <a href="https://custom-scripts.sentinel-hub.com/sentinel-2/burned_area_ms/">Burnt Area Visualization Custom Script</a> combines the Normalized Differential Vegetation Index (NDVI), the Normalized Difference Moisture Index (NDMI) and a custom index using bands B12, B11 and B08 to detect burnt areas.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode javascript code-with-copy"><code class="sourceCode javascript"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">//VERSION=3</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co">// Burned area detection</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">// Author: Monja B. Šebela</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">setup</span>() {</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>        <span class="dt">input</span><span class="op">:</span> [<span class="st">"B02"</span><span class="op">,</span> <span class="st">"B03"</span><span class="op">,</span> <span class="st">"B04"</span><span class="op">,</span> <span class="st">"B08"</span><span class="op">,</span> <span class="st">"B11"</span><span class="op">,</span> <span class="st">"B12"</span><span class="op">,</span> <span class="st">"dataMask"</span>]<span class="op">,</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>        <span class="dt">output</span><span class="op">:</span> { <span class="dt">bands</span><span class="op">:</span> <span class="dv">4</span> }</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>      }<span class="op">;</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">evaluatePixel</span>(samples) {</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> NDWI<span class="op">=</span><span class="fu">index</span>(samples<span class="op">.</span><span class="at">B03</span><span class="op">,</span> samples<span class="op">.</span><span class="at">B08</span>)<span class="op">;</span> </span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> NDVI<span class="op">=</span><span class="fu">index</span>(samples<span class="op">.</span><span class="at">B08</span><span class="op">,</span> samples<span class="op">.</span><span class="at">B04</span>)<span class="op">;</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> INDEX<span class="op">=</span> ((samples<span class="op">.</span><span class="at">B11</span> <span class="op">-</span> samples<span class="op">.</span><span class="at">B12</span>) <span class="op">/</span> (samples<span class="op">.</span><span class="at">B11</span> <span class="op">+</span> samples<span class="op">.</span><span class="at">B12</span>))<span class="op">+</span>(samples<span class="op">.</span><span class="at">B08</span>)<span class="op">;</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>((INDEX<span class="op">&gt;</span><span class="fl">0.1</span>)<span class="op">||</span>(samples<span class="op">.</span><span class="at">B02</span><span class="op">&gt;</span><span class="fl">0.1</span>)<span class="op">||</span>(samples<span class="op">.</span><span class="at">B11</span><span class="op">&lt;</span><span class="fl">0.1</span>)<span class="op">||</span>(NDVI<span class="op">&gt;</span><span class="fl">0.3</span>)<span class="op">||</span>(NDWI <span class="op">&gt;</span> <span class="fl">0.1</span>)){</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span>[<span class="fl">2.5</span><span class="op">*</span>samples<span class="op">.</span><span class="at">B04</span><span class="op">,</span> <span class="fl">2.5</span><span class="op">*</span>samples<span class="op">.</span><span class="at">B03</span><span class="op">,</span> <span class="fl">2.5</span><span class="op">*</span>samples<span class="op">.</span><span class="at">B02</span><span class="op">,</span> samples<span class="op">.</span><span class="at">dataMask</span>]</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> {</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> [<span class="dv">1</span><span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="dv">0</span><span class="op">,</span> samples<span class="op">.</span><span class="at">dataMask</span>]</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The script creates a small decision tree that combines different thresholds applied to these indices and highlights the areas identified as burnt in red. Copy the script into the Custom Script panel of the Copernicus Browser to see how the burnt areas are highlighted. Try adjusting the individual thresholds to see if you can improve the detection of burnt area!</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="./img/copernicus_browser_canada_wildfire_custom_script.jpg" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Visualization of burnt area in Canada using a custom script</figcaption>
+</figure>
 </div>
-<p>Note how the clouds influence this composite: while the cloud shadows are eliminated by the <code>max</code> operation, the bright clouds ruin the composite image.</p>
+<p>In the next step, you will examine <a href="https://link.dataspace.copernicus.eu/951">this</a> time series of burnt area from the example of the 2023 wildfires near Alexandropouli, Greece:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="./img/copernicus_browser_greece_wildfire_custom_script.jpg" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Visualization of burnt area in Greece using a custom script</figcaption>
+</figure>
+</div>
+<p>Note that the custom script in the Browser has an additional output: in the setup section, besides “default”, “burnMask” is also defined, with the values calculated from the decision tree: 0 if the area is not burned, 1 if it is burnt. This property of the script will be useful when we switch to Requests Builder and Jupyter Notebooks.</p>
 </section>
-<section id="cloud-masking" class="level2">
-<h2 class="anchored" data-anchor-id="cloud-masking">Cloud masking</h2>
-<p>In general, to make the raw data more useful, we typically want remove the cloud pixels and only work with non-cloud data. It is very common for earth observation data to have separate masking layers that for instance indicate whether a pixel is covered by a (type of) cloud or not. For Sentinel-2, one such layer is the “scene classification” layer (band name “SCL”) generated by the Sen2Cor algorithm.</p>
-<p>With openEO and the openEO Python client library, we can take this “SCL” band (which we already included before in the <code>load_collection</code> call) and apply cloud masking as follows.</p>
-<p>First we build a binary cloud mask from the SCL values 3 (cloud shadows), 8 (cloud medium probability) and 9 (cloud high probability):</p>
-<div class="cell" data-execution_count="11">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>scl_band <span class="op">=</span> s2_cube.band(<span class="st">"SCL"</span>)</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>cloud_mask <span class="op">=</span> (scl_band <span class="op">==</span> <span class="dv">3</span>) <span class="op">|</span> (scl_band <span class="op">==</span> <span class="dv">8</span>) <span class="op">|</span> (scl_band <span class="op">==</span> <span class="dv">9</span>)</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: TEMP WORKAROUND FOR OFFSET ERROR ON SCL BAND</span></span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>cloud_mask <span class="op">=</span> (scl_band <span class="op">==</span> <span class="dv">3</span> <span class="op">-</span> <span class="dv">1000</span>) <span class="op">|</span> (scl_band <span class="op">==</span> <span class="dv">8</span> <span class="op">-</span> <span class="dv">1000</span>) <span class="op">|</span> (scl_band <span class="op">==</span> <span class="dv">9</span> <span class="op">-</span> <span class="dv">1000</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="step-2-request-builder" class="level2">
+<h2 class="anchored" data-anchor-id="step-2-request-builder">Step 2: Request Builder</h2>
+<p>Request Builder is an online graphical interface to the Sentinel Hub API-s. This tool makes it easier to create and debug API requests, and supports the export of the resulting code in various programming languages. In this tutorial, we will create a <a href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Process.html">Process API</a> request for downloading raster images of the burnt area from the location of the wildfire in Greece that we have already examined in the Browser. Just like a <a href="https://github.com/eu-cdse/notebook-samples/blob/main/sentinelhub/introduction_to_SH_APIs.ipynb">Process API request in code</a>, a request created with the Requests Builder consists of 5 main parts: - <code>Data Collection</code> - <code>Time Range</code> - <code>Area of Interest</code> - <code>Output</code> - <code>Evalscript</code></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="./img/request_builder_wildfire_script.jpg" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Screenshot of Requests Builder for the Alexandropouli wildfire test location</figcaption>
+</figure>
 </div>
-<p>Before we can apply this mask to the cube we have to resample it, as the “SCL” layer has a “ground sample distance” of 20 meter, while it is 10 meter for the “B02”, “B03” and “B04” bands. We can easily do the resampling by referring directly to the data cube to mask.</p>
-<div class="cell" data-execution_count="12">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>cloud_mask <span class="op">=</span> cloud_mask.resample_cube_spatial(s2_cube)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>These can be set individually in the interface. Use the following settings for the Alexandropouli Wildfire example here:</p>
+<ul>
+<li><code>Data Collection</code>: sentinel-2 l2a</li>
+<li><code>Time Range</code>: From 12.09.2023 to 13.09.2023</li>
+<li><code>Area of Interest</code>: [25.558398, 40.806995, 26.298798, 41.270524]</li>
+</ul>
+<p>Click <code>Parse</code> to parse the area of interest - it should be displayed in the map window and zoom in to the rectangle of interest.</p>
+<ul>
+<li><code>Evalscript</code>: use the evalscript from the previous Copernicus Browser example:</li>
+</ul>
+<div class="sourceCode" id="cb2"><pre class="sourceCode javascript code-with-copy"><code class="sourceCode javascript"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">setup</span>() {</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>        <span class="dt">input</span><span class="op">:</span> [<span class="st">"B02"</span><span class="op">,</span> <span class="st">"B03"</span><span class="op">,</span> <span class="st">"B04"</span><span class="op">,</span> <span class="st">"B08"</span><span class="op">,</span> <span class="st">"B11"</span><span class="op">,</span> <span class="st">"B12"</span><span class="op">,</span> <span class="st">"dataMask"</span>]<span class="op">,</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>        <span class="dt">output</span><span class="op">:</span> [</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>            { <span class="dt">id</span><span class="op">:</span> <span class="st">"default"</span><span class="op">,</span> <span class="dt">bands</span><span class="op">:</span> <span class="dv">4</span> }<span class="op">,</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>            { <span class="dt">id</span><span class="op">:</span> <span class="st">"burnMask"</span><span class="op">,</span> <span class="dt">bands</span><span class="op">:</span> <span class="dv">1</span><span class="op">,</span> <span class="dt">sampleType</span><span class="op">:</span> <span class="st">"UINT8"</span> }<span class="op">,</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>        ]</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>      }<span class="op">;</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">evaluatePixel</span>(samples) {</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> NDWI<span class="op">=</span><span class="fu">index</span>(samples<span class="op">.</span><span class="at">B03</span><span class="op">,</span> samples<span class="op">.</span><span class="at">B08</span>)<span class="op">;</span> </span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> NDVI<span class="op">=</span><span class="fu">index</span>(samples<span class="op">.</span><span class="at">B08</span><span class="op">,</span> samples<span class="op">.</span><span class="at">B04</span>)<span class="op">;</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> INDEX<span class="op">=</span> ((samples<span class="op">.</span><span class="at">B11</span> <span class="op">-</span> samples<span class="op">.</span><span class="at">B12</span>) <span class="op">/</span> (samples<span class="op">.</span><span class="at">B11</span> <span class="op">+</span> samples<span class="op">.</span><span class="at">B12</span>))<span class="op">+</span>(samples<span class="op">.</span><span class="at">B08</span>)<span class="op">;</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>((INDEX<span class="op">&gt;</span><span class="fl">0.1</span>)<span class="op">||</span>(samples<span class="op">.</span><span class="at">B02</span><span class="op">&gt;</span><span class="fl">0.1</span>)<span class="op">||</span>(samples<span class="op">.</span><span class="at">B11</span><span class="op">&lt;</span><span class="fl">0.1</span>)<span class="op">||</span>(NDVI<span class="op">&gt;</span><span class="fl">0.3</span>)<span class="op">||</span>(NDWI <span class="op">&gt;</span> <span class="fl">0.1</span>)){</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span>{</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>            <span class="cf">default</span><span class="op">:</span>[<span class="fl">2.5</span><span class="op">*</span>samples<span class="op">.</span><span class="at">B04</span><span class="op">,</span> <span class="fl">2.5</span><span class="op">*</span>samples<span class="op">.</span><span class="at">B03</span><span class="op">,</span> <span class="fl">2.5</span><span class="op">*</span>samples<span class="op">.</span><span class="at">B02</span><span class="op">,</span> samples<span class="op">.</span><span class="at">dataMask</span>]<span class="op">,</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>            <span class="dt">burnMask</span><span class="op">:</span>[<span class="dv">0</span>]</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> {</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>        <span class="cf">default</span><span class="op">:</span> [<span class="dv">1</span><span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="dv">0</span><span class="op">,</span> samples<span class="op">.</span><span class="at">dataMask</span>]<span class="op">,</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>        <span class="dt">burnMask</span><span class="op">:</span> [<span class="dv">1</span>]}</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li><code>Output</code>: Remember, the evalscript has two different outputs, <code>default</code> with 4 bands (Red, Green, Blue and Transparency/Data Mask), and <code>burnMask</code>, which returns 1 where the area is burnt and 0 where it is not. We need to set up the output so that a raster is created from these two outputs for each image. As the area of interest is rather large and the limit for a single request is 2500×2500 pixels, we will reduce the resolution to 40 meters. First click on the <code>resolution</code> tab, then select
+<ul>
+<li><code>Res X in meters</code>: 40</li>
+<li><code>Res Y in meters</code>: 40</li>
+<li><code>Image format</code>: TIFF</li>
+<li><code>Identifier</code>: default</li>
+</ul></li>
+</ul>
+<p>Now you need to click on the <code>Add Response</code> button to create a second output dataset. This should have the same format and be named according to the second output in the evalscript: - <code>Image format</code>: TIFF - <code>Identifier</code>: burnMask</p>
+<p>Finally, you must set the language of the Request Preview to <code>python-requests</code> in the dropdown menu. This will create request code you can later use in the Jupyter Notebook as well.</p>
+<p>If you now click on <code>Send request</code>, you will be prompted to save the request and download the response. The response is a .tar file containing <code>default.tif</code> and <code>burnMask.tif</code>. To download raster datasets of the burnt area for a time series, you only need to change the <code>Time Range</code> parameter and repeat running the request. Possible dates can be the following:</p>
+<ul>
+<li>03.08.2023 - 04.08.2023</li>
+<li>23.08.2023 - 24.08.2023</li>
+<li>28.08.2023 - 29.08.2023</li>
+<li>02.09.2023 - 03.08.2023</li>
+<li>12.08.2023 - 13.08.2023</li>
+</ul>
+<p>The result is a series of TIFF files, including burnt/non-burnt masks, which you can process locally in GIS software to calculate quantitative results. But more importantly, you can copy the code from the Request Preview window and use it in a Jupyter Notebook of the same test case.</p>
+</section>
+<section id="step-3-jupyter-notebooks" class="level2">
+<h2 class="anchored" data-anchor-id="step-3-jupyter-notebooks">Step 3: Jupyter notebooks</h2>
+<section id="importing-necessary-libraries" class="level3">
+<h3 class="anchored" data-anchor-id="importing-necessary-libraries">Importing necessary libraries</h3>
+<p>To run this example, you do not need any additional GIS-specific libraries. You can of course improve the workflow with additional libraries, but for someone new to earth observation coding, this basic notebook could be a good place to start.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> oauthlib.oauth2 <span class="im">import</span> BackendApplicationClient</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> requests_oauthlib <span class="im">import</span> OAuth2Session</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> tarfile</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> getpass</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Apply the cloud mask, and build the composite again:</p>
-<div class="cell" data-execution_count="14">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>cube_masked <span class="op">=</span> s2_cube.mask(cloud_mask)</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>composite_masked <span class="op">=</span> cube_masked.max_time()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="credentials" class="level3">
+<h3 class="anchored" data-anchor-id="credentials">Credentials</h3>
+<p>You can obtain credentials for the Sentinel Hub services (<code>client_id</code> &amp; <code>client_secret</code>) by navigating to your <a href="https://shapps.dataspace.copernicus.eu/dashboard/#/">Dashboard</a>. In the User Settings, you can create a new OAuth Client to generate these credentials. More detailed instructions can be found on the corresponding <a href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Overview/Authentication.html">documentation page</a>.</p>
+<p>Once you run the next cell, you will be prompted to enter the <code>client_id</code> and <code>client_secret</code>.</p>
+<div class="cell" data-vscode="{&quot;languageId&quot;:&quot;plaintext&quot;}">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Your client credentials</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>client_id <span class="op">=</span> getpass.getpass(<span class="st">"Enter your SentinelHub client id"</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>client_secret <span class="op">=</span> getpass.getpass(<span class="st">"Enter your SentinelHub client secret"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Download the result and visualize it.</p>
-<div class="cell" data-execution_count="15">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>composite_masked.download(<span class="st">"load-composite-masked.nc"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>If you have the credentials, you will need a session token to make requests. This token is generated in the following function.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> getauth_token():</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Create a session</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    client <span class="op">=</span> BackendApplicationClient(client_id<span class="op">=</span>client_id)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    oauth <span class="op">=</span> OAuth2Session(client<span class="op">=</span>client)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Get token for the session</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    token <span class="op">=</span> oauth.fetch_token(</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>        token_url<span class="op">=</span><span class="st">"https://identity.cloudferro.com/auth/realms/CDSE/protocol/openid-connect/token"</span>,</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>        client_id<span class="op">=</span>client_id,</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>        client_secret<span class="op">=</span>client_secret,</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># All requests using this session will have an access token automatically added</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> oauth</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-execution_count="22">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>ds <span class="op">=</span> xarray.load_dataset(<span class="st">"load-composite-masked.nc"</span>)</span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert xarray DataSet to a (bands, x, y) DataArray</span></span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> ds[[<span class="st">"B04"</span>, <span class="st">"B03"</span>, <span class="st">"B02"</span>]].to_array(dim<span class="op">=</span><span class="st">"bands"</span>)</span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(ncols<span class="op">=</span><span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">4</span>, <span class="dv">4</span>), dpi<span class="op">=</span><span class="dv">90</span>)</span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>data.plot.imshow(vmin<span class="op">=</span><span class="dv">0</span>, vmax<span class="op">=</span><span class="dv">2000</span>, ax<span class="op">=</span>ax)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display">
-<p><img src="Load_Collection_files/figure-html/cell-15-output-1.png" class="img-fluid"></p>
+</section>
+</section>
+<section id="defining-time-slots" class="level2">
+<h2 class="anchored" data-anchor-id="defining-time-slots">Defining time slots</h2>
+<p>Using the Requests Builder and the Browser, we can see all the images acquisitions that match our criteria. In the following cell, we enter these time slots to create a time series and understand the extent of the damage caused.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>slots <span class="op">=</span> [</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"2023-08-03"</span>, <span class="st">"2023-08-04"</span>),</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"2023-08-23"</span>, <span class="st">"2023-08-24"</span>),</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"2023-08-28"</span>, <span class="st">"2023-08-29"</span>),</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"2023-09-02"</span>, <span class="st">"2023-09-03"</span>),</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"2023-09-12"</span>, <span class="st">"2023-09-13"</span>),</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Time Slots:</span><span class="ch">\n</span><span class="st">"</span>)</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> slot <span class="kw">in</span> slots:</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(slot[<span class="dv">0</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>Next, we can enter the evalscript for Burnt Area Mapping that we used earlier in the Browser and Requests Builder - feel free to copy it from the Browser window.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>evalscript <span class="op">=</span> <span class="st">"""</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="st">//VERSION=3</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="st">// Burneed area detection</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="st">// Author: Monja B. Šebela</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="st">function setup() {</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="st">    return {</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="st">        input: ["B02", "B03", "B04", "B08", "B11", "B12", "dataMask"],</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="st">        output: [</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="st">            { id: "default", bands: 3 },</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="st">            { id: "burnMask", bands: 1, sampleType: "UINT8" },</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="st">        ]</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="st">      };</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="st">function evaluatePixel(samples) {</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="st">    var NDWI=index(samples.B03, samples.B08); </span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="st">    var NDVI=index(samples.B08, samples.B04);</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a><span class="st">    var INDEX= ((samples.B11 - samples.B12) / (samples.B11 + samples.B12))+(samples.B08);</span></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a><span class="st">    if((INDEX&gt;0.15)||(samples.B02&gt;0.1)||(samples.B11&lt;0.1)||(NDVI&gt;0.3)||(NDWI &gt; 0.1)){</span></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a><span class="st">        return{</span></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a><span class="st">            default:[2.5*samples.B04, 2.5*samples.B03, 2.5*samples.B02, samples.dataMask],</span></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a><span class="st">            burnMask:[0]</span></span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a><span class="st">        }</span></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a><span class="st">    }</span></span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a><span class="st">    else {</span></span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a><span class="st">    return {</span></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a><span class="st">        default: [1, 0, 0],</span></span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a><span class="st">        burnMask: [1]}</span></span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a><span class="st">    }</span></span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>The cloud masking clearly helped to build a better composte. Note however that there are still some artifacts due to the quality of the SCL band and our simple cloud mask.</p>
+<p>Here, we have defined a function that contains the request code made in the Requests Builder and references the evalscript defined above. Since we are requesting multiple files in the output, we can expect a compressed .tar file containing the files.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_request(slot):</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    request <span class="op">=</span> {</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>        <span class="st">"input"</span>: {</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>            <span class="st">"bounds"</span>: {</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>                <span class="st">"properties"</span>: {<span class="st">"crs"</span>: <span class="st">"http://www.opengis.net/def/crs/OGC/1.3/CRS84"</span>},</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>                <span class="st">"bbox"</span>: [<span class="fl">25.558398</span>, <span class="fl">40.806995</span>, <span class="fl">26.298798</span>, <span class="fl">41.270524</span>],</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>            },</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>            <span class="st">"data"</span>: [</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>                {</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"dataFilter"</span>: {</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"timeRange"</span>: {</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>                            <span class="st">"from"</span>: slot[<span class="dv">0</span>] <span class="op">+</span> <span class="st">"T00:00:00Z"</span>,</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>                            <span class="st">"to"</span>: slot[<span class="dv">1</span>] <span class="op">+</span> <span class="st">"T00:00:00Z"</span>,</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>                        }</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>                    },</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"type"</span>: <span class="st">"sentinel-2-l2a"</span>,</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>                }</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>            ],</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>        <span class="st">"output"</span>: {</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>            <span class="st">"width"</span>: <span class="fl">1247.7098306086236</span>,</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>            <span class="st">"height"</span>: <span class="fl">1031.9962449583074</span>,</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>            <span class="st">"responses"</span>: [</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>                {</span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"identifier"</span>: <span class="st">"default"</span>,</span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"format"</span>: {<span class="st">"type"</span>: <span class="st">"image/tiff"</span>},</span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>                },</span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>                {</span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"identifier"</span>: <span class="st">"burnMask"</span>,</span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"format"</span>: {<span class="st">"type"</span>: <span class="st">"image/tiff"</span>},</span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>                },</span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>            ],</span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>        <span class="st">"evalscript"</span>: evalscript,</span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>    url <span class="op">=</span> <span class="st">"https://sh.dataspace.copernicus.eu/api/v1/process"</span></span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a>    response <span class="op">=</span> oauth.post(url, json<span class="op">=</span>request, headers<span class="op">=</span>{<span class="st">"Accept"</span>: <span class="st">"application/tar"</span>})</span>
+<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a>    <span class="co"># print(response.status_code)</span></span>
+<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> response.status_code <span class="kw">in</span> (<span class="dv">200</span>,):</span>
+<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a>        <span class="cf">with</span> <span class="bu">open</span>(<span class="ss">f"tarfile_wildfire_</span><span class="sc">{</span>slot[<span class="dv">0</span>]<span class="sc">}</span><span class="ss">.tar"</span>, <span class="st">"wb"</span>) <span class="im">as</span> tarfile:</span>
+<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a>            tarfile.write(response.content)</span>
+<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> response</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now, we are ready to make the request for each of the previously defined time slots. We first get the token created with the OAuth client before making the request and loop through the request for all time slots. This cell might take 10-20 seconds as this is where the requests are actually performed. If it runs successfully, we should see that the compressed .tar files are created in the local folder.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>oauth <span class="op">=</span> getauth_token()</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>responses <span class="op">=</span> [get_request(slot) <span class="cf">for</span> slot <span class="kw">in</span> slots]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>To further display and analyse the images further, we need to extract the files. This cell does exactly that and we can see the names of the files in the extracted folder as a result.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> slot <span class="kw">in</span> slots:</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># open file</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">file</span> <span class="op">=</span> tarfile.<span class="bu">open</span>(<span class="ss">f"tarfile_wildfire_</span><span class="sc">{</span>slot[<span class="dv">0</span>]<span class="sc">}</span><span class="ss">.tar"</span>)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># print file names</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="bu">file</span>.getnames())</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># extract files</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    <span class="bu">file</span>.extractall(<span class="ss">f"./wildfire_</span><span class="sc">{</span>slot[<span class="dv">0</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># close file</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>    <span class="bu">file</span>.close()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now, we create a series of plots to display the images we have requested. If we look at them together, we can see how the damaged area has increased over time.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>ncols <span class="op">=</span> <span class="dv">3</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>nrows <span class="op">=</span> <span class="dv">2</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>aspect_ratio <span class="op">=</span> <span class="dv">1000</span> <span class="op">/</span> <span class="dv">1000</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>subplot_kw <span class="op">=</span> {<span class="st">"xticks"</span>: [], <span class="st">"yticks"</span>: [], <span class="st">"frame_on"</span>: <span class="va">False</span>}</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    ncols<span class="op">=</span>ncols,</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    nrows<span class="op">=</span>nrows,</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    figsize<span class="op">=</span>(<span class="dv">5</span> <span class="op">*</span> ncols <span class="op">*</span> aspect_ratio, <span class="dv">5</span> <span class="op">*</span> nrows),</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>    subplot_kw<span class="op">=</span>subplot_kw,</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> idx, slot <span class="kw">in</span> <span class="bu">enumerate</span>(slots):</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>    img <span class="op">=</span> plt.imread(<span class="ss">f"wildfire_</span><span class="sc">{</span>slot[<span class="dv">0</span>]<span class="sc">}</span><span class="ss">/default.tif"</span>)</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>    ax <span class="op">=</span> axs[idx <span class="op">//</span> ncols][idx <span class="op">%</span> ncols]</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>    ax.imshow(img)</span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>    ax.set_title(<span class="ss">f"</span><span class="sc">{</span>slot[<span class="dv">0</span>]<span class="sc">}</span><span class="ss">  -  </span><span class="sc">{</span>slot[<span class="dv">1</span>]<span class="sc">}</span><span class="ss">"</span>, fontsize<span class="op">=</span><span class="dv">10</span>)</span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We make a similar visualization with the binary mask that represents the burnt area.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>ncols <span class="op">=</span> <span class="dv">3</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>nrows <span class="op">=</span> <span class="dv">2</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>aspect_ratio <span class="op">=</span> <span class="dv">1000</span> <span class="op">/</span> <span class="dv">1000</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>subplot_kw <span class="op">=</span> {<span class="st">"xticks"</span>: [], <span class="st">"yticks"</span>: [], <span class="st">"frame_on"</span>: <span class="va">False</span>}</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    ncols<span class="op">=</span>ncols,</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    nrows<span class="op">=</span>nrows,</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    figsize<span class="op">=</span>(<span class="dv">5</span> <span class="op">*</span> ncols <span class="op">*</span> aspect_ratio, <span class="dv">5</span> <span class="op">*</span> nrows),</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    subplot_kw<span class="op">=</span>subplot_kw,</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> idx, slot <span class="kw">in</span> <span class="bu">enumerate</span>(slots):</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>    img <span class="op">=</span> plt.imread(<span class="ss">f"wildfire_</span><span class="sc">{</span>slot[<span class="dv">0</span>]<span class="sc">}</span><span class="ss">/burnMask.tif"</span>)</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>    ax <span class="op">=</span> axs[idx <span class="op">//</span> ncols][idx <span class="op">%</span> ncols]</span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>    ax.imshow(img, cmap<span class="op">=</span><span class="st">"gray"</span>)</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>    ax.set_title(<span class="ss">f"</span><span class="sc">{</span>slot[<span class="dv">0</span>]<span class="sc">}</span><span class="ss">  -  </span><span class="sc">{</span>slot[<span class="dv">1</span>]<span class="sc">}</span><span class="ss">"</span>, fontsize<span class="op">=</span><span class="dv">10</span>)</span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>To calculate the burnt area in square meters, we perform a simple count of the pixels labelled as burnt area. From the binary burnMask, we can define a function that calculates the number of pixels that have been classified as burnt regions and multiplies this by the resolution to get the area. The next cell runs this function that takes the mask and the resolution (in meters) as the input and outputs the total area for each time slot.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> burnt_area(burnMask, resolution):</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    burn_pixel_count <span class="op">=</span> np.<span class="bu">sum</span>(burnMask)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    burnt_area <span class="op">=</span> burn_pixel_count <span class="op">*</span> (resolution <span class="op">*</span> resolution) <span class="op">/</span> <span class="dv">1000000</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> burnt_area</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>burnt_area_arr <span class="op">=</span> []</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> idx, slot <span class="kw">in</span> <span class="bu">enumerate</span>(slots):</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    burnMask <span class="op">=</span> plt.imread(<span class="ss">f"wildfire_</span><span class="sc">{</span>slot[<span class="dv">0</span>]<span class="sc">}</span><span class="ss">/burnMask.tif"</span>)</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    burnt_area_arr.append(burnt_area(burnMask, resolution<span class="op">=</span><span class="dv">50</span>))</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f"The total burnt area is approximately </span><span class="sc">{</span><span class="bu">round</span>(burnt_area(burnMask,resolution <span class="op">=</span> <span class="dv">50</span>),<span class="dv">1</span>)<span class="sc">}</span><span class="ss"> km</span><span class="ch">\u00b2</span><span class="ss">"</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We can visualise the increasing damaged area by plotting these burnt pixels on a simple line chart as shown below.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>xlabels <span class="op">=</span> [slot[<span class="dv">0</span>] <span class="cf">for</span> slot <span class="kw">in</span> slots]</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> <span class="bu">range</span>(<span class="bu">len</span>(slots))</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>plt.plot(<span class="bu">range</span>(<span class="bu">len</span>(slots)), burnt_area_arr)</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Time Series of area burnt in the wildfires."</span>)</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>plt.xticks(np.arange(<span class="dv">0</span>, <span class="dv">5</span>, step<span class="op">=</span><span class="dv">1</span>), xlabels, rotation<span class="op">=</span><span class="dv">30</span>, ha<span class="op">=</span><span class="st">"center"</span>)</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"Time slots"</span>)</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"Area burnt (in $km^2$)"</span>)</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="summary" class="level2">
+<h2 class="anchored" data-anchor-id="summary">Summary</h2>
+<p>This was a brief guide on how to go from viewing satellite imagery in the Copernicus Browser using <a href="https://custom-scripts.sentinel-hub.com/custom-scripts/">Custom Scripts</a> and requests from the <a href="https://shapps.dataspace.copernicus.eu/requests-builder/">Requests Builder</a> to preparing a Jupyter Notebook to begin your analysis. From here, you can analyse the pixels, derive statistics and create a workflow that is suitable for your problem. The next step could be to familiarize yourself with various other Sentinel Hub API-s, using <a href="https://github.com/eu-cdse/notebook-samples/blob/main/sentinelhub/introduction_to_SH_APIs.ipynb">this notebook example</a>. You can find more information about the different APIs and various examples in the <a href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub.html">documentation</a>. Check out the <a href="https://custom-scripts.sentinel-hub.com/custom-scripts/">Custom Scripts Repository</a> for more examples of evalscripts for a wide range of applications.</p>
 
 
 </section>

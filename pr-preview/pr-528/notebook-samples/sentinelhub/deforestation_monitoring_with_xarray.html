@@ -93,6 +93,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+<script src="https://unpkg.com/@jupyter-widgets/html-manager@*/dist/embed-amd.js" crossorigin="anonymous"></script>
 <meta name="zd-site-verification" content="xj9koofr1crilmoclgxsjd">
 <script type="text/javascript">
 
@@ -1236,7 +1240,7 @@ window.onload = function() {
 <li><a href="https://documentation.dataspace.copernicus.eu/Registration.html">A Copernicus Dataspace Ecosystem account</a></li>
 <li>Basic understanding of the Sentinel Hub Processing API (<a href="https://documentation.dataspace.copernicus.eu/notebook-samples/sentinelhub/data_download_process_request.html">Introductory Notebook available here</a>)</li>
 </ul>
-<div class="cell">
+<div class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> getpass</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> datetime <span class="im">import</span> datetime</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
@@ -1264,7 +1268,7 @@ window.onload = function() {
 <p>To obtain your <code>client_id</code> &amp; <code>client_secret</code>, you need to navigate to your <a href="https://shapps.dataspace.copernicus.eu/dashboard/#/">Dashboard</a>. In the User Settings, you can create a new OAuth client to generate these credentials. More detailed instructions can be found on the corresponding <a href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Overview/Authentication.html">documentation page</a>.</p>
 <p>Now that you have your <code>client_id</code> &amp; <code>client_secret</code>, it is recommended to configure a new profile in your Sentinel Hub Python package. Instructions on how to configure your Sentinel Hub Python package can be found <a href="https://sentinelhub-py.readthedocs.io/en/latest/configure.html">here</a>. Following these instructions, you can create a profile specifically for using the package to access Copernicus Data Space Ecosystem data collections. This is useful as changes to the config class in your notebook are usually only temporary and by saving the configuration to your profile, you don’t have to generate new credentials or overwrite/change the default profile every time you run or write a new Jupyter Notebook.</p>
 <p>If you are using the Sentinel Hub Python package for the Copernicus Data Space Ecosystem for the first time, you should create a profile specifically for the Copernicus Data Space Ecosystem. You can do this in the following cell:</p>
-<div class="cell">
+<div class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Only run this cell if you have not created a configuration.</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>config <span class="op">=</span> SHConfig()</span>
@@ -1285,7 +1289,7 @@ window.onload = function() {
 <p>First, we define an area of interest. In this case the area of interest is in the Harz Mountains in Germany since we are aware of substantial forest dieback in recent years.</p>
 <p>The resolution is defined in the units of the coordinate reference system. Because we want to define units in meters, we also need to define the bounding box coordinates in a CRS using meters. We use EPSG:3035 in this case. This CRS is only available for Europe, outside of Europe we could use EPSG:3857 or UTM Zones.</p>
 <p>You can also explore the area of interest in the Copernicus Browser <a href="https://link.dataspace.copernicus.eu/5t1">here</a>.</p>
-<div class="cell">
+<div class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Desired resolution of our data</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>resolution <span class="op">=</span> (<span class="dv">100</span>, <span class="dv">100</span>)</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>bbox_coords <span class="op">=</span> [<span class="fl">10.633501</span>, <span class="fl">51.611195</span>, <span class="fl">10.787234</span>, <span class="fl">51.698098</span>]</span>
@@ -1293,7 +1297,7 @@ window.onload = function() {
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert to 3035 to get crs with meters as units</span></span>
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>bbox <span class="op">=</span> BBox(bbox_coords, CRS(<span class="dv">4326</span>)).transform(epsg)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell">
+<div class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>x, y <span class="op">=</span> bbox.transform(<span class="dv">4326</span>).middle</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Add OSM background</span></span>
@@ -1305,6 +1309,11 @@ window.onload = function() {
 <span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Display</span></span>
 <span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>overview_map</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="4">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"f3b52ac313cc43c2ae934458cd5df933","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
 </div>
 </section>
 <section id="data-access" class="level2">
@@ -1348,7 +1357,7 @@ window.onload = function() {
 <span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>The way we construct the cloud free mosaic is by first filtering all the available acquisitions to only include the ones which contain clear data with <code>samples.filter(validate);</code>. Then we sort the array and get the value at the first quartile of the array. Getting the first quartile instead of the mean or median further reduces the risk that we select a cloudy pixel.</p>
 <p>Finally, we calculate the NDVI using the cloud-free values and return all the desired values as an array.</p>
-<div class="cell">
+<div class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>evalscript_cloudless <span class="op">=</span> <span class="st">"""</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="st">//VERSION=3</span></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="st">function setup() {</span></span>
@@ -1410,7 +1419,7 @@ window.onload = function() {
 <p>This is what we are doing in the next cell. Here, we also start building our time series. To see changes over the years, we want to get cloud-free mosaics for the same 3 months over the years. We do this by defining the three months (June-August) in the <code>interval_of_interest()</code> function. Then we define a function <code>get_request()</code>, which will build the request to the Sentinel Hub API on the Copernicus Data Space Ecosystem.</p>
 <p>In this <a href="https://sentinelhub-py.readthedocs.io/en/latest/reference/sentinelhub.api.process.html#sentinelhub.api.process.SentinelHubRequest"><code>SentinelHubRequest</code></a>, we define the input data, the timeframe, the output type (TIFF), the bounding box, the resolution and where to save the data.</p>
 <p>We define this as a function because we want to make several requests with the changing years being the only input.</p>
-<div class="cell">
+<div class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> interval_of_interest(year):</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> (datetime(year, <span class="dv">6</span>, <span class="dv">1</span>), datetime(year, <span class="dv">9</span>, <span class="dv">1</span>))</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1435,33 +1444,41 @@ window.onload = function() {
 <span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>This cell now creates a request for each of the years, from 2018 to 2023.</p>
-<div class="cell">
+<div class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create a dictionary of requests</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>sh_requests <span class="op">=</span> {}</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> year <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">2018</span>, <span class="dv">2024</span>):</span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    sh_requests[year] <span class="op">=</span> get_request(year)</span>
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>sh_requests</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="7">
+<pre><code>{2018: &lt;sentinelhub.api.process.SentinelHubRequest at 0x2ce21942110&gt;,
+ 2019: &lt;sentinelhub.api.process.SentinelHubRequest at 0x2ce21f88ad0&gt;,
+ 2020: &lt;sentinelhub.api.process.SentinelHubRequest at 0x2ce21f88d90&gt;,
+ 2021: &lt;sentinelhub.api.process.SentinelHubRequest at 0x2ce21f89050&gt;,
+ 2022: &lt;sentinelhub.api.process.SentinelHubRequest at 0x2ce21f89310&gt;,
+ 2023: &lt;sentinelhub.api.process.SentinelHubRequest at 0x2ce21f89890&gt;}</code></pre>
+</div>
 </div>
 <p>The next step is to download the data. This is done with the utility function <code>SentinelHubDownloadClient</code>. It downloads a list of requests in parallel, greatly improving the download speed. Before we can do that, we need to change the format of the requests slightly, which is done in the variable <code>list_of_requests</code>.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>list_of_requests <span class="op">=</span> [request.download_list[<span class="dv">0</span>] <span class="cf">for</span> request <span class="kw">in</span> sh_requests.values()]</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co"># download data with multiple threads</span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> SentinelHubDownloadClient(config<span class="op">=</span>config).download(</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    list_of_requests, max_threads<span class="op">=</span><span class="dv">5</span></span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>list_of_requests <span class="op">=</span> [request.download_list[<span class="dv">0</span>] <span class="cf">for</span> request <span class="kw">in</span> sh_requests.values()]</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co"># download data with multiple threads</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> SentinelHubDownloadClient(config<span class="op">=</span>config).download(</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    list_of_requests, max_threads<span class="op">=</span><span class="dv">5</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The output of the requests do not provide any information about which year the data is from, so we rename the output of each request to the year of the data it represents.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> request_output_path(request):</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Gets the full path to the output from a request</span></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> Path(request.data_folder, request.get_filename_list()[<span class="dv">0</span>])</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Moves and renames the files to the root directory of results</span></span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> year, request <span class="kw">in</span> sh_requests.items():</span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    request_output_path(request).rename(<span class="ss">f"./data/</span><span class="sc">{</span>year<span class="sc">}</span><span class="ss">.tif"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> request_output_path(request):</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Gets the full path to the output from a request</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> Path(request.data_folder, request.get_filename_list()[<span class="dv">0</span>])</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Moves and renames the files to the root directory of results</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> year, request <span class="kw">in</span> sh_requests.items():</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    request_output_path(request).rename(<span class="ss">f"./data/</span><span class="sc">{</span>year<span class="sc">}</span><span class="ss">.tif"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="read-data-with-xarray" class="level2">
@@ -1469,47 +1486,746 @@ window.onload = function() {
 <p>Now we can load the data into <a href="https://docs.xarray.dev/en/stable/">xarray</a>. We use <a href="https://corteva.github.io/rioxarray/html/index.html">rioxarray</a>, an extension for xarray, to load multiple tiffs into a single xarray dataset. xarray is a scalable tool for analysing multidimensional data in Python. This makes xarray ideal for analysing time series data.</p>
 <p>The different files correspond to the time dimension, but xarray does not know which file is which time step. Therefore, we add a pre-processing step in which we parse out the year from the filename and add it as the time dimension for that file.</p>
 <p>The warnings in the output can be safely ignored.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> add_time_dim(xda):</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># This pre-processes the file to add the correct</span></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># year from the filename as the time dimension</span></span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    year <span class="op">=</span> <span class="bu">int</span>(Path(xda.encoding[<span class="st">"source"</span>]).stem)</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> xda.expand_dims(year<span class="op">=</span>[year])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> add_time_dim(xda):</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># This pre-processes the file to add the correct</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># year from the filename as the time dimension</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    year <span class="op">=</span> <span class="bu">int</span>(Path(xda.encoding[<span class="st">"source"</span>]).stem)</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> xda.expand_dims(year<span class="op">=</span>[year])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>tiff_paths <span class="op">=</span> Path(<span class="st">"./data"</span>).glob(<span class="st">"*.tif"</span>)</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>ds_s2 <span class="op">=</span> xr.open_mfdataset(</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    tiff_paths,</span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    engine<span class="op">=</span><span class="st">"rasterio"</span>,</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    preprocess<span class="op">=</span>add_time_dim,</span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    band_as_variable<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>ds_s2 <span class="op">=</span> ds_s2.rename(</span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>    {</span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>        <span class="st">"band_1"</span>: <span class="st">"R"</span>,</span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>        <span class="st">"band_2"</span>: <span class="st">"G"</span>,</span>
-<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>        <span class="st">"band_3"</span>: <span class="st">"B"</span>,</span>
-<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>        <span class="st">"band_4"</span>: <span class="st">"NDVI"</span>,</span>
-<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>ds_s2 <span class="op">=</span> ds_s2 <span class="op">/</span> <span class="dv">10000</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>tiff_paths <span class="op">=</span> Path(<span class="st">"./data"</span>).glob(<span class="st">"*.tif"</span>)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>ds_s2 <span class="op">=</span> xr.open_mfdataset(</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    tiff_paths,</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    engine<span class="op">=</span><span class="st">"rasterio"</span>,</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    preprocess<span class="op">=</span>add_time_dim,</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    band_as_variable<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>ds_s2 <span class="op">=</span> ds_s2.rename(</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>    {</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>        <span class="st">"band_1"</span>: <span class="st">"R"</span>,</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>        <span class="st">"band_2"</span>: <span class="st">"G"</span>,</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>        <span class="st">"band_3"</span>: <span class="st">"B"</span>,</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>        <span class="st">"band_4"</span>: <span class="st">"NDVI"</span>,</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>ds_s2 <span class="op">=</span> ds_s2 <span class="op">/</span> <span class="dv">10000</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>This results in an xarray dataset with 3 coordinates: year, x and y, as well as the data variables returned by the evalscript as data variables in the dataset.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>ds_s2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>ds_s2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="13">
+
+<div><svg style="position: absolute; width: 0; height: 0; overflow: hidden">
+<defs>
+<symbol id="icon-database" viewbox="0 0 32 32">
+<path d="M16 0c-8.837 0-16 2.239-16 5v4c0 2.761 7.163 5 16 5s16-2.239 16-5v-4c0-2.761-7.163-5-16-5z"></path>
+<path d="M16 17c-8.837 0-16-2.239-16-5v6c0 2.761 7.163 5 16 5s16-2.239 16-5v-6c0 2.761-7.163 5-16 5z"></path>
+<path d="M16 26c-8.837 0-16-2.239-16-5v6c0 2.761 7.163 5 16 5s16-2.239 16-5v-6c0 2.761-7.163 5-16 5z"></path>
+</symbol>
+<symbol id="icon-file-text2" viewbox="0 0 32 32">
+<path d="M28.681 7.159c-0.694-0.947-1.662-2.053-2.724-3.116s-2.169-2.030-3.116-2.724c-1.612-1.182-2.393-1.319-2.841-1.319h-15.5c-1.378 0-2.5 1.121-2.5 2.5v27c0 1.378 1.122 2.5 2.5 2.5h23c1.378 0 2.5-1.122 2.5-2.5v-19.5c0-0.448-0.137-1.23-1.319-2.841zM24.543 5.457c0.959 0.959 1.712 1.825 2.268 2.543h-4.811v-4.811c0.718 0.556 1.584 1.309 2.543 2.268zM28 29.5c0 0.271-0.229 0.5-0.5 0.5h-23c-0.271 0-0.5-0.229-0.5-0.5v-27c0-0.271 0.229-0.5 0.5-0.5 0 0 15.499-0 15.5 0v7c0 0.552 0.448 1 1 1h7v19.5z"></path>
+<path d="M23 26h-14c-0.552 0-1-0.448-1-1s0.448-1 1-1h14c0.552 0 1 0.448 1 1s-0.448 1-1 1z"></path>
+<path d="M23 22h-14c-0.552 0-1-0.448-1-1s0.448-1 1-1h14c0.552 0 1 0.448 1 1s-0.448 1-1 1z"></path>
+<path d="M23 18h-14c-0.552 0-1-0.448-1-1s0.448-1 1-1h14c0.552 0 1 0.448 1 1s-0.448 1-1 1z"></path>
+</symbol>
+</defs>
+</svg>
+<style>/* CSS stylesheet for displaying xarray objects in jupyterlab.
+ *
+ */
+
+:root {
+  --xr-font-color0: var(--jp-content-font-color0, rgba(0, 0, 0, 1));
+  --xr-font-color2: var(--jp-content-font-color2, rgba(0, 0, 0, 0.54));
+  --xr-font-color3: var(--jp-content-font-color3, rgba(0, 0, 0, 0.38));
+  --xr-border-color: var(--jp-border-color2, #e0e0e0);
+  --xr-disabled-color: var(--jp-layout-color3, #bdbdbd);
+  --xr-background-color: var(--jp-layout-color0, white);
+  --xr-background-color-row-even: var(--jp-layout-color1, white);
+  --xr-background-color-row-odd: var(--jp-layout-color2, #eeeeee);
+}
+
+html[theme=dark],
+body[data-theme=dark],
+body.vscode-dark {
+  --xr-font-color0: rgba(255, 255, 255, 1);
+  --xr-font-color2: rgba(255, 255, 255, 0.54);
+  --xr-font-color3: rgba(255, 255, 255, 0.38);
+  --xr-border-color: #1F1F1F;
+  --xr-disabled-color: #515151;
+  --xr-background-color: #111111;
+  --xr-background-color-row-even: #111111;
+  --xr-background-color-row-odd: #313131;
+}
+
+.xr-wrap {
+  display: block !important;
+  min-width: 300px;
+  max-width: 700px;
+}
+
+.xr-text-repr-fallback {
+  /* fallback to plain text repr when CSS is not injected (untrusted notebook) */
+  display: none;
+}
+
+.xr-header {
+  padding-top: 6px;
+  padding-bottom: 6px;
+  margin-bottom: 4px;
+  border-bottom: solid 1px var(--xr-border-color);
+}
+
+.xr-header > div,
+.xr-header > ul {
+  display: inline;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.xr-obj-type,
+.xr-array-name {
+  margin-left: 2px;
+  margin-right: 10px;
+}
+
+.xr-obj-type {
+  color: var(--xr-font-color2);
+}
+
+.xr-sections {
+  padding-left: 0 !important;
+  display: grid;
+  grid-template-columns: 150px auto auto 1fr 20px 20px;
+}
+
+.xr-section-item {
+  display: contents;
+}
+
+.xr-section-item input {
+  display: none;
+}
+
+.xr-section-item input + label {
+  color: var(--xr-disabled-color);
+}
+
+.xr-section-item input:enabled + label {
+  cursor: pointer;
+  color: var(--xr-font-color2);
+}
+
+.xr-section-item input:enabled + label:hover {
+  color: var(--xr-font-color0);
+}
+
+.xr-section-summary {
+  grid-column: 1;
+  color: var(--xr-font-color2);
+  font-weight: 500;
+}
+
+.xr-section-summary > span {
+  display: inline-block;
+  padding-left: 0.5em;
+}
+
+.xr-section-summary-in:disabled + label {
+  color: var(--xr-font-color2);
+}
+
+.xr-section-summary-in + label:before {
+  display: inline-block;
+  content: '►';
+  font-size: 11px;
+  width: 15px;
+  text-align: center;
+}
+
+.xr-section-summary-in:disabled + label:before {
+  color: var(--xr-disabled-color);
+}
+
+.xr-section-summary-in:checked + label:before {
+  content: '▼';
+}
+
+.xr-section-summary-in:checked + label > span {
+  display: none;
+}
+
+.xr-section-summary,
+.xr-section-inline-details {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+.xr-section-inline-details {
+  grid-column: 2 / -1;
+}
+
+.xr-section-details {
+  display: none;
+  grid-column: 1 / -1;
+  margin-bottom: 5px;
+}
+
+.xr-section-summary-in:checked ~ .xr-section-details {
+  display: contents;
+}
+
+.xr-array-wrap {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 20px auto;
+}
+
+.xr-array-wrap > label {
+  grid-column: 1;
+  vertical-align: top;
+}
+
+.xr-preview {
+  color: var(--xr-font-color3);
+}
+
+.xr-array-preview,
+.xr-array-data {
+  padding: 0 5px !important;
+  grid-column: 2;
+}
+
+.xr-array-data,
+.xr-array-in:checked ~ .xr-array-preview {
+  display: none;
+}
+
+.xr-array-in:checked ~ .xr-array-data,
+.xr-array-preview {
+  display: inline-block;
+}
+
+.xr-dim-list {
+  display: inline-block !important;
+  list-style: none;
+  padding: 0 !important;
+  margin: 0;
+}
+
+.xr-dim-list li {
+  display: inline-block;
+  padding: 0;
+  margin: 0;
+}
+
+.xr-dim-list:before {
+  content: '(';
+}
+
+.xr-dim-list:after {
+  content: ')';
+}
+
+.xr-dim-list li:not(:last-child):after {
+  content: ',';
+  padding-right: 5px;
+}
+
+.xr-has-index {
+  font-weight: bold;
+}
+
+.xr-var-list,
+.xr-var-item {
+  display: contents;
+}
+
+.xr-var-item > div,
+.xr-var-item label,
+.xr-var-item > .xr-var-name span {
+  background-color: var(--xr-background-color-row-even);
+  margin-bottom: 0;
+}
+
+.xr-var-item > .xr-var-name:hover span {
+  padding-right: 5px;
+}
+
+.xr-var-list > li:nth-child(odd) > div,
+.xr-var-list > li:nth-child(odd) > label,
+.xr-var-list > li:nth-child(odd) > .xr-var-name span {
+  background-color: var(--xr-background-color-row-odd);
+}
+
+.xr-var-name {
+  grid-column: 1;
+}
+
+.xr-var-dims {
+  grid-column: 2;
+}
+
+.xr-var-dtype {
+  grid-column: 3;
+  text-align: right;
+  color: var(--xr-font-color2);
+}
+
+.xr-var-preview {
+  grid-column: 4;
+}
+
+.xr-index-preview {
+  grid-column: 2 / 5;
+  color: var(--xr-font-color2);
+}
+
+.xr-var-name,
+.xr-var-dims,
+.xr-var-dtype,
+.xr-preview,
+.xr-attrs dt {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-right: 10px;
+}
+
+.xr-var-name:hover,
+.xr-var-dims:hover,
+.xr-var-dtype:hover,
+.xr-attrs dt:hover {
+  overflow: visible;
+  width: auto;
+  z-index: 1;
+}
+
+.xr-var-attrs,
+.xr-var-data,
+.xr-index-data {
+  display: none;
+  background-color: var(--xr-background-color) !important;
+  padding-bottom: 5px !important;
+}
+
+.xr-var-attrs-in:checked ~ .xr-var-attrs,
+.xr-var-data-in:checked ~ .xr-var-data,
+.xr-index-data-in:checked ~ .xr-index-data {
+  display: block;
+}
+
+.xr-var-data > table {
+  float: right;
+}
+
+.xr-var-name span,
+.xr-var-data,
+.xr-index-name div,
+.xr-index-data,
+.xr-attrs {
+  padding-left: 25px !important;
+}
+
+.xr-attrs,
+.xr-var-attrs,
+.xr-var-data,
+.xr-index-data {
+  grid-column: 1 / -1;
+}
+
+dl.xr-attrs {
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: 125px auto;
+}
+
+.xr-attrs dt,
+.xr-attrs dd {
+  padding: 0;
+  margin: 0;
+  float: left;
+  padding-right: 10px;
+  width: auto;
+}
+
+.xr-attrs dt {
+  font-weight: normal;
+  grid-column: 1;
+}
+
+.xr-attrs dt:hover span {
+  display: inline-block;
+  background: var(--xr-background-color);
+  padding-right: 10px;
+}
+
+.xr-attrs dd {
+  grid-column: 2;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.xr-icon-database,
+.xr-icon-file-text2,
+.xr-no-icon {
+  display: inline-block;
+  vertical-align: middle;
+  width: 1em;
+  height: 1.5em !important;
+  stroke-width: 0;
+  stroke: currentColor;
+  fill: currentColor;
+}
+</style><pre class="xr-text-repr-fallback">&lt;xarray.Dataset&gt;
+Dimensions:      (year: 6, x: 105, y: 98)
+Coordinates:
+  * year         (year) int64 2018 2019 2020 2021 2022 2023
+  * x            (x) float64 4.365e+06 4.365e+06 ... 4.375e+06 4.375e+06
+  * y            (y) float64 3.177e+06 3.177e+06 ... 3.167e+06 3.167e+06
+    spatial_ref  int32 0
+Data variables:
+    R            (year, y, x) float32 dask.array&lt;chunksize=(1, 9, 105), meta=np.ndarray&gt;
+    G            (year, y, x) float32 dask.array&lt;chunksize=(1, 9, 105), meta=np.ndarray&gt;
+    B            (year, y, x) float32 dask.array&lt;chunksize=(1, 9, 105), meta=np.ndarray&gt;
+    NDVI         (year, y, x) float32 dask.array&lt;chunksize=(1, 9, 105), meta=np.ndarray&gt;
+Attributes:
+    AREA_OR_POINT:           Area
+    TIFFTAG_RESOLUTIONUNIT:  1 (unitless)
+    TIFFTAG_XRESOLUTION:     1
+    TIFFTAG_YRESOLUTION:     1</pre><div class="xr-wrap" style="display:none"><div class="xr-header"><div class="xr-obj-type">xarray.Dataset</div></div><ul class="xr-sections"><li class="xr-section-item"><input id="section-bb7b6563-8c89-4eec-80ba-02660e433cf2" class="xr-section-summary-in" type="checkbox" disabled=""><label for="section-bb7b6563-8c89-4eec-80ba-02660e433cf2" class="xr-section-summary" title="Expand/collapse section">Dimensions:</label><div class="xr-section-inline-details"><ul class="xr-dim-list"><li><span class="xr-has-index">year</span>: 6</li><li><span class="xr-has-index">x</span>: 105</li><li><span class="xr-has-index">y</span>: 98</li></ul></div><div class="xr-section-details"></div></li><li class="xr-section-item"><input id="section-1cbc2fa1-450f-4468-a979-917be6f1d2d9" class="xr-section-summary-in" type="checkbox" checked=""><label for="section-1cbc2fa1-450f-4468-a979-917be6f1d2d9" class="xr-section-summary">Coordinates: <span>(4)</span></label><div class="xr-section-inline-details"></div><div class="xr-section-details"><ul class="xr-var-list"><li class="xr-var-item"><div class="xr-var-name"><span class="xr-has-index">year</span></div><div class="xr-var-dims">(year)</div><div class="xr-var-dtype">int64</div><div class="xr-var-preview xr-preview">2018 2019 2020 2021 2022 2023</div><input id="attrs-14a50446-244a-459d-b5cc-5dd658010970" class="xr-var-attrs-in" type="checkbox" disabled=""><label for="attrs-14a50446-244a-459d-b5cc-5dd658010970" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use href="#icon-file-text2"></use></svg></label><input id="data-59209cb4-ee90-4977-ac3c-1bde6ae8f4d4" class="xr-var-data-in" type="checkbox"><label for="data-59209cb4-ee90-4977-ac3c-1bde6ae8f4d4" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"></dl></div><div class="xr-var-data"><pre>array([2018, 2019, 2020, 2021, 2022, 2023], dtype=int64)</pre></div></li><li class="xr-var-item"><div class="xr-var-name"><span class="xr-has-index">x</span></div><div class="xr-var-dims">(x)</div><div class="xr-var-dtype">float64</div><div class="xr-var-preview xr-preview">4.365e+06 4.365e+06 ... 4.375e+06</div><input id="attrs-efeb9312-761f-4a96-9b00-87108c0dee84" class="xr-var-attrs-in" type="checkbox" disabled=""><label for="attrs-efeb9312-761f-4a96-9b00-87108c0dee84" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use href="#icon-file-text2"></use></svg></label><input id="data-6a2ca444-011a-4910-8734-16c9787524e8" class="xr-var-data-in" type="checkbox"><label for="data-6a2ca444-011a-4910-8734-16c9787524e8" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"></dl></div><div class="xr-var-data"><pre>array([4364933.008071, 4365033.431633, 4365133.855196, 4365234.278759,
+       4365334.702322, 4365435.125885, 4365535.549448, 4365635.973011,
+       4365736.396574, 4365836.820137, 4365937.2437  , 4366037.667263,
+       4366138.090825, 4366238.514388, 4366338.937951, 4366439.361514,
+       4366539.785077, 4366640.20864 , 4366740.632203, 4366841.055766,
+       4366941.479329, 4367041.902892, 4367142.326455, 4367242.750017,
+       4367343.17358 , 4367443.597143, 4367544.020706, 4367644.444269,
+       4367744.867832, 4367845.291395, 4367945.714958, 4368046.138521,
+       4368146.562084, 4368246.985647, 4368347.409209, 4368447.832772,
+       4368548.256335, 4368648.679898, 4368749.103461, 4368849.527024,
+       4368949.950587, 4369050.37415 , 4369150.797713, 4369251.221276,
+       4369351.644839, 4369452.068401, 4369552.491964, 4369652.915527,
+       4369753.33909 , 4369853.762653, 4369954.186216, 4370054.609779,
+       4370155.033342, 4370255.456905, 4370355.880468, 4370456.304031,
+       4370556.727593, 4370657.151156, 4370757.574719, 4370857.998282,
+       4370958.421845, 4371058.845408, 4371159.268971, 4371259.692534,
+       4371360.116097, 4371460.53966 , 4371560.963223, 4371661.386785,
+       4371761.810348, 4371862.233911, 4371962.657474, 4372063.081037,
+       4372163.5046  , 4372263.928163, 4372364.351726, 4372464.775289,
+       4372565.198852, 4372665.622415, 4372766.045977, 4372866.46954 ,
+       4372966.893103, 4373067.316666, 4373167.740229, 4373268.163792,
+       4373368.587355, 4373469.010918, 4373569.434481, 4373669.858044,
+       4373770.281607, 4373870.705169, 4373971.128732, 4374071.552295,
+       4374171.975858, 4374272.399421, 4374372.822984, 4374473.246547,
+       4374573.67011 , 4374674.093673, 4374774.517236, 4374874.940799,
+       4374975.364361, 4375075.787924, 4375176.211487, 4375276.63505 ,
+       4375377.058613])</pre></div></li><li class="xr-var-item"><div class="xr-var-name"><span class="xr-has-index">y</span></div><div class="xr-var-dims">(y)</div><div class="xr-var-dtype">float64</div><div class="xr-var-preview xr-preview">3.177e+06 3.177e+06 ... 3.167e+06</div><input id="attrs-fe82431c-cd6d-4844-9a46-d665826e2190" class="xr-var-attrs-in" type="checkbox" disabled=""><label for="attrs-fe82431c-cd6d-4844-9a46-d665826e2190" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use href="#icon-file-text2"></use></svg></label><input id="data-e2c5f324-dd9b-40b6-992f-98d96fb47944" class="xr-var-data-in" type="checkbox"><label for="data-e2c5f324-dd9b-40b6-992f-98d96fb47944" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"></dl></div><div class="xr-var-data"><pre>array([3176652.710129, 3176552.99504 , 3176453.27995 , 3176353.564861,
+       3176253.849772, 3176154.134682, 3176054.419593, 3175954.704504,
+       3175854.989414, 3175755.274325, 3175655.559236, 3175555.844146,
+       3175456.129057, 3175356.413968, 3175256.698878, 3175156.983789,
+       3175057.2687  , 3174957.55361 , 3174857.838521, 3174758.123432,
+       3174658.408342, 3174558.693253, 3174458.978164, 3174359.263074,
+       3174259.547985, 3174159.832896, 3174060.117806, 3173960.402717,
+       3173860.687628, 3173760.972538, 3173661.257449, 3173561.542359,
+       3173461.82727 , 3173362.112181, 3173262.397091, 3173162.682002,
+       3173062.966913, 3172963.251823, 3172863.536734, 3172763.821645,
+       3172664.106555, 3172564.391466, 3172464.676377, 3172364.961287,
+       3172265.246198, 3172165.531109, 3172065.816019, 3171966.10093 ,
+       3171866.385841, 3171766.670751, 3171666.955662, 3171567.240573,
+       3171467.525483, 3171367.810394, 3171268.095305, 3171168.380215,
+       3171068.665126, 3170968.950037, 3170869.234947, 3170769.519858,
+       3170669.804769, 3170570.089679, 3170470.37459 , 3170370.659501,
+       3170270.944411, 3170171.229322, 3170071.514233, 3169971.799143,
+       3169872.084054, 3169772.368965, 3169672.653875, 3169572.938786,
+       3169473.223697, 3169373.508607, 3169273.793518, 3169174.078429,
+       3169074.363339, 3168974.64825 , 3168874.933161, 3168775.218071,
+       3168675.502982, 3168575.787893, 3168476.072803, 3168376.357714,
+       3168276.642625, 3168176.927535, 3168077.212446, 3167977.497357,
+       3167877.782267, 3167778.067178, 3167678.352089, 3167578.636999,
+       3167478.92191 , 3167379.206821, 3167279.491731, 3167179.776642,
+       3167080.061553, 3166980.346463])</pre></div></li><li class="xr-var-item"><div class="xr-var-name"><span>spatial_ref</span></div><div class="xr-var-dims">()</div><div class="xr-var-dtype">int32</div><div class="xr-var-preview xr-preview">0</div><input id="attrs-121500ef-c08e-4a85-96fc-b370e04a11e9" class="xr-var-attrs-in" type="checkbox"><label for="attrs-121500ef-c08e-4a85-96fc-b370e04a11e9" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use href="#icon-file-text2"></use></svg></label><input id="data-b9753ff9-3e64-4aa2-8162-40713b3777cf" class="xr-var-data-in" type="checkbox"><label for="data-b9753ff9-3e64-4aa2-8162-40713b3777cf" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"><dt><span>crs_wkt :</span></dt><dd>PROJCS["ETRS89-extended / LAEA Europe",GEOGCS["ETRS89",DATUM["European_Terrestrial_Reference_System_1989",SPHEROID["GRS 1980",6378137,298.257222101,AUTHORITY["EPSG","7019"]],AUTHORITY["EPSG","6258"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4258"]],PROJECTION["Lambert_Azimuthal_Equal_Area"],PARAMETER["latitude_of_center",52],PARAMETER["longitude_of_center",10],PARAMETER["false_easting",4321000],PARAMETER["false_northing",3210000],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Northing",NORTH],AXIS["Easting",EAST],AUTHORITY["EPSG","3035"]]</dd><dt><span>semi_major_axis :</span></dt><dd>6378137.0</dd><dt><span>semi_minor_axis :</span></dt><dd>6356752.314140356</dd><dt><span>inverse_flattening :</span></dt><dd>298.257222101</dd><dt><span>reference_ellipsoid_name :</span></dt><dd>GRS 1980</dd><dt><span>longitude_of_prime_meridian :</span></dt><dd>0.0</dd><dt><span>prime_meridian_name :</span></dt><dd>Greenwich</dd><dt><span>geographic_crs_name :</span></dt><dd>ETRS89</dd><dt><span>horizontal_datum_name :</span></dt><dd>European Terrestrial Reference System 1989</dd><dt><span>projected_crs_name :</span></dt><dd>ETRS89-extended / LAEA Europe</dd><dt><span>grid_mapping_name :</span></dt><dd>lambert_azimuthal_equal_area</dd><dt><span>latitude_of_projection_origin :</span></dt><dd>52.0</dd><dt><span>longitude_of_projection_origin :</span></dt><dd>10.0</dd><dt><span>false_easting :</span></dt><dd>4321000.0</dd><dt><span>false_northing :</span></dt><dd>3210000.0</dd><dt><span>spatial_ref :</span></dt><dd>PROJCS["ETRS89-extended / LAEA Europe",GEOGCS["ETRS89",DATUM["European_Terrestrial_Reference_System_1989",SPHEROID["GRS 1980",6378137,298.257222101,AUTHORITY["EPSG","7019"]],AUTHORITY["EPSG","6258"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4258"]],PROJECTION["Lambert_Azimuthal_Equal_Area"],PARAMETER["latitude_of_center",52],PARAMETER["longitude_of_center",10],PARAMETER["false_easting",4321000],PARAMETER["false_northing",3210000],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Northing",NORTH],AXIS["Easting",EAST],AUTHORITY["EPSG","3035"]]</dd><dt><span>GeoTransform :</span></dt><dd>4364882.796289107 100.42356290888219 0.0 3176702.5676735905 0.0 -99.71508933638925</dd></dl></div><div class="xr-var-data"><pre>array(0)</pre></div></li></ul></div></li><li class="xr-section-item"><input id="section-7428a384-752e-4bd7-afa2-fcbd07abf1f3" class="xr-section-summary-in" type="checkbox" checked=""><label for="section-7428a384-752e-4bd7-afa2-fcbd07abf1f3" class="xr-section-summary">Data variables: <span>(4)</span></label><div class="xr-section-inline-details"></div><div class="xr-section-details"><ul class="xr-var-list"><li class="xr-var-item"><div class="xr-var-name"><span>R</span></div><div class="xr-var-dims">(year, y, x)</div><div class="xr-var-dtype">float32</div><div class="xr-var-preview xr-preview">dask.array&lt;chunksize=(1, 9, 105), meta=np.ndarray&gt;</div><input id="attrs-cb5b69a8-3d45-46f2-bce2-61a3135ce324" class="xr-var-attrs-in" type="checkbox" disabled=""><label for="attrs-cb5b69a8-3d45-46f2-bce2-61a3135ce324" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use href="#icon-file-text2"></use></svg></label><input id="data-a194bfda-c8f1-4e2a-b169-e78ea48a4394" class="xr-var-data-in" type="checkbox"><label for="data-a194bfda-c8f1-4e2a-b169-e78ea48a4394" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"></dl></div><div class="xr-var-data">
+<table data-quarto-postprocess="true" class="table table-sm table-striped small">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td><table data-quarto-postprocess="true" class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th></th>
+<th data-quarto-table-cell-role="th">Array</th>
+<th data-quarto-table-cell-role="th">Chunk</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">Bytes</td>
+<td>241.17 kiB</td>
+<td>3.69 kiB</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">Shape</td>
+<td>(6, 98, 105)</td>
+<td>(1, 9, 105)</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">Dask graph</td>
+<td colspan="2">66 chunks in 20 graph layers</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">Data type</td>
+<td colspan="2">float32 numpy.ndarray</td>
+</tr>
+</tbody>
+</table></td>
+<td><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE4MiIgc3R5bGU9InN0cm9rZTpyZ2IoMCwwLDApO3N0cm9rZS13aWR0aDoxIj4KCiAgPCEtLSBIb3Jpem9udGFsIGxpbmVzIC0tPgogIDxsaW5lIHgxPSIxMCIgeTE9IjAiIHgyPSIzMCIgeTI9IjIwIiBzdHlsZT0ic3Ryb2tlLXdpZHRoOjIiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSIxMCIgeDI9IjMwIiB5Mj0iMzEiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSIyMCIgeDI9IjMwIiB5Mj0iNDEiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSIzMCIgeDI9IjMwIiB5Mj0iNTEiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSI0MSIgeDI9IjMwIiB5Mj0iNjEiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSI1MSIgeDI9IjMwIiB5Mj0iNzIiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSI2MSIgeDI9IjMwIiB5Mj0iODIiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSI3MiIgeDI9IjMwIiB5Mj0iOTIiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSI4MiIgeDI9IjMwIiB5Mj0iMTAzIj48L2xpbmU+CiAgPGxpbmUgeDE9IjEwIiB5MT0iOTIiIHgyPSIzMCIgeTI9IjExMyI+PC9saW5lPgogIDxsaW5lIHgxPSIxMCIgeTE9IjEwMiIgeDI9IjMwIiB5Mj0iMTIzIj48L2xpbmU+CiAgPGxpbmUgeDE9IjEwIiB5MT0iMTEyIiB4Mj0iMzAiIHkyPSIxMzIiIHN0eWxlPSJzdHJva2Utd2lkdGg6MiI+PC9saW5lPgoKICA8IS0tIFZlcnRpY2FsIGxpbmVzIC0tPgogIDxsaW5lIHgxPSIxMCIgeTE9IjAiIHgyPSIxMCIgeTI9IjExMiIgc3R5bGU9InN0cm9rZS13aWR0aDoyIj48L2xpbmU+CiAgPGxpbmUgeDE9IjEzIiB5MT0iMyIgeDI9IjEzIiB5Mj0iMTE1Ij48L2xpbmU+CiAgPGxpbmUgeDE9IjE2IiB5MT0iNiIgeDI9IjE2IiB5Mj0iMTE4Ij48L2xpbmU+CiAgPGxpbmUgeDE9IjIwIiB5MT0iMTAiIHgyPSIyMCIgeTI9IjEyMiI+PC9saW5lPgogIDxsaW5lIHgxPSIyMyIgeTE9IjEzIiB4Mj0iMjMiIHkyPSIxMjUiPjwvbGluZT4KICA8bGluZSB4MT0iMjciIHkxPSIxNyIgeDI9IjI3IiB5Mj0iMTI5Ij48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iMjAiIHgyPSIzMCIgeTI9IjEzMiIgc3R5bGU9InN0cm9rZS13aWR0aDoyIj48L2xpbmU+CgogIDwhLS0gQ29sb3JlZCBSZWN0YW5nbGUgLS0+CiAgPHBvbHlnb24gcG9pbnRzPSIxMC4wLDAuMCAzMC43NzQzMzA1Njc3Mjc5NzIsMjAuNzc0MzMwNTY3NzI3OTcyIDMwLjc3NDMzMDU2NzcyNzk3MiwxMzIuNzc0MzMwNTY3NzI4IDEwLjAsMTEyLjAiIHN0eWxlPSJmaWxsOiNFQ0IxNzJBMDtzdHJva2Utd2lkdGg6MCI+PC9wb2x5Z29uPgoKICA8IS0tIEhvcml6b250YWwgbGluZXMgLS0+CiAgPGxpbmUgeDE9IjEwIiB5MT0iMCIgeDI9IjEzMCIgeTI9IjAiIHN0eWxlPSJzdHJva2Utd2lkdGg6MiI+PC9saW5lPgogIDxsaW5lIHgxPSIxMyIgeTE9IjMiIHgyPSIxMzMiIHkyPSIzIj48L2xpbmU+CiAgPGxpbmUgeDE9IjE2IiB5MT0iNiIgeDI9IjEzNiIgeTI9IjYiPjwvbGluZT4KICA8bGluZSB4MT0iMjAiIHkxPSIxMCIgeDI9IjE0MCIgeTI9IjEwIj48L2xpbmU+CiAgPGxpbmUgeDE9IjIzIiB5MT0iMTMiIHgyPSIxNDMiIHkyPSIxMyI+PC9saW5lPgogIDxsaW5lIHgxPSIyNyIgeTE9IjE3IiB4Mj0iMTQ3IiB5Mj0iMTciPjwvbGluZT4KICA8bGluZSB4MT0iMzAiIHkxPSIyMCIgeDI9IjE1MCIgeTI9IjIwIiBzdHlsZT0ic3Ryb2tlLXdpZHRoOjIiPjwvbGluZT4KCiAgPCEtLSBWZXJ0aWNhbCBsaW5lcyAtLT4KICA8bGluZSB4MT0iMTAiIHkxPSIwIiB4Mj0iMzAiIHkyPSIyMCIgc3R5bGU9InN0cm9rZS13aWR0aDoyIj48L2xpbmU+CiAgPGxpbmUgeDE9IjEzMCIgeTE9IjAiIHgyPSIxNTAiIHkyPSIyMCIgc3R5bGU9InN0cm9rZS13aWR0aDoyIj48L2xpbmU+CgogIDwhLS0gQ29sb3JlZCBSZWN0YW5nbGUgLS0+CiAgPHBvbHlnb24gcG9pbnRzPSIxMC4wLDAuMCAxMzAuMCwwLjAgMTUwLjc3NDMzMDU2NzcyOCwyMC43NzQzMzA1Njc3Mjc5NzIgMzAuNzc0MzMwNTY3NzI3OTcyLDIwLjc3NDMzMDU2NzcyNzk3MiIgc3R5bGU9ImZpbGw6I0VDQjE3MkEwO3N0cm9rZS13aWR0aDowIj48L3BvbHlnb24+CgogIDwhLS0gSG9yaXpvbnRhbCBsaW5lcyAtLT4KICA8bGluZSB4MT0iMzAiIHkxPSIyMCIgeDI9IjE1MCIgeTI9IjIwIiBzdHlsZT0ic3Ryb2tlLXdpZHRoOjIiPjwvbGluZT4KICA8bGluZSB4MT0iMzAiIHkxPSIzMSIgeDI9IjE1MCIgeTI9IjMxIj48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iNDEiIHgyPSIxNTAiIHkyPSI0MSI+PC9saW5lPgogIDxsaW5lIHgxPSIzMCIgeTE9IjUxIiB4Mj0iMTUwIiB5Mj0iNTEiPjwvbGluZT4KICA8bGluZSB4MT0iMzAiIHkxPSI2MSIgeDI9IjE1MCIgeTI9IjYxIj48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iNzIiIHgyPSIxNTAiIHkyPSI3MiI+PC9saW5lPgogIDxsaW5lIHgxPSIzMCIgeTE9IjgyIiB4Mj0iMTUwIiB5Mj0iODIiPjwvbGluZT4KICA8bGluZSB4MT0iMzAiIHkxPSI5MiIgeDI9IjE1MCIgeTI9IjkyIj48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iMTAzIiB4Mj0iMTUwIiB5Mj0iMTAzIj48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iMTEzIiB4Mj0iMTUwIiB5Mj0iMTEzIj48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iMTIzIiB4Mj0iMTUwIiB5Mj0iMTIzIj48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iMTMyIiB4Mj0iMTUwIiB5Mj0iMTMyIiBzdHlsZT0ic3Ryb2tlLXdpZHRoOjIiPjwvbGluZT4KCiAgPCEtLSBWZXJ0aWNhbCBsaW5lcyAtLT4KICA8bGluZSB4MT0iMzAiIHkxPSIyMCIgeDI9IjMwIiB5Mj0iMTMyIiBzdHlsZT0ic3Ryb2tlLXdpZHRoOjIiPjwvbGluZT4KICA8bGluZSB4MT0iMTUwIiB5MT0iMjAiIHgyPSIxNTAiIHkyPSIxMzIiIHN0eWxlPSJzdHJva2Utd2lkdGg6MiI+PC9saW5lPgoKICA8IS0tIENvbG9yZWQgUmVjdGFuZ2xlIC0tPgogIDxwb2x5Z29uIHBvaW50cz0iMzAuNzc0MzMwNTY3NzI3OTcyLDIwLjc3NDMzMDU2NzcyNzk3MiAxNTAuNzc0MzMwNTY3NzI4LDIwLjc3NDMzMDU2NzcyNzk3MiAxNTAuNzc0MzMwNTY3NzI4LDEzMi43NzQzMzA1Njc3MjggMzAuNzc0MzMwNTY3NzI3OTcyLDEzMi43NzQzMzA1Njc3MjgiIHN0eWxlPSJmaWxsOiNFQ0IxNzJBMDtzdHJva2Utd2lkdGg6MCI+PC9wb2x5Z29uPgoKICA8IS0tIFRleHQgLS0+CiAgPHRleHQgeD0iOTAuNzc0MzMxIiB5PSIxNTIuNzc0MzMxIiBmb250LXNpemU9IjEuMHJlbSIgZm9udC13ZWlnaHQ9IjEwMCIgdGV4dC1hbmNob3I9Im1pZGRsZSI+MTA1PC90ZXh0PgogIDx0ZXh0IHg9IjE3MC43NzQzMzEiIHk9Ijc2Ljc3NDMzMSIgZm9udC1zaXplPSIxLjByZW0iIGZvbnQtd2VpZ2h0PSIxMDAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIHRyYW5zZm9ybT0icm90YXRlKDAsMTcwLjc3NDMzMSw3Ni43NzQzMzEpIj45ODwvdGV4dD4KICA8dGV4dCB4PSIxMC4zODcxNjUiIHk9IjE0Mi4zODcxNjUiIGZvbnQtc2l6ZT0iMS4wcmVtIiBmb250LXdlaWdodD0iMTAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiB0cmFuc2Zvcm09InJvdGF0ZSg0NSwxMC4zODcxNjUsMTQyLjM4NzE2NSkiPjY8L3RleHQ+Cjwvc3ZnPg==" class="img-fluid"></td>
+</tr>
+</tbody>
+</table>
+<div class="xr-var-name">
+<span>G</span>
+</div>
+<div class="xr-var-dims">
+(year, y, x)
+</div>
+<div class="xr-var-dtype">
+float32
+</div>
+<div class="xr-var-preview xr-preview">
+dask.array&lt;chunksize=(1, 9, 105), meta=np.ndarray&gt;
+</div>
+<img src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iaWNvbiB4ci1pY29uLWZpbGUtdGV4dDIiPjx1c2UgeGxpbms6aHJlZj0iI2ljb24tZmlsZS10ZXh0MiI+PC91c2U+PC9zdmc+" class="icon xr-icon-file-text2 img-fluid"><img src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iaWNvbiB4ci1pY29uLWRhdGFiYXNlIj48dXNlIHhsaW5rOmhyZWY9IiNpY29uLWRhdGFiYXNlIj48L3VzZT48L3N2Zz4=" class="icon xr-icon-database img-fluid">
+<div class="xr-var-attrs">
+<dl>
+</dl>
+</div>
+<div class="xr-var-data">
+<table data-quarto-postprocess="true" class="table table-sm table-striped small">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td><table data-quarto-postprocess="true" class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th></th>
+<th data-quarto-table-cell-role="th">Array</th>
+<th data-quarto-table-cell-role="th">Chunk</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">Bytes</td>
+<td>241.17 kiB</td>
+<td>3.69 kiB</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">Shape</td>
+<td>(6, 98, 105)</td>
+<td>(1, 9, 105)</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">Dask graph</td>
+<td colspan="2">66 chunks in 20 graph layers</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">Data type</td>
+<td colspan="2">float32 numpy.ndarray</td>
+</tr>
+</tbody>
+</table></td>
+<td><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE4MiIgc3R5bGU9InN0cm9rZTpyZ2IoMCwwLDApO3N0cm9rZS13aWR0aDoxIj4KCiAgPCEtLSBIb3Jpem9udGFsIGxpbmVzIC0tPgogIDxsaW5lIHgxPSIxMCIgeTE9IjAiIHgyPSIzMCIgeTI9IjIwIiBzdHlsZT0ic3Ryb2tlLXdpZHRoOjIiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSIxMCIgeDI9IjMwIiB5Mj0iMzEiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSIyMCIgeDI9IjMwIiB5Mj0iNDEiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSIzMCIgeDI9IjMwIiB5Mj0iNTEiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSI0MSIgeDI9IjMwIiB5Mj0iNjEiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSI1MSIgeDI9IjMwIiB5Mj0iNzIiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSI2MSIgeDI9IjMwIiB5Mj0iODIiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSI3MiIgeDI9IjMwIiB5Mj0iOTIiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSI4MiIgeDI9IjMwIiB5Mj0iMTAzIj48L2xpbmU+CiAgPGxpbmUgeDE9IjEwIiB5MT0iOTIiIHgyPSIzMCIgeTI9IjExMyI+PC9saW5lPgogIDxsaW5lIHgxPSIxMCIgeTE9IjEwMiIgeDI9IjMwIiB5Mj0iMTIzIj48L2xpbmU+CiAgPGxpbmUgeDE9IjEwIiB5MT0iMTEyIiB4Mj0iMzAiIHkyPSIxMzIiIHN0eWxlPSJzdHJva2Utd2lkdGg6MiI+PC9saW5lPgoKICA8IS0tIFZlcnRpY2FsIGxpbmVzIC0tPgogIDxsaW5lIHgxPSIxMCIgeTE9IjAiIHgyPSIxMCIgeTI9IjExMiIgc3R5bGU9InN0cm9rZS13aWR0aDoyIj48L2xpbmU+CiAgPGxpbmUgeDE9IjEzIiB5MT0iMyIgeDI9IjEzIiB5Mj0iMTE1Ij48L2xpbmU+CiAgPGxpbmUgeDE9IjE2IiB5MT0iNiIgeDI9IjE2IiB5Mj0iMTE4Ij48L2xpbmU+CiAgPGxpbmUgeDE9IjIwIiB5MT0iMTAiIHgyPSIyMCIgeTI9IjEyMiI+PC9saW5lPgogIDxsaW5lIHgxPSIyMyIgeTE9IjEzIiB4Mj0iMjMiIHkyPSIxMjUiPjwvbGluZT4KICA8bGluZSB4MT0iMjciIHkxPSIxNyIgeDI9IjI3IiB5Mj0iMTI5Ij48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iMjAiIHgyPSIzMCIgeTI9IjEzMiIgc3R5bGU9InN0cm9rZS13aWR0aDoyIj48L2xpbmU+CgogIDwhLS0gQ29sb3JlZCBSZWN0YW5nbGUgLS0+CiAgPHBvbHlnb24gcG9pbnRzPSIxMC4wLDAuMCAzMC43NzQzMzA1Njc3Mjc5NzIsMjAuNzc0MzMwNTY3NzI3OTcyIDMwLjc3NDMzMDU2NzcyNzk3MiwxMzIuNzc0MzMwNTY3NzI4IDEwLjAsMTEyLjAiIHN0eWxlPSJmaWxsOiNFQ0IxNzJBMDtzdHJva2Utd2lkdGg6MCI+PC9wb2x5Z29uPgoKICA8IS0tIEhvcml6b250YWwgbGluZXMgLS0+CiAgPGxpbmUgeDE9IjEwIiB5MT0iMCIgeDI9IjEzMCIgeTI9IjAiIHN0eWxlPSJzdHJva2Utd2lkdGg6MiI+PC9saW5lPgogIDxsaW5lIHgxPSIxMyIgeTE9IjMiIHgyPSIxMzMiIHkyPSIzIj48L2xpbmU+CiAgPGxpbmUgeDE9IjE2IiB5MT0iNiIgeDI9IjEzNiIgeTI9IjYiPjwvbGluZT4KICA8bGluZSB4MT0iMjAiIHkxPSIxMCIgeDI9IjE0MCIgeTI9IjEwIj48L2xpbmU+CiAgPGxpbmUgeDE9IjIzIiB5MT0iMTMiIHgyPSIxNDMiIHkyPSIxMyI+PC9saW5lPgogIDxsaW5lIHgxPSIyNyIgeTE9IjE3IiB4Mj0iMTQ3IiB5Mj0iMTciPjwvbGluZT4KICA8bGluZSB4MT0iMzAiIHkxPSIyMCIgeDI9IjE1MCIgeTI9IjIwIiBzdHlsZT0ic3Ryb2tlLXdpZHRoOjIiPjwvbGluZT4KCiAgPCEtLSBWZXJ0aWNhbCBsaW5lcyAtLT4KICA8bGluZSB4MT0iMTAiIHkxPSIwIiB4Mj0iMzAiIHkyPSIyMCIgc3R5bGU9InN0cm9rZS13aWR0aDoyIj48L2xpbmU+CiAgPGxpbmUgeDE9IjEzMCIgeTE9IjAiIHgyPSIxNTAiIHkyPSIyMCIgc3R5bGU9InN0cm9rZS13aWR0aDoyIj48L2xpbmU+CgogIDwhLS0gQ29sb3JlZCBSZWN0YW5nbGUgLS0+CiAgPHBvbHlnb24gcG9pbnRzPSIxMC4wLDAuMCAxMzAuMCwwLjAgMTUwLjc3NDMzMDU2NzcyOCwyMC43NzQzMzA1Njc3Mjc5NzIgMzAuNzc0MzMwNTY3NzI3OTcyLDIwLjc3NDMzMDU2NzcyNzk3MiIgc3R5bGU9ImZpbGw6I0VDQjE3MkEwO3N0cm9rZS13aWR0aDowIj48L3BvbHlnb24+CgogIDwhLS0gSG9yaXpvbnRhbCBsaW5lcyAtLT4KICA8bGluZSB4MT0iMzAiIHkxPSIyMCIgeDI9IjE1MCIgeTI9IjIwIiBzdHlsZT0ic3Ryb2tlLXdpZHRoOjIiPjwvbGluZT4KICA8bGluZSB4MT0iMzAiIHkxPSIzMSIgeDI9IjE1MCIgeTI9IjMxIj48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iNDEiIHgyPSIxNTAiIHkyPSI0MSI+PC9saW5lPgogIDxsaW5lIHgxPSIzMCIgeTE9IjUxIiB4Mj0iMTUwIiB5Mj0iNTEiPjwvbGluZT4KICA8bGluZSB4MT0iMzAiIHkxPSI2MSIgeDI9IjE1MCIgeTI9IjYxIj48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iNzIiIHgyPSIxNTAiIHkyPSI3MiI+PC9saW5lPgogIDxsaW5lIHgxPSIzMCIgeTE9IjgyIiB4Mj0iMTUwIiB5Mj0iODIiPjwvbGluZT4KICA8bGluZSB4MT0iMzAiIHkxPSI5MiIgeDI9IjE1MCIgeTI9IjkyIj48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iMTAzIiB4Mj0iMTUwIiB5Mj0iMTAzIj48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iMTEzIiB4Mj0iMTUwIiB5Mj0iMTEzIj48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iMTIzIiB4Mj0iMTUwIiB5Mj0iMTIzIj48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iMTMyIiB4Mj0iMTUwIiB5Mj0iMTMyIiBzdHlsZT0ic3Ryb2tlLXdpZHRoOjIiPjwvbGluZT4KCiAgPCEtLSBWZXJ0aWNhbCBsaW5lcyAtLT4KICA8bGluZSB4MT0iMzAiIHkxPSIyMCIgeDI9IjMwIiB5Mj0iMTMyIiBzdHlsZT0ic3Ryb2tlLXdpZHRoOjIiPjwvbGluZT4KICA8bGluZSB4MT0iMTUwIiB5MT0iMjAiIHgyPSIxNTAiIHkyPSIxMzIiIHN0eWxlPSJzdHJva2Utd2lkdGg6MiI+PC9saW5lPgoKICA8IS0tIENvbG9yZWQgUmVjdGFuZ2xlIC0tPgogIDxwb2x5Z29uIHBvaW50cz0iMzAuNzc0MzMwNTY3NzI3OTcyLDIwLjc3NDMzMDU2NzcyNzk3MiAxNTAuNzc0MzMwNTY3NzI4LDIwLjc3NDMzMDU2NzcyNzk3MiAxNTAuNzc0MzMwNTY3NzI4LDEzMi43NzQzMzA1Njc3MjggMzAuNzc0MzMwNTY3NzI3OTcyLDEzMi43NzQzMzA1Njc3MjgiIHN0eWxlPSJmaWxsOiNFQ0IxNzJBMDtzdHJva2Utd2lkdGg6MCI+PC9wb2x5Z29uPgoKICA8IS0tIFRleHQgLS0+CiAgPHRleHQgeD0iOTAuNzc0MzMxIiB5PSIxNTIuNzc0MzMxIiBmb250LXNpemU9IjEuMHJlbSIgZm9udC13ZWlnaHQ9IjEwMCIgdGV4dC1hbmNob3I9Im1pZGRsZSI+MTA1PC90ZXh0PgogIDx0ZXh0IHg9IjE3MC43NzQzMzEiIHk9Ijc2Ljc3NDMzMSIgZm9udC1zaXplPSIxLjByZW0iIGZvbnQtd2VpZ2h0PSIxMDAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIHRyYW5zZm9ybT0icm90YXRlKDAsMTcwLjc3NDMzMSw3Ni43NzQzMzEpIj45ODwvdGV4dD4KICA8dGV4dCB4PSIxMC4zODcxNjUiIHk9IjE0Mi4zODcxNjUiIGZvbnQtc2l6ZT0iMS4wcmVtIiBmb250LXdlaWdodD0iMTAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiB0cmFuc2Zvcm09InJvdGF0ZSg0NSwxMC4zODcxNjUsMTQyLjM4NzE2NSkiPjY8L3RleHQ+Cjwvc3ZnPg==" class="img-fluid"></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="xr-var-name">
+<span>B</span>
+</div>
+<div class="xr-var-dims">
+(year, y, x)
+</div>
+<div class="xr-var-dtype">
+float32
+</div>
+<div class="xr-var-preview xr-preview">
+dask.array&lt;chunksize=(1, 9, 105), meta=np.ndarray&gt;
+</div>
+<img src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iaWNvbiB4ci1pY29uLWZpbGUtdGV4dDIiPjx1c2UgeGxpbms6aHJlZj0iI2ljb24tZmlsZS10ZXh0MiI+PC91c2U+PC9zdmc+" class="icon xr-icon-file-text2 img-fluid"><img src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iaWNvbiB4ci1pY29uLWRhdGFiYXNlIj48dXNlIHhsaW5rOmhyZWY9IiNpY29uLWRhdGFiYXNlIj48L3VzZT48L3N2Zz4=" class="icon xr-icon-database img-fluid">
+<div class="xr-var-attrs">
+<dl>
+</dl>
+</div>
+<div class="xr-var-data">
+<table data-quarto-postprocess="true" class="table table-sm table-striped small">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td><table data-quarto-postprocess="true" class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th></th>
+<th data-quarto-table-cell-role="th">Array</th>
+<th data-quarto-table-cell-role="th">Chunk</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">Bytes</td>
+<td>241.17 kiB</td>
+<td>3.69 kiB</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">Shape</td>
+<td>(6, 98, 105)</td>
+<td>(1, 9, 105)</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">Dask graph</td>
+<td colspan="2">66 chunks in 20 graph layers</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">Data type</td>
+<td colspan="2">float32 numpy.ndarray</td>
+</tr>
+</tbody>
+</table></td>
+<td><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE4MiIgc3R5bGU9InN0cm9rZTpyZ2IoMCwwLDApO3N0cm9rZS13aWR0aDoxIj4KCiAgPCEtLSBIb3Jpem9udGFsIGxpbmVzIC0tPgogIDxsaW5lIHgxPSIxMCIgeTE9IjAiIHgyPSIzMCIgeTI9IjIwIiBzdHlsZT0ic3Ryb2tlLXdpZHRoOjIiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSIxMCIgeDI9IjMwIiB5Mj0iMzEiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSIyMCIgeDI9IjMwIiB5Mj0iNDEiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSIzMCIgeDI9IjMwIiB5Mj0iNTEiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSI0MSIgeDI9IjMwIiB5Mj0iNjEiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSI1MSIgeDI9IjMwIiB5Mj0iNzIiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSI2MSIgeDI9IjMwIiB5Mj0iODIiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSI3MiIgeDI9IjMwIiB5Mj0iOTIiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSI4MiIgeDI9IjMwIiB5Mj0iMTAzIj48L2xpbmU+CiAgPGxpbmUgeDE9IjEwIiB5MT0iOTIiIHgyPSIzMCIgeTI9IjExMyI+PC9saW5lPgogIDxsaW5lIHgxPSIxMCIgeTE9IjEwMiIgeDI9IjMwIiB5Mj0iMTIzIj48L2xpbmU+CiAgPGxpbmUgeDE9IjEwIiB5MT0iMTEyIiB4Mj0iMzAiIHkyPSIxMzIiIHN0eWxlPSJzdHJva2Utd2lkdGg6MiI+PC9saW5lPgoKICA8IS0tIFZlcnRpY2FsIGxpbmVzIC0tPgogIDxsaW5lIHgxPSIxMCIgeTE9IjAiIHgyPSIxMCIgeTI9IjExMiIgc3R5bGU9InN0cm9rZS13aWR0aDoyIj48L2xpbmU+CiAgPGxpbmUgeDE9IjEzIiB5MT0iMyIgeDI9IjEzIiB5Mj0iMTE1Ij48L2xpbmU+CiAgPGxpbmUgeDE9IjE2IiB5MT0iNiIgeDI9IjE2IiB5Mj0iMTE4Ij48L2xpbmU+CiAgPGxpbmUgeDE9IjIwIiB5MT0iMTAiIHgyPSIyMCIgeTI9IjEyMiI+PC9saW5lPgogIDxsaW5lIHgxPSIyMyIgeTE9IjEzIiB4Mj0iMjMiIHkyPSIxMjUiPjwvbGluZT4KICA8bGluZSB4MT0iMjciIHkxPSIxNyIgeDI9IjI3IiB5Mj0iMTI5Ij48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iMjAiIHgyPSIzMCIgeTI9IjEzMiIgc3R5bGU9InN0cm9rZS13aWR0aDoyIj48L2xpbmU+CgogIDwhLS0gQ29sb3JlZCBSZWN0YW5nbGUgLS0+CiAgPHBvbHlnb24gcG9pbnRzPSIxMC4wLDAuMCAzMC43NzQzMzA1Njc3Mjc5NzIsMjAuNzc0MzMwNTY3NzI3OTcyIDMwLjc3NDMzMDU2NzcyNzk3MiwxMzIuNzc0MzMwNTY3NzI4IDEwLjAsMTEyLjAiIHN0eWxlPSJmaWxsOiNFQ0IxNzJBMDtzdHJva2Utd2lkdGg6MCI+PC9wb2x5Z29uPgoKICA8IS0tIEhvcml6b250YWwgbGluZXMgLS0+CiAgPGxpbmUgeDE9IjEwIiB5MT0iMCIgeDI9IjEzMCIgeTI9IjAiIHN0eWxlPSJzdHJva2Utd2lkdGg6MiI+PC9saW5lPgogIDxsaW5lIHgxPSIxMyIgeTE9IjMiIHgyPSIxMzMiIHkyPSIzIj48L2xpbmU+CiAgPGxpbmUgeDE9IjE2IiB5MT0iNiIgeDI9IjEzNiIgeTI9IjYiPjwvbGluZT4KICA8bGluZSB4MT0iMjAiIHkxPSIxMCIgeDI9IjE0MCIgeTI9IjEwIj48L2xpbmU+CiAgPGxpbmUgeDE9IjIzIiB5MT0iMTMiIHgyPSIxNDMiIHkyPSIxMyI+PC9saW5lPgogIDxsaW5lIHgxPSIyNyIgeTE9IjE3IiB4Mj0iMTQ3IiB5Mj0iMTciPjwvbGluZT4KICA8bGluZSB4MT0iMzAiIHkxPSIyMCIgeDI9IjE1MCIgeTI9IjIwIiBzdHlsZT0ic3Ryb2tlLXdpZHRoOjIiPjwvbGluZT4KCiAgPCEtLSBWZXJ0aWNhbCBsaW5lcyAtLT4KICA8bGluZSB4MT0iMTAiIHkxPSIwIiB4Mj0iMzAiIHkyPSIyMCIgc3R5bGU9InN0cm9rZS13aWR0aDoyIj48L2xpbmU+CiAgPGxpbmUgeDE9IjEzMCIgeTE9IjAiIHgyPSIxNTAiIHkyPSIyMCIgc3R5bGU9InN0cm9rZS13aWR0aDoyIj48L2xpbmU+CgogIDwhLS0gQ29sb3JlZCBSZWN0YW5nbGUgLS0+CiAgPHBvbHlnb24gcG9pbnRzPSIxMC4wLDAuMCAxMzAuMCwwLjAgMTUwLjc3NDMzMDU2NzcyOCwyMC43NzQzMzA1Njc3Mjc5NzIgMzAuNzc0MzMwNTY3NzI3OTcyLDIwLjc3NDMzMDU2NzcyNzk3MiIgc3R5bGU9ImZpbGw6I0VDQjE3MkEwO3N0cm9rZS13aWR0aDowIj48L3BvbHlnb24+CgogIDwhLS0gSG9yaXpvbnRhbCBsaW5lcyAtLT4KICA8bGluZSB4MT0iMzAiIHkxPSIyMCIgeDI9IjE1MCIgeTI9IjIwIiBzdHlsZT0ic3Ryb2tlLXdpZHRoOjIiPjwvbGluZT4KICA8bGluZSB4MT0iMzAiIHkxPSIzMSIgeDI9IjE1MCIgeTI9IjMxIj48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iNDEiIHgyPSIxNTAiIHkyPSI0MSI+PC9saW5lPgogIDxsaW5lIHgxPSIzMCIgeTE9IjUxIiB4Mj0iMTUwIiB5Mj0iNTEiPjwvbGluZT4KICA8bGluZSB4MT0iMzAiIHkxPSI2MSIgeDI9IjE1MCIgeTI9IjYxIj48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iNzIiIHgyPSIxNTAiIHkyPSI3MiI+PC9saW5lPgogIDxsaW5lIHgxPSIzMCIgeTE9IjgyIiB4Mj0iMTUwIiB5Mj0iODIiPjwvbGluZT4KICA8bGluZSB4MT0iMzAiIHkxPSI5MiIgeDI9IjE1MCIgeTI9IjkyIj48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iMTAzIiB4Mj0iMTUwIiB5Mj0iMTAzIj48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iMTEzIiB4Mj0iMTUwIiB5Mj0iMTEzIj48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iMTIzIiB4Mj0iMTUwIiB5Mj0iMTIzIj48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iMTMyIiB4Mj0iMTUwIiB5Mj0iMTMyIiBzdHlsZT0ic3Ryb2tlLXdpZHRoOjIiPjwvbGluZT4KCiAgPCEtLSBWZXJ0aWNhbCBsaW5lcyAtLT4KICA8bGluZSB4MT0iMzAiIHkxPSIyMCIgeDI9IjMwIiB5Mj0iMTMyIiBzdHlsZT0ic3Ryb2tlLXdpZHRoOjIiPjwvbGluZT4KICA8bGluZSB4MT0iMTUwIiB5MT0iMjAiIHgyPSIxNTAiIHkyPSIxMzIiIHN0eWxlPSJzdHJva2Utd2lkdGg6MiI+PC9saW5lPgoKICA8IS0tIENvbG9yZWQgUmVjdGFuZ2xlIC0tPgogIDxwb2x5Z29uIHBvaW50cz0iMzAuNzc0MzMwNTY3NzI3OTcyLDIwLjc3NDMzMDU2NzcyNzk3MiAxNTAuNzc0MzMwNTY3NzI4LDIwLjc3NDMzMDU2NzcyNzk3MiAxNTAuNzc0MzMwNTY3NzI4LDEzMi43NzQzMzA1Njc3MjggMzAuNzc0MzMwNTY3NzI3OTcyLDEzMi43NzQzMzA1Njc3MjgiIHN0eWxlPSJmaWxsOiNFQ0IxNzJBMDtzdHJva2Utd2lkdGg6MCI+PC9wb2x5Z29uPgoKICA8IS0tIFRleHQgLS0+CiAgPHRleHQgeD0iOTAuNzc0MzMxIiB5PSIxNTIuNzc0MzMxIiBmb250LXNpemU9IjEuMHJlbSIgZm9udC13ZWlnaHQ9IjEwMCIgdGV4dC1hbmNob3I9Im1pZGRsZSI+MTA1PC90ZXh0PgogIDx0ZXh0IHg9IjE3MC43NzQzMzEiIHk9Ijc2Ljc3NDMzMSIgZm9udC1zaXplPSIxLjByZW0iIGZvbnQtd2VpZ2h0PSIxMDAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIHRyYW5zZm9ybT0icm90YXRlKDAsMTcwLjc3NDMzMSw3Ni43NzQzMzEpIj45ODwvdGV4dD4KICA8dGV4dCB4PSIxMC4zODcxNjUiIHk9IjE0Mi4zODcxNjUiIGZvbnQtc2l6ZT0iMS4wcmVtIiBmb250LXdlaWdodD0iMTAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiB0cmFuc2Zvcm09InJvdGF0ZSg0NSwxMC4zODcxNjUsMTQyLjM4NzE2NSkiPjY8L3RleHQ+Cjwvc3ZnPg==" class="img-fluid"></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="xr-var-name">
+<span>NDVI</span>
+</div>
+<div class="xr-var-dims">
+(year, y, x)
+</div>
+<div class="xr-var-dtype">
+float32
+</div>
+<div class="xr-var-preview xr-preview">
+dask.array&lt;chunksize=(1, 9, 105), meta=np.ndarray&gt;
+</div>
+<img src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iaWNvbiB4ci1pY29uLWZpbGUtdGV4dDIiPjx1c2UgeGxpbms6aHJlZj0iI2ljb24tZmlsZS10ZXh0MiI+PC91c2U+PC9zdmc+" class="icon xr-icon-file-text2 img-fluid"><img src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iaWNvbiB4ci1pY29uLWRhdGFiYXNlIj48dXNlIHhsaW5rOmhyZWY9IiNpY29uLWRhdGFiYXNlIj48L3VzZT48L3N2Zz4=" class="icon xr-icon-database img-fluid">
+<div class="xr-var-attrs">
+<dl>
+</dl>
+</div>
+<div class="xr-var-data">
+<table data-quarto-postprocess="true" class="table table-sm table-striped small">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td><table data-quarto-postprocess="true" class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th></th>
+<th data-quarto-table-cell-role="th">Array</th>
+<th data-quarto-table-cell-role="th">Chunk</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">Bytes</td>
+<td>241.17 kiB</td>
+<td>3.69 kiB</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">Shape</td>
+<td>(6, 98, 105)</td>
+<td>(1, 9, 105)</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">Dask graph</td>
+<td colspan="2">66 chunks in 20 graph layers</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">Data type</td>
+<td colspan="2">float32 numpy.ndarray</td>
+</tr>
+</tbody>
+</table></td>
+<td><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE4MiIgc3R5bGU9InN0cm9rZTpyZ2IoMCwwLDApO3N0cm9rZS13aWR0aDoxIj4KCiAgPCEtLSBIb3Jpem9udGFsIGxpbmVzIC0tPgogIDxsaW5lIHgxPSIxMCIgeTE9IjAiIHgyPSIzMCIgeTI9IjIwIiBzdHlsZT0ic3Ryb2tlLXdpZHRoOjIiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSIxMCIgeDI9IjMwIiB5Mj0iMzEiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSIyMCIgeDI9IjMwIiB5Mj0iNDEiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSIzMCIgeDI9IjMwIiB5Mj0iNTEiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSI0MSIgeDI9IjMwIiB5Mj0iNjEiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSI1MSIgeDI9IjMwIiB5Mj0iNzIiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSI2MSIgeDI9IjMwIiB5Mj0iODIiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSI3MiIgeDI9IjMwIiB5Mj0iOTIiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSI4MiIgeDI9IjMwIiB5Mj0iMTAzIj48L2xpbmU+CiAgPGxpbmUgeDE9IjEwIiB5MT0iOTIiIHgyPSIzMCIgeTI9IjExMyI+PC9saW5lPgogIDxsaW5lIHgxPSIxMCIgeTE9IjEwMiIgeDI9IjMwIiB5Mj0iMTIzIj48L2xpbmU+CiAgPGxpbmUgeDE9IjEwIiB5MT0iMTEyIiB4Mj0iMzAiIHkyPSIxMzIiIHN0eWxlPSJzdHJva2Utd2lkdGg6MiI+PC9saW5lPgoKICA8IS0tIFZlcnRpY2FsIGxpbmVzIC0tPgogIDxsaW5lIHgxPSIxMCIgeTE9IjAiIHgyPSIxMCIgeTI9IjExMiIgc3R5bGU9InN0cm9rZS13aWR0aDoyIj48L2xpbmU+CiAgPGxpbmUgeDE9IjEzIiB5MT0iMyIgeDI9IjEzIiB5Mj0iMTE1Ij48L2xpbmU+CiAgPGxpbmUgeDE9IjE2IiB5MT0iNiIgeDI9IjE2IiB5Mj0iMTE4Ij48L2xpbmU+CiAgPGxpbmUgeDE9IjIwIiB5MT0iMTAiIHgyPSIyMCIgeTI9IjEyMiI+PC9saW5lPgogIDxsaW5lIHgxPSIyMyIgeTE9IjEzIiB4Mj0iMjMiIHkyPSIxMjUiPjwvbGluZT4KICA8bGluZSB4MT0iMjciIHkxPSIxNyIgeDI9IjI3IiB5Mj0iMTI5Ij48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iMjAiIHgyPSIzMCIgeTI9IjEzMiIgc3R5bGU9InN0cm9rZS13aWR0aDoyIj48L2xpbmU+CgogIDwhLS0gQ29sb3JlZCBSZWN0YW5nbGUgLS0+CiAgPHBvbHlnb24gcG9pbnRzPSIxMC4wLDAuMCAzMC43NzQzMzA1Njc3Mjc5NzIsMjAuNzc0MzMwNTY3NzI3OTcyIDMwLjc3NDMzMDU2NzcyNzk3MiwxMzIuNzc0MzMwNTY3NzI4IDEwLjAsMTEyLjAiIHN0eWxlPSJmaWxsOiNFQ0IxNzJBMDtzdHJva2Utd2lkdGg6MCI+PC9wb2x5Z29uPgoKICA8IS0tIEhvcml6b250YWwgbGluZXMgLS0+CiAgPGxpbmUgeDE9IjEwIiB5MT0iMCIgeDI9IjEzMCIgeTI9IjAiIHN0eWxlPSJzdHJva2Utd2lkdGg6MiI+PC9saW5lPgogIDxsaW5lIHgxPSIxMyIgeTE9IjMiIHgyPSIxMzMiIHkyPSIzIj48L2xpbmU+CiAgPGxpbmUgeDE9IjE2IiB5MT0iNiIgeDI9IjEzNiIgeTI9IjYiPjwvbGluZT4KICA8bGluZSB4MT0iMjAiIHkxPSIxMCIgeDI9IjE0MCIgeTI9IjEwIj48L2xpbmU+CiAgPGxpbmUgeDE9IjIzIiB5MT0iMTMiIHgyPSIxNDMiIHkyPSIxMyI+PC9saW5lPgogIDxsaW5lIHgxPSIyNyIgeTE9IjE3IiB4Mj0iMTQ3IiB5Mj0iMTciPjwvbGluZT4KICA8bGluZSB4MT0iMzAiIHkxPSIyMCIgeDI9IjE1MCIgeTI9IjIwIiBzdHlsZT0ic3Ryb2tlLXdpZHRoOjIiPjwvbGluZT4KCiAgPCEtLSBWZXJ0aWNhbCBsaW5lcyAtLT4KICA8bGluZSB4MT0iMTAiIHkxPSIwIiB4Mj0iMzAiIHkyPSIyMCIgc3R5bGU9InN0cm9rZS13aWR0aDoyIj48L2xpbmU+CiAgPGxpbmUgeDE9IjEzMCIgeTE9IjAiIHgyPSIxNTAiIHkyPSIyMCIgc3R5bGU9InN0cm9rZS13aWR0aDoyIj48L2xpbmU+CgogIDwhLS0gQ29sb3JlZCBSZWN0YW5nbGUgLS0+CiAgPHBvbHlnb24gcG9pbnRzPSIxMC4wLDAuMCAxMzAuMCwwLjAgMTUwLjc3NDMzMDU2NzcyOCwyMC43NzQzMzA1Njc3Mjc5NzIgMzAuNzc0MzMwNTY3NzI3OTcyLDIwLjc3NDMzMDU2NzcyNzk3MiIgc3R5bGU9ImZpbGw6I0VDQjE3MkEwO3N0cm9rZS13aWR0aDowIj48L3BvbHlnb24+CgogIDwhLS0gSG9yaXpvbnRhbCBsaW5lcyAtLT4KICA8bGluZSB4MT0iMzAiIHkxPSIyMCIgeDI9IjE1MCIgeTI9IjIwIiBzdHlsZT0ic3Ryb2tlLXdpZHRoOjIiPjwvbGluZT4KICA8bGluZSB4MT0iMzAiIHkxPSIzMSIgeDI9IjE1MCIgeTI9IjMxIj48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iNDEiIHgyPSIxNTAiIHkyPSI0MSI+PC9saW5lPgogIDxsaW5lIHgxPSIzMCIgeTE9IjUxIiB4Mj0iMTUwIiB5Mj0iNTEiPjwvbGluZT4KICA8bGluZSB4MT0iMzAiIHkxPSI2MSIgeDI9IjE1MCIgeTI9IjYxIj48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iNzIiIHgyPSIxNTAiIHkyPSI3MiI+PC9saW5lPgogIDxsaW5lIHgxPSIzMCIgeTE9IjgyIiB4Mj0iMTUwIiB5Mj0iODIiPjwvbGluZT4KICA8bGluZSB4MT0iMzAiIHkxPSI5MiIgeDI9IjE1MCIgeTI9IjkyIj48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iMTAzIiB4Mj0iMTUwIiB5Mj0iMTAzIj48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iMTEzIiB4Mj0iMTUwIiB5Mj0iMTEzIj48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iMTIzIiB4Mj0iMTUwIiB5Mj0iMTIzIj48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iMTMyIiB4Mj0iMTUwIiB5Mj0iMTMyIiBzdHlsZT0ic3Ryb2tlLXdpZHRoOjIiPjwvbGluZT4KCiAgPCEtLSBWZXJ0aWNhbCBsaW5lcyAtLT4KICA8bGluZSB4MT0iMzAiIHkxPSIyMCIgeDI9IjMwIiB5Mj0iMTMyIiBzdHlsZT0ic3Ryb2tlLXdpZHRoOjIiPjwvbGluZT4KICA8bGluZSB4MT0iMTUwIiB5MT0iMjAiIHgyPSIxNTAiIHkyPSIxMzIiIHN0eWxlPSJzdHJva2Utd2lkdGg6MiI+PC9saW5lPgoKICA8IS0tIENvbG9yZWQgUmVjdGFuZ2xlIC0tPgogIDxwb2x5Z29uIHBvaW50cz0iMzAuNzc0MzMwNTY3NzI3OTcyLDIwLjc3NDMzMDU2NzcyNzk3MiAxNTAuNzc0MzMwNTY3NzI4LDIwLjc3NDMzMDU2NzcyNzk3MiAxNTAuNzc0MzMwNTY3NzI4LDEzMi43NzQzMzA1Njc3MjggMzAuNzc0MzMwNTY3NzI3OTcyLDEzMi43NzQzMzA1Njc3MjgiIHN0eWxlPSJmaWxsOiNFQ0IxNzJBMDtzdHJva2Utd2lkdGg6MCI+PC9wb2x5Z29uPgoKICA8IS0tIFRleHQgLS0+CiAgPHRleHQgeD0iOTAuNzc0MzMxIiB5PSIxNTIuNzc0MzMxIiBmb250LXNpemU9IjEuMHJlbSIgZm9udC13ZWlnaHQ9IjEwMCIgdGV4dC1hbmNob3I9Im1pZGRsZSI+MTA1PC90ZXh0PgogIDx0ZXh0IHg9IjE3MC43NzQzMzEiIHk9Ijc2Ljc3NDMzMSIgZm9udC1zaXplPSIxLjByZW0iIGZvbnQtd2VpZ2h0PSIxMDAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIHRyYW5zZm9ybT0icm90YXRlKDAsMTcwLjc3NDMzMSw3Ni43NzQzMzEpIj45ODwvdGV4dD4KICA8dGV4dCB4PSIxMC4zODcxNjUiIHk9IjE0Mi4zODcxNjUiIGZvbnQtc2l6ZT0iMS4wcmVtIiBmb250LXdlaWdodD0iMTAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiB0cmFuc2Zvcm09InJvdGF0ZSg0NSwxMC4zODcxNjUsMTQyLjM4NzE2NSkiPjY8L3RleHQ+Cjwvc3ZnPg==" class="img-fluid"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div></li></ul></div></li><li class="xr-section-item"><input id="section-131e66ab-c8ab-43f0-a059-3e4f511dfbc7" class="xr-section-summary-in" type="checkbox"><label for="section-131e66ab-c8ab-43f0-a059-3e4f511dfbc7" class="xr-section-summary">Indexes: <span>(3)</span></label><div class="xr-section-inline-details"></div><div class="xr-section-details"><ul class="xr-var-list"><li class="xr-var-item"><div class="xr-index-name"><div>year</div></div><div class="xr-index-preview">PandasIndex</div><div></div><input id="index-c2602597-a78b-4c02-9d6d-c6cba212ff92" class="xr-index-data-in" type="checkbox"><label for="index-c2602597-a78b-4c02-9d6d-c6cba212ff92" title="Show/Hide index repr"><svg class="icon xr-icon-database"><use href="#icon-database"></use></svg></label><div class="xr-index-data"><pre>PandasIndex(Int64Index([2018, 2019, 2020, 2021, 2022, 2023], dtype='int64', name='year'))</pre></div></li><li class="xr-var-item"><div class="xr-index-name"><div>x</div></div><div class="xr-index-preview">PandasIndex</div><div></div><input id="index-7585515a-0a27-4824-83b8-b097284ab5c2" class="xr-index-data-in" type="checkbox"><label for="index-7585515a-0a27-4824-83b8-b097284ab5c2" title="Show/Hide index repr"><svg class="icon xr-icon-database"><use href="#icon-database"></use></svg></label><div class="xr-index-data"><pre>PandasIndex(Float64Index([4364933.008070561,  4365033.43163347, 4365133.855196379,
+              4365234.278759288, 4365334.702322196, 4365435.125885106,
+              4365535.549448014, 4365635.973010924, 4365736.396573832,
+              4365836.820136741,
+              ...
+              4374473.246546905, 4374573.670109814, 4374674.093672723,
+              4374774.517235631, 4374874.940798541, 4374975.364361449,
+              4375075.787924359, 4375176.211487267, 4375276.635050176,
+              4375377.058613085],
+             dtype='float64', name='x', length=105))</pre></div></li><li class="xr-var-item"><div class="xr-index-name"><div>y</div></div><div class="xr-index-preview">PandasIndex</div><div></div><input id="index-574340b0-57fd-4bac-88de-ae036a23aad8" class="xr-index-data-in" type="checkbox"><label for="index-574340b0-57fd-4bac-88de-ae036a23aad8" title="Show/Hide index repr"><svg class="icon xr-icon-database"><use href="#icon-database"></use></svg></label><div class="xr-index-data"><pre>PandasIndex(Float64Index([3176652.7101289225,  3176552.995039586, 3176453.2799502495,
+              3176353.5648609134,  3176253.849771577, 3176154.1346822404,
+               3176054.419592904,  3175954.704503568, 3175854.9894142314,
+               3175755.274324895, 3175655.5592355584, 3175555.8441462223,
+               3175456.129056886, 3175356.4139675493,  3175256.698878213,
+               3175156.983788877, 3175057.2686995403,  3174957.553610204,
+              3174857.8385208673, 3174758.1234315312, 3174658.4083421947,
+              3174558.6932528582, 3174458.9781635217, 3174359.2630741857,
+               3174259.547984849, 3174159.8328955127,  3174060.117806176,
+                3173960.40271684, 3173860.6876275036,  3173760.972538167,
+              3173661.2574488306, 3173561.5423594946,  3173461.827270158,
+              3173362.1121808216,  3173262.397091485,  3173162.682002149,
+              3173062.9669128126,  3172963.251823476, 3172863.5367341395,
+              3172763.8216448035,  3172664.106555467, 3172564.3914661305,
+               3172464.676376794,  3172364.961287458, 3172265.2461981215,
+               3172165.531108785, 3172065.8160194485, 3171966.1009301124,
+               3171866.385840776, 3171766.6707514394,  3171666.955662103,
+              3171567.2405727664, 3171467.5254834304,  3171367.810394094,
+              3171268.0953047574,  3171168.380215421,  3171068.665126085,
+              3170968.9500367483,  3170869.234947412, 3170769.5198580753,
+              3170669.8047687393, 3170570.0896794028, 3170470.3745900663,
+              3170370.6595007298, 3170270.9444113937,  3170171.229322057,
+              3170071.5142327207,  3169971.799143384,  3169872.084054048,
+              3169772.3689647117,  3169672.653875375, 3169572.9387860387,
+              3169473.2236967026,  3169373.508607366, 3169273.7935180296,
+               3169174.078428693,  3169074.363339357, 3168974.6482500206,
+               3168874.933160684, 3168775.2180713476, 3168675.5029820115,
+               3168575.787892675, 3168476.0728033385,  3168376.357714002,
+               3168276.642624666, 3168176.9275353295,  3168077.212445993,
+              3167977.4973566565, 3167877.7822673204,  3167778.067177984,
+              3167678.3520886474,  3167578.636999311,  3167478.921909975,
+              3167379.2068206384,  3167279.491731302, 3167179.7766419654,
+              3167080.0615526293,  3166980.346463293],
+             dtype='float64', name='y'))</pre></div></li></ul></div></li><li class="xr-section-item"><input id="section-46ae52cf-cff8-47d5-9667-86bf5e39409e" class="xr-section-summary-in" type="checkbox" checked=""><label for="section-46ae52cf-cff8-47d5-9667-86bf5e39409e" class="xr-section-summary">Attributes: <span>(4)</span></label><div class="xr-section-inline-details"></div><div class="xr-section-details"><dl class="xr-attrs"><dt><span>AREA_OR_POINT :</span></dt><dd>Area</dd><dt><span>TIFFTAG_RESOLUTIONUNIT :</span></dt><dd>1 (unitless)</dd><dt><span>TIFFTAG_XRESOLUTION :</span></dt><dd>1</dd><dt><span>TIFFTAG_YRESOLUTION :</span></dt><dd>1</dd></dl></div></li></ul></div></div>
+</div>
 </div>
 <p>We can use xarray to plot the RGB data as a true color image:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get RGB data for a year</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>plot_year <span class="op">=</span> <span class="dv">2018</span></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>true_color <span class="op">=</span> ds_s2.sel(year<span class="op">=</span>plot_year)[[<span class="st">"R"</span>, <span class="st">"G"</span>, <span class="st">"B"</span>]].to_array()</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Divide by scale factor and apply gamma to brighten image</span></span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>(true_color <span class="op">*</span> <span class="dv">4</span>).plot.imshow()</span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="ss">f"True Color </span><span class="sc">{</span>plot_year<span class="sc">}</span><span class="ss">"</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get RGB data for a year</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>plot_year <span class="op">=</span> <span class="dv">2018</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>true_color <span class="op">=</span> ds_s2.sel(year<span class="op">=</span>plot_year)[[<span class="st">"R"</span>, <span class="st">"G"</span>, <span class="st">"B"</span>]].to_array()</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Divide by scale factor and apply gamma to brighten image</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>(true_color <span class="op">*</span> <span class="dv">4</span>).plot.imshow()</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="ss">f"True Color </span><span class="sc">{</span>plot_year<span class="sc">}</span><span class="ss">"</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="deforestation_monitoring_with_xarray_files/figure-html/cell-15-output-1.png" class="img-fluid"></p>
+</div>
 </div>
 <p>We can also similarly plot the NDVI values:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>ds_s2.NDVI.plot(cmap<span class="op">=</span><span class="st">"PRGn"</span>, x<span class="op">=</span><span class="st">"x"</span>, y<span class="op">=</span><span class="st">"y"</span>, col<span class="op">=</span><span class="st">"year"</span>, col_wrap<span class="op">=</span><span class="dv">3</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-execution_count="15">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>ds_s2.NDVI.plot(cmap<span class="op">=</span><span class="st">"PRGn"</span>, x<span class="op">=</span><span class="st">"x"</span>, y<span class="op">=</span><span class="st">"y"</span>, col<span class="op">=</span><span class="st">"year"</span>, col_wrap<span class="op">=</span><span class="dv">3</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="deforestation_monitoring_with_xarray_files/figure-html/cell-16-output-1.png" class="img-fluid"></p>
+</div>
 </div>
 </section>
 <section id="analysis" class="level2">
@@ -1517,63 +2233,72 @@ window.onload = function() {
 <p>For analysis the first step is to classify pixels as forest. In our case we will just do a simple thresholding classification where we classify everything above a certain threshold as forest. This isn’t the best approach for classifying forest, since agricultural areas can also easily reach very high NDVI values. A better approach would be to classify based on the temporal signature of the pixel.</p>
 <p>However, for this basic analysis, we stick to the simple thresholding approach.</p>
 <p>In this case we classify everything above an NDVI of 0.7 as forest. This calculated forest mask is then saved to a new Data Variable in the xarray dataset:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>ds_s2[<span class="st">"FOREST"</span>] <span class="op">=</span> ds_s2.NDVI <span class="op">&gt;</span> <span class="fl">0.7</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-execution_count="16">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>ds_s2[<span class="st">"FOREST"</span>] <span class="op">=</span> ds_s2.NDVI <span class="op">&gt;</span> <span class="fl">0.7</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>With this forest mask we can already do a quick preliminary analysis to plot the total forest area over the years.</p>
 <p>To do this we sum up the pixels along the x and y coordinate but not along the time coordinate. This will leave us with one value per year representing the number of pixels classified as forest. We can then calculate the forest area by multiplying the number of forest pixels by the resolution.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> to_km2(dataarray, resolution):</span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Calculate forest area</span></span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> dataarray <span class="op">*</span> np.prod(<span class="bu">list</span>(resolution)) <span class="op">/</span> <span class="fl">1e6</span></span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>forest_pixels <span class="op">=</span> ds_s2.FOREST.<span class="bu">sum</span>([<span class="st">"x"</span>, <span class="st">"y"</span>])</span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>forest_area_km2 <span class="op">=</span> to_km2(forest_pixels, resolution)</span>
-<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>forest_area_km2.plot()</span>
-<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Forest Cover"</span>)</span>
-<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"Forest Cover [km²]"</span>)</span>
-<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>plt.ylim(<span class="dv">0</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-execution_count="17">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> to_km2(dataarray, resolution):</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Calculate forest area</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> dataarray <span class="op">*</span> np.prod(<span class="bu">list</span>(resolution)) <span class="op">/</span> <span class="fl">1e6</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>forest_pixels <span class="op">=</span> ds_s2.FOREST.<span class="bu">sum</span>([<span class="st">"x"</span>, <span class="st">"y"</span>])</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>forest_area_km2 <span class="op">=</span> to_km2(forest_pixels, resolution)</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>forest_area_km2.plot()</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Forest Cover"</span>)</span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"Forest Cover [km²]"</span>)</span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>plt.ylim(<span class="dv">0</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="deforestation_monitoring_with_xarray_files/figure-html/cell-18-output-1.png" class="img-fluid"></p>
+</div>
 </div>
 <p>We can see that the total forest area in this AOI decreased from around 80 km² in 2018 to only around 50 km² in 2023.</p>
 <p>The next step is to make change maps from year to year. To do this we basically take the difference of the forest mask of a year with its previous year.</p>
 <p>This will result in 0 value where there has been no change, -1 where forest was lost and +1 where forest was gained.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Make change maps of forest loss and forest gain compared to previous year</span></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 0 - 0 = No Change: 0</span></span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 1 - 1 = No Change: 0</span></span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="co"># 1 - 0 = Forest Gain: 1</span></span>
-<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 0 - 1 = Forest Loss: -1</span></span>
-<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Define custom colors and labels</span></span>
-<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>colors <span class="op">=</span> [<span class="st">"darkred"</span>, <span class="st">"white"</span>, <span class="st">"darkblue"</span>]</span>
-<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>labels <span class="op">=</span> [<span class="st">"Forest Loss"</span>, <span class="st">"No Change"</span>, <span class="st">"Forest Gain"</span>]</span>
-<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a colormap and normalize it</span></span>
-<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>cmap <span class="op">=</span> mcolors.ListedColormap(colors)</span>
-<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>norm <span class="op">=</span> plt.Normalize(<span class="op">-</span><span class="dv">1</span>, <span class="dv">1</span>)  <span class="co"># Adjust the range based on your data</span></span>
-<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a>plot_year <span class="op">=</span> <span class="dv">2022</span></span>
-<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a>ds_s2[<span class="st">"CHANGE"</span>] <span class="op">=</span> ds_s2.FOREST.astype(<span class="bu">int</span>).diff(<span class="st">"year"</span>, label<span class="op">=</span><span class="st">"upper"</span>)</span>
-<span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a>ds_s2.CHANGE.sel(year<span class="op">=</span>plot_year).plot(cmap<span class="op">=</span>cmap, norm<span class="op">=</span>norm, add_colorbar<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb20-19"><a href="#cb20-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-20"><a href="#cb20-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a legend with string labels</span></span>
-<span id="cb20-21"><a href="#cb20-21" aria-hidden="true" tabindex="-1"></a>legend_patches <span class="op">=</span> [</span>
-<span id="cb20-22"><a href="#cb20-22" aria-hidden="true" tabindex="-1"></a>    mpatches.Patch(color<span class="op">=</span>color, label<span class="op">=</span>label) <span class="cf">for</span> color, label <span class="kw">in</span> <span class="bu">zip</span>(colors, labels)</span>
-<span id="cb20-23"><a href="#cb20-23" aria-hidden="true" tabindex="-1"></a>]</span>
-<span id="cb20-24"><a href="#cb20-24" aria-hidden="true" tabindex="-1"></a>plt.legend(handles<span class="op">=</span>legend_patches, loc<span class="op">=</span><span class="st">"lower left"</span>)</span>
-<span id="cb20-25"><a href="#cb20-25" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="ss">f"Forest Change Map </span><span class="sc">{</span>plot_year<span class="sc">}</span><span class="ss">"</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-execution_count="18">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Make change maps of forest loss and forest gain compared to previous year</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 0 - 0 = No Change: 0</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 1 - 1 = No Change: 0</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="co"># 1 - 0 = Forest Gain: 1</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 0 - 1 = Forest Loss: -1</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Define custom colors and labels</span></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>colors <span class="op">=</span> [<span class="st">"darkred"</span>, <span class="st">"white"</span>, <span class="st">"darkblue"</span>]</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>labels <span class="op">=</span> [<span class="st">"Forest Loss"</span>, <span class="st">"No Change"</span>, <span class="st">"Forest Gain"</span>]</span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a colormap and normalize it</span></span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>cmap <span class="op">=</span> mcolors.ListedColormap(colors)</span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>norm <span class="op">=</span> plt.Normalize(<span class="op">-</span><span class="dv">1</span>, <span class="dv">1</span>)  <span class="co"># Adjust the range based on your data</span></span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>plot_year <span class="op">=</span> <span class="dv">2022</span></span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>ds_s2[<span class="st">"CHANGE"</span>] <span class="op">=</span> ds_s2.FOREST.astype(<span class="bu">int</span>).diff(<span class="st">"year"</span>, label<span class="op">=</span><span class="st">"upper"</span>)</span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a>ds_s2.CHANGE.sel(year<span class="op">=</span>plot_year).plot(cmap<span class="op">=</span>cmap, norm<span class="op">=</span>norm, add_colorbar<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a legend with string labels</span></span>
+<span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a>legend_patches <span class="op">=</span> [</span>
+<span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a>    mpatches.Patch(color<span class="op">=</span>color, label<span class="op">=</span>label) <span class="cf">for</span> color, label <span class="kw">in</span> <span class="bu">zip</span>(colors, labels)</span>
+<span id="cb21-23"><a href="#cb21-23" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb21-24"><a href="#cb21-24" aria-hidden="true" tabindex="-1"></a>plt.legend(handles<span class="op">=</span>legend_patches, loc<span class="op">=</span><span class="st">"lower left"</span>)</span>
+<span id="cb21-25"><a href="#cb21-25" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="ss">f"Forest Change Map </span><span class="sc">{</span>plot_year<span class="sc">}</span><span class="ss">"</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="deforestation_monitoring_with_xarray_files/figure-html/cell-19-output-1.png" class="img-fluid"></p>
+</div>
 </div>
 <p>Here, we can see the spatial distribution of areas affected by forest loss. In the displayed change from 2021 to 2022, most of the forest loss happened in the northern part of the study area, while the southern part lost comparatively less forest.</p>
 <p>To get a feel for the loss per year, we can cumulatively sum up the lost areas over the years. This should basically follow the same trends as the earlier plot of total forest area.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Forest Loss per Year</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>forest_loss <span class="op">=</span> (ds_s2.CHANGE <span class="op">==</span> <span class="op">-</span><span class="dv">1</span>).<span class="bu">sum</span>([<span class="st">"x"</span>, <span class="st">"y"</span>])</span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>forest_loss_km2 <span class="op">=</span> to_km2(forest_loss, resolution)</span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>forest_loss_km2.cumsum().plot()</span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Cumulative Forest Loss"</span>)</span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"Forest Loss [km²]"</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-execution_count="19">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Forest Loss per Year</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>forest_loss <span class="op">=</span> (ds_s2.CHANGE <span class="op">==</span> <span class="op">-</span><span class="dv">1</span>).<span class="bu">sum</span>([<span class="st">"x"</span>, <span class="st">"y"</span>])</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>forest_loss_km2 <span class="op">=</span> to_km2(forest_loss, resolution)</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>forest_loss_km2.cumsum().plot()</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Cumulative Forest Loss"</span>)</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"Forest Loss [km²]"</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="deforestation_monitoring_with_xarray_files/figure-html/cell-20-output-1.png" class="img-fluid"></p>
+</div>
 </div>
 <p>We can see that there have been two years with particularly large amounts of lost forest area. From 2019-2020 and with by far the most lost area between 2021 and 2022.</p>
 </section>
@@ -1581,61 +2306,894 @@ window.onload = function() {
 <h2 class="anchored" data-anchor-id="validation">Validation</h2>
 <p>Finally, we want to see how accurate our data is compared to the widely used Hansen Global Forest Change data. In a real scientific scenario, we would use Ground Truth data to assess the accuracy of our classification. In this case we use the Global Forest Change data in place of Ground Truth data, just to show how an accuracy assessment can be done. The assessment we are doing only shows how accurately we replicate the Global Forest Change data, however we will not know if our product is more or less accurate. For a more accurate assessment, actual Ground Truth data is required.</p>
 <p>First we download the Global Forest Change Data <a href="https://storage.googleapis.com/earthenginepartners-hansen/GFC-2022-v1.10/download.html">here</a> and open it using xarray.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>data_path <span class="op">=</span> Path(<span class="st">"./data/"</span>)</span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>data_path.mkdir(parents<span class="op">=</span><span class="va">True</span>, exist_ok<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>hansen_filename <span class="op">=</span> <span class="st">"Hansen_GFC-2022-v1.10_lossyear_60N_010E.tif"</span></span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>comp_data <span class="op">=</span> data_path <span class="op">/</span> hansen_filename</span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> comp_data.<span class="bu">open</span>(<span class="st">"wb"</span>) <span class="im">as</span> fs:</span>
-<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>    hansen_data <span class="op">=</span> requests.get(</span>
-<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f"https://storage.googleapis.com/earthenginepartners-hansen/GFC-2022-v1.10/</span><span class="sc">{</span>hansen_filename<span class="sc">}</span><span class="ss">"</span></span>
-<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>    fs.write(hansen_data.content)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-execution_count="20">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>data_path <span class="op">=</span> Path(<span class="st">"./data/"</span>)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>data_path.mkdir(parents<span class="op">=</span><span class="va">True</span>, exist_ok<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>hansen_filename <span class="op">=</span> <span class="st">"Hansen_GFC-2022-v1.10_lossyear_60N_010E.tif"</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>comp_data <span class="op">=</span> data_path <span class="op">/</span> hansen_filename</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> comp_data.<span class="bu">open</span>(<span class="st">"wb"</span>) <span class="im">as</span> fs:</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>    hansen_data <span class="op">=</span> requests.get(</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f"https://storage.googleapis.com/earthenginepartners-hansen/GFC-2022-v1.10/</span><span class="sc">{</span>hansen_filename<span class="sc">}</span><span class="ss">"</span></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>    fs.write(hansen_data.content)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Open the file</span></span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>ground_truth <span class="op">=</span> (</span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    xr.open_dataarray(comp_data, engine<span class="op">=</span><span class="st">"rasterio"</span>)</span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>    .rio.clip_box(<span class="op">*</span>bbox_coords)</span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>    .rio.reproject(epsg)</span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>    .sel(band<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>    .where(<span class="kw">lambda</span> gt: gt <span class="op">&lt;</span> <span class="dv">100</span>, <span class="dv">0</span>)  <span class="co"># fill no-data (values over 100) with 0</span></span>
-<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>ground_truth.plot(levels<span class="op">=</span><span class="bu">range</span>(<span class="dv">25</span>), cbar_kwargs<span class="op">=</span>{<span class="st">"label"</span>: <span class="st">"Year of Forest Loss"</span>})</span>
-<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Global Forest Watch Data"</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-execution_count="21">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Open the file</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>ground_truth <span class="op">=</span> (</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    xr.open_dataarray(comp_data, engine<span class="op">=</span><span class="st">"rasterio"</span>)</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>    .rio.clip_box(<span class="op">*</span>bbox_coords)</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>    .rio.reproject(epsg)</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>    .sel(band<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>    .where(<span class="kw">lambda</span> gt: gt <span class="op">&lt;</span> <span class="dv">100</span>, <span class="dv">0</span>)  <span class="co"># fill no-data (values over 100) with 0</span></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>ground_truth.plot(levels<span class="op">=</span><span class="bu">range</span>(<span class="dv">25</span>), cbar_kwargs<span class="op">=</span>{<span class="st">"label"</span>: <span class="st">"Year of Forest Loss"</span>})</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Global Forest Watch Data"</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="deforestation_monitoring_with_xarray_files/figure-html/cell-22-output-1.png" class="img-fluid"></p>
+</div>
 </div>
 <p>The data shows in which year forest was first lost. To compare with our own data, we need to add the data to our dataset. To do this the data needs to have the same coordinates. This can be achieved with <code>.interp_like()</code>. This function interpolates the data to match up the coordinates of another dataset.</p>
 <p>In this case we chose the interpolation method <code>nearest</code> since it is categorical data.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>ds_s2[<span class="st">"GROUND_TRUTH"</span>] <span class="op">=</span> ground_truth.interp_like(ds_s2, method<span class="op">=</span><span class="st">"nearest"</span>).astype(<span class="bu">int</span>)</span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>ds_s2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-execution_count="22">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>ds_s2[<span class="st">"GROUND_TRUTH"</span>] <span class="op">=</span> ground_truth.interp_like(ds_s2, method<span class="op">=</span><span class="st">"nearest"</span>).astype(<span class="bu">int</span>)</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>ds_s2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="22">
+
+<div><svg style="position: absolute; width: 0; height: 0; overflow: hidden">
+<defs>
+<symbol id="icon-database" viewbox="0 0 32 32">
+<path d="M16 0c-8.837 0-16 2.239-16 5v4c0 2.761 7.163 5 16 5s16-2.239 16-5v-4c0-2.761-7.163-5-16-5z"></path>
+<path d="M16 17c-8.837 0-16-2.239-16-5v6c0 2.761 7.163 5 16 5s16-2.239 16-5v-6c0 2.761-7.163 5-16 5z"></path>
+<path d="M16 26c-8.837 0-16-2.239-16-5v6c0 2.761 7.163 5 16 5s16-2.239 16-5v-6c0 2.761-7.163 5-16 5z"></path>
+</symbol>
+<symbol id="icon-file-text2" viewbox="0 0 32 32">
+<path d="M28.681 7.159c-0.694-0.947-1.662-2.053-2.724-3.116s-2.169-2.030-3.116-2.724c-1.612-1.182-2.393-1.319-2.841-1.319h-15.5c-1.378 0-2.5 1.121-2.5 2.5v27c0 1.378 1.122 2.5 2.5 2.5h23c1.378 0 2.5-1.122 2.5-2.5v-19.5c0-0.448-0.137-1.23-1.319-2.841zM24.543 5.457c0.959 0.959 1.712 1.825 2.268 2.543h-4.811v-4.811c0.718 0.556 1.584 1.309 2.543 2.268zM28 29.5c0 0.271-0.229 0.5-0.5 0.5h-23c-0.271 0-0.5-0.229-0.5-0.5v-27c0-0.271 0.229-0.5 0.5-0.5 0 0 15.499-0 15.5 0v7c0 0.552 0.448 1 1 1h7v19.5z"></path>
+<path d="M23 26h-14c-0.552 0-1-0.448-1-1s0.448-1 1-1h14c0.552 0 1 0.448 1 1s-0.448 1-1 1z"></path>
+<path d="M23 22h-14c-0.552 0-1-0.448-1-1s0.448-1 1-1h14c0.552 0 1 0.448 1 1s-0.448 1-1 1z"></path>
+<path d="M23 18h-14c-0.552 0-1-0.448-1-1s0.448-1 1-1h14c0.552 0 1 0.448 1 1s-0.448 1-1 1z"></path>
+</symbol>
+</defs>
+</svg>
+<style>/* CSS stylesheet for displaying xarray objects in jupyterlab.
+ *
+ */
+
+:root {
+  --xr-font-color0: var(--jp-content-font-color0, rgba(0, 0, 0, 1));
+  --xr-font-color2: var(--jp-content-font-color2, rgba(0, 0, 0, 0.54));
+  --xr-font-color3: var(--jp-content-font-color3, rgba(0, 0, 0, 0.38));
+  --xr-border-color: var(--jp-border-color2, #e0e0e0);
+  --xr-disabled-color: var(--jp-layout-color3, #bdbdbd);
+  --xr-background-color: var(--jp-layout-color0, white);
+  --xr-background-color-row-even: var(--jp-layout-color1, white);
+  --xr-background-color-row-odd: var(--jp-layout-color2, #eeeeee);
+}
+
+html[theme=dark],
+body[data-theme=dark],
+body.vscode-dark {
+  --xr-font-color0: rgba(255, 255, 255, 1);
+  --xr-font-color2: rgba(255, 255, 255, 0.54);
+  --xr-font-color3: rgba(255, 255, 255, 0.38);
+  --xr-border-color: #1F1F1F;
+  --xr-disabled-color: #515151;
+  --xr-background-color: #111111;
+  --xr-background-color-row-even: #111111;
+  --xr-background-color-row-odd: #313131;
+}
+
+.xr-wrap {
+  display: block !important;
+  min-width: 300px;
+  max-width: 700px;
+}
+
+.xr-text-repr-fallback {
+  /* fallback to plain text repr when CSS is not injected (untrusted notebook) */
+  display: none;
+}
+
+.xr-header {
+  padding-top: 6px;
+  padding-bottom: 6px;
+  margin-bottom: 4px;
+  border-bottom: solid 1px var(--xr-border-color);
+}
+
+.xr-header > div,
+.xr-header > ul {
+  display: inline;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.xr-obj-type,
+.xr-array-name {
+  margin-left: 2px;
+  margin-right: 10px;
+}
+
+.xr-obj-type {
+  color: var(--xr-font-color2);
+}
+
+.xr-sections {
+  padding-left: 0 !important;
+  display: grid;
+  grid-template-columns: 150px auto auto 1fr 20px 20px;
+}
+
+.xr-section-item {
+  display: contents;
+}
+
+.xr-section-item input {
+  display: none;
+}
+
+.xr-section-item input + label {
+  color: var(--xr-disabled-color);
+}
+
+.xr-section-item input:enabled + label {
+  cursor: pointer;
+  color: var(--xr-font-color2);
+}
+
+.xr-section-item input:enabled + label:hover {
+  color: var(--xr-font-color0);
+}
+
+.xr-section-summary {
+  grid-column: 1;
+  color: var(--xr-font-color2);
+  font-weight: 500;
+}
+
+.xr-section-summary > span {
+  display: inline-block;
+  padding-left: 0.5em;
+}
+
+.xr-section-summary-in:disabled + label {
+  color: var(--xr-font-color2);
+}
+
+.xr-section-summary-in + label:before {
+  display: inline-block;
+  content: '►';
+  font-size: 11px;
+  width: 15px;
+  text-align: center;
+}
+
+.xr-section-summary-in:disabled + label:before {
+  color: var(--xr-disabled-color);
+}
+
+.xr-section-summary-in:checked + label:before {
+  content: '▼';
+}
+
+.xr-section-summary-in:checked + label > span {
+  display: none;
+}
+
+.xr-section-summary,
+.xr-section-inline-details {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+.xr-section-inline-details {
+  grid-column: 2 / -1;
+}
+
+.xr-section-details {
+  display: none;
+  grid-column: 1 / -1;
+  margin-bottom: 5px;
+}
+
+.xr-section-summary-in:checked ~ .xr-section-details {
+  display: contents;
+}
+
+.xr-array-wrap {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 20px auto;
+}
+
+.xr-array-wrap > label {
+  grid-column: 1;
+  vertical-align: top;
+}
+
+.xr-preview {
+  color: var(--xr-font-color3);
+}
+
+.xr-array-preview,
+.xr-array-data {
+  padding: 0 5px !important;
+  grid-column: 2;
+}
+
+.xr-array-data,
+.xr-array-in:checked ~ .xr-array-preview {
+  display: none;
+}
+
+.xr-array-in:checked ~ .xr-array-data,
+.xr-array-preview {
+  display: inline-block;
+}
+
+.xr-dim-list {
+  display: inline-block !important;
+  list-style: none;
+  padding: 0 !important;
+  margin: 0;
+}
+
+.xr-dim-list li {
+  display: inline-block;
+  padding: 0;
+  margin: 0;
+}
+
+.xr-dim-list:before {
+  content: '(';
+}
+
+.xr-dim-list:after {
+  content: ')';
+}
+
+.xr-dim-list li:not(:last-child):after {
+  content: ',';
+  padding-right: 5px;
+}
+
+.xr-has-index {
+  font-weight: bold;
+}
+
+.xr-var-list,
+.xr-var-item {
+  display: contents;
+}
+
+.xr-var-item > div,
+.xr-var-item label,
+.xr-var-item > .xr-var-name span {
+  background-color: var(--xr-background-color-row-even);
+  margin-bottom: 0;
+}
+
+.xr-var-item > .xr-var-name:hover span {
+  padding-right: 5px;
+}
+
+.xr-var-list > li:nth-child(odd) > div,
+.xr-var-list > li:nth-child(odd) > label,
+.xr-var-list > li:nth-child(odd) > .xr-var-name span {
+  background-color: var(--xr-background-color-row-odd);
+}
+
+.xr-var-name {
+  grid-column: 1;
+}
+
+.xr-var-dims {
+  grid-column: 2;
+}
+
+.xr-var-dtype {
+  grid-column: 3;
+  text-align: right;
+  color: var(--xr-font-color2);
+}
+
+.xr-var-preview {
+  grid-column: 4;
+}
+
+.xr-index-preview {
+  grid-column: 2 / 5;
+  color: var(--xr-font-color2);
+}
+
+.xr-var-name,
+.xr-var-dims,
+.xr-var-dtype,
+.xr-preview,
+.xr-attrs dt {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-right: 10px;
+}
+
+.xr-var-name:hover,
+.xr-var-dims:hover,
+.xr-var-dtype:hover,
+.xr-attrs dt:hover {
+  overflow: visible;
+  width: auto;
+  z-index: 1;
+}
+
+.xr-var-attrs,
+.xr-var-data,
+.xr-index-data {
+  display: none;
+  background-color: var(--xr-background-color) !important;
+  padding-bottom: 5px !important;
+}
+
+.xr-var-attrs-in:checked ~ .xr-var-attrs,
+.xr-var-data-in:checked ~ .xr-var-data,
+.xr-index-data-in:checked ~ .xr-index-data {
+  display: block;
+}
+
+.xr-var-data > table {
+  float: right;
+}
+
+.xr-var-name span,
+.xr-var-data,
+.xr-index-name div,
+.xr-index-data,
+.xr-attrs {
+  padding-left: 25px !important;
+}
+
+.xr-attrs,
+.xr-var-attrs,
+.xr-var-data,
+.xr-index-data {
+  grid-column: 1 / -1;
+}
+
+dl.xr-attrs {
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: 125px auto;
+}
+
+.xr-attrs dt,
+.xr-attrs dd {
+  padding: 0;
+  margin: 0;
+  float: left;
+  padding-right: 10px;
+  width: auto;
+}
+
+.xr-attrs dt {
+  font-weight: normal;
+  grid-column: 1;
+}
+
+.xr-attrs dt:hover span {
+  display: inline-block;
+  background: var(--xr-background-color);
+  padding-right: 10px;
+}
+
+.xr-attrs dd {
+  grid-column: 2;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.xr-icon-database,
+.xr-icon-file-text2,
+.xr-no-icon {
+  display: inline-block;
+  vertical-align: middle;
+  width: 1em;
+  height: 1.5em !important;
+  stroke-width: 0;
+  stroke: currentColor;
+  fill: currentColor;
+}
+</style><pre class="xr-text-repr-fallback">&lt;xarray.Dataset&gt;
+Dimensions:       (year: 6, x: 105, y: 98)
+Coordinates:
+  * year          (year) int64 2018 2019 2020 2021 2022 2023
+  * x             (x) float64 4.365e+06 4.365e+06 ... 4.375e+06 4.375e+06
+  * y             (y) float64 3.177e+06 3.177e+06 ... 3.167e+06 3.167e+06
+    spatial_ref   int32 0
+    band          int32 1
+Data variables:
+    R             (year, y, x) float32 dask.array&lt;chunksize=(1, 9, 105), meta=np.ndarray&gt;
+    G             (year, y, x) float32 dask.array&lt;chunksize=(1, 9, 105), meta=np.ndarray&gt;
+    B             (year, y, x) float32 dask.array&lt;chunksize=(1, 9, 105), meta=np.ndarray&gt;
+    NDVI          (year, y, x) float32 dask.array&lt;chunksize=(1, 9, 105), meta=np.ndarray&gt;
+    FOREST        (year, y, x) bool dask.array&lt;chunksize=(1, 9, 105), meta=np.ndarray&gt;
+    CHANGE        (year, y, x) float64 dask.array&lt;chunksize=(2, 9, 105), meta=np.ndarray&gt;
+    GROUND_TRUTH  (y, x) int32 0 0 0 0 0 0 0 0 0 0 0 0 ... 0 0 0 0 0 0 0 0 0 0 0
+Attributes:
+    AREA_OR_POINT:           Area
+    TIFFTAG_RESOLUTIONUNIT:  1 (unitless)
+    TIFFTAG_XRESOLUTION:     1
+    TIFFTAG_YRESOLUTION:     1</pre><div class="xr-wrap" style="display:none"><div class="xr-header"><div class="xr-obj-type">xarray.Dataset</div></div><ul class="xr-sections"><li class="xr-section-item"><input id="section-eca2dce3-c5b8-4bb6-ab38-fc84dc714fee" class="xr-section-summary-in" type="checkbox" disabled=""><label for="section-eca2dce3-c5b8-4bb6-ab38-fc84dc714fee" class="xr-section-summary" title="Expand/collapse section">Dimensions:</label><div class="xr-section-inline-details"><ul class="xr-dim-list"><li><span class="xr-has-index">year</span>: 6</li><li><span class="xr-has-index">x</span>: 105</li><li><span class="xr-has-index">y</span>: 98</li></ul></div><div class="xr-section-details"></div></li><li class="xr-section-item"><input id="section-d0fe946d-278c-4ce3-892b-39ef2a81445c" class="xr-section-summary-in" type="checkbox" checked=""><label for="section-d0fe946d-278c-4ce3-892b-39ef2a81445c" class="xr-section-summary">Coordinates: <span>(5)</span></label><div class="xr-section-inline-details"></div><div class="xr-section-details"><ul class="xr-var-list"><li class="xr-var-item"><div class="xr-var-name"><span class="xr-has-index">year</span></div><div class="xr-var-dims">(year)</div><div class="xr-var-dtype">int64</div><div class="xr-var-preview xr-preview">2018 2019 2020 2021 2022 2023</div><input id="attrs-50ed1ba3-5154-46c0-88bd-015e9ac62385" class="xr-var-attrs-in" type="checkbox" disabled=""><label for="attrs-50ed1ba3-5154-46c0-88bd-015e9ac62385" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use href="#icon-file-text2"></use></svg></label><input id="data-08024d90-c773-488d-856f-d647e3232d24" class="xr-var-data-in" type="checkbox"><label for="data-08024d90-c773-488d-856f-d647e3232d24" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"></dl></div><div class="xr-var-data"><pre>array([2018, 2019, 2020, 2021, 2022, 2023], dtype=int64)</pre></div></li><li class="xr-var-item"><div class="xr-var-name"><span class="xr-has-index">x</span></div><div class="xr-var-dims">(x)</div><div class="xr-var-dtype">float64</div><div class="xr-var-preview xr-preview">4.365e+06 4.365e+06 ... 4.375e+06</div><input id="attrs-31bfef2c-afd4-48bf-ae68-be1b46c7af29" class="xr-var-attrs-in" type="checkbox" disabled=""><label for="attrs-31bfef2c-afd4-48bf-ae68-be1b46c7af29" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use href="#icon-file-text2"></use></svg></label><input id="data-cb1178e5-9455-4a78-8f49-9b2ddf511160" class="xr-var-data-in" type="checkbox"><label for="data-cb1178e5-9455-4a78-8f49-9b2ddf511160" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"></dl></div><div class="xr-var-data"><pre>array([4364933.008071, 4365033.431633, 4365133.855196, 4365234.278759,
+       4365334.702322, 4365435.125885, 4365535.549448, 4365635.973011,
+       4365736.396574, 4365836.820137, 4365937.2437  , 4366037.667263,
+       4366138.090825, 4366238.514388, 4366338.937951, 4366439.361514,
+       4366539.785077, 4366640.20864 , 4366740.632203, 4366841.055766,
+       4366941.479329, 4367041.902892, 4367142.326455, 4367242.750017,
+       4367343.17358 , 4367443.597143, 4367544.020706, 4367644.444269,
+       4367744.867832, 4367845.291395, 4367945.714958, 4368046.138521,
+       4368146.562084, 4368246.985647, 4368347.409209, 4368447.832772,
+       4368548.256335, 4368648.679898, 4368749.103461, 4368849.527024,
+       4368949.950587, 4369050.37415 , 4369150.797713, 4369251.221276,
+       4369351.644839, 4369452.068401, 4369552.491964, 4369652.915527,
+       4369753.33909 , 4369853.762653, 4369954.186216, 4370054.609779,
+       4370155.033342, 4370255.456905, 4370355.880468, 4370456.304031,
+       4370556.727593, 4370657.151156, 4370757.574719, 4370857.998282,
+       4370958.421845, 4371058.845408, 4371159.268971, 4371259.692534,
+       4371360.116097, 4371460.53966 , 4371560.963223, 4371661.386785,
+       4371761.810348, 4371862.233911, 4371962.657474, 4372063.081037,
+       4372163.5046  , 4372263.928163, 4372364.351726, 4372464.775289,
+       4372565.198852, 4372665.622415, 4372766.045977, 4372866.46954 ,
+       4372966.893103, 4373067.316666, 4373167.740229, 4373268.163792,
+       4373368.587355, 4373469.010918, 4373569.434481, 4373669.858044,
+       4373770.281607, 4373870.705169, 4373971.128732, 4374071.552295,
+       4374171.975858, 4374272.399421, 4374372.822984, 4374473.246547,
+       4374573.67011 , 4374674.093673, 4374774.517236, 4374874.940799,
+       4374975.364361, 4375075.787924, 4375176.211487, 4375276.63505 ,
+       4375377.058613])</pre></div></li><li class="xr-var-item"><div class="xr-var-name"><span class="xr-has-index">y</span></div><div class="xr-var-dims">(y)</div><div class="xr-var-dtype">float64</div><div class="xr-var-preview xr-preview">3.177e+06 3.177e+06 ... 3.167e+06</div><input id="attrs-c9e160e5-7f8d-43a2-97ab-a0a558a131a6" class="xr-var-attrs-in" type="checkbox" disabled=""><label for="attrs-c9e160e5-7f8d-43a2-97ab-a0a558a131a6" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use href="#icon-file-text2"></use></svg></label><input id="data-75f3d851-ec11-46d7-8101-3aef04526e8e" class="xr-var-data-in" type="checkbox"><label for="data-75f3d851-ec11-46d7-8101-3aef04526e8e" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"></dl></div><div class="xr-var-data"><pre>array([3176652.710129, 3176552.99504 , 3176453.27995 , 3176353.564861,
+       3176253.849772, 3176154.134682, 3176054.419593, 3175954.704504,
+       3175854.989414, 3175755.274325, 3175655.559236, 3175555.844146,
+       3175456.129057, 3175356.413968, 3175256.698878, 3175156.983789,
+       3175057.2687  , 3174957.55361 , 3174857.838521, 3174758.123432,
+       3174658.408342, 3174558.693253, 3174458.978164, 3174359.263074,
+       3174259.547985, 3174159.832896, 3174060.117806, 3173960.402717,
+       3173860.687628, 3173760.972538, 3173661.257449, 3173561.542359,
+       3173461.82727 , 3173362.112181, 3173262.397091, 3173162.682002,
+       3173062.966913, 3172963.251823, 3172863.536734, 3172763.821645,
+       3172664.106555, 3172564.391466, 3172464.676377, 3172364.961287,
+       3172265.246198, 3172165.531109, 3172065.816019, 3171966.10093 ,
+       3171866.385841, 3171766.670751, 3171666.955662, 3171567.240573,
+       3171467.525483, 3171367.810394, 3171268.095305, 3171168.380215,
+       3171068.665126, 3170968.950037, 3170869.234947, 3170769.519858,
+       3170669.804769, 3170570.089679, 3170470.37459 , 3170370.659501,
+       3170270.944411, 3170171.229322, 3170071.514233, 3169971.799143,
+       3169872.084054, 3169772.368965, 3169672.653875, 3169572.938786,
+       3169473.223697, 3169373.508607, 3169273.793518, 3169174.078429,
+       3169074.363339, 3168974.64825 , 3168874.933161, 3168775.218071,
+       3168675.502982, 3168575.787893, 3168476.072803, 3168376.357714,
+       3168276.642625, 3168176.927535, 3168077.212446, 3167977.497357,
+       3167877.782267, 3167778.067178, 3167678.352089, 3167578.636999,
+       3167478.92191 , 3167379.206821, 3167279.491731, 3167179.776642,
+       3167080.061553, 3166980.346463])</pre></div></li><li class="xr-var-item"><div class="xr-var-name"><span>spatial_ref</span></div><div class="xr-var-dims">()</div><div class="xr-var-dtype">int32</div><div class="xr-var-preview xr-preview">0</div><input id="attrs-4a9d5abf-a867-462c-a6b5-62304560553c" class="xr-var-attrs-in" type="checkbox"><label for="attrs-4a9d5abf-a867-462c-a6b5-62304560553c" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use href="#icon-file-text2"></use></svg></label><input id="data-5325d544-95fd-4506-b833-f35bd9a22a27" class="xr-var-data-in" type="checkbox"><label for="data-5325d544-95fd-4506-b833-f35bd9a22a27" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"><dt><span>crs_wkt :</span></dt><dd>PROJCS["ETRS89-extended / LAEA Europe",GEOGCS["ETRS89",DATUM["European_Terrestrial_Reference_System_1989",SPHEROID["GRS 1980",6378137,298.257222101,AUTHORITY["EPSG","7019"]],AUTHORITY["EPSG","6258"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4258"]],PROJECTION["Lambert_Azimuthal_Equal_Area"],PARAMETER["latitude_of_center",52],PARAMETER["longitude_of_center",10],PARAMETER["false_easting",4321000],PARAMETER["false_northing",3210000],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Northing",NORTH],AXIS["Easting",EAST],AUTHORITY["EPSG","3035"]]</dd><dt><span>semi_major_axis :</span></dt><dd>6378137.0</dd><dt><span>semi_minor_axis :</span></dt><dd>6356752.314140356</dd><dt><span>inverse_flattening :</span></dt><dd>298.257222101</dd><dt><span>reference_ellipsoid_name :</span></dt><dd>GRS 1980</dd><dt><span>longitude_of_prime_meridian :</span></dt><dd>0.0</dd><dt><span>prime_meridian_name :</span></dt><dd>Greenwich</dd><dt><span>geographic_crs_name :</span></dt><dd>ETRS89</dd><dt><span>horizontal_datum_name :</span></dt><dd>European Terrestrial Reference System 1989</dd><dt><span>projected_crs_name :</span></dt><dd>ETRS89-extended / LAEA Europe</dd><dt><span>grid_mapping_name :</span></dt><dd>lambert_azimuthal_equal_area</dd><dt><span>latitude_of_projection_origin :</span></dt><dd>52.0</dd><dt><span>longitude_of_projection_origin :</span></dt><dd>10.0</dd><dt><span>false_easting :</span></dt><dd>4321000.0</dd><dt><span>false_northing :</span></dt><dd>3210000.0</dd><dt><span>spatial_ref :</span></dt><dd>PROJCS["ETRS89-extended / LAEA Europe",GEOGCS["ETRS89",DATUM["European_Terrestrial_Reference_System_1989",SPHEROID["GRS 1980",6378137,298.257222101,AUTHORITY["EPSG","7019"]],AUTHORITY["EPSG","6258"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4258"]],PROJECTION["Lambert_Azimuthal_Equal_Area"],PARAMETER["latitude_of_center",52],PARAMETER["longitude_of_center",10],PARAMETER["false_easting",4321000],PARAMETER["false_northing",3210000],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Northing",NORTH],AXIS["Easting",EAST],AUTHORITY["EPSG","3035"]]</dd><dt><span>GeoTransform :</span></dt><dd>4364882.796289107 100.42356290888219 0.0 3176702.5676735905 0.0 -99.71508933638925</dd></dl></div><div class="xr-var-data"><pre>array(0)</pre></div></li><li class="xr-var-item"><div class="xr-var-name"><span>band</span></div><div class="xr-var-dims">()</div><div class="xr-var-dtype">int32</div><div class="xr-var-preview xr-preview">1</div><input id="attrs-31e4d050-8e52-4a0e-9fe5-2bbc38e5e8b9" class="xr-var-attrs-in" type="checkbox" disabled=""><label for="attrs-31e4d050-8e52-4a0e-9fe5-2bbc38e5e8b9" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use href="#icon-file-text2"></use></svg></label><input id="data-9a56400c-a886-4420-9c0f-64f18e6626a5" class="xr-var-data-in" type="checkbox"><label for="data-9a56400c-a886-4420-9c0f-64f18e6626a5" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"></dl></div><div class="xr-var-data"><pre>array(1)</pre></div></li></ul></div></li><li class="xr-section-item"><input id="section-6825b2ce-d161-4de7-93a7-d635e9c2407e" class="xr-section-summary-in" type="checkbox" checked=""><label for="section-6825b2ce-d161-4de7-93a7-d635e9c2407e" class="xr-section-summary">Data variables: <span>(7)</span></label><div class="xr-section-inline-details"></div><div class="xr-section-details"><ul class="xr-var-list"><li class="xr-var-item"><div class="xr-var-name"><span>R</span></div><div class="xr-var-dims">(year, y, x)</div><div class="xr-var-dtype">float32</div><div class="xr-var-preview xr-preview">dask.array&lt;chunksize=(1, 9, 105), meta=np.ndarray&gt;</div><input id="attrs-c23ac6e6-b329-4197-a7f9-51f48afb8c5f" class="xr-var-attrs-in" type="checkbox" disabled=""><label for="attrs-c23ac6e6-b329-4197-a7f9-51f48afb8c5f" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use href="#icon-file-text2"></use></svg></label><input id="data-e60e9834-ff1c-45c1-89e6-dc8e8ebccb21" class="xr-var-data-in" type="checkbox"><label for="data-e60e9834-ff1c-45c1-89e6-dc8e8ebccb21" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"></dl></div><div class="xr-var-data">
+<table data-quarto-postprocess="true" class="table table-sm table-striped small">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td><table data-quarto-postprocess="true" class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th></th>
+<th data-quarto-table-cell-role="th">Array</th>
+<th data-quarto-table-cell-role="th">Chunk</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">Bytes</td>
+<td>241.17 kiB</td>
+<td>3.69 kiB</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">Shape</td>
+<td>(6, 98, 105)</td>
+<td>(1, 9, 105)</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">Dask graph</td>
+<td colspan="2">66 chunks in 20 graph layers</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">Data type</td>
+<td colspan="2">float32 numpy.ndarray</td>
+</tr>
+</tbody>
+</table></td>
+<td><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE4MiIgc3R5bGU9InN0cm9rZTpyZ2IoMCwwLDApO3N0cm9rZS13aWR0aDoxIj4KCiAgPCEtLSBIb3Jpem9udGFsIGxpbmVzIC0tPgogIDxsaW5lIHgxPSIxMCIgeTE9IjAiIHgyPSIzMCIgeTI9IjIwIiBzdHlsZT0ic3Ryb2tlLXdpZHRoOjIiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSIxMCIgeDI9IjMwIiB5Mj0iMzEiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSIyMCIgeDI9IjMwIiB5Mj0iNDEiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSIzMCIgeDI9IjMwIiB5Mj0iNTEiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSI0MSIgeDI9IjMwIiB5Mj0iNjEiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSI1MSIgeDI9IjMwIiB5Mj0iNzIiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSI2MSIgeDI9IjMwIiB5Mj0iODIiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSI3MiIgeDI9IjMwIiB5Mj0iOTIiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSI4MiIgeDI9IjMwIiB5Mj0iMTAzIj48L2xpbmU+CiAgPGxpbmUgeDE9IjEwIiB5MT0iOTIiIHgyPSIzMCIgeTI9IjExMyI+PC9saW5lPgogIDxsaW5lIHgxPSIxMCIgeTE9IjEwMiIgeDI9IjMwIiB5Mj0iMTIzIj48L2xpbmU+CiAgPGxpbmUgeDE9IjEwIiB5MT0iMTEyIiB4Mj0iMzAiIHkyPSIxMzIiIHN0eWxlPSJzdHJva2Utd2lkdGg6MiI+PC9saW5lPgoKICA8IS0tIFZlcnRpY2FsIGxpbmVzIC0tPgogIDxsaW5lIHgxPSIxMCIgeTE9IjAiIHgyPSIxMCIgeTI9IjExMiIgc3R5bGU9InN0cm9rZS13aWR0aDoyIj48L2xpbmU+CiAgPGxpbmUgeDE9IjEzIiB5MT0iMyIgeDI9IjEzIiB5Mj0iMTE1Ij48L2xpbmU+CiAgPGxpbmUgeDE9IjE2IiB5MT0iNiIgeDI9IjE2IiB5Mj0iMTE4Ij48L2xpbmU+CiAgPGxpbmUgeDE9IjIwIiB5MT0iMTAiIHgyPSIyMCIgeTI9IjEyMiI+PC9saW5lPgogIDxsaW5lIHgxPSIyMyIgeTE9IjEzIiB4Mj0iMjMiIHkyPSIxMjUiPjwvbGluZT4KICA8bGluZSB4MT0iMjciIHkxPSIxNyIgeDI9IjI3IiB5Mj0iMTI5Ij48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iMjAiIHgyPSIzMCIgeTI9IjEzMiIgc3R5bGU9InN0cm9rZS13aWR0aDoyIj48L2xpbmU+CgogIDwhLS0gQ29sb3JlZCBSZWN0YW5nbGUgLS0+CiAgPHBvbHlnb24gcG9pbnRzPSIxMC4wLDAuMCAzMC43NzQzMzA1Njc3Mjc5NzIsMjAuNzc0MzMwNTY3NzI3OTcyIDMwLjc3NDMzMDU2NzcyNzk3MiwxMzIuNzc0MzMwNTY3NzI4IDEwLjAsMTEyLjAiIHN0eWxlPSJmaWxsOiNFQ0IxNzJBMDtzdHJva2Utd2lkdGg6MCI+PC9wb2x5Z29uPgoKICA8IS0tIEhvcml6b250YWwgbGluZXMgLS0+CiAgPGxpbmUgeDE9IjEwIiB5MT0iMCIgeDI9IjEzMCIgeTI9IjAiIHN0eWxlPSJzdHJva2Utd2lkdGg6MiI+PC9saW5lPgogIDxsaW5lIHgxPSIxMyIgeTE9IjMiIHgyPSIxMzMiIHkyPSIzIj48L2xpbmU+CiAgPGxpbmUgeDE9IjE2IiB5MT0iNiIgeDI9IjEzNiIgeTI9IjYiPjwvbGluZT4KICA8bGluZSB4MT0iMjAiIHkxPSIxMCIgeDI9IjE0MCIgeTI9IjEwIj48L2xpbmU+CiAgPGxpbmUgeDE9IjIzIiB5MT0iMTMiIHgyPSIxNDMiIHkyPSIxMyI+PC9saW5lPgogIDxsaW5lIHgxPSIyNyIgeTE9IjE3IiB4Mj0iMTQ3IiB5Mj0iMTciPjwvbGluZT4KICA8bGluZSB4MT0iMzAiIHkxPSIyMCIgeDI9IjE1MCIgeTI9IjIwIiBzdHlsZT0ic3Ryb2tlLXdpZHRoOjIiPjwvbGluZT4KCiAgPCEtLSBWZXJ0aWNhbCBsaW5lcyAtLT4KICA8bGluZSB4MT0iMTAiIHkxPSIwIiB4Mj0iMzAiIHkyPSIyMCIgc3R5bGU9InN0cm9rZS13aWR0aDoyIj48L2xpbmU+CiAgPGxpbmUgeDE9IjEzMCIgeTE9IjAiIHgyPSIxNTAiIHkyPSIyMCIgc3R5bGU9InN0cm9rZS13aWR0aDoyIj48L2xpbmU+CgogIDwhLS0gQ29sb3JlZCBSZWN0YW5nbGUgLS0+CiAgPHBvbHlnb24gcG9pbnRzPSIxMC4wLDAuMCAxMzAuMCwwLjAgMTUwLjc3NDMzMDU2NzcyOCwyMC43NzQzMzA1Njc3Mjc5NzIgMzAuNzc0MzMwNTY3NzI3OTcyLDIwLjc3NDMzMDU2NzcyNzk3MiIgc3R5bGU9ImZpbGw6I0VDQjE3MkEwO3N0cm9rZS13aWR0aDowIj48L3BvbHlnb24+CgogIDwhLS0gSG9yaXpvbnRhbCBsaW5lcyAtLT4KICA8bGluZSB4MT0iMzAiIHkxPSIyMCIgeDI9IjE1MCIgeTI9IjIwIiBzdHlsZT0ic3Ryb2tlLXdpZHRoOjIiPjwvbGluZT4KICA8bGluZSB4MT0iMzAiIHkxPSIzMSIgeDI9IjE1MCIgeTI9IjMxIj48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iNDEiIHgyPSIxNTAiIHkyPSI0MSI+PC9saW5lPgogIDxsaW5lIHgxPSIzMCIgeTE9IjUxIiB4Mj0iMTUwIiB5Mj0iNTEiPjwvbGluZT4KICA8bGluZSB4MT0iMzAiIHkxPSI2MSIgeDI9IjE1MCIgeTI9IjYxIj48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iNzIiIHgyPSIxNTAiIHkyPSI3MiI+PC9saW5lPgogIDxsaW5lIHgxPSIzMCIgeTE9IjgyIiB4Mj0iMTUwIiB5Mj0iODIiPjwvbGluZT4KICA8bGluZSB4MT0iMzAiIHkxPSI5MiIgeDI9IjE1MCIgeTI9IjkyIj48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iMTAzIiB4Mj0iMTUwIiB5Mj0iMTAzIj48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iMTEzIiB4Mj0iMTUwIiB5Mj0iMTEzIj48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iMTIzIiB4Mj0iMTUwIiB5Mj0iMTIzIj48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iMTMyIiB4Mj0iMTUwIiB5Mj0iMTMyIiBzdHlsZT0ic3Ryb2tlLXdpZHRoOjIiPjwvbGluZT4KCiAgPCEtLSBWZXJ0aWNhbCBsaW5lcyAtLT4KICA8bGluZSB4MT0iMzAiIHkxPSIyMCIgeDI9IjMwIiB5Mj0iMTMyIiBzdHlsZT0ic3Ryb2tlLXdpZHRoOjIiPjwvbGluZT4KICA8bGluZSB4MT0iMTUwIiB5MT0iMjAiIHgyPSIxNTAiIHkyPSIxMzIiIHN0eWxlPSJzdHJva2Utd2lkdGg6MiI+PC9saW5lPgoKICA8IS0tIENvbG9yZWQgUmVjdGFuZ2xlIC0tPgogIDxwb2x5Z29uIHBvaW50cz0iMzAuNzc0MzMwNTY3NzI3OTcyLDIwLjc3NDMzMDU2NzcyNzk3MiAxNTAuNzc0MzMwNTY3NzI4LDIwLjc3NDMzMDU2NzcyNzk3MiAxNTAuNzc0MzMwNTY3NzI4LDEzMi43NzQzMzA1Njc3MjggMzAuNzc0MzMwNTY3NzI3OTcyLDEzMi43NzQzMzA1Njc3MjgiIHN0eWxlPSJmaWxsOiNFQ0IxNzJBMDtzdHJva2Utd2lkdGg6MCI+PC9wb2x5Z29uPgoKICA8IS0tIFRleHQgLS0+CiAgPHRleHQgeD0iOTAuNzc0MzMxIiB5PSIxNTIuNzc0MzMxIiBmb250LXNpemU9IjEuMHJlbSIgZm9udC13ZWlnaHQ9IjEwMCIgdGV4dC1hbmNob3I9Im1pZGRsZSI+MTA1PC90ZXh0PgogIDx0ZXh0IHg9IjE3MC43NzQzMzEiIHk9Ijc2Ljc3NDMzMSIgZm9udC1zaXplPSIxLjByZW0iIGZvbnQtd2VpZ2h0PSIxMDAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIHRyYW5zZm9ybT0icm90YXRlKDAsMTcwLjc3NDMzMSw3Ni43NzQzMzEpIj45ODwvdGV4dD4KICA8dGV4dCB4PSIxMC4zODcxNjUiIHk9IjE0Mi4zODcxNjUiIGZvbnQtc2l6ZT0iMS4wcmVtIiBmb250LXdlaWdodD0iMTAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiB0cmFuc2Zvcm09InJvdGF0ZSg0NSwxMC4zODcxNjUsMTQyLjM4NzE2NSkiPjY8L3RleHQ+Cjwvc3ZnPg==" class="img-fluid"></td>
+</tr>
+</tbody>
+</table>
+<div class="xr-var-name">
+<span>G</span>
+</div>
+<div class="xr-var-dims">
+(year, y, x)
+</div>
+<div class="xr-var-dtype">
+float32
+</div>
+<div class="xr-var-preview xr-preview">
+dask.array&lt;chunksize=(1, 9, 105), meta=np.ndarray&gt;
+</div>
+<img src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iaWNvbiB4ci1pY29uLWZpbGUtdGV4dDIiPjx1c2UgeGxpbms6aHJlZj0iI2ljb24tZmlsZS10ZXh0MiI+PC91c2U+PC9zdmc+" class="icon xr-icon-file-text2 img-fluid"><img src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iaWNvbiB4ci1pY29uLWRhdGFiYXNlIj48dXNlIHhsaW5rOmhyZWY9IiNpY29uLWRhdGFiYXNlIj48L3VzZT48L3N2Zz4=" class="icon xr-icon-database img-fluid">
+<div class="xr-var-attrs">
+<dl>
+</dl>
+</div>
+<div class="xr-var-data">
+<table data-quarto-postprocess="true" class="table table-sm table-striped small">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td><table data-quarto-postprocess="true" class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th></th>
+<th data-quarto-table-cell-role="th">Array</th>
+<th data-quarto-table-cell-role="th">Chunk</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">Bytes</td>
+<td>241.17 kiB</td>
+<td>3.69 kiB</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">Shape</td>
+<td>(6, 98, 105)</td>
+<td>(1, 9, 105)</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">Dask graph</td>
+<td colspan="2">66 chunks in 20 graph layers</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">Data type</td>
+<td colspan="2">float32 numpy.ndarray</td>
+</tr>
+</tbody>
+</table></td>
+<td><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE4MiIgc3R5bGU9InN0cm9rZTpyZ2IoMCwwLDApO3N0cm9rZS13aWR0aDoxIj4KCiAgPCEtLSBIb3Jpem9udGFsIGxpbmVzIC0tPgogIDxsaW5lIHgxPSIxMCIgeTE9IjAiIHgyPSIzMCIgeTI9IjIwIiBzdHlsZT0ic3Ryb2tlLXdpZHRoOjIiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSIxMCIgeDI9IjMwIiB5Mj0iMzEiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSIyMCIgeDI9IjMwIiB5Mj0iNDEiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSIzMCIgeDI9IjMwIiB5Mj0iNTEiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSI0MSIgeDI9IjMwIiB5Mj0iNjEiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSI1MSIgeDI9IjMwIiB5Mj0iNzIiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSI2MSIgeDI9IjMwIiB5Mj0iODIiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSI3MiIgeDI9IjMwIiB5Mj0iOTIiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSI4MiIgeDI9IjMwIiB5Mj0iMTAzIj48L2xpbmU+CiAgPGxpbmUgeDE9IjEwIiB5MT0iOTIiIHgyPSIzMCIgeTI9IjExMyI+PC9saW5lPgogIDxsaW5lIHgxPSIxMCIgeTE9IjEwMiIgeDI9IjMwIiB5Mj0iMTIzIj48L2xpbmU+CiAgPGxpbmUgeDE9IjEwIiB5MT0iMTEyIiB4Mj0iMzAiIHkyPSIxMzIiIHN0eWxlPSJzdHJva2Utd2lkdGg6MiI+PC9saW5lPgoKICA8IS0tIFZlcnRpY2FsIGxpbmVzIC0tPgogIDxsaW5lIHgxPSIxMCIgeTE9IjAiIHgyPSIxMCIgeTI9IjExMiIgc3R5bGU9InN0cm9rZS13aWR0aDoyIj48L2xpbmU+CiAgPGxpbmUgeDE9IjEzIiB5MT0iMyIgeDI9IjEzIiB5Mj0iMTE1Ij48L2xpbmU+CiAgPGxpbmUgeDE9IjE2IiB5MT0iNiIgeDI9IjE2IiB5Mj0iMTE4Ij48L2xpbmU+CiAgPGxpbmUgeDE9IjIwIiB5MT0iMTAiIHgyPSIyMCIgeTI9IjEyMiI+PC9saW5lPgogIDxsaW5lIHgxPSIyMyIgeTE9IjEzIiB4Mj0iMjMiIHkyPSIxMjUiPjwvbGluZT4KICA8bGluZSB4MT0iMjciIHkxPSIxNyIgeDI9IjI3IiB5Mj0iMTI5Ij48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iMjAiIHgyPSIzMCIgeTI9IjEzMiIgc3R5bGU9InN0cm9rZS13aWR0aDoyIj48L2xpbmU+CgogIDwhLS0gQ29sb3JlZCBSZWN0YW5nbGUgLS0+CiAgPHBvbHlnb24gcG9pbnRzPSIxMC4wLDAuMCAzMC43NzQzMzA1Njc3Mjc5NzIsMjAuNzc0MzMwNTY3NzI3OTcyIDMwLjc3NDMzMDU2NzcyNzk3MiwxMzIuNzc0MzMwNTY3NzI4IDEwLjAsMTEyLjAiIHN0eWxlPSJmaWxsOiNFQ0IxNzJBMDtzdHJva2Utd2lkdGg6MCI+PC9wb2x5Z29uPgoKICA8IS0tIEhvcml6b250YWwgbGluZXMgLS0+CiAgPGxpbmUgeDE9IjEwIiB5MT0iMCIgeDI9IjEzMCIgeTI9IjAiIHN0eWxlPSJzdHJva2Utd2lkdGg6MiI+PC9saW5lPgogIDxsaW5lIHgxPSIxMyIgeTE9IjMiIHgyPSIxMzMiIHkyPSIzIj48L2xpbmU+CiAgPGxpbmUgeDE9IjE2IiB5MT0iNiIgeDI9IjEzNiIgeTI9IjYiPjwvbGluZT4KICA8bGluZSB4MT0iMjAiIHkxPSIxMCIgeDI9IjE0MCIgeTI9IjEwIj48L2xpbmU+CiAgPGxpbmUgeDE9IjIzIiB5MT0iMTMiIHgyPSIxNDMiIHkyPSIxMyI+PC9saW5lPgogIDxsaW5lIHgxPSIyNyIgeTE9IjE3IiB4Mj0iMTQ3IiB5Mj0iMTciPjwvbGluZT4KICA8bGluZSB4MT0iMzAiIHkxPSIyMCIgeDI9IjE1MCIgeTI9IjIwIiBzdHlsZT0ic3Ryb2tlLXdpZHRoOjIiPjwvbGluZT4KCiAgPCEtLSBWZXJ0aWNhbCBsaW5lcyAtLT4KICA8bGluZSB4MT0iMTAiIHkxPSIwIiB4Mj0iMzAiIHkyPSIyMCIgc3R5bGU9InN0cm9rZS13aWR0aDoyIj48L2xpbmU+CiAgPGxpbmUgeDE9IjEzMCIgeTE9IjAiIHgyPSIxNTAiIHkyPSIyMCIgc3R5bGU9InN0cm9rZS13aWR0aDoyIj48L2xpbmU+CgogIDwhLS0gQ29sb3JlZCBSZWN0YW5nbGUgLS0+CiAgPHBvbHlnb24gcG9pbnRzPSIxMC4wLDAuMCAxMzAuMCwwLjAgMTUwLjc3NDMzMDU2NzcyOCwyMC43NzQzMzA1Njc3Mjc5NzIgMzAuNzc0MzMwNTY3NzI3OTcyLDIwLjc3NDMzMDU2NzcyNzk3MiIgc3R5bGU9ImZpbGw6I0VDQjE3MkEwO3N0cm9rZS13aWR0aDowIj48L3BvbHlnb24+CgogIDwhLS0gSG9yaXpvbnRhbCBsaW5lcyAtLT4KICA8bGluZSB4MT0iMzAiIHkxPSIyMCIgeDI9IjE1MCIgeTI9IjIwIiBzdHlsZT0ic3Ryb2tlLXdpZHRoOjIiPjwvbGluZT4KICA8bGluZSB4MT0iMzAiIHkxPSIzMSIgeDI9IjE1MCIgeTI9IjMxIj48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iNDEiIHgyPSIxNTAiIHkyPSI0MSI+PC9saW5lPgogIDxsaW5lIHgxPSIzMCIgeTE9IjUxIiB4Mj0iMTUwIiB5Mj0iNTEiPjwvbGluZT4KICA8bGluZSB4MT0iMzAiIHkxPSI2MSIgeDI9IjE1MCIgeTI9IjYxIj48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iNzIiIHgyPSIxNTAiIHkyPSI3MiI+PC9saW5lPgogIDxsaW5lIHgxPSIzMCIgeTE9IjgyIiB4Mj0iMTUwIiB5Mj0iODIiPjwvbGluZT4KICA8bGluZSB4MT0iMzAiIHkxPSI5MiIgeDI9IjE1MCIgeTI9IjkyIj48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iMTAzIiB4Mj0iMTUwIiB5Mj0iMTAzIj48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iMTEzIiB4Mj0iMTUwIiB5Mj0iMTEzIj48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iMTIzIiB4Mj0iMTUwIiB5Mj0iMTIzIj48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iMTMyIiB4Mj0iMTUwIiB5Mj0iMTMyIiBzdHlsZT0ic3Ryb2tlLXdpZHRoOjIiPjwvbGluZT4KCiAgPCEtLSBWZXJ0aWNhbCBsaW5lcyAtLT4KICA8bGluZSB4MT0iMzAiIHkxPSIyMCIgeDI9IjMwIiB5Mj0iMTMyIiBzdHlsZT0ic3Ryb2tlLXdpZHRoOjIiPjwvbGluZT4KICA8bGluZSB4MT0iMTUwIiB5MT0iMjAiIHgyPSIxNTAiIHkyPSIxMzIiIHN0eWxlPSJzdHJva2Utd2lkdGg6MiI+PC9saW5lPgoKICA8IS0tIENvbG9yZWQgUmVjdGFuZ2xlIC0tPgogIDxwb2x5Z29uIHBvaW50cz0iMzAuNzc0MzMwNTY3NzI3OTcyLDIwLjc3NDMzMDU2NzcyNzk3MiAxNTAuNzc0MzMwNTY3NzI4LDIwLjc3NDMzMDU2NzcyNzk3MiAxNTAuNzc0MzMwNTY3NzI4LDEzMi43NzQzMzA1Njc3MjggMzAuNzc0MzMwNTY3NzI3OTcyLDEzMi43NzQzMzA1Njc3MjgiIHN0eWxlPSJmaWxsOiNFQ0IxNzJBMDtzdHJva2Utd2lkdGg6MCI+PC9wb2x5Z29uPgoKICA8IS0tIFRleHQgLS0+CiAgPHRleHQgeD0iOTAuNzc0MzMxIiB5PSIxNTIuNzc0MzMxIiBmb250LXNpemU9IjEuMHJlbSIgZm9udC13ZWlnaHQ9IjEwMCIgdGV4dC1hbmNob3I9Im1pZGRsZSI+MTA1PC90ZXh0PgogIDx0ZXh0IHg9IjE3MC43NzQzMzEiIHk9Ijc2Ljc3NDMzMSIgZm9udC1zaXplPSIxLjByZW0iIGZvbnQtd2VpZ2h0PSIxMDAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIHRyYW5zZm9ybT0icm90YXRlKDAsMTcwLjc3NDMzMSw3Ni43NzQzMzEpIj45ODwvdGV4dD4KICA8dGV4dCB4PSIxMC4zODcxNjUiIHk9IjE0Mi4zODcxNjUiIGZvbnQtc2l6ZT0iMS4wcmVtIiBmb250LXdlaWdodD0iMTAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiB0cmFuc2Zvcm09InJvdGF0ZSg0NSwxMC4zODcxNjUsMTQyLjM4NzE2NSkiPjY8L3RleHQ+Cjwvc3ZnPg==" class="img-fluid"></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="xr-var-name">
+<span>B</span>
+</div>
+<div class="xr-var-dims">
+(year, y, x)
+</div>
+<div class="xr-var-dtype">
+float32
+</div>
+<div class="xr-var-preview xr-preview">
+dask.array&lt;chunksize=(1, 9, 105), meta=np.ndarray&gt;
+</div>
+<img src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iaWNvbiB4ci1pY29uLWZpbGUtdGV4dDIiPjx1c2UgeGxpbms6aHJlZj0iI2ljb24tZmlsZS10ZXh0MiI+PC91c2U+PC9zdmc+" class="icon xr-icon-file-text2 img-fluid"><img src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iaWNvbiB4ci1pY29uLWRhdGFiYXNlIj48dXNlIHhsaW5rOmhyZWY9IiNpY29uLWRhdGFiYXNlIj48L3VzZT48L3N2Zz4=" class="icon xr-icon-database img-fluid">
+<div class="xr-var-attrs">
+<dl>
+</dl>
+</div>
+<div class="xr-var-data">
+<table data-quarto-postprocess="true" class="table table-sm table-striped small">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td><table data-quarto-postprocess="true" class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th></th>
+<th data-quarto-table-cell-role="th">Array</th>
+<th data-quarto-table-cell-role="th">Chunk</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">Bytes</td>
+<td>241.17 kiB</td>
+<td>3.69 kiB</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">Shape</td>
+<td>(6, 98, 105)</td>
+<td>(1, 9, 105)</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">Dask graph</td>
+<td colspan="2">66 chunks in 20 graph layers</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">Data type</td>
+<td colspan="2">float32 numpy.ndarray</td>
+</tr>
+</tbody>
+</table></td>
+<td><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE4MiIgc3R5bGU9InN0cm9rZTpyZ2IoMCwwLDApO3N0cm9rZS13aWR0aDoxIj4KCiAgPCEtLSBIb3Jpem9udGFsIGxpbmVzIC0tPgogIDxsaW5lIHgxPSIxMCIgeTE9IjAiIHgyPSIzMCIgeTI9IjIwIiBzdHlsZT0ic3Ryb2tlLXdpZHRoOjIiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSIxMCIgeDI9IjMwIiB5Mj0iMzEiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSIyMCIgeDI9IjMwIiB5Mj0iNDEiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSIzMCIgeDI9IjMwIiB5Mj0iNTEiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSI0MSIgeDI9IjMwIiB5Mj0iNjEiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSI1MSIgeDI9IjMwIiB5Mj0iNzIiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSI2MSIgeDI9IjMwIiB5Mj0iODIiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSI3MiIgeDI9IjMwIiB5Mj0iOTIiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSI4MiIgeDI9IjMwIiB5Mj0iMTAzIj48L2xpbmU+CiAgPGxpbmUgeDE9IjEwIiB5MT0iOTIiIHgyPSIzMCIgeTI9IjExMyI+PC9saW5lPgogIDxsaW5lIHgxPSIxMCIgeTE9IjEwMiIgeDI9IjMwIiB5Mj0iMTIzIj48L2xpbmU+CiAgPGxpbmUgeDE9IjEwIiB5MT0iMTEyIiB4Mj0iMzAiIHkyPSIxMzIiIHN0eWxlPSJzdHJva2Utd2lkdGg6MiI+PC9saW5lPgoKICA8IS0tIFZlcnRpY2FsIGxpbmVzIC0tPgogIDxsaW5lIHgxPSIxMCIgeTE9IjAiIHgyPSIxMCIgeTI9IjExMiIgc3R5bGU9InN0cm9rZS13aWR0aDoyIj48L2xpbmU+CiAgPGxpbmUgeDE9IjEzIiB5MT0iMyIgeDI9IjEzIiB5Mj0iMTE1Ij48L2xpbmU+CiAgPGxpbmUgeDE9IjE2IiB5MT0iNiIgeDI9IjE2IiB5Mj0iMTE4Ij48L2xpbmU+CiAgPGxpbmUgeDE9IjIwIiB5MT0iMTAiIHgyPSIyMCIgeTI9IjEyMiI+PC9saW5lPgogIDxsaW5lIHgxPSIyMyIgeTE9IjEzIiB4Mj0iMjMiIHkyPSIxMjUiPjwvbGluZT4KICA8bGluZSB4MT0iMjciIHkxPSIxNyIgeDI9IjI3IiB5Mj0iMTI5Ij48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iMjAiIHgyPSIzMCIgeTI9IjEzMiIgc3R5bGU9InN0cm9rZS13aWR0aDoyIj48L2xpbmU+CgogIDwhLS0gQ29sb3JlZCBSZWN0YW5nbGUgLS0+CiAgPHBvbHlnb24gcG9pbnRzPSIxMC4wLDAuMCAzMC43NzQzMzA1Njc3Mjc5NzIsMjAuNzc0MzMwNTY3NzI3OTcyIDMwLjc3NDMzMDU2NzcyNzk3MiwxMzIuNzc0MzMwNTY3NzI4IDEwLjAsMTEyLjAiIHN0eWxlPSJmaWxsOiNFQ0IxNzJBMDtzdHJva2Utd2lkdGg6MCI+PC9wb2x5Z29uPgoKICA8IS0tIEhvcml6b250YWwgbGluZXMgLS0+CiAgPGxpbmUgeDE9IjEwIiB5MT0iMCIgeDI9IjEzMCIgeTI9IjAiIHN0eWxlPSJzdHJva2Utd2lkdGg6MiI+PC9saW5lPgogIDxsaW5lIHgxPSIxMyIgeTE9IjMiIHgyPSIxMzMiIHkyPSIzIj48L2xpbmU+CiAgPGxpbmUgeDE9IjE2IiB5MT0iNiIgeDI9IjEzNiIgeTI9IjYiPjwvbGluZT4KICA8bGluZSB4MT0iMjAiIHkxPSIxMCIgeDI9IjE0MCIgeTI9IjEwIj48L2xpbmU+CiAgPGxpbmUgeDE9IjIzIiB5MT0iMTMiIHgyPSIxNDMiIHkyPSIxMyI+PC9saW5lPgogIDxsaW5lIHgxPSIyNyIgeTE9IjE3IiB4Mj0iMTQ3IiB5Mj0iMTciPjwvbGluZT4KICA8bGluZSB4MT0iMzAiIHkxPSIyMCIgeDI9IjE1MCIgeTI9IjIwIiBzdHlsZT0ic3Ryb2tlLXdpZHRoOjIiPjwvbGluZT4KCiAgPCEtLSBWZXJ0aWNhbCBsaW5lcyAtLT4KICA8bGluZSB4MT0iMTAiIHkxPSIwIiB4Mj0iMzAiIHkyPSIyMCIgc3R5bGU9InN0cm9rZS13aWR0aDoyIj48L2xpbmU+CiAgPGxpbmUgeDE9IjEzMCIgeTE9IjAiIHgyPSIxNTAiIHkyPSIyMCIgc3R5bGU9InN0cm9rZS13aWR0aDoyIj48L2xpbmU+CgogIDwhLS0gQ29sb3JlZCBSZWN0YW5nbGUgLS0+CiAgPHBvbHlnb24gcG9pbnRzPSIxMC4wLDAuMCAxMzAuMCwwLjAgMTUwLjc3NDMzMDU2NzcyOCwyMC43NzQzMzA1Njc3Mjc5NzIgMzAuNzc0MzMwNTY3NzI3OTcyLDIwLjc3NDMzMDU2NzcyNzk3MiIgc3R5bGU9ImZpbGw6I0VDQjE3MkEwO3N0cm9rZS13aWR0aDowIj48L3BvbHlnb24+CgogIDwhLS0gSG9yaXpvbnRhbCBsaW5lcyAtLT4KICA8bGluZSB4MT0iMzAiIHkxPSIyMCIgeDI9IjE1MCIgeTI9IjIwIiBzdHlsZT0ic3Ryb2tlLXdpZHRoOjIiPjwvbGluZT4KICA8bGluZSB4MT0iMzAiIHkxPSIzMSIgeDI9IjE1MCIgeTI9IjMxIj48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iNDEiIHgyPSIxNTAiIHkyPSI0MSI+PC9saW5lPgogIDxsaW5lIHgxPSIzMCIgeTE9IjUxIiB4Mj0iMTUwIiB5Mj0iNTEiPjwvbGluZT4KICA8bGluZSB4MT0iMzAiIHkxPSI2MSIgeDI9IjE1MCIgeTI9IjYxIj48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iNzIiIHgyPSIxNTAiIHkyPSI3MiI+PC9saW5lPgogIDxsaW5lIHgxPSIzMCIgeTE9IjgyIiB4Mj0iMTUwIiB5Mj0iODIiPjwvbGluZT4KICA8bGluZSB4MT0iMzAiIHkxPSI5MiIgeDI9IjE1MCIgeTI9IjkyIj48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iMTAzIiB4Mj0iMTUwIiB5Mj0iMTAzIj48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iMTEzIiB4Mj0iMTUwIiB5Mj0iMTEzIj48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iMTIzIiB4Mj0iMTUwIiB5Mj0iMTIzIj48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iMTMyIiB4Mj0iMTUwIiB5Mj0iMTMyIiBzdHlsZT0ic3Ryb2tlLXdpZHRoOjIiPjwvbGluZT4KCiAgPCEtLSBWZXJ0aWNhbCBsaW5lcyAtLT4KICA8bGluZSB4MT0iMzAiIHkxPSIyMCIgeDI9IjMwIiB5Mj0iMTMyIiBzdHlsZT0ic3Ryb2tlLXdpZHRoOjIiPjwvbGluZT4KICA8bGluZSB4MT0iMTUwIiB5MT0iMjAiIHgyPSIxNTAiIHkyPSIxMzIiIHN0eWxlPSJzdHJva2Utd2lkdGg6MiI+PC9saW5lPgoKICA8IS0tIENvbG9yZWQgUmVjdGFuZ2xlIC0tPgogIDxwb2x5Z29uIHBvaW50cz0iMzAuNzc0MzMwNTY3NzI3OTcyLDIwLjc3NDMzMDU2NzcyNzk3MiAxNTAuNzc0MzMwNTY3NzI4LDIwLjc3NDMzMDU2NzcyNzk3MiAxNTAuNzc0MzMwNTY3NzI4LDEzMi43NzQzMzA1Njc3MjggMzAuNzc0MzMwNTY3NzI3OTcyLDEzMi43NzQzMzA1Njc3MjgiIHN0eWxlPSJmaWxsOiNFQ0IxNzJBMDtzdHJva2Utd2lkdGg6MCI+PC9wb2x5Z29uPgoKICA8IS0tIFRleHQgLS0+CiAgPHRleHQgeD0iOTAuNzc0MzMxIiB5PSIxNTIuNzc0MzMxIiBmb250LXNpemU9IjEuMHJlbSIgZm9udC13ZWlnaHQ9IjEwMCIgdGV4dC1hbmNob3I9Im1pZGRsZSI+MTA1PC90ZXh0PgogIDx0ZXh0IHg9IjE3MC43NzQzMzEiIHk9Ijc2Ljc3NDMzMSIgZm9udC1zaXplPSIxLjByZW0iIGZvbnQtd2VpZ2h0PSIxMDAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIHRyYW5zZm9ybT0icm90YXRlKDAsMTcwLjc3NDMzMSw3Ni43NzQzMzEpIj45ODwvdGV4dD4KICA8dGV4dCB4PSIxMC4zODcxNjUiIHk9IjE0Mi4zODcxNjUiIGZvbnQtc2l6ZT0iMS4wcmVtIiBmb250LXdlaWdodD0iMTAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiB0cmFuc2Zvcm09InJvdGF0ZSg0NSwxMC4zODcxNjUsMTQyLjM4NzE2NSkiPjY8L3RleHQ+Cjwvc3ZnPg==" class="img-fluid"></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="xr-var-name">
+<span>NDVI</span>
+</div>
+<div class="xr-var-dims">
+(year, y, x)
+</div>
+<div class="xr-var-dtype">
+float32
+</div>
+<div class="xr-var-preview xr-preview">
+dask.array&lt;chunksize=(1, 9, 105), meta=np.ndarray&gt;
+</div>
+<img src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iaWNvbiB4ci1pY29uLWZpbGUtdGV4dDIiPjx1c2UgeGxpbms6aHJlZj0iI2ljb24tZmlsZS10ZXh0MiI+PC91c2U+PC9zdmc+" class="icon xr-icon-file-text2 img-fluid"><img src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iaWNvbiB4ci1pY29uLWRhdGFiYXNlIj48dXNlIHhsaW5rOmhyZWY9IiNpY29uLWRhdGFiYXNlIj48L3VzZT48L3N2Zz4=" class="icon xr-icon-database img-fluid">
+<div class="xr-var-attrs">
+<dl>
+</dl>
+</div>
+<div class="xr-var-data">
+<table data-quarto-postprocess="true" class="table table-sm table-striped small">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td><table data-quarto-postprocess="true" class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th></th>
+<th data-quarto-table-cell-role="th">Array</th>
+<th data-quarto-table-cell-role="th">Chunk</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">Bytes</td>
+<td>241.17 kiB</td>
+<td>3.69 kiB</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">Shape</td>
+<td>(6, 98, 105)</td>
+<td>(1, 9, 105)</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">Dask graph</td>
+<td colspan="2">66 chunks in 20 graph layers</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">Data type</td>
+<td colspan="2">float32 numpy.ndarray</td>
+</tr>
+</tbody>
+</table></td>
+<td><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE4MiIgc3R5bGU9InN0cm9rZTpyZ2IoMCwwLDApO3N0cm9rZS13aWR0aDoxIj4KCiAgPCEtLSBIb3Jpem9udGFsIGxpbmVzIC0tPgogIDxsaW5lIHgxPSIxMCIgeTE9IjAiIHgyPSIzMCIgeTI9IjIwIiBzdHlsZT0ic3Ryb2tlLXdpZHRoOjIiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSIxMCIgeDI9IjMwIiB5Mj0iMzEiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSIyMCIgeDI9IjMwIiB5Mj0iNDEiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSIzMCIgeDI9IjMwIiB5Mj0iNTEiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSI0MSIgeDI9IjMwIiB5Mj0iNjEiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSI1MSIgeDI9IjMwIiB5Mj0iNzIiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSI2MSIgeDI9IjMwIiB5Mj0iODIiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSI3MiIgeDI9IjMwIiB5Mj0iOTIiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSI4MiIgeDI9IjMwIiB5Mj0iMTAzIj48L2xpbmU+CiAgPGxpbmUgeDE9IjEwIiB5MT0iOTIiIHgyPSIzMCIgeTI9IjExMyI+PC9saW5lPgogIDxsaW5lIHgxPSIxMCIgeTE9IjEwMiIgeDI9IjMwIiB5Mj0iMTIzIj48L2xpbmU+CiAgPGxpbmUgeDE9IjEwIiB5MT0iMTEyIiB4Mj0iMzAiIHkyPSIxMzIiIHN0eWxlPSJzdHJva2Utd2lkdGg6MiI+PC9saW5lPgoKICA8IS0tIFZlcnRpY2FsIGxpbmVzIC0tPgogIDxsaW5lIHgxPSIxMCIgeTE9IjAiIHgyPSIxMCIgeTI9IjExMiIgc3R5bGU9InN0cm9rZS13aWR0aDoyIj48L2xpbmU+CiAgPGxpbmUgeDE9IjEzIiB5MT0iMyIgeDI9IjEzIiB5Mj0iMTE1Ij48L2xpbmU+CiAgPGxpbmUgeDE9IjE2IiB5MT0iNiIgeDI9IjE2IiB5Mj0iMTE4Ij48L2xpbmU+CiAgPGxpbmUgeDE9IjIwIiB5MT0iMTAiIHgyPSIyMCIgeTI9IjEyMiI+PC9saW5lPgogIDxsaW5lIHgxPSIyMyIgeTE9IjEzIiB4Mj0iMjMiIHkyPSIxMjUiPjwvbGluZT4KICA8bGluZSB4MT0iMjciIHkxPSIxNyIgeDI9IjI3IiB5Mj0iMTI5Ij48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iMjAiIHgyPSIzMCIgeTI9IjEzMiIgc3R5bGU9InN0cm9rZS13aWR0aDoyIj48L2xpbmU+CgogIDwhLS0gQ29sb3JlZCBSZWN0YW5nbGUgLS0+CiAgPHBvbHlnb24gcG9pbnRzPSIxMC4wLDAuMCAzMC43NzQzMzA1Njc3Mjc5NzIsMjAuNzc0MzMwNTY3NzI3OTcyIDMwLjc3NDMzMDU2NzcyNzk3MiwxMzIuNzc0MzMwNTY3NzI4IDEwLjAsMTEyLjAiIHN0eWxlPSJmaWxsOiNFQ0IxNzJBMDtzdHJva2Utd2lkdGg6MCI+PC9wb2x5Z29uPgoKICA8IS0tIEhvcml6b250YWwgbGluZXMgLS0+CiAgPGxpbmUgeDE9IjEwIiB5MT0iMCIgeDI9IjEzMCIgeTI9IjAiIHN0eWxlPSJzdHJva2Utd2lkdGg6MiI+PC9saW5lPgogIDxsaW5lIHgxPSIxMyIgeTE9IjMiIHgyPSIxMzMiIHkyPSIzIj48L2xpbmU+CiAgPGxpbmUgeDE9IjE2IiB5MT0iNiIgeDI9IjEzNiIgeTI9IjYiPjwvbGluZT4KICA8bGluZSB4MT0iMjAiIHkxPSIxMCIgeDI9IjE0MCIgeTI9IjEwIj48L2xpbmU+CiAgPGxpbmUgeDE9IjIzIiB5MT0iMTMiIHgyPSIxNDMiIHkyPSIxMyI+PC9saW5lPgogIDxsaW5lIHgxPSIyNyIgeTE9IjE3IiB4Mj0iMTQ3IiB5Mj0iMTciPjwvbGluZT4KICA8bGluZSB4MT0iMzAiIHkxPSIyMCIgeDI9IjE1MCIgeTI9IjIwIiBzdHlsZT0ic3Ryb2tlLXdpZHRoOjIiPjwvbGluZT4KCiAgPCEtLSBWZXJ0aWNhbCBsaW5lcyAtLT4KICA8bGluZSB4MT0iMTAiIHkxPSIwIiB4Mj0iMzAiIHkyPSIyMCIgc3R5bGU9InN0cm9rZS13aWR0aDoyIj48L2xpbmU+CiAgPGxpbmUgeDE9IjEzMCIgeTE9IjAiIHgyPSIxNTAiIHkyPSIyMCIgc3R5bGU9InN0cm9rZS13aWR0aDoyIj48L2xpbmU+CgogIDwhLS0gQ29sb3JlZCBSZWN0YW5nbGUgLS0+CiAgPHBvbHlnb24gcG9pbnRzPSIxMC4wLDAuMCAxMzAuMCwwLjAgMTUwLjc3NDMzMDU2NzcyOCwyMC43NzQzMzA1Njc3Mjc5NzIgMzAuNzc0MzMwNTY3NzI3OTcyLDIwLjc3NDMzMDU2NzcyNzk3MiIgc3R5bGU9ImZpbGw6I0VDQjE3MkEwO3N0cm9rZS13aWR0aDowIj48L3BvbHlnb24+CgogIDwhLS0gSG9yaXpvbnRhbCBsaW5lcyAtLT4KICA8bGluZSB4MT0iMzAiIHkxPSIyMCIgeDI9IjE1MCIgeTI9IjIwIiBzdHlsZT0ic3Ryb2tlLXdpZHRoOjIiPjwvbGluZT4KICA8bGluZSB4MT0iMzAiIHkxPSIzMSIgeDI9IjE1MCIgeTI9IjMxIj48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iNDEiIHgyPSIxNTAiIHkyPSI0MSI+PC9saW5lPgogIDxsaW5lIHgxPSIzMCIgeTE9IjUxIiB4Mj0iMTUwIiB5Mj0iNTEiPjwvbGluZT4KICA8bGluZSB4MT0iMzAiIHkxPSI2MSIgeDI9IjE1MCIgeTI9IjYxIj48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iNzIiIHgyPSIxNTAiIHkyPSI3MiI+PC9saW5lPgogIDxsaW5lIHgxPSIzMCIgeTE9IjgyIiB4Mj0iMTUwIiB5Mj0iODIiPjwvbGluZT4KICA8bGluZSB4MT0iMzAiIHkxPSI5MiIgeDI9IjE1MCIgeTI9IjkyIj48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iMTAzIiB4Mj0iMTUwIiB5Mj0iMTAzIj48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iMTEzIiB4Mj0iMTUwIiB5Mj0iMTEzIj48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iMTIzIiB4Mj0iMTUwIiB5Mj0iMTIzIj48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iMTMyIiB4Mj0iMTUwIiB5Mj0iMTMyIiBzdHlsZT0ic3Ryb2tlLXdpZHRoOjIiPjwvbGluZT4KCiAgPCEtLSBWZXJ0aWNhbCBsaW5lcyAtLT4KICA8bGluZSB4MT0iMzAiIHkxPSIyMCIgeDI9IjMwIiB5Mj0iMTMyIiBzdHlsZT0ic3Ryb2tlLXdpZHRoOjIiPjwvbGluZT4KICA8bGluZSB4MT0iMTUwIiB5MT0iMjAiIHgyPSIxNTAiIHkyPSIxMzIiIHN0eWxlPSJzdHJva2Utd2lkdGg6MiI+PC9saW5lPgoKICA8IS0tIENvbG9yZWQgUmVjdGFuZ2xlIC0tPgogIDxwb2x5Z29uIHBvaW50cz0iMzAuNzc0MzMwNTY3NzI3OTcyLDIwLjc3NDMzMDU2NzcyNzk3MiAxNTAuNzc0MzMwNTY3NzI4LDIwLjc3NDMzMDU2NzcyNzk3MiAxNTAuNzc0MzMwNTY3NzI4LDEzMi43NzQzMzA1Njc3MjggMzAuNzc0MzMwNTY3NzI3OTcyLDEzMi43NzQzMzA1Njc3MjgiIHN0eWxlPSJmaWxsOiNFQ0IxNzJBMDtzdHJva2Utd2lkdGg6MCI+PC9wb2x5Z29uPgoKICA8IS0tIFRleHQgLS0+CiAgPHRleHQgeD0iOTAuNzc0MzMxIiB5PSIxNTIuNzc0MzMxIiBmb250LXNpemU9IjEuMHJlbSIgZm9udC13ZWlnaHQ9IjEwMCIgdGV4dC1hbmNob3I9Im1pZGRsZSI+MTA1PC90ZXh0PgogIDx0ZXh0IHg9IjE3MC43NzQzMzEiIHk9Ijc2Ljc3NDMzMSIgZm9udC1zaXplPSIxLjByZW0iIGZvbnQtd2VpZ2h0PSIxMDAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIHRyYW5zZm9ybT0icm90YXRlKDAsMTcwLjc3NDMzMSw3Ni43NzQzMzEpIj45ODwvdGV4dD4KICA8dGV4dCB4PSIxMC4zODcxNjUiIHk9IjE0Mi4zODcxNjUiIGZvbnQtc2l6ZT0iMS4wcmVtIiBmb250LXdlaWdodD0iMTAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiB0cmFuc2Zvcm09InJvdGF0ZSg0NSwxMC4zODcxNjUsMTQyLjM4NzE2NSkiPjY8L3RleHQ+Cjwvc3ZnPg==" class="img-fluid"></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="xr-var-name">
+<span>FOREST</span>
+</div>
+<div class="xr-var-dims">
+(year, y, x)
+</div>
+<div class="xr-var-dtype">
+bool
+</div>
+<div class="xr-var-preview xr-preview">
+dask.array&lt;chunksize=(1, 9, 105), meta=np.ndarray&gt;
+</div>
+<img src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iaWNvbiB4ci1pY29uLWZpbGUtdGV4dDIiPjx1c2UgeGxpbms6aHJlZj0iI2ljb24tZmlsZS10ZXh0MiI+PC91c2U+PC9zdmc+" class="icon xr-icon-file-text2 img-fluid"><img src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iaWNvbiB4ci1pY29uLWRhdGFiYXNlIj48dXNlIHhsaW5rOmhyZWY9IiNpY29uLWRhdGFiYXNlIj48L3VzZT48L3N2Zz4=" class="icon xr-icon-database img-fluid">
+<div class="xr-var-attrs">
+<dl>
+</dl>
+</div>
+<div class="xr-var-data">
+<table data-quarto-postprocess="true" class="table table-sm table-striped small">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td><table data-quarto-postprocess="true" class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th></th>
+<th data-quarto-table-cell-role="th">Array</th>
+<th data-quarto-table-cell-role="th">Chunk</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">Bytes</td>
+<td>60.29 kiB</td>
+<td>0.92 kiB</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">Shape</td>
+<td>(6, 98, 105)</td>
+<td>(1, 9, 105)</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">Dask graph</td>
+<td colspan="2">66 chunks in 21 graph layers</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">Data type</td>
+<td colspan="2">bool numpy.ndarray</td>
+</tr>
+</tbody>
+</table></td>
+<td><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE4MiIgc3R5bGU9InN0cm9rZTpyZ2IoMCwwLDApO3N0cm9rZS13aWR0aDoxIj4KCiAgPCEtLSBIb3Jpem9udGFsIGxpbmVzIC0tPgogIDxsaW5lIHgxPSIxMCIgeTE9IjAiIHgyPSIzMCIgeTI9IjIwIiBzdHlsZT0ic3Ryb2tlLXdpZHRoOjIiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSIxMCIgeDI9IjMwIiB5Mj0iMzEiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSIyMCIgeDI9IjMwIiB5Mj0iNDEiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSIzMCIgeDI9IjMwIiB5Mj0iNTEiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSI0MSIgeDI9IjMwIiB5Mj0iNjEiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSI1MSIgeDI9IjMwIiB5Mj0iNzIiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSI2MSIgeDI9IjMwIiB5Mj0iODIiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSI3MiIgeDI9IjMwIiB5Mj0iOTIiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSI4MiIgeDI9IjMwIiB5Mj0iMTAzIj48L2xpbmU+CiAgPGxpbmUgeDE9IjEwIiB5MT0iOTIiIHgyPSIzMCIgeTI9IjExMyI+PC9saW5lPgogIDxsaW5lIHgxPSIxMCIgeTE9IjEwMiIgeDI9IjMwIiB5Mj0iMTIzIj48L2xpbmU+CiAgPGxpbmUgeDE9IjEwIiB5MT0iMTEyIiB4Mj0iMzAiIHkyPSIxMzIiIHN0eWxlPSJzdHJva2Utd2lkdGg6MiI+PC9saW5lPgoKICA8IS0tIFZlcnRpY2FsIGxpbmVzIC0tPgogIDxsaW5lIHgxPSIxMCIgeTE9IjAiIHgyPSIxMCIgeTI9IjExMiIgc3R5bGU9InN0cm9rZS13aWR0aDoyIj48L2xpbmU+CiAgPGxpbmUgeDE9IjEzIiB5MT0iMyIgeDI9IjEzIiB5Mj0iMTE1Ij48L2xpbmU+CiAgPGxpbmUgeDE9IjE2IiB5MT0iNiIgeDI9IjE2IiB5Mj0iMTE4Ij48L2xpbmU+CiAgPGxpbmUgeDE9IjIwIiB5MT0iMTAiIHgyPSIyMCIgeTI9IjEyMiI+PC9saW5lPgogIDxsaW5lIHgxPSIyMyIgeTE9IjEzIiB4Mj0iMjMiIHkyPSIxMjUiPjwvbGluZT4KICA8bGluZSB4MT0iMjciIHkxPSIxNyIgeDI9IjI3IiB5Mj0iMTI5Ij48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iMjAiIHgyPSIzMCIgeTI9IjEzMiIgc3R5bGU9InN0cm9rZS13aWR0aDoyIj48L2xpbmU+CgogIDwhLS0gQ29sb3JlZCBSZWN0YW5nbGUgLS0+CiAgPHBvbHlnb24gcG9pbnRzPSIxMC4wLDAuMCAzMC43NzQzMzA1Njc3Mjc5NzIsMjAuNzc0MzMwNTY3NzI3OTcyIDMwLjc3NDMzMDU2NzcyNzk3MiwxMzIuNzc0MzMwNTY3NzI4IDEwLjAsMTEyLjAiIHN0eWxlPSJmaWxsOiNFQ0IxNzJBMDtzdHJva2Utd2lkdGg6MCI+PC9wb2x5Z29uPgoKICA8IS0tIEhvcml6b250YWwgbGluZXMgLS0+CiAgPGxpbmUgeDE9IjEwIiB5MT0iMCIgeDI9IjEzMCIgeTI9IjAiIHN0eWxlPSJzdHJva2Utd2lkdGg6MiI+PC9saW5lPgogIDxsaW5lIHgxPSIxMyIgeTE9IjMiIHgyPSIxMzMiIHkyPSIzIj48L2xpbmU+CiAgPGxpbmUgeDE9IjE2IiB5MT0iNiIgeDI9IjEzNiIgeTI9IjYiPjwvbGluZT4KICA8bGluZSB4MT0iMjAiIHkxPSIxMCIgeDI9IjE0MCIgeTI9IjEwIj48L2xpbmU+CiAgPGxpbmUgeDE9IjIzIiB5MT0iMTMiIHgyPSIxNDMiIHkyPSIxMyI+PC9saW5lPgogIDxsaW5lIHgxPSIyNyIgeTE9IjE3IiB4Mj0iMTQ3IiB5Mj0iMTciPjwvbGluZT4KICA8bGluZSB4MT0iMzAiIHkxPSIyMCIgeDI9IjE1MCIgeTI9IjIwIiBzdHlsZT0ic3Ryb2tlLXdpZHRoOjIiPjwvbGluZT4KCiAgPCEtLSBWZXJ0aWNhbCBsaW5lcyAtLT4KICA8bGluZSB4MT0iMTAiIHkxPSIwIiB4Mj0iMzAiIHkyPSIyMCIgc3R5bGU9InN0cm9rZS13aWR0aDoyIj48L2xpbmU+CiAgPGxpbmUgeDE9IjEzMCIgeTE9IjAiIHgyPSIxNTAiIHkyPSIyMCIgc3R5bGU9InN0cm9rZS13aWR0aDoyIj48L2xpbmU+CgogIDwhLS0gQ29sb3JlZCBSZWN0YW5nbGUgLS0+CiAgPHBvbHlnb24gcG9pbnRzPSIxMC4wLDAuMCAxMzAuMCwwLjAgMTUwLjc3NDMzMDU2NzcyOCwyMC43NzQzMzA1Njc3Mjc5NzIgMzAuNzc0MzMwNTY3NzI3OTcyLDIwLjc3NDMzMDU2NzcyNzk3MiIgc3R5bGU9ImZpbGw6I0VDQjE3MkEwO3N0cm9rZS13aWR0aDowIj48L3BvbHlnb24+CgogIDwhLS0gSG9yaXpvbnRhbCBsaW5lcyAtLT4KICA8bGluZSB4MT0iMzAiIHkxPSIyMCIgeDI9IjE1MCIgeTI9IjIwIiBzdHlsZT0ic3Ryb2tlLXdpZHRoOjIiPjwvbGluZT4KICA8bGluZSB4MT0iMzAiIHkxPSIzMSIgeDI9IjE1MCIgeTI9IjMxIj48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iNDEiIHgyPSIxNTAiIHkyPSI0MSI+PC9saW5lPgogIDxsaW5lIHgxPSIzMCIgeTE9IjUxIiB4Mj0iMTUwIiB5Mj0iNTEiPjwvbGluZT4KICA8bGluZSB4MT0iMzAiIHkxPSI2MSIgeDI9IjE1MCIgeTI9IjYxIj48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iNzIiIHgyPSIxNTAiIHkyPSI3MiI+PC9saW5lPgogIDxsaW5lIHgxPSIzMCIgeTE9IjgyIiB4Mj0iMTUwIiB5Mj0iODIiPjwvbGluZT4KICA8bGluZSB4MT0iMzAiIHkxPSI5MiIgeDI9IjE1MCIgeTI9IjkyIj48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iMTAzIiB4Mj0iMTUwIiB5Mj0iMTAzIj48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iMTEzIiB4Mj0iMTUwIiB5Mj0iMTEzIj48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iMTIzIiB4Mj0iMTUwIiB5Mj0iMTIzIj48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iMTMyIiB4Mj0iMTUwIiB5Mj0iMTMyIiBzdHlsZT0ic3Ryb2tlLXdpZHRoOjIiPjwvbGluZT4KCiAgPCEtLSBWZXJ0aWNhbCBsaW5lcyAtLT4KICA8bGluZSB4MT0iMzAiIHkxPSIyMCIgeDI9IjMwIiB5Mj0iMTMyIiBzdHlsZT0ic3Ryb2tlLXdpZHRoOjIiPjwvbGluZT4KICA8bGluZSB4MT0iMTUwIiB5MT0iMjAiIHgyPSIxNTAiIHkyPSIxMzIiIHN0eWxlPSJzdHJva2Utd2lkdGg6MiI+PC9saW5lPgoKICA8IS0tIENvbG9yZWQgUmVjdGFuZ2xlIC0tPgogIDxwb2x5Z29uIHBvaW50cz0iMzAuNzc0MzMwNTY3NzI3OTcyLDIwLjc3NDMzMDU2NzcyNzk3MiAxNTAuNzc0MzMwNTY3NzI4LDIwLjc3NDMzMDU2NzcyNzk3MiAxNTAuNzc0MzMwNTY3NzI4LDEzMi43NzQzMzA1Njc3MjggMzAuNzc0MzMwNTY3NzI3OTcyLDEzMi43NzQzMzA1Njc3MjgiIHN0eWxlPSJmaWxsOiNFQ0IxNzJBMDtzdHJva2Utd2lkdGg6MCI+PC9wb2x5Z29uPgoKICA8IS0tIFRleHQgLS0+CiAgPHRleHQgeD0iOTAuNzc0MzMxIiB5PSIxNTIuNzc0MzMxIiBmb250LXNpemU9IjEuMHJlbSIgZm9udC13ZWlnaHQ9IjEwMCIgdGV4dC1hbmNob3I9Im1pZGRsZSI+MTA1PC90ZXh0PgogIDx0ZXh0IHg9IjE3MC43NzQzMzEiIHk9Ijc2Ljc3NDMzMSIgZm9udC1zaXplPSIxLjByZW0iIGZvbnQtd2VpZ2h0PSIxMDAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIHRyYW5zZm9ybT0icm90YXRlKDAsMTcwLjc3NDMzMSw3Ni43NzQzMzEpIj45ODwvdGV4dD4KICA8dGV4dCB4PSIxMC4zODcxNjUiIHk9IjE0Mi4zODcxNjUiIGZvbnQtc2l6ZT0iMS4wcmVtIiBmb250LXdlaWdodD0iMTAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiB0cmFuc2Zvcm09InJvdGF0ZSg0NSwxMC4zODcxNjUsMTQyLjM4NzE2NSkiPjY8L3RleHQ+Cjwvc3ZnPg==" class="img-fluid"></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="xr-var-name">
+<span>CHANGE</span>
+</div>
+<div class="xr-var-dims">
+(year, y, x)
+</div>
+<div class="xr-var-dtype">
+float64
+</div>
+<div class="xr-var-preview xr-preview">
+dask.array&lt;chunksize=(2, 9, 105), meta=np.ndarray&gt;
+</div>
+<img src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iaWNvbiB4ci1pY29uLWZpbGUtdGV4dDIiPjx1c2UgeGxpbms6aHJlZj0iI2ljb24tZmlsZS10ZXh0MiI+PC91c2U+PC9zdmc+" class="icon xr-icon-file-text2 img-fluid"><img src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iaWNvbiB4ci1pY29uLWRhdGFiYXNlIj48dXNlIHhsaW5rOmhyZWY9IiNpY29uLWRhdGFiYXNlIj48L3VzZT48L3N2Zz4=" class="icon xr-icon-database img-fluid">
+<div class="xr-var-attrs">
+<dl>
+</dl>
+</div>
+<div class="xr-var-data">
+<table data-quarto-postprocess="true" class="table table-sm table-striped small">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td><table data-quarto-postprocess="true" class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th></th>
+<th data-quarto-table-cell-role="th">Array</th>
+<th data-quarto-table-cell-role="th">Chunk</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">Bytes</td>
+<td>482.34 kiB</td>
+<td>14.77 kiB</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">Shape</td>
+<td>(6, 98, 105)</td>
+<td>(2, 9, 105)</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">Dask graph</td>
+<td colspan="2">55 chunks in 37 graph layers</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">Data type</td>
+<td colspan="2">float64 numpy.ndarray</td>
+</tr>
+</tbody>
+</table></td>
+<td><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE4MiIgc3R5bGU9InN0cm9rZTpyZ2IoMCwwLDApO3N0cm9rZS13aWR0aDoxIj4KCiAgPCEtLSBIb3Jpem9udGFsIGxpbmVzIC0tPgogIDxsaW5lIHgxPSIxMCIgeTE9IjAiIHgyPSIzMCIgeTI9IjIwIiBzdHlsZT0ic3Ryb2tlLXdpZHRoOjIiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSIxMCIgeDI9IjMwIiB5Mj0iMzEiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSIyMCIgeDI9IjMwIiB5Mj0iNDEiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSIzMCIgeDI9IjMwIiB5Mj0iNTEiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSI0MSIgeDI9IjMwIiB5Mj0iNjEiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSI1MSIgeDI9IjMwIiB5Mj0iNzIiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSI2MSIgeDI9IjMwIiB5Mj0iODIiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSI3MiIgeDI9IjMwIiB5Mj0iOTIiPjwvbGluZT4KICA8bGluZSB4MT0iMTAiIHkxPSI4MiIgeDI9IjMwIiB5Mj0iMTAzIj48L2xpbmU+CiAgPGxpbmUgeDE9IjEwIiB5MT0iOTIiIHgyPSIzMCIgeTI9IjExMyI+PC9saW5lPgogIDxsaW5lIHgxPSIxMCIgeTE9IjEwMiIgeDI9IjMwIiB5Mj0iMTIzIj48L2xpbmU+CiAgPGxpbmUgeDE9IjEwIiB5MT0iMTEyIiB4Mj0iMzAiIHkyPSIxMzIiIHN0eWxlPSJzdHJva2Utd2lkdGg6MiI+PC9saW5lPgoKICA8IS0tIFZlcnRpY2FsIGxpbmVzIC0tPgogIDxsaW5lIHgxPSIxMCIgeTE9IjAiIHgyPSIxMCIgeTI9IjExMiIgc3R5bGU9InN0cm9rZS13aWR0aDoyIj48L2xpbmU+CiAgPGxpbmUgeDE9IjE2IiB5MT0iNiIgeDI9IjE2IiB5Mj0iMTE4Ij48L2xpbmU+CiAgPGxpbmUgeDE9IjIwIiB5MT0iMTAiIHgyPSIyMCIgeTI9IjEyMiI+PC9saW5lPgogIDxsaW5lIHgxPSIyMyIgeTE9IjEzIiB4Mj0iMjMiIHkyPSIxMjUiPjwvbGluZT4KICA8bGluZSB4MT0iMjciIHkxPSIxNyIgeDI9IjI3IiB5Mj0iMTI5Ij48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iMjAiIHgyPSIzMCIgeTI9IjEzMiIgc3R5bGU9InN0cm9rZS13aWR0aDoyIj48L2xpbmU+CgogIDwhLS0gQ29sb3JlZCBSZWN0YW5nbGUgLS0+CiAgPHBvbHlnb24gcG9pbnRzPSIxMC4wLDAuMCAzMC43NzQzMzA1Njc3Mjc5NzIsMjAuNzc0MzMwNTY3NzI3OTcyIDMwLjc3NDMzMDU2NzcyNzk3MiwxMzIuNzc0MzMwNTY3NzI4IDEwLjAsMTEyLjAiIHN0eWxlPSJmaWxsOiNFQ0IxNzJBMDtzdHJva2Utd2lkdGg6MCI+PC9wb2x5Z29uPgoKICA8IS0tIEhvcml6b250YWwgbGluZXMgLS0+CiAgPGxpbmUgeDE9IjEwIiB5MT0iMCIgeDI9IjEzMCIgeTI9IjAiIHN0eWxlPSJzdHJva2Utd2lkdGg6MiI+PC9saW5lPgogIDxsaW5lIHgxPSIxNiIgeTE9IjYiIHgyPSIxMzYiIHkyPSI2Ij48L2xpbmU+CiAgPGxpbmUgeDE9IjIwIiB5MT0iMTAiIHgyPSIxNDAiIHkyPSIxMCI+PC9saW5lPgogIDxsaW5lIHgxPSIyMyIgeTE9IjEzIiB4Mj0iMTQzIiB5Mj0iMTMiPjwvbGluZT4KICA8bGluZSB4MT0iMjciIHkxPSIxNyIgeDI9IjE0NyIgeTI9IjE3Ij48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iMjAiIHgyPSIxNTAiIHkyPSIyMCIgc3R5bGU9InN0cm9rZS13aWR0aDoyIj48L2xpbmU+CgogIDwhLS0gVmVydGljYWwgbGluZXMgLS0+CiAgPGxpbmUgeDE9IjEwIiB5MT0iMCIgeDI9IjMwIiB5Mj0iMjAiIHN0eWxlPSJzdHJva2Utd2lkdGg6MiI+PC9saW5lPgogIDxsaW5lIHgxPSIxMzAiIHkxPSIwIiB4Mj0iMTUwIiB5Mj0iMjAiIHN0eWxlPSJzdHJva2Utd2lkdGg6MiI+PC9saW5lPgoKICA8IS0tIENvbG9yZWQgUmVjdGFuZ2xlIC0tPgogIDxwb2x5Z29uIHBvaW50cz0iMTAuMCwwLjAgMTMwLjAsMC4wIDE1MC43NzQzMzA1Njc3MjgsMjAuNzc0MzMwNTY3NzI3OTcyIDMwLjc3NDMzMDU2NzcyNzk3MiwyMC43NzQzMzA1Njc3Mjc5NzIiIHN0eWxlPSJmaWxsOiNFQ0IxNzJBMDtzdHJva2Utd2lkdGg6MCI+PC9wb2x5Z29uPgoKICA8IS0tIEhvcml6b250YWwgbGluZXMgLS0+CiAgPGxpbmUgeDE9IjMwIiB5MT0iMjAiIHgyPSIxNTAiIHkyPSIyMCIgc3R5bGU9InN0cm9rZS13aWR0aDoyIj48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iMzEiIHgyPSIxNTAiIHkyPSIzMSI+PC9saW5lPgogIDxsaW5lIHgxPSIzMCIgeTE9IjQxIiB4Mj0iMTUwIiB5Mj0iNDEiPjwvbGluZT4KICA8bGluZSB4MT0iMzAiIHkxPSI1MSIgeDI9IjE1MCIgeTI9IjUxIj48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iNjEiIHgyPSIxNTAiIHkyPSI2MSI+PC9saW5lPgogIDxsaW5lIHgxPSIzMCIgeTE9IjcyIiB4Mj0iMTUwIiB5Mj0iNzIiPjwvbGluZT4KICA8bGluZSB4MT0iMzAiIHkxPSI4MiIgeDI9IjE1MCIgeTI9IjgyIj48L2xpbmU+CiAgPGxpbmUgeDE9IjMwIiB5MT0iOTIiIHgyPSIxNTAiIHkyPSI5MiI+PC9saW5lPgogIDxsaW5lIHgxPSIzMCIgeTE9IjEwMyIgeDI9IjE1MCIgeTI9IjEwMyI+PC9saW5lPgogIDxsaW5lIHgxPSIzMCIgeTE9IjExMyIgeDI9IjE1MCIgeTI9IjExMyI+PC9saW5lPgogIDxsaW5lIHgxPSIzMCIgeTE9IjEyMyIgeDI9IjE1MCIgeTI9IjEyMyI+PC9saW5lPgogIDxsaW5lIHgxPSIzMCIgeTE9IjEzMiIgeDI9IjE1MCIgeTI9IjEzMiIgc3R5bGU9InN0cm9rZS13aWR0aDoyIj48L2xpbmU+CgogIDwhLS0gVmVydGljYWwgbGluZXMgLS0+CiAgPGxpbmUgeDE9IjMwIiB5MT0iMjAiIHgyPSIzMCIgeTI9IjEzMiIgc3R5bGU9InN0cm9rZS13aWR0aDoyIj48L2xpbmU+CiAgPGxpbmUgeDE9IjE1MCIgeTE9IjIwIiB4Mj0iMTUwIiB5Mj0iMTMyIiBzdHlsZT0ic3Ryb2tlLXdpZHRoOjIiPjwvbGluZT4KCiAgPCEtLSBDb2xvcmVkIFJlY3RhbmdsZSAtLT4KICA8cG9seWdvbiBwb2ludHM9IjMwLjc3NDMzMDU2NzcyNzk3MiwyMC43NzQzMzA1Njc3Mjc5NzIgMTUwLjc3NDMzMDU2NzcyOCwyMC43NzQzMzA1Njc3Mjc5NzIgMTUwLjc3NDMzMDU2NzcyOCwxMzIuNzc0MzMwNTY3NzI4IDMwLjc3NDMzMDU2NzcyNzk3MiwxMzIuNzc0MzMwNTY3NzI4IiBzdHlsZT0iZmlsbDojRUNCMTcyQTA7c3Ryb2tlLXdpZHRoOjAiPjwvcG9seWdvbj4KCiAgPCEtLSBUZXh0IC0tPgogIDx0ZXh0IHg9IjkwLjc3NDMzMSIgeT0iMTUyLjc3NDMzMSIgZm9udC1zaXplPSIxLjByZW0iIGZvbnQtd2VpZ2h0PSIxMDAiIHRleHQtYW5jaG9yPSJtaWRkbGUiPjEwNTwvdGV4dD4KICA8dGV4dCB4PSIxNzAuNzc0MzMxIiB5PSI3Ni43NzQzMzEiIGZvbnQtc2l6ZT0iMS4wcmVtIiBmb250LXdlaWdodD0iMTAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiB0cmFuc2Zvcm09InJvdGF0ZSgwLDE3MC43NzQzMzEsNzYuNzc0MzMxKSI+OTg8L3RleHQ+CiAgPHRleHQgeD0iMTAuMzg3MTY1IiB5PSIxNDIuMzg3MTY1IiBmb250LXNpemU9IjEuMHJlbSIgZm9udC13ZWlnaHQ9IjEwMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgdHJhbnNmb3JtPSJyb3RhdGUoNDUsMTAuMzg3MTY1LDE0Mi4zODcxNjUpIj42PC90ZXh0Pgo8L3N2Zz4=" class="img-fluid"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div></li><li class="xr-var-item"><div class="xr-var-name"><span>GROUND_TRUTH</span></div><div class="xr-var-dims">(y, x)</div><div class="xr-var-dtype">int32</div><div class="xr-var-preview xr-preview">0 0 0 0 0 0 0 0 ... 0 0 0 0 0 0 0 0</div><input id="attrs-4eb3d622-8359-42d0-ae1e-a68330db1cca" class="xr-var-attrs-in" type="checkbox"><label for="attrs-4eb3d622-8359-42d0-ae1e-a68330db1cca" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use href="#icon-file-text2"></use></svg></label><input id="data-3f65ddfb-7dd6-481d-9ffb-3d389e8dc9da" class="xr-var-data-in" type="checkbox"><label for="data-3f65ddfb-7dd6-481d-9ffb-3d389e8dc9da" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"><dt><span>AREA_OR_POINT :</span></dt><dd>Area</dd><dt><span>LAYER_TYPE :</span></dt><dd>athematic</dd><dt><span>long_name :</span></dt><dd>Layer_1</dd><dt><span>_FillValue :</span></dt><dd>3.402823466e+38</dd></dl></div><div class="xr-var-data"><pre>array([[ 0,  0,  0, ...,  0, 20,  7],
+       [ 0,  0,  0, ...,  0,  0, 21],
+       [ 0, 22, 21, ...,  0,  0,  7],
+       ...,
+       [ 0,  0,  0, ...,  0,  0,  0],
+       [ 0,  0, 20, ...,  0,  0,  0],
+       [ 0,  0,  0, ...,  0,  0,  0]])</pre></div></li></ul></div></li><li class="xr-section-item"><input id="section-160941fd-4641-4f5b-808b-a0830b8a9d6d" class="xr-section-summary-in" type="checkbox"><label for="section-160941fd-4641-4f5b-808b-a0830b8a9d6d" class="xr-section-summary">Indexes: <span>(3)</span></label><div class="xr-section-inline-details"></div><div class="xr-section-details"><ul class="xr-var-list"><li class="xr-var-item"><div class="xr-index-name"><div>year</div></div><div class="xr-index-preview">PandasIndex</div><div></div><input id="index-d96f6364-9d1f-46ad-be57-75f26fe385a1" class="xr-index-data-in" type="checkbox"><label for="index-d96f6364-9d1f-46ad-be57-75f26fe385a1" title="Show/Hide index repr"><svg class="icon xr-icon-database"><use href="#icon-database"></use></svg></label><div class="xr-index-data"><pre>PandasIndex(Int64Index([2018, 2019, 2020, 2021, 2022, 2023], dtype='int64', name='year'))</pre></div></li><li class="xr-var-item"><div class="xr-index-name"><div>x</div></div><div class="xr-index-preview">PandasIndex</div><div></div><input id="index-6fde16cf-7402-4597-9b43-0cf960a487cf" class="xr-index-data-in" type="checkbox"><label for="index-6fde16cf-7402-4597-9b43-0cf960a487cf" title="Show/Hide index repr"><svg class="icon xr-icon-database"><use href="#icon-database"></use></svg></label><div class="xr-index-data"><pre>PandasIndex(Float64Index([4364933.008070561,  4365033.43163347, 4365133.855196379,
+              4365234.278759288, 4365334.702322196, 4365435.125885106,
+              4365535.549448014, 4365635.973010924, 4365736.396573832,
+              4365836.820136741,
+              ...
+              4374473.246546905, 4374573.670109814, 4374674.093672723,
+              4374774.517235631, 4374874.940798541, 4374975.364361449,
+              4375075.787924359, 4375176.211487267, 4375276.635050176,
+              4375377.058613085],
+             dtype='float64', name='x', length=105))</pre></div></li><li class="xr-var-item"><div class="xr-index-name"><div>y</div></div><div class="xr-index-preview">PandasIndex</div><div></div><input id="index-3a23c392-05e5-4912-9ce0-87405da64c41" class="xr-index-data-in" type="checkbox"><label for="index-3a23c392-05e5-4912-9ce0-87405da64c41" title="Show/Hide index repr"><svg class="icon xr-icon-database"><use href="#icon-database"></use></svg></label><div class="xr-index-data"><pre>PandasIndex(Float64Index([3176652.7101289225,  3176552.995039586, 3176453.2799502495,
+              3176353.5648609134,  3176253.849771577, 3176154.1346822404,
+               3176054.419592904,  3175954.704503568, 3175854.9894142314,
+               3175755.274324895, 3175655.5592355584, 3175555.8441462223,
+               3175456.129056886, 3175356.4139675493,  3175256.698878213,
+               3175156.983788877, 3175057.2686995403,  3174957.553610204,
+              3174857.8385208673, 3174758.1234315312, 3174658.4083421947,
+              3174558.6932528582, 3174458.9781635217, 3174359.2630741857,
+               3174259.547984849, 3174159.8328955127,  3174060.117806176,
+                3173960.40271684, 3173860.6876275036,  3173760.972538167,
+              3173661.2574488306, 3173561.5423594946,  3173461.827270158,
+              3173362.1121808216,  3173262.397091485,  3173162.682002149,
+              3173062.9669128126,  3172963.251823476, 3172863.5367341395,
+              3172763.8216448035,  3172664.106555467, 3172564.3914661305,
+               3172464.676376794,  3172364.961287458, 3172265.2461981215,
+               3172165.531108785, 3172065.8160194485, 3171966.1009301124,
+               3171866.385840776, 3171766.6707514394,  3171666.955662103,
+              3171567.2405727664, 3171467.5254834304,  3171367.810394094,
+              3171268.0953047574,  3171168.380215421,  3171068.665126085,
+              3170968.9500367483,  3170869.234947412, 3170769.5198580753,
+              3170669.8047687393, 3170570.0896794028, 3170470.3745900663,
+              3170370.6595007298, 3170270.9444113937,  3170171.229322057,
+              3170071.5142327207,  3169971.799143384,  3169872.084054048,
+              3169772.3689647117,  3169672.653875375, 3169572.9387860387,
+              3169473.2236967026,  3169373.508607366, 3169273.7935180296,
+               3169174.078428693,  3169074.363339357, 3168974.6482500206,
+               3168874.933160684, 3168775.2180713476, 3168675.5029820115,
+               3168575.787892675, 3168476.0728033385,  3168376.357714002,
+               3168276.642624666, 3168176.9275353295,  3168077.212445993,
+              3167977.4973566565, 3167877.7822673204,  3167778.067177984,
+              3167678.3520886474,  3167578.636999311,  3167478.921909975,
+              3167379.2068206384,  3167279.491731302, 3167179.7766419654,
+              3167080.0615526293,  3166980.346463293],
+             dtype='float64', name='y'))</pre></div></li></ul></div></li><li class="xr-section-item"><input id="section-51d6129e-8d1f-4021-87fc-f962ced4f88b" class="xr-section-summary-in" type="checkbox" checked=""><label for="section-51d6129e-8d1f-4021-87fc-f962ced4f88b" class="xr-section-summary">Attributes: <span>(4)</span></label><div class="xr-section-inline-details"></div><div class="xr-section-details"><dl class="xr-attrs"><dt><span>AREA_OR_POINT :</span></dt><dd>Area</dd><dt><span>TIFFTAG_RESOLUTIONUNIT :</span></dt><dd>1 (unitless)</dd><dt><span>TIFFTAG_XRESOLUTION :</span></dt><dd>1</dd><dt><span>TIFFTAG_YRESOLUTION :</span></dt><dd>1</dd></dl></div></li></ul></div></div>
+</div>
 </div>
 <p>The ground truth data saves the year when deforestation was first detected for a pixel in a single raster. To do this, it encodes the year of forest loss as an integer, giving the year. So, an integer 21 means the pixel was first detected as deforested in 2021, whereas a value of 0 means that deforestation was never detected.</p>
 <p>Currently our classification saves the deforestation detection in multiple rasters, one for each year. To get our data into a format that is similar to our comparison data we need to convert our rasters for each time step into a single one.</p>
 <p>To do this we first assign all pixels which were detected as deforestation (<code>CHANGE == -1</code>) to the year in which the deforestation was detected (<code>lost_year</code>). Then we compute over our time-series the first occurence of deforestation (equivalent to the first non-zero value) per pixel. This is then saved in a new data variable.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># convert lost forest (-1) into the year it was lost</span></span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>lost_year <span class="op">=</span> (ds_s2.CHANGE <span class="op">==</span> <span class="op">-</span><span class="dv">1</span>) <span class="op">*</span> ds_s2.year <span class="op">%</span> <span class="dv">100</span></span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>first_nonzero <span class="op">=</span> (lost_year <span class="op">!=</span> <span class="dv">0</span>).argmax(axis<span class="op">=</span><span class="dv">0</span>).compute()</span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>ds_s2[<span class="st">"LOST_YEAR"</span>] <span class="op">=</span> lost_year[first_nonzero]</span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>ds_s2.LOST_YEAR.plot(levels<span class="op">=</span><span class="bu">range</span>(<span class="dv">25</span>), cbar_kwargs<span class="op">=</span>{<span class="st">"label"</span>: <span class="st">"Year of Forest Loss"</span>})</span>
-<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Classification Forest Loss Year"</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-execution_count="23">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># convert lost forest (-1) into the year it was lost</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>lost_year <span class="op">=</span> (ds_s2.CHANGE <span class="op">==</span> <span class="op">-</span><span class="dv">1</span>) <span class="op">*</span> ds_s2.year <span class="op">%</span> <span class="dv">100</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>first_nonzero <span class="op">=</span> (lost_year <span class="op">!=</span> <span class="dv">0</span>).argmax(axis<span class="op">=</span><span class="dv">0</span>).compute()</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>ds_s2[<span class="st">"LOST_YEAR"</span>] <span class="op">=</span> lost_year[first_nonzero]</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>ds_s2.LOST_YEAR.plot(levels<span class="op">=</span><span class="bu">range</span>(<span class="dv">25</span>), cbar_kwargs<span class="op">=</span>{<span class="st">"label"</span>: <span class="st">"Year of Forest Loss"</span>})</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Classification Forest Loss Year"</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="deforestation_monitoring_with_xarray_files/figure-html/cell-24-output-1.png" class="img-fluid"></p>
+</div>
 </div>
 <p>Comparing this visually to the Global Forest Watch data, allows us to do some initial quality assessment. We can see definite differences between the two datasets. The Global Forest Watch data has much more clearly defined borders. In general, our classification seems to overestimate deforestation. However, the general pattern of forest loss is the same in both. Most of the deforestation is in the north of the study area, with less forest loss in the south.</p>
 <p>There are a few reasons for those differences. The main difference has to be in our much more simple approach to forest classification and change detection. It is expected that our approach will lead to large amounts of commission errors since changes are only confirmed using a single observation. It however can also lead to a lot of omission errors since the NDVI thresholding might classify highly productive non-forest areas as forest due to their high NDVI values.</p>
 <p>However, there are also some systematic differences. Our algorithm looks at differences between the middle of the years, which means that some changes can happen at the end of the growing year which will be detected first in the next year whereas the Global Forest Watch dataset will detect it in the correct (earlier) year.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>ds_s2.GROUND_TRUTH.plot(levels<span class="op">=</span><span class="bu">range</span>(<span class="dv">25</span>), cbar_kwargs<span class="op">=</span>{<span class="st">"label"</span>: <span class="st">"Year of Forest Loss"</span>})</span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Global Forest Watch - Interpolated"</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-execution_count="24">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>ds_s2.GROUND_TRUTH.plot(levels<span class="op">=</span><span class="bu">range</span>(<span class="dv">25</span>), cbar_kwargs<span class="op">=</span>{<span class="st">"label"</span>: <span class="st">"Year of Forest Loss"</span>})</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Global Forest Watch - Interpolated"</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="deforestation_monitoring_with_xarray_files/figure-html/cell-25-output-1.png" class="img-fluid"></p>
+</div>
 </div>
 <p>Finally, we can also calculate an accuracy score. This is a score from 0-1, where values close to 0.5 basically mean that the classification is random, and values close to 1 mean that most of the values of our comparison data and classification data match.</p>
 <p>First, we look at the overall accuracy of forest loss over the entire period from 2018 to 2023.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>score <span class="op">=</span> accuracy_score(</span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>    (ds_s2.LOST_YEAR <span class="op">&gt;</span> <span class="dv">18</span>).values.ravel(), (ds_s2.GROUND_TRUTH <span class="op">&gt;</span> <span class="dv">18</span>).values.ravel()</span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"The overall accuracy of forest loss detection is </span><span class="sc">{</span>score<span class="sc">:.2f}</span><span class="ss">."</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-execution_count="25">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>score <span class="op">=</span> accuracy_score(</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>    (ds_s2.LOST_YEAR <span class="op">&gt;</span> <span class="dv">18</span>).values.ravel(), (ds_s2.GROUND_TRUTH <span class="op">&gt;</span> <span class="dv">18</span>).values.ravel()</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"The overall accuracy of forest loss detection is </span><span class="sc">{</span>score<span class="sc">:.2f}</span><span class="ss">."</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>The overall accuracy of forest loss detection is 0.77.</code></pre>
+</div>
 </div>
 <p>As expected from the visual interpretation, with an accuracy of 0.77, our product differs quite a lot compared to the Global Forest Watch data. From this we do not know for sure that our product is less accurate compared to the actual forest loss patterns observed on the ground. We only know that it is different to the Global Forest Watch product. It might be more or less accurate.</p>
 <p>However, because of the simplicity of our algorithm, it is safe to assume that our output is less accurate.</p>
