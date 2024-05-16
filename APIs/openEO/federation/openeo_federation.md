@@ -19,7 +19,7 @@ All external providers comply with the regulations of the federation, but are no
 broader Copernicus ecosystem, they are either fully independent providers, or are governed and/or funded by other parties. This mainly impacts their currently foreseen lifetime, but also 
 how they handle aspects that are not part of federation governance.
 
-You can find a description of the technical design [here](./backends/design.md), as well as a more extensive [overview of federation governance](./backends/index.md).
+You can find a description of the technical design [here](./backends/design.md), as well as a more extensive [overview of federation governance](./backends/contract.md).
 
 ## Federation credit usage
 
