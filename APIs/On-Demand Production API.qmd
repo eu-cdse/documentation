@@ -2,16 +2,110 @@
 title: On-Demand Production API
 ---
 
+On-Demand Production API provides access to two sets of data processing workflows:  
+* production of the Sentinel-1/2/3 products from Level-0 data to Level-1 and Level-2. The service allows generation of products using different versions of the processors and parameters than the ones used by the Production Service.
+* processing of additional products including Sentinel-1 backscatter and interferometric coherence.
 
-On-demand processing capability for CARD-BS and CARD-COH6/12 is available in the Copernicus Data Space Ecosystem. This service is offered via a limited pool of resources, shared across all users, and can be used to process the data free of charge. This is suitable for users who need to process smaller batches of products. There is no guarantee that processing will be completed in a specific time. For commercial use, the [price list](https://creodias.eu/pricing/eo-data-hub-services/){target="blank"} is available in the CREODIAS portal. The service is available via an On-Demand Processing API that allows the users to interact with the service to issue and control the orders. It provides functionalities such as creating, updating, cancelling, pausing and monitoring of orders. This allows the users to have better control over the workflow execution process. 
+Both production and processing workflows are available through the OData API described below, and the [Data Workspace](https://dataspace.copernicus.eu/analyse/data-workspace){target="blank"} which provided a graphical user interface to the service.
+Basic interaction with the On-Demand Production service is following:   
+* user sends a request including the name of the workflow (the processor to be executed), the identifier of the reference product (product from which the processing should start or product which should be reprocessed) and workflow options (parameters) specific to the selected workflow.
+* system runs the requested workflows and the result is made available for retrieval.
 
-## OnDemand Processing API with OData interface
+## On-Demand Production
+
+The production of the Copernicus products is done using the recent IPF (Instrument Processing Facility) processor sets, used by the Production Services.
+Users can request production of any Sentinel-1 or Sentinel-3 product using the existing output product as reference. Using the metadata of the reference product, the service identifies the necessary Level-0 and Auxiliary products to run the IPF. The input products are retrieved from the Copernicus LTA (Long Term Archive) and submitted to a processing engine.
+The output of the production is stored in the temporary data storage and available to download for a period of 14 days.
+Initially the production workflows are available for Sentinel-1 and Sentinel-3. The Sentinel-2 workflows will follow.  
+Check the examples below to learn how to submit a production order.
+
+### Sentinel-1
+
+All Sentinel-1 workflows start from Level-0 RAW products and require Level-0 product as input reference.  
+
+**The available workflows** 
+
+|Workflow name|Input product type|Output product type|
+|--|--|--|
+|Sentinel-1-L0-EW_GRDM_1S|EW_RAW__0|EW_GRDM_1S|
+|Sentinel-1-L0-EW_OCN__2S|EW_RAW__0|EW_OCN__2S|
+|Sentinel-1-L0-EW_SLC__2S|EW_RAW__0|EW_SLC__2S|
+|Sentinel-1-L0-IW_GRDH_1S|IW_RAW__0|IW_GRDH_1S|
+|Sentinel-1-L0-IW_OCN__2S|IW_RAW__0|IW_OCN__2S|
+|Sentinel-1-L0-IW_SLC__1S|IW_RAW__0|IW_SLC__1S|
+|Sentinel-1-L0-S1_GRDH_1S|S1_RAW__0|S1_GRDH_1S|
+|Sentinel-1-L0-S1_OCN__2S|S1_RAW__0|S1_OCN_2S|
+|Sentinel-1-L0-S1_SLC__1S|S1_RAW__0|S1_SLC__1S|
+|Sentinel-1-L0-S2_GRDH_1S|S2_RAW__0|S2_GRDH_1S|
+|Sentinel-1-L0-S2_OCN__2S|S2_RAW__0|S2_OCN__2S|
+|Sentinel-1-L0-S2_SLC__1S|S2_RAW__0|S2_SLC__1S|
+|Sentinel-1-L0-S3_GRDH_1S|S3_RAW__0|S3_GRDH_1S|
+|Sentinel-1-L0-S3_OCN__2S|S3_RAW__0|S3_OCN__2S|
+|Sentinel-1-L0-S3_SLC__1S|S3_RAW__0|S3_SLC__1S|
+|Sentinel-1-L0-S4_GRDH_1S|S4_RAW__0|S4_GRDH_1S|
+|Sentinel-1-L0-S4_OCN__2S|S4_RAW__0|S4_OCN__2S|
+|Sentinel-1-L0-S4_SLC__1S|S4_RAW__0|S4_SLC__1S|
+|Sentinel-1-L0-S5_GRDH_1S|S5_RAW__0|S5_GRDH_1S|
+|Sentinel-1-L0-S5_OCN__2S|S5_RAW__0|S5_OCN__2S|
+|Sentinel-1-L0-S5_SLC__1S|S5_RAW__0|S5_SLC__1S|
+|Sentinel-1-L0-S6_GRDH_1S|S6_RAW__0|S6_GRDH_1S|
+|Sentinel-1-L0-S6_OCN__2S|S6_RAW__0|S6_OCN__2S|
+|Sentinel-1-L0-S6_SLC__1S|S6_RAW__0|S6_SLC__1S|
+|Sentinel-1-L0-WV_OCN__2S|WV_RAW__0|WV_OCN__2S|
+|Sentinel-1-L0-WV_SLC__1S|WV_RAW__0|WV_SLC__1S|
+
+**Workflow options for Sentinel-1** 
+
+|Option name|Description|Values|
+|--|--|--|
+|DEM|Identifier of the digital elevation model to use for processing.|"coarse", "getasse30v1", "getasse30v2"|
+|output_storage|Location of output product.|“TEMPORARY”|
+
+### Sentinel-3
+
+The Sentinel-3 workflows run from Level-0 products and require Level-1/Level-2 (output) product as input reference.
+
+**The available workflows** 
+
+|Workflow name|Input product type|Output product type|
+|--|--|--|
+|Sentinel-3-L0-OL_1_EFR|OL_0_EFR___|OL_1_EFR___|
+|Sentinel-3-L0-OL_1_ERR|OL_0_EFR___|OL_1_ERR___|
+|Sentinel-3-L0-OL_2_LFR|OL_0_EFR___|OL_2_LFR___|
+|Sentinel-3-L0-OL_2_LRR|OL_0_EFR___|OL_2_LRR___|
+|Sentinel-3-L0-SL_1_RBT|SL_0_SLT___|SL_1_RBT___|
+|Sentinel-3-L0-SL_2_FRP|SL_0_SLT___|SL_2_FRP___|
+|Sentinel-3-L0-SL_2_LST|SL_0_SLT___|SL_2_LST___|
+|Sentinel-3-L0-SR_1_SRA|SR_0_SRA___|SR_1_SRA___|
+|Sentinel-3-L0-SR_2_LAN|SR_0_SRA___,MW_0_MWR___|SR_2_LAN___|
+|Sentinel-3-L0-SY_2_AOD|OL_0_EFR___,SL_0_SLT___|SY_2_AOD___|
+|Sentinel-3-L0-SY_2_SYN|OL_0_EFR___,SL_0_SLT___|SY_2_SYN___|
+|Sentinel-3-L0-SY_2_VG1|OL_1_EFR___,SL_1_RBT___|SY_2_VG1___|
+|Sentinel-3-L0-SR_2_LAN_LI|SR_0_SRA___,MW_0_MWR___|SR_2_LAN_LI|
+|Sentinel-3-L0-SR_2_LAN_HY|SR_0_SRA___,MW_0_MWR___|SR_2_LAN_HY|
+|Sentinel-3-L0-SR_2_LAN_SI|SR_0_SRA___,MW_0_MWR___|SR_2_LAN_SI|
+
+**Workflow options for Sentinel-3** 
+
+|Option name|Description|Values|
+|--|--|--|
+|Baseline|Version number of the processor and static auxiliary files.|dependent on the specific workflow|
+|Mode|Timeliness condition : NTC (Non-Time Critical).|“NTC”|
+|output_storage|Location of output product.|“TEMPORARY”|
+
+
+## On-Demand Processing 
+
+On-demand processing capability for CARD-BS and CARD-COH6/12 is available in the Copernicus Data Space Ecosystem. This service is offered via a limited pool of resources, shared across all users, and can be used to process the data free of charge. This is suitable for users who need to process smaller batches of products. There is no guarantee that processing will be completed in a specific time. For commercial use, the [price list](https://creodias.eu/pricing/eo-data-hub-services/){target="blank"} is available in the CREODIAS portal. The service is available via an On-Demand Processing API and Data Workspace.
+
+## OnDemand Production API with OData interface
 
 The OnDemand Processing API allows the users to interact with the service to issue and control the orders. It provides functionalities like creation, update, cancellation, pausing and monitoring of orders. This allows the users to have better control over the workflow execution process.
+The API is based on the Production Interface Delivery Point ICD, extended to provide more flexibility and additional functionality.
 
 ## General information
 
-This documentation provides an overview of the OnDemand Processing (ODP) API based on the Open Data Protocol (OData) standard. The ODP API provides a RESTful interface for accessing data and metadata from the Copernicus data catalogue.
+This documentation provides an overview of the OnDemand Processing (ODP) API based on the Open Data Protocol (OData) standard. The ODP API complements the Catalogue API used for accessing data and metadata from the Copernicus data catalogue.
 Access to the API is limited by the Authentication service. Quotas are assigned according to the user typology and include limits on the number of concurrent orders and available processing workflows.
 The API allows the discovery of all available workflows that can be run in the Copernicus Data Space Ecosystem platform, indicating which data types can be processed and what the available parameters and output modes are.
 
@@ -23,23 +117,25 @@ The **ODP API endpoint is [https://odp.dataspace.copernicus.eu/odata/v1](https:/
 
 ### API Operations
 
-The ODP API supports the following operations:
-- GET: This operation retrieves data and metadata from the ODP. The GET operation supports various query options to filter, order, and limit the data retrieved.
-- POST: This operation creates new entities in the ODP. The POST operation requires a payload in JSON format that specifies the properties of the new entity.
-- PATCH: This operation is used to update existing entities in the ODP. The PATCH operation requires a JSON payload that specifies the entity's properties to update.
-- DELETE: This operation deletes existing entities from the ODP. The DELETE operation requires the URL of the entity to be deleted.
+The ODP API supports the following operations: 
+
+* GET: This operation retrieves data and metadata from the ODP. The GET operation supports various query options to filter, order, and limit the data retrieved
+* POST: This operation creates new entities in the ODP. The POST operation requires a payload in JSON format that specifies the properties of the new entity
+* PATCH: This operation is used to update existing entities in the ODP. The PATCH operation requires a JSON payload that specifies the entity's properties to update
+* DELETE: This operation deletes existing entities from the ODP. The DELETE operation requires the URL of the entity to be deleted 
 
 ### API Resources
 
-The ODP API provides access to the following resources:
-- Workflow: predefined processor which creates a single output product or series of products based on the input parameters provided by the user. Typical inputs are the name of the source product and parameters specific to the processing chain.
-- Production Order: request for production using a Workflow chosen by the user.
-- Batch Order: request to produce multiple products using a chosen Workflow.
-- Order Item: single processing job within and a Production Order or Batch Order.
+The ODP API provides access to the following resources:  
+
+* Workflow: predefined processor which creates a single output product or series of products based on the input parameters provided by the user. Typical inputs are the name of the source product and parameters specific to the processing chain
+* Production Order: request for production using a Workflow chosen by the user
+* Batch Order: request to produce multiple products using a chosen Workflow
+* Order Item: single processing job within and a Production Order or Batch Order
 
 ### Authentication
 
-To access the ODP API, you need an authorization token, as only authorized users are allowed to interact with the processing service.
+To access the ODP API, you need an authorization token, as only authorized users are allowed to interact with the processing service.  
 To get the token, you can use the following script:
 
 ````
@@ -54,7 +150,7 @@ python -m json.tool | grep "access_token" | awk -F\" '{print $4}')
 Once you have your token, you can execute a request to the API, including the token in the request header. For example, to list available Workflows, you can use the following command:
 
 ````
-curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" "https://odp.dataspace.copernicus.eu/odata/v1/Workflows"
+curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" 'https://odp.dataspace.copernicus.eu/odata/v1/Workflows'
 ````
 
 More information on the tokens and authentication can be found here: [https://documentation.dataspace.copernicus.eu/APIs/OData.html#product-download](https://documentation.dataspace.copernicus.eu/APIs/OData.html#product-download){target="blank"}
@@ -67,21 +163,21 @@ To list all processing Workflows available to the user:
 
 ````
 curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" \
-"https://odp.dataspace.copernicus.eu/odata/v1/Workflows"
+'https://odp.dataspace.copernicus.eu/odata/v1/Workflows'
 ````
 
 To search for specific Workflows you can use filters on the attributes. To find workflow named “coh”:
 
 ````
 curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" \
-"https://odp.dataspace.copernicus.eu/odata/v1/Workflows?$filter=Name%20eq%20coh"
+'https://odp.dataspace.copernicus.eu/odata/v1/Workflows?$filter=Name%20eq%20coh'
 ````
 
 In a similar way to find all Workflows suitable for processing Sentinel-1 SLC products:
 
 ````
 curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" \
-"https://odp.dataspace.copernicus.eu/odata/v1/Workflows?$filter=contains(InputProductType,'SLC')"
+'https://odp.dataspace.copernicus.eu/odata/v1/Workflows?$filter=contains(InputProductType,'SLC')'
 ````
 
 Details of the Workflow in the response list the parameters which are needed to create a new Production Order:
@@ -124,19 +220,21 @@ To submit a new processing job, you need to use the POST method and send the par
 ````
 curl -X POST -H 'Content-Type:application/json' \
 -H "Authorization: Bearer $KEYCLOAK_TOKEN" \
-"https://odp.dataspace.copernicus.eu/odata/v1/ProductionOrder/OData.CSC.Order" \
+'https://odp.dataspace.copernicus.eu/odata/v1/ProductionOrder/OData.CSC.Order' \
 -d '<json_message>'
 ````
 
-Production orders accept the following general parameters:
-- WorkflowName: the  identifier of the workflow – “Name” attribute in the /Workflows response
-- InputProductReference: information about the input data to be used by the processor
-    - Reference: identifier of a single input product or multiple products (example – mosaicking processors)
-    - ContentDate: time period which should be used by the Workflows (example - time-series based processors)
-- WorkflowOptions: parameters specific to the Workflows (example – DEM version, cloud coverage)
-- Priority: priority of the order in the users job queue. Orders with higher priority will be processed first
-- NotificationEndpoint: (not used) URL of the endpoint which should receive the information once the order is completed (done or failed)
-- Name: non-unique name for the order to help identify the orders
+Production orders accept the following general parameters: 
+
+* WorkflowName: the  identifier of the workflow – “Name” attribute in the /Workflows response
+* InputProductReference: information about the input data to be used by the processor
+  * Reference: identifier of a single input product or multiple products (example – mosaicking processors)
+  * ContentDate: time period which should be used by the Workflows (example - time-series based processors)
+* WorkflowOptions: parameters specific to the Workflows (example – DEM version, cloud coverage)
+* Priority: priority of the order in the users job queue. Orders with higher priority will be processed first
+* NotificationEndpoint: (not used) URL of the endpoint which should receive the information once the order is completed (done or failed)
+* Name: non-unique name for the order to help identify the orders 
+
 The structure of the JSON message:
 
 ````
@@ -166,7 +264,7 @@ Example: to submit an order for the Sentinel-1 CARD Backscatter product:
 ````
 curl -X POST -H 'Content-Type:application/json' \
 -H "Authorization: Bearer $KEYCLOAK_TOKEN" \
-"https://odp.dataspace.copernicus.eu/odata/v1/ProductionOrder/OData.CSC.Order" \
+'https://odp.dataspace.copernicus.eu/odata/v1/ProductionOrder/OData.CSC.Order' \
 -d '{ \
   "WorkflowName": "card_bs",
   "InputProductReference": {
@@ -206,14 +304,14 @@ To list all Production Orders requested by the user:
 
 ````
 curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" \
-"https://odp.dataspace.copernicus.eu/odata/v1/ProductionOrders"
+'https://odp.dataspace.copernicus.eu/odata/v1/ProductionOrders'
 ````
 
 When looking for completed orders for a specific processor:
 
 ````
 curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" \
-"https://odp.dataspace.copernicus.eu/odata/v1/ProductionOrders?$filter=WorkflowName%20eq%20coh%20and%20Status%20eq%20completed"
+'https://odp.dataspace.copernicus.eu/odata/v1/ProductionOrders?$filter=WorkflowName%20eq%20coh%20and%20Status%20eq%20completed'
 ````
 
 #### Check the status of a single Production Order
@@ -221,7 +319,7 @@ To check details of the single order using the order Id:
 
 ````
 curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" \
-"https://odp.dataspace.copernicus.eu/odata/v1/ProductionOrders(<order_id>)"
+'https://odp.dataspace.copernicus.eu/odata/v1/ProductionOrders(<order_id>)'
 ````
 
 #### Cancel a Production Order
@@ -229,49 +327,52 @@ To cancel an existing order:
 
 ````
 curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" \
-"https://odp.dataspace.copernicus.eu/odata/v1/ProductionOrder(<order_id>)/OData.CSC.Cancel"
+'https://odp.dataspace.copernicus.eu/odata/v1/ProductionOrder(<order_id>)/OData.CSC.Cancel'
 ````
 
-The orders that are in the queue and have not yet been processed will be removed instantly. For the orders in processing, the Order Items (single item within a Production Order) being processed will complete but the remaining part of the Order will be cancelled.
+The orders that are in the queue and have not yet been processed will be removed instantly. For the orders in processing, the Order Items (single item within a Production Order) being processed will complete but the remaining part of the Order will be cancelled.  
+
 #### Display details of the result
 The order generates a new product which can be downloaded from the public repository or private storage. To check the details of the result:
 
 ````
 curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" \
-"https://odp.dataspace.copernicus.eu/odata/v1/ProductionOrder(<order_id>)/Product"
+'https://odp.dataspace.copernicus.eu/odata/v1/ProductionOrder(<order_id>)/Product'
 ````
 
 #### Download the result
-Once the order is successfully processed, the status changes to complete, and the result is ready for download. The user may choose to instruct the service to put the results in a specified location (mandatory if custom parameters have been passed to the Workflow), and standard results (for Workflows like CARD-BS or CARD-COH12) are stored in the CDSE public repository and can be retrieved through the API.
+Once the order is successfully processed, the status changes to complete, and the result is ready for download. The user may choose to instruct the service to put the results in a specified location (mandatory if custom parameters have been passed to the Workflow), and standard results (for Workflows like CARD-BS or CARD-COH12) are stored in the CDSE public repository and can be retrieved through the API.  
 To download the result:
 
 ````
 curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" \
-"https://odp.dataspace.copernicus.eu/odata/v1/ProductionOrder(<order_id>)/Product/$value" \
+'https://odp.dataspace.copernicus.eu/odata/v1/ProductionOrder(<order_id>)/Product/$value' \
 -o result.zip
 ````
 
 ### Batch Orders
 #### Create a new Batch Order
-In a way similar to a single Production Order, you can request processing of multiple input products as a Batch Order. The Batch Order will run a selected Workflow with the same parameters for all inputs and output the results to the same location. Using Batch Orders makes it easier to process time series or large AOIs.
+In a way similar to a single Production Order, you can request processing of multiple input products as a Batch Order. The Batch Order will run a selected Workflow with the same parameters for all inputs and output the results to the same location. Using Batch Orders makes it easier to process time series or large AOIs.  
 Batch Order endpoint uses the same mechanism as described for the Production Order:
 
 ````
 curl -X POST -H 'Content-Type:application/json' \
 -H "Authorization: Bearer $KEYCLOAK_TOKEN" \ 
-"https://odp.dataspace.copernicus.eu/odata/v1/BatchOrder/OData.CSC.Order" \
+'https://odp.dataspace.copernicus.eu/odata/v1/BatchOrder/OData.CSC.Order' \
 -d '<json_message>'
 ````
 
-Batch Orders accept the following general parameters:
-- WorkflowName: the  identifier of the workflow – “Name” attribute in the /Workflows response
-- IdentifierList: information about the input data to be used by the processor - identifiers of products
-- WorkflowOptions: parameters specific to the Workflows (example – DEM version, cloud coverage)
-- Priority: priority of the order in the users job queue. Orders with higher priority will be processed first
-- Callback: (not used) URL of the endpoint which should receive the information once the order is completed (done or failed)
-- Name: non-unique name for the order to help identify the orders
-- BatchSize: maximum number of items in the batch
-- BatchVolume: maximum size of output data
+Batch Orders accept the following general parameters: 
+
+* WorkflowName: the  identifier of the workflow – “Name” attribute in the /Workflows response
+* IdentifierList: information about the input data to be used by the processor - identifiers of products
+* WorkflowOptions: parameters specific to the Workflows (example – DEM version, cloud coverage)
+* Priority: priority of the order in the users job queue. Orders with higher priority will be processed first
+* Callback: (not used) URL of the endpoint which should receive the information once the order is completed (done or failed)
+* Name: non-unique name for the order to help identify the orders
+* BatchSize: maximum number of items in the batch
+* BatchVolume: maximum size of output data 
+
 The structure of the JSON message:
 
 ````
@@ -300,14 +401,14 @@ To list all Production Orders requested by the user:
 ````
 curl -X POST -H 'Content-Type:application/json' \
 -H "Authorization: Bearer $KEYCLOAK_TOKEN" \ 
-"https://odp.dataspace.copernicus.eu/odata/v1/BatchOrder"
+'https://odp.dataspace.copernicus.eu/odata/v1/BatchOrder'
 ````
 
 When looking for batch orders for a specific processor (in example 'coh'):
 
 ````
 curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" \
-"https://odp.dataspace.copernicus.eu/odata/v1/BatchOrder?$filter=WorkflowName%20eq%20%coh"
+'https://odp.dataspace.copernicus.eu/odata/v1/BatchOrder?$filter=WorkflowName%20eq%20%coh'
 ````
 
 #### Check the status of a single Batch Order
@@ -315,7 +416,7 @@ To check details of the single order using the order Id:
 
 ````
 curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" \
-"https://odp.dataspace.copernicus.eu/odata/v1/BatchOrder(<batch_order_id>)"
+'https://odp.dataspace.copernicus.eu/odata/v1/BatchOrder(<batch_order_id>)'
 ````
 
 #### List products generated in a Batch Order
@@ -323,7 +424,7 @@ When the batch order is processed, for each input product an output is generated
 
 ````
 curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" \
-"https://odp.dataspace.copernicus.eu/odata/v1/BatchOrder(<batch_order_id>)/Products"
+'https://odp.dataspace.copernicus.eu/odata/v1/BatchOrder(<batch_order_id>)/Products'
 ````
 
 #### Display details of the results
@@ -331,8 +432,144 @@ Each item in the batch is an individual Production Order. To check the details o
 
 ````
 curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" \
-"https://odp.dataspace.copernicus.eu/odata/v1/BatchOrder(<batch_order_id>)/Product(<order_id>)"
+'https://odp.dataspace.copernicus.eu/odata/v1/BatchOrder(<batch_order_id>)/Product(<order_id>)'
 ````
 
+## Usage examples
+The examples below show how to use the OnDemand Production API to order production of Sentinel data packages. The requests to the API endpoint can be made using standard Linux CLI tools like curl and wget, or by other programmatic methods. More information and examples of using the OData APIs of the Copernicus Dataspace Ecosystem can be found above and in the [Catalogue API documentation](https://documentation.dataspace.copernicus.eu/APIs/OData.html){target="blank"}
 
+### On-Demand Production
+#### Ordering Sentinel-1 Level-1 IW_GRDH_1S using Production Order
+The production of Sentinel-1 GRD products starts from Level-0 RAW product. As the Sentinel-1 products require single input product, the workflow can use Level-0 product as input reference.
+In the following example we will order production of GRD product covering Brussels on 12th of May, 2024.
+First the required input Level-0 products needs to be identified using the CDSE catalogue:
+````
+curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" \
+'https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=((ContentDate/Start%20ge%202024-05-12T00:00:00.000Z%20and%20ContentDate/Start%20le%202024-05-12T23:59:59.999Z)%20and%20(Online%20eq%20true)%20and%20(OData.CSC.Intersects(Footprint=geography%27SRID=4326;POLYGON%20((4.313869%2050.796245,%204.437046%2050.796245,%204.437046%2050.913716,%204.313869%2050.913716,%204.313869%2050.796245))%27))%20and%20(((((Collection/Name%20eq%20%27SENTINEL-1%27)%20and%20(((Attributes/OData.CSC.StringAttribute/any(i0:i0/Name%20eq%20%27productType%27%20and%20i0/Value%20eq%20%27RAW%27)))))))))&$expand=Attributes&$expand=Assets&$orderby=ContentDate/Start%20asc&$top=1'
+````
+The query breaks down to the following filters:  
+* *(ContentDate/Start ge 2024-05-12T00:00:00.000Z and ContentDate/Start le 2024-05-12T23:59:59.999Z)* - observation starting on 12/05/2024
+* *(Online eq true)* - the product is online (ready to use) in the CDSE archive
+* *(OData.CSC.Intersects(Footprint=geography'SRID=4326;POLYGON ((4.313869 50.796245, 4.437046 50.796245, 4.437046 50.913716, 4.313869 50.913716, 4.313869 50.796245))'))* - product footprint intersects with the Brussels metropolitan area
+* *(Collection/Name eq 'SENTINEL-1')* - we are looking for Sentinel-1 data
+* *(Attributes/OData.CSC.StringAttribute/any(i0:i0/Name eq 'productType' and i0/Value eq 'RAW'))* - the "RAW" product type is a group covers all Level-0 product types
+* *$top=1* - results in a single product
+  
+The result is *S1A_IW_RAW__0SDV_20240512T055035_20240512T055108_053834_068ADC_5C24.SAFE* which will be used as input to the production order.  
+  
+The next step is preparation of the body of the request:  
+````
+{
+	"Name":"S1 IW_GRDH_1S getasse30v1 1",
+	"WorkflowName":"Sentinel-1-L0-IW_GRDH_1S",
+	"InputProductReference": {
+		"Reference": "S1A_IW_RAW__0SDV_20240512T055035_20240512T055108_053834_068ADC_5C24.SAFE"
+		},
+	"Priority": 1,
+	"WorkflowOptions":[
+		{
+		"Name":"Dem","Value":"getasse30v1"
+		},
+		{
+		"Name":"output_storage","Value":"TEMPORARY"
+		}
+	]
+}
+````
+and save it in a file called *odp_request.json* (example name).  
 
+The request contents break down to the following:
+* *"Name":"S1 IW_GRDH_1S getasse30v1"* - user provided string identifying the order
+* *"WorkflowName":"Sentinel-1-L0-IW_GRDH_1S"* - identifier of the workflow which will be used to process input data
+* *"Name":"Dem","Value":"getasse30v1"* - GETASSE30 elevation model selected
+* *"Name":"output_storage","Value":"TEMPORARY"* - the data will be stored in temporary storage (available for download for 14 days)
+* *"IdentifierList":["S1A_IW_RAW__0SDV_20240512T055035_20240512T055108_053834_068ADC_5C24.SAFE"]* - Level-0 RAW product used as input to the processor
+
+The body of the request needs to be sent in a call to ODP API:
+````
+curl -X POST -H 'Content-Type:application/json' -H "Authorization: Bearer $KEYCLOAK_TOKEN" -d @odp_request.json 'https://odp.dataspace.copernicus.eu/odata/v1/ProductionOrder/OData.CSC.Order'
+````
+As a result new order should be created. The status of the order can be checked with the following request:
+````
+curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" 'https://odp.dataspace.copernicus.eu/odata/v1/ProductionOrders?$filter=Name%20eq%20%27S1%20IW_GRDH_1S%20getasse30v1%27'
+````
+The API response includes the Status and the ID:
+````
+{
+  "@odata.context": "$metadata#ProductionOrder/$entity",
+  "value": [
+    {
+      "Id": "2322968",
+      "Status": "completed",
+      "StatusMessage": "requested output product is available",
+      "SubmissionDate": "2024-05-21T05:34:52.840Z",
+      "Name": "S1 IW_GRDH_1S getasse30v1",
+      "EstimatedDate": "2024-05-21T08:33:31.103Z",
+      "InputProductReference": {
+        "Reference": "S1A_IW_RAW__0SDV_20240512T055035_20240512T055108_053834_068ADC_5C24.SAFE",
+        "ContentDate": null
+      },
+...
+````
+Key information in the response:
+* *"Id": "2322968"* - the identifier (ID) of the order
+* *"Status": "completed"* - status of the processing (queued, in progress, completed, failed)
+* *"StatusMessage": "requested output product is available"* - detailed information about the processing status. In case the production fails, the cause of error is provided
+
+Once the order is in status "Completed" the result can be downloaded using the order ID:
+````
+curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" \
+'https://odp.dataspace.copernicus.eu/odata/v1/ProductionOrder(2322968)/Product/$value' -o result.zip
+````
+The output will be saved as *result.zip* in the local folder.
+It contains the output product stored as compressed SAFE archive.
+````
+unzip -l result.zip
+Archive:  result.zip
+  Length      Date    Time    Name
+---------  ---------- -----   ----
+1771670525  2024-05-21 15:46   S1A_IW_GRDH_1SDV_20240512T055039_20240512T055104_053834_068ADC_A2BD.SAFE.zip
+---------                     -------
+1771670525                     1 file
+````
+#### Ordering Sentinel-3 Level-2 SL_2_LST using Production Order
+The production of Sentinel-2 and Sentinel-3 products starts from a set of Level-0 products chosen by the selection rules. Differently than in case of Sentinel-1, the reference input is an existing higher level product. The workflow based on the reference will identify required Level-0 inputs and produces an equivalent of the reference product using the chosen processor version and workflow options.  
+In this example we will order production of  product covering Brussels on 12th of May, 2024.  
+When choosing Sentinel-3 product it is important to select NTC (non-time critical) timeliness as the workflow does not generate NRT or STC products. Providing NRT or STC product as input reference will result in an error.  
+First the required input Level-2 reference products needs to be identified using the CDSE catalogue:
+````
+curl -H "Authorization: Bearer $KEYCLOAK_TOKEN" \
+'https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=((ContentDate/Start%20ge%202024-05-12T00:00:00.000Z%20and%20ContentDate/Start%20le%202024-05-12T23:59:59.999Z)%20and%20(Online%20eq%20true)%20and%20(OData.CSC.Intersects(Footprint=geography%27SRID=4326;POLYGON%20((4.313869%2050.796245,%204.437046%2050.796245,%204.437046%2050.913716,%204.313869%2050.913716,%204.313869%2050.796245))%27))%20and%20((Collection/Name%20eq%20%27SENTINEL-3%27)%20and%20(Attributes/OData.CSC.StringAttribute/any(i0:i0/Name%20eq%20%27productType%27%20and%20i0/Value%20eq%20%27SL_2_LST___%27)))%20and%20(Attributes/OData.CSC.StringAttribute/any(i0:i0/Name%20eq%20%27timeliness%27%20and%20i0/Value%20eq%20%27NT%27)))&$expand=Attributes&$expand=Assets&$orderby=ContentDate/Start%20asc&$top=1'
+````
+Filtering parameters specific to this example (standard parameters as in Sentinel-1 example):
+* *(Collection/Name%20eq%20%27SENTINEL-3%27)* - we are looking for Sentinel-3 data
+* *(Attributes/OData.CSC.StringAttribute/any(i0:i0/Name%20eq%20%27productType%27%20and%20i0/Value%20eq%20%27SL_2_LST___%27))* - product type SL_2_LST___
+* *(Attributes/OData.CSC.StringAttribute/any(i0:i0/Name%20eq%20%27timeliness%27%20and%20i0/Value%20eq%20%27NT%27))* - product timeliness non-time critical (NTC)
+
+The result is *S3B_SL_2_LST____20240512T093034_20240512T093334_20240513T031156_0180_093_036_2160_PS2_O_NT_004.SEN3* which will be used as input to the production order.  
+
+The next step is preparation of the body of the request:  
+````
+{
+	"Name":"S3 SL_2_LST 1",
+	"WorkflowName":"Sentinel-3-L0-SL_2_LST",
+	"InputProductReference": {
+		"Reference": "S3B_SL_2_LST____20240512T093034_20240512T093334_20240513T031156_0180_093_036_2160_PS2_O_NT_004.SEN3"
+		},
+	"Priority": 1,
+	"WorkflowOptions":[
+		{
+		"Name":"Baseline","Value":"3.27"
+		},
+		{
+		"Name":"output_storage","Value":"TEMPORARY"
+		}
+	]
+}
+````
+and save it in a file called *odp_request.json* (example name).  
+
+The additional workflow option used in this example:
+* *"Name":"Baseline","Value":"3.27"* - selects specific baseline (version of the processor)
+
+Further steps to check the status of the order and download results are the same as for the Sentinel-1 example.
