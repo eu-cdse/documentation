@@ -6,6 +6,419 @@ aliases:
 
 This page includes the list of changes made to Catalog APIs for each release.
 
+## Default Timezone Change for OData and OpenSearch APIs  [2024-05-28]
+
+Please be informed that the **OData** and **OpenSearch** APIs were updated on 28th May 2024; the default timzone has been changed to UTC. 
+
+As of 28th May 2024, all API requests without a specified timezone are treated by default as datetime provided in UTC format.
+
+Previously, if a client did not specify a timezone in their date request, it defaulted to Warsaw local time. However, starting form **28th May 2024**, all API requests without a specified timezone default to datetime provided in UTC format.
+
+This change is aimed at standardizing our API responses and ensuring uniformity.
+
+To specify a timezone within the request:
+
+**OData API (e.g. UTC-4)**
+
+::: {.panel-tabset}
+
+# OData Request
+
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name eq 'SENTINEL-1' and ContentDate/Start gt 2022-05-03T00:00:00.000-04:00 and ContentDate/Start lt 2022-05-04T00:00:00.000-04:00&$top=2`](<https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name eq 'SENTINEL-1' and ContentDate/Start gt 2022-05-03T00:00:00.000-04:00 and ContentDate/Start lt 2022-05-04T00:00:00.000-04:00&$top=2>){target="_blank"}
+
+:::
+
+**OpenSearch API (e.g. UTC+1)**
+
+::: {.panel-tabset}
+
+# OpenSearch Request
+
+[`https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel1/search.json?startDate=2022-05-03T00:00:00+01:00&maxRecords=2`](<https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel1/search.json?startDate=2022-05-03T00:00:00%2b01:00&maxRecords=2>){target="_blank"}
+
+:::
+
+::: {.callout-note}
+
+Please note while making an API request, any special characters need to be encoded in a specific way so that they can be interpreted correctly by the server. In the case of the plus sign (+), it's a reserved character in URLs and is interpreted as a space. So, if you want to represent a literal plus sign within your API request, you need to encode it as '%2b'.
+
+:::
+
+Examples of API requests without the timezone and API responses before and after the change:
+
+**OData API Example**
+
+::: {.panel-tabset}
+
+# HTTP Request
+
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name eq 'SENTINEL-1' and ContentDate/Start gt 2022-05-03T00:00:00.000 and ContentDate/Start lt 2022-05-04T00:00:00.000&$top=2`](<https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name eq 'SENTINEL-1' and ContentDate/Start gt 2022-05-03T00:00:00.000 and ContentDate/Start lt 2022-05-04T00:00:00.000&$top=2>){target="_blank"}
+
+# Previous response
+```{json}
+{
+  "@odata.context": "$metadata#Products",
+  "value": [
+    {
+      "@odata.mediaContentType": "application/octet-stream",
+      "Id": "896aeef0-eee1-5e28-acaa-7f420bb23e8c",
+      "Name": "S1A_IW_SLC__1SDV_20220502T220617_20220502T220647_043037_052392_1E9A.SAFE",
+      "ContentType": "application/octet-stream",
+      "ContentLength": 8231197123,
+      "OriginDate": "2022-05-02T23:30:02.126Z",
+      "PublicationDate": "2022-05-02T23:40:02.825Z",
+      "ModificationDate": "2024-03-16T03:19:06.436Z",
+      "Online": true,
+      "EvictionDate": "",
+      "S3Path": "/eodata/Sentinel-1/SAR/SLC/2022/05/02/S1A_IW_SLC__1SDV_20220502T220617_20220502T220647_043037_052392_1E9A.SAFE",
+      "Checksum": [
+        {
+          "Value": "65940707f71f444b0fa05141657cc387",
+          "Algorithm": "MD5",
+          "ChecksumDate": "2024-03-16T03:18:49.857391Z"
+        },
+        {
+          "Value": "3d2d07a95aad14f1fb77ea5ba49485b6efee667578a74257d07b9edbd9d4912a",
+          "Algorithm": "BLAKE3",
+          "ChecksumDate": "2024-03-16T03:19:07.058832Z"
+        }
+      ],
+      "ContentDate": {
+        "Start": "2022-05-02T22:06:17.548Z",
+        "End": "2022-05-02T22:06:47.359Z"
+      },
+      "Footprint": "geography'SRID=4326;POLYGON ((-57.750202 -2.026322, -57.366844 -3.828814, -55.15321 -3.341953, -55.540607 -1.545508, -57.750202 -2.026322))'",
+      "GeoFootprint": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -57.750202,
+              -2.026322
+            ],
+            [
+              -57.366844,
+              -3.828814
+            ],
+            [
+              -55.15321,
+              -3.341953
+            ],
+            [
+              -55.540607,
+              -1.545508
+            ],
+            [
+              -57.750202,
+              -2.026322
+            ]
+          ]
+        ]
+      }
+    },
+    {...
+    }
+  ],
+  "@odata.nextLink": "https://catalogue.dataspace.copernicus.eu/odata/v1/Products?%24filter=Collection%2FName+eq+%27SENTINEL-1%27+and+ContentDate%2FStart+gt+2022-05-03T00%3A00%3A00.000+and+ContentDate%2FStart+lt+2022-05-04T00%3A00%3A00.000&%24top=2&%24skip=2"
+}
+```
+
+# New response
+```{json}
+{
+  "@odata.context": "$metadata#Products",
+  "value": [
+    {
+      "@odata.mediaContentType": "application/octet-stream",
+      "Id": "1d42f2d3-2456-485f-a93e-92f08bdd5c51",
+      "Name": "S1A_OPER_AUX_GNSSRD_POD__20220510T020122_V20220502T235946_20220503T235936",
+      "ContentType": "application/octet-stream",
+      "ContentLength": 2663000,
+      "OriginDate": "2022-05-10T02:30:11.130Z",
+      "PublicationDate": "2023-10-25T13:45:19.736Z",
+      "ModificationDate": "2023-11-14T22:50:17.708Z",
+      "Online": true,
+      "EvictionDate": "",
+      "S3Path": "/eodata/Sentinel-1/AUX/AUX_GNSSRD/2022/05/03/S1A_OPER_AUX_GNSSRD_POD__20220510T020122_V20220502T235946_20220503T235936",
+      "Checksum": [
+        {
+          "Value": "6a99572d2baaa3c9a83bd851ba3ba70f",
+          "Algorithm": "MD5",
+          "ChecksumDate": "2023-11-14T22:50:17.595702Z"
+        },
+        {
+          "Value": "d42f79c1ab8840db09d7596dea4ee40b175df7795dd186f812eafe4a5fa21aab",
+          "Algorithm": "BLAKE3",
+          "ChecksumDate": "2023-11-14T22:50:17.616477Z"
+        }
+      ],
+      "ContentDate": {
+        "Start": "2022-05-03T00:00:04.000Z",
+        "End": "2022-05-03T23:59:54.000Z"
+      },
+      "Footprint": null,
+      "GeoFootprint": null
+    },
+    {...
+    }
+  ],
+  "@odata.nextLink": "https://catalogue.dataspace.copernicus.eu/odata/v1/Products?%24filter=Collection%2FName+eq+%27SENTINEL-1%27+and+ContentDate%2FStart+gt+2022-05-03T00%3A00%3A00.000Z+and+ContentDate%2FStart+lt+2022-05-04T00%3A00%3A00.000Z&%24top=2&%24skip=2"
+}
+```
+
+:::
+
+**OpenSearch API Example**
+
+::: {.panel-tabset}
+
+# HTTP Request
+
+[`https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel1/search.json?startDate=2022-05-03T00:00:00&maxRecords=2`](<https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel1/search.json?startDate=2022-05-03T00:00:00&maxRecords=2>){target="_blank"}
+
+# Previous response
+```{json}
+{
+  "type": "FeatureCollection",
+  "properties": {
+    "id": "04139de2-34f6-56d0-b36f-122f1a3c290a",
+    "totalResults": null,
+    "exactCount": 0,
+    "startIndex": 1,
+    "itemsPerPage": 2,
+    "query": {
+      "originalFilters": {
+        "startDate": "2022-05-03T00:00:00",
+        "collection": "SENTINEL-1"
+      },
+      "appliedFilters": {
+        "startDate": "2022-05-03T00:00:00",
+        "collection": "SENTINEL-1"
+      },
+      "processingTime": 0.163432102
+    },
+    "links": [
+      {
+        "rel": "self",
+        "type": "application/json",
+        "title": "self",
+        "href": "https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel1/search.json?startDate=2022-05-03T00:00:00&maxRecords=2"
+      },
+      {
+        "rel": "search",
+        "type": "application/opensearchdescription+xml",
+        "title": "OpenSearch Description Document",
+        "href": "https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel1/describe.xml"
+      },
+      {
+        "rel": "next",
+        "type": "application/json",
+        "title": "next",
+        "href": "https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel1/search.json?startDate=2022-05-03T00%3A00%3A00&maxRecords=2&page=2"
+      }
+    ]
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "id": "896aeef0-eee1-5e28-acaa-7f420bb23e8c",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [...
+        ]
+      },
+      "properties": {
+        "collection": "SENTINEL-1",
+        "status": "ONLINE",
+        "license": {
+          "licenseId": "unlicensed",
+          "hasToBeSigned": "never",
+          "grantedCountries": null,
+          "grantedOrganizationCountries": null,
+          "grantedFlags": null,
+          "viewService": "public",
+          "signatureQuota": -1,
+          "description": {
+            "shortName": "No license"
+          }
+        },
+        "productIdentifier": "/eodata/Sentinel-1/SAR/SLC/2022/05/02/S1A_IW_SLC__1SDV_20220502T220617_20220502T220647_043037_052392_1E9A.SAFE",
+        "parentIdentifier": null,
+        "title": "S1A_IW_SLC__1SDV_20220502T220617_20220502T220647_043037_052392_1E9A.SAFE",
+        "description": "The Sentinel-1 mission is the European Radar Observatory for the Copernicus joint initiative of the European Commission (EC) and the European Space Agency (ESA). The Sentinel-1 mission includes C-band imaging operating in four exclusive imaging modes with different resolution (down to 5 m) and coverage (up to 400 km). It provides dual polarization capability, short revisit times and rapid product delivery. Additionally, precise measurements of spacecraft position and attitude are available for every observation [https://dataspace.copernicus.eu/explore-data/data-collections/sentinel-data/sentinel-1].",
+        "organisationName": "ESA",
+        "startDate": "2022-05-02T22:06:17.548Z",
+        "completionDate": "2022-05-02T22:06:47.359Z",
+        "productType": "IW_SLC__1S",
+        "processingLevel": "LEVEL1",
+        "platform": "S1A",
+        "instrument": "SAR",
+        "resolution": 2.3,
+        "sensorMode": "IW",
+        "orbitNumber": 43037,
+        "quicklook": null,
+        "thumbnail": "https://catalogue.dataspace.copernicus.eu/get-object?path=/Sentinel-1/SAR/SLC/2022/05/02/S1A_IW_SLC__1SDV_20220502T220617_20220502T220647_043037_052392_1E9A.SAFE/preview/thumbnail.png",
+        "updated": "2024-03-16T03:19:06.436Z",
+        "published": "2022-05-02T23:40:02.825Z",
+        "snowCover": 0,
+        "cloudCover": 0,
+        "gmlgeometry": "<gml:Polygon srsName=\"EPSG:4326\"><gml:outerBoundaryIs><gml:LinearRing><gml:coordinates>-57.750202,-2.026322 -57.366844,-3.828814 -55.15321,-3.341953 -55.540607,-1.545508 -57.750202,-2.026322</gml:coordinates></gml:LinearRing></gml:outerBoundaryIs></gml:Polygon>",
+        "centroid": {
+          "type": "Point",
+          "coordinates": [
+            -56.45314692566288,
+            -2.68610524638
+          ]
+        },
+        "orbitDirection": "ASCENDING",
+        "timeliness": "Fast-24h",
+        "relativeOrbitNumber": 90,
+        "processingBaseline": 0,
+        "polarisation": "VV&VH",
+        "swath": "IW1 IW2 IW3",
+        "services": {
+          "download": {
+            "url": "https://catalogue.dataspace.copernicus.eu/download/896aeef0-eee1-5e28-acaa-7f420bb23e8c",
+            "mimeType": "application/octet-stream",
+            "size": 8231197123
+          }
+        },
+        "links": [
+          {
+            "rel": "self",
+            "type": "application/json",
+            "title": "GeoJSON link for 896aeef0-eee1-5e28-acaa-7f420bb23e8c",
+            "href": "https://catalogue.dataspace.copernicus.eu/resto/collections/SENTINEL-1/896aeef0-eee1-5e28-acaa-7f420bb23e8c.json"
+          }
+        ]
+      }
+    },
+    {...
+    }
+  ]
+}
+```
+
+# New response
+```{json}
+{
+  "type": "FeatureCollection",
+  "properties": {
+    "id": "1f7387ef-7456-5a77-ba63-fa036a7659cd",
+    "totalResults": null,
+    "exactCount": 0,
+    "startIndex": 1,
+    "itemsPerPage": 2,
+    "query": {
+      "originalFilters": {
+        "startDate": "2022-05-03T00:00:00Z",
+        "collection": "SENTINEL-1"
+      },
+      "appliedFilters": {
+        "startDate": "2022-05-03T00:00:00Z",
+        "collection": "SENTINEL-1"
+      },
+      "processingTime": 0.032169373
+    },
+    "links": [
+      {
+        "rel": "self",
+        "type": "application/json",
+        "title": "self",
+        "href": "https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel1/search.json?startDate=2022-05-03T00:00:00Z&maxRecords=2"
+      },
+      {
+        "rel": "search",
+        "type": "application/opensearchdescription+xml",
+        "title": "OpenSearch Description Document",
+        "href": "https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel1/describe.xml"
+      },
+      {
+        "rel": "next",
+        "type": "application/json",
+        "title": "next",
+        "href": "https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel1/search.json?startDate=2022-05-03T00%3A00%3A00Z&maxRecords=2&page=2"
+      }
+    ]
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "id": "1d42f2d3-2456-485f-a93e-92f08bdd5c51",
+      "geometry": [
+         
+      ],
+      "properties": {
+        "collection": "SENTINEL-1",
+        "status": "ONLINE",
+        "license": {
+          "licenseId": "unlicensed",
+          "hasToBeSigned": "never",
+          "grantedCountries": null,
+          "grantedOrganizationCountries": null,
+          "grantedFlags": null,
+          "viewService": "public",
+          "signatureQuota": -1,
+          "description": {
+            "shortName": "No license"
+          }
+        },
+        "productIdentifier": "/eodata/Sentinel-1/AUX/AUX_GNSSRD/2022/05/03/S1A_OPER_AUX_GNSSRD_POD__20220510T020122_V20220502T235946_20220503T235936",
+        "parentIdentifier": null,
+        "title": "S1A_OPER_AUX_GNSSRD_POD__20220510T020122_V20220502T235946_20220503T235936",
+        "description": "The Sentinel-1 mission is the European Radar Observatory for the Copernicus joint initiative of the European Commission (EC) and the European Space Agency (ESA). The Sentinel-1 mission includes C-band imaging operating in four exclusive imaging modes with different resolution (down to 5 m) and coverage (up to 400 km). It provides dual polarization capability, short revisit times and rapid product delivery. Additionally, precise measurements of spacecraft position and attitude are available for every observation [https://dataspace.copernicus.eu/explore-data/data-collections/sentinel-data/sentinel-1].",
+        "organisationName": null,
+        "startDate": "2022-05-03T00:00:04.000Z",
+        "completionDate": "2022-05-03T23:59:54.000Z",
+        "productType": "AUX_GNSSRD",
+        "processingLevel": null,
+        "platform": "SENTINEL-1",
+        "instrument": "SAR",
+        "resolution": 0,
+        "sensorMode": null,
+        "orbitNumber": 0,
+        "quicklook": null,
+        "thumbnail": null,
+        "updated": "2023-11-14T22:50:17.708Z",
+        "published": "2023-10-25T13:45:19.736Z",
+        "snowCover": 0,
+        "cloudCover": 0,
+        "gmlgeometry": null,
+        "centroid": {
+          "type": null,
+          "coordinates": null
+        },
+        "orbitDirection": null,
+        "timeliness": null,
+        "relativeOrbitNumber": 0,
+        "processingBaseline": 0,
+        "polarisation": null,
+        "swath": null,
+        "services": {
+          "download": {
+            "url": "https://catalogue.dataspace.copernicus.eu/download/1d42f2d3-2456-485f-a93e-92f08bdd5c51",
+            "mimeType": "application/octet-stream",
+            "size": 2663000
+          }
+        },
+        "links": [
+          {
+            "rel": "self",
+            "type": "application/json",
+            "title": "GeoJSON link for 1d42f2d3-2456-485f-a93e-92f08bdd5c51",
+            "href": "https://catalogue.dataspace.copernicus.eu/resto/collections/SENTINEL-1/1d42f2d3-2456-485f-a93e-92f08bdd5c51.json"
+          }
+        ]
+      }
+    },
+    {...
+    }
+  ]
+}
+```
+
+:::
+
 ## OpenSearch Catalog API updates
 
 ### OpenSearch API error handling update [2023-10-24]
