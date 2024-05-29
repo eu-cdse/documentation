@@ -82,25 +82,33 @@ The following diagram provides an overview of the evaluation flow.
 %%| fig-cap: "Monthly uptime evaluation flow"
 %%| fig-align: "center"
 graph TD
-    A([Monthly Uptime Check]):::focus --> B{>= 95%}
-    B -->| Yes| C([Maintain Status]):::focus
-    B -->| No | D[Notify Provider]
-    D --> E{Second<br/>Warning}
-    E --> | Yes | F([Temporary Exclusion]):::optional
-    E --> | No | G([Maintain Status with Warning]):::focus
+    B(Monthly Uptime Check):::focus --> C{> 99.5%?}
+    C -->|Yes| G(Mark as Stable):::stable
+    C -->|No| D{"> 2 consecutive months <br/> lower than 99.5%?"}
+    D -->|Yes| H(Mark as Unstable):::unstable
+    D --> E{"< 95%?"}
+    E -->|Yes| I(Receive warning)
+    E -->|No| M
+    I --> J{Second warning<br/> in 6 months?}
+    J -->|Yes| K(Temporary Exclusion):::exclusion
+    J -->|No| M(Remain current status):::focus
 
     classDef focus stroke-width:3px
-    classDef optional stroke-width:3px,stroke-dasharray: 5 5
+    classDef stable fill:#3ec13d,;stroke-width:0px
+    classDef unstable fill:#f4bb1c,;stroke-width:0px
+    classDef exclusion fill:#f03638,stroke-width:3px,stroke-dasharray: 5 5
 ```
 
 The main points from this diagram are:
 
-* The minimum uptime threshold for a backend is 95%. If this is not achieved, the provider will receive a warning.
-* On the second warning, ESA has the right to temporarily exclude the backend from the federation until the provider demonstrates improvements.
+- If the provider achieves a monthly uptime of 99.5% or higher, the provider will maintain a stable status.
+- If the total monthly uptime for a backend is lower than 99.5% for two consecutive months, the provider will be marked as unstable.
+- If the total monthly uptime for a backend is lower than 95%, the provider will receive a warning.
+- If the provider receives two warnings within a six-month period, ESA has the right to temporarily exclude the backend from the federation until the provider demonstrates improvements.
 
 > **Grace period for new providers**
 > 
-> New providers will have a 3-month grace period during which the minimum availability threshold is set at 90% to accommodate initial setup and unforeseen issues.
+> New providers will have a 3-month grace period during which the minimum availability threshold to receive a warning is set at 90% to accommodate initial setup and unforeseen issues.
 > After the initial 3 months, standard thresholds apply.
 
 > **Scheduled maintenances**
