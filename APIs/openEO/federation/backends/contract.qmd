@@ -1,0 +1,133 @@
+# Federation Contract
+
+For a federation to work, all providers need to agree with a common federation contract.
+For the Copernicus Data Space Ecosystem, the proposed contract is based upon the groundwork established through ESA's openEO platform.
+
+This contract has 2 main goals:
+
+1. Boost user satisfaction, which can be measured in terms of user growth and number of complaints versus the usage of a specific feature.
+2. Agree on interfaces and harmonization rules to align the different services within the federation.
+
+To join the federation, providers are expected to fulfill the requirements outlined on this page.
+However, to accommodate and encourage new backend entries into the federation, these requirements are open to negotiation if there are good arguments for changing the current contract agreements.
+
+For more detailed information, please refer to the different parts of the federation contract:
+
+- [API](./api.md)
+- [Collections](./collections.md)
+- [File Formats](./fileformats.md)
+- [Processes](./processes.md)
+
+## Benefits of joining the federation
+
+The federation provides a unique opportunity for smaller organizations to join strengths, allowing them to build an offering that matches or even exceeds capabilities of well-known large scale cloud providers. 
+This collaboration is a key element for the long term sustainability of participants. 
+The short-term benefits of joining the federation include:
+
+1. **Increased visibility**: the federation serves a single endpoint for users to access multiple services, increasing the visibility of your service.
+2. **Increased user base**: thanks to the common authentication within the federation, users can access your service without any additional registration. This opens your service up to the larger openEO user community.
+3. **Joint outreach**: outreach and promotion activities are performed together with other members of the federation, significantly reducing the effort to attract new users.
+4. **Shared accounting**: credit usage is centrally tracked, allowing for efficient and transparent use of your service in commercial settings.
+
+## How to join the federation
+
+1. Assess if your system is compliant with the above requirements and identify the eligible collections. 
+2. Contact the federation through [our support team](https://helpcenter.dataspace.copernicus.eu/hc/en-gb), showing your interest and detailing your offering.
+3. Integrate the CDSE identity provider as your openEO service will need to accept CDSE users.
+4. Integrate with the accounting component by reporting the usage of CDSE users through a JSON HTTP API. The API details will be provided upon request.
+
+Finally, an official agreement will need to be established confirming that the service provider agrees with the federation contract and SLA.
+
+> **Important**<br/>
+> When joining the openEO federation, the provider agrees to the statements outlined in the following policies:
+> 
+> * [Privacy Policy](https://dataspace.copernicus.eu/openeofed-privacy-policy)
+> * [Terms & Conditions](https://dataspace.copernicus.eu/openeofed-terms-and-conditions)
+
+## Implementation of experimental features
+
+The federation aims to be inclusive towards onboarding new features and components to stimulate growth and innovation.
+In an environment supporting user-critical workflows, such new features need to be distinctly identified.
+For example, designating a process, collection, or backend as 'experimental' and indicating this in descriptions or official documentation.
+
+Generally, we assume that an implementor can determine when a feature is mature enough.
+However, in case of any uncertainty, we provide the following guidelines:
+
+- By default, or if unsure, the feature is considered experimental.
+- If a feature is new or unused, designate it as experimental.
+- If still in doubt, consult with partner providers.
+
+Suppose a non-experimental component exceeds the [error budget](https://sre.google/workbook/implementing-slos/), such as when downtime exceeds the objectives.
+In this case, the provider is expected to stop working on new features and improve reliability or to mark the component as experimental.
+Reverting a 'stable' feature to 'experimental' should be considered as a backwards incompatible change, requiring communication towards the user and proper consideration of the impact.
+
+## Credit reporting
+
+As specified, service providers need to log the resource usage in the federation's central accounting service.
+This will allow them to be compensated for incurred usage.
+The value of a credit is fixed, and service providers are free to choose the resources they log.
+Typical examples include memory and cpu hours, but it can also be based on a more complex logic, such as amount of input data or specific processes that are used.
+To ensure full transparency, service providers are requested to document this logic.
+
+## Availability of the service
+Providers are encouraged to continuously enhance their backend systems to optimize processing efficiency and improve the overall user experience.
+Each provider is responsible for ensuring maximum service availability and strives to minimize downtime.
+
+Upon joining the federation, the provider's openEO endpoint will be added to a monitoring system that checks the endpoint's availability every 5 minutes.
+These metrics are collected in dashboards and evaluated monthly.
+The following diagram provides an overview of the evaluation flow.
+
+```{mermaid}
+%%| label: fig-uptime-flow
+%%| fig-cap: "Monthly uptime evaluation flow"
+%%| fig-align: "center"
+graph TD
+    B(Monthly Uptime Check):::focus --> C{> 99.5%?}
+    C -->|Yes| G(Mark as Stable):::stable
+    C -->|No| D{"2 consecutive months <br/> lower than 99.5%?"}
+    D -->|Yes| H(Mark as Unstable):::unstable
+    H --> E
+    D -->|No | E{"< 95%?"}
+    E -->|Yes| I(Receive warning)
+    E -->|No| M
+    I --> J{Second warning<br/> in 6 months?}
+    J -->|Yes| K(Temporary Exclusion):::exclusion
+    J -->|No| M(Remain current status):::focus
+
+    classDef focus stroke-width:3px
+    classDef stable fill:#3ec13d,stroke-width:0px
+    classDef unstable fill:#f4bb1c,stroke-width:0px
+    classDef exclusion fill:#f03638,stroke:red,stroke-width:3px,stroke-dasharray: 5 5
+```
+
+The main points from this diagram are:
+
+- If the provider achieves a monthly uptime of 99.5% or higher, the provider will maintain a stable status.
+- If the total monthly uptime for a backend is lower than 99.5% for two consecutive months, the provider will be marked as unstable.
+- If the total monthly uptime for a backend is lower than 95%, the provider will receive a warning.
+- If the provider receives two warnings within a six-month period, ESA has the right to temporarily exclude the backend from the federation until the provider demonstrates improvements.
+
+> **Grace period for new providers**
+> 
+> New providers will have a 3-month grace period during which the minimum availability threshold to receive a warning is set at 90% to accommodate initial setup and unforeseen issues.
+> After the initial 3 months, standard thresholds apply.
+
+> **Scheduled maintenances**
+>
+> Scheduled maintenances will not be considered in the uptime evaluation, provided the federation is informed in advance as outlined [here](../openeo_federation.md#openeoannounce).
+
+## Providing user support
+
+The Copernicus Data Space Ecosystem [forum](https://forum.dataspace.copernicus.eu/) is considered the main support channel for users and service providers to post updates or service events.
+Service providers are also requested to provide an email address, to which support questions from users can be forwarded.
+
+For communicating important changes towards users, service providers are required to comply with the announcement procedure described [here](../openeo_federation.md#openeoannounce).
+The overall lead time for the announcement of planned breaking changes is 3 months.
+
+Downtime (planned or unplanned) is also announced in the same manner.
+
+## Breaches
+
+In the event that any breaches with the statements in this page or its related documents are detected, ESA reserves the right to take appropriate actions to maintain the stability and reliability of the CDSE federation
+These actions can include a temporary or permanent exclusion from the federation.
+
