@@ -16,7 +16,7 @@ The [Service description and evolution document](/_docs/CDSE-SDE-TSY_Service%20D
 
 ## Details
 
-More detailed information on the timelines for Copernicus Data Space Ecosystem data, APIs and Application updates can be found here:
+More detailed information on the timelines for Copernicus Data Space Ecosystem data, APIs and Application updates can be found in:
 
 * [Data timeline overview](/Roadmap/DataTable.qmd)
 
