@@ -15,7 +15,7 @@ Before installing the openEO R-client module, ensure to have atleast R of 3.6 ve
 
 Stable releases can be installed from CRAN:
 
-```{r}
+```r
 install.packages("openeo")
 ```
 
@@ -29,7 +29,7 @@ Ensure 'devtools' is installed; if not, use `install.packages("devtools")`.
 
 Now, `install_github` from the devtools package can be used to install the development version:
 
-```{r}
+```r
 
 devtools::install_github(repo="Open-EO/openeo-r-client", dependencies=TRUE, ref="develop")
 
@@ -48,7 +48,7 @@ With the successful completion of the installation, import it to use openEO-comp
 
 First, establish a connection to the Copernicus Data Space Ecosystem backend. The endpoint is `https://openeo.dataspace.copernicus.eu`.
 
-```{r}
+```r
 
 library(openeo)
 connection = connect(host = "https://openeo.dataspace.copernicus.eu")
@@ -61,7 +61,7 @@ Collections are the data offered by the backend (e.g., Sentinel 1 collection) fo
 
 The code snippet below lists available collection names and their descriptions. To use a specific collection in a workflow, its Collection ID can access it. For a more detailed overview of any collection, utilize the `describe_collection` function.
 
-```{r}
+```r
 
 # Dictionary of the full metadata of the "COPERNICUS/S2" collection (dict)
 describe_collection("SENTINEL2_L2A")
@@ -80,7 +80,7 @@ When using RStudio, metadata can be readily displayed as a web page in the viewe
 
 Processes in openEO are operations applied to (EO) data (see [here](../Glossary.qmd#processes)), such as calculating the mean, pixel masking, spatial aggregations, etc. Furthermore, a process's output can be another's input in a workflow. 
 
-```{r}
+```r
 # List of available openEO processes with full metadata
 processes = list_processes()
 print(processes)
@@ -110,7 +110,7 @@ before authentication.
 
 Once registered, user can authenticate as shown below:
 
-```{r}
+```r
 
 login()
 
@@ -125,7 +125,7 @@ Now, let's create fetch and process EO data using openEO. This involves working 
 
 First we need to create a process builder object that carries all the available predefined openEO processes of the connected back-end as attached R functions with the parameters stated in the process metadata.
 
-```{r}
+```r
 
 p = processes()
 
@@ -133,7 +133,7 @@ p = processes()
 
 A process builder is initialised.  This object encapsulates all available predefined openEO processes from the CDSE backend as R functions, each with parameters defined in the process metadata.
 
-```{r}
+```r
 datacube = p$load_collection(
   id = "SENTINEL1_GRD",
   spatial_extent=list(west = 16.06, south = 48.06, east = 16.65, north = 48.35),
@@ -155,7 +155,7 @@ It is useful to check the actual data occasionally to understand the processing 
 
 A process can now be applied to the input datacube.  
 
-```{r}
+```r
 
 # apply sar backscatter 
 
@@ -180,7 +180,7 @@ It is important to note that all processes applied so far have not yet been run 
 
 After applying all processes you want to execute, we need to tell the back-end to export the datacube, for example as GeoTiff:
 
-```{r}
+```r
 
 formats = list_file_formats()
 
@@ -195,7 +195,7 @@ The initial line in the above snippet fetches the supported format backends. The
 Simple openEO usage examples demonstrate synchronous downloading of results. This approach is preferred to a smaller extent or for a simple workflow. However, batch jobs are necessary for more demanding tasks, such as processing larger extents or intensive computations. For more information on these approaches visit [here](../Glossary.qmd#data-processing-modes).
 
 
-```{r}
+```r
 # create a job at the back-end using our datacube, giving it the title `Example Title`
 
 job = create_job(graph=result,title = "Example Title")
@@ -204,7 +204,7 @@ job = create_job(graph=result,title = "Example Title")
 
 The `create_job` method sends all required information to the backend and registers a new job. However, the job is created at this stage and to start, it must be explicitly queued for processing:
 
-```{r}
+```r
 
 start_job(job = job)
 
@@ -227,7 +227,7 @@ describe_job(job = job)
 
 Once completed, `download_results()` allows the result to be retrieved. Alternatively, `list_results()` provides an overview of the created files, including download links and encountered error messages.
 
-```{r}
+```r
 
 # list the processed results
 list_results(job = job)
@@ -250,7 +250,7 @@ The objective is to produce a monthly RGB composite of Sentinel 1 backscatter da
 The code example below includes inline comments explaining each step of the process:
 
 
-```{r}
+```r
 library(openeo)
 
 # connect to the backend and authenticate
