@@ -7,6 +7,244 @@ aliases:
 
 This page includes the list of upcoming changes to Catalog APIs.
 
+## OpenSearch Catalogue API: Geometry Attribute Handling Updated for Null Values
+
+We would like to inform you about an upcoming change to our **OpenSearch API** interface, effective **8th July, 2024**.
+
+Starting from 8th July 2024, the `geometry` attribute in case of empty product geometries will return `null` (`"geometry": null,`) instead of empty array (`"geometry": [ ],`). This update is designed to improve the clarity and consistency of the data returned by our APIs. For non-empty products geometries, the behaviour will remain unchanged.
+
+Below please find the example of OpenSearch API response before and after the described change:
+
+::: {.panel-tabset}
+
+# HTTPS Request
+
+[`https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel1/search.json?identifier=cf1a597c-ec22-11ee-8006-fa163e7968e5`](<https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel1/search.json?identifier=cf1a597c-ec22-11ee-8006-fa163e7968e5>){target="_blank"}
+
+
+# Current response
+```{json}
+{
+  "type": "FeatureCollection",
+  "properties": {
+    "id": "8cf9566f-ad45-5ed7-b586-7ff0f8d6c677",
+    "totalResults": null,
+    "exactCount": 0,
+    "startIndex": 1,
+    "itemsPerPage": 20,
+    "query": {
+      "originalFilters": {
+        "identifier": "cf1a597c-ec22-11ee-8006-fa163e7968e5",
+        "collection": "SENTINEL-1"
+      },
+      "appliedFilters": {
+        "identifier": "cf1a597c-ec22-11ee-8006-fa163e7968e5",
+        "collection": "SENTINEL-1"
+      },
+      "processingTime": 0.121144462
+    },
+    "links": [
+      {
+        "rel": "self",
+        "type": "application/json",
+        "title": "self",
+        "href": "https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel1/search.json?identifier=cf1a597c-ec22-11ee-8006-fa163e7968e5"
+      },
+      {
+        "rel": "search",
+        "type": "application/opensearchdescription+xml",
+        "title": "OpenSearch Description Document",
+        "href": "https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel1/describe.xml"
+      }
+    ]
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "id": "cf1a597c-ec22-11ee-8006-fa163e7968e5",
+      "geometry": [
+         
+      ],
+      "properties": {
+        "collection": "SENTINEL-1",
+        "status": "ONLINE",
+        "license": {
+          "licenseId": "unlicensed",
+          "hasToBeSigned": "never",
+          "grantedCountries": null,
+          "grantedOrganizationCountries": null,
+          "grantedFlags": null,
+          "viewService": "public",
+          "signatureQuota": -1,
+          "description": {
+            "shortName": "No license"
+          }
+        },
+        "parentIdentifier": null,
+        "title": "S1A_AUX_CAL_V20140908T000000_G20240327T101157.SAFE",
+        "description": "The Sentinel-1 mission is the European Radar Observatory for the Copernicus joint initiative of the European Commission (EC) and the European Space Agency (ESA). The Sentinel-1 mission includes C-band imaging operating in four exclusive imaging modes with different resolution (down to 5 m) and coverage (up to 400 km). It provides dual polarization capability, short revisit times and rapid product delivery. Additionally, precise measurements of spacecraft position and attitude are available for every observation [https://dataspace.copernicus.eu/explore-data/data-collections/sentinel-data/sentinel-1].",
+        "organisationName": null,
+        "startDate": "2014-09-08T00:00:00.000Z",
+        "completionDate": "2014-09-08T00:00:00.000Z",
+        "productType": "AUX_CAL",
+        "processingLevel": null,
+        "platform": "S1A",
+        "instrument": "SAR",
+        "resolution": 0,
+        "sensorMode": null,
+        "orbitNumber": 0,
+        "quicklook": null,
+        "thumbnail": null,
+        "updated": "2024-03-27T10:15:07.353Z",
+        "published": "2024-03-27T10:15:06.733Z",
+        "snowCover": 0,
+        "cloudCover": 0,
+        "gmlgeometry": null,
+        "centroid": {
+          "type": null,
+          "coordinates": null
+        },
+        "productIdentifier": "/eodata/Sentinel-1/AUX/AUX_CAL/2014/09/08/S1A_AUX_CAL_V20140908T000000_G20240327T101157.SAFE.zip",
+        "orbitDirection": null,
+        "timeliness": null,
+        "relativeOrbitNumber": 0,
+        "processingBaseline": 0,
+        "polarisation": null,
+        "swath": null,
+        "services": {
+          "download": {
+            "url": "https://catalogue.dataspace.copernicus.eu/download/cf1a597c-ec22-11ee-8006-fa163e7968e5",
+            "mimeType": "application/octet-stream",
+            "size": 505960
+          }
+        },
+        "links": [
+          {
+            "rel": "self",
+            "type": "application/json",
+            "title": "GeoJSON link for cf1a597c-ec22-11ee-8006-fa163e7968e5",
+            "href": "https://catalogue.dataspace.copernicus.eu/resto/collections/SENTINEL-1/cf1a597c-ec22-11ee-8006-fa163e7968e5.json"
+          }
+        ]
+      }
+    }
+  ]
+}
+```
+
+# New response
+```{json}
+{
+  "type": "FeatureCollection",
+  "properties": {
+    "id": "8cf9566f-ad45-5ed7-b586-7ff0f8d6c677",
+    "totalResults": null,
+    "exactCount": 0,
+    "startIndex": 1,
+    "itemsPerPage": 20,
+    "query": {
+      "originalFilters": {
+        "identifier": "cf1a597c-ec22-11ee-8006-fa163e7968e5",
+        "collection": "SENTINEL-1"
+      },
+      "appliedFilters": {
+        "identifier": "cf1a597c-ec22-11ee-8006-fa163e7968e5",
+        "collection": "SENTINEL-1"
+      },
+      "processingTime": 0.121144462
+    },
+    "links": [
+      {
+        "rel": "self",
+        "type": "application/json",
+        "title": "self",
+        "href": "https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel1/search.json?identifier=cf1a597c-ec22-11ee-8006-fa163e7968e5"
+      },
+      {
+        "rel": "search",
+        "type": "application/opensearchdescription+xml",
+        "title": "OpenSearch Description Document",
+        "href": "https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel1/describe.xml"
+      }
+    ]
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "id": "cf1a597c-ec22-11ee-8006-fa163e7968e5",
+      "geometry": null,
+      "properties": {
+        "collection": "SENTINEL-1",
+        "status": "ONLINE",
+        "license": {
+          "licenseId": "unlicensed",
+          "hasToBeSigned": "never",
+          "grantedCountries": null,
+          "grantedOrganizationCountries": null,
+          "grantedFlags": null,
+          "viewService": "public",
+          "signatureQuota": -1,
+          "description": {
+            "shortName": "No license"
+          }
+        },
+        "parentIdentifier": null,
+        "title": "S1A_AUX_CAL_V20140908T000000_G20240327T101157.SAFE",
+        "description": "The Sentinel-1 mission is the European Radar Observatory for the Copernicus joint initiative of the European Commission (EC) and the European Space Agency (ESA). The Sentinel-1 mission includes C-band imaging operating in four exclusive imaging modes with different resolution (down to 5 m) and coverage (up to 400 km). It provides dual polarization capability, short revisit times and rapid product delivery. Additionally, precise measurements of spacecraft position and attitude are available for every observation [https://dataspace.copernicus.eu/explore-data/data-collections/sentinel-data/sentinel-1].",
+        "organisationName": null,
+        "startDate": "2014-09-08T00:00:00.000Z",
+        "completionDate": "2014-09-08T00:00:00.000Z",
+        "productType": "AUX_CAL",
+        "processingLevel": null,
+        "platform": "S1A",
+        "instrument": "SAR",
+        "resolution": 0,
+        "sensorMode": null,
+        "orbitNumber": 0,
+        "quicklook": null,
+        "thumbnail": null,
+        "updated": "2024-03-27T10:15:07.353Z",
+        "published": "2024-03-27T10:15:06.733Z",
+        "snowCover": 0,
+        "cloudCover": 0,
+        "gmlgeometry": null,
+        "centroid": {
+          "type": null,
+          "coordinates": null
+        },
+        "productIdentifier": "/eodata/Sentinel-1/AUX/AUX_CAL/2014/09/08/S1A_AUX_CAL_V20140908T000000_G20240327T101157.SAFE.zip",
+        "orbitDirection": null,
+        "timeliness": null,
+        "relativeOrbitNumber": 0,
+        "processingBaseline": 0,
+        "polarisation": null,
+        "swath": null,
+        "services": {
+          "download": {
+            "url": "https://catalogue.dataspace.copernicus.eu/cf1a597c-ec22-11ee-8006-fa163e7968e5",
+            "mimeType": "application/octet-stream",
+            "size": 505960
+          }
+        },
+        "links": [
+          {
+            "rel": "self",
+            "type": "application/json",
+            "title": "GeoJSON link for cf1a597c-ec22-11ee-8006-fa163e7968e5",
+            "href": "https://catalogue.dataspace.copernicus.eu/resto/collections/SENTINEL-1/cf1a597c-ec22-11ee-8006-fa163e7968e5.json"
+          }
+        ]
+      }
+    }
+  ]
+}
+```
+:::
+
+
+**We recommend reviewing the upcoming changes to Catalogue OpenSearch API described above to avoid disruption to your current scripts or apps.**
+
+
 ## Default Timezone Change for OData and OpenSearch APIs
 
 We would like to inform you about an upcoming change to our OData and OpenSearch API interfaces, effective **27th May 2024**.
