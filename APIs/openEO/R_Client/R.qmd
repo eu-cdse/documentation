@@ -121,7 +121,7 @@ Calling this method opens the system's web browser for user authentication. Upon
 
 ## Creating a datacube
 
-Now, let's create fetch and process EO data using openEO. This involves working with "Datacubes," which are fundamental in openEO for representing EO data. For more information on datacubes, refer to the glossary [here](../Glossary.qmd#spatial-datacubes).
+Now, let us create, fetch and process EO data using openEO. This involves working with "Datacubes," which are fundamental in openEO for representing EO data. For more information on datacubes, refer to the glossary [here](../Glossary.qmd#spatial-datacubes).
 
 First we need to create a process builder object that carries all the available predefined openEO processes of the connected back-end as attached R functions with the parameters stated in the process metadata.
 
@@ -241,11 +241,9 @@ This summarizes the complete openEO workflow using the R-client.
 
 ## Full Example
 
-Certainly! Here's a simplified version without pronouns:
+Therefore, a complete example of an earth observation use case using the R client is outlined in this chapter. 
 
-This chapter outlines a complete example of an earth observation use case using the R client.
-
-The objective is to produce a monthly RGB composite of Sentinel 1 backscatter data across Vienna, Austria for three months in 2017. This composite can support tasks like classification and crop monitoring.
+The objective is to get a monthly RGB composite of Sentinel 1 backscatter data across Vienna, Austria for three months in 2017. This composite can support tasks like classification and crop monitoring.
 
 The code example below includes inline comments explaining each step of the process:
 
@@ -279,7 +277,7 @@ data = p$load_collection(id = collections$`SENTINEL1_GRD`,
 datacube_sar = p$sar_backscatter(data = data, coefficient = "sigma0-ellipsoid")
 
 
-# create three monthly sub data sets, which will be merged back into a single data cube later
+# create three monthly sub-datasets, which will later be combined back into a single data cube
 march = p$filter_temporal(data = datacube_sar,
                           extent = c("2017-03-01", "2017-04-01"))
 
@@ -336,7 +334,7 @@ rescaled = p$apply(data = merge_2,
         })
 
 
-# store the results using the png format and set the create options
+# store the results using the png format and set the create a job options
 result = p$save_result(data = rescaled,format = formats$output$PNG, options = list(red="R",green="G",blue="B"))
 
 # create a job
@@ -355,9 +353,11 @@ The resulting PNG file of the RGB backscatter composite is stored in the current
 
 ## User Defined Functions
 
-If a usecase cannot be defined with the default processes of openEO, use can define a [user defined function](../Glossary.qmd#user-defined-function-udf).
 
-In general the processing workflow works by uploading the Python or R script into the users file directory on the back-end and reference the script via its URL or by its relational name (e.g. `/scripts/script1.R`) in the function `run_udf`. The latter function is a predefined openEO process that the back-end might provide, if UDFs are supported.
+
+If a usecase cannot be defined using the default openEO processes, user can define them as a [user defined function](../Glossary.qmd#user-defined-function-udf).
+
+The workflow involves uploading a Python or R script to the user's directory. Reference it by URL or name (e.g., `/scripts/script1.R`) in the `run_udf` function of openEO.
 
 Find out more about UDFs in the respective [Python UDF](https://github.com/Open-EO/openeo-udf){target="_blank"} and [R UDF](https://github.com/Open-EO/openeo-r-udf){target="_blank"} repositories with their documentation and examples.
 
