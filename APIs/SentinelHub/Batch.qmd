@@ -26,29 +26,7 @@ statuses of a batch processing request (`CREATED`, `ANALYSING`,
 and user\'s actions (`ANALYSE`, `START`, `RESTART`, `CANCEL`) which
 trigger transitions among them.
 
-``` {mermaid}
-stateDiagram
-    [*]-->CREATED
-    state fork_state_created <<fork>>
-    CREATED-->fork_state_created
-    fork_state_created-->PROCESSING: #128100; START
-    fork_state_created-->ANALYSING: #128100; ANALYSE
-    ANALYSING --> ANALYSIS_DONE
-    state fork_state_analysis_done <<fork>>
-    ANALYSIS_DONE-->fork_state_analysis_done
-    fork_state_analysis_done-->PROCESSING: #128100; START
-    PROCESSING-->CANCELED: #128100; CANCEL
-    fork_state_analysis_done-->CANCELED: #128100; CANCEL
-    fork_state_created-->CANCELED: #128100; CANCEL
-    PROCESSING-->DONE
-    PROCESSING-->PARTIAL
-    PROCESSING-->FAILED
-    PARTIAL-->PROCESSING: #128100; RESTART
-    DONE-->[*]
-    PARTIAL-->[*]
-    FAILED-->[*]
-    CANCELED-->[*]
-```
+![](Batch/img/sh_batch_flowchart.png)
 
 The workflow starts when a user posts a new batch processing request. In
 this step the system:
@@ -183,15 +161,7 @@ are as follows:
 6.  When a batch request with status PARTIAL is restarted, all its
     FAILed tiles go back into PENDING.
 
-``` {mermaid}
-stateDiagram
-    [*]-->PENDING: Analyzer creates tiles
-    PENDING-->SCHEDULED: Move to scheduling queue
-    SCHEDULED --> PROCESSING: Start processing
-    PROCESSING-->DONE: Finished
-    PROCESSING-->FAILED: Error
-    PROCESSING-->PENDING: Stuck (up to 2x)
-```
+![](Batch/img/sh_batch_flowchart.png)
 
 ## Tiling grids
 
