@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Documentation - FAIR data &amp; open science</title>
+<title>Documentation - Example of running ML inference with an ONNX model in openEO</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,27 +20,59 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
-<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="../../site_libs/clipboard/clipboard.min.js"></script>
-<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="../../site_libs/quarto-search/fuse.min.js"></script>
-<script src="../../site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="../../">
-<link href="../../APIs/SentinelHub.html" rel="next">
-<link href="../../APIs/openEO/federation/backends/contract.html" rel="prev">
-<link href="../../_images/logos/favicon.png" rel="icon" type="image/png">
-<script src="../../site_libs/quarto-html/quarto.js"></script>
-<script src="../../site_libs/quarto-html/popper.min.js"></script>
-<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="../../site_libs/quarto-html/anchor.min.js"></script>
-<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="../../../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../../../">
+<link href="../../../../../_images/logos/favicon.png" rel="icon" type="image/png">
+<script src="../../../../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": true,
@@ -61,9 +93,6 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
-<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 <meta name="zd-site-verification" content="xj9koofr1crilmoclgxsjd">
 <script type="text/javascript">
 
@@ -156,7 +185,7 @@ window.onload = function() {
 </script>
 
 
-<link rel="stylesheet" href="../../custom.css">
+<link rel="stylesheet" href="../../../../../custom.css">
 </head>
 
 <body class="nav-sidebar floating nav-fixed">
@@ -168,7 +197,7 @@ window.onload = function() {
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container">
     <a href="https://dataspace.copernicus.eu/" class="navbar-brand navbar-brand-logo">
-    <img src="../../_images/logos/combinedLogo.svg" alt="" class="navbar-logo">
+    <img src="../../../../../_images/logos/combinedLogo.svg" alt="" class="navbar-logo">
     </a>
     <a class="navbar-brand" href="https://dataspace.copernicus.eu/">
     <span class="navbar-title">Documentation</span>
@@ -183,7 +212,7 @@ window.onload = function() {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../APIs.html">APIs</a></li><li class="breadcrumb-item"><a href="../../APIs/openEO/openEO.html">openEO</a></li><li class="breadcrumb-item"><a href="../../APIs/openEO/fair.html">FAIR &amp; open science</a></li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Example of running ML inference with an ONNX model in openEO</li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
@@ -205,13 +234,13 @@ window.onload = function() {
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../Home.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../Home.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Welcome</span></a>
   </div>
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="../../Roadmap.html" class="sidebar-item-text sidebar-link">
+            <a href="../../../../../Roadmap.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Service description and evolution roadmap</span></a>
           <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
@@ -220,19 +249,19 @@ window.onload = function() {
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../Roadmap/DataTable.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../Roadmap/DataTable.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Data</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../Roadmap/APITable.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../Roadmap/APITable.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">APIs</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../Roadmap/AppTable.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../Roadmap/AppTable.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Applications</span></a>
   </div>
 </li>
@@ -241,7 +270,7 @@ window.onload = function() {
         <li class="px-0"><hr class="sidebar-divider hi "></li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="../../Registration.html" class="sidebar-item-text sidebar-link">
+            <a href="../../../../../Registration.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">User registration and authentication</span></a>
           <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
@@ -250,7 +279,7 @@ window.onload = function() {
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../2FA.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../2FA.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Setting up Two-Factor Authentication (2FA)</span></a>
   </div>
 </li>
@@ -258,7 +287,7 @@ window.onload = function() {
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="../../Data.html" class="sidebar-item-text sidebar-link">
+            <a href="../../../../../Data.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Data</span></a>
           <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
@@ -267,7 +296,7 @@ window.onload = function() {
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../Data/Others/Dashboard.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../Data/Others/Dashboard.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Copernicus Operations Dashboard</span></a>
   </div>
 </li>
@@ -282,31 +311,31 @@ window.onload = function() {
       <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../Data/SentinelMissions/Sentinel1.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../Data/SentinelMissions/Sentinel1.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Sentinel-1</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../Data/SentinelMissions/Sentinel2.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../Data/SentinelMissions/Sentinel2.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Sentinel-2</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../Data/SentinelMissions/Sentinel3.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../Data/SentinelMissions/Sentinel3.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Sentinel-3</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../Data/SentinelMissions/Sentinel5P.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../Data/SentinelMissions/Sentinel5P.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Sentinel-5P</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../Data/SentinelMissions/Sentinel6.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../Data/SentinelMissions/Sentinel6.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Sentinel-6</span></a>
   </div>
 </li>
@@ -323,61 +352,61 @@ window.onload = function() {
       <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../Data/ComplementaryData/SMOS.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../Data/ComplementaryData/SMOS.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Soil Moisture and Ocean Salinity (SMOS)</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../Data/ComplementaryData/MERIS.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../Data/ComplementaryData/MERIS.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">ENVISAT- Medium Resolution Imaging Spectrometer (MERIS)</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../Data/ComplementaryData/Landsat5.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../Data/ComplementaryData/Landsat5.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Landsat-5</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../Data/ComplementaryData/Landsat7.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../Data/ComplementaryData/Landsat7.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Landsat-7</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../Data/ComplementaryData/Landsat8.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../Data/ComplementaryData/Landsat8.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Landsat-8</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../Data/ComplementaryData/CLMS.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../Data/ComplementaryData/CLMS.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Copernicus Land Monitoring Service (CLMS)</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../Data/ComplementaryData/CMEMS.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../Data/ComplementaryData/CMEMS.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Copernicus Marine Service (CMEMS)</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../Data/ComplementaryData/CEMS.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../Data/ComplementaryData/CEMS.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Copernicus Emergency Management Service (CEMS)</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../Data/ComplementaryData/CAMS.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../Data/ComplementaryData/CAMS.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Copernicus Atmosphere Monitoring Service (CAMS)</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../Data/ComplementaryData/Additional.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../Data/ComplementaryData/Additional.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Additional Complementary Data</span></a>
   </div>
 </li>
@@ -387,76 +416,76 @@ window.onload = function() {
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="../../APIs.html" class="sidebar-item-text sidebar-link">
+            <a href="../../../../../APIs.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">APIs</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/Token.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/Token.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Access Token</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/OData.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/OData.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">OData</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/OpenSearch.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/OpenSearch.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">OpenSearch</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/STAC.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/STAC.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">STAC product catalogue</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/Subscriptions.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/Subscriptions.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Subscriptions</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/S3.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/S3.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">S3 Access</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/TCP.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/TCP.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">TCP stack configuration</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/On-Demand Production API.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/On-Demand Production API.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">On-Demand Production API</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/Traceability.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/Traceability.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Traceability API</span></a>
   </div>
 </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="../../APIs/openEO/openEO.html" class="sidebar-item-text sidebar-link">
+            <a href="../../../../../APIs/openEO/openEO.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">openEO</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth2 show">  
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="false">
@@ -468,19 +497,19 @@ window.onload = function() {
       <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth3 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/openEO/Python_Client/Python.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/openEO/Python_Client/Python.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Python</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/openEO/R_Client/R.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/openEO/R_Client/R.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">R</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/openEO/JavaScript_Client/JavaScript.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/openEO/JavaScript_Client/JavaScript.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">JavaScript</span></a>
   </div>
 </li>
@@ -488,25 +517,25 @@ window.onload = function() {
   </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/openEO/Glossary.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/openEO/Glossary.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Glossary</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/openEO/Collections.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/openEO/Collections.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Data Collections</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/openEO/Processes.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/openEO/Processes.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">openEO Processes</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/openEO/File_formats.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/openEO/File_formats.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">File Formats</span></a>
   </div>
 </li>
@@ -524,25 +553,25 @@ window.onload = function() {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/openEO/job_config.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/openEO/job_config.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Job configuration</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/openEO/credit_usage.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/openEO/credit_usage.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Credit usage</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/openEO/large_scale_processing.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/openEO/large_scale_processing.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Large scale processing</span></a>
   </div>
 </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="../../APIs/openEO/federation/openeo_federation.html" class="sidebar-item-text sidebar-link">
+            <a href="../../../../../APIs/openEO/federation/openeo_federation.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">openEO federation</span></a>
           <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
@@ -551,7 +580,7 @@ window.onload = function() {
       <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth3 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/openEO/federation/backends/contract.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/openEO/federation/backends/contract.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Federation contract</span></a>
   </div>
 </li>
@@ -565,7 +594,7 @@ window.onload = function() {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/openEO/fair.html" class="sidebar-item-text sidebar-link active">
+  <a href="../../../../../APIs/openEO/fair.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">FAIR &amp; open science</span></a>
   </div>
 </li>
@@ -573,7 +602,7 @@ window.onload = function() {
   </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="../../APIs/SentinelHub.html" class="sidebar-item-text sidebar-link">
+            <a href="../../../../../APIs/SentinelHub.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Sentinel Hub</span></a>
           <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
@@ -591,25 +620,25 @@ window.onload = function() {
       <ul id="quarto-sidebar-section-11" class="collapse list-unstyled sidebar-section depth3 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/SentinelHub/UserGuides/Datamask.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/SentinelHub/UserGuides/Datamask.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Data Mask</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/SentinelHub/UserGuides/Transparency.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/SentinelHub/UserGuides/Transparency.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Transparency</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/SentinelHub/UserGuides/TimeSeries.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/SentinelHub/UserGuides/TimeSeries.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Time Series</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/SentinelHub/UserGuides/Metadata.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/SentinelHub/UserGuides/Metadata.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Working with metadata in evalscript</span></a>
   </div>
 </li>
@@ -617,7 +646,7 @@ window.onload = function() {
   </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="../../APIs/SentinelHub/Data.html" class="sidebar-item-text sidebar-link">
+            <a href="../../../../../APIs/SentinelHub/Data.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Data</span></a>
           <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
@@ -626,61 +655,61 @@ window.onload = function() {
       <ul id="quarto-sidebar-section-12" class="collapse list-unstyled sidebar-section depth3 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/SentinelHub/Data/S1GRD.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/SentinelHub/Data/S1GRD.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Sentinel-1 GRD</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/SentinelHub/Data/S2L1C.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/SentinelHub/Data/S2L1C.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Sentinel-2 L1C</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/SentinelHub/Data/S2L2A.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/SentinelHub/Data/S2L2A.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Sentinel-2 L2A</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/SentinelHub/Data/S3OLCI.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/SentinelHub/Data/S3OLCI.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Sentinel-3 OLCI L1B</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/SentinelHub/Data/S3SLSTR.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/SentinelHub/Data/S3SLSTR.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Sentinel-3 SLSTR L1B</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/SentinelHub/Data/S5PL2.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/SentinelHub/Data/S5PL2.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Sentinel-5P L2</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/SentinelHub/Data/DEM.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/SentinelHub/Data/DEM.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Digital Elevation Model (DEM) Data</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/SentinelHub/Data/Byoc.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/SentinelHub/Data/Byoc.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Bring Your Own COG / Batch</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/SentinelHub/Data/Zarr.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/SentinelHub/Data/Zarr.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Zarr</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/SentinelHub/Data/DataFusion.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/SentinelHub/Data/DataFusion.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Data Fusion</span></a>
   </div>
 </li>
@@ -688,7 +717,7 @@ window.onload = function() {
   </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="../../APIs/SentinelHub/Evalscript.html" class="sidebar-item-text sidebar-link">
+            <a href="../../../../../APIs/SentinelHub/Evalscript.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Evalscript (custom script)</span></a>
           <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-13" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
@@ -697,13 +726,13 @@ window.onload = function() {
       <ul id="quarto-sidebar-section-13" class="collapse list-unstyled sidebar-section depth3 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/SentinelHub/Evalscript/V3.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/SentinelHub/Evalscript/V3.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Evalscript V3</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/SentinelHub/Evalscript/Functions.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/SentinelHub/Evalscript/Functions.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Utility Functions</span></a>
   </div>
 </li>
@@ -711,7 +740,7 @@ window.onload = function() {
   </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="../../APIs/SentinelHub/Overview.html" class="sidebar-item-text sidebar-link">
+            <a href="../../../../../APIs/SentinelHub/Overview.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">API Overview</span></a>
           <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-14" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
@@ -720,25 +749,25 @@ window.onload = function() {
       <ul id="quarto-sidebar-section-14" class="collapse list-unstyled sidebar-section depth3 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/SentinelHub/Overview/Authentication.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/SentinelHub/Overview/Authentication.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Authentication</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/SentinelHub/Overview/RateLimiting.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/SentinelHub/Overview/RateLimiting.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Rate limiting</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/SentinelHub/Overview/ProcessingUnit.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/SentinelHub/Overview/ProcessingUnit.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Processing Unit</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/SentinelHub/Overview/ErrorHandling.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/SentinelHub/Overview/ErrorHandling.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Error Handling</span></a>
   </div>
 </li>
@@ -746,7 +775,7 @@ window.onload = function() {
   </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="../../APIs/SentinelHub/Process.html" class="sidebar-item-text sidebar-link">
+            <a href="../../../../../APIs/SentinelHub/Process.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Process API</span></a>
           <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-15" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
@@ -755,7 +784,7 @@ window.onload = function() {
       <ul id="quarto-sidebar-section-15" class="collapse list-unstyled sidebar-section depth3 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/SentinelHub/Process/Crs.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/SentinelHub/Process/Crs.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">CRS support</span></a>
   </div>
 </li>
@@ -770,49 +799,49 @@ window.onload = function() {
       <ul id="quarto-sidebar-section-16" class="collapse list-unstyled sidebar-section depth4 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/SentinelHub/Process/Examples/S1GRD.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/SentinelHub/Process/Examples/S1GRD.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Examples for S1GRD</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/SentinelHub/Process/Examples/S2L1C.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/SentinelHub/Process/Examples/S2L1C.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Examples for S2L1C</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/SentinelHub/Process/Examples/S2L2A.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/SentinelHub/Process/Examples/S2L2A.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Examples for S2L2A</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/SentinelHub/Process/Examples/S3OLCI.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/SentinelHub/Process/Examples/S3OLCI.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Examples for S3OLCI</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/SentinelHub/Process/Examples/S3SLSTR.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/SentinelHub/Process/Examples/S3SLSTR.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Examples for S3SLSTR</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/SentinelHub/Process/Examples/S5PL2.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/SentinelHub/Process/Examples/S5PL2.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Examples for S5PL2</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/SentinelHub/Process/Examples/DEM.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/SentinelHub/Process/Examples/DEM.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Examples for DEM</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/SentinelHub/Process/Examples/DataFusion.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/SentinelHub/Process/Examples/DataFusion.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Examples for DataFusion</span></a>
   </div>
 </li>
@@ -822,7 +851,7 @@ window.onload = function() {
   </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="../../APIs/SentinelHub/AsyncProcess.html" class="sidebar-item-text sidebar-link">
+            <a href="../../../../../APIs/SentinelHub/AsyncProcess.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Asynchronous Processing API</span></a>
           <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-17" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
@@ -831,7 +860,7 @@ window.onload = function() {
       <ul id="quarto-sidebar-section-17" class="collapse list-unstyled sidebar-section depth3 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/SentinelHub/AsyncProcess/Examples.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/SentinelHub/AsyncProcess/Examples.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Examples for Asynchronous Processing API</span></a>
   </div>
 </li>
@@ -839,7 +868,7 @@ window.onload = function() {
   </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="../../APIs/SentinelHub/Catalog.html" class="sidebar-item-text sidebar-link">
+            <a href="../../../../../APIs/SentinelHub/Catalog.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Catalog API</span></a>
           <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-18" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
@@ -848,7 +877,7 @@ window.onload = function() {
       <ul id="quarto-sidebar-section-18" class="collapse list-unstyled sidebar-section depth3 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/SentinelHub/Catalog/Examples.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/SentinelHub/Catalog/Examples.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Examples for Catalog API</span></a>
   </div>
 </li>
@@ -856,7 +885,7 @@ window.onload = function() {
   </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="../../APIs/SentinelHub/Batch.html" class="sidebar-item-text sidebar-link">
+            <a href="../../../../../APIs/SentinelHub/Batch.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Batch Processing API</span></a>
           <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-19" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
@@ -865,13 +894,13 @@ window.onload = function() {
       <ul id="quarto-sidebar-section-19" class="collapse list-unstyled sidebar-section depth3 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/SentinelHub/Batch/Crs.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/SentinelHub/Batch/Crs.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">CRS</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/SentinelHub/Batch/Examples.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/SentinelHub/Batch/Examples.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Examples of Batch Processing Workflow</span></a>
   </div>
 </li>
@@ -879,7 +908,7 @@ window.onload = function() {
   </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="../../APIs/SentinelHub/Statistical.html" class="sidebar-item-text sidebar-link">
+            <a href="../../../../../APIs/SentinelHub/Statistical.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Statistical API</span></a>
           <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-20" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
@@ -888,7 +917,7 @@ window.onload = function() {
       <ul id="quarto-sidebar-section-20" class="collapse list-unstyled sidebar-section depth3 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/SentinelHub/Statistical/Examples.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/SentinelHub/Statistical/Examples.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Examples for Statistical API</span></a>
   </div>
 </li>
@@ -896,7 +925,7 @@ window.onload = function() {
   </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="../../APIs/SentinelHub/BatchStatistical.html" class="sidebar-item-text sidebar-link">
+            <a href="../../../../../APIs/SentinelHub/BatchStatistical.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Batch Statistical API</span></a>
           <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-21" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
@@ -905,7 +934,7 @@ window.onload = function() {
       <ul id="quarto-sidebar-section-21" class="collapse list-unstyled sidebar-section depth3 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/SentinelHub/BatchStatistical/Examples.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/SentinelHub/BatchStatistical/Examples.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Examples of Batch Statistical Workflow</span></a>
   </div>
 </li>
@@ -913,7 +942,7 @@ window.onload = function() {
   </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="../../APIs/SentinelHub/Byoc.html" class="sidebar-item-text sidebar-link">
+            <a href="../../../../../APIs/SentinelHub/Byoc.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Bring Your Own COG API</span></a>
           <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-22" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
@@ -922,7 +951,7 @@ window.onload = function() {
       <ul id="quarto-sidebar-section-22" class="collapse list-unstyled sidebar-section depth3 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/SentinelHub/Byoc/Examples.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/SentinelHub/Byoc/Examples.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">BYOC API examples</span></a>
   </div>
 </li>
@@ -930,7 +959,7 @@ window.onload = function() {
   </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="../../APIs/SentinelHub/Zarr.html" class="sidebar-item-text sidebar-link">
+            <a href="../../../../../APIs/SentinelHub/Zarr.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Zarr Import API</span></a>
           <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-23" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
@@ -939,7 +968,7 @@ window.onload = function() {
       <ul id="quarto-sidebar-section-23" class="collapse list-unstyled sidebar-section depth3 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/SentinelHub/Zarr/Examples.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/SentinelHub/Zarr/Examples.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Zarr Import API examples</span></a>
   </div>
 </li>
@@ -947,7 +976,7 @@ window.onload = function() {
   </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="../../APIs/SentinelHub/OGC.html" class="sidebar-item-text sidebar-link">
+            <a href="../../../../../APIs/SentinelHub/OGC.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">OGC</span></a>
           <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-24" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
@@ -956,43 +985,43 @@ window.onload = function() {
       <ul id="quarto-sidebar-section-24" class="collapse list-unstyled sidebar-section depth3 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/SentinelHub/OGC/WMS.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/SentinelHub/OGC/WMS.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">WMS</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/SentinelHub/OGC/WCS.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/SentinelHub/OGC/WCS.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">WCS</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/SentinelHub/OGC/WFS.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/SentinelHub/OGC/WFS.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">WFS</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/SentinelHub/OGC/WMTS.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/SentinelHub/OGC/WMTS.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">WMTS</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/SentinelHub/OGC/AdditionalRequestParameters.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/SentinelHub/OGC/AdditionalRequestParameters.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Additional Request Parameters</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/SentinelHub/OGC/OutputFormats.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/SentinelHub/OGC/OutputFormats.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Output Formats</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/SentinelHub/OGC/Examples.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/SentinelHub/OGC/Examples.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Examples for OGC</span></a>
   </div>
 </li>
@@ -1000,7 +1029,7 @@ window.onload = function() {
   </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/SentinelHub/ApiReference.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/SentinelHub/ApiReference.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">API Reference</span></a>
   </div>
 </li>
@@ -1010,7 +1039,7 @@ window.onload = function() {
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="../../Applications.html" class="sidebar-item-text sidebar-link">
+            <a href="../../../../../Applications.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Applications</span></a>
           <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-25" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
@@ -1019,25 +1048,25 @@ window.onload = function() {
       <ul id="quarto-sidebar-section-25" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../Applications/Browser.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../Applications/Browser.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">About the Browser</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../Applications/Catalogue-csv.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../Applications/Catalogue-csv.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Catalogue CSV</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../Applications/DataWorkspace.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../Applications/DataWorkspace.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">About Data Workspace</span></a>
   </div>
 </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="../../Applications/AlgorithmPlaza.html" class="sidebar-item-text sidebar-link">
+            <a href="../../../../../Applications/AlgorithmPlaza.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">openEO Algorithm Plaza</span></a>
           <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
@@ -1046,25 +1075,25 @@ window.onload = function() {
       <ul id="" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../Applications/PlazaDetails/ManageOrg.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../Applications/PlazaDetails/ManageOrg.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Manage your Organisation</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../Applications/PlazaDetails/PublishService.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../Applications/PlazaDetails/PublishService.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Publish a Service</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../Applications/PlazaDetails/ExecuteService.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../Applications/PlazaDetails/ExecuteService.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Execute a Service</span></a>
   </div>
 </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="../../Applications/PlazaDetails/ManageService.html" class="sidebar-item-text sidebar-link">
+            <a href="../../../../../Applications/PlazaDetails/ManageService.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Manage a Service</span></a>
           <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-26" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
@@ -1073,13 +1102,13 @@ window.onload = function() {
       <ul id="quarto-sidebar-section-26" class="collapse list-unstyled sidebar-section depth3 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../Applications/PlazaDetails/ServiceMaturity.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../Applications/PlazaDetails/ServiceMaturity.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Service Maturity</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../Applications/PlazaDetails/Strength.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../Applications/PlazaDetails/Strength.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Service credit strength</span></a>
   </div>
 </li>
@@ -1087,7 +1116,7 @@ window.onload = function() {
   </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../Applications/PlazaDetails/Reporting.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../Applications/PlazaDetails/Reporting.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Reporting</span></a>
   </div>
 </li>
@@ -1095,25 +1124,25 @@ window.onload = function() {
   </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../Applications/WebEditor.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../Applications/WebEditor.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">openEO Web Editor</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../Applications/JupyterHub.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../Applications/JupyterHub.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">JupyterLab</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../Applications/QGIS.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../Applications/QGIS.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">QGIS Plugin</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../Applications/DataSpaceDashboard.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../Applications/DataSpaceDashboard.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Copernicus Data Space Ecosystem Dashboard</span></a>
   </div>
 </li>
@@ -1121,32 +1150,32 @@ window.onload = function() {
   </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../Quotas.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../Quotas.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Quotas and Limitations</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../ResearchNetwork.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../ResearchNetwork.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Access through Research Network</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../Usecase.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../Usecase.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Jupyter Notebook Samples</span></a>
   </div>
 </li>
         <li class="px-0"><hr class="sidebar-divider hi "></li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../FAQ.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../FAQ.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">FAQ</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../Support.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../Support.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Support</span></a>
   </div>
 </li>
@@ -1162,13 +1191,13 @@ window.onload = function() {
       <ul id="quarto-sidebar-section-27" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/Others/UpcomingChanges.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/Others/UpcomingChanges.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Upcoming changes</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/Others/ReleaseNotes.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../../../APIs/Others/ReleaseNotes.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Release notes</span></a>
   </div>
 </li>
@@ -1184,8 +1213,8 @@ window.onload = function() {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#fair" id="toc-fair" class="nav-link active" data-scroll-target="#fair">FAIR</a></li>
-  <li><a href="#open-science" id="toc-open-science" class="nav-link" data-scroll-target="#open-science">Open Science</a></li>
+  <li><a href="#dependencies" id="toc-dependencies" class="nav-link active" data-scroll-target="#dependencies">Dependencies</a></li>
+  <li><a href="#model" id="toc-model" class="nav-link" data-scroll-target="#model">Model</a></li>
   </ul>
 </nav>
     </div>
@@ -1194,7 +1223,7 @@ window.onload = function() {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">FAIR data &amp; open science</h1>
+<h1 class="title">Example of running ML inference with an ONNX model in openEO</h1>
 </div>
 
 
@@ -1209,66 +1238,92 @@ window.onload = function() {
 
 </header>
 
-<section id="fair" class="level2">
-<h2 class="anchored" data-anchor-id="fair">FAIR</h2>
-<p>One of the key goals of openEO, is to support <a href="https://www.go-fair.org/fair-principles/">FAIR principles</a> and open science. The implementation in the Copernicus dataspace makes it easier to comply with these principles, by incorporating these principles in the implementation, so that users are automatically a step closer to generating FAIR-compliant open data. If your project has requirements related to these topics, this should serve as a good starting point.</p>
-<p>These are a few examples:</p>
-<ul>
-<li><em><a href="https://www.go-fair.org/fair-principles/f2-data-described-rich-metadata/">F2 Rich metadata</a></em> openEO generates rich STAC metadata, that includes processing info, complete raster metadata, band information, etcetera.</li>
-<li><em><a href="https://www.go-fair.org/fair-principles/r1-2-metadata-associated-detailed-provenance/">R1.2 Detailed provenance</a></em> In result metadata <a href="https://github.com/radiantearth/stac-spec/blob/master/item-spec/item-spec.md#derived_from">derived-from</a> links link back to all input products to provide provenance.</li>
-<li><em><a href="https://www.go-fair.org/fair-principles/r1-3-metadata-meet-domain-relevant-community-standards/">R1.3 use of domain relevant (meta)data standard</a></em> openEO generates STAC metadata, so this one is included by default. For the data formats, it supports well known options such as Cloud optimized Geotiff, netCDF with CF conventions, GeoParquet, and many more.</li>
-</ul>
-<p>This is a concrete example of STAC metadata generated by openEO:</p>
-<div class="cell" data-execution_count="1">
-<div class="cell-output cell-output-display" data-execution_count="1">
-
-    <script>
-    if (!window.customElements || !window.customElements.get('openeo-collection')) {
-        var el = document.createElement('script');
-        el.src = "https://cdn.jsdelivr.net/npm/@openeo/vue-components@2/assets/openeo.min.js";
-        document.head.appendChild(el);
-
-        var font = document.createElement('font');
-        font.as = "font";
-        font.type = "font/woff2";
-        font.crossOrigin = true;
-        font.href = "https://use.fontawesome.com/releases/v5.13.0/webfonts/fa-solid-900.woff2"
-        document.head.appendChild(font);
-    }
-    </script>
-    <openeo-collection>
-        <script type="application/json">{"mapOptions": {}, "data": {"assets": {"openEO.nc": {"eo:bands": [{"center_wavelength": 0.4924, "name": "B02"}, {"center_wavelength": 0.5598, "name": "B03"}, {"center_wavelength": 0.6646, "name": "B04"}], "file:nodata": [-32768], "href": "https://openeo.dataspace.copernicus.eu/openeo/1.2/jobs/my_custom_job/results/assets/MzJjYzdkZGItZjdlMS00YjFjLTk3OTYtZjlmZTM5Y2I4ZmVi/eb3cbffb39820a19588bbff73e25000a/openEO.nc?expires=1709880758", "proj:bbox": [534060, 6479360, 797110, 6667130], "proj:epsg": 32633, "proj:shape": [26305, 18777], "raster:bands": [{"name": "B02", "statistics": {"maximum": 18792, "mean": 1761.7649320274, "minimum": -999, "stddev": 3041.8121307017, "valid_percent": 66.75}}, {"name": "B03", "statistics": {"maximum": 17592, "mean": 1767.9099226689, "minimum": -799, "stddev": 2827.4360730483, "valid_percent": 66.75}}, {"name": "B04", "statistics": {"maximum": 16840, "mean": 1634.3294499714, "minimum": -385, "stddev": 2775.1541115591, "valid_percent": 66.75}}], "roles": ["data"], "title": "openEO.nc", "type": "application/x-netcdf"}}, "description": "This is example STAC metadata as generated by the Copernicus Dataspace openEO backend. Description and title is provided by the user.", "extent": {"spatial": {"bbox": [[15.611572, 58.453481000000004, 20.093994, 60.042903999999986]]}, "temporal": {"interval": [["2023-08-01T00:00:00Z", "2023-08-15T00:00:00Z"]]}}, "id": "j-2401123752f848e4a1c72a108ef0c4ce", "license": "proprietary", "links": [{"href": "/eodata/Sentinel-2/MSI/L2A/2023/08/01/S2A_MSIL2A_20230801T100601_N0509_R022_T33VWF_20230801T161353.SAFE", "rel": "derived_from", "title": "Derived from /eodata/Sentinel-2/MSI/L2A/2023/08/01/S2A_MSIL2A_20230801T100601_N0509_R022_T33VWF_20230801T161353.SAFE", "type": "application/json"}, {"href": "/eodata/Sentinel-2/MSI/L2A/2023/08/01/S2A_MSIL2A_20230801T100601_N0509_R022_T34VCL_20230801T161353.SAFE", "rel": "derived_from", "title": "Derived from /eodata/Sentinel-2/MSI/L2A/2023/08/01/S2A_MSIL2A_20230801T100601_N0509_R022_T34VCL_20230801T161353.SAFE", "type": "application/json"}, {"href": "/eodata/Sentinel-2/MSI/L2A/2023/08/01/S2A_MSIL2A_20230801T100601_N0509_R022_T33VXF_20230801T161353.SAFE", "rel": "derived_from", "title": "Derived from /eodata/Sentinel-2/MSI/L2A/2023/08/01/S2A_MSIL2A_20230801T100601_N0509_R022_T33VXF_20230801T161353.SAFE", "type": "application/json"}, {"href": "/eodata/Sentinel-2/MSI/L2A/2023/08/01/S2A_MSIL2A_20230801T100601_N0509_R022_T34VDM_20230801T161353.SAFE", "rel": "derived_from", "title": "Derived from /eodata/Sentinel-2/MSI/L2A/2023/08/01/S2A_MSIL2A_20230801T100601_N0509_R022_T34VDM_20230801T161353.SAFE", "type": "application/json"}, {"href": "/eodata/Sentinel-2/MSI/L2A/2023/08/04/S2A_MSIL2A_20230804T101601_N0509_R065_T34VDM_20230804T155854.SAFE", "rel": "derived_from", "title": "Derived from /eodata/Sentinel-2/MSI/L2A/2023/08/04/S2A_MSIL2A_20230804T101601_N0509_R065_T34VDM_20230804T155854.SAFE", "type": "application/json"}, {"href": "/eodata/Sentinel-2/MSI/L2A/2023/08/04/S2A_MSIL2A_20230804T101601_N0509_R065_T33VXE_20230804T155854.SAFE", "rel": "derived_from", "title": "Derived from /eodata/Sentinel-2/MSI/L2A/2023/08/04/S2A_MSIL2A_20230804T101601_N0509_R065_T33VXE_20230804T155854.SAFE", "type": "application/json"}, {"href": "/eodata/Sentinel-2/MSI/L2A/2023/08/04/S2A_MSIL2A_20230804T101601_N0509_R065_T34VCM_20230804T155854.SAFE", "rel": "derived_from", "title": "Derived from /eodata/Sentinel-2/MSI/L2A/2023/08/04/S2A_MSIL2A_20230804T101601_N0509_R065_T34VCM_20230804T155854.SAFE", "type": "application/json"}, {"href": "/eodata/Sentinel-2/MSI/L2A/2023/08/04/S2A_MSIL2A_20230804T101601_N0509_R065_T34VCK_20230804T155854.SAFE", "rel": "derived_from", "title": "Derived from /eodata/Sentinel-2/MSI/L2A/2023/08/04/S2A_MSIL2A_20230804T101601_N0509_R065_T34VCK_20230804T155854.SAFE", "type": "application/json"}, {"href": "/eodata/Sentinel-2/MSI/L2A/2023/08/04/S2A_MSIL2A_20230804T101601_N0509_R065_T34VCL_20230804T155854.SAFE", "rel": "derived_from", "title": "Derived from /eodata/Sentinel-2/MSI/L2A/2023/08/04/S2A_MSIL2A_20230804T101601_N0509_R065_T34VCL_20230804T155854.SAFE", "type": "application/json"}, {"href": "/eodata/Sentinel-2/MSI/L2A/2023/08/04/S2A_MSIL2A_20230804T101601_N0509_R065_T33VXG_20230804T155854.SAFE", "rel": "derived_from", "title": "Derived from /eodata/Sentinel-2/MSI/L2A/2023/08/04/S2A_MSIL2A_20230804T101601_N0509_R065_T33VXG_20230804T155854.SAFE", "type": "application/json"}, {"href": "/eodata/Sentinel-2/MSI/L2A/2023/08/04/S2A_MSIL2A_20230804T101601_N0509_R065_T33VWE_20230804T155854.SAFE", "rel": "derived_from", "title": "Derived from /eodata/Sentinel-2/MSI/L2A/2023/08/04/S2A_MSIL2A_20230804T101601_N0509_R065_T33VWE_20230804T155854.SAFE", "type": "application/json"}, {"href": "/eodata/Sentinel-2/MSI/L2A/2023/08/04/S2A_MSIL2A_20230804T101601_N0509_R065_T33VXF_20230804T155854.SAFE", "rel": "derived_from", "title": "Derived from /eodata/Sentinel-2/MSI/L2A/2023/08/04/S2A_MSIL2A_20230804T101601_N0509_R065_T33VXF_20230804T155854.SAFE", "type": "application/json"}, {"href": "/eodata/Sentinel-2/MSI/L2A/2023/08/09/S2B_MSIL2A_20230809T101609_N0509_R065_T33VXG_20230809T131713.SAFE", "rel": "derived_from", "title": "Derived from /eodata/Sentinel-2/MSI/L2A/2023/08/09/S2B_MSIL2A_20230809T101609_N0509_R065_T33VXG_20230809T131713.SAFE", "type": "application/json"}, {"href": "/eodata/Sentinel-2/MSI/L2A/2023/08/09/S2B_MSIL2A_20230809T101609_N0509_R065_T34VCM_20230809T131713.SAFE", "rel": "derived_from", "title": "Derived from /eodata/Sentinel-2/MSI/L2A/2023/08/09/S2B_MSIL2A_20230809T101609_N0509_R065_T34VCM_20230809T131713.SAFE", "type": "application/json"}, {"href": "/eodata/Sentinel-2/MSI/L2A/2023/08/09/S2B_MSIL2A_20230809T101609_N0509_R065_T34VDM_20230809T131713.SAFE", "rel": "derived_from", "title": "Derived from /eodata/Sentinel-2/MSI/L2A/2023/08/09/S2B_MSIL2A_20230809T101609_N0509_R065_T34VDM_20230809T131713.SAFE", "type": "application/json"}, {"href": "/eodata/Sentinel-2/MSI/L2A/2023/08/11/S2A_MSIL2A_20230811T101031_N0509_R022_T33VWE_20230811T161756.SAFE", "rel": "derived_from", "title": "Derived from /eodata/Sentinel-2/MSI/L2A/2023/08/11/S2A_MSIL2A_20230811T101031_N0509_R022_T33VWE_20230811T161756.SAFE", "type": "application/json"}, {"href": "https://openeo.dataspace.copernicus.eu/openeo/1.2/jobs/j-2401123752f848e4a1c72a108ef0c4ce/results", "rel": "self", "type": "application/json"}, {"href": "https://openeo.dataspace.copernicus.eu/openeo/1.2/jobs/j-2401123752f848e4a1c72a108ef0c4ce/results/MzJjYzdkZGItZjdlMS00YjFjLTk3OTYtZjlmZTM5Y2I4ZmVi/c2111d2821edc1de99fc8855a1842821?expires=1709880758", "rel": "canonical", "type": "application/json"}, {"href": "http://ceos.org/ard/files/PFS/SR/v5.0/CARD4L_Product_Family_Specification_Surface_Reflectance-v5.0.pdf", "rel": "card4l-document", "type": "application/pdf"}], "openeo:status": "finished", "providers": [{"description": "This data was processed on an openEO backend maintained by VITO.", "name": "VITO", "processing:expression": {"expression": {"loadcollection1": {"arguments": {"bands": ["B02", "B03", "B04"], "id": "SENTINEL2_L2A", "properties": {"eo:cloud_cover": {"process_graph": {"lte1": {"arguments": {"x": {"from_parameter": "value"}, "y": 85}, "process_id": "lte", "result": true}}}}, "spatial_extent": {"east": 20.093994, "north": 60.042903999999986, "south": 58.453481000000004, "west": 15.611572}, "temporal_extent": ["2023-08-01T00:00:00Z", "2023-08-15T00:00:00Z"]}, "process_id": "load_collection"}, "saveresult1": {"arguments": {"data": {"from_node": "loadcollection1"}, "format": "netcdf", "options": {"format": "netcdf", "output_format": "netcdf"}}, "process_id": "save_result", "result": true}}, "format": "openeo"}, "processing:facility": "openEO Geotrellis backend", "processing:software": {"Geotrellis backend": "0.22.0a1"}, "roles": ["processor"]}], "stac_extensions": ["https://stac-extensions.github.io/eo/v1.1.0/schema.json", "https://stac-extensions.github.io/file/v2.1.0/schema.json", "https://stac-extensions.github.io/processing/v1.1.0/schema.json", "https://stac-extensions.github.io/projection/v1.1.0/schema.json"], "stac_version": "1.0.0", "summaries": {"instruments": []}, "title": "EO product generated by openEO", "type": "Collection"}}</script>
-    </openeo-collection>
-    
+<p>This notebook shows how to run inference with a trained model in the ONNX format. In this example, we use a Convolutional Neural Network (CNN) that is applied on a window of 256x256 pixels of a Sentinel-2 band. After training, the model has been converted to the ONNX format. More information on how to do this for your own model can be found here: https://github.com/onnx/tutorials#converting-to-onnx-format</p>
+<p>We first set up the connection with an openEO backend and load some data as usual.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> openeo</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>connection <span class="op">=</span> openeo.<span class="ex">connect</span>(<span class="st">"openeo.dataspace.copernicus.eu"</span>).authenticate_oidc()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>spatial_extent <span class="op">=</span> {</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"west"</span>: <span class="fl">4.217639</span>,</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"south"</span>: <span class="fl">51.162882</span>,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"east"</span>: <span class="fl">4.477856</span>,</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"north"</span>: <span class="fl">51.260197</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>temporal_extent <span class="op">=</span> [<span class="st">"2022-06-01"</span>, <span class="st">"2022-08-01"</span>]</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>s2_cube <span class="op">=</span> connection.load_collection(</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"SENTINEL2_L2A"</span>,</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    temporal_extent<span class="op">=</span>temporal_extent,</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    spatial_extent<span class="op">=</span>spatial_extent,</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    bands<span class="op">=</span>[<span class="st">"B04"</span>],</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    max_cloud_cover<span class="op">=</span><span class="dv">20</span>,</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>After setting up the connection with a back-end, we define where both the dependencies and the model are stored.</p>
+<section id="dependencies" class="level3">
+<h3 class="anchored" data-anchor-id="dependencies">Dependencies</h3>
+<p>In order to remain lightweight, an openEO backend does not have the necessary dependencies to run the model. Therefore, we need to pass the extra dependencies to the backend. If you are using an ONNX model that can be run with ONNX Runtime version 1.16.3, you can use the dependencies url provided in the code below. If you are using a different version of ONNX Runtime, you need to provide the dependencies yourself.</p>
+<p>More information on onnx version compatibility can be found here: https://github.com/onnx/tutorials#converting-to-onnx-format</p>
+<p>More information on how to make a dependency archive for openeo can be found here: https://documentation.dataspace.copernicus.eu/APIs/openEO/job_config.html#custom-udf-dependencies</p>
 </section>
-<section id="open-science" class="level2">
-<h2 class="anchored" data-anchor-id="open-science">Open Science</h2>
-<p>With respect to open science, the main benefit of openEO is that your workflows can be stored in a standardized notation, in the form of openEO ‘process graphs’. This gives scientists a novel way of exchanging algorithms, without having to exchange a complex code base. The key element is that openEO code or process graphs are often a lot easier to understand, because much of the boilerplate logic is handled by the backend rather than by the user code.</p>
-<p>This also has consequences for replicating work: the same process graph can be executed on different backends, or evaluated against different datasets. This allows to evaluate whether an algorithm is broadly applicable, or only works in a very specific environment.</p>
-<p>A rendering of a very simple process graph that simply extracts Sentinel-2 data is shown below. While the example is simple, the underlying steps needed to generate an analysis ready datacube from raw Sentinel-2 L2A products are already quite complex, and most equivalent code will be a lot harder to understand and analyze.</p>
-<div class="cell" data-execution_count="2">
-<div class="cell-output cell-output-display" data-execution_count="2">
-
-    <script>
-    if (!window.customElements || !window.customElements.get('openeo-model-builder')) {
-        var el = document.createElement('script');
-        el.src = "https://cdn.jsdelivr.net/npm/@openeo/vue-components@2/assets/openeo.min.js";
-        document.head.appendChild(el);
-
-        var font = document.createElement('font');
-        font.as = "font";
-        font.type = "font/woff2";
-        font.crossOrigin = true;
-        font.href = "https://use.fontawesome.com/releases/v5.13.0/webfonts/fa-solid-900.woff2"
-        document.head.appendChild(font);
-    }
-    </script>
-    <openeo-model-builder>
-        <script type="application/json">{"id": "efcc82d36dc443cf9ffac0644ff335af", "explicit-zoom": true, "height": "400px", "value": {"process_graph": {"loadcollection1": {"process_id": "load_collection", "arguments": {"bands": ["B02", "B03", "B04"], "id": "SENTINEL2_L2A", "properties": {"eo:cloud_cover": {"process_graph": {"lte1": {"arguments": {"x": {"from_parameter": "value"}, "y": 85}, "process_id": "lte", "result": true}}}}, "spatial_extent": {"east": 20.093994, "north": 60.042903999999986, "south": 58.453481000000004, "west": 15.611572}, "temporal_extent": ["2023-08-01T00:00:00Z", "2023-08-15T00:00:00Z"]}}, "saveresult1": {"process_id": "save_result", "arguments": {"data": {"from_node": "loadcollection1"}, "format": "netcdf", "options": {"format": "netcdf", "output_format": "netcdf"}}, "result": true}}}}</script>
-    </openeo-model-builder>
-    
+<section id="model" class="level3">
+<h3 class="anchored" data-anchor-id="model">Model</h3>
+<p>The model needs to be stored in a location that is accessible by the backend. In this example, we store the model in the same location as the dependencies. You could however also store the model in a public github repository and provide the url to the backend.</p>
+<div class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># This will be required to import onnxruntime in the UDF.</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>dependencies_url <span class="op">=</span> <span class="st">"https://artifactory.vgt.vito.be:443/auxdata-public/openeo/onnx_dependencies_1.16.3.zip"</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># You can upload your own model to a public download link and paste the url here. An example of a public storage is github, or you can set up a public S3 bucket.</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>model_url <span class="op">=</span> <span class="st">"https://artifactory.vgt.vito.be:443/auxdata-public/openeo/test_onnx_model.zip"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Next we load the udf that will run the model. Make sure to take a look at <a href="./onnx_udf.py">the udf code</a> to understand how and why the loading of the model is cached to reduce your processing costs, how you can work with the named dimensions of an Xarray and how to run a model on each separate timestep.</p>
+<p>We use the process <code>apply_neighborhood</code> to apply the udf. The model accepts a window of 256x256 pixels. In order to get a smooth result, we apply the model on overlapping windows. The values included in the overlap will not be modified.<br>
+In this case an overlap of 16 pixels is used on both sides, so the remaining size of 224x224 pixels will be modified each step.</p>
+<p>Other models might perform pixel-wise predictions (e.g.&nbsp;random forests) in which case you can simply use the <code>apply</code> process. The openEO backend will then automatically handle the chunking and stitching of the results.<br>
+In case you only want to keep your prediction, instead of using <code>apply</code> you can use the <code>reduce dimension</code> process to only keep the prediction and not the input bands.</p>
+<div class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the UDF from a file.</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>udf <span class="op">=</span> openeo.UDF.from_file(</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"onnx_udf.py"</span>,</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    context<span class="op">=</span><span class="va">None</span>, <span class="co"># you can pass extra arguments to the UDF here</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply the UDF to the data cube.</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>onnx_result <span class="op">=</span> s2_cube.apply_neighborhood(</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    udf,</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    size<span class="op">=</span>[</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>        {<span class="st">"dimension"</span>: <span class="st">"x"</span>, <span class="st">"value"</span>: <span class="dv">224</span>, <span class="st">"unit"</span>: <span class="st">"px"</span>},</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>        {<span class="st">"dimension"</span>: <span class="st">"y"</span>, <span class="st">"value"</span>: <span class="dv">224</span>, <span class="st">"unit"</span>: <span class="st">"px"</span>},</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    ],</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    overlap<span class="op">=</span>[</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>        {<span class="st">"dimension"</span>: <span class="st">"x"</span>, <span class="st">"value"</span>: <span class="dv">16</span>, <span class="st">"unit"</span>: <span class="st">"px"</span>},</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>        {<span class="st">"dimension"</span>: <span class="st">"y"</span>, <span class="st">"value"</span>: <span class="dv">16</span>, <span class="st">"unit"</span>: <span class="st">"px"</span>}</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    ],</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>mean_result <span class="op">=</span> onnx_result.mean_time()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Finally, we add the dependencies to the job-options and run the process on the back-end.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># We pass the model and dependencies as zip files to the UDF through the job options.</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># The zip files provided in this list will be extracted in the UDF environment in a folder indicated by the name after the # symbol.</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>job_options <span class="op">=</span> {</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"udf-dependency-archives"</span>: [</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f"</span><span class="sc">{</span>dependencies_url<span class="sc">}</span><span class="ss">#onnx_deps"</span>,</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f"</span><span class="sc">{</span>model_url<span class="sc">}</span><span class="ss">#onnx_models"</span>,</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    ],</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>mean_result.execute_batch(<span class="st">"output.tiff"</span>, job_options<span class="op">=</span>job_options)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> rasterio</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> rasterio.plot <span class="im">import</span> show</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> rasterio.<span class="bu">open</span>(<span class="st">"output.tiff"</span>) <span class="im">as</span> image:</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    show(image)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="Onnx_ML_Inference_files/figure-html/cell-7-output-1.png" class="img-fluid"></p>
 </div>
 </div>
 
@@ -1525,18 +1580,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
 });
 </script>
-<nav class="page-navigation column-body">
-  <div class="nav-page nav-page-previous">
-      <a href="../../APIs/openEO/federation/backends/contract.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Federation contract</span>
-      </a>          
-  </div>
-  <div class="nav-page nav-page-next">
-      <a href="../../APIs/SentinelHub.html" class="pagination-link">
-        <span class="nav-page-text">Sentinel Hub</span> <i class="bi bi-arrow-right-short"></i>
-      </a>
-  </div>
-</nav>
 </div> <!-- /content -->
 
 
