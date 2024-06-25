@@ -1181,6 +1181,13 @@ window.onload = function() {
   <li><a href="#generate-secrets" id="toc-generate-secrets" class="nav-link" data-scroll-target="#generate-secrets">Generate secrets</a></li>
   <li><a href="#example-access-using-s3cmd" id="toc-example-access-using-s3cmd" class="nav-link" data-scroll-target="#example-access-using-s3cmd">Example access using s3cmd</a></li>
   <li><a href="#example-script-to-download-product-using-boto3" id="toc-example-script-to-download-product-using-boto3" class="nav-link" data-scroll-target="#example-script-to-download-product-using-boto3">Example script to download product using boto3</a></li>
+  <li><a href="#accessing-eodata-via-aws-cli" id="toc-accessing-eodata-via-aws-cli" class="nav-link" data-scroll-target="#accessing-eodata-via-aws-cli">Accessing EOData via AWS CLI</a>
+  <ul>
+  <li><a href="#prerequirements" id="toc-prerequirements" class="nav-link" data-scroll-target="#prerequirements">Prerequirements</a></li>
+  <li><a href="#install-or-update-the-aws-cli" id="toc-install-or-update-the-aws-cli" class="nav-link" data-scroll-target="#install-or-update-the-aws-cli">Install or update the AWS CLI</a></li>
+  <li><a href="#configuration" id="toc-configuration" class="nav-link" data-scroll-target="#configuration">Configuration</a></li>
+  <li><a href="#list-and-download-products" id="toc-list-and-download-products" class="nav-link" data-scroll-target="#list-and-download-products">List and download products</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -1220,18 +1227,8 @@ window.onload = function() {
 <section id="generate-secrets" class="level2">
 <h2 class="anchored" data-anchor-id="generate-secrets">Generate secrets</h2>
 <p>In order to obtain secrets, <a href="https://eodata-s3keysmanager.dataspace.copernicus.eu/">visit page</a> and log in with the Copernicus Data Space Ecosystem account for which the keys are to be generated. After successfully logging in, indicate the expiration date of the secrets using the “Add Credentials” button and click “Confirm”.</p>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="_images/s3_cdse_1.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Add Credentials</figcaption>
-</figure>
-</div>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="_images/s3_cdse_2.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Display Credentials</figcaption>
-</figure>
-</div>
+<p><img src="_images/s3_cdse_1.png" class="img-fluid"></p>
+<p><img src="_images/s3_cdse_2.png" class="img-fluid"></p>
 <p>Note that the Secret Key will be displayed only once, and you cannot view it again after clicking the Close button. Copy your secret key and keep it in a safe place.</p>
 </section>
 <section id="example-access-using-s3cmd" class="level2">
@@ -1252,7 +1249,7 @@ secret_key = &lt;secret_key&gt;
 use_https = true
 check_ssl_certificate = true</code></pre>
 <p>Then you can run any s3cmd command pointing to the previously created configuration file with option <code>-c</code>:</p>
-<pre><code>s3cmd -c ~/.s3cfg ls</code></pre>
+<pre><code>$ s3cmd -c .s3cfg ls s3://eodata/</code></pre>
 <p>Below is an example of downloading a product from the EO data repository using s3cmd:</p>
 <pre><code>s3cmd -c ~/.s3cfg get s3://eodata/Sentinel-1/SAR/SLC/2016/12/28/S1A_IW_SLC__1SDV_20161228T044442_20161228T044509_014575_017AE8_4C26.SAFE/measurement/s1a-iw2-slc-vv-20161228t044442-20161228t044508-014575-017ae8-005.tiff</code></pre>
 <p>If the objects in the repository are archives, for example, such as <code>S1B_IW_SLC__1SDV_20191013T155948_20191013T160015_018459_022C6B_13A2.SAFE</code> use the resursive option <code>––recursive</code> or <code>-r</code> to download whole product.</p>
@@ -1294,8 +1291,80 @@ def download(bucket, product: str, target: str = "") -&gt; None:
 
 # path to the product to download
 download(s3.Bucket("eodata"), "Sentinel-1/SAR/SLC/2019/10/13/S1B_IW_SLC__1SDV_20191013T155948_20191013T160015_018459_022C6B_13A2.SAFE/")</code></pre>
+</section>
+<section id="accessing-eodata-via-aws-cli" class="level2">
+<h2 class="anchored" data-anchor-id="accessing-eodata-via-aws-cli">Accessing EOData via AWS CLI</h2>
+<p>In this section, you will access EOData resources using a Linux OS using <strong>AWS Command Line Interface (AWS CLI)</strong>.</p>
+<section id="prerequirements" class="level3">
+<h3 class="anchored" data-anchor-id="prerequirements">Prerequirements</h3>
+<p><strong>Check for system updates:</strong></p>
+<pre><code>$ sudo apt-get update -y</code></pre>
+<p><strong>Install prerequirements:</strong></p>
+<pre><code>$ sudo apt-get install unzip groff less -y</code></pre>
+<p><strong>Generate S3 credentials at CDSE:</strong></p>
+<p>In order to access EOData via S3 you must obtain secrets (<strong>access</strong> and <strong>secret</strong> key). Please visit following <a href="https://eodata-s3keysmanager.dataspace.copernicus.eu/">page</a> and log in with Copernicus Data Space Ecosystem account for which the keys are to be generated.</p>
+<p>If you dont have an account, you can register via following <a href="https://documentation.dataspace.copernicus.eu/Registration.html">link</a>.</p>
+</section>
+<section id="install-or-update-the-aws-cli" class="level3">
+<h3 class="anchored" data-anchor-id="install-or-update-the-aws-cli">Install or update the AWS CLI</h3>
+<p>To update your current installation of AWS CLI, download a new installer each time you update to overwrite previous versions. Follow these steps from the command line to install the AWS CLI on Linux.</p>
+<pre><code>$ curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install</code></pre>
+<p>Verify if client is installed:</p>
+<pre><code>$ aws --version
+aws-cli/2.13.32 Python/3.11.6 Linux/5.15.0-75-generic exe/x86_64.ubuntu.22 prompt/off</code></pre>
+</section>
+<section id="configuration" class="level3">
+<h3 class="anchored" data-anchor-id="configuration">Configuration</h3>
+<p>Enter the following command:</p>
+<pre><code>$ aws configure</code></pre>
+<p>You will be prompted for providing certain connection details. Below are the values which you should use during the configuration. Replace <strong>access_key</strong> and <strong>secret_key</strong> with appropriate keys you obtained previously.</p>
+<pre><code>AWS Access Key ID [None]: &lt;access_key&gt;
+AWS Secret Key ID [None]: &lt;secret_key&gt;
+Default region name [None]: default
+Default output format [None]: text</code></pre>
+</section>
+<section id="list-and-download-products" class="level3">
+<h3 class="anchored" data-anchor-id="list-and-download-products">List and download products</h3>
+<p>Now you can use AWS CLI commands (documentation available via following link: https://aws.amazon.com/cli/)</p>
+<p><strong>Specify the CDSE endpoint:</strong></p>
+<p>Use following line to specify endpoint.</p>
+<pre><code>export AWS_ENDPOINT_URL=https://eodata.dataspace.copernicus.eu/</code></pre>
+<p><strong>List available buckets:</strong></p>
+<pre><code>$ aws s3 ls s3://eodata/
+eouser@aws-cli:~$ aws s3 ls s3://eodata/
+                           PRE C3S/
+                           PRE CAMS/
+                           PRE CEMS/
+                           PRE CLMS/
+                           PRE CMEMS/
+                           PRE Envisat/
+                           PRE Envisat-ASAR/
+                           PRE Global-Mosaics/
+                           PRE Jason-3/
+                           PRE Landsat-5/
+                           PRE Landsat-7/
+                           PRE Landsat-8/
+                           PRE SMOS/
+                           PRE Sentinel-1/
+                           PRE Sentinel-1-COG/
+                           PRE Sentinel-1-RTC/
+                           PRE Sentinel-2/
+                           PRE Sentinel-3/
+                           PRE Sentinel-5P/
+                           PRE Sentinel-6/
+                           PRE auxdata/</code></pre>
+<p><strong>Downloading products:</strong></p>
+<p>In order to download products from repository follow the steps.</p>
+<p>Below example is downloading product from Sentinel-2 named “S2A_MSIL2A_20240115T235221_N0510_R130_T55HGS_20240116T021554.SAFE” and saving it at user’s home location.</p>
+<pre><code>$ aws s3 cp s3://eodata/Sentinel-2/MSI/L2A/2024/01/15/S2A_MSIL2A_20240115T235221_N0510_R130_T55HGS_20240116T021554.SAFE/ /home/eouser/S2A_MSIL2A_20240115T235221_N0510_R130_T55HGS_20240116T021554.SAFE
+
+download: s3://eodata/Sentinel-2/MSI/L2A/2024/01/15/S2A_MSIL2A_20240115T235221_N0510_R130_T55HGS_20240116T021554.SAFE/ to ./S2A_MSIL2A_20240115T235221_N0510_R130_T55HGS_20240116T021554.SAFE</code></pre>
+<p>After this operation, you should downloaded product in specified path.</p>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->

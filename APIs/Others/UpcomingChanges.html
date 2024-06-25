@@ -1175,7 +1175,8 @@ window.onload = function() {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#default-timezone-change-for-odata-and-opensearch-apis" id="toc-default-timezone-change-for-odata-and-opensearch-apis" class="nav-link active" data-scroll-target="#default-timezone-change-for-odata-and-opensearch-apis">Default Timezone Change for OData and OpenSearch APIs</a></li>
+  <li><a href="#opensearch-catalogue-api-geometry-attribute-handling-updated-for-null-values" id="toc-opensearch-catalogue-api-geometry-attribute-handling-updated-for-null-values" class="nav-link active" data-scroll-target="#opensearch-catalogue-api-geometry-attribute-handling-updated-for-null-values">OpenSearch Catalogue API: Geometry Attribute Handling Updated for Null Values</a></li>
+  <li><a href="#default-timezone-change-for-odata-and-opensearch-apis" id="toc-default-timezone-change-for-odata-and-opensearch-apis" class="nav-link" data-scroll-target="#default-timezone-change-for-odata-and-opensearch-apis">Default Timezone Change for OData and OpenSearch APIs</a></li>
   <li><a href="#opensearch-api-new-error-handling-release" id="toc-opensearch-api-new-error-handling-release" class="nav-link" data-scroll-target="#opensearch-api-new-error-handling-release">OpenSearch API new error handling release</a></li>
   <li><a href="#opensearch-api-error-handling-update-new-date" id="toc-opensearch-api-error-handling-update-new-date" class="nav-link" data-scroll-target="#opensearch-api-error-handling-update-new-date">OpenSearch API error handling update new date</a></li>
   <li><a href="#opensearch-api-error-handling-update-date" id="toc-opensearch-api-error-handling-update-date" class="nav-link" data-scroll-target="#opensearch-api-error-handling-update-date">OpenSearch API error handling update date</a></li>
@@ -1211,6 +1212,235 @@ window.onload = function() {
 </header>
 
 <p>This page includes the list of upcoming changes to Catalog APIs.</p>
+<section id="opensearch-catalogue-api-geometry-attribute-handling-updated-for-null-values" class="level2">
+<h2 class="anchored" data-anchor-id="opensearch-catalogue-api-geometry-attribute-handling-updated-for-null-values">OpenSearch Catalogue API: Geometry Attribute Handling Updated for Null Values</h2>
+<p>We would like to inform you about an upcoming change to our <strong>OpenSearch API</strong> interface, effective <strong>8th July, 2024</strong>.</p>
+<p>Starting from 8th July 2024, the <code>geometry</code> attribute in case of empty product geometries will return <code>null</code> (<code>"geometry": null,</code>) instead of empty array (<code>"geometry": [ ],</code>). This update is designed to improve the clarity and consistency of the data returned by our APIs. For non-empty products geometries, the behaviour will remain unchanged.</p>
+<p>Below please find the example of OpenSearch API response before and after the described change:</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" aria-current="page">HTTPS Request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">Current response</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false">New response</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<p><a href="https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel1/search.json?identifier=cf1a597c-ec22-11ee-8006-fa163e7968e5" target="_blank"><code>https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel1/search.json?identifier=cf1a597c-ec22-11ee-8006-fa163e7968e5</code></a></p>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<pre class="{json}"><code>{
+  "type": "FeatureCollection",
+  "properties": {
+    "id": "8cf9566f-ad45-5ed7-b586-7ff0f8d6c677",
+    "totalResults": null,
+    "exactCount": 0,
+    "startIndex": 1,
+    "itemsPerPage": 20,
+    "query": {
+      "originalFilters": {
+        "identifier": "cf1a597c-ec22-11ee-8006-fa163e7968e5",
+        "collection": "SENTINEL-1"
+      },
+      "appliedFilters": {
+        "identifier": "cf1a597c-ec22-11ee-8006-fa163e7968e5",
+        "collection": "SENTINEL-1"
+      },
+      "processingTime": 0.121144462
+    },
+    "links": [
+      {
+        "rel": "self",
+        "type": "application/json",
+        "title": "self",
+        "href": "https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel1/search.json?identifier=cf1a597c-ec22-11ee-8006-fa163e7968e5"
+      },
+      {
+        "rel": "search",
+        "type": "application/opensearchdescription+xml",
+        "title": "OpenSearch Description Document",
+        "href": "https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel1/describe.xml"
+      }
+    ]
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "id": "cf1a597c-ec22-11ee-8006-fa163e7968e5",
+      "geometry": [
+         
+      ],
+      "properties": {
+        "collection": "SENTINEL-1",
+        "status": "ONLINE",
+        "license": {
+          "licenseId": "unlicensed",
+          "hasToBeSigned": "never",
+          "grantedCountries": null,
+          "grantedOrganizationCountries": null,
+          "grantedFlags": null,
+          "viewService": "public",
+          "signatureQuota": -1,
+          "description": {
+            "shortName": "No license"
+          }
+        },
+        "parentIdentifier": null,
+        "title": "S1A_AUX_CAL_V20140908T000000_G20240327T101157.SAFE",
+        "description": "The Sentinel-1 mission is the European Radar Observatory for the Copernicus joint initiative of the European Commission (EC) and the European Space Agency (ESA). The Sentinel-1 mission includes C-band imaging operating in four exclusive imaging modes with different resolution (down to 5 m) and coverage (up to 400 km). It provides dual polarization capability, short revisit times and rapid product delivery. Additionally, precise measurements of spacecraft position and attitude are available for every observation [https://dataspace.copernicus.eu/explore-data/data-collections/sentinel-data/sentinel-1].",
+        "organisationName": null,
+        "startDate": "2014-09-08T00:00:00.000Z",
+        "completionDate": "2014-09-08T00:00:00.000Z",
+        "productType": "AUX_CAL",
+        "processingLevel": null,
+        "platform": "S1A",
+        "instrument": "SAR",
+        "resolution": 0,
+        "sensorMode": null,
+        "orbitNumber": 0,
+        "quicklook": null,
+        "thumbnail": null,
+        "updated": "2024-03-27T10:15:07.353Z",
+        "published": "2024-03-27T10:15:06.733Z",
+        "snowCover": 0,
+        "cloudCover": 0,
+        "gmlgeometry": null,
+        "centroid": {
+          "type": null,
+          "coordinates": null
+        },
+        "productIdentifier": "/eodata/Sentinel-1/AUX/AUX_CAL/2014/09/08/S1A_AUX_CAL_V20140908T000000_G20240327T101157.SAFE.zip",
+        "orbitDirection": null,
+        "timeliness": null,
+        "relativeOrbitNumber": 0,
+        "processingBaseline": 0,
+        "polarisation": null,
+        "swath": null,
+        "services": {
+          "download": {
+            "url": "https://catalogue.dataspace.copernicus.eu/download/cf1a597c-ec22-11ee-8006-fa163e7968e5",
+            "mimeType": "application/octet-stream",
+            "size": 505960
+          }
+        },
+        "links": [
+          {
+            "rel": "self",
+            "type": "application/json",
+            "title": "GeoJSON link for cf1a597c-ec22-11ee-8006-fa163e7968e5",
+            "href": "https://catalogue.dataspace.copernicus.eu/resto/collections/SENTINEL-1/cf1a597c-ec22-11ee-8006-fa163e7968e5.json"
+          }
+        ]
+      }
+    }
+  ]
+}</code></pre>
+</div>
+<div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
+<pre class="{json}"><code>{
+  "type": "FeatureCollection",
+  "properties": {
+    "id": "8cf9566f-ad45-5ed7-b586-7ff0f8d6c677",
+    "totalResults": null,
+    "exactCount": 0,
+    "startIndex": 1,
+    "itemsPerPage": 20,
+    "query": {
+      "originalFilters": {
+        "identifier": "cf1a597c-ec22-11ee-8006-fa163e7968e5",
+        "collection": "SENTINEL-1"
+      },
+      "appliedFilters": {
+        "identifier": "cf1a597c-ec22-11ee-8006-fa163e7968e5",
+        "collection": "SENTINEL-1"
+      },
+      "processingTime": 0.121144462
+    },
+    "links": [
+      {
+        "rel": "self",
+        "type": "application/json",
+        "title": "self",
+        "href": "https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel1/search.json?identifier=cf1a597c-ec22-11ee-8006-fa163e7968e5"
+      },
+      {
+        "rel": "search",
+        "type": "application/opensearchdescription+xml",
+        "title": "OpenSearch Description Document",
+        "href": "https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel1/describe.xml"
+      }
+    ]
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "id": "cf1a597c-ec22-11ee-8006-fa163e7968e5",
+      "geometry": null,
+      "properties": {
+        "collection": "SENTINEL-1",
+        "status": "ONLINE",
+        "license": {
+          "licenseId": "unlicensed",
+          "hasToBeSigned": "never",
+          "grantedCountries": null,
+          "grantedOrganizationCountries": null,
+          "grantedFlags": null,
+          "viewService": "public",
+          "signatureQuota": -1,
+          "description": {
+            "shortName": "No license"
+          }
+        },
+        "parentIdentifier": null,
+        "title": "S1A_AUX_CAL_V20140908T000000_G20240327T101157.SAFE",
+        "description": "The Sentinel-1 mission is the European Radar Observatory for the Copernicus joint initiative of the European Commission (EC) and the European Space Agency (ESA). The Sentinel-1 mission includes C-band imaging operating in four exclusive imaging modes with different resolution (down to 5 m) and coverage (up to 400 km). It provides dual polarization capability, short revisit times and rapid product delivery. Additionally, precise measurements of spacecraft position and attitude are available for every observation [https://dataspace.copernicus.eu/explore-data/data-collections/sentinel-data/sentinel-1].",
+        "organisationName": null,
+        "startDate": "2014-09-08T00:00:00.000Z",
+        "completionDate": "2014-09-08T00:00:00.000Z",
+        "productType": "AUX_CAL",
+        "processingLevel": null,
+        "platform": "S1A",
+        "instrument": "SAR",
+        "resolution": 0,
+        "sensorMode": null,
+        "orbitNumber": 0,
+        "quicklook": null,
+        "thumbnail": null,
+        "updated": "2024-03-27T10:15:07.353Z",
+        "published": "2024-03-27T10:15:06.733Z",
+        "snowCover": 0,
+        "cloudCover": 0,
+        "gmlgeometry": null,
+        "centroid": {
+          "type": null,
+          "coordinates": null
+        },
+        "productIdentifier": "/eodata/Sentinel-1/AUX/AUX_CAL/2014/09/08/S1A_AUX_CAL_V20140908T000000_G20240327T101157.SAFE.zip",
+        "orbitDirection": null,
+        "timeliness": null,
+        "relativeOrbitNumber": 0,
+        "processingBaseline": 0,
+        "polarisation": null,
+        "swath": null,
+        "services": {
+          "download": {
+            "url": "https://catalogue.dataspace.copernicus.eu/cf1a597c-ec22-11ee-8006-fa163e7968e5",
+            "mimeType": "application/octet-stream",
+            "size": 505960
+          }
+        },
+        "links": [
+          {
+            "rel": "self",
+            "type": "application/json",
+            "title": "GeoJSON link for cf1a597c-ec22-11ee-8006-fa163e7968e5",
+            "href": "https://catalogue.dataspace.copernicus.eu/resto/collections/SENTINEL-1/cf1a597c-ec22-11ee-8006-fa163e7968e5.json"
+          }
+        ]
+      }
+    }
+  ]
+}</code></pre>
+</div>
+</div>
+</div>
+<p><strong>We recommend reviewing the upcoming changes to Catalogue OpenSearch API described above to avoid disruption to your current scripts or apps.</strong></p>
+</section>
 <section id="default-timezone-change-for-odata-and-opensearch-apis" class="level2">
 <h2 class="anchored" data-anchor-id="default-timezone-change-for-odata-and-opensearch-apis">Default Timezone Change for OData and OpenSearch APIs</h2>
 <p>We would like to inform you about an upcoming change to our OData and OpenSearch API interfaces, effective <strong>27th May 2024</strong>.</p>
@@ -1220,18 +1450,18 @@ window.onload = function() {
 <p>To specify a timezone within the request:</p>
 <p><strong>OData API (e.g.&nbsp;UTC-4)</strong></p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" aria-current="page">OData Request</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">OData Request</a></li></ul>
 <div class="tab-content">
-<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
 <p><a href="https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name%20eq%20'SENTINEL-1'%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000-04:00%20and%20ContentDate/Start%20lt%202022-05-04T00:00:00.000-04:00&amp;$top=2" target="_blank"><code>https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name eq 'SENTINEL-1' and ContentDate/Start gt 2022-05-03T00:00:00.000-04:00 and ContentDate/Start lt 2022-05-04T00:00:00.000-04:00&amp;$top=2</code></a></p>
 </div>
 </div>
 </div>
 <p><strong>OpenSearch API (e.g.&nbsp;UTC+1)</strong></p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">OpenSearch Request</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true">OpenSearch Request</a></li></ul>
 <div class="tab-content">
-<div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
+<div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
 <p><a href="https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel1/search.json?startDate=2022-05-03T00:00:00%2b01:00&amp;maxRecords=2" target="_blank"><code>https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel1/search.json?startDate=2022-05-03T00:00:00+01:00&amp;maxRecords=2</code></a></p>
 </div>
 </div>
@@ -1252,12 +1482,12 @@ Note
 <p>Examples of API requests without the timezone and API responses before and after the change:</p>
 <p><strong>OData API Example</strong></p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true">HTTP Request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false">Current response</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-3" role="tab" aria-controls="tabset-3-3" aria-selected="false">New response</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true">HTTP Request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false">Current response</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-3" role="tab" aria-controls="tabset-4-3" aria-selected="false">New response</a></li></ul>
 <div class="tab-content">
-<div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
+<div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
 <p><a href="https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name%20eq%20'SENTINEL-1'%20and%20ContentDate/Start%20gt%202022-05-03T00:00:00.000%20and%20ContentDate/Start%20lt%202022-05-04T00:00:00.000&amp;$top=2" target="_blank"><code>https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name eq 'SENTINEL-1' and ContentDate/Start gt 2022-05-03T00:00:00.000 and ContentDate/Start lt 2022-05-04T00:00:00.000&amp;$top=2</code></a></p>
 </div>
-<div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
+<div id="tabset-4-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
 <pre class="{json}"><code>{
   "@odata.context": "$metadata#Products",
   "value": [
@@ -1324,7 +1554,7 @@ Note
   "@odata.nextLink": "https://catalogue.dataspace.copernicus.eu/odata/v1/Products?%24filter=Collection%2FName+eq+%27SENTINEL-1%27+and+ContentDate%2FStart+gt+2022-05-03T00%3A00%3A00.000+and+ContentDate%2FStart+lt+2022-05-04T00%3A00%3A00.000&amp;%24top=2&amp;%24skip=2"
 }</code></pre>
 </div>
-<div id="tabset-3-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-3-tab">
+<div id="tabset-4-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-3-tab">
 <pre class="{json}"><code>{
   "@odata.context": "$metadata#Products",
   "value": [
@@ -1369,12 +1599,12 @@ Note
 </div>
 <p><strong>OpenSearch API Example</strong></p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true">HTTP Request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false">Current response</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-3" role="tab" aria-controls="tabset-4-3" aria-selected="false">New response</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-5-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-1" role="tab" aria-controls="tabset-5-1" aria-selected="true">HTTP Request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-2" role="tab" aria-controls="tabset-5-2" aria-selected="false">Current response</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-3" role="tab" aria-controls="tabset-5-3" aria-selected="false">New response</a></li></ul>
 <div class="tab-content">
-<div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
+<div id="tabset-5-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-5-1-tab">
 <p><a href="https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel1/search.json?startDate=2022-05-03T00:00:00&amp;maxRecords=2" target="_blank"><code>https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel1/search.json?startDate=2022-05-03T00:00:00&amp;maxRecords=2</code></a></p>
 </div>
-<div id="tabset-4-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
+<div id="tabset-5-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-2-tab">
 <pre class="{json}"><code>{
   "type": "FeatureCollection",
   "properties": {
@@ -1495,7 +1725,7 @@ Note
   ]
 }</code></pre>
 </div>
-<div id="tabset-4-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-3-tab">
+<div id="tabset-5-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-3-tab">
 <pre class="{json}"><code>{
   "type": "FeatureCollection",
   "properties": {
@@ -1635,9 +1865,9 @@ Note
 <section id="incorrect-collection-name" class="level4">
 <h4 class="anchored" data-anchor-id="incorrect-collection-name">Incorrect collection name</h4>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-5-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-1" role="tab" aria-controls="tabset-5-1" aria-selected="true">Current response</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-2" role="tab" aria-controls="tabset-5-2" aria-selected="false">New response</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-6-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-1" role="tab" aria-controls="tabset-6-1" aria-selected="true">Current response</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-2" role="tab" aria-controls="tabset-6-2" aria-selected="false">New response</a></li></ul>
 <div class="tab-content">
-<div id="tabset-5-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-5-1-tab">
+<div id="tabset-6-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-6-1-tab">
 <pre class="{json}"><code>{
     "detail": {
         "ErrorMessage": "loadFromStore - Not Found",
@@ -1645,7 +1875,7 @@ Note
     }
 }</code></pre>
 </div>
-<div id="tabset-5-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-2-tab">
+<div id="tabset-6-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-2-tab">
 <pre class="{json}"><code>{
     "detail": {
         "ErrorMessage": "Unknown collection.",
@@ -1666,12 +1896,12 @@ Note
 </div>
 <p><strong>Example</strong></p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-6-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-1" role="tab" aria-controls="tabset-6-1" aria-selected="true">HTTP Request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-2" role="tab" aria-controls="tabset-6-2" aria-selected="false">New response example</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-7-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-1" role="tab" aria-controls="tabset-7-1" aria-selected="true">HTTP Request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-2" role="tab" aria-controls="tabset-7-2" aria-selected="false">New response example</a></li></ul>
 <div class="tab-content">
-<div id="tabset-6-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-6-1-tab">
+<div id="tabset-7-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-7-1-tab">
 <p><a href="https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinl2/search.json" target="_blank"><code>https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinl2/search.json</code></a></p>
 </div>
-<div id="tabset-6-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-2-tab">
+<div id="tabset-7-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-2-tab">
 <pre class="{json}"><code>{
     "detail": {
         "ErrorMessage": "Unknown collection.",
@@ -1695,12 +1925,12 @@ Note
 <h4 class="anchored" data-anchor-id="incorrect-name-of-the-query-parameter">Incorrect name of the query parameter</h4>
 <p>(when the collection is not specified)</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-7-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-1" role="tab" aria-controls="tabset-7-1" aria-selected="true">Current response</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-2" role="tab" aria-controls="tabset-7-2" aria-selected="false">New response</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-8-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-1" role="tab" aria-controls="tabset-8-1" aria-selected="true">Current response</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-8-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-2" role="tab" aria-controls="tabset-8-2" aria-selected="false">New response</a></li></ul>
 <div class="tab-content">
-<div id="tabset-7-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-7-1-tab">
+<div id="tabset-8-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-8-1-tab">
 <p>No error is returned. The incorrect query parameter is ignored and not reflected in <code>appliedFilters</code>.</p>
 </div>
-<div id="tabset-7-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-2-tab">
+<div id="tabset-8-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-8-2-tab">
 <pre class="{json}"><code>{
     "detail": {
         "ErrorMessage": "Unknown query parameter(s).",
@@ -1719,12 +1949,12 @@ Note
 </div>
 <p><strong>Example</strong></p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-8-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-1" role="tab" aria-controls="tabset-8-1" aria-selected="true">HTTP Request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-8-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-2" role="tab" aria-controls="tabset-8-2" aria-selected="false">New response example</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-9-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-9-1" role="tab" aria-controls="tabset-9-1" aria-selected="true">HTTP Request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-9-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-9-2" role="tab" aria-controls="tabset-9-2" aria-selected="false">New response example</a></li></ul>
 <div class="tab-content">
-<div id="tabset-8-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-8-1-tab">
+<div id="tabset-9-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-9-1-tab">
 <p><a href="https://catalogue.dataspace.copernicus.eu/resto/api/collections/search.json?productsType=S2MSI1C" target="_blank"><code>https://catalogue.dataspace.copernicus.eu/resto/api/collections/search.json?productsType=S2MSI1C</code></a></p>
 </div>
-<div id="tabset-8-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-8-2-tab">
+<div id="tabset-9-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-9-2-tab">
 <pre class="{json}"><code>{
     "detail": {
         "ErrorMessage": "Unknown query parameter(s).",
@@ -1746,12 +1976,12 @@ Note
 <h4 class="anchored" data-anchor-id="incorrect-name-of-the-query-parameter-1">Incorrect name of the query parameter</h4>
 <p>(when the collection is specified)</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-9-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-9-1" role="tab" aria-controls="tabset-9-1" aria-selected="true">Current response</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-9-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-9-2" role="tab" aria-controls="tabset-9-2" aria-selected="false">New response</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-10-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-10-1" role="tab" aria-controls="tabset-10-1" aria-selected="true">Current response</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-10-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-10-2" role="tab" aria-controls="tabset-10-2" aria-selected="false">New response</a></li></ul>
 <div class="tab-content">
-<div id="tabset-9-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-9-1-tab">
+<div id="tabset-10-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-10-1-tab">
 <p>No error is returned. The incorrect query parameter is ignored and not reflected in <code>appliedFilters</code>.</p>
 </div>
-<div id="tabset-9-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-9-2-tab">
+<div id="tabset-10-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-10-2-tab">
 <pre class="{json}"><code>{
     "detail": {
         "ErrorMessage": "Unknown query parameter(s).",
@@ -1770,12 +2000,12 @@ Note
 </div>
 <p><strong>Example</strong></p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-10-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-10-1" role="tab" aria-controls="tabset-10-1" aria-selected="true">HTTP Request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-10-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-10-2" role="tab" aria-controls="tabset-10-2" aria-selected="false">New response example</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-11-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-11-1" role="tab" aria-controls="tabset-11-1" aria-selected="true">HTTP Request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-11-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-11-2" role="tab" aria-controls="tabset-11-2" aria-selected="false">New response example</a></li></ul>
 <div class="tab-content">
-<div id="tabset-10-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-10-1-tab">
+<div id="tabset-11-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-11-1-tab">
 <p><a href="https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?productType=S2MSI1C&amp;startDat=2023-06-11&amp;completionDte=2023-06-22" target="_blank"><code>https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel2/search.json?productType=S2MSI1C&amp;startDat=2023-06-11&amp;completionDte=2023-06-22</code></a></p>
 </div>
-<div id="tabset-10-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-10-2-tab">
+<div id="tabset-11-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-11-2-tab">
 <pre class="{json}"><code>{
     "detail": {
         "ErrorMessage": "Unknown query parameter(s).",
@@ -1811,9 +2041,9 @@ Note
 <h4 class="anchored" data-anchor-id="incorrect-value-of-the-query-parameter">Incorrect value of the query parameter</h4>
 <p><em>(maxRecords, index, page, sortParam, sortOrder, exactCount, geometry, box, lon, lat, radius, startDate, completionDate, updated, published, publishedAfter, publishedBefore, status)</em></p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-11-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-11-1" role="tab" aria-controls="tabset-11-1" aria-selected="true">Current response</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-11-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-11-2" role="tab" aria-controls="tabset-11-2" aria-selected="false">New response</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-12-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-12-1" role="tab" aria-controls="tabset-12-1" aria-selected="true">Current response</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-12-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-12-2" role="tab" aria-controls="tabset-12-2" aria-selected="false">New response</a></li></ul>
 <div class="tab-content">
-<div id="tabset-11-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-11-1-tab">
+<div id="tabset-12-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-12-1-tab">
 <pre class="{json}"><code>{
     "detail": {
         "ErrorMessage": &lt;error message&gt;,
@@ -1821,7 +2051,7 @@ Note
     }
 }</code></pre>
 </div>
-<div id="tabset-11-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-11-2-tab">
+<div id="tabset-12-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-12-2-tab">
 <pre class="{json}"><code>{
     "detail": {
         "ErrorMessage": "Validation error.",
@@ -1840,12 +2070,12 @@ Note
 </div>
 <p><strong>Example</strong></p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-12-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-12-1" role="tab" aria-controls="tabset-12-1" aria-selected="true">HTTP Request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-12-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-12-2" role="tab" aria-controls="tabset-12-2" aria-selected="false">New response example</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-13-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-13-1" role="tab" aria-controls="tabset-13-1" aria-selected="true">HTTP Request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-13-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-13-2" role="tab" aria-controls="tabset-13-2" aria-selected="false">New response example</a></li></ul>
 <div class="tab-content">
-<div id="tabset-12-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-12-1-tab">
+<div id="tabset-13-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-13-1-tab">
 <p><a href="https://catalogue.dataspace.copernicus.eu/resto/api/collections/search.json?startDate=2021-07-01T00:00:00Z&amp;completionDate=2021-07-31T23:59:59Z&amp;maxRecords=2001" target="_blank"><code>https://catalogue.dataspace.copernicus.eu/resto/api/collections/search.json?startDate=2021-07-01T00:00:00Z&amp;completionDate=2021-07-31T23:59:59Z&amp;maxRecords=2001</code></a></p>
 </div>
-<div id="tabset-12-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-12-2-tab">
+<div id="tabset-13-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-13-2-tab">
 <pre class="{json}"><code>{
     "detail": {
         "ErrorMessage": "Validation error.",
@@ -1887,9 +2117,9 @@ Note
 <section id="incorrect-value-type-of-the-query-parameter" class="level4">
 <h4 class="anchored" data-anchor-id="incorrect-value-type-of-the-query-parameter">Incorrect value type of the query parameter</h4>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-13-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-13-1" role="tab" aria-controls="tabset-13-1" aria-selected="true">Current response</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-13-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-13-2" role="tab" aria-controls="tabset-13-2" aria-selected="false">New response</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-14-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-14-1" role="tab" aria-controls="tabset-14-1" aria-selected="true">Current response</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-14-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-14-2" role="tab" aria-controls="tabset-14-2" aria-selected="false">New response</a></li></ul>
 <div class="tab-content">
-<div id="tabset-13-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-13-1-tab">
+<div id="tabset-14-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-14-1-tab">
 <pre class="{json}"><code>{
     "detail": {
         "ErrorMessage": &lt;error message&gt;,
@@ -1897,7 +2127,7 @@ Note
     }
 }</code></pre>
 </div>
-<div id="tabset-13-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-13-2-tab">
+<div id="tabset-14-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-14-2-tab">
 <pre class="{json}"><code>{
     "detail": {
         "ErrorMessage": "Validation error.",
@@ -1916,12 +2146,12 @@ Note
 </div>
 <p><strong>Example</strong></p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-14-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-14-1" role="tab" aria-controls="tabset-14-1" aria-selected="true">HTTP Request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-14-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-14-2" role="tab" aria-controls="tabset-14-2" aria-selected="false">New response example</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-15-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-15-1" role="tab" aria-controls="tabset-15-1" aria-selected="true">HTTP Request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-15-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-15-2" role="tab" aria-controls="tabset-15-2" aria-selected="false">New response example</a></li></ul>
 <div class="tab-content">
-<div id="tabset-14-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-14-1-tab">
+<div id="tabset-15-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-15-1-tab">
 <p><a href="https://catalogue.dataspace.copernicus.eu/resto/api/collections/search.json?orbitNumber=ascending" target="_blank"><code>https://catalogue.dataspace.copernicus.eu/resto/api/collections/search.json?orbitNumber=ascending</code></a></p>
 </div>
-<div id="tabset-14-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-14-2-tab">
+<div id="tabset-15-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-15-2-tab">
 <pre class="{json}"><code>{
     "detail": {
         "ErrorMessage": "Validation error.",
@@ -1946,9 +2176,9 @@ Note
 </ul>
 <p>The <code>last</code> link will be provided <em>only</em> when <code>exactCount</code> is used in the request.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-15-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-15-1" role="tab" aria-controls="tabset-15-1" aria-selected="true">Link <code>last</code> example</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-16-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-16-1" role="tab" aria-controls="tabset-16-1" aria-selected="true">Link <code>last</code> example</a></li></ul>
 <div class="tab-content">
-<div id="tabset-15-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-15-1-tab">
+<div id="tabset-16-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-16-1-tab">
 <pre class="{json}"><code>{
     "rel": "last",
     "type": "application/json",
