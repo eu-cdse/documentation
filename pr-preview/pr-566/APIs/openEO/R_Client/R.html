@@ -1228,7 +1228,7 @@ window.onload = function() {
   <li><a href="#processes" id="toc-processes" class="nav-link" data-scroll-target="#processes">Processes</a></li>
   </ul></li>
   <li><a href="#authentication" id="toc-authentication" class="nav-link" data-scroll-target="#authentication">Authentication</a></li>
-  <li><a href="#creating-a-user-defined-process" id="toc-creating-a-user-defined-process" class="nav-link" data-scroll-target="#creating-a-user-defined-process">Creating a (user-defined) process</a></li>
+  <li><a href="#creating-a-datacube" id="toc-creating-a-datacube" class="nav-link" data-scroll-target="#creating-a-datacube">Creating a datacube</a></li>
   <li><a href="#batch-job-management" id="toc-batch-job-management" class="nav-link" data-scroll-target="#batch-job-management">Batch Job Management</a></li>
   <li><a href="#full-example" id="toc-full-example" class="nav-link" data-scroll-target="#full-example">Full Example</a></li>
   <li><a href="#user-defined-functions" id="toc-user-defined-functions" class="nav-link" data-scroll-target="#user-defined-functions">User Defined Functions</a></li>
@@ -1256,10 +1256,10 @@ window.onload = function() {
 
 </header>
 
-<p>This Getting Started guide will give you just a simple overview of the capabilities of the openEO R client library.</p>
+<p>This Getting Started guide provides a simple overview of the capabilities offered by the openEO R client library.</p>
 <section id="installation" class="level2">
 <h2 class="anchored" data-anchor-id="installation">Installation</h2>
-<p>Before you install the R client module into your R environment, please make sure that you have at least R version 3.6. Older versions might also work, but were not tested.</p>
+<p>Before installing the openEO R-client module, ensure to have atleast R of 3.6 version. Older versions might also work, but have not been tested.</p>
 <p>Stable releases can be installed from CRAN:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"openeo"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="callout callout-style-default callout-tip callout-titled">
@@ -1274,35 +1274,32 @@ Installing the development version
 </div>
 <div id="callout-1" class="callout-1-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>If you want to install the development version, you can install from GitHub. It may contain more features, but may also be unstable.</p>
-<p>You need to have the package ‘devtools’ installed. If it is not installed use <code>install.packages("devtools")</code>.</p>
-<p>Now you can use <code>install_github</code> from the devtools package to install the development version:</p>
+<p>To install the development version, follow the GitHub installation instructions. This version might include additional features but could be less stable.</p>
+<p>Ensure ‘devtools’ is installed; if not, use <code>install.packages("devtools")</code>.</p>
+<p>Now, <code>install_github</code> from the devtools package can be used to install the development version:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="at">repo=</span><span class="st">"Open-EO/openeo-r-client"</span>, <span class="at">dependencies=</span><span class="cn">TRUE</span>, <span class="at">ref=</span><span class="st">"develop"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>If this gives you an error, something went wrong with the installation so please check the requirements again.</p>
+<p>If an error occurs, there may have been an issue during the installation process. Please review the requirements to troubleshoot the problem.</p>
 </div>
 </div>
 </div>
-<p>If you have troubles installing the package, feel free to to <a href="https://helpcenter.dataspace.copernicus.eu/hc/en-gb/requests/new" target="_blank">create a ticket</a> or leave an issue at the <a href="https://github.com/Open-EO/openeo-r-client/issues">GitHub project</a>.</p>
-<p>Now that the installation was successfully finished, we can load the package and connect to openEO compliant back-ends. In the following chapters we quickly walk through the main features of the R client.</p>
+<p>If problems are encountered when installing, <a href="https://helpcenter.dataspace.copernicus.eu/hc/en-gb/requests/new" target="_blank">create a ticket, post in forum</a> or raise an issue on the <a href="https://github.com/Open-EO/openeo-r-client/issues">GitHub project page</a>.</p>
+<p>With the successful completion of the installation, import it to use openEO-compliant back-ends. The following section provides a simple overview of the R client.</p>
 </section>
 <section id="exploring-a-back-end" class="level2">
 <h2 class="anchored" data-anchor-id="exploring-a-back-end">Exploring a back-end</h2>
-<p>For this tutorial we will use the openEO instance of Copernicus Data Space Ecosystem, which is available at <code>https://openeo.dataspace.copernicus.eu</code>.</p>
-<p>First we need to establish a connection to the back-end.</p>
+<p>First, establish a connection to the Copernicus Data Space Ecosystem backend. The endpoint is <code>https://openeo.dataspace.copernicus.eu</code>.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(openeo)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>connection <span class="ot">=</span> <span class="fu">connect</span>(<span class="at">host =</span> <span class="st">"https://openeo.dataspace.copernicus.eu"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>The capabilities of the back-end and the collections are generally publicly available, unless the data collections are proprietary and licensing issues prevent the back-end provider from publishing the collection. For the publicly available information you do not need to have an account on the back-end for reading them.</p>
 <section id="collections" class="level3">
 <h3 class="anchored" data-anchor-id="collections">Collections</h3>
-<p>Collections represent the basic data the back-end provides (e.g.&nbsp;Sentinel 1 collection) and are therefore often used as input data for job executions (<a href="../../../APIs/openEO/Glossary.html#eo-data-collections">more info on collections</a>). With the following code snippet you can get all available collection names and their description. The collection list and its entries have their own implementations of the <code>print</code> function. The collection list object is coerced into a <code>data.frame</code> only for printing purposes and the collection for the collection some key information are printed.</p>
-<p>To get the collection list can be indexed by the collections ID to get the more details about the overview information. With the <code>describe_collection</code> function you can get an even more detailed information about the collection.</p>
+<p>Collections are the data offered by the backend (e.g., Sentinel 1 collection) for further processing and analysis. For additional information on collections, please refer to the glossary entry <a href="../../../APIs/openEO/Glossary.html#eo-data-collections">here</a>.</p>
+<p>The code snippet below lists available collection names and their descriptions. To use a specific collection in a workflow, its Collection ID can access it. For a more detailed overview of any collection, utilize the <code>describe_collection</code> function.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Dictionary of the full metadata of the "COPERNICUS/S2" collection (dict)</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>s2 <span class="ot">=</span> <span class="fu">describe_collection</span>(<span class="st">"SENTINEL2_L2A"</span>) <span class="co"># or use the collection entry from the list, e.g. collections$`COPERNICUS/S2`</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(s2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>In general all metadata objects are based on lists, so you can use <code>str()</code> to get the structure of the list and address fields by the <code>$</code> operator.</p>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">describe_collection</span>(<span class="st">"SENTINEL2_L2A"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Generally, all metadata objects are structured as lists. Users can use <code>str()</code> to examine the structure of the list and access fields using the <code>$</code> operator.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -1315,23 +1312,21 @@ Tip
 </div>
 <div id="callout-2" class="callout-2-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>If the package is used with RStudio the metadata can also be nicely rendered as a web page in the viewer panel by running <code>collection_viewer(x="SENTINEL2_L2A")</code>.</p>
+<p>When using RStudio, metadata can be readily displayed as a web page in the viewer panel by executing <code>collection_viewer(x="SENTINEL2_L2A")</code>.</p>
 </div>
 </div>
 </div>
 </section>
 <section id="processes" class="level3">
 <h3 class="anchored" data-anchor-id="processes">Processes</h3>
-<p>Processes in openEO are tasks that can be applied to (EO) data. The input of a process might be the output of another process, so that several connected processes form a new (user-defined) process itself. Therefore, a process resembles the smallest unit of task descriptions in openEO (<a href="../../../APIs/openEO/Glossary.html#processes">more details on processes</a>). The following code snippet shows how to get the available processes.</p>
+<p>Processes in openEO are operations applied to (EO) data (see <a href="../../../APIs/openEO/Glossary.html#processes">here</a>), such as calculating the mean, pixel masking, spatial aggregations, etc. Furthermore, a process’s output can be another’s input in a workflow.</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># List of available openEO processes with full metadata</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>processes <span class="ot">=</span> <span class="fu">list_processes</span>()</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># List of available openEO processes by identifiers (string)</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">names</span>(processes))</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co"># print metadata of the process with ID "load_collection"</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(processes<span class="sc">$</span>load_collection)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>The <code>list_processes()</code> method returns a list of process metadata objects that the back-end provides. Each process list entry is a more complex list object (called ‘ProcessInfo’) and contains the process identifier and additional metadata about the process, such as expected arguments and return types.</p>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(processes)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co"># print metadata of the process with ID "load_collection"</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(processes<span class="sc">$</span>load_collection)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The <code>list_processes()</code> used above returns a list of available processes. Each process includes a unique identifier and additional metadata, such as expected arguments and return types.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -1344,47 +1339,49 @@ Tip
 </div>
 <div id="callout-3" class="callout-3-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>As for the collection, processes can also be rendered as a web page in the viewer panel, if RStudio is used. In order to open the viewer use <code>process_viewer()</code> with either a particular process (<code>process_viewer("load_collection")</code>) or you can pass on all processes (<code>process_viewer(processes)</code>). When all processes are chosen, there is also a search bar and a category tree.</p>
+<p>Like collections, processes can also be displayed as a web page in the viewer panel when using RStudio. To open the viewer, use <code>process_viewer()</code> with either a specific process (e.g., <code>process_viewer("load_collection")</code>) or all processes (<code>process_viewer(processes)</code>).</p>
 </div>
 </div>
 </div>
-<p>For other graphical overviews of the openEO processes, there is an <a href="https://docs.openeo.cloud/processes/" target="_blank">online documentation</a> for general process descriptions and the <a href="https://hub.openeo.org/">openEO Hub</a> for back-end specific process descriptions.</p>
 </section>
 </section>
 <section id="authentication" class="level2">
 <h2 class="anchored" data-anchor-id="authentication">Authentication</h2>
-<p>In the code snippets above we did not need to log in since we just queried publicly available back-end information. However, to run non-trivial processing queries one has to authenticate so that permissions, resource usage, etc. can be managed properly.</p>
-<p>To authenticate your account on the backend of the Copernicus Data Space Ecosystem, it is necessary for you to complete the registration process. Once registered, the OIDC (<a href="https://openid.net/connect/" target="_blank">OpenID Connect</a>) authentication method will be employed to verify your identity using an external service.</p>
-<p>The following code snippet shows how to log in via OIDC authentication if the back-end supports the simplified authentication method:</p>
+<p>Basic metadata about collection and processes, as discussed above is publicly available and does not require being logged in. However, for downloading EO data or running processing workflows, it is necessary to authenticate so that permissions, resource usage, etc. can be managed properly.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Make sure to complete <a href="../../../Registration.html">Copernicus Data Space Ecosystem registration</a> before authentication.</p>
+</div>
+</div>
+<p>Once registered, user can authenticate as shown below:</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">login</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>The following code snippet shows how to log in via OIDC authentication if the simplified authentication method doesn’t work and you need to provide a client ID and secret:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co"># get supported OIDC providers which the back-end supports</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>oidc_providers <span class="ot">=</span> <span class="fu">list_oidc_providers</span>()</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="fu">login</span>(<span class="at">provider =</span> oidc_providers<span class="sc">$</span>some_provider,</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>      <span class="at">config =</span> <span class="fu">list</span>(</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">client_id=</span> <span class="st">"..."</span>,</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>        <span class="at">secret =</span> <span class="st">"..."</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Calling this method opens your system web browser, with which you can authenticate yourself on the back-end authentication system. After that the website will give you the instructions to go back to the R client, where your connection has logged your account in. This means, that every call that comes after that via the connection variable is executed by your user account.</p>
+<p>Calling this method opens the system’s web browser for user authentication. Upon successful authentication, a message confirming the login success will appear on the R console.</p>
 </section>
-<section id="creating-a-user-defined-process" class="level2">
-<h2 class="anchored" data-anchor-id="creating-a-user-defined-process">Creating a (user-defined) process</h2>
-<p>Now that we know how to discover the back-end and how to authenticate, lets continue by creating a new batch job to process some data.</p>
+<section id="creating-a-datacube" class="level2">
+<h2 class="anchored" data-anchor-id="creating-a-datacube">Creating a datacube</h2>
+<p>Now, let us create, fetch and process EO data using openEO. This involves working with “Datacubes,” which are fundamental in openEO for representing EO data. For more information on datacubes, refer to the glossary <a href="../../../APIs/openEO/Glossary.html#spatial-datacubes">here</a>.</p>
 <p>First we need to create a process builder object that carries all the available predefined openEO processes of the connected back-end as attached R functions with the parameters stated in the process metadata.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>p <span class="ot">=</span> <span class="fu">processes</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>The functions of the builder return process nodes, which represent a particular result in the workflow. As one of the first steps we need to select the source data collection.</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>datacube <span class="ot">=</span> p<span class="sc">$</span><span class="fu">load_collection</span>(</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">id =</span> <span class="st">"SENTINEL1_GRD"</span>,</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">spatial_extent=</span><span class="fu">list</span>(<span class="at">west =</span> <span class="fl">16.06</span>, <span class="at">south =</span> <span class="fl">48.06</span>, <span class="at">east =</span> <span class="fl">16.65</span>, <span class="at">north =</span> <span class="fl">48.35</span>),</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">temporal_extent=</span><span class="fu">c</span>(<span class="st">"2017-03-01"</span>, <span class="st">"2017-04-01"</span>),</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">bands=</span><span class="fu">c</span>(<span class="st">"VV"</span>, <span class="st">"VH"</span>)</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>This results in a process node that represents a <a href="../../../APIs/openEO/Glossary.html#spatial-datacubes"><code>datacube</code></a> and contains the “SENTINEL1_GRD” data restricted to the given spatial extent, the given temporal extent and the given bands .</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>p <span class="ot">=</span> <span class="fu">processes</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>A process builder is initialised. This object encapsulates all available predefined openEO processes from the CDSE backend as R functions, each with parameters defined in the process metadata.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>datacube <span class="ot">=</span> p<span class="sc">$</span><span class="fu">load_collection</span>(</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">id =</span> <span class="st">"SENTINEL1_GRD"</span>,</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">spatial_extent=</span><span class="fu">list</span>(<span class="at">west =</span> <span class="fl">16.06</span>, <span class="at">south =</span> <span class="fl">48.06</span>, <span class="at">east =</span> <span class="fl">16.65</span>, <span class="at">north =</span> <span class="fl">48.35</span>),</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">temporal_extent=</span><span class="fu">c</span>(<span class="st">"2017-03-01"</span>, <span class="st">"2017-04-01"</span>),</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">bands=</span><span class="fu">c</span>(<span class="st">"VV"</span>, <span class="st">"VH"</span>)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>This creates a process node representing a <a href="../../../APIs/openEO/Glossary.html#spatial-datacubes"><code>datacube</code></a> with “SENTINEL1_GRD” data for the specified spatial extent, temporal extent, and bands.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1393,20 +1390,24 @@ Sample Data Retrieval
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>In order to get a better understanding about the processing mechanisms and the data structures used in openEO Platform, it helps to check the actual data from time to time. The function <a href="https://open-eo.github.io/openeo-r-client/reference/get_sample.html" target="_blank"><code>get_sample</code></a> aids the user in downloading data for a very small spatial extent. It is automatically loaded into R so that you can directly inspect it with <code>stars</code>. Read the vignette on “<a href="https://open-eo.github.io/openeo-r-client/articles/sample_data.html" target="_blank">Sample Data Retrieval</a>” for more details.</p>
+<p>It is useful to check the actual data occasionally to understand the processing mechanisms and data structures used in the openEO Platform. The function <a href="https://open-eo.github.io/openeo-r-client/reference/get_sample.html" target="_blank"><code>get_sample</code></a> helps in downloading data for a small spatial extent. This data is automatically loaded into R, for direct inspection with <code>stars</code>.</p>
 </div>
 </div>
 </div>
-<p>Having the input data ready, we want to apply a process on the datacube. Therefore, we can call the process directly on the datacube object, which then returns a datacube with the process applied.</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>min_reducer <span class="ot">=</span> <span class="cf">function</span>(data,context) { </span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(p<span class="sc">$</span><span class="fu">min</span>(<span class="at">data =</span> data))</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>reduced <span class="ot">=</span> p<span class="sc">$</span><span class="fu">reduce_dimension</span>(<span class="at">data =</span> datacube, <span class="at">reducer =</span> min_reducer, <span class="at">dimension=</span><span class="st">"t"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>The datacube is now reduced by the time dimension named <code>t</code>, by taking the minimum value of the timeseries values. Now the datacube has no time dimension left. Other so called “reducer” processes exist, e.g.&nbsp;for computing maximum and mean values.</p>
+<p>A process can now be applied to the input datacube.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co"># apply sar backscatter </span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>datacube_sar <span class="ot">=</span> p<span class="sc">$</span><span class="fu">sar_backscatter</span>(<span class="at">data =</span> datacube, <span class="at">coefficient =</span> <span class="st">"sigma0-ellipsoid"</span>)</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>min_reducer <span class="ot">=</span> <span class="cf">function</span>(data,context) { </span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(p<span class="sc">$</span><span class="fu">min</span>(<span class="at">data =</span> data))</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>reduced <span class="ot">=</span> p<span class="sc">$</span><span class="fu">reduce_dimension</span>(<span class="at">data =</span> datacube_sar, <span class="at">reducer =</span> min_reducer, <span class="at">dimension=</span><span class="st">"t"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>A SAR backscatter process is applied to the input datacube. The datacube is then reduced by the time dimension using <code>min_reducer</code> function.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -1417,162 +1418,149 @@ Note
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Everything applied to the datacube at this point is neither executed locally on your machine nor executed on the back-end. It just defines the input data and process chain the back-end needs to apply when it sends the datacube to the back-end and executes it there.</p>
+<p>It is important to note that all processes applied so far have not yet been run locally or on the backend. An abstract representation of the algorithm (input data and processing chain) has been created and encapsulated in a local <code>reduced</code> object. To run the workflow, it must be explicitly sent to the backend.</p>
 </div>
 </div>
 <p>After applying all processes you want to execute, we need to tell the back-end to export the datacube, for example as GeoTiff:</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>formats <span class="ot">=</span> <span class="fu">list_file_formats</span>()</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>result <span class="ot">=</span> p<span class="sc">$</span><span class="fu">save_result</span>(<span class="at">data =</span> reduced, <span class="at">format =</span> formats<span class="sc">$</span>output<span class="sc">$</span><span class="st">`</span><span class="at">GTIFF-ZIP</span><span class="st">`</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>The first line retrieves the back-ends offered input and output formats. The second line creates the result node, which stores the data as a zipped GeoTiff.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>formats <span class="ot">=</span> <span class="fu">list_file_formats</span>()</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>result <span class="ot">=</span> p<span class="sc">$</span><span class="fu">save_result</span>(<span class="at">data =</span> reduced, <span class="at">format =</span> formats<span class="sc">$</span>output<span class="sc">$</span><span class="st">`</span><span class="at">GTIFF-ZIP</span><span class="st">`</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The initial line in the above snippet fetches the supported format backends. The following line creates the result node, which stores the data as a zipped GeoTiff.</p>
 </section>
 <section id="batch-job-management" class="level2">
 <h2 class="anchored" data-anchor-id="batch-job-management">Batch Job Management</h2>
-<p>After you have finished working on your (user-defined) process, we can now send it to the back-end and start the execution. In openEO, an execution of a (user-defined) process is called a <a href="../../../APIs/openEO/Glossary.html#data-processing-modes">(batch job)</a>. Therefore, we need to create a job at the back-end using our datacube, giving it the title <code>Example Title</code>.</p>
+<p>Simple openEO usage examples demonstrate synchronous downloading of results. This approach is preferred to a smaller extent or for a simple workflow. However, batch jobs are necessary for more demanding tasks, such as processing larger extents or intensive computations. For more information on these approaches visit <a href="../../../APIs/openEO/Glossary.html#data-processing-modes">here</a>.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create a job at the back-end using our datacube, giving it the title `Example Title`</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>job <span class="ot">=</span> <span class="fu">create_job</span>(<span class="at">graph=</span>result,<span class="at">title =</span> <span class="st">"Example Title"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The <code>create_job</code> method sends all required information to the backend and registers a new job. However, the job is created at this stage and to start, it must be explicitly queued for processing:</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>job <span class="ot">=</span> <span class="fu">create_job</span>(<span class="at">graph=</span>result,<span class="at">title =</span> <span class="st">"Example Title"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>The <code>create_job</code> method sends all necessary information to the back-end and creates a new job, which gets returned. After this, the job is just created, but has not started the execution at the back-end yet. It needs to be queued for processing explicitly:</p>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">start_job</span>(<span class="at">job =</span> job)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The status updates can be obtained using the <code>list_jobs()</code> function. This function provides a list of jobs submitted to the backend. However, it is important to note that only <code>list_jobs()</code> refreshes this list. Therefore, to monitor a job, you need to iteratively call either <code>describe_job()</code> or update the job list using <code>list_jobs()</code>.</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">start_job</span>(<span class="at">job =</span> job)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>After the job was executed, status updates can be fetched by using the <code>list_jobs()</code> function. This function returns a list of job descriptions, which can be indexed with the jobs ID to limit the search results. But remember that only <code>list_jobs()</code> refreshes this list. So, to monitor a job you have to iteratively call the job (<code>describe_job()</code>) or the job list <code>list_jobs()</code>.</p>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>jobs <span class="ot">=</span> <span class="fu">list_jobs</span>()</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>jobs <span class="co"># printed as a tibble or data.frame, but the object is a list</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="co"># or use the job id (in this example 'cZ2ND0Z5nhBFNQFq') as index to get a particular job overview</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>jobs<span class="sc">$</span>cZ2ND0Z5nhBFNQFq</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="co"># alternatively request detailed information about the job</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="fu">describe_job</span>(<span class="at">job =</span> job)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Once completed, <code>download_results()</code> allows the result to be retrieved. Alternatively, <code>list_results()</code> provides an overview of the created files, including download links and encountered error messages.</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>jobs <span class="ot">=</span> <span class="fu">list_jobs</span>()</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>jobs <span class="co"># printed as a tibble or data.frame, but the object is a list</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co"># list the processed results</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="fu">list_results</span>(<span class="at">job =</span> job)</span>
 <span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="co"># or use the job id (in this example 'cZ2ND0Z5nhBFNQFq') as index to get a particular job overview</span></span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>jobs<span class="sc">$</span>cZ2ND0Z5nhBFNQFq</span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="co"># alternatively request detailed information about the job</span></span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="fu">describe_job</span>(<span class="at">job =</span> job)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>When the job is finished, calling <code>download_results()</code> will download the results of a job. Using <code>list_results()</code> will return an overview about the created files and their download link or it states the error message, in case of an error.</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co"># list the processed results</span></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="fu">list_results</span>(<span class="at">job =</span> job)</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="co"># download all the files into a folder on the file system</span></span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="fu">download_results</span>(<span class="at">job =</span> job, <span class="at">folder =</span> <span class="st">"/some/folder/on/filesystem"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Note
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>The printing behavior and the actual data structure might differ!</p>
-</div>
-</div>
-<p>Now you know the general workflow of job executions.</p>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="co"># download all the files into a folder on the file system</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="fu">download_results</span>(<span class="at">job =</span> job, <span class="at">folder =</span> <span class="st">"/some/folder/on/filesystem"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>This summarizes the complete openEO workflow using the R-client.</p>
 </section>
 <section id="full-example" class="level2">
 <h2 class="anchored" data-anchor-id="full-example">Full Example</h2>
-<p>In this chapter we will show a full example of an earth observation use case using the R client. Instead of batch job processing, we compute the image synchronously. Synchronous processing means the result is directly returned in the response, which usually works only for smaller amounts of data.</p>
-<p>Here, we want to produce a monthly RGB composite of Sentinel 1 backscatter data over the area of Vienna, Austria for three months in 2017. This can be used for classification and crop monitoring.</p>
-<p>In the following code example, we use inline code comments to describe what we are doing.</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(openeo)</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tibble)</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="co"># connect  to the back-end and login either via explicit call of login, or use your credentials in the connect function</span></span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>connection <span class="ot">=</span> <span class="fu">login</span>(<span class="fu">connect</span>(<span class="at">host =</span> <span class="st">"https://openeo.dataspace.copernicus.eu"</span>))</span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="co"># get the process collection to use the predefined processes of the back-end</span></span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>p <span class="ot">=</span> <span class="fu">processes</span>()</span>
-<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a><span class="co"># get the collection list to get easier access to the collection ids, via auto completion</span></span>
-<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>collections <span class="ot">=</span> <span class="fu">list_collections</span>()</span>
-<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a><span class="co"># get the formats</span></span>
-<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>formats <span class="ot">=</span> <span class="fu">list_file_formats</span>()</span>
-<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a><span class="co"># load the initial data collection and limit the amount of data loaded</span></span>
-<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a><span class="co"># note: for the collection id and later the format you can also use the its character value</span></span>
-<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>data <span class="ot">=</span> p<span class="sc">$</span><span class="fu">load_collection</span>(<span class="at">id =</span> collections<span class="sc">$</span><span class="st">`</span><span class="at">SENTINEL1_GRD</span><span class="st">`</span>,</span>
-<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>                         <span class="at">spatial_extent =</span> <span class="fu">list</span>(<span class="at">west=</span><span class="fl">16.06</span>, </span>
-<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>                                               <span class="at">south=</span><span class="fl">48.06</span>,</span>
-<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>                                               <span class="at">east=</span><span class="fl">16.65</span>,</span>
-<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a>                                               <span class="at">north=</span><span class="fl">48.35</span>),</span>
-<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a>                         <span class="at">temporal_extent =</span> <span class="fu">c</span>(<span class="st">"2017-03-01"</span>, <span class="st">"2017-06-01"</span>),</span>
-<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a>                         <span class="at">bands =</span> <span class="fu">c</span>(<span class="st">"VV"</span>))</span>
-<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a><span class="co"># create three monthly sub data sets, which will be merged back into a single data cube later</span></span>
-<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a>march <span class="ot">=</span> p<span class="sc">$</span><span class="fu">filter_temporal</span>(<span class="at">data =</span> data,</span>
-<span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a>                          <span class="at">extent =</span> <span class="fu">c</span>(<span class="st">"2017-03-01"</span>, <span class="st">"2017-04-01"</span>))</span>
-<span id="cb16-30"><a href="#cb16-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-31"><a href="#cb16-31" aria-hidden="true" tabindex="-1"></a>april <span class="ot">=</span> p<span class="sc">$</span><span class="fu">filter_temporal</span>(<span class="at">data =</span> data,</span>
-<span id="cb16-32"><a href="#cb16-32" aria-hidden="true" tabindex="-1"></a>                          <span class="at">extent =</span> <span class="fu">c</span>(<span class="st">"2017-04-01"</span>, <span class="st">"2017-05-01"</span>))</span>
-<span id="cb16-33"><a href="#cb16-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-34"><a href="#cb16-34" aria-hidden="true" tabindex="-1"></a>may <span class="ot">=</span> p<span class="sc">$</span><span class="fu">filter_temporal</span>(<span class="at">data =</span> data,</span>
-<span id="cb16-35"><a href="#cb16-35" aria-hidden="true" tabindex="-1"></a>                        <span class="at">extent =</span> <span class="fu">c</span>(<span class="st">"2017-05-01"</span>, <span class="st">"2017-06-01"</span>))</span>
-<span id="cb16-36"><a href="#cb16-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-37"><a href="#cb16-37" aria-hidden="true" tabindex="-1"></a><span class="co"># The aggregation function for the following temporal reducer</span></span>
-<span id="cb16-38"><a href="#cb16-38" aria-hidden="true" tabindex="-1"></a>agg_fun_mean <span class="ot">=</span> <span class="cf">function</span>(data, context) {</span>
-<span id="cb16-39"><a href="#cb16-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mean</span>(data)</span>
-<span id="cb16-40"><a href="#cb16-40" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb16-41"><a href="#cb16-41" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-42"><a href="#cb16-42" aria-hidden="true" tabindex="-1"></a>march_reduced <span class="ot">=</span> p<span class="sc">$</span><span class="fu">reduce_dimension</span>(<span class="at">data =</span> march,</span>
-<span id="cb16-43"><a href="#cb16-43" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">reducer =</span> agg_fun_mean,</span>
-<span id="cb16-44"><a href="#cb16-44" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">dimension =</span> <span class="st">"t"</span>)</span>
-<span id="cb16-45"><a href="#cb16-45" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-46"><a href="#cb16-46" aria-hidden="true" tabindex="-1"></a>april_reduced <span class="ot">=</span> p<span class="sc">$</span><span class="fu">reduce_dimension</span>(<span class="at">data =</span> april,</span>
-<span id="cb16-47"><a href="#cb16-47" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">reducer =</span> agg_fun_mean,</span>
-<span id="cb16-48"><a href="#cb16-48" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">dimension =</span> <span class="st">"t"</span>)</span>
-<span id="cb16-49"><a href="#cb16-49" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-50"><a href="#cb16-50" aria-hidden="true" tabindex="-1"></a>may_reduced <span class="ot">=</span> p<span class="sc">$</span><span class="fu">reduce_dimension</span>(<span class="at">data =</span> may,</span>
-<span id="cb16-51"><a href="#cb16-51" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">reducer =</span> agg_fun_mean,</span>
-<span id="cb16-52"><a href="#cb16-52" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">dimension =</span> <span class="st">"t"</span>)</span>
-<span id="cb16-53"><a href="#cb16-53" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-54"><a href="#cb16-54" aria-hidden="true" tabindex="-1"></a><span class="co"># Each band is currently called VV. We need to rename at least the label of one dimension, </span></span>
-<span id="cb16-55"><a href="#cb16-55" aria-hidden="true" tabindex="-1"></a><span class="co"># because otherwise identity of the data cubes is assumed. The bands dimension consists </span></span>
-<span id="cb16-56"><a href="#cb16-56" aria-hidden="true" tabindex="-1"></a><span class="co"># only of one label, so we can rename this to be able to merge those data cubes.</span></span>
-<span id="cb16-57"><a href="#cb16-57" aria-hidden="true" tabindex="-1"></a>march_renamed <span class="ot">=</span> p<span class="sc">$</span><span class="fu">rename_labels</span>(<span class="at">data =</span> march_reduced,</span>
-<span id="cb16-58"><a href="#cb16-58" aria-hidden="true" tabindex="-1"></a>                                <span class="at">dimension =</span> <span class="st">"bands"</span>,</span>
-<span id="cb16-59"><a href="#cb16-59" aria-hidden="true" tabindex="-1"></a>                                <span class="at">target =</span> <span class="fu">c</span>(<span class="st">"R"</span>),</span>
-<span id="cb16-60"><a href="#cb16-60" aria-hidden="true" tabindex="-1"></a>                                <span class="at">source =</span> <span class="fu">c</span>(<span class="st">"VV"</span>))</span>
-<span id="cb16-61"><a href="#cb16-61" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-62"><a href="#cb16-62" aria-hidden="true" tabindex="-1"></a>april_renamed <span class="ot">=</span> p<span class="sc">$</span><span class="fu">rename_labels</span>(<span class="at">data =</span> april_reduced,</span>
-<span id="cb16-63"><a href="#cb16-63" aria-hidden="true" tabindex="-1"></a>                                <span class="at">dimension =</span> <span class="st">"bands"</span>,</span>
-<span id="cb16-64"><a href="#cb16-64" aria-hidden="true" tabindex="-1"></a>                                <span class="at">target =</span> <span class="fu">c</span>(<span class="st">"G"</span>),</span>
-<span id="cb16-65"><a href="#cb16-65" aria-hidden="true" tabindex="-1"></a>                                <span class="at">source =</span> <span class="fu">c</span>(<span class="st">"VV"</span>))</span>
-<span id="cb16-66"><a href="#cb16-66" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-67"><a href="#cb16-67" aria-hidden="true" tabindex="-1"></a>may_renamed <span class="ot">=</span> p<span class="sc">$</span><span class="fu">rename_labels</span>(<span class="at">data =</span> may_reduced,</span>
-<span id="cb16-68"><a href="#cb16-68" aria-hidden="true" tabindex="-1"></a>                              <span class="at">dimension =</span> <span class="st">"bands"</span>,</span>
-<span id="cb16-69"><a href="#cb16-69" aria-hidden="true" tabindex="-1"></a>                              <span class="at">target =</span> <span class="fu">c</span>(<span class="st">"B"</span>),</span>
-<span id="cb16-70"><a href="#cb16-70" aria-hidden="true" tabindex="-1"></a>                              <span class="at">source =</span> <span class="fu">c</span>(<span class="st">"VV"</span>))</span>
-<span id="cb16-71"><a href="#cb16-71" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-72"><a href="#cb16-72" aria-hidden="true" tabindex="-1"></a><span class="co"># combine the individual data cubes into one</span></span>
-<span id="cb16-73"><a href="#cb16-73" aria-hidden="true" tabindex="-1"></a><span class="co"># this is done one by one, since the dimensionalities have to match between each of the data cubes</span></span>
-<span id="cb16-74"><a href="#cb16-74" aria-hidden="true" tabindex="-1"></a>merge_1 <span class="ot">=</span> p<span class="sc">$</span><span class="fu">merge_cubes</span>(<span class="at">cube1 =</span> march_renamed,<span class="at">cube2 =</span> april_renamed)</span>
-<span id="cb16-75"><a href="#cb16-75" aria-hidden="true" tabindex="-1"></a>merge_2 <span class="ot">=</span> p<span class="sc">$</span><span class="fu">merge_cubes</span>(<span class="at">cube1 =</span> merge_1, <span class="at">cube2 =</span> may_renamed)</span>
-<span id="cb16-76"><a href="#cb16-76" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-77"><a href="#cb16-77" aria-hidden="true" tabindex="-1"></a><span class="co"># rescale the the back scatter measurements into 8Bit integer to view the results as PNG</span></span>
-<span id="cb16-78"><a href="#cb16-78" aria-hidden="true" tabindex="-1"></a>rescaled <span class="ot">=</span> p<span class="sc">$</span><span class="fu">apply</span>(<span class="at">data =</span> merge_2,</span>
-<span id="cb16-79"><a href="#cb16-79" aria-hidden="true" tabindex="-1"></a>        <span class="at">process =</span> <span class="cf">function</span>(data,context) {</span>
-<span id="cb16-80"><a href="#cb16-80" aria-hidden="true" tabindex="-1"></a>          p<span class="sc">$</span><span class="fu">linear_scale_range</span>(<span class="at">x=</span>data, <span class="at">inputMin =</span> <span class="sc">-</span><span class="dv">20</span>,<span class="at">inputMax =</span> <span class="sc">-</span><span class="dv">5</span>, <span class="at">outputMin =</span> <span class="dv">0</span>, <span class="at">outputMax =</span> <span class="dv">255</span>)</span>
-<span id="cb16-81"><a href="#cb16-81" aria-hidden="true" tabindex="-1"></a>        })</span>
-<span id="cb16-82"><a href="#cb16-82" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-83"><a href="#cb16-83" aria-hidden="true" tabindex="-1"></a><span class="co"># export shall be format PNG</span></span>
-<span id="cb16-84"><a href="#cb16-84" aria-hidden="true" tabindex="-1"></a><span class="co"># look at the format description</span></span>
-<span id="cb16-85"><a href="#cb16-85" aria-hidden="true" tabindex="-1"></a>formats<span class="sc">$</span>output<span class="sc">$</span>PNG</span>
-<span id="cb16-86"><a href="#cb16-86" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-87"><a href="#cb16-87" aria-hidden="true" tabindex="-1"></a><span class="co"># store the results using the format and set the create options</span></span>
-<span id="cb16-88"><a href="#cb16-88" aria-hidden="true" tabindex="-1"></a>result <span class="ot">=</span> p<span class="sc">$</span><span class="fu">save_result</span>(<span class="at">data =</span> rescaled,<span class="at">format =</span> formats<span class="sc">$</span>output<span class="sc">$</span>PNG, <span class="at">options =</span> <span class="fu">list</span>(<span class="at">red=</span><span class="st">"R"</span>,<span class="at">green=</span><span class="st">"G"</span>,<span class="at">blue=</span><span class="st">"B"</span>))</span>
-<span id="cb16-89"><a href="#cb16-89" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-90"><a href="#cb16-90" aria-hidden="true" tabindex="-1"></a><span class="co"># create a job</span></span>
-<span id="cb16-91"><a href="#cb16-91" aria-hidden="true" tabindex="-1"></a>job <span class="ot">=</span> <span class="fu">create_job</span>(<span class="at">graph =</span> result, <span class="at">title =</span> <span class="st">"S1 Example R"</span>, <span class="at">description =</span> <span class="st">"Getting Started example on openeo.org for R-client"</span>)</span>
-<span id="cb16-92"><a href="#cb16-92" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-93"><a href="#cb16-93" aria-hidden="true" tabindex="-1"></a><span class="co"># then start the processing of the job and turn on logging (messages that are captured on the back-end during the process execution)</span></span>
-<span id="cb16-94"><a href="#cb16-94" aria-hidden="true" tabindex="-1"></a><span class="fu">start_job</span>(<span class="at">job =</span> job, <span class="at">log =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Now the resulting PNG file of the RGB backscatter composite is stored as a PNG file in the current working directory. It looks like this:</p>
+<p>Therefore, a complete example of an earth observation use case using the R client is outlined in this chapter.</p>
+<p>The objective is to get a monthly RGB composite of Sentinel 1 backscatter data across Vienna, Austria for three months in 2017. This composite can support tasks like classification and crop monitoring.</p>
+<p>The code example below includes inline comments explaining each step of the process:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(openeo)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co"># connect to the backend and authenticate</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>connection <span class="ot">=</span> <span class="fu">connect</span>(<span class="at">host =</span> <span class="st">"https://openeo.dataspace.copernicus.eu"</span>)</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="fu">login</span>()</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="co"># get the process collection to use the predefined processes of the back-end</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>p <span class="ot">=</span> <span class="fu">processes</span>()</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="co"># get the collection list to get easier access to the collection ids, via auto completion</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>collections <span class="ot">=</span> <span class="fu">list_collections</span>()</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="co"># get the formats</span></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>formats <span class="ot">=</span> <span class="fu">list_file_formats</span>()</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a><span class="co"># load the initial data collection and limit the amount of data loaded</span></span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a><span class="co"># note: for the collection id and later the format you can also use the its character value</span></span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>data <span class="ot">=</span> p<span class="sc">$</span><span class="fu">load_collection</span>(<span class="at">id =</span> collections<span class="sc">$</span><span class="st">`</span><span class="at">SENTINEL1_GRD</span><span class="st">`</span>,</span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>                         <span class="at">spatial_extent =</span> <span class="fu">list</span>(<span class="at">west=</span><span class="fl">16.06</span>, </span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>                                               <span class="at">south=</span><span class="fl">48.06</span>,</span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>                                               <span class="at">east=</span><span class="fl">16.65</span>,</span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>                                               <span class="at">north=</span><span class="fl">48.35</span>),</span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>                         <span class="at">temporal_extent =</span> <span class="fu">c</span>(<span class="st">"2017-03-01"</span>, <span class="st">"2017-06-01"</span>),</span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>                         <span class="at">bands =</span> <span class="fu">c</span>(<span class="st">"VV"</span>))</span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a><span class="co"># apply the SAR backscatter process to the data</span></span>
+<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a>datacube_sar <span class="ot">=</span> p<span class="sc">$</span><span class="fu">sar_backscatter</span>(<span class="at">data =</span> data, <span class="at">coefficient =</span> <span class="st">"sigma0-ellipsoid"</span>)</span>
+<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a><span class="co"># create three monthly sub-datasets, which will later be combined back into a single data cube</span></span>
+<span id="cb15-30"><a href="#cb15-30" aria-hidden="true" tabindex="-1"></a>march <span class="ot">=</span> p<span class="sc">$</span><span class="fu">filter_temporal</span>(<span class="at">data =</span> datacube_sar,</span>
+<span id="cb15-31"><a href="#cb15-31" aria-hidden="true" tabindex="-1"></a>                          <span class="at">extent =</span> <span class="fu">c</span>(<span class="st">"2017-03-01"</span>, <span class="st">"2017-04-01"</span>))</span>
+<span id="cb15-32"><a href="#cb15-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-33"><a href="#cb15-33" aria-hidden="true" tabindex="-1"></a>april <span class="ot">=</span> p<span class="sc">$</span><span class="fu">filter_temporal</span>(<span class="at">data =</span> datacube_sar,</span>
+<span id="cb15-34"><a href="#cb15-34" aria-hidden="true" tabindex="-1"></a>                          <span class="at">extent =</span> <span class="fu">c</span>(<span class="st">"2017-04-01"</span>, <span class="st">"2017-05-01"</span>))</span>
+<span id="cb15-35"><a href="#cb15-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-36"><a href="#cb15-36" aria-hidden="true" tabindex="-1"></a>may <span class="ot">=</span> p<span class="sc">$</span><span class="fu">filter_temporal</span>(<span class="at">data =</span> datacube_sar,</span>
+<span id="cb15-37"><a href="#cb15-37" aria-hidden="true" tabindex="-1"></a>                        <span class="at">extent =</span> <span class="fu">c</span>(<span class="st">"2017-05-01"</span>, <span class="st">"2017-06-01"</span>))</span>
+<span id="cb15-38"><a href="#cb15-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-39"><a href="#cb15-39" aria-hidden="true" tabindex="-1"></a><span class="co"># The aggregation function for the following temporal reducer</span></span>
+<span id="cb15-40"><a href="#cb15-40" aria-hidden="true" tabindex="-1"></a>agg_fun_mean <span class="ot">=</span> <span class="cf">function</span>(data, context) {</span>
+<span id="cb15-41"><a href="#cb15-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mean</span>(data)</span>
+<span id="cb15-42"><a href="#cb15-42" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb15-43"><a href="#cb15-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-44"><a href="#cb15-44" aria-hidden="true" tabindex="-1"></a>march_reduced <span class="ot">=</span> p<span class="sc">$</span><span class="fu">reduce_dimension</span>(<span class="at">data =</span> march,</span>
+<span id="cb15-45"><a href="#cb15-45" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">reducer =</span> agg_fun_mean,</span>
+<span id="cb15-46"><a href="#cb15-46" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">dimension =</span> <span class="st">"t"</span>)</span>
+<span id="cb15-47"><a href="#cb15-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-48"><a href="#cb15-48" aria-hidden="true" tabindex="-1"></a>april_reduced <span class="ot">=</span> p<span class="sc">$</span><span class="fu">reduce_dimension</span>(<span class="at">data =</span> april,</span>
+<span id="cb15-49"><a href="#cb15-49" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">reducer =</span> agg_fun_mean,</span>
+<span id="cb15-50"><a href="#cb15-50" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">dimension =</span> <span class="st">"t"</span>)</span>
+<span id="cb15-51"><a href="#cb15-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-52"><a href="#cb15-52" aria-hidden="true" tabindex="-1"></a>may_reduced <span class="ot">=</span> p<span class="sc">$</span><span class="fu">reduce_dimension</span>(<span class="at">data =</span> may,</span>
+<span id="cb15-53"><a href="#cb15-53" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">reducer =</span> agg_fun_mean,</span>
+<span id="cb15-54"><a href="#cb15-54" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">dimension =</span> <span class="st">"t"</span>)</span>
+<span id="cb15-55"><a href="#cb15-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-56"><a href="#cb15-56" aria-hidden="true" tabindex="-1"></a><span class="co"># Each band is currently called VV. We need to rename at least the label of one dimension, </span></span>
+<span id="cb15-57"><a href="#cb15-57" aria-hidden="true" tabindex="-1"></a><span class="co"># because otherwise identity of the data cubes is assumed. The bands dimension consists </span></span>
+<span id="cb15-58"><a href="#cb15-58" aria-hidden="true" tabindex="-1"></a><span class="co"># only of one label, so we can rename this to be able to merge those data cubes.</span></span>
+<span id="cb15-59"><a href="#cb15-59" aria-hidden="true" tabindex="-1"></a>march_renamed <span class="ot">=</span> p<span class="sc">$</span><span class="fu">rename_labels</span>(<span class="at">data =</span> march_reduced,</span>
+<span id="cb15-60"><a href="#cb15-60" aria-hidden="true" tabindex="-1"></a>                                <span class="at">dimension =</span> <span class="st">"bands"</span>,</span>
+<span id="cb15-61"><a href="#cb15-61" aria-hidden="true" tabindex="-1"></a>                                <span class="at">target =</span> <span class="fu">c</span>(<span class="st">"R"</span>),</span>
+<span id="cb15-62"><a href="#cb15-62" aria-hidden="true" tabindex="-1"></a>                                <span class="at">source =</span> <span class="fu">c</span>(<span class="st">"VV"</span>))</span>
+<span id="cb15-63"><a href="#cb15-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-64"><a href="#cb15-64" aria-hidden="true" tabindex="-1"></a>april_renamed <span class="ot">=</span> p<span class="sc">$</span><span class="fu">rename_labels</span>(<span class="at">data =</span> april_reduced,</span>
+<span id="cb15-65"><a href="#cb15-65" aria-hidden="true" tabindex="-1"></a>                                <span class="at">dimension =</span> <span class="st">"bands"</span>,</span>
+<span id="cb15-66"><a href="#cb15-66" aria-hidden="true" tabindex="-1"></a>                                <span class="at">target =</span> <span class="fu">c</span>(<span class="st">"G"</span>),</span>
+<span id="cb15-67"><a href="#cb15-67" aria-hidden="true" tabindex="-1"></a>                                <span class="at">source =</span> <span class="fu">c</span>(<span class="st">"VV"</span>))</span>
+<span id="cb15-68"><a href="#cb15-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-69"><a href="#cb15-69" aria-hidden="true" tabindex="-1"></a>may_renamed <span class="ot">=</span> p<span class="sc">$</span><span class="fu">rename_labels</span>(<span class="at">data =</span> may_reduced,</span>
+<span id="cb15-70"><a href="#cb15-70" aria-hidden="true" tabindex="-1"></a>                              <span class="at">dimension =</span> <span class="st">"bands"</span>,</span>
+<span id="cb15-71"><a href="#cb15-71" aria-hidden="true" tabindex="-1"></a>                              <span class="at">target =</span> <span class="fu">c</span>(<span class="st">"B"</span>),</span>
+<span id="cb15-72"><a href="#cb15-72" aria-hidden="true" tabindex="-1"></a>                              <span class="at">source =</span> <span class="fu">c</span>(<span class="st">"VV"</span>))</span>
+<span id="cb15-73"><a href="#cb15-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-74"><a href="#cb15-74" aria-hidden="true" tabindex="-1"></a><span class="co"># combine the individual data cubes into one</span></span>
+<span id="cb15-75"><a href="#cb15-75" aria-hidden="true" tabindex="-1"></a><span class="co"># this is done one by one, since the dimensionalities have to match between each of the data cubes</span></span>
+<span id="cb15-76"><a href="#cb15-76" aria-hidden="true" tabindex="-1"></a>merge_1 <span class="ot">=</span> p<span class="sc">$</span><span class="fu">merge_cubes</span>(<span class="at">cube1 =</span> march_renamed,<span class="at">cube2 =</span> april_renamed)</span>
+<span id="cb15-77"><a href="#cb15-77" aria-hidden="true" tabindex="-1"></a>merge_2 <span class="ot">=</span> p<span class="sc">$</span><span class="fu">merge_cubes</span>(<span class="at">cube1 =</span> merge_1, <span class="at">cube2 =</span> may_renamed)</span>
+<span id="cb15-78"><a href="#cb15-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-79"><a href="#cb15-79" aria-hidden="true" tabindex="-1"></a><span class="co"># rescale the the back scatter measurements into 8Bit integer to view the results as PNG</span></span>
+<span id="cb15-80"><a href="#cb15-80" aria-hidden="true" tabindex="-1"></a>rescaled <span class="ot">=</span> p<span class="sc">$</span><span class="fu">apply</span>(<span class="at">data =</span> merge_2,</span>
+<span id="cb15-81"><a href="#cb15-81" aria-hidden="true" tabindex="-1"></a>        <span class="at">process =</span> <span class="cf">function</span>(data,context) {</span>
+<span id="cb15-82"><a href="#cb15-82" aria-hidden="true" tabindex="-1"></a>          p<span class="sc">$</span><span class="fu">linear_scale_range</span>(<span class="at">x=</span>data, <span class="at">inputMin =</span> <span class="sc">-</span><span class="dv">20</span>,<span class="at">inputMax =</span> <span class="sc">-</span><span class="dv">5</span>, <span class="at">outputMin =</span> <span class="dv">0</span>, <span class="at">outputMax =</span> <span class="dv">255</span>)</span>
+<span id="cb15-83"><a href="#cb15-83" aria-hidden="true" tabindex="-1"></a>        })</span>
+<span id="cb15-84"><a href="#cb15-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-85"><a href="#cb15-85" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-86"><a href="#cb15-86" aria-hidden="true" tabindex="-1"></a><span class="co"># store the results using the png format and set the create a job options</span></span>
+<span id="cb15-87"><a href="#cb15-87" aria-hidden="true" tabindex="-1"></a>result <span class="ot">=</span> p<span class="sc">$</span><span class="fu">save_result</span>(<span class="at">data =</span> rescaled,<span class="at">format =</span> formats<span class="sc">$</span>output<span class="sc">$</span>PNG, <span class="at">options =</span> <span class="fu">list</span>(<span class="at">red=</span><span class="st">"R"</span>,<span class="at">green=</span><span class="st">"G"</span>,<span class="at">blue=</span><span class="st">"B"</span>))</span>
+<span id="cb15-88"><a href="#cb15-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-89"><a href="#cb15-89" aria-hidden="true" tabindex="-1"></a><span class="co"># create a job</span></span>
+<span id="cb15-90"><a href="#cb15-90" aria-hidden="true" tabindex="-1"></a>job <span class="ot">=</span> <span class="fu">create_job</span>(<span class="at">graph =</span> result, <span class="at">title =</span> <span class="st">"S1 Example R"</span>, <span class="at">description =</span> <span class="st">"Getting Started example on openeo.org for R-client"</span>)</span>
+<span id="cb15-91"><a href="#cb15-91" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-92"><a href="#cb15-92" aria-hidden="true" tabindex="-1"></a><span class="co"># then start the processing of the job and turn on logging (messages that are captured on the back-end during the process execution)</span></span>
+<span id="cb15-93"><a href="#cb15-93" aria-hidden="true" tabindex="-1"></a><span class="fu">start_job</span>(<span class="at">job =</span> job, <span class="at">log =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The resulting PNG file of the RGB backscatter composite is stored in the current working directory. Here is how it looks:</p>
 <p><img src="../_images/getting-started-result-example.jpg" class="img-fluid"></p>
 </section>
 <section id="user-defined-functions" class="level2">
 <h2 class="anchored" data-anchor-id="user-defined-functions">User Defined Functions</h2>
-<p>If your use case can not be accomplished with the default processes of openEO, you can define a <a href="../../../APIs/openEO/Glossary.html#user-defined-function-udf">user defined function</a>.</p>
-<p>In general the processing workflow works by uploading the Python or R script into the users file directory on the back-end and reference the script via its URL or by its relational name (e.g.&nbsp;<code>/scripts/script1.R</code>) in the function <code>run_udf</code>. The latter function is a predefined openEO process that the back-end might provide, if UDFs are supported.</p>
+<p>If a usecase cannot be defined using the default openEO processes, user can define them as a <a href="../../../APIs/openEO/Glossary.html#user-defined-function-udf">user defined function</a>.</p>
+<p>The workflow involves uploading a Python or R script to the user’s directory. Reference it by URL or name (e.g., <code>/scripts/script1.R</code>) in the <code>run_udf</code> function of openEO.</p>
 <p>Find out more about UDFs in the respective <a href="https://github.com/Open-EO/openeo-udf" target="_blank">Python UDF</a> and <a href="https://github.com/Open-EO/openeo-r-udf" target="_blank">R UDF</a> repositories with their documentation and examples.</p>
 </section>
 <section id="useful-links" class="level2">
