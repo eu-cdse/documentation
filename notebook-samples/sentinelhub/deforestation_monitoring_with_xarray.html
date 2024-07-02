@@ -1244,7 +1244,7 @@ window.onload = function() {
 
 </header>
 
-<p>Sentinel 2 data is one of the most popular satellite dataets, but it does come with challenges. Cloud-free mosaics have to be constructed often in order to get analysis-ready data. Accessing a lot of data through tiles takes a long time, and getting the data into a format it can be easily analysed in with common Python tools can be a challenge.</p>
+<p>Sentinel 2 data is one of the most popular satellite datasets, but it does come with challenges. Cloud-free mosaics have to be constructed often in order to get analysis-ready data. Accessing a lot of data through tiles takes a long time, and getting the data into a format it can be easily analysed in with common Python tools can be a challenge.</p>
 <p>In this notebook, we will show how this whole process of getting analysis-ready data into Python can be sped up by using the Copernicus Dataspace Ecosystem and Sentinel Hub APIs. This is being presented by running through a basic deforestation monitoring use-case. The notebook uses the popular <a href="https://docs.xarray.dev/en/stable/index.html#">xarray</a> Python library to handle the multidimensional data.</p>
 <p>What we show in this notebook:</p>
 <ul>
@@ -1311,6 +1311,12 @@ window.onload = function() {
 <p>First, we define an area of interest. In this case the area of interest is in the Harz Mountains in Germany since we are aware of substantial forest dieback in recent years.</p>
 <p>The resolution is defined in the units of the coordinate reference system. Because we want to define units in meters, we also need to define the bounding box coordinates in a CRS using meters. We use EPSG:3035 in this case. This CRS is only available for Europe, outside of Europe we could use EPSG:3857 or UTM Zones.</p>
 <p>You can also explore the area of interest in the Copernicus Browser <a href="https://link.dataspace.copernicus.eu/5t1">here</a>.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="./img/deforestation_thumbnail.jpg" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Deforestation in Harz Mountain as seen from Sentinel-2, June 2023</figcaption>
+</figure>
+</div>
 <div class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Desired resolution of our data</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>resolution <span class="op">=</span> (<span class="dv">100</span>, <span class="dv">100</span>)</span>
@@ -1528,9 +1534,21 @@ window.onload = function() {
 <span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>ds_s2 <span class="op">=</span> ds_s2 <span class="op">/</span> <span class="dv">10000</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>This results in an xarray dataset with 3 coordinates: year, x and y, as well as the data variables returned by the evalscript as data variables in the dataset.</p>
+<p>We can use the resultatnt xarray to plot the RGB data as a true color image:</p>
+<div class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get RGB data for a year</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>plot_year <span class="op">=</span> <span class="dv">2018</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>true_color <span class="op">=</span> ds_s2.sel(year<span class="op">=</span>plot_year)[[<span class="st">"R"</span>, <span class="st">"G"</span>, <span class="st">"B"</span>]].to_array()</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Divide by scale factor and apply gamma to brighten image</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>(true_color <span class="op">*</span> <span class="dv">4</span>).plot.imshow()</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="ss">f"True Color </span><span class="sc">{</span>plot_year<span class="sc">}</span><span class="ss">"</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="deforestation_monitoring_with_xarray_files/figure-html/cell-14-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>We now have an xarray dataset with 3 coordinates: year, x and y, as well as the data variables returned by the evalscript as data variables in the dataset.</p>
 <div class="cell" data-execution_count="12">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>ds_s2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>ds_s2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="12">
 
 <div><svg style="position: absolute; width: 0; height: 0; overflow: hidden">
@@ -2223,18 +2241,6 @@ dask.array&lt;chunksize=(1, 9, 105), meta=np.ndarray&gt;
               3167379.2068206384,  3167279.491731302, 3167179.7766419654,
               3167080.0615526293,  3166980.346463293],
              dtype='float64', name='y'))</pre></div></li></ul></div></li><li class="xr-section-item"><input id="section-21b8214e-1b98-4c1d-be24-1dc05fc60de3" class="xr-section-summary-in" type="checkbox" checked=""><label for="section-21b8214e-1b98-4c1d-be24-1dc05fc60de3" class="xr-section-summary">Attributes: <span>(4)</span></label><div class="xr-section-inline-details"></div><div class="xr-section-details"><dl class="xr-attrs"><dt><span>AREA_OR_POINT :</span></dt><dd>Area</dd><dt><span>TIFFTAG_RESOLUTIONUNIT :</span></dt><dd>1 (unitless)</dd><dt><span>TIFFTAG_XRESOLUTION :</span></dt><dd>1</dd><dt><span>TIFFTAG_YRESOLUTION :</span></dt><dd>1</dd></dl></div></li></ul></div></div>
-</div>
-</div>
-<p>We can use xarray to plot the RGB data as a true color image:</p>
-<div class="cell" data-execution_count="13">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get RGB data for a year</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>plot_year <span class="op">=</span> <span class="dv">2018</span></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>true_color <span class="op">=</span> ds_s2.sel(year<span class="op">=</span>plot_year)[[<span class="st">"R"</span>, <span class="st">"G"</span>, <span class="st">"B"</span>]].to_array()</span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Divide by scale factor and apply gamma to brighten image</span></span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>(true_color <span class="op">*</span> <span class="dv">4</span>).plot.imshow()</span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="ss">f"True Color </span><span class="sc">{</span>plot_year<span class="sc">}</span><span class="ss">"</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display">
-<p><img src="deforestation_monitoring_with_xarray_files/figure-html/cell-15-output-1.png" class="img-fluid"></p>
 </div>
 </div>
 <p>We can also similarly plot the NDVI values:</p>

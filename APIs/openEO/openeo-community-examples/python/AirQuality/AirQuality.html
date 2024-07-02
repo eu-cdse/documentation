@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Documentation - Best available pixel composite</title>
+<title>Documentation - Explore Sentinel-5P products with openEO</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -93,6 +93,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 <meta name="zd-site-verification" content="xj9koofr1crilmoclgxsjd">
 <script type="text/javascript">
 
@@ -212,7 +215,7 @@ window.onload = function() {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Best available pixel composite</li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Explore Sentinel-5P products with openEO</li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
@@ -1208,17 +1211,7 @@ window.onload = function() {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#references" id="toc-references" class="nav-link active" data-scroll-target="#references">References</a>
-  <ul>
-  <li><a href="#bap-composites-assessment" id="toc-bap-composites-assessment" class="nav-link" data-scroll-target="#bap-composites-assessment">BAP composites assessment</a></li>
-  <li><a href="#bap-process-background" id="toc-bap-process-background" class="nav-link" data-scroll-target="#bap-process-background">BAP process background:</a></li>
-  </ul></li>
-  <li><a href="#loading-sentinel-2-scene-classification" id="toc-loading-sentinel-2-scene-classification" class="nav-link" data-scroll-target="#loading-sentinel-2-scene-classification">Loading Sentinel-2 scene classification</a></li>
-  <li><a href="#coverage-score" id="toc-coverage-score" class="nav-link" data-scroll-target="#coverage-score">Coverage score</a></li>
-  <li><a href="#date-score" id="toc-date-score" class="nav-link" data-scroll-target="#date-score">Date Score</a></li>
-  <li><a href="#distance-to-cloud-score" id="toc-distance-to-cloud-score" class="nav-link" data-scroll-target="#distance-to-cloud-score">Distance to Cloud Score</a></li>
-  <li><a href="#aggregating-scores" id="toc-aggregating-scores" class="nav-link" data-scroll-target="#aggregating-scores">Aggregating Scores</a></li>
-  <li><a href="#masking-and-compositing" id="toc-masking-and-compositing" class="nav-link" data-scroll-target="#masking-and-compositing">Masking and Compositing</a></li>
+  <li><a href="#now-lets-analyse-the-output." id="toc-now-lets-analyse-the-output." class="nav-link active" data-scroll-target="#now-lets-analyse-the-output.">Now, let’s analyse the output.</a></li>
   </ul>
 </nav>
     </div>
@@ -1227,7 +1220,7 @@ window.onload = function() {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Best available pixel composite</h1>
+<h1 class="title">Explore Sentinel-5P products with openEO</h1>
 </div>
 
 
@@ -1242,181 +1235,385 @@ window.onload = function() {
 
 </header>
 
-<p>In this notebook a monthly composite image is created based on the Best Available Pixel (BAP) method in OpenEO. This is a scientifically sound method of generating composites, which minimizes the mixing of pixels from different observations. Also for each pixel, all bands will be taken from a single observation. As a result, the spectral signature in the composite is observed rather than being a combination of multiple observations.</p>
-<p>We refer to the scientific references for a full discussion of this method, but can generally recommend it both for its correctness and performance. We do still observe some residual cloud (shadow) in certain cases, which can be attributed to the quality of the SCL band.</p>
-<p>The BAP score is a weighted average of three (four) scores:</p>
-<ul>
-<li><strong>Distance-to-Cloud Score</strong>: Pixels that are clouds are given score 0. Pixels that are more than 150 pixels - calculated with the Manhattan distance measure, assuming a resolution of 20m - away from a cloud pixel are given score 1. The pixels in between are given a score versus distance-to-cloud that follows a Gaussian shape.</li>
-<li><strong>Coverage Score</strong>: Per date, the percentage of all pixels that are classified as a cloud over the entire spatial extent is calculated. The Coverage Score is then equal to 1 - the cloud percentage.</li>
-<li><strong>Date Score</strong>: In order to favor pixels that are observed in the middle of a month, a date score is calculated, which follows a Gaussian shape. I.e. the largest scores are given for days in the middle of the month, the lowest scores are given for days at the beginning and end of the month.</li>
-</ul>
-<p>The final BAP score is a weighted average of the three aforementioned scores. The weights are 1, 0.5 and 0.8 for the Distance-to-Cloud, Coverage and Date Score respectively.</p>
-<p>The current implementation and the various parameters are still subject to change, so please do evaluate the correctness when using this method in your project.</p>
-<section id="references" class="level3">
-<h3 class="anchored" data-anchor-id="references">References</h3>
-<p>The approach described here was originally applied to Landsat, and adapted here for Sentinel-2.</p>
-<section id="bap-composites-assessment" class="level4">
-<h4 class="anchored" data-anchor-id="bap-composites-assessment">BAP composites assessment</h4>
-<p>Francini, S., Hermosilla, T., Coops, N. C., Wulder, M. A., White, J. C., &amp; Chirici, G. (2023). An assessment approach for pixel-based image composites. ISPRS Journal of Photogrammetry and Remote Sensing, 202, 1–12, <a href="https://doi.org/10.1016/j.isprsjprs.2023.06.002">doi:10.1016/j.isprsjprs.2023.06.002</a></p>
-</section>
-<section id="bap-process-background" class="level4">
-<h4 class="anchored" data-anchor-id="bap-process-background">BAP process background:</h4>
-<p>White, J.C.; Wulder, M.A.; Hobart, G.W.; Luther, J.E.; Hermosilla, T.; Griffiths, P.; Coops, N.C.; Hall, R.J.; Hostert, P.; Dyk, A.; et al.&nbsp;Pixel-based image compositing for large-area dense time series applications and science. Can. J. Remote Sens. 2014, 40, 192–212, <a href="https://doi.org/10.1080/07038992.2014.945827">doi:10.1080/07038992.2014.945827</a>.</p>
-</section>
-</section>
-<section id="loading-sentinel-2-scene-classification" class="level2">
-<h2 class="anchored" data-anchor-id="loading-sentinel-2-scene-classification">Loading Sentinel-2 scene classification</h2>
-<p>The score is calculated based on the ‘SCL’ band only. This is very efficient because it’s a lower resolution (20m) band, which is relatively quick to read. All other bands are read based on the score, which allows openEO to avoid loading data that is not used in the composite.</p>
-<p>First a sample period and region are defined. It is necessary to specify your region of interest as a Polygon.</p>
+<p>Sentinel-5P is the first Copernicus mission to monitor the atmosphere and global air quality. It conducts precise atmospheric measurements to support air quality assessments, ozone and UV radiation monitoring, as well as climate forecasting.</p>
+<p>For those interested in Sentinel-5P offerings, openEO provides a convenient means to retrieve these products without the hassle of dealing with file locations or downloading entire collections. Users can effortlessly access the products relevant to their specified area and timeframe with the openEO API. Moreover, users can conduct analyses on these products through built-in processes.</p>
+<p>Thus, within this notebook, we illustrate the application of openEO for accessing Sentinel-5P products for comprehensive analysis. While we won’t delve into detailed analyses and possibilities in this notebook, we aim to demonstrate the fundamental tasks that users interested in atmospheric monitoring can perform using openEO.</p>
+<p>Reference: * https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-5p * https://www.sciencedirect.com/science/article/pii/S1352231097004457</p>
 <div class="cell" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> geopandas <span class="im">as</span> gpd</span>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> openeo</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>gdf <span class="op">=</span> gpd.read_file(<span class="st">'test_area.geojson'</span>)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>gdf <span class="op">=</span> gdf.to_crs(epsg<span class="op">=</span><span class="dv">4326</span>)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>area <span class="op">=</span> <span class="bu">eval</span>(gdf.to_json())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> xarray <span class="im">as</span> xr</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>temporal_extent <span class="op">=</span> [<span class="st">"2022-07-01"</span>, <span class="st">"2022-07-31"</span>]</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>max_cloud_cover <span class="op">=</span> <span class="dv">70</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>spatial_resolution <span class="op">=</span> <span class="dv">20</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>Note that the Python code behind the calculation of the BAP scores can be found in utils_BAP.py. All functions are defined there, and are loaded in here.</p>
-<div class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> openeo</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> openeo.processes <span class="im">import</span> if_, is_nan</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> utils_BAP <span class="im">import</span> (calculate_cloud_mask, calculate_cloud_coverage_score,</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>                           calculate_date_score, calculate_distance_to_cloud_score,</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>                           calculate_distance_to_cloud_score, aggregate_BAP_scores,</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>                           create_rank_mask)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>c<span class="op">=</span>openeo.<span class="ex">connect</span>(<span class="st">"openeo.dataspace.copernicus.eu"</span>).authenticate_oidc()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># authenticate your account</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>connection <span class="op">=</span> openeo.<span class="ex">connect</span>(<span class="st">"openeo.dataspace.copernicus.eu"</span>).authenticate_oidc()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Authenticated using refresh token.</code></pre>
 </div>
 </div>
-<p>Load in the SCL band from Sentinel-2 which will be used to calculate all cloud-related scores.</p>
+<p>Let’s have a quick understanding of the available <code>SENTINEL_5P_L2</code> accessed through openEO in the Copernicus Data Space Ecosystem.</p>
+<div class="cell" data-scrolled="true" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>connection.describe_collection(<span class="st">"SENTINEL_5P_L2"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="3">
+
+    <script>
+    if (!window.customElements || !window.customElements.get('openeo-collection')) {
+        var el = document.createElement('script');
+        el.src = "https://cdn.jsdelivr.net/npm/@openeo/vue-components@2/assets/openeo.min.js";
+        document.head.appendChild(el);
+
+        var font = document.createElement('font');
+        font.as = "font";
+        font.type = "font/woff2";
+        font.crossOrigin = true;
+        font.href = "https://use.fontawesome.com/releases/v5.13.0/webfonts/fa-solid-900.woff2"
+        document.head.appendChild(font);
+    }
+    </script>
+    <openeo-collection>
+        <script type="application/json">{"mapOptions": {}, "data": {"cube:dimensions": {"bands": {"type": "bands", "values": ["CO", "HCHO", "NO2", "O3", "SO2", "CH4", "AER_AI_340_380", "AER_AI_354_388", "CLOUD_BASE_PRESSURE", "CLOUD_TOP_PRESSURE", "CLOUD_BASE_HEIGHT", "CLOUD_TOP_HEIGHT", "CLOUD_OPTICAL_THICKNESS", "CLOUD_FRACTION", "dataMask"]}, "t": {"extent": ["2018-04-30T00:18:50Z", null], "step": "P1D", "type": "temporal"}, "x": {"axis": "x", "extent": [-180, 180], "reference_system": 4326, "type": "spatial"}, "y": {"axis": "y", "extent": [-85, 85], "reference_system": 4326, "type": "spatial"}}, "description": "Sentinel 5 Precursor imagery captured by TROPOMI sensor.\n\nThis dataset only supports loading one band at a time.", "extent": {"spatial": {"bbox": [[-180.0, -85.0, 180.0, 85.0]]}, "temporal": {"interval": [["2018-04-30T00:18:50Z", null]]}}, "id": "SENTINEL_5P_L2", "license": "proprietary", "links": [{"href": "https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/", "rel": "root", "type": "application/json"}, {"href": "https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/collections/sentinel-5p-l2", "rel": "self", "type": "application/json"}, {"href": "https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/collections", "rel": "parent", "type": "application/json"}, {"href": "https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/collections/sentinel-5p-l2/queryables", "rel": "http://www.opengis.net/def/rel/ogc/1.0/queryables", "type": "application/schema+json"}, {"href": "https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/collections/sentinel-5p-l2/items", "rel": "items", "type": "application/geo+json"}], "providers": [], "sci:citation": "Modified Copernicus Sentinel data [Year]/Sentinel Hub", "stac_extensions": ["https://stac-extensions.github.io/scientific/v1.0.0/schema.json", "https://stac-extensions.github.io/sat/v1.0.0/schema.json", "https://docs.sentinel-hub.com/api/latest/stac/s5p/v1.0.0/schema.json"], "stac_version": "1.0.0", "summaries": {"eo:bands": [{"data_type": "float32", "description": "Carbon monoxide", "name": "CO", "openeo:gsd": {"unit": "\u00b0", "value": [0.054563492063483, 0.034722222222216]}, "statistics": {"maximum": [0.1], "minimum": [0]}}, {"data_type": "float32", "description": "Formaldehyde", "name": "HCHO", "openeo:gsd": {"unit": "\u00b0", "value": [0.054563492063483, 0.034722222222216]}, "statistics": {"maximum": [0.001], "minimum": [0]}}, {"data_type": "float32", "description": "Nitrogen oxide", "name": "NO2", "openeo:gsd": {"unit": "\u00b0", "value": [0.054563492063483, 0.034722222222216]}, "statistics": {"maximum": [0.0003], "minimum": [0]}}, {"data_type": "float32", "description": "Ozone", "name": "O3", "openeo:gsd": {"unit": "\u00b0", "value": [0.054563492063483, 0.034722222222216]}, "statistics": {"maximum": [0.36], "minimum": [0]}}, {"data_type": "float32", "description": "Sulphur dioxide", "name": "SO2", "openeo:gsd": {"unit": "\u00b0", "value": [0.054563492063483, 0.034722222222216]}, "statistics": {"maximum": [0.01], "minimum": [0]}}, {"data_type": "float32", "description": "Methane", "name": "CH4", "openeo:gsd": {"unit": "\u00b0", "value": [0.054563492063483, 0.034722222222216]}, "statistics": {"maximum": [2000], "minimum": [1600]}}, {"data_type": "float32", "description": "UV (Ultraviolet) Aerosol Index calculated based on wavelengths of 340 nm and 380 nm", "name": "AER_AI_340_380", "openeo:gsd": {"unit": "\u00b0", "value": [0.054563492063483, 0.034722222222216]}, "statistics": {"maximum": [5], "minimum": [-1]}}, {"data_type": "float32", "description": "UV (Ultraviolet) Aerosol Index calculated based on wavelengths of 354 nm and 388 nm", "name": "AER_AI_354_388", "openeo:gsd": {"unit": "\u00b0", "value": [0.054563492063483, 0.034722222222216]}, "statistics": {"maximum": [5], "minimum": [-1]}}, {"data_type": "float32", "description": "Cloud base pressure", "name": "CLOUD_BASE_PRESSURE", "openeo:gsd": {"unit": "\u00b0", "value": [0.054563492063483, 0.034722222222216]}, "statistics": {"maximum": [110000], "minimum": [1000]}}, {"data_type": "float32", "description": "Cloud top pressure", "name": "CLOUD_TOP_PRESSURE", "openeo:gsd": {"unit": "\u00b0", "value": [0.054563492063483, 0.034722222222216]}, "statistics": {"maximum": [110000], "minimum": [1000]}}, {"data_type": "float32", "description": "Cloud base height", "name": "CLOUD_BASE_HEIGHT", "openeo:gsd": {"unit": "\u00b0", "value": [0.054563492063483, 0.034722222222216]}, "statistics": {"maximum": [20000], "minimum": [0]}}, {"data_type": "float32", "description": "Cloud top height", "name": "CLOUD_TOP_HEIGHT", "openeo:gsd": {"unit": "\u00b0", "value": [0.054563492063483, 0.034722222222216]}, "statistics": {"maximum": [20000], "minimum": [0]}}, {"data_type": "float32", "description": "Cloud optical thickness", "name": "CLOUD_OPTICAL_THICKNESS", "openeo:gsd": {"unit": "\u00b0", "value": [0.054563492063483, 0.034722222222216]}, "statistics": {"maximum": [250], "minimum": [0]}}, {"data_type": "float32", "description": "Effective radiometric cloud fraction", "name": "CLOUD_FRACTION", "openeo:gsd": {"unit": "\u00b0", "value": [0.054563492063483, 0.034722222222216]}, "statistics": {"maximum": [1], "minimum": [0]}}, {"data_type": "uint8", "description": "The mask of data/no data pixels.", "name": "dataMask", "statistics": {"maximum": [1], "minimum": [0]}}], "gsd": [7000], "instrument": ["tropomi"], "platform": ["sentinel-5 precursor"], "s5p:timeliness": ["NRTI", "OFFL", "RPRO"], "s5p:type": ["O3", "O3_TCL", "O3_PR", "O3_TPR", "NO2", "SO2", "CO", "CH4", "HCHO", "CLOUD", "AER_AI", "AER_LH", "FRESCO", "BD3", "BD6", "BD7"], "sat:orbit_state": ["ascending", "descending"]}, "title": "Sentinel 5 Precursor", "type": "Collection"}}</script>
+    </openeo-collection>
+    
+</div>
+</div>
+<p>In this scenario, we’ve selected a bounding box covering Belgium for 2020. We chose Belgium purely out of interest, but users can pick any geographical area or time frame they desire for their analysis.</p>
+<div class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># define area and time of interest</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>extent <span class="op">=</span> {<span class="st">"west"</span>:<span class="fl">2.146728</span>, <span class="st">"south"</span>: <span class="fl">49.446978</span>, <span class="st">"east"</span>: <span class="fl">6.497314</span>, <span class="st">"north"</span>: <span class="fl">51.651837</span>}</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>time <span class="op">=</span> [<span class="st">"2020-01-01"</span>, <span class="st">"2021-01-01"</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Next, we create a function called <code>fetch_collection</code> to retrieve a list of datacubes. Each datacube in the list represents an individual air quality product from the Sentinel-5P L2 dataset. These datacubes are then combined using the <code>merge_cubes</code> process to generate a single cube containing all these products as a separate layer.</p>
+<p>Please note that users can only load one product at a time, even if provided within the same Sentinel 5P collection.</p>
 <div class="cell" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>scl <span class="op">=</span> c.load_collection(</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"SENTINEL2_L2A"</span>,</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    temporal_extent<span class="op">=</span>temporal_extent,</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    bands<span class="op">=</span>[<span class="st">"SCL"</span>],</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    max_cloud_cover<span class="op">=</span>max_cloud_cover</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>).resample_spatial(spatial_resolution).filter_spatial(area)</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>scl <span class="op">=</span> scl.<span class="bu">apply</span>(<span class="kw">lambda</span> x: if_(is_nan(x), <span class="dv">0</span>, x))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> fetch_collection(bands, time, extent) <span class="op">-&gt;</span> <span class="bu">list</span>:</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    cubes <span class="op">=</span> []</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> band <span class="kw">in</span> bands:</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>        datacube <span class="op">=</span> connection.load_collection(</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>            <span class="st">"SENTINEL_5P_L2"</span>,</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>            temporal_extent<span class="op">=</span>time,</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>            spatial_extent<span class="op">=</span>extent,</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>            bands<span class="op">=</span>[band]</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>        cubes.append(datacube)</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> cubes</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Create a binary cloud mask, which gives 1 if a pixel is classified as cloud by SCL, an 0 otherwise.</p>
 <div class="cell" data-execution_count="6">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>cloud_mask <span class="op">=</span>  calculate_cloud_mask(scl)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>band<span class="op">=</span>[<span class="st">"AER_AI_340_380"</span>, <span class="st">"AER_AI_354_388"</span>, <span class="st">"CO"</span>, <span class="st">"HCHO"</span>, <span class="st">"NO2"</span>, <span class="st">"O3"</span>, <span class="st">"SO2"</span>, <span class="st">"CH4"</span>]</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>cubes <span class="op">=</span> fetch_collection(band,time,extent)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>merged_cube <span class="op">=</span> cubes[<span class="dv">0</span>]</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> cube <span class="kw">in</span> cubes[<span class="dv">1</span>:]:</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    merged_cube <span class="op">=</span> merged_cube.merge_cubes(cube)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</section>
-<section id="coverage-score" class="level2">
-<h2 class="anchored" data-anchor-id="coverage-score">Coverage score</h2>
-<p>First of all, the coverage score is calculated, which is equal to 1 - the percentage of pixels in the spatial_extent that are classified as cloud in SCL.</p>
-<ul>
-<li>A polygon is created that is slighty larger than the original spatial_extent</li>
-<li>The cloud coverage percentage is calculated by taking the average of the cloud binary (defined above), by using the <code>aggregate_spatial</code> process</li>
-<li>Since the <code>aggregate_spatial</code> process results in vectordata, the data is rasterized again to the original dimensions, using the (experimental) <code>vector_to_raster</code> process</li>
-<li>The coverage score is then equal to 1 - the cloud coverage percentage. I.e. a smaller cloud coverage percentage indicates a larger score</li>
-</ul>
+<p>As an additional step in this workflow, we apply the <a href="https://open-eo.github.io/openeo-python-client/api-processes.html#openeo.processes.aggregate_temporal_period"><code>aggregate_temporal_period</code></a> process available in openEO, which combines data over a specified time period. In this case, we have set the period to <em>dekad</em>, meaning a 10-day period.</p>
 <div class="cell" data-execution_count="7">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>coverage_score <span class="op">=</span> calculate_cloud_coverage_score(cloud_mask, area, scl)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>simplified_cube <span class="op">=</span> merged_cube.aggregate_temporal_period(reducer<span class="op">=</span><span class="st">"mean"</span>, period<span class="op">=</span><span class="st">"dekad"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</section>
-<section id="date-score" class="level2">
-<h2 class="anchored" data-anchor-id="date-score">Date Score</h2>
-<p>Both the date and distance-to-cloud score are calculated via a UDF.</p>
+<p>Since the workflow covers an entire year with eight different bands over Belgium, we assume that the processing might be computationally intensive. Therefore, we should leverage the job configuration capabilities provided in openEO to execute the workflow using batch job-based methods.</p>
 <div class="cell" data-execution_count="8">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>date_score <span class="op">=</span> calculate_date_score(scl)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>/home/vverelst/anaconda3/envs/openeo-app/lib/python3.9/site-packages/openeo/api/process.py:22: UserWarning: Parameter without description: using name as description.
-  warnings.warn("Parameter without description: using name as description.")</code></pre>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>job_options <span class="op">=</span> {</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>        <span class="st">"executor-memory"</span>: <span class="st">"3G"</span>,</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>        <span class="st">"executor-memoryOverhead"</span>: <span class="st">"4G"</span>,</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">"executor-cores"</span>: <span class="st">"2"</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<div class="cell" data-scrolled="true" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># execute the process</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>simplified_cube.execute_batch(title<span class="op">=</span><span class="st">"Sentinel-5P Belgium"</span>,outputfile<span class="op">=</span><span class="st">"Sentinel5P_Belgium.nc"</span>, job_options<span class="op">=</span>job_options)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</section>
-<section id="distance-to-cloud-score" class="level2">
-<h2 class="anchored" data-anchor-id="distance-to-cloud-score">Distance to Cloud Score</h2>
-<p>Finally, the Distance to Cloud Score is calculated by applying a Gaussian kernel to the binary. The kernel size, defined below, indicates the maximum distance from a cloud, above which a pixel is automatically assigned score 1. In case of a kernel size of 151, the maximum distance is 150 pixels. The kernel size is 151 for a resolution of 20m and will be rescaled accordingly.</p>
-<div class="cell" data-execution_count="9">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>dtc_score <span class="op">=</span> calculate_distance_to_cloud_score(cloud_mask, spatial_resolution)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="now-lets-analyse-the-output." class="level3">
+<h3 class="anchored" data-anchor-id="now-lets-analyse-the-output.">Now, let’s analyse the output.</h3>
+<div class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co">#load the saved file</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>dataset <span class="op">=</span> xr.load_dataset(<span class="st">"Sentinel5P_Belgium.nc"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</section>
-<section id="aggregating-scores" class="level2">
-<h2 class="anchored" data-anchor-id="aggregating-scores">Aggregating Scores</h2>
-<p>Then, the scores are aggregated together, by using a weighted average. As for now the coverage score is excluded. To make sure that pixels which contain no data (SCL score 0) are not selected, they are explicitly masked out of the final score. B01 score is excluded.</p>
-<div class="cell" data-execution_count="10">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>weights <span class="op">=</span> [<span class="dv">1</span>, <span class="fl">0.8</span>, <span class="fl">0.5</span>]</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>score <span class="op">=</span> aggregate_BAP_scores(dtc_score, date_score, coverage_score, weights)</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>score <span class="op">=</span> score.mask(scl.band(<span class="st">"SCL"</span>) <span class="op">==</span> <span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</section>
-<section id="masking-and-compositing" class="level2">
-<h2 class="anchored" data-anchor-id="masking-and-compositing">Masking and Compositing</h2>
-<p>Next, a mask is created. This serves to mask every pixel, except the one with the highest score, for each month.</p>
-<div class="cell" data-execution_count="11">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>rank_mask <span class="op">=</span> create_rank_mask(score)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>Next, some bands of interest from Sentinel-2 are loaded. They are then masked by the BAP mask constructed above. Then they are aggregated per month, to obtain a composite image per month. By using the “first” process as an aggregator, the situation where there are potentially more than one days in a month selected by the algorithm is immediately handled.</p>
-<div class="cell" data-execution_count="12">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>rgb_bands <span class="op">=</span> c.load_collection(</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"SENTINEL2_L2A"</span>,</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    temporal_extent <span class="op">=</span> temporal_extent,</span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    bands <span class="op">=</span> [<span class="st">"B02"</span>, <span class="st">"B03"</span>,<span class="st">"B04"</span>],</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    max_cloud_cover<span class="op">=</span>max_cloud_cover</span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>).filter_spatial(area)</span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>composite <span class="op">=</span> rgb_bands.mask(rank_mask).mask(cloud_mask).aggregate_temporal_period(<span class="st">"month"</span>,<span class="st">"first"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>Next, the final results are downloaded and a composite image for the month of June is shown as an example.</p>
-<div class="cell" data-execution_count="13">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>job <span class="op">=</span> composite.execute_batch(</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    title<span class="op">=</span><span class="st">"BAP Composite"</span>,</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    out_format<span class="op">=</span><span class="st">"netcdf"</span></span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>results <span class="op">=</span> job.get_results()</span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>results.download_files(<span class="st">'./results/'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>0:00:00 Job 'j-24041209f0e64b119b20e266cb049c51': send 'start'
-0:00:13 Job 'j-24041209f0e64b119b20e266cb049c51': running (progress N/A)
-0:00:18 Job 'j-24041209f0e64b119b20e266cb049c51': running (progress N/A)
-0:00:25 Job 'j-24041209f0e64b119b20e266cb049c51': running (progress N/A)
-0:00:34 Job 'j-24041209f0e64b119b20e266cb049c51': running (progress N/A)
-0:00:44 Job 'j-24041209f0e64b119b20e266cb049c51': running (progress N/A)
-0:00:57 Job 'j-24041209f0e64b119b20e266cb049c51': running (progress N/A)
-0:01:13 Job 'j-24041209f0e64b119b20e266cb049c51': running (progress N/A)
-0:01:33 Job 'j-24041209f0e64b119b20e266cb049c51': running (progress N/A)
-0:02:00 Job 'j-24041209f0e64b119b20e266cb049c51': running (progress N/A)
-0:02:31 Job 'j-24041209f0e64b119b20e266cb049c51': finished (progress N/A)</code></pre>
-</div>
-<div class="cell-output cell-output-display" data-execution_count="13">
-<pre><code>[PosixPath('results/openEO.nc'), PosixPath('results/job-results.json')]</code></pre>
-</div>
-</div>
-<div class="cell" data-execution_count="14">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> xarray <span class="im">as</span> xr</span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>composite_ds <span class="op">=</span> xr.open_dataset(<span class="st">'./results/openEO.nc'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell" data-execution_count="15">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>rgb_array<span class="op">=</span>composite_ds.to_array(dim<span class="op">=</span><span class="st">"bands"</span>).sel(bands<span class="op">=</span>[<span class="st">"B04"</span>,<span class="st">"B03"</span>,<span class="st">"B02"</span>]).astype(np.float32)<span class="op">/</span><span class="dv">10000</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell" data-execution_count="16">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>xr.plot.imshow(rgb_array,vmin<span class="op">=</span><span class="dv">0</span>,vmax<span class="op">=</span><span class="fl">0.18</span>,rgb<span class="op">=</span><span class="st">"bands"</span>,col<span class="op">=</span><span class="st">'t'</span>,col_wrap<span class="op">=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="16">
-<pre><code>&lt;xarray.plot.facetgrid.FacetGrid at 0x7faea8e03be0&gt;</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>/home/vverelst/anaconda3/envs/openeo-app/lib/python3.9/site-packages/matplotlib/cm.py:494: RuntimeWarning: invalid value encountered in cast
-  xx = (xx * 255).astype(np.uint8)</code></pre>
-</div>
+<p>Let us create a map showing the average values of each variable across time. These maps can provide insights into how the variables behave within the specified area of interest.</p>
+<div class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>band<span class="op">=</span>[<span class="st">"AER_AI_340_380"</span>, <span class="st">"AER_AI_354_388"</span>, <span class="st">"CO"</span>, <span class="st">"HCHO"</span>, <span class="st">"NO2"</span>, <span class="st">"O3"</span>, <span class="st">"SO2"</span>, <span class="st">"CH4"</span>]</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>units <span class="op">=</span> [<span class="st">""</span>, <span class="st">""</span>, <span class="st">"(mol/m$^</span><span class="sc">{2}</span><span class="st">$)"</span>, <span class="st">"(mol/m$^</span><span class="sc">{2}</span><span class="st">$)"</span>, <span class="st">"(mol/m$^</span><span class="sc">{2}</span><span class="st">$)"</span>, <span class="st">"(mol/m$^</span><span class="sc">{2}</span><span class="st">$)"</span>, <span class="st">"(mol/m$^</span><span class="sc">{2}</span><span class="st">$)"</span>, <span class="st">"(ppb)"</span>]</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>nrows <span class="op">=</span> <span class="dv">2</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>ncols <span class="op">=</span> <span class="dv">4</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="dv">2</span>,<span class="dv">4</span>, figsize<span class="op">=</span>(<span class="dv">15</span>, <span class="dv">8</span>), dpi<span class="op">=</span><span class="dv">100</span>, sharey<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> idx, (i, u) <span class="kw">in</span> <span class="bu">enumerate</span>(<span class="bu">zip</span>(band, units)):</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    row <span class="op">=</span> idx <span class="op">//</span> ncols</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    col <span class="op">=</span> idx <span class="op">%</span> ncols</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>    ds <span class="op">=</span> dataset[[i]].to_array(dim<span class="op">=</span><span class="st">"bands"</span>)</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>    ds.mean(dim<span class="op">=</span><span class="st">"t"</span>)[<span class="dv">0</span>].plot.imshow(ax<span class="op">=</span>axes[row, col])</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>    axes[row, col].set_title(<span class="st">"mean "</span> <span class="op">+</span> i  <span class="op">+</span> u )</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<p><img src="bap_composite_files/figure-html/cell-17-output-3.png" class="img-fluid"></p>
+<p><img src="AirQuality_files/figure-html/cell-12-output-1.png" class="img-fluid"></p>
 </div>
 </div>
+<p>Additionally, to understand the trend of these variables over time, let us calculate the mean of the images and analyze it for selected timestamps by plotting the variables across time intervals.</p>
+<div class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co">#calculate mean</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>dataset_mean <span class="op">=</span> dataset[band].mean(dim<span class="op">=</span>[<span class="st">'x'</span>,<span class="st">'y'</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>nrows <span class="op">=</span> <span class="dv">2</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>ncols <span class="op">=</span> <span class="dv">4</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(nrows<span class="op">=</span>nrows, ncols<span class="op">=</span>ncols, figsize<span class="op">=</span>(<span class="dv">15</span>, <span class="dv">8</span>), dpi<span class="op">=</span><span class="dv">100</span>, sharex<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> idx, (i, unit) <span class="kw">in</span> <span class="bu">enumerate</span>(<span class="bu">zip</span>(band, units)):</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    row <span class="op">=</span> idx <span class="op">//</span> ncols</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    col <span class="op">=</span> idx <span class="op">%</span> ncols</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>    xr.plot.line(dataset_mean[i], ax<span class="op">=</span>axs[row][col]) </span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>    axs[row][col].tick_params(axis<span class="op">=</span><span class="st">'x'</span>, labelrotation<span class="op">=</span><span class="dv">45</span>)</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>    axs[row][col].set_ylabel(i <span class="op">+</span> unit )</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="AirQuality_files/figure-html/cell-14-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>From the plot above, we can observe the air quality trends of Belgium for the year 2020. There is a noticeable increase in CO and NO2 levels at the beginning of the year, followed by a decrease during the lockdown months from May to September. Conversely, there is a decreasing trend in O3 concentration, and a similar pattern is observed for SO2 levels.</p>
+<p>Given that these variables are present in the atmosphere, it’s reasonable to assume there could be some correlation among them. An overview of the correlation could help in future research and workflows.</p>
+<div class="cell" data-execution_count="19">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># generate pandas dataframe</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> dataset.to_dataframe()</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co">#correlation matrix</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>corr <span class="op">=</span> df[band].corr()</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="co"># mask the same comparison twice for better visualisation</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>mask <span class="op">=</span> np.zeros_like(corr, dtype<span class="op">=</span><span class="bu">bool</span>)</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>mask[np.triu_indices_from(mask)] <span class="op">=</span> <span class="va">True</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>corr[mask] <span class="op">=</span> np.nan</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>(corr</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a> .style</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a> .background_gradient(cmap<span class="op">=</span><span class="st">'coolwarm'</span>, axis<span class="op">=</span><span class="va">None</span>, vmin<span class="op">=-</span><span class="dv">1</span>, vmax<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a> .highlight_null(color<span class="op">=</span><span class="st">'#f1f1f1'</span>) </span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a> .<span class="bu">format</span>(precision<span class="op">=</span><span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="19">
+<style type="text/css">
+#T_ad83e_row0_col0, #T_ad83e_row0_col1, #T_ad83e_row0_col2, #T_ad83e_row0_col3, #T_ad83e_row0_col4, #T_ad83e_row0_col5, #T_ad83e_row0_col6, #T_ad83e_row0_col7, #T_ad83e_row1_col1, #T_ad83e_row1_col2, #T_ad83e_row1_col3, #T_ad83e_row1_col4, #T_ad83e_row1_col5, #T_ad83e_row1_col6, #T_ad83e_row1_col7, #T_ad83e_row2_col2, #T_ad83e_row2_col3, #T_ad83e_row2_col4, #T_ad83e_row2_col5, #T_ad83e_row2_col6, #T_ad83e_row2_col7, #T_ad83e_row3_col3, #T_ad83e_row3_col4, #T_ad83e_row3_col5, #T_ad83e_row3_col6, #T_ad83e_row3_col7, #T_ad83e_row4_col4, #T_ad83e_row4_col5, #T_ad83e_row4_col6, #T_ad83e_row4_col7, #T_ad83e_row5_col5, #T_ad83e_row5_col6, #T_ad83e_row5_col7, #T_ad83e_row6_col6, #T_ad83e_row6_col7, #T_ad83e_row7_col7 {
+  background-color: #000000;
+  color: #f1f1f1;
+  background-color: #f1f1f1;
+}
+#T_ad83e_row1_col0 {
+  background-color: #b70d28;
+  color: #f1f1f1;
+}
+#T_ad83e_row2_col0 {
+  background-color: #f5c2aa;
+  color: #000000;
+}
+#T_ad83e_row2_col1 {
+  background-color: #f6bda2;
+  color: #000000;
+}
+#T_ad83e_row3_col0, #T_ad83e_row7_col3 {
+  background-color: #dcdddd;
+  color: #000000;
+}
+#T_ad83e_row3_col1 {
+  background-color: #dddcdc;
+  color: #000000;
+}
+#T_ad83e_row3_col2 {
+  background-color: #ccd9ed;
+  color: #000000;
+}
+#T_ad83e_row4_col0 {
+  background-color: #f2cab5;
+  color: #000000;
+}
+#T_ad83e_row4_col1 {
+  background-color: #f3c8b2;
+  color: #000000;
+}
+#T_ad83e_row4_col2 {
+  background-color: #f7af91;
+  color: #000000;
+}
+#T_ad83e_row4_col3 {
+  background-color: #dbdcde;
+  color: #000000;
+}
+#T_ad83e_row5_col0 {
+  background-color: #bad0f8;
+  color: #000000;
+}
+#T_ad83e_row5_col1 {
+  background-color: #bed2f6;
+  color: #000000;
+}
+#T_ad83e_row5_col2 {
+  background-color: #f6bea4;
+  color: #000000;
+}
+#T_ad83e_row5_col3 {
+  background-color: #cdd9ec;
+  color: #000000;
+}
+#T_ad83e_row5_col4, #T_ad83e_row7_col2 {
+  background-color: #dadce0;
+  color: #000000;
+}
+#T_ad83e_row6_col0, #T_ad83e_row7_col1 {
+  background-color: #edd1c2;
+  color: #000000;
+}
+#T_ad83e_row6_col1 {
+  background-color: #eed0c0;
+  color: #000000;
+}
+#T_ad83e_row6_col2 {
+  background-color: #e7d7ce;
+  color: #000000;
+}
+#T_ad83e_row6_col3 {
+  background-color: #cedaeb;
+  color: #000000;
+}
+#T_ad83e_row6_col4 {
+  background-color: #ead5c9;
+  color: #000000;
+}
+#T_ad83e_row6_col5 {
+  background-color: #d6dce4;
+  color: #000000;
+}
+#T_ad83e_row7_col0 {
+  background-color: #ead4c8;
+  color: #000000;
+}
+#T_ad83e_row7_col4 {
+  background-color: #f7b396;
+  color: #000000;
+}
+#T_ad83e_row7_col5 {
+  background-color: #afcafc;
+  color: #000000;
+}
+#T_ad83e_row7_col6 {
+  background-color: #ebd3c6;
+  color: #000000;
+}
+</style>
+
+<table id="T_ad83e" data-quarto-postprocess="true" class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th class="blank level0" data-quarto-table-cell-role="th">&nbsp;</th>
+<th id="T_ad83e_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">AER_AI_340_380</th>
+<th id="T_ad83e_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">AER_AI_354_388</th>
+<th id="T_ad83e_level0_col2" class="col_heading level0 col2" data-quarto-table-cell-role="th">CO</th>
+<th id="T_ad83e_level0_col3" class="col_heading level0 col3" data-quarto-table-cell-role="th">HCHO</th>
+<th id="T_ad83e_level0_col4" class="col_heading level0 col4" data-quarto-table-cell-role="th">NO2</th>
+<th id="T_ad83e_level0_col5" class="col_heading level0 col5" data-quarto-table-cell-role="th">O3</th>
+<th id="T_ad83e_level0_col6" class="col_heading level0 col6" data-quarto-table-cell-role="th">SO2</th>
+<th id="T_ad83e_level0_col7" class="col_heading level0 col7" data-quarto-table-cell-role="th">CH4</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td id="T_ad83e_level0_row0" class="row_heading level0 row0" data-quarto-table-cell-role="th">AER_AI_340_380</td>
+<td id="T_ad83e_row0_col0" class="data row0 col0">nan</td>
+<td id="T_ad83e_row0_col1" class="data row0 col1">nan</td>
+<td id="T_ad83e_row0_col2" class="data row0 col2">nan</td>
+<td id="T_ad83e_row0_col3" class="data row0 col3">nan</td>
+<td id="T_ad83e_row0_col4" class="data row0 col4">nan</td>
+<td id="T_ad83e_row0_col5" class="data row0 col5">nan</td>
+<td id="T_ad83e_row0_col6" class="data row0 col6">nan</td>
+<td id="T_ad83e_row0_col7" class="data row0 col7">nan</td>
+</tr>
+<tr class="even">
+<td id="T_ad83e_level0_row1" class="row_heading level0 row1" data-quarto-table-cell-role="th">AER_AI_354_388</td>
+<td id="T_ad83e_row1_col0" class="data row1 col0">0.98</td>
+<td id="T_ad83e_row1_col1" class="data row1 col1">nan</td>
+<td id="T_ad83e_row1_col2" class="data row1 col2">nan</td>
+<td id="T_ad83e_row1_col3" class="data row1 col3">nan</td>
+<td id="T_ad83e_row1_col4" class="data row1 col4">nan</td>
+<td id="T_ad83e_row1_col5" class="data row1 col5">nan</td>
+<td id="T_ad83e_row1_col6" class="data row1 col6">nan</td>
+<td id="T_ad83e_row1_col7" class="data row1 col7">nan</td>
+</tr>
+<tr class="odd">
+<td id="T_ad83e_level0_row2" class="row_heading level0 row2" data-quarto-table-cell-role="th">CO</td>
+<td id="T_ad83e_row2_col0" class="data row2 col0">0.26</td>
+<td id="T_ad83e_row2_col1" class="data row2 col1">0.30</td>
+<td id="T_ad83e_row2_col2" class="data row2 col2">nan</td>
+<td id="T_ad83e_row2_col3" class="data row2 col3">nan</td>
+<td id="T_ad83e_row2_col4" class="data row2 col4">nan</td>
+<td id="T_ad83e_row2_col5" class="data row2 col5">nan</td>
+<td id="T_ad83e_row2_col6" class="data row2 col6">nan</td>
+<td id="T_ad83e_row2_col7" class="data row2 col7">nan</td>
+</tr>
+<tr class="even">
+<td id="T_ad83e_level0_row3" class="row_heading level0 row3" data-quarto-table-cell-role="th">HCHO</td>
+<td id="T_ad83e_row3_col0" class="data row3 col0">-0.00</td>
+<td id="T_ad83e_row3_col1" class="data row3 col1">0.00</td>
+<td id="T_ad83e_row3_col2" class="data row3 col2">-0.12</td>
+<td id="T_ad83e_row3_col3" class="data row3 col3">nan</td>
+<td id="T_ad83e_row3_col4" class="data row3 col4">nan</td>
+<td id="T_ad83e_row3_col5" class="data row3 col5">nan</td>
+<td id="T_ad83e_row3_col6" class="data row3 col6">nan</td>
+<td id="T_ad83e_row3_col7" class="data row3 col7">nan</td>
+</tr>
+<tr class="odd">
+<td id="T_ad83e_level0_row4" class="row_heading level0 row4" data-quarto-table-cell-role="th">NO2</td>
+<td id="T_ad83e_row4_col0" class="data row4 col0">0.20</td>
+<td id="T_ad83e_row4_col1" class="data row4 col1">0.22</td>
+<td id="T_ad83e_row4_col2" class="data row4 col2">0.38</td>
+<td id="T_ad83e_row4_col3" class="data row4 col3">-0.01</td>
+<td id="T_ad83e_row4_col4" class="data row4 col4">nan</td>
+<td id="T_ad83e_row4_col5" class="data row4 col5">nan</td>
+<td id="T_ad83e_row4_col6" class="data row4 col6">nan</td>
+<td id="T_ad83e_row4_col7" class="data row4 col7">nan</td>
+</tr>
+<tr class="even">
+<td id="T_ad83e_level0_row5" class="row_heading level0 row5" data-quarto-table-cell-role="th">O3</td>
+<td id="T_ad83e_row5_col0" class="data row5 col0">-0.24</td>
+<td id="T_ad83e_row5_col1" class="data row5 col1">-0.22</td>
+<td id="T_ad83e_row5_col2" class="data row5 col2">0.29</td>
+<td id="T_ad83e_row5_col3" class="data row5 col3">-0.11</td>
+<td id="T_ad83e_row5_col4" class="data row5 col4">-0.02</td>
+<td id="T_ad83e_row5_col5" class="data row5 col5">nan</td>
+<td id="T_ad83e_row5_col6" class="data row5 col6">nan</td>
+<td id="T_ad83e_row5_col7" class="data row5 col7">nan</td>
+</tr>
+<tr class="odd">
+<td id="T_ad83e_level0_row6" class="row_heading level0 row6" data-quarto-table-cell-role="th">SO2</td>
+<td id="T_ad83e_row6_col0" class="data row6 col0">0.15</td>
+<td id="T_ad83e_row6_col1" class="data row6 col1">0.15</td>
+<td id="T_ad83e_row6_col2" class="data row6 col2">0.08</td>
+<td id="T_ad83e_row6_col3" class="data row6 col3">-0.11</td>
+<td id="T_ad83e_row6_col4" class="data row6 col4">0.11</td>
+<td id="T_ad83e_row6_col5" class="data row6 col5">-0.05</td>
+<td id="T_ad83e_row6_col6" class="data row6 col6">nan</td>
+<td id="T_ad83e_row6_col7" class="data row6 col7">nan</td>
+</tr>
+<tr class="even">
+<td id="T_ad83e_level0_row7" class="row_heading level0 row7" data-quarto-table-cell-role="th">CH4</td>
+<td id="T_ad83e_row7_col0" class="data row7 col0">0.11</td>
+<td id="T_ad83e_row7_col1" class="data row7 col1">0.14</td>
+<td id="T_ad83e_row7_col2" class="data row7 col2">-0.02</td>
+<td id="T_ad83e_row7_col3" class="data row7 col3">-0.00</td>
+<td id="T_ad83e_row7_col4" class="data row7 col4">0.36</td>
+<td id="T_ad83e_row7_col5" class="data row7 col5">-0.30</td>
+<td id="T_ad83e_row7_col6" class="data row7 col6">0.12</td>
+<td id="T_ad83e_row7_col7" class="data row7 col7">nan</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>As observed in the plot above, no significant or strong correlation exists between products except the two air quality indexes. However, a slight positive correlation exists between CH4, CO, and NO2.</p>
+<p>Please note that this correlation coefficient is calculated independently for a specific region, and no spatio-temporal or seasonal factors are considered in this analysis. This example illustrates potential correlations, and users can use any correlation matrix generation tool they prefer.</p>
 
 
 </section>
