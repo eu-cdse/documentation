@@ -1,9 +1,11 @@
-# Service description and evolution roadmap  
+# Roadmap  
 
 
-The [Service description and evolution document](/_docs/CDSE-SDE-TSY_Service%20Description%20and%20Evolution_1.2.pdf ':ignore') provides a comprehensive view of all data products and services available in the frame of the Copernicus Data Space Ecosystem, both the “Copernicus Free Services” as well as the services operated by third parties. 
+The Copernicus Data Space Ecosystem is continually advancing, with its roadmap frequently revised to incorporate new improvements.
+Explore additional data offerings and upcoming services in the near future here.
 
-## Roadmap
+
+## Upcoming improvements
 <!-- |Timeline| Jan-23 | Apr-23 | Jul-23| Nov-23 
 |---|---|---|---|----|
 |1. | New Data Access portal  | Catalogue API: STAC, S3  | Full archive of Sentinel missions | Sentinel engineering and auxiliary data|
@@ -14,7 +16,9 @@ The [Service description and evolution document](/_docs/CDSE-SDE-TSY_Service%20D
 |6.|  |  | Marketplace | -->
 ![](_images/RoadmapSummary_07_2024.png)
 
-## Details
+## Details*
+
+*Under revision
 
 More detailed information on the timelines for Copernicus Data Space Ecosystem data, APIs and Application updates can be found in:
 
