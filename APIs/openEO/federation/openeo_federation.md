@@ -23,8 +23,16 @@ You can find a description of the technical design [here](./backends/design.md),
 
 ## Federation credit usage
 
-The usage of processing capacity in the federation is likely to lead to credit consumption.
-This usage will be reported in the [openEO algorithm plaza](../../../Applications/PlazaDetails/Reporting.qmd). 
+Using the federation's processing capacity will lead to credit consumption. This credit usage can be monitored through 
+openEO Algorithm Plaza's [reporting capabilities](../../../Applications/PlazaDetails/Reporting.qmd). Users can also get 
+more information on their credit wallets via the openEO Algorithm Plaza billing page. Detailed instructions on accessing 
+your credit wallets are available [here](../../../Applications/AlgorithmPlaza.qmd#step-3-check-your-credits).
+
+![Credit wallets in federation](../../../Applications/_images/billing_federation.png){#fig-federation}
+
+As shown in @fig-federation, credit wallets can be linked to one or more providers. This setup provides a clear overview 
+of the remaining credits available for usage with different providers.
+
 To support basic processing within the federation, external providers can allow a limited amount of credits, similar to the [free openEO credits](../../../Quotas.qmd) offered by CDSE.
 It is important to note that there is clear separation of your credits amongst the external providers.
 This means that using an external provider will not lead to a reduction in the free credits supplied by CDSE. 
