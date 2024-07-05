@@ -14,7 +14,7 @@ Explore additional data offerings and upcoming services in the near future here.
 |4. |Browser| On-demand production API  | Processing API: extended Sentinel Hub APIs, OpenEO  |   |
 | 5.|Catalogue APIs: OData and OpenSearch |   | Jupyter Lab    |      |
 |6.|  |  | Marketplace | -->
-![](_images/RoadmapSummary_07_2024.png)
+![](_images/CDSE_Roadmap_07.2024new.png)
 
 ## Details*
 
