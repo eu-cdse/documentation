@@ -5,7 +5,11 @@ title: Batch Processing API
 ---
 
 **The Batch Processing API is only available for users with Copernicus
-Service accounts.** Please refer to our [FAQ](https://documentation.dataspace.copernicus.eu/FAQ.html#which-entities-are-qualified-to-get-higher-quotas-in-scope-of-copernicus-services-group-and-how-can-one-ask-for-it) on account typology change and [Submit an account change request](https://dataspace.copernicus.eu/copernicus-services-user){target="_blank"} to our Copernicus Data Space Ecosystem Support Team to request your Copernicus Service account.
+Service accounts.** Please refer to our [FAQ](/FAQ.qmd) on account
+typology change and [Submit A
+Request](https://helpcenter.dataspace.copernicus.eu/hc/en-gb/requests/new){target="_blank"}
+to our Copernicus Data Space Ecosystem Support Team to request your
+Copernicus Service account accordingly.
 
 Batch Processing API (or shortly \"Batch API\") enables you to request
 data for large areas and/or longer time periods for any Sentinel Hub
@@ -40,7 +44,7 @@ request, start the processing or cancel the request. When additional
 analysis is requested:
 
 -   the status of the request changes to `ANALYSING`,
--   the evalscript is validated,
+-   the evalscript is [validated](#evalscript-validation),
 -   a list of required tiles is created, and
 -   the request\'s cost is estimated, i.e. the estimated number of
     processing units (PU) needed for the requested processing. Note that
@@ -48,12 +52,6 @@ analysis is requested:
     significantly inaccurate, as described [below](#cost-estimate).
 -   After the analysis is finished the status of the request changes to
     `ANALYSIS_DONE`.
-
-In the evalscript validation for ORBIT and TILE mosaicking, we select a
-few orbits or tiles that match your request, and test if your evalscript
-can process them. We also test, if your evalscript can process the case,
-when no orbit or tile is passed. So make sure your evalscript handles
-this.
 
 If the user chooses to directly start processing, the system still
 executes the analysis but when the analysis is done it automatically
@@ -79,6 +77,34 @@ processing may fail. In this case, the batch request ends up in status
 `PARTIAL` and user can request restart its processing as shown in [this
 example](/APIs/SentinelHub/Batch/Examples.qmd#restart-a-partially-processed-batch-processing-request-restart).
 This will restart processing of all `FAILED` tiles.
+
+### Evalscript validation
+
+During analysis your evalscript will be validated against a portion of
+your selected area of interest. With SIMPLE mosaicking, your evalscript
+will only be evaluated against one scene. With ORBIT or TILE mosaicking,
+your evalscript will be evaluated against any number of possible scenes.
+That also includes a case with zero scenes (when no orbit or tile is
+available). Your evalscript must therefore be able to handle all such
+cases, even if your specific request does not contain such a case.
+
+Example of a request that handles such cases:
+
+``` javascript
+function evaluatePixel(S2L2A) {
+  let sum = 0
+
+  for (var i = 0; i < S2L2A.length; i++){
+    sum += S2L2A[i].B02
+  }
+
+  return sum;
+}
+```
+
+As can be seen in the case above. The array represents the S2L2A scenes
+that are available. In the case of zero scenes, the for loop is not
+entered, ensuring the script also works with zero scenes.
 
 #### Canceling the request
 
