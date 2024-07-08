@@ -5,8 +5,9 @@ title: Bring Your Own COG API
 ---
 
 **Bring Your Own COG API is only available for users with Copernicus
-Service accounts.** Please refer to our [FAQ](https://documentation.dataspace.copernicus.eu/FAQ.html#which-entities-are-qualified-to-get-higher-quotas-in-scope-of-copernicus-services-group-and-how-can-one-ask-for-it) on account
-typology change and [Submit an account change request](https://dataspace.copernicus.eu/copernicus-services-user){target="_blank"}
+Service accounts.** Please refer to our [FAQ](/FAQ.qmd) on account
+typology change and [Submit A
+Request](https://helpcenter.dataspace.copernicus.eu/hc/en-gb/requests/new){target="_blank"}
 to our Copernicus Data Space Ecosystem Support Team to request your
 Copernicus Service account accordingly.
 
@@ -61,6 +62,9 @@ These are:
 -   The projection needs to be one of: WGS84 (EPSG:4326), WebMercator
     (EPGS:3857), any UTM zone (EPSG:32601-32660, 32701-32760), or Europe
     LAEA (EPSG:3035).
+-   Photometric interpretation that is not 1 (0 is imaged as black) or 2
+    (RGB) is only supported with no compression and deflate or zstd
+    compression.
 -   The COG must not cross any of the two poles.
 -   The band name should be a valid JavaScript identifier so it can be
     safely used in evalscripts; valid identifiers are case-sensitive,
@@ -470,14 +474,17 @@ ingested.
 The cover geometry is important because it tells the system where it can
 expect to find data. As a consequence, this determines how data is
 rendered where tiles overlap. If you have tiles with overlapping cover
-geometries, only the data from one tile can be rendered where two (or
-more) cover geometries intersect. This is true even if this data is
-nodata or if it lies outside the tile bounding box. Having quality cover
-geometries is therefore important for collections where many tiles
-containing nodata overlap. Not all cases need precise cover geometries,
-however. A single tile or a regularly gridded collection with a single
-date and coordinate reference system can get away with cover geometries
-equalling the bounding box.
+geometries and you for example request [mosaicking
+SIMPLE](/APIs/SentinelHub/Evalscript/V3.qmd#mosaicking), only the data
+from one tile will be rendered where two (or more) cover geometries
+intersect. This is true even if this data is nodata or if it lies
+outside the tile bounding box. Sentinel Hub will render such areas as
+nodata even if other tiles in the data collection contain valid data for
+this area. Having quality cover geometries is therefore important for
+collections where many tiles containing nodata overlap. Not all cases
+need precise cover geometries, however. A single tile or a regularly
+gridded collection with a single date and coordinate reference system
+can get away with cover geometries equalling the bounding box.
 
 ```{=html}
 <br />
@@ -589,6 +596,9 @@ function evaluatePixel(samples, scenes) {
 }
 ```
 
+*Note that getting data in such a manner will use more processing units
+than SIMPLE mosaicking with precise cover geometries.*
+
 Optionally, you may additionally use the `preProcessScenes` function to
 potentially reduce the number of tiles which will be processed. This is
 useful to set an upper limit for the number of processing units which
@@ -601,9 +611,6 @@ function preProcessScenes (collections) {
   return collections;
 }
 ```
-
-*Note that getting data in such a manner will use more processing units
-than SIMPLE mosaicking with precise cover geometries.*
 
 ## Collection metadata
 
