@@ -243,7 +243,7 @@ window.onload = function() {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="../../Roadmap.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Service description and evolution roadmap</span></a>
+ <span class="menu-text">Roadmap</span></a>
           <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -677,6 +677,12 @@ window.onload = function() {
   <div class="sidebar-item-container"> 
   <a href="../../APIs/SentinelHub/Data/S3OLCI.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Sentinel-3 OLCI L1B</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Data/S3OLCIL2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Sentinel-3 OLCI L2</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -1270,7 +1276,7 @@ window.onload = function() {
 
 </header>
 
-<p><strong>Bring Your Own COG API is only available for users with Copernicus Service accounts.</strong> Please refer to our <a href="https://documentation.dataspace.copernicus.eu/FAQ.html#which-entities-are-qualified-to-get-higher-quotas-in-scope-of-copernicus-services-group-and-how-can-one-ask-for-it">FAQ</a> on account typology change and <a href="https://dataspace.copernicus.eu/copernicus-services-user" target="_blank">Submit an account change request</a> to our Copernicus Data Space Ecosystem Support Team to request your Copernicus Service account accordingly.</p>
+<p><strong>Bring Your Own COG API is only available for users with Copernicus Service accounts.</strong> Please refer to our <a href="../../FAQ.html">FAQ</a> on account typology change and <a href="https://helpcenter.dataspace.copernicus.eu/hc/en-gb/requests/new" target="_blank">Submit A Request</a> to our Copernicus Data Space Ecosystem Support Team to request your Copernicus Service account accordingly.</p>
 <section id="overview" class="level2">
 <h2 class="anchored" data-anchor-id="overview">Overview</h2>
 <p>Bring Your Own COG API (or shortly "BYOC") enables you to import your own data in Sentinel Hub and access it just like any other data you are used to. To be able to do so, the following conditions should be met:</p>
@@ -1299,6 +1305,7 @@ window.onload = function() {
 <li>The COG header size must not exceed one megabyte.</li>
 <li>The internal tile size must be between 256 x 256 and 2048 x 2048.</li>
 <li>The projection needs to be one of: WGS84 (EPSG:4326), WebMercator (EPGS:3857), any UTM zone (EPSG:32601-32660, 32701-32760), or Europe LAEA (EPSG:3035).</li>
+<li>Photometric interpretation that is not 1 (0 is imaged as black) or 2 (RGB) is only supported with no compression and deflate or zstd compression.</li>
 <li>The COG must not cross any of the two poles.</li>
 <li>The band name should be a valid JavaScript identifier so it can be safely used in evalscripts; valid identifiers are case-sensitive, can contain Unicode letters, $, _, and digits (0-9), but may not start with a digit, and should not be one of the reserved JavaScript keywords.</li>
 <li>There can be at most 100 bands.</li>
@@ -1552,7 +1559,7 @@ Note
 <section id="a-note-about-cover-geometries" class="level3">
 <h3 class="anchored" data-anchor-id="a-note-about-cover-geometries">A note about cover geometries</h3>
 <p>Each tile ingested also requires a cover geometry. A cover geometry is a geometry which outlines the valid data part of the tile. Nodata therefore should not be contained in the cover geometry. In the simplest case, the cover geometry will equal the bounding box of the file being ingested.</p>
-<p>The cover geometry is important because it tells the system where it can expect to find data. As a consequence, this determines how data is rendered where tiles overlap. If you have tiles with overlapping cover geometries, only the data from one tile can be rendered where two (or more) cover geometries intersect. This is true even if this data is nodata or if it lies outside the tile bounding box. Having quality cover geometries is therefore important for collections where many tiles containing nodata overlap. Not all cases need precise cover geometries, however. A single tile or a regularly gridded collection with a single date and coordinate reference system can get away with cover geometries equalling the bounding box.</p>
+<p>The cover geometry is important because it tells the system where it can expect to find data. As a consequence, this determines how data is rendered where tiles overlap. If you have tiles with overlapping cover geometries and you for example request <a href="../../APIs/SentinelHub/Evalscript/V3.html#mosaicking">mosaicking SIMPLE</a>, only the data from one tile will be rendered where two (or more) cover geometries intersect. This is true even if this data is nodata or if it lies outside the tile bounding box. Sentinel Hub will render such areas as nodata even if other tiles in the data collection contain valid data for this area. Having quality cover geometries is therefore important for collections where many tiles containing nodata overlap. Not all cases need precise cover geometries, however. A single tile or a regularly gridded collection with a single date and coordinate reference system can get away with cover geometries equalling the bounding box.</p>
 <br>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -1613,12 +1620,12 @@ Note
 <span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  }</span>
 <span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> someNodataValueArray<span class="op">;</span></span>
 <span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><em>Note that getting data in such a manner will use more processing units than SIMPLE mosaicking with precise cover geometries.</em></p>
 <p>Optionally, you may additionally use the <code>preProcessScenes</code> function to potentially reduce the number of tiles which will be processed. This is useful to set an upper limit for the number of processing units which will be used. The following limits the maximum number of tiles to 5, for example.</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode javascript code-with-copy"><code class="sourceCode javascript"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">preProcessScenes</span> (collections) {</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  collections<span class="op">.</span><span class="at">scenes</span><span class="op">.</span><span class="at">tiles</span> <span class="op">=</span> collections<span class="op">.</span><span class="at">scenes</span><span class="op">.</span><span class="at">tiles</span><span class="op">.</span><span class="fu">splice</span>(<span class="dv">5</span>)<span class="op">;</span></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> collections<span class="op">;</span></span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p><em>Note that getting data in such a manner will use more processing units than SIMPLE mosaicking with precise cover geometries.</em></p>
 </section>
 </section>
 </section>
