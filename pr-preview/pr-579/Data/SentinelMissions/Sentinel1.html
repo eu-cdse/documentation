@@ -1962,7 +1962,12 @@ X
 </div>
 </div>
 <div class="column" style="margin-right:10%; margin-left:auto; text-align: right;">
-
+<figure class="figure">
+<img width="165" height="150" src="./_images/Thumbnail/Sentinel1_Monthly_Mosaic_Thumbnail.png" class="figure-img">
+<figcaption align="center" class="figure-caption">
+<a class="clickable" href="https://browser.dataspace.copernicus.eu/?zoom=5&amp;lat=50.16282&amp;lng=20.78613&amp;themeId=DEFAULT-THEME&amp;visualizationUrl=U2FsdGVkX1%2BXlMdUZLnVQoYUh01myIX6O1WXr1kbOUG31t0HstlLz0G0204oHh6UmVbK5kwkJkqpKeJZeMBuap6kPO41lj2f%2BJd5uZwMUW5GElYBig9e%2FBAeZ5%2B2voXK&amp;datasetId=3c662330-108b-4378-8899-525fd5a225cb&amp;fromTime=2023-12-01T00%3A00%3A00.000Z&amp;toTime=2023-12-01T23%3A59%3A59.999Z&amp;layerId=0-RGB-RATIO&amp;demSource3D=%22MAPZEN%22&amp;cloudCoverage=30&amp;dateMode=SINGLE" target="_blank">View in browser</a>
+</figcaption>
+</figure>
 </div>
 </div>
 <section id="overview-5" class="level4">
@@ -1971,7 +1976,127 @@ X
 <h5 class="anchored">
 Offered Data
 </h5>
+
+<table class="table">
+<thead>
+<tr>
+<th>
+Spatial Extent
+</th>
+<th>
+Temporal Extent
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Non-polar landmasses, depends on availability of IW products
+</td>
+<td>
+Jan - Dec 2023 *
+</td>
+</tr>
+<tr>
+<td>
+Polar regions, depends on availability of HH + HV polarised products
+</td>
+<td>
+Jan - Dec 2023 *
+</td>
+</tr>
+</tbody>
+
+</table>
 <p>More mosaics coming soon.</p>
+<section id="algorithm" class="level5">
+<h5 class="anchored" data-anchor-id="algorithm">Algorithm</h5>
+<p><strong>Input data and preprocessing</strong></p>
+<p>Sentinel-1 GRD data, as offered and pre-processed in Sentinel Hub, serves as input for the generation of mosaics. The preprocessing steps made in Sentinel Hub are explained in detail in the <a href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Data/S1GRD.html#processing-chain" target="_blank">Sentinel Hub documentation</a>. Here, we are only listing the main processing steps applied to the input data before mosaicking:</p>
+<p><strong>(1)</strong> Calibration to beta0 backscatter coefficient</p>
+<p><strong>(2)</strong> Thermal noise removal</p>
+<p><strong>(3)</strong> Radiometric terrain correction using area integration</p>
+<p><strong>(4)</strong> Terrain Correction using Range-Doppler terrain correction</p>
+<p>For steps 3 and 4, the Copernicus DEM was used with a spatial resolution of 10m over Europe and 30m for the rest of the world.</p>
+<p><strong>Generation of mosaics</strong></p>
+<p>Two different mosaics are being produced for each month: <strong>IW mosaic</strong> and <strong>DH mosaic</strong></p>
+
+<table class="available-mosaic-bands" style="margin: 10px;">
+<thead>
+<tr>
+<th style="background-color: #9ea1a5">
+</th>
+<th style="background-color: #9ea1a5">
+IW mosaic
+</th>
+<th style="background-color: #9ea1a5">
+DH mosaic
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td rowspan="1">
+Polarization
+</td>
+<td>
+VV + VH
+</td>
+<td>
+HH + HV
+</td>
+</tr>
+<tr>
+<td rowspan="1">
+Acquisition mode
+</td>
+<td>
+IW acquisition mode
+</td>
+<td>
+All acquisition modes
+</td>
+</tr>
+<tr>
+<td rowspan="1">
+Orbit direction
+</td>
+<td colspan="2" style="text-align: center">
+both
+</td>
+</tr>
+<tr>
+<td rowspan="1">
+Processing grid
+</td>
+<td colspan="2" style="text-align: center">
+UTM grid with 100,08 x 100,08 km tiles (<a href="https://s3.eu-central-1.amazonaws.com/sh-batch-grids/tiling-grid-2.zip" target="_blank">link</a>)
+</td>
+</tr>
+<tr>
+<td rowspan="1">
+Spatial resolution
+</td>
+<td>
+20 m
+</td>
+<td>
+40 m
+</td>
+</tr>
+<tr>
+<td rowspan="1">
+Output format
+</td>
+<td colspan="2" style="text-align: center">
+16-bit cloud optimized GeoTIFF
+</td>
+</tr>
+</tbody>
+
+</table>
+<p>The weighted sum of the flattened backscatter observations was used for mosaicking data in a monthly stack. Observations with the highest available local resolution receive the highest local weights. Therefore, the differences in backscatter between areas sloping towards the sensor and away from the sensor in individual orbits are largely corrected, and the resulting signal is mainly a product of the local surface properties. Observations in radar shadows are filtered out and are not used. The algorithm is described in detail in the paper by D. Small “SAR backscatter multitemporal compositing via local resolution weighting” (<a href="https://www.zora.uzh.ch/id/eprint/68085/1/2012_SmallD-AV_20120722-IGARSS12-LocalResolutionWeighting_Kopie_.pdf" target="_blank">pdf</a> is available). The resulting mosaics have less noise and better spatial homogeneity when compared to each single Sentinel-1 GRD observation.</p>
+</section>
 </section>
 </section>
 </div>
