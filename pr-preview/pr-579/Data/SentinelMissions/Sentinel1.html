@@ -2096,7 +2096,266 @@ Output format
 
 </table>
 <p>The weighted sum of the flattened backscatter observations was used for mosaicking data in a monthly stack. Observations with the highest available local resolution receive the highest local weights. Therefore, the differences in backscatter between areas sloping towards the sensor and away from the sensor in individual orbits are largely corrected, and the resulting signal is mainly a product of the local surface properties. Observations in radar shadows are filtered out and are not used. The algorithm is described in detail in the paper by D. Small “SAR backscatter multitemporal compositing via local resolution weighting” (<a href="https://www.zora.uzh.ch/id/eprint/68085/1/2012_SmallD-AV_20120722-IGARSS12-LocalResolutionWeighting_Kopie_.pdf" target="_blank">pdf</a> is available). The resulting mosaics have less noise and better spatial homogeneity when compared to each single Sentinel-1 GRD observation.</p>
+<p><a class="btn btn-light" data-bs-toggle="collapse" href="#AccessBYOC" role="button" aria-expanded="false" aria-controls="AccessBYOC">Access Sentinel-1 Level 3 Monthly Mosaics with Sentinel Hub</a></p>
 </section>
+<div id="AccessBYOC" class="collapse multi-collapse">
+<section id="access-sentinel-1-level-3-monthly-mosaics-with-sentinel-hub" class="level5">
+<h5 class="anchored" data-anchor-id="access-sentinel-1-level-3-monthly-mosaics-with-sentinel-hub">Access Sentinel-1 Level 3 Monthly Mosaics with Sentinel Hub</h5>
+<p>Sentinel-1 Level 3 Monthly Mosaics are onboarded to Sentinel Hub as a BYOC data collection. To access the data, you will need the specific pieces of information listed below, for general information about how to access BYOC collections visit our <a href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Data/Byoc.html" target="_blank">Data BYOC page</a>.</p>
+<p><strong>IW Mosaics</strong></p>
+<ul>
+<li>Data collection id: byoc-3c662330-108b-4378-8899-525fd5a225cb</li>
+<li>Available Bands and Data:</li>
+</ul>
+
+<table class="available-mosaic-bands" style="margin: 10px;">
+<thead>
+<tr>
+<th style="background-color: #9ea1a5">
+Name
+</th>
+<th style="background-color: #9ea1a5">
+Description
+</th>
+<th style="background-color: #9ea1a5">
+Resolution
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td rowspan="1">
+VV
+</td>
+<td>
+VV polarization
+</td>
+<td>
+20 m
+</td>
+</tr>
+<tr>
+<td rowspan="1">
+VH
+</td>
+<td>
+VH polarization
+</td>
+<td>
+20 m
+</td>
+</tr>
+<tr>
+<td rowspan="1">
+dataMask
+</td>
+<td>
+The mask of data/no data pixels (<a href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/UserGuides/Datamask.html">more</a>)
+</td>
+<td>
+N/A*
+</td>
+</tr>
+</tbody>
+
+</table>
+<p>*dataMask has no source resolution as it is calculated for each output pixel.</p>
+<section id="example-of-requesting-mosaic-over-sfântu-gheorghe-with-processing-api-request" class="level6">
+<h6 class="anchored" data-anchor-id="example-of-requesting-mosaic-over-sfântu-gheorghe-with-processing-api-request">Example of requesting mosaic over Sfântu Gheorghe with Processing API request</h6>
+<p>The request below is written in Python. To execute it, you need to create an OAuth client as is explained <a href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Overview/Authentication.html#python">here</a>. It is named <code>oauth</code> in this example.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>evalscript <span class="op">=</span> <span class="st">"""</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="st">//VERSION=3</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="st">function setup() {</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="st">  return {</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="st">    input: ["VV", "VH", "dataMask"],</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="st">    output: { bands: 3 }</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="st">  };</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="st">var viz = new HighlightCompressVisualizer(0, 0.8);</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="st">var gain = 0.8;</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="st">function evaluatePixel(sample) {</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="st">  if (sample.dataMask == 0) {</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="st">    return [0, 0, 0];</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="st">  }</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="st">  </span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="st">  let vals = [gain * sample.VV / 0.28,</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="st">              gain * sample.VH / 0.06,</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="st">              gain * sample.VH / sample.VV / 0.49];</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="st">  </span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="st">  return viz.processList(vals);</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>request <span class="op">=</span> {</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>  <span class="st">"input"</span>: {</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>    <span class="st">"bounds"</span>: {</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>      <span class="st">"bbox"</span>: [</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>          <span class="fl">25.713501</span>,</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>          <span class="fl">45.74836</span>,</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>          <span class="fl">26.196213</span>,</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>          <span class="fl">45.965231</span></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>      ]</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>    },</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>    <span class="st">"data"</span>: [</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>      {</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>        <span class="st">"dataFilter"</span>: {</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>          <span class="st">"timeRange"</span>: {</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>            <span class="st">"from"</span>: <span class="st">"2023-09-01T00:00:00Z"</span>,</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>            <span class="st">"to"</span>: <span class="st">"2023-09-02T23:59:59Z"</span></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>          }</span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>        <span class="st">"type"</span>: <span class="st">"byoc-3c662330-108b-4378-8899-525fd5a225cb"</span></span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>  },</span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>  <span class="st">"output"</span>: {</span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>    <span class="st">"width"</span>: <span class="dv">512</span>,</span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>    <span class="st">"height"</span>: <span class="dv">330</span>,</span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>    <span class="st">"responses"</span>: [</span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>      {</span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>        <span class="st">"identifier"</span>: <span class="st">"default"</span>,</span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>        <span class="st">"format"</span>: {</span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>          <span class="st">"type"</span>: <span class="st">"image/jpeg"</span></span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>  },</span>
+<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a>  <span class="st">"evalscript"</span>: evalscript,</span>
+<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a>url <span class="op">=</span> <span class="st">"https://sh.dataspace.copernicus.eu/api/v1/process"</span></span>
+<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a>response <span class="op">=</span> oauth.post(url, json<span class="op">=</span>request)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>DH Mosaics</strong></p>
+<ul>
+<li>Data collection id: byoc-cc676fec-cb8d-4bc1-adce-1d9658da950b</li>
+<li>Available Bands and Data:</li>
+</ul>
+
+<table class="available-mosaic-bands" style="margin: 10px;">
+<thead>
+<tr>
+<th style="background-color: #9ea1a5">
+Name
+</th>
+<th style="background-color: #9ea1a5">
+Description
+</th>
+<th style="background-color: #9ea1a5">
+Resolution
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td rowspan="1">
+HH
+</td>
+<td>
+HH polarization
+</td>
+<td>
+40 m
+</td>
+</tr>
+<tr>
+<td rowspan="1">
+HV
+</td>
+<td>
+HV polarization
+</td>
+<td>
+40 m
+</td>
+</tr>
+<tr>
+<td rowspan="1">
+dataMask
+</td>
+<td>
+The mask of data/no data pixels (<a href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/UserGuides/Datamask.html">more</a>)
+</td>
+<td>
+N/A*
+</td>
+</tr>
+</tbody>
+
+</table>
+<p>*dataMask has no source resolution as it is calculated for each output pixel.</p>
+</section>
+<section id="example-of-requesting-mosaic-over-reykjavík-with-processing-api-request" class="level6">
+<h6 class="anchored" data-anchor-id="example-of-requesting-mosaic-over-reykjavík-with-processing-api-request">Example of requesting mosaic over Reykjavík with Processing API request</h6>
+<p>The request below is written in Python. To execute it, you need to create an OAuth client as is explained <a href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Overview/Authentication.html#python">here</a>. It is named <code>oauth</code> in this example.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>evalscript <span class="op">=</span> <span class="st">"""</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="st">//VERSION=3</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="st">function setup() {</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="st">  return {</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="st">    input: ["HH", "HV", "dataMask"],</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="st">    output: { bands: 4 }</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="st">  };</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="st">var viz = new HighlightCompressVisualizer(0, 0.8);</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="st">var gain = 0.8;</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="st">function evaluatePixel(sample) {</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="st">  let vals = [gain * sample.HH / 0.28,</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="st">              gain * sample.HV / 0.06,</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="st">              gain * sample.HV / sample.HH / 0.49];</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="st">  </span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="st">  let out = viz.processList(vals);</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="st">  out.push(sample.dataMask);</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="st">  return out;</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>request <span class="op">=</span> {</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>  <span class="st">"input"</span>: {</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>    <span class="st">"bounds"</span>: {</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>      <span class="st">"bbox"</span>: [</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>          <span class="op">-</span><span class="fl">22.486267</span>,</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>          <span class="fl">63.959085</span>,</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>          <span class="op">-</span><span class="fl">19.79187</span>,</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>          <span class="fl">64.722572</span></span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>      ]</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>    },</span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>    <span class="st">"data"</span>: [</span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>      {</span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>        <span class="st">"dataFilter"</span>: {</span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>          <span class="st">"timeRange"</span>: {</span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>            <span class="st">"from"</span>: <span class="st">"2023-01-01T00:00:00Z"</span>,</span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>            <span class="st">"to"</span>: <span class="st">"2023-01-02T23:59:59Z"</span></span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>          }</span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>        <span class="st">"type"</span>: <span class="st">"byoc-cc676fec-cb8d-4bc1-adce-1d9658da950b"</span></span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>  },</span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>  <span class="st">"output"</span>: {</span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>    <span class="st">"width"</span>: <span class="dv">858</span>,</span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>    <span class="st">"height"</span>: <span class="dv">553</span>,</span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>    <span class="st">"responses"</span>: [</span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a>      {</span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>        <span class="st">"identifier"</span>: <span class="st">"default"</span>,</span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>        <span class="st">"format"</span>: {</span>
+<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a>          <span class="st">"type"</span>: <span class="st">"image/jpeg"</span></span>
+<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a>  },</span>
+<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a>  <span class="st">"evalscript"</span>: evalscript,</span>
+<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a>url <span class="op">=</span> <span class="st">"https://sh.dataspace.copernicus.eu/api/v1/process"</span></span>
+<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a>response <span class="op">=</span> oauth.post(url, json<span class="op">=</span>request)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+</section>
+</div>
 </section>
 </section>
 </div>
@@ -2137,15 +2396,15 @@ Output format
 <li><strong>sigma0-ellipsoid</strong>: ground area computed with ellipsoid earth model</li>
 </ul>
 <p>For example:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>sentinel1 <span class="op">=</span> connection.load_collection(</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"SENTINEL1_GRD"</span>,</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    temporal_extent <span class="op">=</span> [<span class="st">"2022-06-04"</span>, <span class="st">"2022-08-04"</span>],</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    bands <span class="op">=</span> [<span class="st">"VV"</span>,<span class="st">"VH"</span>]</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  sentinel1 <span class="op">=</span> sentinel1.sar_backscatter(</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>      coefficient<span class="op">=</span><span class="st">'sigma0-ellipsoid'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>sentinel1 <span class="op">=</span> connection.load_collection(</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"SENTINEL1_GRD"</span>,</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    temporal_extent <span class="op">=</span> [<span class="st">"2022-06-04"</span>, <span class="st">"2022-08-04"</span>],</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    bands <span class="op">=</span> [<span class="st">"VV"</span>,<span class="st">"VH"</span>]</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  sentinel1 <span class="op">=</span> sentinel1.sar_backscatter(</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>      coefficient<span class="op">=</span><span class="st">'sigma0-ellipsoid'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>The product is orthorectified using the Copernicus 30m DEM. No RTC or speckle filtering is applied to this product.</p>
 </section>
 <section id="on-demand-processing-options" class="level2">
