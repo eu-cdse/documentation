@@ -241,11 +241,23 @@ def general(c):
                 offered_type = c['summaries']['DataAvailability'][i]['offered_type']
             except Exception:
                 offered_type = ''
+            try:
+                mosaic = c['summaries']['DataAvailability'][i]['Mosaic']
+            except Exception:
+                mosaic = ''
+            try:
+                polarization = c['summaries']['DataAvailability'][i]['Polarization']
+            except Exception:
+                polarization = ''
+            try:
+                S3path = c['summaries']['DataAvailability'][i]['S3 Path']
+            except Exception:
+                S3path = ''
         
             if offered_type != '':
-                t.append([offered_type, status, access, spatial, temporal, available_from])
+                t.append([offered_type, status, access, spatial, temporal, available_from, mosaic, polarization, S3path,])
                 note += footnotes
-                headers = ["Timeliness","Archive Status", "Access Type", "Spatial Extent", "Temporal Extent", "Available in Ecosystem from"]
+                headers = ["Timeliness", "Archive Status", "Access Type", "Spatial Extent", "Temporal Extent", "Available in Ecosystem from", "Mosaic", "Polarization", "S3 Path", ]
             else:
                 t.append([status, access, spatial, temporal, available_from])
                 note += footnotes
