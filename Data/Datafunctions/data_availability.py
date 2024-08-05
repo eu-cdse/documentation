@@ -255,9 +255,9 @@ def general(c):
                 note += footnotes
                 headers = ["Timeliness", "Archive Status", "Access Type", "Spatial Extent", "Temporal Extent", "Available in Ecosystem from"]
             else:
-                t.append([status, access, spatial, temporal, available_from, mosaic, S3path])
+                t.append([status, access, mosaic, spatial, temporal, available_from, S3path])
                 note += footnotes
-                headers = ["Archive Status", "Access Type", "Spatial Extent", "Temporal Extent", "Available in Ecosystem from", "Mosaic", "S3 Path"]
+                headers = ["Archive Status", "Access Type", "Mosaic", "Spatial Extent", "Temporal Extent", "Available in Ecosystem from", "S3 Path"]
 
         # Find empty columns and remove them
         t,headers=removeempty(t,headers)
