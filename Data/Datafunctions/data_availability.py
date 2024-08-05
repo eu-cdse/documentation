@@ -244,24 +244,20 @@ def general(c):
             try:
                 mosaic = c['summaries']['DataAvailability'][i]['Mosaic']
             except Exception:
-                mosaic = ''
-            try:
-                polarization = c['summaries']['DataAvailability'][i]['Polarization']
-            except Exception:
-                polarization = ''
+                mosaic = ''            
             try:
                 S3path = c['summaries']['DataAvailability'][i]['S3 Path']
             except Exception:
                 S3path = ''
         
             if offered_type != '':
-                t.append([offered_type, status, access, spatial, temporal, available_from, mosaic, polarization, S3path,])
+                t.append([offered_type, status, access, spatial, temporal, available_from])
                 note += footnotes
-                headers = ["Timeliness", "Archive Status", "Access Type", "Spatial Extent", "Temporal Extent", "Available in Ecosystem from", "Mosaic", "Polarization", "S3 Path", ]
+                headers = ["Timeliness", "Archive Status", "Access Type", "Spatial Extent", "Temporal Extent", "Available in Ecosystem from"]
             else:
-                t.append([status, access, spatial, temporal, available_from])
+                t.append([status, access, mosaic, spatial, temporal, available_from, S3path])
                 note += footnotes
-                headers = ["Archive Status", "Access Type", "Spatial Extent", "Temporal Extent", "Available in Ecosystem from"]
+                headers = ["Archive Status", "Access Type", "Mosaic", "Spatial Extent", "Temporal Extent", "Available in Ecosystem from", "S3 Path"]
 
         # Find empty columns and remove them
         t,headers=removeempty(t,headers)
