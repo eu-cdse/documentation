@@ -65,10 +65,18 @@ components:
         format: int32
     SearchBeanViewtoken:
       name: viewtoken
-      description: >-
-        When total number of items is larger than *count*, the response contains
-        *viewtoken*. This *viewtoken* can be used in the next request to
-        retrieve the next page of items.
+      description: >
+        When the total number of items is larger than *count*, the response
+        contains *viewtoken*.
+
+        This *viewtoken* can be used in the next request to retrieve the next
+        page of items.
+
+
+        The next page can be retrieved by repeating the query. However, replace
+        your URL with the
+
+        next URL in the returned links object.
       in: query
       schema:
         type: string
@@ -1715,6 +1723,7 @@ components:
         - sentinel-1-grd
         - s2gm
         - sentinel-3-olci
+        - sentinel-3-olci-l2
         - sentinel-3-slstr
         - sentinel-5p-l2
         - custom
@@ -2045,7 +2054,7 @@ components:
               type: string
               enum:
                 - sentinel-1-grd
-    S3Dataset:
+    S3OlciDataset:
       title: sentinel-3-olci
       type: object
       allOf:
@@ -2060,6 +2069,21 @@ components:
               type: string
               enum:
                 - sentinel-3-olci
+    S3OlciL2Dataset:
+      title: sentinel-3-olci-l2
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/BaseDataset'
+        - type: object
+          properties:
+            dataFilter:
+              $ref: '#/components/schemas/S3OlciL2Filtering'
+            processing:
+              $ref: '#/components/schemas/BaseDatasetProcessing'
+            type:
+              type: string
+              enum:
+                - sentinel-3-olci-l2
     S3SlstrDataset:
       title: sentinel-3-slstr
       type: object
@@ -2308,6 +2332,23 @@ components:
             - mostRecent
             - leastRecent
           default: mostRecent
+    S3OlciL2Filtering:
+      type: object
+      properties:
+        timeRange:
+          $ref: '#/components/schemas/TimeRange'
+        mosaickingOrder:
+          description: >-
+            The order in which tiles are overlapped from which the output result
+            is mosaicked.
+          type: string
+          enum:
+            - mostRecent
+            - leastRecent
+            - leastCC
+          default: mostRecent
+        maxCloudCoverage:
+          $ref: '#/components/schemas/MaxCloudCoverage'
     S3SlstrFiltering:
       type: object
       properties:
@@ -2637,7 +2678,8 @@ components:
           - $ref: '#/components/schemas/ModisDataset'
           - $ref: '#/components/schemas/DEMDataset'
           - $ref: '#/components/schemas/S1Dataset'
-          - $ref: '#/components/schemas/S3Dataset'
+          - $ref: '#/components/schemas/S3OlciDataset'
+          - $ref: '#/components/schemas/S3OlciL2Dataset'
           - $ref: '#/components/schemas/S3SlstrDataset'
           - $ref: '#/components/schemas/S5PDataset'
           - $ref: '#/components/schemas/HLSDataset'
@@ -4471,12 +4513,8 @@ components:
             - <identifier>
             - userdata
         format:
-          description: >
+          description: |
             Format object
-
-
-            **Note**: Zarr output is currently in beta release. Both the request
-            parameters and the output are likely to change in the future.
           type: object
           oneOf:
             - $ref: '#/components/schemas/ProcessRequestOutputFormatTiff'
@@ -4512,10 +4550,6 @@ components:
       type: object
       properties:
         id:
-          type: string
-          format: uuid
-          readOnly: true
-        userId:
           type: string
           format: uuid
           readOnly: true
@@ -4759,12 +4793,6 @@ components:
         and neither `bucketName` nor `output` can be specified.
 
         With Zarr output **only** WGS84 and LAEA grids **are supported**.
-
-
-        **Note**: Zarr output is currently in beta release.
-
-        Both the request parameters and the output are likely to change in the
-        future.
       type: object
       required:
         - path
@@ -4795,7 +4823,7 @@ components:
             below.
           externalDocs:
             description: Zarr metadata specification version 2, Attributes
-            url: https://zarr.readthedocs.io/en/stable/spec/v2.html#metadata
+            url: https://zarr-specs.readthedocs.io/en/latest/v2/v2.0.html#metadata
           allOf:
             - $ref: '#/components/schemas/ArrayParameters'
         arrayOverrides:
@@ -4866,7 +4894,7 @@ components:
           externalDocs:
             description: Zarr data type specification version 2, Attributes
             url: >-
-              https://zarr.readthedocs.io/en/stable/spec/v2.html#data-type-encoding
+              https://zarr-specs.readthedocs.io/en/latest/v2/v2.0.html#data-type-encoding
         order:
           description: >-
             Layout of values within each chunk of the array. Currently only "C"
@@ -5009,9 +5037,6 @@ components:
             - PROCESSING
             - PROCESSED
             - FAILED
-        error:
-          description: Error description for tiles that failed during processing.
-          type: string
         cost:
           description: Tile processing cost (PU)
           type: number
@@ -5842,6 +5867,17 @@ components:
           description: >-
             You can define noData either per band or per collection, but not
             both.
+        aliases:
+          description: >
+            An optional list of alias names that can be used instead of the band
+            name in the evalscript.
+
+            Only used in certain specific collections and not settable by the
+            user.
+          type: array
+          items:
+            type: string
+          readOnly: true
     BYOCTilesResponse:
       type: object
       properties:
@@ -6138,7 +6174,7 @@ components:
         A subset of the metadata as read from the array's `.zarray` file.
       externalDocs:
         description: Zarr storage specification version 2, Array metadata
-        url: https://zarr.readthedocs.io/en/stable/spec/v2.html#metadata
+        url: https://zarr-specs.readthedocs.io/en/latest/v2/v2.0.html#metadata
     ZarrQueryArraysResponse:
       type: object
       properties:
@@ -6158,7 +6194,7 @@ components:
       description: Custom attributes as read from the `.zattrs` file.
       externalDocs:
         description: Zarr storage specification version 2, Attributes
-        url: https://zarr.readthedocs.io/en/stable/spec/v2.html#attributes
+        url: https://zarr-specs.readthedocs.io/en/latest/v2/v2.0.html#attributes
       readOnly: true
     TpdiCollectionId:
       description: Collection ID
@@ -6804,6 +6840,8 @@ components:
             - $ref: '#/components/schemas/PlanetSubscriptionDataFilterBase'
             - type: object
               properties:
+                maxCloudCoverage:
+                  $ref: '#/components/schemas/MaxCloudCoverage'
                 nativeFilter:
                   type: object
                   description: |
