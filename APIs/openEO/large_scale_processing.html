@@ -1062,14 +1062,14 @@ window.onload = function() {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../Applications/Catalogue-csv.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Catalogue CSV</span></a>
+  <a href="../../Applications/JupyterHub.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">JupyterLab</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../Applications/DataWorkspace.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">About Data Workspace</span></a>
+  <a href="../../Applications/WebEditor.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">openEO Web Editor</span></a>
   </div>
 </li>
           <li class="sidebar-item sidebar-item-section">
@@ -1117,7 +1117,7 @@ window.onload = function() {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../Applications/PlazaDetails/Strength.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Service credit strength</span></a>
+ <span class="menu-text">Service credit consumption</span></a>
   </div>
 </li>
       </ul>
@@ -1132,14 +1132,14 @@ window.onload = function() {
   </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../Applications/WebEditor.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">openEO Web Editor</span></a>
+  <a href="../../Applications/DataWorkspace.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">About Data Workspace</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../Applications/JupyterHub.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">JupyterLab</span></a>
+  <a href="../../Applications/Catalogue-csv.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Catalogue CSV</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -1251,15 +1251,15 @@ window.onload = function() {
 
 </header>
 
-<p>Processing of larger areas extending to a global scale is one of the more challenging tasks in earth observation, but certainly one that this platform aims to tackle. In this page we describe one of the best practice based on the example of <a href="https://github.com/openEOPlatform/openeo-classification" target="_blank">processing a croptype map for all 27 countries in the European Union</a>. We do recommend you to reaching out on the forum or helpdesk regarding your particular case, as workflows can vary, and adequate processing resources may require some advanced planning.</p>
+<p>Processing larger areas, especially globally, presents significant challenges in earth observation. Nonetheless, this platform aims to address these challenges. In this context, we highlight one of the best practices by showcasing the example of <a href="https://github.com/openEOPlatform/openeo-classification" target="_blank">processing a croptype map for all 27 countries in the European Union</a>. We encourage users to contact the forum with their issues connected to a specific case.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="_images/EU27croptypemap.png" class="img-fluid figure-img"></p>
 <figcaption class="figure-caption">EU27 croptype map, processed on openEO</figcaption>
 </figure>
 </div>
-<p>The approach described here is based on local files to track the production. This is a low-cost approach that does not require special IT knowledge but comes with some risks, such as losing your local files. A more robust approach for production-grade projects would typically rely on some sort of database or STAC catalogue service to monitor processing. Such a setup is, however quite similar in many aspects.</p>
-<p>The basic strategy for processing large areas is to split them up into smaller areas, usually according to a regular tile grid. Splitting reduces the size of the area that needs to be processed by one batch job and avoids running into all kinds of limitations. For instance, when processing a specific projection, you anyway have to stay within the bounds of that projection. Also, the output file size of a job often becomes impractical when working over huge areas. Or you will hit bottlenecks in the backend implementation that does not occur for normally sized jobs. Also, when a smaller job fails or requires reprocessing, the cost will be smaller.</p>
+<p>The approach described here relies on local files to track production, offering a low-cost solution. However, this method comes with risks, such as the potential loss of local files. A more robust approach for production-grade projects would typically use a database or STAC catalogue service to monitor processing. However, the setup is quite similar in many aspects.</p>
+<p>The basic strategy for processing large areas involves splitting them into smaller sections, usually according to a regular tile grid. This division reduces the area size that needs to be processed in one batch job and avoids various limitations. For example, when processing within a specific projection, it is necessary to stay within the bounds of that projection. Additionally, the output file size of a job can become impractical when dealing with large areas. Bottlenecks that do not occur with smaller jobs may also arise in the backend implementation. Also, the cost will be smaller when a smaller job fails or requires reprocessing.</p>
 <section id="relevant-openeo-features" class="level2">
 <h2 class="anchored" data-anchor-id="relevant-openeo-features">Relevant openEO features</h2>
 <p>We want to highlight a few key elements that made us choose openEO for large-scale processing:</p>
@@ -1273,13 +1273,13 @@ window.onload = function() {
 </section>
 <section id="preparation" class="level2">
 <h2 class="anchored" data-anchor-id="preparation">Preparation</h2>
-<p>The concept involves initially generating and persistently storing a list of tiles to be produced, including all the necessary attributes for each specific tile. This approach provides a comprehensive visual overview of the processing that will take place.</p>
-<p>Having job parameters in a file is also useful for debugging afterwards. Determining parameters at runtime means you don’t have absolute certainty over the value of a specific argument, as there may be bugs in your code.</p>
+<p>The concept involves generating a list of tiles to be produced and persistently storing it, along with all the necessary attributes for each tile. This approach offers a comprehensive visual overview of the processing that will take place.</p>
+<p>Having job parameters in a file is also beneficial for debugging afterwards. If parameters are determined at runtime, there is no absolute certainty over the value of a specific argument due to potential bugs in the code.</p>
 </section>
 <section id="prepare-tiling-grid" class="level2">
 <h2 class="anchored" data-anchor-id="prepare-tiling-grid">Prepare tiling grid</h2>
-<p>The tiling grid choice depends on your preferred projection system, which, in turn, is determined by your area of interest. For Europe, you can use the EPSG:3035 projection, while for global processing, considering different projections in accordance with UTM zones may be preferable.</p>
-<p>The size of tiles in your grid is also important and often ranges from 20km to 100km. For relatively light workflows, a 100km grid can work well, while for more demanding cases, a 20km grid is better. In our example, we chose to work with 20km tiles because the workflow was quite demanding. A smaller tile size can also result in less unneeded processing when your target area has an irregular shape, like most countries and continents.</p>
+<p>The choice of the tiling grid depends on the user’s preferred projection system, which is determined by the area of interest. For Europe, users can opt for the EPSG:3035 projection. In contrast, using different projections per UTM zone may be preferable for global processing.</p>
+<p>The size of tiles in the grid is also crucial and typically ranges from 20km to 100km. A 100km grid can suffice for relatively light workflows, whereas a 20km grid is more suitable for demanding cases. We opted for 20km tiles in our example because the workflow was particularly demanding. A smaller tile size can also minimize unnecessary processing, especially for irregular target areas like most countries and continents.</p>
 <p>A couple of basic grids can be found here: <a href="https://artifactory.vgt.vito.be/ui/repos/tree/General/auxdata-public/grids" target="blank">https://artifactory.vgt.vito.be/ui/repos/tree/General/auxdata-public/grids</a></p>
 <p>The images below illustrate the overlap in the UTM grids versus a regular LAEA grid.</p>
 <table class="table">
@@ -1296,7 +1296,7 @@ window.onload = function() {
 </tr>
 </tbody>
 </table>
-<p>A grid can be masked based on the countries we want to load, the following script shows an example:</p>
+<p>A grid can be masked based on the countries the user want to load; the following script shows an example:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> geopandas <span class="im">as</span> gpd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>europe <span class="op">=</span> gpd.read_file(gpd.datasets.get_path(<span class="st">"naturalearth_lowres"</span>))</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>europe <span class="op">=</span> europe[europe.continent<span class="op">==</span><span class="st">"Europe"</span>]</span>
@@ -1304,27 +1304,27 @@ window.onload = function() {
 </section>
 <section id="prepare-job-attributes" class="level2">
 <h2 class="anchored" data-anchor-id="prepare-job-attributes">Prepare job attributes</h2>
-<p>In addition to the tiling grid, we recommend determining other necessary properties for your processing jobs in advance. This enables a thorough review of these properties before initiating the processing. Examples includes basic elements such as job titles or tile-specific processing parameters, as well as attributes to determine the processing order.</p>
-<p>In this step, you may also want to make sure to determine the correct tile extent in the coordinate system of your tile grid. Providing exact coordinates in the right projection is necessary to ensure pixel-perfect alignment of your tiles.</p>
+<p>In addition to defining the tiling grid, it is advisable to pre-determine other essential properties required for processing jobs. This approach allows for a comprehensive review of these properties before initiating processing. Examples include fundamental elements like job titles or tile-specific processing parameters, as well as attributes necessary to establish the processing sequence.</p>
+<p>During this phase, users may also need to establish the precise tile extents within the coordinate system of their chosen tile grid. Providing accurate coordinates in the correct projection ensures precise alignment of tiles at the pixel level.</p>
 </section>
 <section id="tuning-your-processing-job" class="level2">
 <h2 class="anchored" data-anchor-id="tuning-your-processing-job">Tuning your processing job</h2>
-<p>Before kicking off large processing, you want to be very sure that the correct output is generated and that you have sufficient credits and resources available to finish your job in time. This can be done by simply running various jobs and using the statistics reported in the metadata to determine average parameters. (The map production section below shows a way to collect these parameters in a CSV.)</p>
-<p>For instance, for the case of processing the EU27 croptype map, consisting of ~11000 20km tiles, we made the following calculations up front:</p>
+<p>Before starting large-scale processing, users should verify that the correct output is generated and that they have sufficient credits and resources to complete their jobs. This can be achieved by running test jobs and analyzing the statistics reported in the metadata to determine average parameters. (Refer to the map production section below for guidance on collecting these parameters in a CSV format.)</p>
+<p>For example, when processing the EU27 croptype map, consisting of ~11000 20km tiles, we conducted the following upfront calculations:</p>
 <ul>
-<li>The average runtime was 30 minutes, which means that it would take ~15 days of continuous processing with 15 parallel jobs.</li>
-<li>The average cost was below 100 credits, so we would be able to process with a budget of 1100000 credits.</li>
+<li>The average runtime per job was 30 minutes, indicating it would require approximately 15 days of continuous processing with 15 parallel jobs.</li>
+<li>The average cost per job was below 100 credits, ensuring we could feasibly process within a budget of 1,100,000 credits.</li>
 </ul>
-<p>To achieve these numbers, we did have to optimize batch job settings and the overall workflow to reduce resource usage.</p>
-<p>A common bottleneck to parallelization is memory consumption, and it can be useful to know the maximum memory allocation on a single machine in your backend of choice. For instance, in a cloud environment with 16GB per machine and 4 CPUs, using slightly less than 4GB per worker is efficient as you can fit 4 parallel workers on a single VM while requiring 6GB would fit only 2 workers and leave about 4GB unused.</p>
-<p>In our example, we used the openEO backend running on the Copernicus dataspace, which is based on Geotrellis, the execution options are documented <a href="../../jobconfigurations.html#customizing-batch-job-resources">here</a>.</p>
+<p>We had to optimize batch job settings and streamline the overall workflow to achieve these performance metrics.</p>
+<p>A common challenge in parallelization is managing memory consumption, especially understanding the maximum memory allocation per machine in the chosen backend environment. For example, in a cloud setup where each machine has 16GB RAM and 4 CPUs, efficient usage would involve allocating less than 4GB per worker. This configuration allows four parallel workers to be fitted on a single VM. Conversely, requiring 6GB per worker would accommodate only two workers per VM, leaving approximately 4GB unused.</p>
+<p>In our case, we utilized the openEO backend hosted on the Copernicus Data Space Ecosystem, built on Geotrellis. Detailed execution options and configurations are documented <a href="../../jobconfigurations.html#customizing-batch-job-resources">here</a>.</p>
 </section>
 <section id="starting-map-production" class="level2">
 <h2 class="anchored" data-anchor-id="starting-map-production">Starting map production</h2>
-<p>The openEO Python client provides a useful tool to run multiple processing jobs in <a href="https://open-eo.github.io/openeo-python-client/cookbook/job_manager.html" target="_blank">multiple backends</a>.</p>
-<p>It takes a GeoJSON corresponding to your tile grid and job properties per tile and triggers a function provided by you whenever a new job needs to be created. You can configure multiple backends and set the number of parallel jobs per backend.</p>
-<p>Similarly, it also takes care of error handling and can be considered more resilient compared to writing a simple loop yourself.</p>
-<p>This script uses a CSV file to track your jobs, and whenever it is interrupted, it can simply resume from that CSV file, making it tolerant to failure.</p>
+<p>The openEO Python client offers a powerful tool for executing multiple processing jobs across <a href="https://open-eo.github.io/openeo-python-client/cookbook/job_manager.html" target="_blank">various backends</a>.</p>
+<p>It operates by taking a GeoJSON file corresponding to the tile grid and includes job properties for each tile. Whenever a new job needs to be created, it triggers a function provided by the user. Configuration options include setting up multiple backends and specifying the number of parallel jobs per backend.</p>
+<p>Moreover, the tool handles error management seamlessly, making it more resilient than manually implementing a loop.</p>
+<p>This script utilizes a CSV file to track jobs, enabling it to resume operations from the exact point of interruption. This capability enhances its tolerance to failures during processing.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="_images/trackingcsv.png" class="img-fluid figure-img"></p>
@@ -1334,8 +1334,7 @@ window.onload = function() {
 </section>
 <section id="errors-during-production" class="level2">
 <h2 class="anchored" data-anchor-id="errors-during-production">Errors during production</h2>
-<p>It’s common for some tasks to run into issues during production, which is okay if it doesn’t happen too frequently. If a task fails, take a quick look at the error logs. If there’s no obvious reason, a simple retry might do the trick. Sometimes, you might need to allocate more memory.</p>
-<p>We also see a limited number of cases where issues in the underlying product archive cause failures or artifacts. These are harder to resolve and may require interaction with the backend.</p>
+<p>It’s common for some tasks to encounter issues during production, which is generally acceptable if it happens occasionally. If a task fails, it is recommended to check the error logs. A simple retry might solve the problem if there’s no obvious reason for the failure. However, if the issue persists, it’s advisable to contact the forum.</p>
 
 
 </section>
