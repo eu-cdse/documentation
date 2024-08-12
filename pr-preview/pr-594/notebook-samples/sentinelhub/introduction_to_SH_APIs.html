@@ -1,0 +1,2239 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Documentation - First Steps in accessing Satellite Imagery on Copernicus Data Space Ecosystem with Sentinel Hub APIs</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../_images/logos/favicon.png" rel="icon" type="image/png">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": true,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+<meta name="zd-site-verification" content="xj9koofr1crilmoclgxsjd">
+<script type="text/javascript">
+
+    window.onload = () => {
+        const elems = document.getElementsByClassName('navbar-title');
+        if (elems.length > 0) {
+            const title = elems[0];
+            title.parentElement.href = '/Home.html'
+        }
+    }
+</script>
+
+
+<script type="text/javascript">
+function scrollFunction() {
+    var prevScrollpos = window.pageYOffset;
+    if (prevScrollpos > 50) {
+      document.getElementsByClassName("navbar-brand")[1].style.display = "none";
+    } else {
+      document.getElementsByClassName("navbar-brand")[1].style.display = "initial";
+     
+    }
+  }
+  
+  window.addEventListener('scroll', scrollFunction);
+</script>
+
+
+<script>
+function togglecheck(className, displayState){
+  var elements = document.getElementsByClassName(className)
+  for (var i = 0; i < elements.length; i++){
+  if (elements[i].style.display === "none") {
+    elements[i].style.display = "block";
+  } else {
+    elements[i].style.display = "none";
+  }
+  }
+}
+window.onload = function() {
+      // Modify this array to contain the levelids of checkboxes that should be unchecked by default
+      var uncheckedByDefault = ["Level-0"];
+  
+      for (var i = 0; i < uncheckedByDefault.length; i++) {
+          togglecheck(uncheckedByDefault[i], "none");
+      }
+  };
+</script>
+
+<script>
+  function handleQuestionClick(questionId) {
+      // Update the hash in the URL
+      window.location.hash = questionId;
+      
+      // Scroll to the target element and adjust its position
+      scrollToQuestion(questionId);
+  }
+
+  function scrollToQuestion(questionId) {
+      // Get the element with the ID specified in the hash
+      var targetElement = document.querySelector(questionId);
+
+      // Scroll to the target element and adjust its position
+      if (targetElement) {
+          // Calculate the position of the target element relative to the viewport
+          var rect = targetElement.getBoundingClientRect();
+          var offsetTop = rect.top + window.scrollY;
+          var targetPosition = offsetTop - (window.innerHeight / 16);
+
+          // Scroll to the adjusted position
+          window.scrollTo({
+              top: targetPosition,
+              behavior: 'smooth'
+          });
+
+          // Open the details element
+          targetElement.open = true;
+      }
+  }
+
+  document.addEventListener("DOMContentLoaded", function() {
+      // Check if there is a hash in the URL
+      if (window.location.hash) {
+          // Scroll to the target element and adjust its position after a short delay
+          setTimeout(function() {
+              scrollToQuestion(window.location.hash);
+          }, 100);
+      }
+  });
+</script>
+
+
+<link rel="stylesheet" href="../../custom.css">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a href="https://dataspace.copernicus.eu/" class="navbar-brand navbar-brand-logo">
+    <img src="../../_images/logos/combinedLogo.svg" alt="" class="navbar-logo">
+    </a>
+    <a class="navbar-brand" href="https://dataspace.copernicus.eu/">
+    <span class="navbar-title">Documentation</span>
+    </a>
+  </div>
+        <div class="quarto-navbar-tools ms-auto">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">First Steps in accessing Satellite Imagery on Copernicus Data Space Ecosystem with Sentinel Hub APIs</li></ol></nav>
+      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+      </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Home.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Welcome</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../Roadmap.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Roadmap</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Roadmap/DataTable.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Roadmap/APITable.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">APIs</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Roadmap/AppTable.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Applications</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="px-0"><hr class="sidebar-divider hi "></li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../Registration.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">User registration and authentication</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../2FA.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Setting up Two-Factor Authentication (2FA)</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../Data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Data</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Data/Others/Dashboard.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Copernicus Operations Dashboard</span></a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false">
+ <span class="menu-text">Copernicus Sentinel Mission</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Data/SentinelMissions/Sentinel1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Sentinel-1</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Data/SentinelMissions/Sentinel2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Sentinel-2</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Data/SentinelMissions/Sentinel3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Sentinel-3</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Data/SentinelMissions/Sentinel5P.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Sentinel-5P</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Data/SentinelMissions/Sentinel6.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Sentinel-6</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="false">
+ <span class="menu-text">Complementary data</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Data/ComplementaryData/SMOS.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Soil Moisture and Ocean Salinity (SMOS)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Data/ComplementaryData/MERIS.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">ENVISAT- Medium Resolution Imaging Spectrometer (MERIS)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Data/ComplementaryData/Landsat5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Landsat-5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Data/ComplementaryData/Landsat7.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Landsat-7</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Data/ComplementaryData/Landsat8.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Landsat-8</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Data/ComplementaryData/CLMS.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Copernicus Land Monitoring Service (CLMS)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Data/ComplementaryData/CMEMS.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Copernicus Marine Service (CMEMS)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Data/ComplementaryData/CEMS.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Copernicus Emergency Management Service (CEMS)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Data/ComplementaryData/CAMS.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Copernicus Atmosphere Monitoring Service (CAMS)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Data/ComplementaryData/Additional.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Additional Complementary Data</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../APIs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">APIs</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/Token.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Access Token</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/OData.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">OData</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/OpenSearch.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">OpenSearch</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/STAC.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">STAC product catalogue</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/Subscriptions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Subscriptions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/S3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">S3 Access</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/TCP.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">TCP stack configuration</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/On-Demand Production API.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">On-Demand Production API</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/Traceability.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Traceability API</span></a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../APIs/openEO/openEO.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">openEO</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="false">
+ <span class="menu-text">Getting Started</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth3 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/openEO/Python_Client/Python.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Python</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/openEO/R_Client/R.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">R</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/openEO/JavaScript_Client/JavaScript.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">JavaScript</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/openEO/Glossary.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Glossary</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/openEO/Collections.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Data Collections</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/openEO/Processes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">openEO Processes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/openEO/File_formats.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">File Formats</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="https://open-eo.github.io/openeo-python-client" class="sidebar-item-text sidebar-link" target="&quot;_blank&quot;">
+ <span class="menu-text">Python documentation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="https://openeo.org/documentation/1.0/datacubes.html" class="sidebar-item-text sidebar-link" target="&quot;_blank&quot;">
+ <span class="menu-text">Datacubes explained</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/openEO/job_config.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Job configuration</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/openEO/credit_usage.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Credit usage</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/openEO/large_scale_processing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Large scale processing</span></a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../APIs/openEO/federation/openeo_federation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">openEO federation</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth3 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/openEO/federation/backends/contract.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Federation contract</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="https://openeo.org/documentation/1.0/developers/api/reference.html" class="sidebar-item-text sidebar-link" target="&quot;_blank&quot;">
+ <span class="menu-text">REST API Reference</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/openEO/fair.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">FAIR &amp; open science</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../APIs/SentinelHub.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Sentinel Hub</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-10" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" aria-expanded="false">
+ <span class="menu-text">User guides</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-11" class="collapse list-unstyled sidebar-section depth3 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/UserGuides/Datamask.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Data Mask</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/UserGuides/Transparency.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Transparency</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/UserGuides/TimeSeries.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Time Series</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/UserGuides/Metadata.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Working with metadata in evalscript</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../APIs/SentinelHub/Data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Data</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-12" class="collapse list-unstyled sidebar-section depth3 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Data/S1GRD.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Sentinel-1 GRD</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Data/S2L1C.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Sentinel-2 L1C</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Data/S2L2A.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Sentinel-2 L2A</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Data/S3OLCI.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Sentinel-3 OLCI L1B</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Data/S3OLCIL2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Sentinel-3 OLCI L2</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Data/S3SLSTR.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Sentinel-3 SLSTR L1B</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Data/S5PL2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Sentinel-5P L2</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Data/DEM.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Digital Elevation Model (DEM) Data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Data/Byoc.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Bring Your Own COG / Batch</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Data/Zarr.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Zarr</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Data/DataFusion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Data Fusion</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../APIs/SentinelHub/Evalscript.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Evalscript (custom script)</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-13" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-13" class="collapse list-unstyled sidebar-section depth3 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Evalscript/V3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Evalscript V3</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Evalscript/Functions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Utility Functions</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../APIs/SentinelHub/Overview.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">API Overview</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-14" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-14" class="collapse list-unstyled sidebar-section depth3 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Overview/Authentication.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Authentication</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Overview/RateLimiting.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Rate limiting</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Overview/ProcessingUnit.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Processing Unit</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Overview/ErrorHandling.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Error Handling</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../APIs/SentinelHub/Process.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Process API</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-15" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-15" class="collapse list-unstyled sidebar-section depth3 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Process/Crs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">CRS support</span></a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-16" aria-expanded="false">
+ <span class="menu-text">Examples</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-16" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-16" class="collapse list-unstyled sidebar-section depth4 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Process/Examples/S1GRD.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Examples for S1GRD</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Process/Examples/S2L1C.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Examples for S2L1C</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Process/Examples/S2L2A.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Examples for S2L2A</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Process/Examples/S3OLCI.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Examples for S3OLCI</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Process/Examples/S3SLSTR.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Examples for S3SLSTR</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Process/Examples/S5PL2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Examples for S5PL2</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Process/Examples/DEM.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Examples for DEM</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Process/Examples/DataFusion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Examples for DataFusion</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../APIs/SentinelHub/AsyncProcess.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Asynchronous Processing API</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-17" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-17" class="collapse list-unstyled sidebar-section depth3 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/AsyncProcess/Examples.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Examples for Asynchronous Processing API</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../APIs/SentinelHub/Catalog.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Catalog API</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-18" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-18" class="collapse list-unstyled sidebar-section depth3 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Catalog/Examples.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Examples for Catalog API</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../APIs/SentinelHub/Batch.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Batch Processing API</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-19" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-19" class="collapse list-unstyled sidebar-section depth3 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Batch/Crs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">CRS</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Batch/Examples.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Examples of Batch Processing Workflow</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../APIs/SentinelHub/Statistical.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Statistical API</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-20" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-20" class="collapse list-unstyled sidebar-section depth3 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Statistical/Examples.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Examples for Statistical API</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../APIs/SentinelHub/BatchStatistical.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Batch Statistical API</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-21" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-21" class="collapse list-unstyled sidebar-section depth3 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/BatchStatistical/Examples.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Examples of Batch Statistical Workflow</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../APIs/SentinelHub/Byoc.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Bring Your Own COG API</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-22" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-22" class="collapse list-unstyled sidebar-section depth3 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Byoc/Examples.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">BYOC API examples</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../APIs/SentinelHub/Zarr.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Zarr Import API</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-23" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-23" class="collapse list-unstyled sidebar-section depth3 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Zarr/Examples.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Zarr Import API examples</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../APIs/SentinelHub/OGC.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">OGC</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-24" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-24" class="collapse list-unstyled sidebar-section depth3 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/OGC/WMS.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">WMS</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/OGC/WCS.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">WCS</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/OGC/WFS.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">WFS</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/OGC/WMTS.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">WMTS</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/OGC/AdditionalRequestParameters.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Additional Request Parameters</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/OGC/OutputFormats.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Output Formats</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/OGC/Examples.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Examples for OGC</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/ApiReference.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">API Reference</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../Applications.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Applications</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-25" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-25" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Applications/Browser.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">About the Browser</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Applications/JupyterHub.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">JupyterLab</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Applications/WebEditor.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">openEO Web Editor</span></a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../Applications/AlgorithmPlaza.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">openEO Algorithm Plaza</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Applications/PlazaDetails/ManageOrg.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Manage your Organisation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Applications/PlazaDetails/PublishService.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Publish a Service</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Applications/PlazaDetails/ExecuteService.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Execute a Service</span></a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../Applications/PlazaDetails/ManageService.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Manage a Service</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-26" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-26" class="collapse list-unstyled sidebar-section depth3 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Applications/PlazaDetails/ServiceMaturity.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Service Maturity</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Applications/PlazaDetails/Strength.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Service credit consumption</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Applications/PlazaDetails/Reporting.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Reporting</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Applications/DataWorkspace.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">About Data Workspace</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Applications/Catalogue-csv.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Catalogue CSV</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Applications/QGIS.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">QGIS Plugin</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Applications/DataSpaceDashboard.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Copernicus Data Space Ecosystem Dashboard</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Quotas.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Quotas and Limitations</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../ResearchNetwork.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Access through Research Network</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Usecase.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Jupyter Notebook Samples</span></a>
+  </div>
+</li>
+        <li class="px-0"><hr class="sidebar-divider hi "></li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../FAQ.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">FAQ</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Support.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Support</span></a>
+  </div>
+</li>
+        <li class="px-0"><hr class="sidebar-divider hi "></li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-27" aria-expanded="false">
+ <span class="menu-text">Catalog APIs news</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-27" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-27" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/Others/UpcomingChanges.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Upcoming changes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/Others/ReleaseNotes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Release notes</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#credentials" id="toc-credentials" class="nav-link active" data-scroll-target="#credentials">Credentials</a></li>
+  <li><a href="#setting-an-area-of-interest" id="toc-setting-an-area-of-interest" class="nav-link" data-scroll-target="#setting-an-area-of-interest">Setting an area of interest</a></li>
+  <li><a href="#catalog-api" id="toc-catalog-api" class="nav-link" data-scroll-target="#catalog-api">Catalog API</a></li>
+  <li><a href="#process-api" id="toc-process-api" class="nav-link" data-scroll-target="#process-api">Process API</a>
+  <ul>
+  <li><a href="#example-1-true-color-image" id="toc-example-1-true-color-image" class="nav-link" data-scroll-target="#example-1-true-color-image">Example 1: True Color Image</a></li>
+  <li><a href="#example-2-ndvi-image" id="toc-example-2-ndvi-image" class="nav-link" data-scroll-target="#example-2-ndvi-image">Example 2: NDVI Image</a></li>
+  </ul></li>
+  <li><a href="#statistical-api" id="toc-statistical-api" class="nav-link" data-scroll-target="#statistical-api">Statistical API</a>
+  <ul>
+  <li><a href="#requesting-and-plotting-an-ndvi-time-series-for-a-single-field" id="toc-requesting-and-plotting-an-ndvi-time-series-for-a-single-field" class="nav-link" data-scroll-target="#requesting-and-plotting-an-ndvi-time-series-for-a-single-field">Requesting, and plotting an NDVI time series for a single field</a></li>
+  <li><a href="#comparing-different-fields" id="toc-comparing-different-fields" class="nav-link" data-scroll-target="#comparing-different-fields">Comparing different fields</a></li>
+  </ul></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content column-body" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">First Steps in accessing Satellite Imagery on Copernicus Data Space Ecosystem with Sentinel Hub APIs</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>The Sentinel Hub API is a RESTful API interface that provides access to various satellite imagery archives. It allows you to access raw satellite data, rendered images, statistical analysis, and other features.</p>
+<div class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Utilities</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> getpass</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sentinelhub <span class="im">import</span> (</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    SHConfig,</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    DataCollection,</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    SentinelHubCatalog,</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    SentinelHubRequest,</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    SentinelHubStatistical,</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    BBox,</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    bbox_to_dimensions,</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    CRS,</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    MimeType,</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    Geometry,</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> utils <span class="im">import</span> plot_image</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="credentials" class="level2">
+<h2 class="anchored" data-anchor-id="credentials">Credentials</h2>
+<p>Credentials for Sentinel Hub services (<code>client_id</code> &amp; <code>client_secret</code>) can be obtained in your <a href="https://shapps.dataspace.copernicus.eu/dashboard/#/">Dashboard</a>. In the User Settings you can create a new OAuth Client to generate these credentials. For more detailed instructions, visit the relevant <a href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Overview/Authentication.html">documentation page</a>.</p>
+<p>Now that you have your <code>client_id</code> &amp; <code>client_secret</code>, it is recommended to configure a new profile in your Sentinel Hub Python package. Instructions on how to configure your Sentinel Hub Python package can be found <a href="https://sentinelhub-py.readthedocs.io/en/latest/configure.html">here</a>. Using these instructions you can create a profile specific to using the package for accessing Copernicus Data Space Ecosystem data collections. This is useful as changes to the the config class are usually only temporary in your notebook and by saving the configuration to your profile you won’t need to generate new credentials or overwrite/change the default profile each time you rerun or write a new Jupyter Notebook.</p>
+<p>If you are a first time user of the Sentinel Hub Python package for Copernicus Data Space Ecosystem, you should create a profile specific to the Copernicus Data Space Ecosystem. You can do this in the following cell:</p>
+<div class="cell" data-tags="[]">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Only run this cell if you have not created a configuration.</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>config <span class="op">=</span> SHConfig()</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># config.sh_client_id = getpass.getpass("Enter your SentinelHub client id")</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># config.sh_client_secret = getpass.getpass("Enter your SentinelHub client secret")</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>config.sh_token_url <span class="op">=</span> <span class="st">"https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token"</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>config.sh_base_url <span class="op">=</span> <span class="st">"https://sh.dataspace.copernicus.eu"</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># config.save("cdse")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>However, if you have already configured a profile in Sentinel Hub Python for the Copernicus Data Space Ecosystem, then you can run the below cell entering the profile name as a string replacing <code>&lt;profile_name&gt;</code>.</p>
+<div class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># config = SHConfig("profile_name")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="setting-an-area-of-interest" class="level2">
+<h2 class="anchored" data-anchor-id="setting-an-area-of-interest">Setting an area of interest</h2>
+<p>The bounding box in <code>WGS84</code> coordinate system is <code>[(longitude and latitude coordinates of lower left and upper right corners)]</code>. You can get the bbox for a different area at the <a href="http://bboxfinder.com/">bboxfinder</a> website.</p>
+<p>All requests require a bounding box to be given as an instance of <code>sentinelhub.geometry.BBox</code> with corresponding Coordinate Reference System (<code>sentinelhub.constants.CRS</code>). In our case it is in WGS84 and we can use the predefined WGS84 coordinate reference system from <code>sentinelhub.constants.CRS</code>.</p>
+<div class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>aoi_coords_wgs84 <span class="op">=</span> [<span class="fl">15.461282</span>, <span class="fl">46.757161</span>, <span class="fl">15.574922</span>, <span class="fl">46.851514</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>When the bounding box bounds have been defined, you can initialize the <code>BBox</code> of the area of interest. Using the <code>bbox_to_dimensions</code> utility function, you can provide the desired resolution parameter of the image in meters and obtain the output image shape.</p>
+<div class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>resolution <span class="op">=</span> <span class="dv">10</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>aoi_bbox <span class="op">=</span> BBox(bbox<span class="op">=</span>aoi_coords_wgs84, crs<span class="op">=</span>CRS.WGS84)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>aoi_size <span class="op">=</span> bbox_to_dimensions(aoi_bbox, resolution<span class="op">=</span>resolution)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Image shape at </span><span class="sc">{</span>resolution<span class="sc">}</span><span class="ss"> m resolution: </span><span class="sc">{</span>aoi_size<span class="sc">}</span><span class="ss"> pixels"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Image shape at 10 m resolution: (860, 1054) pixels</code></pre>
+</div>
+</div>
+</section>
+<section id="catalog-api" class="level2">
+<h2 class="anchored" data-anchor-id="catalog-api">Catalog API</h2>
+<p>To search and discover data, you can use the Catalog API. Sentinel Hub Catalog API (or shortly “Catalog”) is an API implementing the STAC Specification, providing geospatial information for data available in Sentinel Hub. Firstly, to initialise the <code>SentinelHubCatalog</code> class we will use:</p>
+<div class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>catalog <span class="op">=</span> SentinelHubCatalog(config<span class="op">=</span>config)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now we can build the Catalog API request; to do this we use the <code>aoi_bbox</code> we defined earlier as well as <code>time_interval</code> and insert these into the request:</p>
+<div class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>aoi_bbox <span class="op">=</span> BBox(bbox<span class="op">=</span>aoi_coords_wgs84, crs<span class="op">=</span>CRS.WGS84)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>time_interval <span class="op">=</span> <span class="st">"2022-07-01"</span>, <span class="st">"2022-07-20"</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>search_iterator <span class="op">=</span> catalog.search(</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    DataCollection.SENTINEL2_L2A,</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    bbox<span class="op">=</span>aoi_bbox,</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    time<span class="op">=</span>time_interval,</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    fields<span class="op">=</span>{<span class="st">"include"</span>: [<span class="st">"id"</span>, <span class="st">"properties.datetime"</span>], <span class="st">"exclude"</span>: []},</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>results <span class="op">=</span> <span class="bu">list</span>(search_iterator)</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Total number of results:"</span>, <span class="bu">len</span>(results))</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>results</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Total number of results: 8</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="6">
+<pre><code>[{'id': 'S2B_MSIL2A_20220719T095559_N0400_R122_T33TWM_20220719T113943.SAFE',
+  'properties': {'datetime': '2022-07-19T10:07:53.062Z'}},
+ {'id': 'S2B_MSIL2A_20220716T094549_N0400_R079_T33TWM_20220716T114017.SAFE',
+  'properties': {'datetime': '2022-07-16T09:57:56.26Z'}},
+ {'id': 'S2A_MSIL2A_20220714T100041_N0400_R122_T33TWM_20220714T175057.SAFE',
+  'properties': {'datetime': '2022-07-14T10:08:00.748Z'}},
+ {'id': 'S2A_MSIL2A_20220711T095041_N0400_R079_T33TWM_20220711T142927.SAFE',
+  'properties': {'datetime': '2022-07-11T09:58:04.522Z'}},
+ {'id': 'S2B_MSIL2A_20220709T100029_N0400_R122_T33TWM_20220709T114004.SAFE',
+  'properties': {'datetime': '2022-07-09T10:07:52.974Z'}},
+ {'id': 'S2B_MSIL2A_20220706T095039_N0400_R079_T33TWM_20220706T113052.SAFE',
+  'properties': {'datetime': '2022-07-06T09:57:56.689Z'}},
+ {'id': 'S2A_MSIL2A_20220704T100041_N0400_R122_T33TWM_20220704T141618.SAFE',
+  'properties': {'datetime': '2022-07-04T10:08:01.243Z'}},
+ {'id': 'S2A_MSIL2A_20220701T095041_N0400_R079_T33TWM_20220701T141709.SAFE',
+  'properties': {'datetime': '2022-07-01T09:58:04.669Z'}}]</code></pre>
+</div>
+</div>
+</section>
+<section id="process-api" class="level2">
+<h2 class="anchored" data-anchor-id="process-api">Process API</h2>
+<section id="example-1-true-color-image" class="level3">
+<h3 class="anchored" data-anchor-id="example-1-true-color-image">Example 1: True Color Image</h3>
+<p>We build the request according to the <a href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/ApiReference.html">API Reference</a>, using the <code>SentinelHubRequest</code> class. Each Process API request also needs an <a href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Evalscript.html">evalscript</a>. An evalscript (or “custom script”) is a piece of Javascript code which defines how the satellite data shall be processed by Sentinel Hub and what values the service shall return. It is a required part of any <a href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Process.html">process</a>, <a href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Batch.html">batch processing</a> or <a href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/OGC.html">OGC request</a>.</p>
+<p>The information that we specify in the <code>SentinelHubRequest</code> object is: - an evalscript, - a list of input data collections with time interval, - a format of the response, - a bounding box and its size (size or resolution). - <code>mosaickingOrder</code> (optional): in this example we have used <code>leastCC</code> which will return pixels from the least cloudy acquisition in the specified time period.</p>
+<p>The evalscript in the example is used to select the appropriate bands. We return the RGB (B04, B03, B02) Sentinel-2 L2A bands.</p>
+<p>The least cloudy image from the time period is downloaded. Without any additional parameters in the evalscript, the downloaded data will correspond to reflectance values in <code>UINT8</code> format (values in 0-255 range).</p>
+<div class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>evalscript_true_color <span class="op">=</span> <span class="st">"""</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="st">    //VERSION=3</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="st">    function setup() {</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="st">        return {</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="st">            input: [{</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="st">                bands: ["B02", "B03", "B04"]</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="st">            }],</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="st">            output: {</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="st">                bands: 3</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="st">            }</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="st">        };</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="st">    }</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a><span class="st">    function evaluatePixel(sample) {</span></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a><span class="st">        return [sample.B04, sample.B03, sample.B02];</span></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a><span class="st">    }</span></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>request_true_color <span class="op">=</span> SentinelHubRequest(</span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>    evalscript<span class="op">=</span>evalscript_true_color,</span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>    input_data<span class="op">=</span>[</span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>        SentinelHubRequest.input_data(</span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>            data_collection<span class="op">=</span>DataCollection.SENTINEL2_L2A.define_from(</span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>                name<span class="op">=</span><span class="st">"s2l2a"</span>, service_url<span class="op">=</span><span class="st">"https://sh.dataspace.copernicus.eu"</span></span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a>            ),</span>
+<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>            time_interval<span class="op">=</span>(<span class="st">"2022-05-01"</span>, <span class="st">"2022-05-20"</span>),</span>
+<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a>            other_args<span class="op">=</span>{<span class="st">"dataFilter"</span>: {<span class="st">"mosaickingOrder"</span>: <span class="st">"leastCC"</span>}},</span>
+<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a>    ],</span>
+<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a>    responses<span class="op">=</span>[SentinelHubRequest.output_response(<span class="st">"default"</span>, MimeType.PNG)],</span>
+<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a>    bbox<span class="op">=</span>aoi_bbox,</span>
+<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a>    size<span class="op">=</span>aoi_size,</span>
+<span id="cb11-34"><a href="#cb11-34" aria-hidden="true" tabindex="-1"></a>    config<span class="op">=</span>config,</span>
+<span id="cb11-35"><a href="#cb11-35" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The method <code>get_data()</code> will always return a list of length 1 with the available image from the requested time interval in the form of numpy arrays.</p>
+<div class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>true_color_imgs <span class="op">=</span> request_true_color.get_data()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"Returned data is of type = </span><span class="sc">{</span><span class="bu">type</span>(true_color_imgs)<span class="sc">}</span><span class="ss"> and length </span><span class="sc">{</span><span class="bu">len</span>(true_color_imgs)<span class="sc">}</span><span class="ss">."</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"Single element in the list is of type </span><span class="sc">{</span><span class="bu">type</span>(true_color_imgs[<span class="op">-</span><span class="dv">1</span>])<span class="sc">}</span><span class="ss"> and has shape </span><span class="sc">{</span>true_color_imgs[<span class="op">-</span><span class="dv">1</span>]<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">"</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Returned data is of type = &lt;class 'list'&gt; and length 1.
+Single element in the list is of type &lt;class 'numpy.ndarray'&gt; and has shape (1054, 860, 3)</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>image <span class="op">=</span> true_color_imgs[<span class="dv">0</span>]</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Image type: </span><span class="sc">{</span>image<span class="sc">.</span>dtype<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co"># plot function</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="co"># factor 1/255 to scale between 0-1</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="co"># factor 3.5 to increase brightness</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>plot_image(image, factor<span class="op">=</span><span class="fl">3.5</span> <span class="op">/</span> <span class="dv">255</span>, clip_range<span class="op">=</span>(<span class="dv">0</span>, <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Image type: uint8</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="introduction_to_SH_APIs_files/figure-html/cell-12-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+<section id="example-2-ndvi-image" class="level3">
+<h3 class="anchored" data-anchor-id="example-2-ndvi-image">Example 2: NDVI Image</h3>
+<p>Secondly, we will also show you an example of how to calculate and visualise NDVI using the same API. NDVI is a very commonly used spectral vegetation index for vegetation monitoring, for example, monitoring crop growth and yields. As you will notice in the codeblock below, the evalscript has changed substantially: - we are only using Band 4 and Band 8 as an input into our script. - In the <code>evaluatePixel()</code> function, we calculate NDVI and visualise this using the <code>imgVals</code> array.</p>
+<div class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>evalscript_ndvi <span class="op">=</span> <span class="st">"""</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="st">//VERSION=3</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="st">function setup() {</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="st">  return {</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="st">    input: [{</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="st">      bands: [</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="st">        "B04",</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="st">        "B08",</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="st">        "dataMask"</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="st">      ]</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a><span class="st">    }],</span></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a><span class="st">    output: {</span></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a><span class="st">      bands: 4</span></span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a><span class="st">    }</span></span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a><span class="st">  }</span></span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a><span class="st">  </span></span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a><span class="st">function evaluatePixel(sample) {</span></span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a><span class="st">    let val = (sample.B08 - sample.B04) / (sample.B08 + sample.B04);</span></span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a><span class="st">    let imgVals = null;</span></span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a><span class="st">    </span></span>
+<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a><span class="st">    if (val&lt;-1.1) imgVals = [0,0,0];</span></span>
+<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a><span class="st">    else if (val&lt;-0.2) imgVals = [0.75,0.75,0.75];</span></span>
+<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a><span class="st">    else if (val&lt;-0.1) imgVals = [0.86,0.86,0.86];</span></span>
+<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a><span class="st">    else if (val&lt;0) imgVals = [1,1,0.88];</span></span>
+<span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a><span class="st">    else if (val&lt;0.025) imgVals = [1,0.98,0.8];</span></span>
+<span id="cb17-28"><a href="#cb17-28" aria-hidden="true" tabindex="-1"></a><span class="st">    else if (val&lt;0.05) imgVals = [0.93,0.91,0.71];</span></span>
+<span id="cb17-29"><a href="#cb17-29" aria-hidden="true" tabindex="-1"></a><span class="st">    else if (val&lt;0.075) imgVals = [0.87,0.85,0.61];</span></span>
+<span id="cb17-30"><a href="#cb17-30" aria-hidden="true" tabindex="-1"></a><span class="st">    else if (val&lt;0.1) imgVals = [0.8,0.78,0.51];</span></span>
+<span id="cb17-31"><a href="#cb17-31" aria-hidden="true" tabindex="-1"></a><span class="st">    else if (val&lt;0.125) imgVals = [0.74,0.72,0.42];</span></span>
+<span id="cb17-32"><a href="#cb17-32" aria-hidden="true" tabindex="-1"></a><span class="st">    else if (val&lt;0.15) imgVals = [0.69,0.76,0.38];</span></span>
+<span id="cb17-33"><a href="#cb17-33" aria-hidden="true" tabindex="-1"></a><span class="st">    else if (val&lt;0.175) imgVals = [0.64,0.8,0.35];</span></span>
+<span id="cb17-34"><a href="#cb17-34" aria-hidden="true" tabindex="-1"></a><span class="st">    else if (val&lt;0.2) imgVals = [0.57,0.75,0.32];</span></span>
+<span id="cb17-35"><a href="#cb17-35" aria-hidden="true" tabindex="-1"></a><span class="st">    else if (val&lt;0.25) imgVals = [0.5,0.7,0.28];</span></span>
+<span id="cb17-36"><a href="#cb17-36" aria-hidden="true" tabindex="-1"></a><span class="st">    else if (val&lt;0.3) imgVals = [0.44,0.64,0.25];</span></span>
+<span id="cb17-37"><a href="#cb17-37" aria-hidden="true" tabindex="-1"></a><span class="st">    else if (val&lt;0.35) imgVals = [0.38,0.59,0.21];</span></span>
+<span id="cb17-38"><a href="#cb17-38" aria-hidden="true" tabindex="-1"></a><span class="st">    else if (val&lt;0.4) imgVals = [0.31,0.54,0.18];</span></span>
+<span id="cb17-39"><a href="#cb17-39" aria-hidden="true" tabindex="-1"></a><span class="st">    else if (val&lt;0.45) imgVals = [0.25,0.49,0.14];</span></span>
+<span id="cb17-40"><a href="#cb17-40" aria-hidden="true" tabindex="-1"></a><span class="st">    else if (val&lt;0.5) imgVals = [0.19,0.43,0.11];</span></span>
+<span id="cb17-41"><a href="#cb17-41" aria-hidden="true" tabindex="-1"></a><span class="st">    else if (val&lt;0.55) imgVals = [0.13,0.38,0.07];</span></span>
+<span id="cb17-42"><a href="#cb17-42" aria-hidden="true" tabindex="-1"></a><span class="st">    else if (val&lt;0.6) imgVals = [0.06,0.33,0.04];</span></span>
+<span id="cb17-43"><a href="#cb17-43" aria-hidden="true" tabindex="-1"></a><span class="st">    else imgVals = [0,0.27,0];</span></span>
+<span id="cb17-44"><a href="#cb17-44" aria-hidden="true" tabindex="-1"></a><span class="st">    </span></span>
+<span id="cb17-45"><a href="#cb17-45" aria-hidden="true" tabindex="-1"></a><span class="st">    </span></span>
+<span id="cb17-46"><a href="#cb17-46" aria-hidden="true" tabindex="-1"></a><span class="st">    imgVals.push(sample.dataMask)</span></span>
+<span id="cb17-47"><a href="#cb17-47" aria-hidden="true" tabindex="-1"></a><span class="st">    </span></span>
+<span id="cb17-48"><a href="#cb17-48" aria-hidden="true" tabindex="-1"></a><span class="st">    return imgVals</span></span>
+<span id="cb17-49"><a href="#cb17-49" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb17-50"><a href="#cb17-50" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span>
+<span id="cb17-51"><a href="#cb17-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-52"><a href="#cb17-52" aria-hidden="true" tabindex="-1"></a>request_ndvi_img <span class="op">=</span> SentinelHubRequest(</span>
+<span id="cb17-53"><a href="#cb17-53" aria-hidden="true" tabindex="-1"></a>    evalscript<span class="op">=</span>evalscript_ndvi,</span>
+<span id="cb17-54"><a href="#cb17-54" aria-hidden="true" tabindex="-1"></a>    input_data<span class="op">=</span>[</span>
+<span id="cb17-55"><a href="#cb17-55" aria-hidden="true" tabindex="-1"></a>        SentinelHubRequest.input_data(</span>
+<span id="cb17-56"><a href="#cb17-56" aria-hidden="true" tabindex="-1"></a>            data_collection<span class="op">=</span>DataCollection.SENTINEL2_L2A.define_from(</span>
+<span id="cb17-57"><a href="#cb17-57" aria-hidden="true" tabindex="-1"></a>                name<span class="op">=</span><span class="st">"s2l2a"</span>, service_url<span class="op">=</span><span class="st">"https://sh.dataspace.copernicus.eu"</span></span>
+<span id="cb17-58"><a href="#cb17-58" aria-hidden="true" tabindex="-1"></a>            ),</span>
+<span id="cb17-59"><a href="#cb17-59" aria-hidden="true" tabindex="-1"></a>            time_interval<span class="op">=</span>(<span class="st">"2022-05-01"</span>, <span class="st">"2022-05-20"</span>),</span>
+<span id="cb17-60"><a href="#cb17-60" aria-hidden="true" tabindex="-1"></a>            other_args<span class="op">=</span>{<span class="st">"dataFilter"</span>: {<span class="st">"mosaickingOrder"</span>: <span class="st">"leastCC"</span>}},</span>
+<span id="cb17-61"><a href="#cb17-61" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb17-62"><a href="#cb17-62" aria-hidden="true" tabindex="-1"></a>    ],</span>
+<span id="cb17-63"><a href="#cb17-63" aria-hidden="true" tabindex="-1"></a>    responses<span class="op">=</span>[SentinelHubRequest.output_response(<span class="st">"default"</span>, MimeType.PNG)],</span>
+<span id="cb17-64"><a href="#cb17-64" aria-hidden="true" tabindex="-1"></a>    bbox<span class="op">=</span>aoi_bbox,</span>
+<span id="cb17-65"><a href="#cb17-65" aria-hidden="true" tabindex="-1"></a>    size<span class="op">=</span>aoi_size,</span>
+<span id="cb17-66"><a href="#cb17-66" aria-hidden="true" tabindex="-1"></a>    config<span class="op">=</span>config,</span>
+<span id="cb17-67"><a href="#cb17-67" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The same method as before is used to request and then visualise the data. In the visualisation, the lighter greens indicate a higher NDVI value (vegetation, forest) and the darker greens (urban areas and water bodies) represent areas with lower NDVI values.</p>
+<div class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>ndvi_img <span class="op">=</span> request_ndvi_img.get_data()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"Returned data is of type = </span><span class="sc">{</span><span class="bu">type</span>(true_color_imgs)<span class="sc">}</span><span class="ss"> and length </span><span class="sc">{</span><span class="bu">len</span>(true_color_imgs)<span class="sc">}</span><span class="ss">."</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"Single element in the list is of type </span><span class="sc">{</span><span class="bu">type</span>(true_color_imgs[<span class="op">-</span><span class="dv">1</span>])<span class="sc">}</span><span class="ss"> and has shape </span><span class="sc">{</span>true_color_imgs[<span class="op">-</span><span class="dv">1</span>]<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">"</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Returned data is of type = &lt;class 'list'&gt; and length 1.
+Single element in the list is of type &lt;class 'numpy.ndarray'&gt; and has shape (1054, 860, 3)</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>image <span class="op">=</span> ndvi_img[<span class="dv">0</span>]</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Image type: </span><span class="sc">{</span>image<span class="sc">.</span>dtype<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="co"># plot function</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>plot_image(image, factor<span class="op">=</span><span class="dv">1</span> <span class="op">/</span> <span class="dv">255</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Image type: uint8</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="introduction_to_SH_APIs_files/figure-html/cell-16-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+</section>
+<section id="statistical-api" class="level2">
+<h2 class="anchored" data-anchor-id="statistical-api">Statistical API</h2>
+<p>In the Process API examples, we have seen how to obtain satellite imagery. Statistical API can be used in a very similar way. The main difference is that the results of Statistical API are aggregated statistical values of satellite data instead of entire images. In many use cases, such values are all that we need. By using Statistical API we can avoid downloading and processing large amounts of satellite data.</p>
+<p>All general rules for building evalscripts apply. However, there are some specifics when using evalscripts with the Statistical API:</p>
+<ul>
+<li>The <code>evaluatePixel()</code> function must, in addition to other output, always return a <code>dataMask</code> output. This output defines which pixels are excluded from calculations. For more details and an example, see <a href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Statistical.html">here</a>.</li>
+<li>The default value of sampleType is <code>FLOAT32</code>.</li>
+<li>The output.bands parameter in the setup() function can be an array. This makes it possible to specify custom names for the output bands and different output <code>dataMask</code> for different outputs, see this <a href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Statistical/Examples.html#multiple-outputs-with-different-datamasks-multi-band-output-with-custom-bands-names-and-different-histogram-types">example</a>.</li>
+</ul>
+<section id="requesting-and-plotting-an-ndvi-time-series-for-a-single-field" class="level3">
+<h3 class="anchored" data-anchor-id="requesting-and-plotting-an-ndvi-time-series-for-a-single-field">Requesting, and plotting an NDVI time series for a single field</h3>
+<p>In the example here, we will calculate NDVI for a specific field of interest and then plot the mean NDVI and standard deviation over the requested time period. First we define our evalscript:</p>
+<div class="cell" data-execution_count="15">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>evalscript <span class="op">=</span> <span class="st">"""</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="st">//VERSION=3</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="st">function setup() {</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="st">  return {</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="st">    input: [{</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="st">      bands: [</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a><span class="st">        "B04",</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a><span class="st">        "B08",</span></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a><span class="st">        "dataMask"</span></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a><span class="st">      ]</span></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a><span class="st">    }],</span></span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a><span class="st">    output: [</span></span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a><span class="st">      {</span></span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a><span class="st">        id: "ndvi",</span></span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a><span class="st">        bands: 1</span></span>
+<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a><span class="st">      },</span></span>
+<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a><span class="st">      {</span></span>
+<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a><span class="st">        id: "dataMask",</span></span>
+<span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a><span class="st">        bands: 1</span></span>
+<span id="cb23-20"><a href="#cb23-20" aria-hidden="true" tabindex="-1"></a><span class="st">      }]</span></span>
+<span id="cb23-21"><a href="#cb23-21" aria-hidden="true" tabindex="-1"></a><span class="st">  };</span></span>
+<span id="cb23-22"><a href="#cb23-22" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb23-23"><a href="#cb23-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-24"><a href="#cb23-24" aria-hidden="true" tabindex="-1"></a><span class="st">function evaluatePixel(samples) {</span></span>
+<span id="cb23-25"><a href="#cb23-25" aria-hidden="true" tabindex="-1"></a><span class="st">    let index = (samples.B08 - samples.B04) / (samples.B08+samples.B04);</span></span>
+<span id="cb23-26"><a href="#cb23-26" aria-hidden="true" tabindex="-1"></a><span class="st">    return {</span></span>
+<span id="cb23-27"><a href="#cb23-27" aria-hidden="true" tabindex="-1"></a><span class="st">        ndvi: [index],</span></span>
+<span id="cb23-28"><a href="#cb23-28" aria-hidden="true" tabindex="-1"></a><span class="st">        dataMask: [samples.dataMask],</span></span>
+<span id="cb23-29"><a href="#cb23-29" aria-hidden="true" tabindex="-1"></a><span class="st">    };</span></span>
+<span id="cb23-30"><a href="#cb23-30" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb23-31"><a href="#cb23-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-32"><a href="#cb23-32" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>In this example, we will compare two fields within the area we requested using Process API:</p>
+<div class="cell" data-execution_count="16">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>field1 <span class="op">=</span> {</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"type"</span>: <span class="st">"Polygon"</span>,</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"coordinates"</span>: [</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>        [</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>            [<span class="fl">15.541723001099184</span>, <span class="fl">46.820368115848446</span>],</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>            [<span class="fl">15.541756949727985</span>, <span class="fl">46.82037740810231</span>],</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>            [<span class="fl">15.54192669287196</span>, <span class="fl">46.82008470133467</span>],</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>            [<span class="fl">15.542211861353849</span>, <span class="fl">46.81964331510048</span>],</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>            [<span class="fl">15.539394125163792</span>, <span class="fl">46.81905789197882</span>],</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>            [<span class="fl">15.539251540922846</span>, <span class="fl">46.819805931503055</span>],</span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>            [<span class="fl">15.541723001099184</span>, <span class="fl">46.820368115848446</span>],</span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>        ]</span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>    ],</span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a>field2 <span class="op">=</span> {</span>
+<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a>    <span class="st">"type"</span>: <span class="st">"Polygon"</span>,</span>
+<span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a>    <span class="st">"coordinates"</span>: [</span>
+<span id="cb24-19"><a href="#cb24-19" aria-hidden="true" tabindex="-1"></a>        [</span>
+<span id="cb24-20"><a href="#cb24-20" aria-hidden="true" tabindex="-1"></a>            [<span class="fl">15.507170086710744</span>, <span class="fl">46.83938135202761</span>],</span>
+<span id="cb24-21"><a href="#cb24-21" aria-hidden="true" tabindex="-1"></a>            [<span class="fl">15.508086699688228</span>, <span class="fl">46.83921879483953</span>],</span>
+<span id="cb24-22"><a href="#cb24-22" aria-hidden="true" tabindex="-1"></a>            [<span class="fl">15.50831755036404</span>, <span class="fl">46.839576420004114</span>],</span>
+<span id="cb24-23"><a href="#cb24-23" aria-hidden="true" tabindex="-1"></a>            [<span class="fl">15.508582349668648</span>, <span class="fl">46.83992939835186</span>],</span>
+<span id="cb24-24"><a href="#cb24-24" aria-hidden="true" tabindex="-1"></a>            [<span class="fl">15.508874307876296</span>, <span class="fl">46.840221997066486</span>],</span>
+<span id="cb24-25"><a href="#cb24-25" aria-hidden="true" tabindex="-1"></a>            [<span class="fl">15.50860950857169</span>, <span class="fl">46.840514594187695</span>],</span>
+<span id="cb24-26"><a href="#cb24-26" aria-hidden="true" tabindex="-1"></a>            [<span class="fl">15.50842618597619</span>, <span class="fl">46.84082112279607</span>],</span>
+<span id="cb24-27"><a href="#cb24-27" aria-hidden="true" tabindex="-1"></a>            [<span class="fl">15.508113858591262</span>, <span class="fl">46.840639992466144</span>],</span>
+<span id="cb24-28"><a href="#cb24-28" aria-hidden="true" tabindex="-1"></a>            [<span class="fl">15.50781511065786</span>, <span class="fl">46.84039384001332</span>],</span>
+<span id="cb24-29"><a href="#cb24-29" aria-hidden="true" tabindex="-1"></a>            [<span class="fl">15.50739414766079</span>, <span class="fl">46.83981328730921</span>],</span>
+<span id="cb24-30"><a href="#cb24-30" aria-hidden="true" tabindex="-1"></a>            [<span class="fl">15.507149717533464</span>, <span class="fl">46.83939064099493</span>],</span>
+<span id="cb24-31"><a href="#cb24-31" aria-hidden="true" tabindex="-1"></a>            [<span class="fl">15.507170086710744</span>, <span class="fl">46.83938135202761</span>],</span>
+<span id="cb24-32"><a href="#cb24-32" aria-hidden="true" tabindex="-1"></a>        ]</span>
+<span id="cb24-33"><a href="#cb24-33" aria-hidden="true" tabindex="-1"></a>    ],</span>
+<span id="cb24-34"><a href="#cb24-34" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now we have defined the evalscript and the two fields of interest, we can build the first Statistical API Request, before returning the response for the first field. In this request, as part of the payload we define some input parameters: - <code>time_interval</code> this defines the time range of our request. - <code>aggregation_interval</code> this defines the length of time each interval is. In this case, the interval is 10 days. he aggregation intervals should be at least one day long (e.g.&nbsp;“P5D”, “P30D”). You can only use period OR time designator not both. - <code>dataFilter: {maxCloudCoverage}</code> this is an additional argument in our request which filters out image acquisitions that have a cloud coverage percentage above 10%.</p>
+<p><strong>NOTE:</strong> If a timeRange is not divisible by an aggregationInterval, the last (“not full”) time interval will be dismissed by default (SKIP option). The user can instead set the lastIntervalBehavior to SHORTEN (shortens the last interval so that it ends at the end of the provided time range) or EXTEND (extends the last interval over the end of the provided time range so that all the intervals are of equal duration).</p>
+<div class="cell" data-execution_count="17">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>geometry <span class="op">=</span> Geometry(geometry<span class="op">=</span>field1, crs<span class="op">=</span>CRS.WGS84)</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>request <span class="op">=</span> SentinelHubStatistical(</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>    aggregation<span class="op">=</span>SentinelHubStatistical.aggregation(</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>        evalscript<span class="op">=</span>evalscript,</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>        time_interval<span class="op">=</span>(<span class="st">"2022-04-01T00:00:00Z"</span>, <span class="st">"2022-08-30T23:59:59Z"</span>),</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>        aggregation_interval<span class="op">=</span><span class="st">"P10D"</span>,</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>        size<span class="op">=</span>[<span class="fl">368.043</span>, <span class="fl">834.345</span>],</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>    input_data<span class="op">=</span>[</span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>        SentinelHubStatistical.input_data(</span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>            DataCollection.SENTINEL2_L1C.define_from(</span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>                name<span class="op">=</span><span class="st">"s2l1c"</span>, service_url<span class="op">=</span><span class="st">"https://sh.dataspace.copernicus.eu"</span></span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>            ),</span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>            other_args<span class="op">=</span>{<span class="st">"dataFilter"</span>: {<span class="st">"maxCloudCoverage"</span>: <span class="dv">10</span>}},</span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a>        ),</span>
+<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a>    ],</span>
+<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a>    geometry<span class="op">=</span>geometry,</span>
+<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a>    config<span class="op">=</span>config,</span>
+<span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a>response1 <span class="op">=</span> request.get_data()</span>
+<span id="cb25-23"><a href="#cb25-23" aria-hidden="true" tabindex="-1"></a>response1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="17">
+<pre><code>[{'data': [{'interval': {'from': '2022-04-21T00:00:00Z',
+     'to': '2022-05-01T00:00:00Z'},
+    'outputs': {'ndvi': {'bands': {'B0': {'stats': {'min': 0.08167635649442673,
+         'max': 0.39603960514068604,
+         'mean': 0.13346635554959452,
+         'stDev': 0.06778421108052068,
+         'sampleCount': 306912,
+         'noDataCount': 137731}}}}}},
+   {'interval': {'from': '2022-05-11T00:00:00Z', 'to': '2022-05-21T00:00:00Z'},
+    'outputs': {'ndvi': {'bands': {'B0': {'stats': {'min': 0.07600757479667664,
+         'max': 0.4349462389945984,
+         'mean': 0.11771845381622796,
+         'stDev': 0.06006468950382084,
+         'sampleCount': 306912,
+         'noDataCount': 137731}}}}}},
+   {'interval': {'from': '2022-05-21T00:00:00Z', 'to': '2022-05-31T00:00:00Z'},
+    'outputs': {'ndvi': {'bands': {'B0': {'stats': {'min': 0.12070990353822708,
+         'max': 0.22220245003700256,
+         'mean': 0.1623609989287693,
+         'stDev': 0.02119876493505649,
+         'sampleCount': 306912,
+         'noDataCount': 137731}}}}}},
+   {'interval': {'from': '2022-05-31T00:00:00Z', 'to': '2022-06-10T00:00:00Z'},
+    'outputs': {'ndvi': {'bands': {'B0': {'stats': {'min': 0.30697834491729736,
+         'max': 0.5585442781448364,
+         'mean': 0.3871644425922805,
+         'stDev': 0.036877585538162914,
+         'sampleCount': 306912,
+         'noDataCount': 137731}}}}}},
+   {'interval': {'from': '2022-06-10T00:00:00Z', 'to': '2022-06-20T00:00:00Z'},
+    'outputs': {'ndvi': {'bands': {'B0': {'stats': {'min': 0.4932262897491455,
+         'max': 0.7623130679130554,
+         'mean': 0.7166323115162642,
+         'stDev': 0.03632912872686905,
+         'sampleCount': 306912,
+         'noDataCount': 137731}}}}}},
+   {'interval': {'from': '2022-06-20T00:00:00Z', 'to': '2022-06-30T00:00:00Z'},
+    'outputs': {'ndvi': {'bands': {'B0': {'stats': {'min': 0.5235322713851929,
+         'max': 0.8472102880477905,
+         'mean': 0.8134408265822731,
+         'stDev': 0.04334495262826597,
+         'sampleCount': 306912,
+         'noDataCount': 137731}}}}}},
+   {'interval': {'from': '2022-06-30T00:00:00Z', 'to': '2022-07-10T00:00:00Z'},
+    'outputs': {'ndvi': {'bands': {'B0': {'stats': {'min': 0.5385261178016663,
+         'max': 0.8165295124053955,
+         'mean': 0.7346462549343704,
+         'stDev': 0.05007425808442363,
+         'sampleCount': 306912,
+         'noDataCount': 137731}}}}}},
+   {'interval': {'from': '2022-07-10T00:00:00Z', 'to': '2022-07-20T00:00:00Z'},
+    'outputs': {'ndvi': {'bands': {'B0': {'stats': {'min': 0.48085325956344604,
+         'max': 0.7764950394630432,
+         'mean': 0.6345127327117525,
+         'stDev': 0.037435679050829576,
+         'sampleCount': 306912,
+         'noDataCount': 137731}}}}}},
+   {'interval': {'from': '2022-07-20T00:00:00Z', 'to': '2022-07-30T00:00:00Z'},
+    'outputs': {'ndvi': {'bands': {'B0': {'stats': {'min': 0.3827281594276428,
+         'max': 0.7180401086807251,
+         'mean': 0.47361417948967777,
+         'stDev': 0.04486725306919478,
+         'sampleCount': 306912,
+         'noDataCount': 137731}}}}}},
+   {'interval': {'from': '2022-07-30T00:00:00Z', 'to': '2022-08-09T00:00:00Z'},
+    'outputs': {'ndvi': {'bands': {'B0': {'stats': {'min': 0.25120440125465393,
+         'max': 0.6704408526420593,
+         'mean': 0.3448654317316632,
+         'stDev': 0.060250767466331526,
+         'sampleCount': 306912,
+         'noDataCount': 137731}}}}}},
+   {'interval': {'from': '2022-08-09T00:00:00Z', 'to': '2022-08-19T00:00:00Z'},
+    'outputs': {'ndvi': {'bands': {'B0': {'stats': {'min': 0.24285714328289032,
+         'max': 0.6134668588638306,
+         'mean': 0.33002391002395726,
+         'stDev': 0.05309494318283593,
+         'sampleCount': 306912,
+         'noDataCount': 137731}}}}}}],
+  'status': 'OK'}]</code></pre>
+</div>
+</div>
+<p>However, as it is clear to see, our response is not that useful in <code>json</code> format. It’s difficult to read from a human perspective. So, let’s transform it into a <code>pandas</code> dataframe. To help us achieve this, let’s define some helper functions.</p>
+<div class="cell" data-execution_count="18">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># define functions to extract statistics for all acquisition dates</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> extract_stats(date, stat_data):</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>    d <span class="op">=</span> {}</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> key, value <span class="kw">in</span> stat_data[<span class="st">"outputs"</span>].items():</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>        stats <span class="op">=</span> value[<span class="st">"bands"</span>][<span class="st">"B0"</span>][<span class="st">"stats"</span>]</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> stats[<span class="st">"sampleCount"</span>] <span class="op">==</span> stats[<span class="st">"noDataCount"</span>]:</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>            <span class="cf">continue</span></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>:</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>            d[<span class="st">"date"</span>] <span class="op">=</span> [date]</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> stat_name, stat_value <span class="kw">in</span> stats.items():</span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> stat_name <span class="op">==</span> <span class="st">"sampleCount"</span> <span class="kw">or</span> stat_name <span class="op">==</span> <span class="st">"noDataCount"</span>:</span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">continue</span></span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>                <span class="cf">else</span>:</span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>                    d[<span class="ss">f"</span><span class="sc">{</span>key<span class="sc">}</span><span class="ss">_</span><span class="sc">{</span>stat_name<span class="sc">}</span><span class="ss">"</span>] <span class="op">=</span> [stat_value]</span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> pd.DataFrame(d)</span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> read_acquisitions_stats(stat_data):</span>
+<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a>    df_li <span class="op">=</span> []</span>
+<span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> aq <span class="kw">in</span> stat_data:</span>
+<span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a>        date <span class="op">=</span> aq[<span class="st">"interval"</span>][<span class="st">"from"</span>][:<span class="dv">10</span>]</span>
+<span id="cb27-22"><a href="#cb27-22" aria-hidden="true" tabindex="-1"></a>        df_li.append(extract_stats(date, aq))</span>
+<span id="cb27-23"><a href="#cb27-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> pd.concat(df_li)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="19">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>result_df1 <span class="op">=</span> read_acquisitions_stats(response1[<span class="dv">0</span>][<span class="st">"data"</span>])</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>result_df1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="19">
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">date</th>
+<th data-quarto-table-cell-role="th">ndvi_min</th>
+<th data-quarto-table-cell-role="th">ndvi_max</th>
+<th data-quarto-table-cell-role="th">ndvi_mean</th>
+<th data-quarto-table-cell-role="th">ndvi_stDev</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>2022-04-21</td>
+<td>0.081676</td>
+<td>0.396040</td>
+<td>0.133466</td>
+<td>0.067784</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">0</td>
+<td>2022-05-11</td>
+<td>0.076008</td>
+<td>0.434946</td>
+<td>0.117718</td>
+<td>0.060065</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>2022-05-21</td>
+<td>0.120710</td>
+<td>0.222202</td>
+<td>0.162361</td>
+<td>0.021199</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">0</td>
+<td>2022-05-31</td>
+<td>0.306978</td>
+<td>0.558544</td>
+<td>0.387164</td>
+<td>0.036878</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>2022-06-10</td>
+<td>0.493226</td>
+<td>0.762313</td>
+<td>0.716632</td>
+<td>0.036329</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">0</td>
+<td>2022-06-20</td>
+<td>0.523532</td>
+<td>0.847210</td>
+<td>0.813441</td>
+<td>0.043345</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>2022-06-30</td>
+<td>0.538526</td>
+<td>0.816530</td>
+<td>0.734646</td>
+<td>0.050074</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">0</td>
+<td>2022-07-10</td>
+<td>0.480853</td>
+<td>0.776495</td>
+<td>0.634513</td>
+<td>0.037436</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>2022-07-20</td>
+<td>0.382728</td>
+<td>0.718040</td>
+<td>0.473614</td>
+<td>0.044867</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">0</td>
+<td>2022-07-30</td>
+<td>0.251204</td>
+<td>0.670441</td>
+<td>0.344865</td>
+<td>0.060251</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>2022-08-09</td>
+<td>0.242857</td>
+<td>0.613467</td>
+<td>0.330024</td>
+<td>0.053095</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p>We can take this another step further, and display the data in a time series using the Matplotlib python library:</p>
+<div class="cell" data-execution_count="20">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>fig_stat, ax_stat <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">6</span>))</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>t1 <span class="op">=</span> result_df1[<span class="st">"date"</span>]</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>ndvi_mean_field1 <span class="op">=</span> result_df1[<span class="st">"ndvi_mean"</span>]</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>ndvi_std_field1 <span class="op">=</span> result_df1[<span class="st">"ndvi_stDev"</span>]</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>ax_stat.plot(t1, ndvi_mean_field1, label<span class="op">=</span><span class="st">"field 1 mean"</span>)</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>ax_stat.fill_between(</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>    t1,</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>    ndvi_mean_field1 <span class="op">-</span> ndvi_std_field1,</span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>    ndvi_mean_field1 <span class="op">+</span> ndvi_std_field1,</span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>    alpha<span class="op">=</span><span class="fl">0.3</span>,</span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>    label<span class="op">=</span><span class="st">"field 1 stDev"</span>,</span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a>ax_stat.tick_params(axis<span class="op">=</span><span class="st">"x"</span>, labelrotation<span class="op">=</span><span class="dv">30</span>, labelsize<span class="op">=</span><span class="dv">12</span>)</span>
+<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a>ax_stat.tick_params(axis<span class="op">=</span><span class="st">"y"</span>, labelsize<span class="op">=</span><span class="dv">12</span>)</span>
+<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a>ax_stat.set_xlabel(<span class="st">"Date"</span>, size<span class="op">=</span><span class="dv">15</span>)</span>
+<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a>ax_stat.set_ylabel(<span class="st">"NDVI/unitless"</span>, size<span class="op">=</span><span class="dv">15</span>)</span>
+<span id="cb29-17"><a href="#cb29-17" aria-hidden="true" tabindex="-1"></a>ax_stat.legend(loc<span class="op">=</span><span class="st">"lower right"</span>, prop<span class="op">=</span>{<span class="st">"size"</span>: <span class="dv">12</span>})</span>
+<span id="cb29-18"><a href="#cb29-18" aria-hidden="true" tabindex="-1"></a>ax_stat.set_title(<span class="st">"NDVI time series"</span>, fontsize<span class="op">=</span><span class="dv">20</span>)</span>
+<span id="cb29-19"><a href="#cb29-19" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> label <span class="kw">in</span> ax_stat.get_xticklabels()[<span class="dv">1</span>::<span class="dv">2</span>]:</span>
+<span id="cb29-20"><a href="#cb29-20" aria-hidden="true" tabindex="-1"></a>    label.set_visible(<span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="introduction_to_SH_APIs_files/figure-html/cell-22-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+<section id="comparing-different-fields" class="level3">
+<h3 class="anchored" data-anchor-id="comparing-different-fields">Comparing different fields</h3>
+<p>Now that we have learnt how to plot the data for the first field, let’s take this another step forward and compare the NDVI time series of the first field with the second field. We will now run the same request for our second field and then transform the response into a second Pandas dataframe.</p>
+<div class="cell" data-execution_count="21">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>geometry <span class="op">=</span> Geometry(geometry<span class="op">=</span>field2, crs<span class="op">=</span>CRS.WGS84)</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>request <span class="op">=</span> SentinelHubStatistical(</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>    aggregation<span class="op">=</span>SentinelHubStatistical.aggregation(</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>        evalscript<span class="op">=</span>evalscript,</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>        time_interval<span class="op">=</span>(<span class="st">"2022-04-01T00:00:00Z"</span>, <span class="st">"2022-08-30T23:59:59Z"</span>),</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>        aggregation_interval<span class="op">=</span><span class="st">"P10D"</span>,</span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>        size<span class="op">=</span>[<span class="fl">368.043</span>, <span class="fl">834.345</span>],</span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>    input_data<span class="op">=</span>[</span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>        SentinelHubStatistical.input_data(</span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>            DataCollection.SENTINEL2_L1C.define_from(</span>
+<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a>                name<span class="op">=</span><span class="st">"s2l1c"</span>, service_url<span class="op">=</span><span class="st">"https://sh.dataspace.copernicus.eu"</span></span>
+<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a>            ),</span>
+<span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a>            other_args<span class="op">=</span>{<span class="st">"dataFilter"</span>: {<span class="st">"maxCloudCoverage"</span>: <span class="dv">10</span>}},</span>
+<span id="cb30-16"><a href="#cb30-16" aria-hidden="true" tabindex="-1"></a>        ),</span>
+<span id="cb30-17"><a href="#cb30-17" aria-hidden="true" tabindex="-1"></a>    ],</span>
+<span id="cb30-18"><a href="#cb30-18" aria-hidden="true" tabindex="-1"></a>    geometry<span class="op">=</span>geometry,</span>
+<span id="cb30-19"><a href="#cb30-19" aria-hidden="true" tabindex="-1"></a>    config<span class="op">=</span>config,</span>
+<span id="cb30-20"><a href="#cb30-20" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-22"><a href="#cb30-22" aria-hidden="true" tabindex="-1"></a>response2 <span class="op">=</span> request.get_data()</span>
+<span id="cb30-23"><a href="#cb30-23" aria-hidden="true" tabindex="-1"></a>result_df2 <span class="op">=</span> read_acquisitions_stats(response2[<span class="dv">0</span>][<span class="st">"data"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now we have requested the statistics for both fields and transformed them into Pandas dataframes, let’s plot the two time series and visualise this in the same plot:</p>
+<div class="cell" data-execution_count="22">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>fig_stat, ax_stat <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">6</span>))</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>t1 <span class="op">=</span> result_df1[<span class="st">"date"</span>]</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>t2 <span class="op">=</span> result_df1[<span class="st">"date"</span>]</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>ndvi_mean_field1 <span class="op">=</span> result_df1[<span class="st">"ndvi_mean"</span>]</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>ndvi_std_field1 <span class="op">=</span> result_df1[<span class="st">"ndvi_stDev"</span>]</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>ndvi_mean_field2 <span class="op">=</span> result_df2[<span class="st">"ndvi_mean"</span>]</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>ndvi_std_field2 <span class="op">=</span> result_df2[<span class="st">"ndvi_stDev"</span>]</span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>ax_stat.plot(t1, ndvi_mean_field1, label<span class="op">=</span><span class="st">"field 1 mean"</span>)</span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>ax_stat.fill_between(</span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>    t1,</span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>    ndvi_mean_field1 <span class="op">-</span> ndvi_std_field1,</span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a>    ndvi_mean_field1 <span class="op">+</span> ndvi_std_field1,</span>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a>    alpha<span class="op">=</span><span class="fl">0.3</span>,</span>
+<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a>    label<span class="op">=</span><span class="st">"field 1 stDev"</span>,</span>
+<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb31-16"><a href="#cb31-16" aria-hidden="true" tabindex="-1"></a>ax_stat.plot(t2, ndvi_mean_field2, label<span class="op">=</span><span class="st">"field 2 mean"</span>)</span>
+<span id="cb31-17"><a href="#cb31-17" aria-hidden="true" tabindex="-1"></a>ax_stat.fill_between(</span>
+<span id="cb31-18"><a href="#cb31-18" aria-hidden="true" tabindex="-1"></a>    t2,</span>
+<span id="cb31-19"><a href="#cb31-19" aria-hidden="true" tabindex="-1"></a>    ndvi_mean_field2 <span class="op">-</span> ndvi_std_field2,</span>
+<span id="cb31-20"><a href="#cb31-20" aria-hidden="true" tabindex="-1"></a>    ndvi_mean_field2 <span class="op">+</span> ndvi_std_field2,</span>
+<span id="cb31-21"><a href="#cb31-21" aria-hidden="true" tabindex="-1"></a>    alpha<span class="op">=</span><span class="fl">0.3</span>,</span>
+<span id="cb31-22"><a href="#cb31-22" aria-hidden="true" tabindex="-1"></a>    label<span class="op">=</span><span class="st">"field 2 stDev"</span>,</span>
+<span id="cb31-23"><a href="#cb31-23" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb31-24"><a href="#cb31-24" aria-hidden="true" tabindex="-1"></a>ax_stat.tick_params(axis<span class="op">=</span><span class="st">"x"</span>, labelrotation<span class="op">=</span><span class="dv">30</span>, labelsize<span class="op">=</span><span class="dv">12</span>)</span>
+<span id="cb31-25"><a href="#cb31-25" aria-hidden="true" tabindex="-1"></a>ax_stat.tick_params(axis<span class="op">=</span><span class="st">"y"</span>, labelsize<span class="op">=</span><span class="dv">12</span>)</span>
+<span id="cb31-26"><a href="#cb31-26" aria-hidden="true" tabindex="-1"></a>ax_stat.set_xlabel(<span class="st">"Date"</span>, size<span class="op">=</span><span class="dv">15</span>)</span>
+<span id="cb31-27"><a href="#cb31-27" aria-hidden="true" tabindex="-1"></a>ax_stat.set_ylabel(<span class="st">"NDVI/unitless"</span>, size<span class="op">=</span><span class="dv">15</span>)</span>
+<span id="cb31-28"><a href="#cb31-28" aria-hidden="true" tabindex="-1"></a>ax_stat.legend(loc<span class="op">=</span><span class="st">"lower right"</span>, prop<span class="op">=</span>{<span class="st">"size"</span>: <span class="dv">12</span>})</span>
+<span id="cb31-29"><a href="#cb31-29" aria-hidden="true" tabindex="-1"></a>ax_stat.set_title(<span class="st">"NDVI time series"</span>, fontsize<span class="op">=</span><span class="dv">20</span>)</span>
+<span id="cb31-30"><a href="#cb31-30" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> label <span class="kw">in</span> ax_stat.get_xticklabels()[<span class="dv">1</span>::<span class="dv">2</span>]:</span>
+<span id="cb31-31"><a href="#cb31-31" aria-hidden="true" tabindex="-1"></a>    label.set_visible(<span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="introduction_to_SH_APIs_files/figure-html/cell-24-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+</section>
+<section id="summary" class="level2">
+<h2 class="anchored" data-anchor-id="summary">Summary</h2>
+<p>So what have we learnt in this notebook?</p>
+<ul>
+<li>How to quickly access satellite imagery though Sentinel Hub using Process API.</li>
+<li>Visualising NDVI derived from the satellite imagery</li>
+<li>Using Statistical API to produce NDVI time series for single and multiple fields.</li>
+</ul>
+<p>This concludes this notebook on working with Sentinel Hub APIs to access data from the Copernicus Data Space Ecosystem. For more information you can check out the <a href="https://dataspace.copernicus.eu/analyse/apis/sentinel-hub">Sentinel Hub API</a> Documentation and the <a href="https://sentinelhub-py.readthedocs.io/en/latest/index.html">Sentinel Hub Python package</a> documentation too.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var filterRegex = new RegExp("^(?:http:|https:)\/\/documentation.*dataspace.copernicus\/custom");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+          // target, if specified
+          link.setAttribute("target", "_blank");
+          // default icon
+          link.classList.add("external");
+      }
+    }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
