@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -1192,6 +1226,7 @@ window.onload = function() {
   <li><a href="#registration-and-authentication" id="toc-registration-and-authentication" class="nav-link" data-scroll-target="#registration-and-authentication">Registration and authentication</a></li>
   <li><a href="#apis" id="toc-apis" class="nav-link" data-scroll-target="#apis">APIs</a></li>
   <li><a href="#documentation" id="toc-documentation" class="nav-link" data-scroll-target="#documentation">Documentation</a></li>
+  <li><a href="#copernicus-browser" id="toc-copernicus-browser" class="nav-link" data-scroll-target="#copernicus-browser">Copernicus Browser</a></li>
   </ul>
 </nav>
     </div>
@@ -1660,6 +1695,122 @@ Are there tutorials (online &amp; physical meetings) to use the new interface?
 <p>
 Tutorials will be added to the documentation in due time explaining the usage of the different interfaces. We will also be present on different conferences explaining the service &amp; ecosystem.
 </p>
+</details>
+</section>
+<section id="copernicus-browser" class="level2">
+<h2 class="anchored" data-anchor-id="copernicus-browser">Copernicus Browser</h2>
+<details id="where-can-i-learn-more-about-the-copernicus-browser">
+<summary onclick="handleQuestionClick('where-can-i-learn-more-about-the-copernicus-browser')">
+Where can I learn more about the Copernicus Browser?
+</summary>
+<p>
+Visit our <a href="https://documentation.dataspace.copernicus.eu/Applications/Browser.html">documentation page</a> for details about the Browser.
+</p>
+</details>
+<details id="how-can-i-find-the-exact-location-by-knowing-the-lat-lon-coordinates">
+<summary onclick="handleQuestionClick('how-can-i-find-the-exact-location-by-knowing-the-lat-lon-coordinates')">
+How can I find the exact location by knowing the lat/lon coordinates?
+</summary>
+<p>
+Simply write coordinates in the “Search places” tool in “lat,lon” form, e.g.:<br><br> 46.0246,14.5367<br><br> And click enter.
+</p>
+</details>
+<details id="how-can-i-make-long-time-lapses">
+<summary onclick="handleQuestionClick('how-can-i-make-long-time-lapses')">
+How can I make long time-lapses?
+</summary>
+<p>
+As Copernicus Browser timelapse functionality has a limit of processing up to 300 images at once, we need to do some post-processing, to be able to create longer timelapses.<br><br> First, use command prompt to convert .gif timelapses from Copernicus Browser into .mp4 files and then merge them together. For example, if we want to create a five-years long timelapse from daily Sentinel-3 data, six timelapses, each 300 days long, are required. You should first download your smaller timelapses from <a href="https://browser.dataspace.copernicus.eu/">Copernicus Browser</a>.<br><br> After downloading the gifs from Copernicus Browser, we should transform them into .mp4 files. To do so, we first need to download and install the ffmpeg program for making videos. Follow <a href="https://www.wikihow.com/Install-FFmpeg-on-Windows">this tutorial to install ffmpeg</a>.<br><br> <em>To test if ffmpeg is installed, go to CMD and type: <code>ffmpeg -version</code>.</em><br><br> To transform a gif into mp4, first navigate to the folder where your gif files are stored, then open your command prompt and write in the following code:
+</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode javascript code-with-copy"><code class="sourceCode javascript"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>ffmpeg <span class="op">-</span>i GIF1<span class="op">.</span><span class="at">gif</span> <span class="op">-</span>movflags faststart <span class="op">-</span>pix_fmt yuv420p <span class="op">-</span>vf <span class="st">"scale=trunc(iw/2)*2:trunc(ih/2)*2"</span> GIF1vid<span class="op">.</span><span class="at">mp4</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><em>The only part of the code you need to change is the name of your gif at the start and the name of the output .mp4 video at the end.</em><br><br> You need to transform all your .gif time-lapses into separate .mp4 files:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode javascript code-with-copy"><code class="sourceCode javascript"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>ffmpeg <span class="op">-</span>i GIF1<span class="op">.</span><span class="at">gif</span> <span class="op">-</span>movflags faststart <span class="op">-</span>pix_fmt yuv420p <span class="op">-</span>vf <span class="st">"scale=trunc(iw/2)*2:trunc(ih/2)*2"</span> GIF1vid<span class="op">.</span><span class="at">mp4</span><span class="op">&lt;</span>br<span class="op">&gt;</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>ffmpeg <span class="op">-</span>i GIF2<span class="op">.</span><span class="at">gif</span> <span class="op">-</span>movflags faststart <span class="op">-</span>pix_fmt yuv420p <span class="op">-</span>vf <span class="st">"scale=trunc(iw/2)*2:trunc(ih/2)*2"</span> GIF2vid<span class="op">.</span><span class="at">mp4</span><span class="op">&lt;</span>br<span class="op">&gt;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>ffmpeg <span class="op">-</span>i GIF3<span class="op">.</span><span class="at">gif</span> <span class="op">-</span>movflags faststart <span class="op">-</span>pix_fmt yuv420p <span class="op">-</span>vf <span class="st">"scale=trunc(iw/2)*2:trunc(ih/2)*2"</span> GIF3vid<span class="op">.</span><span class="at">mp4</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Finally, merge all the .mp4 files into a final .mp4 file with the following code:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode javascript code-with-copy"><code class="sourceCode javascript"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>ffmpeg <span class="op">-</span>i GIF1vid<span class="op">.</span><span class="at">mp4</span> <span class="op">-</span>i GIF2vid<span class="op">.</span><span class="at">mp4</span> <span class="op">-</span>i GIF3vid<span class="op">.</span><span class="at">mp4</span> <span class="op">-</span>filter_complex <span class="st">"[0:0] [1:0] [2:0] concat=n=3:v=1:a=0"</span> FinalVideo<span class="op">.</span><span class="at">mp4</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>In this code, we specify the output name of the final .mp4 timelapse and list the .mp4 files we want to merge. We preface the .mp4 files with -i. Then we need to add as many arrays as there are input .mp4 videos; <code>[0:0]</code> for the first one, <code>[0:1]</code> for the second one, <code>[0:3]</code> for the third one and so on. The <code>n=3</code> indicates how many input .mp4 files there are.<br><br> For 6 input .mp4 files, the code would look like this:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode javascript code-with-copy"><code class="sourceCode javascript"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>ffmpeg <span class="op">-</span>i GIF1vid<span class="op">.</span><span class="at">mp4</span> <span class="op">-</span>i GIF2vid<span class="op">.</span><span class="at">mp4</span> <span class="op">-</span>i GIF3vid<span class="op">.</span><span class="at">mp4</span> <span class="op">-</span>i GIF4vid<span class="op">.</span><span class="at">mp4</span> <span class="op">-</span>i GIF5vid<span class="op">.</span><span class="at">mp4</span> <span class="op">-</span>i GIF6vid<span class="op">.</span><span class="at">mp4</span> <span class="op">-</span> filter_complex <span class="st">"[0:0][1:0][2:0][3:0][4:0][5:0] concat=n=6:v=1:a=0"</span> FinalVideo<span class="op">.</span><span class="at">mp4</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<details id="how-can-i-configure-my-layers-for-statistical-information-in-copernicus-browser">
+<summary onclick="handleQuestionClick('how-can-i-configure-my-layers-for-statistical-information-in-copernicus-browser')">
+How can I configure my layers for statistical information in Copernicus Browser?
+</summary>
+<p>
+In Copernicus Browser, you can view two kinds of statistical information for your imagery: a line chart of values through time for either a point or a polygon, and a histogram of values (see the chapter Statistical Analysis on our <a href="https://documentation.dataspace.copernicus.eu/Applications/Browser.html#statistical-analysis">Copernicus Browser page</a>). To enable statistical features, an evalscript supporting statistical API should be used in your layers.<br><br> Because statistics operate on the indicator values themselves (and not on RGB), you must add an additional output to the evalscript, which returns the value without conversion to color. For example, statistics can be calculated for values of B04 or for an index like NDVI. Additionally, the evalscript should include dataMask to exclude no-data values from the calculation (no-data pixels often have value 0, which could skew the statistics), and it’s also recommended to check for presence of clouds, so we can exclude them as well (cloudy pixels usually have very high values, which could also skew the results). The user can exclude any pixels from the statistics, such as, for example, snow or water.<br><br><br>
+The evalscript should contain the following outputs, with the exact same names:
+</p>
+<ul>
+<li><p><code>default</code>: Mandatory. A visualization output that defines what will be displayed on the map. The visualization can return anything you like, a single value grayscale, an RGB visualization, etc.</p></li>
+<li><p><code>index</code>: Optional. Returning the raw values of your index, enabling the histogram functionality. Use FLOAT32 format to include decimals and negative values.</p></li>
+<li><p><code>eobrowserStats</code>: Mandatory. An output containing both the index values and cloud information, used for line chart generation. Cloud information will allow us to filter the tiles by maximum cloud coverage. Use FLOAT32 format to include decimals and negative values.</p></li>
+<li><p><code>dataMask</code>: Mandatory. A dataMask output to take no-data values into account.</p>
+<p>Here is an example evalscript for NDVI:</p></li>
+</ul>
+<div class="sourceCode" id="cb5"><pre class="sourceCode javascript code-with-copy"><code class="sourceCode javascript"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">//VERSION=3</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">setup</span>() {</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>   <span class="cf">return</span> {</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>       <span class="dt">input</span><span class="op">:</span> [<span class="st">"B04"</span><span class="op">,</span> <span class="st">"B08"</span><span class="op">,</span> <span class="st">"SCL"</span><span class="op">,</span><span class="st">"dataMask"</span>]<span class="op">,</span> </span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>       <span class="co">//The four outputs should be setup here in the setup function, and defined under the evaluatePixel function. </span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>       <span class="dt">output</span><span class="op">:</span> [</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>         { <span class="dt">id</span><span class="op">:</span> <span class="st">"default"</span><span class="op">,</span> <span class="dt">bands</span><span class="op">:</span> <span class="dv">4</span> }<span class="op">,</span> </span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>         { <span class="dt">id</span><span class="op">:</span> <span class="st">"index"</span><span class="op">,</span> <span class="dt">bands</span><span class="op">:</span> <span class="dv">1</span><span class="op">,</span> <span class="dt">sampleType</span><span class="op">:</span> <span class="st">'FLOAT32'</span> }<span class="op">,</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>         { <span class="dt">id</span><span class="op">:</span> <span class="st">"eobrowserStats"</span><span class="op">,</span> <span class="dt">bands</span><span class="op">:</span> <span class="dv">2</span><span class="op">,</span> <span class="dt">sampleType</span><span class="op">:</span> <span class="st">'FLOAT32'</span> }<span class="op">,</span> </span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>         { <span class="dt">id</span><span class="op">:</span> <span class="st">"dataMask"</span><span class="op">,</span> <span class="dt">bands</span><span class="op">:</span> <span class="dv">1</span> }</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>       ]</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>     }<span class="op">;</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="co">// Optional filtering for clouds using the Sentinel-2A SCL band (values 1, 2, 7, 8, 9, 10, 11 are either clouds or snow)</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">isCloud</span> (scl) {</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a> <span class="cf">if</span> ([<span class="dv">1</span><span class="op">,</span> <span class="dv">2</span><span class="op">,</span> <span class="dv">7</span><span class="op">,</span> <span class="dv">8</span><span class="op">,</span> <span class="dv">9</span><span class="op">,</span> <span class="dv">10</span><span class="op">,</span> <span class="dv">11</span>]<span class="op">.</span><span class="fu">includes</span>(scl))  {</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>   <span class="cf">return</span> <span class="kw">false</span><span class="op">;</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a> } </span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">evaluatePixel</span>(samples) {</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>   <span class="kw">let</span> val <span class="op">=</span> <span class="fu">index</span>(samples<span class="op">.</span><span class="at">B08</span><span class="op">,</span> samples<span class="op">.</span><span class="at">B04</span>)<span class="op">;</span> <span class="co">// NDVI calculation</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>   <span class="kw">let</span> imgVals <span class="op">=</span> <span class="kw">null</span><span class="op">;</span> </span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>   <span class="kw">const</span> indexVal <span class="op">=</span> samples<span class="op">.</span><span class="at">dataMask</span> <span class="op">===</span> <span class="dv">1</span> <span class="op">?</span> val <span class="op">:</span> <span class="kw">NaN</span><span class="op">;</span> <span class="co">//NDVI index without no-data values</span></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>   <span class="kw">const</span> cloud <span class="op">=</span> <span class="fu">isCloud</span>(samples<span class="op">.</span><span class="at">SCL</span>) <span class="co">//calling in our cloud filtering functon as a cloud variable</span></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>   <span class="co">//Define the RGB NDVI visualization and write it into imgVals</span></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>   <span class="cf">if</span> (val<span class="op">&lt;-</span><span class="fl">0.5</span>) imgVals <span class="op">=</span> [<span class="fl">0.05</span><span class="op">,</span><span class="fl">0.05</span><span class="op">,</span><span class="fl">0.05</span><span class="op">,</span>samples<span class="op">.</span><span class="at">dataMask</span>]<span class="op">;</span></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>   <span class="cf">else</span> <span class="cf">if</span> (val<span class="op">&lt;-</span><span class="fl">0.2</span>) imgVals <span class="op">=</span> [<span class="fl">0.75</span><span class="op">,</span><span class="fl">0.75</span><span class="op">,</span><span class="fl">0.75</span><span class="op">,</span>samples<span class="op">.</span><span class="at">dataMask</span>]<span class="op">;</span></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>   <span class="cf">else</span> <span class="cf">if</span> (val<span class="op">&lt;-</span><span class="fl">0.1</span>) imgVals <span class="op">=</span> [<span class="fl">0.86</span><span class="op">,</span><span class="fl">0.86</span><span class="op">,</span><span class="fl">0.86</span><span class="op">,</span>samples<span class="op">.</span><span class="at">dataMask</span>]<span class="op">;</span></span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>   <span class="cf">else</span> <span class="cf">if</span> (val<span class="op">&lt;</span><span class="dv">0</span>) imgVals <span class="op">=</span> [<span class="fl">0.92</span><span class="op">,</span><span class="fl">0.92</span><span class="op">,</span><span class="fl">0.92</span><span class="op">,</span>samples<span class="op">.</span><span class="at">dataMask</span>]<span class="op">;</span></span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>   <span class="cf">else</span> <span class="cf">if</span> (val<span class="op">&lt;</span><span class="fl">0.025</span>) imgVals <span class="op">=</span> [<span class="dv">1</span><span class="op">,</span><span class="fl">0.98</span><span class="op">,</span><span class="fl">0.8</span><span class="op">,</span>samples<span class="op">.</span><span class="at">dataMask</span>]<span class="op">;</span></span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>   <span class="cf">else</span> <span class="cf">if</span> (val<span class="op">&lt;</span><span class="fl">0.05</span>) imgVals <span class="op">=</span> [<span class="fl">0.93</span><span class="op">,</span><span class="fl">0.91</span><span class="op">,</span><span class="fl">0.71</span><span class="op">,</span>samples<span class="op">.</span><span class="at">dataMask</span>]<span class="op">;</span></span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>   <span class="cf">else</span> <span class="cf">if</span> (val<span class="op">&lt;</span><span class="fl">0.075</span>) imgVals <span class="op">=</span> [<span class="fl">0.87</span><span class="op">,</span><span class="fl">0.85</span><span class="op">,</span><span class="fl">0.61</span><span class="op">,</span>samples<span class="op">.</span><span class="at">dataMask</span>]<span class="op">;</span></span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>   <span class="cf">else</span> <span class="cf">if</span> (val<span class="op">&lt;</span><span class="fl">0.1</span>) imgVals <span class="op">=</span> [<span class="fl">0.8</span><span class="op">,</span><span class="fl">0.78</span><span class="op">,</span><span class="fl">0.51</span><span class="op">,</span>samples<span class="op">.</span><span class="at">dataMask</span>]<span class="op">;</span></span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>   <span class="cf">else</span> <span class="cf">if</span> (val<span class="op">&lt;</span><span class="fl">0.125</span>) imgVals <span class="op">=</span> [<span class="fl">0.74</span><span class="op">,</span><span class="fl">0.72</span><span class="op">,</span><span class="fl">0.42</span><span class="op">,</span>samples<span class="op">.</span><span class="at">dataMask</span>]<span class="op">;</span></span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>   <span class="cf">else</span> <span class="cf">if</span> (val<span class="op">&lt;</span><span class="fl">0.15</span>) imgVals <span class="op">=</span> [<span class="fl">0.69</span><span class="op">,</span><span class="fl">0.76</span><span class="op">,</span><span class="fl">0.38</span><span class="op">,</span>samples<span class="op">.</span><span class="at">dataMask</span>]<span class="op">;</span></span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>   <span class="cf">else</span> <span class="cf">if</span> (val<span class="op">&lt;</span><span class="fl">0.175</span>) imgVals <span class="op">=</span> [<span class="fl">0.64</span><span class="op">,</span><span class="fl">0.8</span><span class="op">,</span><span class="fl">0.35</span><span class="op">,</span>samples<span class="op">.</span><span class="at">dataMask</span>]<span class="op">;</span></span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>   <span class="cf">else</span> <span class="cf">if</span> (val<span class="op">&lt;</span><span class="fl">0.2</span>) imgVals <span class="op">=</span> [<span class="fl">0.57</span><span class="op">,</span><span class="fl">0.75</span><span class="op">,</span><span class="fl">0.32</span><span class="op">,</span>samples<span class="op">.</span><span class="at">dataMask</span>]<span class="op">;</span></span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>   <span class="cf">else</span> <span class="cf">if</span> (val<span class="op">&lt;</span><span class="fl">0.25</span>) imgVals <span class="op">=</span> [<span class="fl">0.5</span><span class="op">,</span><span class="fl">0.7</span><span class="op">,</span><span class="fl">0.28</span><span class="op">,</span>samples<span class="op">.</span><span class="at">dataMask</span>]<span class="op">;</span></span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a>   <span class="cf">else</span> <span class="cf">if</span> (val<span class="op">&lt;</span><span class="fl">0.3</span>) imgVals <span class="op">=</span> [<span class="fl">0.44</span><span class="op">,</span><span class="fl">0.64</span><span class="op">,</span><span class="fl">0.25</span><span class="op">,</span>samples<span class="op">.</span><span class="at">dataMask</span>]<span class="op">;</span></span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a>   <span class="cf">else</span> <span class="cf">if</span> (val<span class="op">&lt;</span><span class="fl">0.35</span>) imgVals <span class="op">=</span> [<span class="fl">0.38</span><span class="op">,</span><span class="fl">0.59</span><span class="op">,</span><span class="fl">0.21</span><span class="op">,</span>samples<span class="op">.</span><span class="at">dataMask</span>]<span class="op">;</span></span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>   <span class="cf">else</span> <span class="cf">if</span> (val<span class="op">&lt;</span><span class="fl">0.4</span>) imgVals <span class="op">=</span> [<span class="fl">0.31</span><span class="op">,</span><span class="fl">0.54</span><span class="op">,</span><span class="fl">0.18</span><span class="op">,</span>samples<span class="op">.</span><span class="at">dataMask</span>]<span class="op">;</span></span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a>   <span class="cf">else</span> <span class="cf">if</span> (val<span class="op">&lt;</span><span class="fl">0.45</span>) imgVals <span class="op">=</span> [<span class="fl">0.25</span><span class="op">,</span><span class="fl">0.49</span><span class="op">,</span><span class="fl">0.14</span><span class="op">,</span>samples<span class="op">.</span><span class="at">dataMask</span>]<span class="op">;</span></span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a>   <span class="cf">else</span> <span class="cf">if</span> (val<span class="op">&lt;</span><span class="fl">0.5</span>) imgVals <span class="op">=</span> [<span class="fl">0.19</span><span class="op">,</span><span class="fl">0.43</span><span class="op">,</span><span class="fl">0.11</span><span class="op">,</span>samples<span class="op">.</span><span class="at">dataMask</span>]<span class="op">;</span></span>
+<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a>   <span class="cf">else</span> <span class="cf">if</span> (val<span class="op">&lt;</span><span class="fl">0.55</span>) imgVals <span class="op">=</span> [<span class="fl">0.13</span><span class="op">,</span><span class="fl">0.38</span><span class="op">,</span><span class="fl">0.07</span><span class="op">,</span>samples<span class="op">.</span><span class="at">dataMask</span>]<span class="op">;</span></span>
+<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a>   <span class="cf">else</span> <span class="cf">if</span> (val<span class="op">&lt;</span><span class="fl">0.6</span>) imgVals <span class="op">=</span> [<span class="fl">0.06</span><span class="op">,</span><span class="fl">0.33</span><span class="op">,</span><span class="fl">0.04</span><span class="op">,</span>samples<span class="op">.</span><span class="at">dataMask</span>]<span class="op">;</span></span>
+<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a>   <span class="cf">else</span> imgVals <span class="op">=</span> [<span class="dv">0</span><span class="op">,</span><span class="fl">0.27</span><span class="op">,</span><span class="dv">0</span><span class="op">,</span>samples<span class="op">.</span><span class="at">dataMask</span>]<span class="op">;</span></span>
+<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a>   <span class="co">// Return the 4 inputs and define content for each one</span></span>
+<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a>   <span class="cf">return</span> {</span>
+<span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a>     <span class="cf">default</span><span class="op">:</span> imgVals<span class="op">,</span></span>
+<span id="cb5-52"><a href="#cb5-52" aria-hidden="true" tabindex="-1"></a>     <span class="dt">index</span><span class="op">:</span> [indexVal]<span class="op">,</span>     </span>
+<span id="cb5-53"><a href="#cb5-53" aria-hidden="true" tabindex="-1"></a>     <span class="dt">eobrowserStats</span><span class="op">:</span> [indexVal<span class="op">,</span>cloud<span class="op">?</span><span class="dv">1</span><span class="op">:</span><span class="dv">0</span>]<span class="op">,</span></span>
+<span id="cb5-54"><a href="#cb5-54" aria-hidden="true" tabindex="-1"></a>     <span class="dt">dataMask</span><span class="op">:</span> [samples<span class="op">.</span><span class="at">dataMask</span>]</span>
+<span id="cb5-55"><a href="#cb5-55" aria-hidden="true" tabindex="-1"></a>   }<span class="op">;</span></span>
+<span id="cb5-56"><a href="#cb5-56" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>See the script in <a href="https://link.dataspace.copernicus.eu/nnvv">Copernicus Browser</a>.<br><br> The evalscript can be used directly in Copernicus Browser using the custom script function, or setup for the layer within the <a href="https://shapps.dataspace.copernicus.eu/dashboard/#/configurations">Configuration Utility</a>.<br><br> When you create a custom layer, it is possible to select the same layer in Copernicus Browser. Follow the steps below.</p>
+<ul>
+<li>Log into <a href="https://browser.dataspace.copernicus.eu/">Copernicus Browser</a> and select your configuration from the dropdown menu in <em>Configurations</em> in the <em>Visualize</em> tab on the left.</li>
+<li>Select the desired data source (if all layers in your configuration have the same data source, only one will be available).</li>
+<li>Make sure to set the appropriate date and zoom in to the area where your data is available.</li>
+<li>If your configuration has more layers, they will be available for selection under the <em>Layers</em> in the <em>Visualize</em> tab on the left.</li>
+<li>When you have your layer displayed, draw a point or a polygon on the map and inspect the statistics features.</li>
+</ul>
 </details>
 
 
