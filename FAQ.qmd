@@ -195,6 +195,106 @@ title : "Frequently Asked Questions"
     Please note that Copernicus Data Space Ecosystem monitoring requirements include reporting of aggregated consumption on account level, shared within project stakeholder group.
 </details>
 
+<details id="what-does-processing-unit-mean">
+    <summary onclick="handleQuestionClick('what-does-processing-unit-mean')">What does a "processing unit" mean?</summary>
+    
+    <p>A definition of a processing unit is available in our [documentation](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Overview/ProcessingUnit.html){target="_blank"}. The rules with examples of how to calculate the number of processing units for a request are also provided.</p>
+</details>
+
+<details id="general-rules-processing-units-requests">
+    <summary onclick="handleQuestionClick('general-rules-processing-units-requests')">What are the general rules of "processing units" and "requests" in the scope of Sentinel Hub?</summary>
+    
+    <p>The processing units and requests included in your Sentinel Hub plan are reset on the first day of each month. The unused processing units and requests are not carried over to the next month. If the usage exceeds the assigned quota, the user will be moved to a slower interface. Such a user will still be able to access and download products but at a reduced speed.</p>
+    <p>Visit our webpage for more details about the [processing units](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Overview/ProcessingUnit.html){target="_blank"} and [rate limiting](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Overview/RateLimiting.html){target="_blank"}.</p>
+    <p>More about the quotas and limitations is also available <a href="https://documentation.dataspace.copernicus.eu/Quotas.html" target="_blank">here</a>.</p>
+</details>
+
+<details id="what-to-do-if-run-out-of-quota">
+    <summary onclick="handleQuestionClick('what-to-do-if-run-out-of-quota')">What can I do if I run out of download quota, processing units, or requests in the middle of the month?</summary>
+    
+    <p>Every user account is set a limited quota to guarantee fair sharing of free tier resources within all users of the Copernicus Data Space Ecosystem.</p>
+    <p>The total volume of downloads from the Copernicus Data Space Ecosystem for each user account is summed up for the last 30 days. Downloaded volume is checked on an hourly basis, and if it exceeds the assigned quota, the user will be moved to a slower interface. Such a user will still be able to access and download products but at a reduced speed. More about the quotas and limitations is also available <a href="https://documentation.dataspace.copernicus.eu/Quotas.html"target="_blank">here</a>.</p>
+    <p>If you run out of quota, we recommend exploring some of the [commercial services integrated with CDSE](https://dataspace.copernicus.eu/ecosystem/services){target="_blank"}.</p>
+    <p>For eligible users (i.e., Copernicus Services users, European institutions, etc.), we recommend submitting a request for a [Copernicus Service account](https://dataspace.copernicus.eu/ecosystem/services){target="_blank"}. The form to change your Copernicus user type is available <a href="https://dataspace.copernicus.eu/copernicus-services-user"target="_blank">here</a>.</p>
+</details>
+
+
+<details id="typical-conversions-processing-units">
+    <summary>Which are typical conversions between processing units and square kilometers?</summary>
+    
+| Mission      | Product            | Resolution [m] | km² for one PU |
+|--------------|---------------------|----------------|----------------|
+| Sentinel-2   | True color          | 10             | 26.2           |
+|              | NDVI                | 10             | 39.3           |
+|              | All 13 bands        | 10             | 6.0            |
+| Sentinel-1   | VV gamma0 ortho     | 20             | 157.3          |
+| Sentinel-3 OCI | True color         | 300            | 23,593.0       |
+|              | OTCI                | 300            | 35,389.4       |
+
+</details>
+
+
+<details id="processing-units-calculation">
+    <summary onclick="handleQuestionClick('processing-units-calculation')">How can I know how many processing units I need and how to calculate the consumption of my requests?</summary>
+    
+    <p>Each request is worth a certain amount of processing units. If we only focus on [rate limiting](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Overview/RateLimiting.html), the quota you need depends on how many processing units (PU) and requests per minute or month you intend to use. This in turn depends on how large your images are in pixels, how many of them you order, how many bands you order, the format used and whether some more complex processing options are enabled.</p>
+    <p>See documentation on how processing units are defined and calculated <a href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Overview/ProcessingUnit.html" target="_blank">here</a>. The following are detailed calculation examples for Sentinel-1, exploring three different scenarios, including a simple 1 image request, many small requests, long time ranges and large area processing.</p>
+    
+    <p><strong>Example 1</strong></p>
+    <p>1 request that outputs an image 2000 x 2000 px large, with 2 bands ordered, 16-bit tiff format and orthorectification applied, would result in 20.34 PUs used. See the multiplication factors and the calculation below:</p>
+    
+| Parameter                                | Your Parameters            | Multiplication Factor |
+|------------------------------------------|-----------------------------|------------------------|
+| Output image size (width x height)      | 2000 x 2000 = 4,000,000     | / (512 x 512)          |
+| Number of input bands                    | 2                           | / 3                    |
+| Output format                            | 16-bit INT/UINT              | x1                     |
+| Number of data samples per pixel         | 1                           | x1                     |
+| Orthorectification                       | Yes                         | x2                     |
+
+    
+    <p>**The calculation**: (4,000,000 / 262,144) x (2 / 3) x 1 x 1 x 2 = 20.34 PU per request;</p>
+    
+    <p>If you wanted to get 500 images (e.g. for time series), you would need to create 500 separate processing requests. If parameters for each image are equal as above, we can simply multiply our calculation with 500 and see that 500 similar requests would use about 10,172 PU in sum.</p>
+    
+    <p>**The calculation**: 20.34 PU x 500 = ~10,172 PU per 500 requests</p>
+    
+    <p>If your output image were smaller, e.g. 500 x 500 px large, the cost of a single request would be 1.27 PU. Multiplied by 500, that’s just 635.78 PU in total, so much less. On the other hand, if you wanted an image with quite a large output of 5000 x 5000 px, a request would cost you 127.15 PU, and 500 of these would cost ~63,578 PU. However, processing API is limited to output images with width and height up to 2500 px, so setting it to 5000 would result in an error. To output images this large, you would need a Copernicus Service account or a commercial Sentinel Hub account and bucket on [CREODIAS](https://creodias.eu/eobased-services/sentinel-hub/){target="_blank"} to use batch processing API. You will notice that batch processing divides your PU cost by 3, as it’s only a third of the price of processing API. So your 500 requests would cost 63,578 / 3 = 21,192 PU.</p>
+    
+    <p><strong>Example 2</strong></p>
+    <p>If you wanted to create a single request that uses 500 scenes in a multi-temporal script, where you e.g. calculate max NDVI over several years, using up 500 acquisitions, your request would also use 10,172 PU, just like our request for 2000 px x 2000 px output in Example 1 (given that all the other parameters are the same as in Example 1).</p>
+    
+| Parameter                                | Your Parameters            | Multiplication Factor |
+|------------------------------------------|-----------------------------|------------------------|
+| Output image size (width x height)      | 2000 x 2000 = 4,000,000     | / (512 x 512)          |
+| Number of input bands                    | 2                           | / 3                    |
+| Output format                            | 16-bit INT/UINT              | x1                     |
+| Number of data samples per pixel         | 500                         | x500                   |
+| Orthorectification                       | Yes                         | x2                     |
+
+    
+    <p>**The calculation**: (4,000,000 / 262,144) x (2 / 3) x 1 x 500 x 2 = 10,172 PU</p>
+    
+    <p>The issue here is that you would use more than 2,000 PU in a single minute, as it’s just one request, and use this heavy isn’t supported by any package. Each package specifies how many PUs and requests you can use per month, as well as per minute. Your request would time out or fail. If you’re interested in very large time ranges, it’s best to use [batch processing API](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Batch.html).</p>
+    
+    <p><strong>Example 3</strong></p>
+    <p>Let’s suppose you want to order an orthorectified 16-bit Sentinel-1 image with 2 bands for the whole Australia in full resolution, which let’s say is covered with a 4000 x 4000 km bounding box, which equals to 4 million meters x 4 million meters. As Sentinel-1 resolution is 10 meters, we know that our output image will have to be 400,000 pixels x 400,000 pixels large.</p>
+
+| Parameter                                | Your Parameters              | Multiplication Factor |
+|------------------------------------------|-------------------------------|------------------------|
+| Output image size (width x height)      | 400,000 x 400,000 = 160,000,000,000 | / (512 x 512)          |
+| Number of input bands                    | 2                             | / 3                    |
+| Output format                            | 16-bit INT/UINT                | x1                     |
+| Number of data samples per pixel         | 1                             | x1                     |
+| Orthorectification                       | Yes                           | x2                     |
+
+    
+    <p>**The calculation**: (160,000,000,000 / 262,144) x (2 / 3) x 1 x 1 x 2 = 813,802 PU.</p>
+    
+    <p>Processing API is limited to 2500 pixels for output width and height, so you would have to run this request with batch processing API. To use batch processing API, you would need a **Copernicus Service account**. As batch processing is cheaper, your batch processing request would use 813,802 / 3 = 271,267 PU. And because batch processing is asynchronous and takes a while to ingest the tiles, you won’t be stopped by per minute rate limiting for a single request.</p>
+</details>
+
+
+
 ## Registration and authentication
 
 <details id="im-having-troubles-with-registering-what-can-I-do">
