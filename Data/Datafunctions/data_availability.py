@@ -22,7 +22,8 @@ def main(c):
         "CMEMS" : CMEMSOffer,
         "CEMS": CEMSOffer,
         "ContributingMissions_optical": CCMOffer,
-        "ContributingMissions_radar": CCMOffer            
+        "ContributingMissions_radar": CCMOffer,
+        "ContributingMissions_other": CCMOffer            
     }
     AvailabilityTable = cases.get(constellation, general)(c)
     return AvailabilityTable
