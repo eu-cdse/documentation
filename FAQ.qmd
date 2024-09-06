@@ -261,6 +261,170 @@ title : "Frequently Asked Questions"
     <p>Searching via ID or product name in the OpenSearch or OData will give the S3 path to the product in response.</p>
 </details>
 
+### Bring Your Own Data
+
+<details id="how-can-I-best-prepare-my-data-for-sentinel-hub-processing">
+    <summary onclick="handleQuestionClick('how-can-I-best-prepare-my-data-for-sentinel-hub-processing')">How can I best prepare my data for Sentinel Hub processing?</summary>
+    <p>To prepare data, check out our documentation <a href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Byoc.html" target="_blank">here</a>.</p>
+</details>
+
+
+<details id="is-my-data-copied-somewhere-else">
+    <summary onclick="handleQuestionClick('is-my-data-copied-somewhere-else')">Is my data copied somewhere else?</summary>
+    <p>Sentinel Hub does not keep any copies of your own data. During the process of ingestion, we will read each file once to establish the index. The index will be stored on our side until you decide to remove the data from Sentinel Hub. Whenever a request comes, we will read the relevant parts of the file to provide results, keeping it in memory. Results are streamed to the user, and memory contents are discarded.</p>
+    <p>In no step of this process is any data stored as a file, not even temporarily. Once you decide to remove the data, we will delete all information we have about it.</p>
+</details>
+
+### WMS, OGC and API
+
+<details id="where-can-i-get-the-instance-id">
+    <summary onclick="handleQuestionClick('where-can-i-get-the-instance-id')">Where can I get the INSTANCE ID?</summary>
+
+    Find your INSTANCE ID in the [CDSE Dashboard - Configuration Utility](https://shapps.dataspace.copernicus.eu/dashboard/#/configurations/){target="_blank"}. See example below:
+
+    ![](FAQ_images/Configuration_utility.png)
+</details>
+
+<details id="which-parameters-are-available-in-ogc-requests">
+    <summary onclick="handleQuestionClick('which-parameters-are-available-in-ogc-requests')">Which parameters are available in OGC requests?</summary>
+    
+    <p>The list of the available standard OGC URL parameters is available <a href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/OGC.html" target="_blank">here</a> and the advanced URL parameters are available <a href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/OGC/AdditionalRequestParameters.html" target="_blank">here</a>.</p>
+</details>
+
+<details id="how-can-i-get-point-values-from-the-services">
+    <summary onclick="handleQuestionClick('how-can-i-get-point-values-from-the-services')">How can I get point values from the services?</summary>
+    
+    <p>In case you would like to get point values at a specific location (e.g., reflectance, NDVI, etc.), you can use the <code>GetFeatureInfo</code> request. This is often labeled as “Identify features” or “feature info” in various GIS applications.</p>
+    
+    <p>Here is an example of such a request:</p>
+    
+    <pre><code>https://sh.dataspace.copernicus.eu/ogc/wms/&lt;INSTANCE_ID&gt;?SERVICE=WMS&amp;VERSION=1.3.0&amp;REQUEST=GetFeatureInfo&amp;I=0&amp;J=0&amp;QUERY_LAYERS=NDVI&amp;INFO_FORMAT=application/json&amp;BBOX=38.55105530425345,-7.883667078518689,38.55269383803389,-7.885252872445627&amp;CRS=EPSG:4326&amp;MAXCC=100&amp;WIDTH=1&amp;HEIGHT=1&amp;TIME=2017-03-16</code></pre>
+    
+    <p>Check also the <a href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Statistical.html" target="_blank">Statistical API</a> for additional information.</p>
+</details>
+
+<details id="how-can-i-get-all-the-images-from-an-area-of-interest">
+    <summary onclick="handleQuestionClick('how-can-i-get-all-the-images-from-an-area-of-interest')">How can I get all the images from an area of interest in a desired time period?</summary>
+    
+    <p>Use Sentinel Hub WFS request and retrieve all relevant geometries for a given bounding box and time frame. From the response, gather the unique dates. For each date, construct a WCS request to retrieve the image.</p>
+    
+    <p>See the code example below:</p>
+
+```javascript
+// using Sentinel Hub OGC web services - https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/OGC.html
+// config
+const CDSE_SH_INSTANCE_ID = '<INSTANCE-ID>';
+const layerName = '1_NATURAL_COLOR';
+const timeFrom = '2015-01-01';
+const timeTo = '2017-04-20';
+const bbox = '-410925.4640611076,4891969.810251283,-391357.58482010243,4911537.689492286';
+const maxFeatures = 100; // 100 is max
+
+// typenames parameter depends on the collection that is used in the layer
+// https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/OGC/WFS.html#typenames
+let wfsUrl = `https://sh.dataspace.copernicus.eu/ogc/wfs/${CDSE_SH_INSTANCE_ID}?service=WFS&version=2.0.0&request=GetFeature&time=${timeFrom}/${timeTo}/P1D&typenames=DSS2&maxfeatures=${maxFeatures}&srsname=EPSG:3857&bbox=${bbox}&outputformat=application/json`;
+
+async function getGeometries() {
+  // retrieving
+  // relevant geometries/images in bbox in timespan [timeFrom, timeTo]
+  // Sentinel Hub - WFS request - https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/OGC/WFS.html#wfs-request
+  try {
+let response = await fetch(wfsUrl);
+let data = await response.json();
+return data;
+  } catch (e) {
+throw new Error('There was an error fetching the list of geometries from WFS service.\nDid you substitute your SENTINEL_HUB_INSTANCE_ID ? ');
+  }
+}
+
+function parseDatesFromGeometries(geometries) {
+  // parsing
+  // relevant geometries -> all relevant dates
+
+  if (geometries.features === undefined) {
+geometries.features = [];
+  }
+  const dates = geometries.features.map(value => value.properties.date);
+  return Array.from(new Set(dates)); // return unique dates
+}
+
+function generateWcsUrlsFromDates(dates) {
+  // mapping
+  // dates -> image url
+  // images available via WCS request - https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/OGC/WCS.html#wcs-request
+
+  const imageUrls = [];
+  dates.forEach(date => {
+const niceName = encodeURIComponent(`${layerName} from ${date}.tiff`);
+const size = 512;
+const imageUrl = `https://sh.dataspace.copernicus.eu/ogc/wcs/${CDSE_SH_INSTANCE_ID}?service=WCS&version=1.1.2&request=GetCoverage&time=${date}&coverage=${layerName}&nicename=${niceName}&bbox=${bbox}&width=${size}&height=${size}}`;
+imageUrls.push(imageUrl);
+  });
+  return imageUrls;
+}
+
+function shout(value) {
+  console.log('Images', value);
+}
+
+async function getImages() {
+  const geometries = await getGeometries();
+  const dates = parseDatesFromGeometries(geometries);
+  const imageUrls = generateWcsUrlsFromDates(dates);
+  shout(imageUrls);
+}
+
+getImages();
+ ```
+
+</details>
+
+<details id="if-we-do-not-specify-the-time-range-in-the-endpoint-url-can-we-assume-that-the-images-returned-by-the-wms-service-are-the-latest-acquired">
+    <summary onclick="handleQuestionClick('if-we-do-not-specify-the-time-range-in-the-endpoint-url-can-we-assume-that-the-images-returned-by-the-wms-service-are-the-latest-acquired')">If we do not specify the time range in the endpoint URL, can we assume that the images returned by the WMS service are the latest acquired?</summary>
+    <p>Images are ordered by **“Mosaic order”** priority (see <a href= "https://shapps.dataspace.copernicus.eu/dashboard/#/configurations/" target="_blank">Configuration Utility</a>, can be set for each layer; you can also set this in a parameter). You can choose either to have the most recent on top or least cloud coverage. You should also consider the “maximum cloud coverage” parameter. In case you want to get the most recent images acquired, you should set maximum cloud coverage to **100%** and priority to **“most recent”**.</p>
+
+    ![](FAQ_images/Configuration_utility2.png)
+</details>
+
+
+<details id="why-is-the-result-different-when-i-am-using-wms-or-wcs-when-the-coordinate-system-is-epsg-4326">
+    <summary onclick="handleQuestionClick('why-is-the-result-different-when-i-am-using-wms-or-wcs-when-the-coordinate-system-is-epsg-4326')">Why is the result different when I am using WMS or WCS, when the coordinate system is EPSG:4326?</summary>
+    
+    <p>OGC consortium specifications for **WMS, WFS, WCS, …** services define the coordinate axis order. Older OGC service specifications assumed **“X, Y”** order for all coordinate reference systems (CRSs), even for WGS84 (EPSG:4326), while newer OGC service specifications obey the axis orders defined by the CRS’s, not assuming “X, Y” order anymore.</p>
+    
+    <p>Our services conform to the standards definitions. The **WGS84** axis order is thus version dependent:</p>
+    
+* WMS:
+    * version 1.1.1: longitude, latitude
+    * version 1.3.0: latitude, longitude
+* WFS:
+    * version 1.0.0: longitude, latitude
+    * version 2.0.0: latitude, longitude
+* WCS:
+    * version 1.0.0: longitude, latitude
+    
+    <p>The user should always request a specific version of OGC services by providing an explicit <strong>“VERSION”</strong> parameter in the URL.</p>
+</details>
+
+<details id="can-i-access-sentinel-hub-using-http-or-https">
+    <summary onclick="handleQuestionClick('can-i-access-sentinel-hub-using-http-or-https')">Can I access Sentinel Hub using HTTP or HTTPS?</summary>
+    
+    <p>All Sentinel Hub services are available using both HTTP and HTTPS protocols.</p>
+</details>
+
+<details id="why-am-i-getting-429-errors">
+    <summary onclick="handleQuestionClick('why-am-i-getting-429-errors')">Why am I getting 429 errors?</summary>
+    
+    <p>To prevent overloading the system and to improve user experience, we have a rate limiting system in place. Find more info about it <a href="https://support.sentinel-hub.com" target="_blank">here</a>. In case you need a higher limit, <a href="https://helpcenter.dataspace.copernicus.eu/hc/en-gb" target="_blank">contact support</a>.</p>
+</details>
+
+<details id="is-it-possible-to-integrate-the-api-in-public-facing-applications-without-revealing-the-security-credentials">
+    <summary onclick="handleQuestionClick('is-it-possible-to-integrate-the-api-in-public-facing-applications-without-revealing-the-security-credentials')">Is it possible to integrate the API in public-facing applications without revealing the security credentials?</summary>
+    
+    <p>This is not facilitated by us at the moment; you will have to implement your own authentication service.</p>
+</details>
+
+
 
 
 ## Documentation
@@ -407,4 +571,86 @@ function evaluatePixel(samples) {
 * Make sure to set the appropriate date and zoom in to the area where your data is available.
 * If your configuration has more layers, they will be available for selection under the *Layers* in the *Visualize* tab on the left.
 * When you have your layer displayed, draw a point or a polygon on the map and inspect the statistics features.
+</details>
+
+
+## Integrate Data into GIS and Web applications 
+
+
+<details id="why-cant-i-see-ogc-layers-displayed-in-arcgis-online">
+    <summary onclick="handleQuestionClick('why-cant-i-see-ogc-layers-displayed-in-arcgis-online')">Why can't I see OGC layers displayed in ArcGIS Online?</summary>
+    <p>There are two map viewers currently available: <a href="https://www.arcgis.com/home/webmap/viewer.html" target="_blank">ArcGIS Map Viewer Classic</a> and <a href="https://www.arcgis.com/apps/mapviewer/index.html" target="_blank">ArcGIS Map Viewer</a>. You can try both; we noticed that layers are more likely to work in the new ArcGIS Map Viewer. You can also try to use WMTS instead of WMS, as it’s expected to work better.</p>
+    <p>ArcGIS also suggests configuring its CORS settings to allow specific domains to communicate with the server, as described in this <a href="https://doc.arcgis.com/en/arcgis-online/administer/configure-security.htm#ESRI_SECTION1_70CC159B3540440AB325BE5D89DBE94A" target= "_blank">ArcGIS Online documentation</a>. </p>
+</details>
+
+<details id="how-can-i-integrate-data-with-acugis">
+    <summary onclick="handleQuestionClick('how-can-i-integrate-data-with-acugis')">How can I integrate data with AcuGIS?</summary>
+    
+    Follow these steps to integrate your data with AcuGIS:
+
+    1. Go to [https://canvas.acugis.com/](https://canvas.acugis.com/){target="_blank"}
+    
+    2. Sign up and login to Canvas.
+    
+    3. Click on **WMS Services** in the left menu.
+    
+    ![](FAQ_images/WMS_service1.png)
+    
+    4. Click **Add WMS Layer**.
+    
+    ![](FAQ_images/WMS_service2.png)
+    
+    5. Enter the WMS Service information for Sentinel in the URL field.
+    
+    ![](FAQ_images/WMS_settings.png)
+    
+    6. Go to **Projects** and click the **Add Project** button.
+    
+    7. In the Project you created, click the **Maps** button.
+    
+    ![](FAQ_images/WMS_actions.png)
+    
+    8. Click the **Add Map** button.
+    
+    9. In the left menu of the new map, expand the WMS layer you created in step 4 and toggle the desired layer(s), such as the **NDVI layer**.
+    
+    ![](FAQ_images/SentinelHub_demo.png)
+    
+    10. Define the Geometry Area:
+    
+        - A data layer
+        - Draw a Polygon or Rectangle area
+    
+    While there are some simple use-cases in which you might wish to draw an area, in most cases, you will be using a data layer. Below, we are using a data layer of the state of Rhode Island.
+    
+    11. Click the settings icon on the NDVI layer and select **‘Geometry’** from the menu.
+    
+    ![](FAQ_images/Select_geometry.png)
+    
+    12. Select the Geometry Area:
+    
+        - For a data layer (such as we are using), select **Custom** as the Geometry Area.
+        - For a polygon you have created via the free-hand toolbar, select **Polygon**.
+        
+    ![](FAQ_images/Geometry_limit.png)
+    
+    13.  Click **Save** and then click the Save button for your map. 
+    
+    14. Congratulations! Your map is now ready.
+    
+    ![](FAQ_images/WMS_map.png)
+</details>
+
+
+<details id="why-does-an-error-pop-up-when-i-add-wms-to-arcmap">
+    <summary onclick="handleQuestionClick('why-does-an-error-pop-up-when-i-add-wms-to-arcmap')">Why does an error pop up when I add WMS to ArcMap?</summary>
+
+    <p>In some cases, ArcMap turns on all layers and calls WMS. Sentinel Hub WMS service does not support visualization of many layers at the same time. We suggest you turn off all layers and turn them on one by one.</p>
+    
+    <p>If you get the following error:</p>
+    
+    <img src="FAQ_images/ArcMAP1.jpg" alt="Image not found" />
+    
+    <p>Turn off all layers and turn them on one by one:</p>
+    <img src="FAQ_images/ArcMAP2.jpg" alt="Image not found" />
 </details>
