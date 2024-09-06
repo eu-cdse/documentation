@@ -134,6 +134,278 @@ title : "Frequently Asked Questions"
     <p>Copernicus Data Space Ecosystem provides access to EO data in zip format without compression(i.e. zero compression applied).</p>
 </details>
 
+<details id="eo-data-availability">
+    <summary onclick="handleQuestionClick('eo-data-availability')">Which EO data is available?</summary>
+    
+    <p>To learn more about the available EO data, visit our <a href="https://dataspace.copernicus.eu/explore-data/data-collections" target="_blank">page</a>.</p>
+</details>
+
+<details id="browse-data-collections">
+    <summary onclick="handleQuestionClick('browse-data-collections')">Where can I browse various data collections?</summary>
+    
+    <p>To browse various data, go to <a href="https://browser.dataspace.copernicus.eu/" target="_blank">Copernicus Browser</a>. Read about how to use it <a href="https://documentation.dataspace.copernicus.eu/Applications/Browser.html" target="_blank">here</a>.</p>
+</details>
+
+<details id="data-timeliness">
+    <summary onclick="handleQuestionClick('data-timeliness')">How soon after the acquisition is data available?</summary>
+    
+    <p>We put a lot of effort into making data available as soon as possible. The expected timeliness is:</p>
+    <ul>
+        <li>24 hours after sensing for Sentinel-1 and Sentinel-2</li>
+        <li>3 hours after sensing for Sentinel-3 and Sentinel-5P</li>
+    </ul>
+    <p>Check the timeliness metrics in the <a href="https://dashboard.dataspace.copernicus.eu/#/mission-snapshot" target="_blank">Dashboard</a>.</p>
+</details>
+
+<details id="available-imagery-dates">
+    <summary onclick="handleQuestionClick('available-imagery-dates')">Where can I get a list of the available imagery dates for a specific area?</summary>
+    
+    <p>The best way to get information about all the available scenes in a specific area is to use our [Catalog service API](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Catalog.html), which provides detailed geospatial information for each tile. You can control the output by specifying fields, limits, and other properties. For this specific use case, use the <code>distinct</code> parameter with <code>[date](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Catalog/Examples.html#search-with-distinct)</code> to return a list of available dates for your requested BBOX and time range. Here’s how you can make the Catalog API request:</p>
+    
+    <p>Import the following CURL request into Postman. You will need to [authenticate the request with a token](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Overview/Authentication.html):</p>
+    
+ ```bash
+ curl -X POST 'sh.dataspace.copernicus.eu/api/v1/catalog/search' \
+-header 'Authorization: Bearer &lt;your access token&gt;' \
+-header 'Content-Type: application/json' \
+-data-raw '{
+    "bbox": [13,45,14,46],
+    "datetime": "2019-12-10T00:00:00Z/2020-12-15T00:00:00Z",
+    "collections": ["sentinel-1-grd"],
+    "limit": 50,
+    "distinct": "date"
+}'
+
+```
+    
+<p>In the curl request above, the first line is the URL for the request, which you only need to change if you’re using data collections on different deployments. The first header is where you add your access token; if you authenticate the collection or the request in Postman, the token will be automatically added. The second header is where you specify the desired output, which in this case, is a JSON file. In data-raw, you will specify the bbox, time range (datetime), data collection (collections), limit (the upper limit of the number of results), and with the line "distinct":"date", you will limit your results to only include information on the acquisition date. Consult the [Catalog API reference](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/ApiReference.html) to learn more about the available parameters.
+The result for the CURL request above will look like this:
+</p>
+    
+
+```json
+
+{
+    "type": "FeatureCollection",
+    "features": [
+        "2019-12-10",
+        "2019-12-11",
+        "2019-12-12",
+        "2019-12-15"
+    ],
+    "links": [
+        {
+            "href": "http://sh.dataspace.copernicus.eu/api/v1/catalog/search",
+            "rel": "self",
+            "type": "application/json"
+        }
+    ],
+    "context": {
+        "limit": 50,
+        "returned": 4
+    }
+}
+
+```
+    
+    <p>At the beginning of the result, you can see all the available dates listed for your request.</p>
+    
+    <p>It’s also possible to search for available scenes using an OGC WFS request, which might be easier to use but offers less search control. To make a WFS request, you will need to add your <code>INSTANCE_ID</code>, specify the <code>bbox</code>, time range (<code>TIME</code>), data collection (<code>TYPENAMES</code>), coordinate system (<code>srsName</code>), and request type. An example WFS request would look like this:</p>
+    
+```bash
+
+[https://sh.dataspace.copernicus.eu/ogc/wfs/INSTANCE_ID?REQUEST=GetFeature&srsName=EPSG:3857&TYPENAMES=DSS2&BBOX=3238005,5039853,3244050,5045897&TIME=2019-02-11/2019-02-12](https://sh.dataspace.copernicus.eu/ogc/wfs/INSTANCE_ID?REQUEST=GetFeature&srsName=EPSG:3857&TYPENAMES=DSS2&BBOX=3238005,5039853,3244050,5045897&TIME=2019-02-11/2019-02-12){target="_blank"}
+
+```
+    
+    <p>You can test WFS examples with different parameters and inspect the results instantly <a href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/OGC/Examples.html" target="_blank">here</a>.</p>
+    
+    <p>Note that you can also use the <code>MAXCC</code> parameter (maximum cloud coverage) in this call to filter cloudless data. Use the <code>FEATURE_OFFSET</code> parameter to control the starting point within the returned features and <code>MAXFEATURES</code> parameter for the maximum number of features to be returned by a single request.</p>
+    
+    <p>As a result, you will get a list of all the available scenes for the chosen location in JSON format (or XML if set so). Some of the dates may be duplicated if there are two scenes available in the area. Simply ignore these duplications.</p>
+</details>
+
+<details id="how-are-the-values-calculated-within-sentinel-hub">
+    <summary onclick="handleQuestionClick('how-are-the-values-calculated-within-sentinel-hub')">How are the values calculated within Sentinel Hub and how are they returned as an output?</summary>
+    <p>In Sentinel Hub, the calculated and output values depend on what users specify in their evalscripts (or custom scripts). By calculated values we are referring to the values that are returned from the <code>evaluatePixel()</code> function or from a simple script. Output values are values returned from Sentinel Hub, after the calculated values go through formatting defined by <code>sampleType</code>. In the evalscript, calculated and output values are controlled by:</p>
+    <ul>
+        <li><strong>In the <code>setup()</code> function:</strong> The requested bands and units define what values are used as input for the calculation (in simple scripts, default units are used). For example, if Sentinel–2 band B04 is requested in REFLECTANCE, the input values will be in the range 0–1. If Sentinel-2 band B04 is requested in DN (digital numbers), the input values for the calculation will be in the range 0–10000. Typical value ranges can be found in our data documentation, chapter Units for each data collection.</li>
+        <li><strong>The <code>evaluatePixel()</code> function:</strong> Defines the actual calculation (in simple scripts, the entire script is its equivalent). Sentinel Hub uses double precision for all calculations and rounds only the final calculated values before they are output.</li>
+        <li><strong>The value of the <code>sampleType</code> parameter in the <code>setup()</code> function:</strong> Defines the format of the output values. Possible values are AUTO, UINT8, UINT16, and FLOAT32. See our sampleType documentation for more details. When the sampleType is not specified (e.g., in simple scripts), the default value AUTO will be used. <code>sampleType.AUTO</code> takes calculated values from the interval 0–1 and stretches them to 0–255. If your calculated values are not in the range 0–1, make sure you either scale them to this range in the <code>evaluatePixel()</code> function or specify another <code>sampleType</code>.</li>
+    </ul>
+    <h4>Example 1: NDVI</h4>
+    <p>In this example, we want to output values of the NDVI index, calculated based on Sentinel-2 data. Our <code>evaluatePixel()</code> function is:</p>
+    <pre><code>function evaluatePixel(sample) {
+    let NDVI =  (sample.B08 - sample.B04) / (sample.B08 + sample.B04);
+    return [NDVI];
+}</code></pre>
+    <p>The requested units in this example do not have any influence on the calculated values of the NDVI. The output values returned by Sentinel Hub (black values in the table) for different <code>sampleType</code> values are:</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Calculated Value</th>
+                <th>sampleType.AUTO</th>
+                <th>sampleType.UINT8</th>
+                <th>sampleType.UINT16</th>
+                <th>sampleType.FLOAT32</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td>-1</td><td>0</td><td>0</td><td>0</td><td>-1</td></tr>
+            <tr><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+            <tr><td>0.25</td><td>64</td><td>0</td><td>0</td><td>0.25</td></tr>
+            <tr><td>1</td><td>255</td><td>1</td><td>1</td><td>1</td></tr>
+        </tbody>
+    </table>
+    <p>Use <code>sampleType:"FLOAT32"</code> to return full floating -1 to 1 values. If you do not need values but a visualization, you can use <code>sampleType:"AUTO"</code>, but make sure to either:</p>
+    <ul>
+        <li>Map the NDVI values to the 0–1 interval in the <code>evaluatePixel()</code> function, e.g.:
+            <pre><code>function evaluatePixel(sample) {
+    let NDVI =  (sample.B08 - sample.B04) / (sample.B08 + sample.B04);
+    return [(NDVI + 1) / 2];
+}</code></pre>
+        </li>
+        <li>Use a visualizer or a color visualization function, e.g. <code>valueInterpolate</code>.</li>
+    </ul>
+    <h4>Example 2: Sentinel-2 band B04</h4>
+    <p>In this example, we want to output raw values of Sentinel-2 band 4. Our <code>evaluatePixel()</code> function looks like this:</p>
+    <pre><code>function evaluatePixel(sample) {
+    return [sample.B04];
+}</code></pre>
+    <p>If we request units: “REFLECTANCE”, the output values returned by Sentinel Hub (black values in the table) for different <code>sampleType</code> values are:</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Calculated Value</th>
+                <th>sampleType.AUTO</th>
+                <th>sampleType.UINT8</th>
+                <th>sampleType.UINT16</th>
+                <th>sampleType.FLOAT32</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+            <tr><td>0.25</td><td>64</td><td>0</td><td>0</td><td>0.25</td></tr>
+            <tr><td>0.5</td><td>128</td><td>1</td><td>1</td><td>0.5</td></tr>
+            <tr><td>1</td><td>255</td><td>1</td><td>1</td><td>1</td></tr>
+            <tr><td>1.05</td><td>255</td><td>1</td><td>1</td><td>1.05</td></tr>
+        </tbody>
+    </table>
+    <p>If we request units: “DN”, the output values returned by Sentinel Hub (black values in the table) for different <code>sampleType</code> values are:</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Calculated Value</th>
+                <th>sampleType.AUTO</th>
+                <th>sampleType.UINT8</th>
+                <th>sampleType.UINT16</th>
+                <th>sampleType.FLOAT32</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+            <tr><td>2500</td><td>255</td><td>255</td><td>2500</td><td>2500</td></tr>
+            <tr><td>5000</td><td>255</td><td>255</td><td>5000</td><td>5000</td></tr>
+            <tr><td>10000</td><td>255</td><td>255</td><td>10000</td><td>10000</td></tr>
+            <tr><td>10500</td><td>255</td><td>255</td><td>10500</td><td>10500</td></tr>
+        </tbody>
+    </table>
+    <h4>Example 3: Brightness Temperature Bands</h4>
+    <p>Here we output a Sentinel-3 SLSTR band F1 with typical values between 250–320 representing brightness temperature in Kelvin. The <code>evaluatePixel()</code> function is:</p>
+    <pre><code>function evaluatePixel(sample) {
+    return [sample.F1];
+}</code></pre>
+    <p>The output values returned by Sentinel Hub (black values in the table) for different <code>sampleType</code> values are:</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Calculated Value</th>
+                <th>sampleType.AUTO</th>
+                <th>sampleType.UINT8</th>
+                <th>sampleType.UINT16</th>
+                <th>sampleType.FLOAT32</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td>250</td><td>255</td><td>250</td><td>250</td><td>250</td></tr>
+            <tr><td>255</td><td>255</td><td>255</td><td>255</td><td>255</td></tr>
+            <tr><td>275.3</td><td>255</td><td>255</td><td>275</td><td>275.3</td></tr>
+            <tr><td>320</td><td>255</td><td>255</td><td>320</td><td>320</td></tr>
+        </tbody>
+    </table>
+    <p>Use <code>sampleType:"FLOAT32"</code> to return original values. If integer values are still acceptable for your application, use <code>sampleType:"UINT16"</code>. If you do not need values but a visualization, you can use <code>sampleType:"AUTO"</code>, but make sure to either:</p>
+    <ul>
+        <li>Map the values to the 0–1 interval in the <code>evaluatePixel()</code> function, e.g.:
+            <pre><code>function evaluatePixel(sample) {
+    return [sample.F1 / 320];
+}</code></pre>
+        </li>
+        <li>Use a visualizer or a color visualization function, e.g. <code>valueInterpolate</code>.</li>
+    </ul>
+</details>
+
+<details id="how-can-i-get-images-in-higher-resolution">
+    <summary onclick="handleQuestionClick('how-can-i-get-images-in-higher-resolution')">How can I get images in higher resolution?</summary>
+    <p>Open data are always served in their full resolution. Each of the collections has its own maximum resolution, which you can check in our documentation (see [here](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Data/S2L1C.html#available-bands-and-data) for Sentinel-2). What you get for Sentinel-2 in Copernicus Browser is always a full resolution image. If you go to the effects in Copernicus Browser and enable NEAREST upscaling and downscaling, you will see individual pixels displayed, and you can even measure them to confirm that the pixel resolution indeed matches the maximum resolution of the sensor.</p>
+    <p>If you’re using the processing API, you can get full resolution by specifying the maximum resolution the collection offers using the <code>resx/resy</code> parameter. See the [full resolution example](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Process/Examples/S2L1C.html#true-color-resolution-epsg-32633) for Sentinel-2.</p>
+</details>
+
+<details id="why-are-some-sentinel-images-missing">
+    <summary onclick="handleQuestionClick('why-are-some-sentinel-images-missing')">Why are some Sentinel images missing?</summary>
+    <p>There can be several reasons for missing data - for example, there could be an error in the processing chain of the Copernicus ground segment, or it could be debris avoidance. Sometimes there are also problems with the satellite itself (e.g., Sentinel-1B failed completely in December 2021 and the data has been unavailable ever since). If there is an interruption in satellite operation, this is logged in [ESA’s Events Viewer](https://operations.dashboard.copernicus.eu/events.html){target="_blank"}. If the data cannot be found there, we recommend that you address the question to ESA.</p>
+</details>
+
+<details id="why-are-some-areas-white">
+    <summary onclick="handleQuestionClick('why-are-some-areas-white')">Why are some areas white?</summary>
+    <p>Some areas never have cloud coverage below 20%. This is why in Copernicus Browser, where we have default settings for 30% of cloud coverage, for some areas it seems there is no satellite imagery available.</p>
+
+![](FAQ_images/White1.png)
+
+    <p>However, if we turn the slider for maximum cloud coverage to 100%, we can see [data available](https://link.dataspace.copernicus.eu/vujl){target="_blank"}.</p>
+
+![](FAQ_images/White2.png)
+    <p>In the cloudless quarterly mosaic, we use as a background, areas without a cloud-free pixel during the time frame of interest are also displayed in white. For cold season composites, some areas may have had only one cloud-free satellite overpass but during a period of snow cover, therefore patterns of white swaths might reflect Sentinel-2 coverage patterns.</p>
+</details>
+
+<details id="why-are-the-images-without-contrast">
+    <summary onclick="handleQuestionClick('why-are-the-images-without-contrast')">Why are the images without contrast?</summary>
+    <p>We would like to serve data as it is, without uncontrolled changes, because it is almost impossible to set color balance to one fitting all places in the world and all groups of users. You can still tweak contrast in several ways.</p>
+![Raw picture](FAQ_images/Contrast1.png)
+    <p>You can tweak “Gain” (brightness) to automatically equalize the image. Click on the “Show effects and advanced options” link at the bottom on the left.</p>
+
+![Gain adjusted to desired values.](FAQ_images/Contrast2.png)
+    <p>You can tweak “Gamma” (contrast) as well.</p>
+
+![Gamma adjusted to desired values.](FAQ_images/Contrast3.png)
+    <p>Use the atmospheric correction by using the S2L2A atmospherically corrected data instead of S2L1C. As you can see on the image below, atmospheric correction increases the contrast, as it corrects for the effects of the atmosphere.</p>
+
+![Atmospheric correction with S-2 L2A](FAQ_images/Contrast4.png)
+</details>
+
+<details id="how-to-get-data-in-native-resolution-in-wgs84">
+    <summary onclick="handleQuestionClick('how-to-get-data-in-native-resolution-in-wgs84')">How to get data in 'native resolution' in WGS84?</summary>
+    <p><strong>Recommendation:</strong> Whenever possible, you should work with the data in the same coordinate system as they are produced in, i.e., UTM (in the same zone!) for Sentinel-2. This will prevent the inaccuracy resulting from reprojections, rounding, etc.</p>
+    <p>However, if you really want to do it, we recommend the following approach:</p>
+    <ul>
+        <li>latitude resolution = real world ground distance resolution / 111226.26</li>
+        <li>longitude resolution = real world ground distance resolution / 111226.26 / cos(lat)</li>
+        <li>lat = the latitude of the point at which the conversion needs to take place</li>
+    </ul>
+    <p><strong>Example:</strong> You are at (lat, lon) = (45, 10) and want to know how many degrees 10m is:</p>
+    <ul>
+        <li>latitude resolution = 10 / 111226.26 ≈ 0.000090</li>
+        <li>longitude resolution = 10 / 111226.26 / cos (45 degrees) ≈ 0.000127</li>
+    </ul>
+    <p><strong>Notes:</strong></p>
+    <ul>
+        <li>The coordinate systems are complicated, even more so if you go towards the poles.</li>
+        <li>The above formulas hold for real world distances; projected distances (web mercator, UTM, etc.) are not the same thing and can be complicated to convert. That said, the UTM distance is usually quite close to the real-world distance, so the formula for converting between UTM and WGS84 should give reasonable results.</li>
+        <li>cos(lat) should be performed with the latitude in radians, not degrees, so it’s actually cos(latDegrees * PI / 180).</li>
+    </ul>
+</details>
+
+
+
 ## Services
 
 <details id="are-the-free-offering-and-commercial-offering-integrated-to-facilitate-the-transfer-of-the-users-from-free-to-commercial">
