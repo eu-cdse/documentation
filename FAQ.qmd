@@ -227,121 +227,101 @@ The result for the CURL request above will look like this:
 
 <details id="how-are-the-values-calculated-within-sentinel-hub">
     <summary onclick="handleQuestionClick('how-are-the-values-calculated-within-sentinel-hub')">How are the values calculated within Sentinel Hub and how are they returned as an output?</summary>
-    <p>In Sentinel Hub, the calculated and output values depend on what users specify in their evalscripts (or custom scripts). By calculated values we are referring to the values that are returned from the <code>evaluatePixel()</code> function or from a simple script. Output values are values returned from Sentinel Hub, after the calculated values go through formatting defined by <code>sampleType</code>. In the evalscript, calculated and output values are controlled by:</p>
+    <p>In Sentinel Hub, the calculated and output values depend on what users specify in their [evalscripts](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Evalscript/V3.html) (or custom scripts). By calculated values we are referring to the values that are returned from the <code>evaluatePixel()</code> function or from a simple script. Output values are values returned from Sentinel Hub, after the calculated values go through formatting defined by <code>sampleType</code>. In the evalscript, calculated and output values are controlled by:</p>
     <ul>
         <li><strong>In the <code>setup()</code> function:</strong> The requested bands and units define what values are used as input for the calculation (in simple scripts, default units are used). For example, if Sentinel–2 band B04 is requested in REFLECTANCE, the input values will be in the range 0–1. If Sentinel-2 band B04 is requested in DN (digital numbers), the input values for the calculation will be in the range 0–10000. Typical value ranges can be found in our data documentation, chapter Units for each data collection.</li>
         <li><strong>The <code>evaluatePixel()</code> function:</strong> Defines the actual calculation (in simple scripts, the entire script is its equivalent). Sentinel Hub uses double precision for all calculations and rounds only the final calculated values before they are output.</li>
         <li><strong>The value of the <code>sampleType</code> parameter in the <code>setup()</code> function:</strong> Defines the format of the output values. Possible values are AUTO, UINT8, UINT16, and FLOAT32. See our sampleType documentation for more details. When the sampleType is not specified (e.g., in simple scripts), the default value AUTO will be used. <code>sampleType.AUTO</code> takes calculated values from the interval 0–1 and stretches them to 0–255. If your calculated values are not in the range 0–1, make sure you either scale them to this range in the <code>evaluatePixel()</code> function or specify another <code>sampleType</code>.</li>
     </ul>
-    <h4>Example 1: NDVI</h4>
+    **Example 1: NDVI**
     <p>In this example, we want to output values of the NDVI index, calculated based on Sentinel-2 data. Our <code>evaluatePixel()</code> function is:</p>
-    <pre><code>function evaluatePixel(sample) {
+
+```javascript
+
+    function evaluatePixel(sample) {
     let NDVI =  (sample.B08 - sample.B04) / (sample.B08 + sample.B04);
     return [NDVI];
-}</code></pre>
+}
+
+```
     <p>The requested units in this example do not have any influence on the calculated values of the NDVI. The output values returned by Sentinel Hub (black values in the table) for different <code>sampleType</code> values are:</p>
-    <table>
-        <thead>
-            <tr>
-                <th>Calculated Value</th>
-                <th>sampleType.AUTO</th>
-                <th>sampleType.UINT8</th>
-                <th>sampleType.UINT16</th>
-                <th>sampleType.FLOAT32</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr><td>-1</td><td>0</td><td>0</td><td>0</td><td>-1</td></tr>
-            <tr><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
-            <tr><td>0.25</td><td>64</td><td>0</td><td>0</td><td>0.25</td></tr>
-            <tr><td>1</td><td>255</td><td>1</td><td>1</td><td>1</td></tr>
-        </tbody>
-    </table>
+    
+| Calculated Value | sampleType.AUTO | sampleType.UINT8 | sampleType.UINT16 | sampleType.FLOAT32 |
+|------------------|-----------------|------------------|-------------------|--------------------|
+| -1               | 0               | 0                | 0                 | -1                 |
+| 0                | 0               | 0                | 0                 | 0                  |
+| 0.25             | 64              | 0                | 0                 | 0.25               |
+| 1                | 255             | 1                | 1                 | 1                  |
+
+
     <p>Use <code>sampleType:"FLOAT32"</code> to return full floating -1 to 1 values. If you do not need values but a visualization, you can use <code>sampleType:"AUTO"</code>, but make sure to either:</p>
-    <ul>
-        <li>Map the NDVI values to the 0–1 interval in the <code>evaluatePixel()</code> function, e.g.:
-            <pre><code>function evaluatePixel(sample) {
+
+* Map the NDVI values to the 0–1 interval in the <code>evaluatePixel()</code> function, 
+        
+        e.g.:
+            
+```javascript
+           
+function evaluatePixel(sample) {
     let NDVI =  (sample.B08 - sample.B04) / (sample.B08 + sample.B04);
     return [(NDVI + 1) / 2];
-}</code></pre>
-        </li>
-        <li>Use a visualizer or a color visualization function, e.g. <code>valueInterpolate</code>.</li>
-    </ul>
-    <h4>Example 2: Sentinel-2 band B04</h4>
+}
+
+```
+
+* Use a visualizer or a color visualization function, e.g. <code>valueInterpolate</code>.</li>
+  
+    **Example 2: Sentinel-2 band B04**
     <p>In this example, we want to output raw values of Sentinel-2 band 4. Our <code>evaluatePixel()</code> function looks like this:</p>
-    <pre><code>function evaluatePixel(sample) {
+    
+```javascript
+    function evaluatePixel(sample) {
     return [sample.B04];
-}</code></pre>
+}
+
+```
     <p>If we request units: “REFLECTANCE”, the output values returned by Sentinel Hub (black values in the table) for different <code>sampleType</code> values are:</p>
-    <table>
-        <thead>
-            <tr>
-                <th>Calculated Value</th>
-                <th>sampleType.AUTO</th>
-                <th>sampleType.UINT8</th>
-                <th>sampleType.UINT16</th>
-                <th>sampleType.FLOAT32</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
-            <tr><td>0.25</td><td>64</td><td>0</td><td>0</td><td>0.25</td></tr>
-            <tr><td>0.5</td><td>128</td><td>1</td><td>1</td><td>0.5</td></tr>
-            <tr><td>1</td><td>255</td><td>1</td><td>1</td><td>1</td></tr>
-            <tr><td>1.05</td><td>255</td><td>1</td><td>1</td><td>1.05</td></tr>
-        </tbody>
-    </table>
-    <p>If we request units: “DN”, the output values returned by Sentinel Hub (black values in the table) for different <code>sampleType</code> values are:</p>
-    <table>
-        <thead>
-            <tr>
-                <th>Calculated Value</th>
-                <th>sampleType.AUTO</th>
-                <th>sampleType.UINT8</th>
-                <th>sampleType.UINT16</th>
-                <th>sampleType.FLOAT32</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
-            <tr><td>2500</td><td>255</td><td>255</td><td>2500</td><td>2500</td></tr>
-            <tr><td>5000</td><td>255</td><td>255</td><td>5000</td><td>5000</td></tr>
-            <tr><td>10000</td><td>255</td><td>255</td><td>10000</td><td>10000</td></tr>
-            <tr><td>10500</td><td>255</td><td>255</td><td>10500</td><td>10500</td></tr>
-        </tbody>
-    </table>
-    <h4>Example 3: Brightness Temperature Bands</h4>
+    
+| Calculated Value | sampleType.AUTO | sampleType.UINT8 | sampleType.UINT16 | sampleType.FLOAT32 |
+|------------------|-----------------|------------------|-------------------|--------------------|
+| 0                | 0               | 0                | 0                 | 0                  |
+| 0.25             | 64              | 0                | 0                 | 0.25               |
+| 0.5              | 128             | 1                | 1                 | 0.5                |
+| 1                | 255             | 1                | 1                 | 1                  |
+| 1.05             | 255             | 1                | 1                 | 1.05               |
+
+    **Example 3: Brightness Temperature Bands**
+    
     <p>Here we output a Sentinel-3 SLSTR band F1 with typical values between 250–320 representing brightness temperature in Kelvin. The <code>evaluatePixel()</code> function is:</p>
-    <pre><code>function evaluatePixel(sample) {
+
+```javascript
+function evaluatePixel(sample) {
     return [sample.F1];
-}</code></pre>
+}
+
+```
     <p>The output values returned by Sentinel Hub (black values in the table) for different <code>sampleType</code> values are:</p>
-    <table>
-        <thead>
-            <tr>
-                <th>Calculated Value</th>
-                <th>sampleType.AUTO</th>
-                <th>sampleType.UINT8</th>
-                <th>sampleType.UINT16</th>
-                <th>sampleType.FLOAT32</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr><td>250</td><td>255</td><td>250</td><td>250</td><td>250</td></tr>
-            <tr><td>255</td><td>255</td><td>255</td><td>255</td><td>255</td></tr>
-            <tr><td>275.3</td><td>255</td><td>255</td><td>275</td><td>275.3</td></tr>
-            <tr><td>320</td><td>255</td><td>255</td><td>320</td><td>320</td></tr>
-        </tbody>
-    </table>
+
+| Calculated Value | sampleType.AUTO | sampleType.UINT8 | sampleType.UINT16 | sampleType.FLOAT32 |
+|------------------|-----------------|------------------|-------------------|--------------------|
+| 250              | 255             | 250              | 250               | 250                |
+| 255              | 255             | 255              | 255               | 255                |
+| 275.3            | 255             | 255              | 275               | 275.3              |
+| 320              | 255             | 255              | 320               | 320                |
+
+
     <p>Use <code>sampleType:"FLOAT32"</code> to return original values. If integer values are still acceptable for your application, use <code>sampleType:"UINT16"</code>. If you do not need values but a visualization, you can use <code>sampleType:"AUTO"</code>, but make sure to either:</p>
-    <ul>
-        <li>Map the values to the 0–1 interval in the <code>evaluatePixel()</code> function, e.g.:
-            <pre><code>function evaluatePixel(sample) {
+
+* Map the values to the 0–1 interval in the <code>evaluatePixel()</code> function, e.g.:
+
+```javascript
+
+function evaluatePixel(sample) {
     return [sample.F1 / 320];
-}</code></pre>
-        </li>
-        <li>Use a visualizer or a color visualization function, e.g. <code>valueInterpolate</code>.</li>
-    </ul>
+}
+```
+
+* Use a visualizer or a color visualization function, e.g. <code>valueInterpolate</code>.
 </details>
 
 <details id="how-can-i-get-images-in-higher-resolution">
@@ -370,16 +350,17 @@ The result for the CURL request above will look like this:
 <details id="why-are-the-images-without-contrast">
     <summary onclick="handleQuestionClick('why-are-the-images-without-contrast')">Why are the images without contrast?</summary>
     <p>We would like to serve data as it is, without uncontrolled changes, because it is almost impossible to set color balance to one fitting all places in the world and all groups of users. You can still tweak contrast in several ways.</p>
-![Raw picture](FAQ_images/Contrast1.png)
+![Raw picture](FAQ_images/Contrats1.png)
+
     <p>You can tweak “Gain” (brightness) to automatically equalize the image. Click on the “Show effects and advanced options” link at the bottom on the left.</p>
 
-![Gain adjusted to desired values.](FAQ_images/Contrast2.png)
+![Gain adjusted to desired values.](FAQ_images/Contrats2.png)
     <p>You can tweak “Gamma” (contrast) as well.</p>
 
-![Gamma adjusted to desired values.](FAQ_images/Contrast3.png)
+![Gamma adjusted to desired values.](FAQ_images/Contrats3.png)
     <p>Use the atmospheric correction by using the S2L2A atmospherically corrected data instead of S2L1C. As you can see on the image below, atmospheric correction increases the contrast, as it corrects for the effects of the atmosphere.</p>
 
-![Atmospheric correction with S-2 L2A](FAQ_images/Contrast4.png)
+![Atmospheric correction with S-2 L2A](FAQ_images/Contrats4.png)
 </details>
 
 <details id="how-to-get-data-in-native-resolution-in-wgs84">
