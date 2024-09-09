@@ -20,7 +20,10 @@ def main(c):
         "CAMS": CAMSOffer,
         "CLMS": CLMSOffer,               
         "CMEMS" : CMEMSOffer,
-        "CEMS": CEMSOffer               
+        "CEMS": CEMSOffer,
+        "ContributingMissions_optical": CCMOffer,
+        "ContributingMissions_radar": CCMOffer,
+        "ContributingMissions_other": CCMOffer            
     }
     AvailabilityTable = cases.get(constellation, general)(c)
     return AvailabilityTable
@@ -597,3 +600,32 @@ def CLMSOffer(c):
         tablertn = " "
     
     return tablertn
+
+########################## DEFINE FUNCTION TO CREATE DATA AVAILABILITY TABLE FOR Contributing Missions (CCM) ########################
+def CCMOffer(c):
+    
+    try: 
+        data_offer = len(c['summaries']['DataAvailability'])
+        t = []
+        note = ""
+        empty_columns = []  # Track empty columns
+
+        for i in range(0, data_offer):
+            type,status,access,product_type,specific_product,spatial,temporal,product_link,catalogue,footnotes,provider,satellite,resolution,opensearch,odata = DataFetch(c,i)
+            t.append([product_type, status, access, catalogue])
+            note += footnotes
+            headers = ["Product Type", "File Description","Data Access Type","Catalogue"]
+
+        # Find and remove empty columns
+        t,headers=removeempty(t,headers)
+
+        table = tabulate(t, headers=headers, tablefmt='html', floatfmt=".4f", stralign="left", numalign="left")
+        # Set the minimum width of each column to 100 pixels
+        table = table.replace("<table>", '<table class="table">')
+        # call the merge cell function
+        table=mergecells(table)
+        table = f"""<h5>{tabletitle}</h5>{table}{note}"""
+    except Exception:
+        table = " "
+    
+    return table
