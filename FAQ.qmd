@@ -160,13 +160,11 @@ title : "Frequently Asked Questions"
 <details id="available-imagery-dates">
     <summary onclick="handleQuestionClick('available-imagery-dates')">Where can I get a list of the available imagery dates for a specific area?</summary>
     
-    <p>The best way to get information about all the available scenes in a specific area is to use our [Catalog service API](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Catalog.html), which provides detailed geospatial information for each tile. You can control the output by specifying fields, limits, and other properties. For this specific use case, use the <code>distinct</code> parameter with <code>[date](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Catalog/Examples.html#search-with-distinct)</code> to return a list of available dates for your requested BBOX and time range. Here’s how you can make the Catalog API request:</p>
-    
-    <p>Import the following CURL request into Postman. You will need to [authenticate the request with a token](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Overview/Authentication.html):</p>
+    <p>The best way to get information about all the available scenes in a specific area is to use our [Catalog service API](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Catalog.html), which will give you detailed geospatial information for each tile, that you can control by specifying fields, limits, and other properties. For this specific use case, it is most useful to use the <code>[distinct parameter with date](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Catalog/Examples.html#search-with-distinct)</code>, which will return a list of available dates for your requested BBOX and time range. To make this Catalog API request,  import the following CURL request to Postman. You will need to [authenticate the request with a token](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Overview/Authentication.html).
     
  ```bash
  curl -X POST 'sh.dataspace.copernicus.eu/api/v1/catalog/search' \
--header 'Authorization: Bearer &lt;your access token&gt;' \
+-header 'Authorization: Bearer <your access token>' \
 -header 'Content-Type: application/json' \
 -data-raw '{
     "bbox": [13,45,14,46],
@@ -178,8 +176,8 @@ title : "Frequently Asked Questions"
 
 ```
     
-<p>In the curl request above, the first line is the URL for the request, which you only need to change if you’re using data collections on different deployments. The first header is where you add your access token; if you authenticate the collection or the request in Postman, the token will be automatically added. The second header is where you specify the desired output, which in this case, is a JSON file. In data-raw, you will specify the bbox, time range (datetime), data collection (collections), limit (the upper limit of the number of results), and with the line "distinct":"date", you will limit your results to only include information on the acquisition date. Consult the [Catalog API reference](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/ApiReference.html) to learn more about the available parameters.
-The result for the CURL request above will look like this:
+<p>In the curl request above, the first line is the URL for the request, which you only need to change if you’re using data collections on different deployments. The first header is where you add your access token; if you authenticate the collection or the request in Postman, the token will be automatically added. The second header is where you specify the desired output, which in this case, is a JSON file. In <code>data-raw</code>, you will specify the <code>bbox</code>, time range (<code>datetime</code>), data collection (<code>collections</code>), <code>limit</code> (the upper limit of the number of results), and with the line <code>"distinct":"date"</code>, you will limit your results to only include information on the acquisition date. Consult the [Catalog API reference](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/ApiReference.html) to learn more about the available parameters.</p>
+<p>The result for the CURL request above will look like this:
 </p>
     
 
@@ -208,30 +206,30 @@ The result for the CURL request above will look like this:
 
 ```
     
-    <p>At the beginning of the result, you can see all the available dates listed for your request.</p>
+<p>At the beginning of the result, you can see all the available dates listed for your request.</p>
     
-    <p>It’s also possible to search for available scenes using an OGC WFS request, which might be easier to use but offers less search control. To make a WFS request, you will need to add your <code>INSTANCE_ID</code>, specify the <code>bbox</code>, time range (<code>TIME</code>), data collection (<code>TYPENAMES</code>), coordinate system (<code>srsName</code>), and request type. An example WFS request would look like this:</p>
+<p>It’s also possible to search for available scenes using an OGC WFS request, which might be easier to use but offers less search control. To make a WFS request, you will need to add your <code>INSTANCE_ID</code>, specify the <code>bbox</code>, time range (<code>TIME</code>), data collection (<code>TYPENAMES</code>), coordinate system (<code>srsName</code>), and request type. An example WFS request would look like this:</p>
     
 ```bash
 
-[https://sh.dataspace.copernicus.eu/ogc/wfs/INSTANCE_ID?REQUEST=GetFeature&srsName=EPSG:3857&TYPENAMES=DSS2&BBOX=3238005,5039853,3244050,5045897&TIME=2019-02-11/2019-02-12](https://sh.dataspace.copernicus.eu/ogc/wfs/INSTANCE_ID?REQUEST=GetFeature&srsName=EPSG:3857&TYPENAMES=DSS2&BBOX=3238005,5039853,3244050,5045897&TIME=2019-02-11/2019-02-12){target="_blank"}
+https://sh.dataspace.copernicus.eu/ogc/wfs/INSTANCE_ID?REQUEST=GetFeature&srsName=EPSG:3857&TYPENAMES=DSS2&BBOX=3238005,5039853,3244050,5045897&TIME=2019-02-11/2019-02-12
 
 ```
     
-    <p>You can test WFS examples with different parameters and inspect the results instantly <a href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/OGC/Examples.html" target="_blank">here</a>.</p>
+<p>You can test WFS examples with different parameters and inspect the results instantly <a href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/OGC/Examples.html" target="_blank">here</a>.</p>
     
-    <p>Note that you can also use the <code>MAXCC</code> parameter (maximum cloud coverage) in this call to filter cloudless data. Use the <code>FEATURE_OFFSET</code> parameter to control the starting point within the returned features and <code>MAXFEATURES</code> parameter for the maximum number of features to be returned by a single request.</p>
+<p>Note that you can also use the <code>MAXCC</code> parameter (maximum cloud coverage) in this call to filter cloudless data. Use the <code>FEATURE_OFFSET</code> parameter to control the starting point within the returned features and <code>MAXFEATURES</code> parameter - the maximum number of parameters of features to be returned by a single request.</p>
     
-    <p>As a result, you will get a list of all the available scenes for the chosen location in JSON format (or XML if set so). Some of the dates may be duplicated if there are two scenes available in the area. Simply ignore these duplications.</p>
+<p>As a result, you will get a list of all the available scenes for the chosen location in <code>JSON</code> format (or <code>XML</code> if set so). Some of the dates may be duplicated if there are two scenes available in the area. Simply ignore these duplications.</p>
 </details>
 
 <details id="how-are-the-values-calculated-within-sentinel-hub">
     <summary onclick="handleQuestionClick('how-are-the-values-calculated-within-sentinel-hub')">How are the values calculated within Sentinel Hub and how are they returned as an output?</summary>
-    <p>In Sentinel Hub, the calculated and output values depend on what users specify in their [evalscripts](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Evalscript/V3.html) (or custom scripts). By calculated values we are referring to the values that are returned from the <code>evaluatePixel()</code> function or from a simple script. Output values are values returned from Sentinel Hub, after the calculated values go through formatting defined by <code>sampleType</code>. In the evalscript, calculated and output values are controlled by:</p>
+    <p>In Sentinel Hub, the **calculated** and **output** values depend on what users specify in their [evalscripts](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Evalscript/V3.html) (or custom scripts). By **calculated values** we are referring to the values that are returned from the <code>evaluatePixel()</code> function or from a simple script. **Output values** are values returned from Sentinel Hub, after the calculated values go through formatting defined by <code>sampleType</code>. In the evalscript, calculated and output values are controlled by:</p>
     <ul>
-        <li><strong>In the <code>setup()</code> function:</strong> The requested bands and units define what values are used as input for the calculation (in simple scripts, default units are used). For example, if Sentinel–2 band B04 is requested in REFLECTANCE, the input values will be in the range 0–1. If Sentinel-2 band B04 is requested in DN (digital numbers), the input values for the calculation will be in the range 0–10000. Typical value ranges can be found in our data documentation, chapter Units for each data collection.</li>
-        <li><strong>The <code>evaluatePixel()</code> function:</strong> Defines the actual calculation (in simple scripts, the entire script is its equivalent). Sentinel Hub uses double precision for all calculations and rounds only the final calculated values before they are output.</li>
-        <li><strong>The value of the <code>sampleType</code> parameter in the <code>setup()</code> function:</strong> Defines the format of the output values. Possible values are AUTO, UINT8, UINT16, and FLOAT32. See our sampleType documentation for more details. When the sampleType is not specified (e.g., in simple scripts), the default value AUTO will be used. <code>sampleType.AUTO</code> takes calculated values from the interval 0–1 and stretches them to 0–255. If your calculated values are not in the range 0–1, make sure you either scale them to this range in the <code>evaluatePixel()</code> function or specify another <code>sampleType</code>.</li>
+        <li>In the <code>setup()</code> function, the requested <code>bands</code> and <code>units</code> define what values are used as input for the calculation (in simple scripts, default units are used). For example, if Sentinel–2 band B04 is requested in <code>REFLECTANCE</code>, the input values will be in the range 0–1. If Sentinel-2 band B04 is requested in <code>DN</code> (digital numbers), the input values for the calculation will be in the range 0–10000. Typical value ranges can be found in our [data documentation](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Data.html), chapter [Units](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Data/S2L1C.html#units) for each data collection.</li>
+        <li>The <code>evaluatePixel()</code> function defines the actual calculation (in simple scripts, the entire script is its equivalent). Sentinel Hub uses double precision for all calculations and rounds only the final calculated values before they are output.</li>
+        <li>The value of the <code>sampleType</code> parameter in the <code>setup()</code> function defines the format of the output values. Possible values are <code>AUTO</code>, <code>UINT8</code>, <code>UINT16</code>, and <code>FLOAT32</code>. See our [sampleType documentation](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Evalscript/V3.html#sampletype) for more details. When the <code>sampleType</code> is not specified (e.g., in simple scripts), the default value <code>AUTO</code> will be used. <code>sampleType.AUTO</code> takes calculated values from the interval 0–1 and stretches them to 0–255. If your calculated values are not in the range 0–1, make sure you either scale them to this range in the <code>evaluatePixel()</code> function or specify another <code>sampleType</code>.</li>
     </ul>
     **Example 1: NDVI**
     <p>In this example, we want to output values of the NDVI index, calculated based on Sentinel-2 data. Our <code>evaluatePixel()</code> function is:</p>
@@ -244,7 +242,7 @@ The result for the CURL request above will look like this:
 }
 
 ```
-    <p>The requested units in this example do not have any influence on the calculated values of the NDVI. The output values returned by Sentinel Hub (black values in the table) for different <code>sampleType</code> values are:</p>
+    <p>The requested units in this example do not have any influence on the calculated values of the NDVI. The output values returned by Sentinel Hub for different <code>sampleType</code> values are:</p>
     
 | Calculated Value | sampleType.AUTO | sampleType.UINT8 | sampleType.UINT16 | sampleType.FLOAT32 |
 |------------------|-----------------|------------------|-------------------|--------------------|
@@ -254,33 +252,33 @@ The result for the CURL request above will look like this:
 | 1                | 255             | 1                | 1                 | 1                  |
 
 
-    <p>Use <code>sampleType:"FLOAT32"</code> to return full floating -1 to 1 values. If you do not need values but a visualization, you can use <code>sampleType:"AUTO"</code>, but make sure to either:</p>
+    <p>Use <code>sampleType:"FLOAT32"</code> to return full floating -1 to 1 values. See the example [here](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Process/Examples/S2L1C.html#exact-ndvi-values-using-a-floating-point-geotiff)</p>
+    <p>If you do not need values but a visualization, you can use <code>sampleType:"AUTO"</code>, but make sure to either:</p>
 
-* Map the NDVI values to the 0–1 interval in the <code>evaluatePixel()</code> function, 
-        
-        e.g.:
+* Map the NDVI values to the 0–1 interval in the <code>evaluatePixel()</code> function, e.g.:
             
 ```javascript
            
 function evaluatePixel(sample) {
     let NDVI =  (sample.B08 - sample.B04) / (sample.B08 + sample.B04);
-    return [(NDVI + 1) / 2];
+    return [(NDVI + 1) / 2]
 }
 
 ```
 
-* Use a visualizer or a color visualization function, e.g. <code>valueInterpolate</code>.</li>
-  
-    **Example 2: Sentinel-2 band B04**
+* Use a [visualizer](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Evalscript/Functions.html#visualizers) or a color visualization function, e.g. [valueInterpolate](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Evalscript/Functions.html#valueinterpolate).</li>
+
+<br>
+   **Example 2: Sentinel-2 band B04**
     <p>In this example, we want to output raw values of Sentinel-2 band 4. Our <code>evaluatePixel()</code> function looks like this:</p>
     
 ```javascript
     function evaluatePixel(sample) {
-    return [sample.B04];
+    return [sample.B04]
 }
 
 ```
-    <p>If we request units: “REFLECTANCE”, the output values returned by Sentinel Hub (black values in the table) for different <code>sampleType</code> values are:</p>
+    <p>If we request <code>units: “REFLECTANCE”</code>, the output values returned by Sentinel Hub for different <code>sampleTypes</code> values are:</p>
     
 | Calculated Value | sampleType.AUTO | sampleType.UINT8 | sampleType.UINT16 | sampleType.FLOAT32 |
 |------------------|-----------------|------------------|-------------------|--------------------|
@@ -290,17 +288,27 @@ function evaluatePixel(sample) {
 | 1                | 255             | 1                | 1                 | 1                  |
 | 1.05             | 255             | 1                | 1                 | 1.05               |
 
+<p>If we request <code>units: “DN”</code>, the output values returned by Sentinel Hub for different <code>sampleTypes</code> values are:</p>
+    
+| Calculated Value | sampleType.AUTO | sampleType.UINT8 | sampleType.UINT16 | sampleType.FLOAT32 |
+|------------------|-----------------|------------------|-------------------|--------------------|
+| 0                | 0               | 0                | 0                 | 0                  |
+| 2500            | 255              | 255             | 2500              | 2500               |
+| 5000            | 255             | 255             | 5000              | 5000            |
+| 10000           | 255             | 255              | 10000             | 10000           |
+| 10500            | 255             | 255             | 10500              | 10500           |
+<br>
     **Example 3: Brightness Temperature Bands**
     
     <p>Here we output a Sentinel-3 SLSTR band F1 with typical values between 250–320 representing brightness temperature in Kelvin. The <code>evaluatePixel()</code> function is:</p>
 
 ```javascript
 function evaluatePixel(sample) {
-    return [sample.F1];
+    return [sample.F1]
 }
 
 ```
-    <p>The output values returned by Sentinel Hub (black values in the table) for different <code>sampleType</code> values are:</p>
+<p>The output values returned by Sentinel Hub for different <code>sampleTypes</code> values are:</p>
 
 | Calculated Value | sampleType.AUTO | sampleType.UINT8 | sampleType.UINT16 | sampleType.FLOAT32 |
 |------------------|-----------------|------------------|-------------------|--------------------|
@@ -310,18 +318,19 @@ function evaluatePixel(sample) {
 | 320              | 255             | 255              | 320               | 320                |
 
 
-    <p>Use <code>sampleType:"FLOAT32"</code> to return original values. If integer values are still acceptable for your application, use <code>sampleType:"UINT16"</code>. If you do not need values but a visualization, you can use <code>sampleType:"AUTO"</code>, but make sure to either:</p>
+    <p>Use <code>sampleType:"FLOAT32"</code> to return original values. If integer values are still acceptable for your application, use <code>sampleType:"UINT16"</code>.</p>
+    <p>If you do not need values but a visualization, you can use <code>sampleType:"AUTO"</code>, but make sure to either:</p>
 
 * Map the values to the 0–1 interval in the <code>evaluatePixel()</code> function, e.g.:
 
 ```javascript
 
 function evaluatePixel(sample) {
-    return [sample.F1 / 320];
+    return [sample.F1 / 320]
 }
 ```
 
-* Use a visualizer or a color visualization function, e.g. <code>valueInterpolate</code>.
+* Use a [visualizer](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Evalscript/Functions.html#visualizers) or a color visualization function, e.g. [valueInterpolate](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Evalscript/Functions.html#valueinterpolate).
 </details>
 
 <details id="how-can-i-get-images-in-higher-resolution">
@@ -344,6 +353,7 @@ function evaluatePixel(sample) {
     <p>However, if we turn the slider for maximum cloud coverage to 100%, we can see [data available](https://link.dataspace.copernicus.eu/vujl){target="_blank"}.</p>
 
 ![](FAQ_images/White2.png)
+
     <p>In the cloudless quarterly mosaic, we use as a background, areas without a cloud-free pixel during the time frame of interest are also displayed in white. For cold season composites, some areas may have had only one cloud-free satellite overpass but during a period of snow cover, therefore patterns of white swaths might reflect Sentinel-2 coverage patterns.</p>
 </details>
 
@@ -370,18 +380,19 @@ function evaluatePixel(sample) {
     <ul>
         <li>latitude resolution = real world ground distance resolution / 111226.26</li>
         <li>longitude resolution = real world ground distance resolution / 111226.26 / cos(lat)</li>
-        <li>lat = the latitude of the point at which the conversion needs to take place</li>
+        *lat = the latitude of the point at which the conversion needs to take place*
     </ul>
-    <p><strong>Example:</strong> You are at (lat, lon) = (45, 10) and want to know how many degrees 10m is:</p>
+    <p><strong>Example:</strong></p>
+    <p>You are at (lat, lon) = (45, 10) and want to know how many degrees 10m is:</p>
     <ul>
-        <li>latitude resolution = 10 / 111226.26 ≈ 0.000090</li>
-        <li>longitude resolution = 10 / 111226.26 / cos (45 degrees) ≈ 0.000127</li>
+        <li>latitude resolution = 10 / 111226.26 ~= 0.000090</li>
+        <li>longitude resolution = 10 / 111226.26 / cos (45 degrees) ~= 0.000127</li>
     </ul>
     <p><strong>Notes:</strong></p>
     <ul>
         <li>The coordinate systems are complicated, even more so if you go towards the poles.</li>
         <li>The above formulas hold for real world distances; projected distances (web mercator, UTM, etc.) are not the same thing and can be complicated to convert. That said, the UTM distance is usually quite close to the real-world distance, so the formula for converting between UTM and WGS84 should give reasonable results.</li>
-        <li>cos(lat) should be performed with the latitude in radians, not degrees, so it’s actually cos(latDegrees * PI / 180).</li>
+        <li>**cos(lat)** should be performed with the latitude in radians, not degrees, so it’s actually **cos(latDegrees * PI / 180)**.</li>
     </ul>
 </details>
 
@@ -468,7 +479,7 @@ function evaluatePixel(sample) {
     <p>Every user account is set a limited quota to guarantee fair sharing of free tier resources within all users of the Copernicus Data Space Ecosystem.</p>
     <p>The total volume of downloads from the Copernicus Data Space Ecosystem for each user account is summed up for the last 30 days. Downloaded volume is checked on an hourly basis, and if it exceeds the assigned quota, the user will be moved to a slower interface. Such a user will still be able to access and download products but at a reduced speed. More about the quotas and limitations is also available <a href="https://documentation.dataspace.copernicus.eu/Quotas.html"target="_blank">here</a>.</p>
     <p>If you run out of quota, we recommend exploring some of the [commercial services integrated with CDSE](https://dataspace.copernicus.eu/ecosystem/services){target="_blank"}.</p>
-    <p>For eligible users (i.e., Copernicus Services users, European institutions, etc.), we recommend submitting a request for a [Copernicus Service account](https://dataspace.copernicus.eu/ecosystem/services){target="_blank"}. The form to change your Copernicus user type is available <a href="https://dataspace.copernicus.eu/copernicus-services-user"target="_blank">here</a>.</p>
+    <p>For eligible users (i.e., Copernicus Services users, European institutions, etc.), we recommend submitting a request for a [Copernicus Service account](https://documentation.dataspace.copernicus.eu/FAQ.html#which-users-are-qualified-for-higher-tier-accounts){target="_blank"}. The form to change your Copernicus user type is available <a href="https://dataspace.copernicus.eu/copernicus-services-user"target="_blank">here</a>.</p>
 </details>
 
 
@@ -511,7 +522,7 @@ function evaluatePixel(sample) {
     
     <p>**The calculation**: 20.34 PU x 500 = ~10,172 PU per 500 requests</p>
     
-    <p>If your output image were smaller, e.g. 500 x 500 px large, the cost of a single request would be 1.27 PU. Multiplied by 500, that’s just 635.78 PU in total, so much less. On the other hand, if you wanted an image with quite a large output of 5000 x 5000 px, a request would cost you 127.15 PU, and 500 of these would cost ~63,578 PU. However, processing API is limited to output images with width and height up to 2500 px, so setting it to 5000 would result in an error. To output images this large, you would need a Copernicus Service account or a commercial Sentinel Hub account and bucket on [CREODIAS](https://creodias.eu/eobased-services/sentinel-hub/){target="_blank"} to use batch processing API. You will notice that batch processing divides your PU cost by 3, as it’s only a third of the price of processing API. So your 500 requests would cost 63,578 / 3 = 21,192 PU.</p>
+    <p>If your output image were smaller, e.g. 500 x 500 px large, the cost of a single request would be 1.27 PU. Multiplied by 500, that’s just 635.78 PU in total, so much less. On the other hand, if you wanted an image with quite a large output of 5000 x 5000 px, a request would cost you 127.15 PU, and 500 of these would cost ~63,578 PU. However, processing API is limited to output images with width and height up to 2500 px, so setting it to 5000 would result in an error. To output images this large, you would need a **Copernicus Service account** or a commercial Sentinel Hub account and bucket on [CREODIAS](https://creodias.eu/eobased-services/sentinel-hub/){target="_blank"} to use batch processing API. You will notice that batch processing divides your PU cost by 3, as it’s only a third of the price of processing API. So your 500 requests would cost 63,578 / 3 = 21,192 PU.</p>
     
     <p><strong>Example 2</strong></p>
     <p>If you wanted to create a single request that uses 500 scenes in a multi-temporal script, where you e.g. calculate max NDVI over several years, using up 500 acquisitions, your request would also use 10,172 PU, just like our request for 2000 px x 2000 px output in Example 1 (given that all the other parameters are the same as in Example 1).</p>
@@ -1218,13 +1229,13 @@ https://sh.dataspace.copernicus.eu/ogc/wms/&lt;INSTANCE_ID&gt;?SERVICE=WMS&amp;R
     <summary onclick="handleQuestionClick('how-to-run-a-custom-script-in-copernicus-browser')">How to run a custom script in Copernicus Browser?</summary>
 
 1. Finding the appropriate satellite scene
-   1. Search for the location of your interest either by scrolling the map with your mouse or entering the location in the search field on the right side of your screen.
-   2. Choose from which satellites you want to receive the data (dropdown menu on the left side of your screen under Data Collections).
-   3. Select maximum Cloud coverage percentage.
-   4. Select the time range by either typing the date or selecting the date from the calendar.
+   * Search for the location of your interest either by scrolling the map with your mouse or entering the location in the search field on the right side of your screen.
+   * Choose from which satellites you want to receive the data (dropdown menu on the left side of your screen under **Data Collections**).
+   * Select maximum **Cloud coverage percentage**.
+   * Select the time range by either typing the date or selecting the date from the calendar.
      ![](FAQ_images/CustomScript1.png)
 
-2. In the **Visualize** tab, choose the **Custom (Create custom visualization)** button under the Layers.
+2. In the **Visualize** tab, choose the **Custom** (Create custom visualization) button under the Layers.
      ![](FAQ_images/CustomScript2.png)
 
 3. Open the custom script dialog by clicking on the **Custom script** tab.
@@ -1236,7 +1247,7 @@ https://sh.dataspace.copernicus.eu/ogc/wms/&lt;INSTANCE_ID&gt;?SERVICE=WMS&amp;R
 <details id="which-functions-are-supported-in-custom-scripts">
     <summary onclick="handleQuestionClick('which-functions-are-supported-in-custom-scripts')">Which functions are supported in Custom Scripts?</summary>
 
-    <p>Custom Script integrates Chrome <a href="https://developers.google.com/v8/" target="_blank">V8 JavaScript engine </a>, so the vast majority of the functions supported there can be used in Custom Script as well. Some of the functions that can be used with our custom scripts are described in our <a href="https://documentation.dataspace.copernicus.eu/Documentation/Evalscript/v3" target="_blank">Evalscript V3 documentation</a>.</p>
+    <p>Custom Script integrates [Chrome V8 JavaScript engine](https://developers.google.com/v8/), so the vast majority of the functions supported there can be used in Custom Script as well. Some of the functions that can be used with our custom scripts are described in our [Evalscript V3 documentation](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Evalscript/Functions.html).</p>
 
 </details>
 
@@ -1248,7 +1259,7 @@ https://sh.dataspace.copernicus.eu/ogc/wms/&lt;INSTANCE_ID&gt;?SERVICE=WMS&amp;R
 
     <p>A working WMS request from Copernicus Browser, using a simple custom evaluation script:</p>
 
-    <p><a href="https://browser.dataspace.copernicus.eu/?zoom=10&lat=41.6429&lng=12.8862&themeId=DEFAULT-THEME&visualizationUrl=U2FsdGVkX1%2FdjVgXKNxsgHpvLC0Lk9xYTBFSuIxQlOH6qZOOtL3utpao5rghCRt8AHfhSUB3LFuwAZoDeBviT1Q%2BUoyJky7D6ZDKrnKwOfz3TPX8xluv1RNfpifr0lOU&evalscript=cmV0dXJuIFtCMDgqMi41LEIwNCoyLjUsQjAzKjIuNV07&datasetId=S2_L1C_CDAS&fromTime=2020-05-15T00%3A00%3A00.000Z&toTime=2020-05-15T23%3A59%3A59.999Z&cloudCoverage=30&dateMode=SINGLE#custom-script" target="_blank">https://browser.dataspace.copernicus.eu/?zoom=10&lat=41.6429&lng=12.8862&themeId=DEFAULT-THEME&visualizationUrl</a></p>
+    <p>[https://browser.dataspace.copernicus.eu/?zoom=10&lat=41.6429&lng=12.8862&themeId=DEFAULT-THEME&visualizationUrl=U2FsdGVkX1%2FdjVgXKNxsgHpvLC0Lk9xYTBFSuIxQlOH6qZOOtL3utpao5rghCRt8AHfhSUB3LFuwAZoDeBviT1Q%2BUoyJky7D6ZDKrnKwOfz3TPX8xluv1RNfpifr0lOU&evalscript=cmV0dXJuIFtCMDgqMi41LEIwNCoyLjUsQjAzKjIuNV07&datasetId=S2_L1C_CDAS&fromTime=2020-05-15T00%3A00%3A00.000Z&toTime=2020-05-15T23%3A59%3A59.999Z&cloudCoverage=30&dateMode=SINGLE#custom-script](https://browser.dataspace.copernicus.eu/?zoom=10&lat=41.6429&lng=12.8862&themeId=DEFAULT-THEME&visualizationUrl=U2FsdGVkX1%2FdjVgXKNxsgHpvLC0Lk9xYTBFSuIxQlOH6qZOOtL3utpao5rghCRt8AHfhSUB3LFuwAZoDeBviT1Q%2BUoyJky7D6ZDKrnKwOfz3TPX8xluv1RNfpifr0lOU&evalscript=cmV0dXJuIFtCMDgqMi41LEIwNCoyLjUsQjAzKjIuNV07&datasetId=S2_L1C_CDAS&fromTime=2020-05-15T00%3A00%3A00.000Z&toTime=2020-05-15T23%3A59%3A59.999Z&cloudCoverage=30&dateMode=SINGLE#custom-script)</p>
 
     <p>Note that the <code>LAYERS</code> parameter should be set as one of the existing layers in the configuration when using a <code>PRESET=CUSTOM</code> with a custom evalscript.</p>
 
@@ -1258,15 +1269,15 @@ https://sh.dataspace.copernicus.eu/ogc/wms/&lt;INSTANCE_ID&gt;?SERVICE=WMS&amp;R
 <details id="how-do-i-do-raster-calculation-on-bands">
     <summary onclick="handleQuestionClick('how-do-i-do-raster-calculation-on-bands')">How do I do raster calculation on bands?</summary>
 
-    <p>Raster calculations are done in custom scripts. You can access custom scripts in Configuration Utility, in each layer under each configuration.</p>
-    <p>To edit the script, click on the “pencil icon” beside the Data processing option under a selected layer and enter the Custom Script Editor.</p>
-    <p>See more details <a href="https://documentation.dataspace.copernicus.eu/Documentation/Evalscript/v3" target="_blank">here</a>.</p>  *TODO: Add a link to the How can I create EO products? .*
+    <p>Raster calculations are done in custom scripts. You can access custom scripts in [Configuration Utility](https://shapps.dataspace.copernicus.eu/dashboard/#/configurations), in each layer under each configuration.</p>
+    <p>To edit the script, click on the “pencil icon” beside the **Data processing** option under a selected layer and enter the **Custom Script Editor**.</p>
+    <p>See more details [here](#how-to-create-eo-products).
 
     ![](FAQ_images/RasterCalculation.png)
 
-    <p>How to use the script is detailed <a href="https://www.sentinel-hub.com/develop/custom-scripts/">here</a>.</p>
+    <p>How to use the script is detailed [here](https://www.sentinel-hub.com/develop/custom-scripts).</p>
 
-    <p>An example of the NDVI script below and visualized in <a href="https://link.dataspace.copernicus.eu/gzdi" target="_blank">Copernicus Browser</a>.</p>
+    <p>An example of the NDVI script below and visualized in [Copernicus Browser](https://link.dataspace.copernicus.eu/gzdi).</p>
 
 ```javascript
 
@@ -1283,7 +1294,7 @@ return [ndvi]
     
     <p>Scripts in Copernicus Browser are passed to Sentinel Hub service using a “GET request,” which is limited in the number of characters, depending on the browser used, between 1,000 and 4,000.</p> <p>But there is an easy way to work around this:</p>
 
-1. Upload your script to a publicly accessible website, such as GitHub, like we do in the Custom Script repository. For example, <a href="https://raw.githubusercontent.com/sentinel-hub/custom-scripts/master/sentinel-2/lai/script.js" target="_blank">LAI script.</a><br>
+1. Upload your script to a publicly accessible website, for example GitHub, like we do in the Custom Script repository. E.g. [LAI script](https://raw.githubusercontent.com/sentinel-hub/custom-scripts/master/sentinel-2/lai/script.js).<br>
 2. Select “Use URL” and paste the URL to the script in the “Script URL” field.<br>
 ![](FAQ_images/Handlescripts.png)
 3. Click the “Refresh Evalscript” button.
@@ -1302,7 +1313,8 @@ return [ndvi]
     ![](FAQ_images/ObserveScript.png)
     <p>After the appropriate EO product is chosen, click the button “Copy script to editor” [4] to tweak the script [5]. After setting the custom script [6] you can immediately inspect the changes in the preview window without saving the Layer.</p>
     ![](FAQ_images/CopyScripy.png)
-    <p>You can also choose different EO Products [7] under “Data processing settings”.Clicking the “Undo” link will reset the latest custom script changes in the layer.</p>
+    <p>You can also choose different EO Products [7] under “Data processing settings”.</p>
+    <p>Clicking the “Undo” link will reset the latest custom script changes in the layer.</p>
 </details>
 
 <details id="how-to-write-complex-custom-script-algorithms">
@@ -1496,7 +1508,7 @@ function setup() {
 
 function evaluatePixel(sample) {
   let ndvi = (sample.B08 - sample.B04) / (sample.B08 + sample.B04);
-  return [ndvi];
+  return [ndvi]
 }
 
 ```
@@ -1509,7 +1521,7 @@ https://sh.dataspace.copernicus.eu/ogc/wms/<INSTANCE_ID>?service=WMS&request=Get
 
 ```
     
-    <p>We suggest also checking the FAQ about details of internal calculation.</p>
+    <p>We suggest also checking the FAQ about [details of internal calculation](#how-are-the-values-calculated-within-sentinel-hub).</p>
 </details>
 
 
@@ -1521,7 +1533,7 @@ https://sh.dataspace.copernicus.eu/ogc/wms/<INSTANCE_ID>?service=WMS&request=Get
 * format=image/png (note that PNGs are larger than JPGs, which might affect download speed)
 * custom script output needs to have 4 channels, fourth one being alpha, e.g. "return[1,0,0,0.5]" for semi-transparent red pixel or "return[0,0,0,0]" for full transparency
   
-E.g. if one wants to have a [Hollstein's cloud overview layer](https://custom-scripts.sentinel-hub.com/sentinel-2/hollstein/){target="_blank"} shown in a way, that everything except clouds is transparent, she just needs to change
+E.g. if one wants to have a [Hollstein's cloud overview layer](https://custom-scripts.sentinel-hub.com/sentinel-2/hollstein/){target="_blank"} shown in a way, that everything except clouds is transparent, you need to change
     
 ```javascript	
 
@@ -1560,7 +1572,7 @@ let SNOW   = [1.0, 0.8, 0.4, 1];
 <details id="how-to-get-original-reflectance-data-from-the-satellite">
     <summary onclick="handleQuestionClick('how-to-get-original-reflectance-data-from-the-satellite')">How can I get original reflectance data from the satellite?</summary>
     
-    <p>REFLECTANCE is the physical property of surfaces, equivalent to the ratio of reflected light to incident light ([source](https://usa.flos.com/glossary){target="_blank"}), with typical values ranging from 0-1. It requires a 32-bit TIFF floating format. To get original reflectance data from the satellite, use the [advanced evalscript](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Evalscript/V3.html#sampletype){target="_blank"} and set sampleType to FLOAT32. See the evalscript example for a single grayscale band below:</p>
+    <p>**REFLECTANCE** is the physical property of surfaces, equivalent to the ratio of reflected light to incident light ([source](https://usa.flos.com/glossary){target="_blank"}), with typical values ranging from 0-1. It requires a 32-bit TIFF floating format. To get original reflectance data from the satellite, use the [advanced evalscript](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Evalscript/V3.html#sampletype){target="_blank"} and set sampleType to FLOAT32. See the evalscript example for a single grayscale band below:</p>
     
 ```javascript
 
@@ -1577,7 +1589,7 @@ function setup() {
   };
 }
 function evaluatePixel(samples){
-    return [samples.B04];
+    return [samples.B04]
 }
 
 ```	
@@ -1588,7 +1600,7 @@ function evaluatePixel(samples){
         <li>Request the same resolution as in the original data (note that different bands of the same satellite can have different resolutions. To check the resolutions for each band, see our [data documentation](https://documentation.dataspace.copernicus.eu/Data.html){target="_blank"}).</li>
     </ul>
     
-    <p>We suggest also checking the FAQ about how the values are calculated and returned in Sentinel Hub.</p>
+    <p>We suggest also checking the FAQ about [how the values are calculated and returned in Sentinel Hub](#how-are-the-values-calculated-within-sentinel-hub).</p>
 </details>
 
 <details id="how-to-find-the-image-acquisition-date">
@@ -1596,21 +1608,21 @@ function evaluatePixel(samples){
     
     <p>There are several options, depending on what you would like to do.</p>
     
-    <p>OGC services:</p>
+<p>**OGC services**</p>
 
-1. You can use the WFS service with the same parameters as used in your WMS request (e.g. date, cloud coverage). You will get a list of features representing scenes fitting the criteria.
+1. You can use the **WFS service** with the same parameters as used in your **WMS request** (e.g. date, cloud coverage). You will get a list of features representing scenes fitting the criteria.
 2. You can configure the layer to show acquisition dates on images returned from WMS service. Go to the layer of your choice and follow the steps:
    * Click the “Advanced” option in the Layer tab to enter advanced parameters dialogue.
    * (optional) You can turn on Help by clicking on “?” top right.
    * Add “additionalData” node with type “Date”.
-   * Click Save in Advanced parameters dialogue.
-   * Click Save Layer and layer’s tab.
+   * Click **Save** in Advanced parameters dialogue.
+   * Click **Save Layer** and layer’s tab.
     
 ![](FAQ_images/OGC_service.png)
 
-    <p>Catalog API:</p>
+<p>**Catalog API**</p>
 
-1. Make a request to Catalog API where you set a distinct parameter to date along with setting bounding box, timespan and collection for which you want to get the acquisition dates (see [example](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Catalog/Examples.html#search-with-distinct){target="_blank"}).
+1. Make a request to Catalog API where you set a <code>distinct</code> parameter to date along with setting bounding box, timespan and collection for which you want to get the acquisition dates (see [example](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Catalog/Examples.html#search-with-distinct){target="_blank"}).
 
 </details>
 
@@ -1637,16 +1649,15 @@ return [viewZenithMean / 80];
 <details id="how-to-create-eo-products">
     <summary onclick="handleQuestionClick('how-to-create-eo-products')">How can I create EO products?</summary>
     
-    <p>You can easily create a new EO product in [Configuration Utility](https://shapps.dataspace.copernicus.eu/dashboard/#/configurations){target="_blank"}.</p>
-    
+    You can easily create a new EO product in [Configuration Utility](https://shapps.dataspace.copernicus.eu/dashboard/#/configurations){target="_blank"}.<br><br>
     1. Create a new configuration or open an existing one.<br>
     2. Click on “Add new layer”.<br>
     3. Enter the title of the layer.<br>
     4. Click the “pencil icon” next to the **Data Processing** option to select a predefined product or enter your processing script.<br>
    ![](FAQ_images/Eoproducts1.png)
     5. Choose from the available Base Products.<br>
-    6. Click on the selected product under Visualization Options and the “Copy Script to Editor” button.<br>
-    7. Edit the selected base script in the Custom script editor and click the “Set Custom Script” button when you are done.<br>
+    6. Click on the selected product under **Visualization Options** and the “Copy Script to Editor” button.<br>
+    7. Edit the selected base script in the **Custom script editor** and click the “Set Custom Script” button when you are done.<br>
     8. Click “Save” under the newly added layer to complete the creation of a new layer.<br>
     9.  The newly added layer will appear in the list of layers under your configuration.<br>
    ![](FAQ_images/Eoproducts2.png)
@@ -1661,7 +1672,7 @@ return [viewZenithMean / 80];
 
     ![](FAQ_images/ViewNDVI1.png)
     
-    <p>You can create a new NDVI layer yourself with custom modifications in [Configuration Utility](https://shapps.dataspace.copernicus.eu/dashboard/#/configurations){target="_blank"}, and view it in Copernicus Browser after logging in with your credentials. Read more about creating a new layer.</p>
+    <p>You can create a new NDVI layer yourself with custom modifications in [Configuration Utility](https://shapps.dataspace.copernicus.eu/dashboard/#/configurations){target="_blank"}, and view it in Copernicus Browser after logging in with your credentials. Read more about [creating a new layer](#how-to-create-eo-products).</p>
 
     ![](FAQ_images/ViewNDVI2.png)
     
