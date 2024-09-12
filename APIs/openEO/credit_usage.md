@@ -22,10 +22,11 @@ Usage metrics shown in the OpenEO Web Editor for an example batch job:
 * 13,400,773 mb-seconds corresponds to 3.64 GB hours or 3.64 credits 
 * 5099 CPU seconds corresponds to 1.4 CPU hour which translates to 2.12 credits
   
-Summing this up, we arrive at 5.76 credits. In the current free tier, you receive 10000 credits, which amounts to quite a few of jobs like this! 
+Summing this up, we arrive at 5.76 credits. In the current free tier, you receive 10 000 credits(¹), which amounts to quite a few of jobs like this! 
 It is important to note however that resource consumption (CPU and memory in this case) is not fixed over time because the performance characteristics of a particular cloud tends to fluctuate depending on overall load. 
 Cloud providers do try to avoid this, but in general only manage to do so within the limits of a given SLA.
 
+*(¹)Temporary Boost of monthly openEO Credits to 10 000. [Read our news item](https://dataspace.copernicus.eu/news/2024-9-3-temporary-boost-monthly-openeo-credits-10000-granted-user) published on September 3, 2024.*
 
 ## Estimating resource usage
 Often you want to know up front what kind of costs you will incur by using opeEO, especially when generating larger results or running the same job at fixed times. 
