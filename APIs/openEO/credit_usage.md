@@ -1,6 +1,8 @@
 # Credit Usage
-To access openEO functionalities, users are required to have a subscription. 
-Initially, users are provided with a set of free credits, enabling them to explore the capabilities of openEO. 
+
+To access openEO functionalities, users are required to have a CDSE login. 
+The API is a public service which can be used free of charge, but is backed by a limited amount of cloud resources.
+To fairly distribute the free cloud resources among users, each user is allowed to use a fixed amount of 'credits' on a monthly basis.
 Additional information on locating your credits or requesting more can be found on the [openEO Algorithm Plaza](../../Applications/AlgorithmPlaza.qmd) page.
 
 Currently, credits can be deducted based on:
@@ -10,7 +12,8 @@ Currently, credits can be deducted based on:
 * Storage (GB/day)
 * Data access to specific layers (e.g. Sentinel Hub or commercial)
 * Usage of services contributed by third parties, through an 'added value' cost (e.g. per hectare)
-
+* Usage of synchronous requests, which currently have a fixed cost of 6 credits per request.
+* Startup & storage cost of batch jobs, which is currently 2 credits.
 
 For example, let's say we compute a Sentinel-2 based NDWI for an area of 10 hectares to a series of GeoTiffs (one per observation). 
 When running this example, the batch job reports the usage, which can be seen in the [OpenEO Web Editor](https://openeo.dataspace.copernicus.eu/) by clicking the ![](./_images/batch_info.png) button for an individual batch job:
