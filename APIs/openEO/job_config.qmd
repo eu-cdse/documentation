@@ -15,6 +15,7 @@ that default settings are subject to change by the backend whenever needed.
 job_options = {
     "executor-memory": "2G",
     "executor-memoryOverhead": "1800m",
+    "python-memory": None, #the default is in fact to derive this from executor-memoryOverhead
     "executor-cores": 1,
     "task-cpus": 1,
     "max-executors": 20,
@@ -31,7 +32,8 @@ This is a short overview of the various options:
 
 - `executor-memory`: memory assigned to your workers, for the JVM that executes most predefined processes
 - `executor-memoryOverhead`: memory assigned on top of the JVM, for instance to run UDF's
-- `executor-cores`: number of CPUs per worker (executor). The number of parallel tasks is executor-cores/task-cpus
+- `python-memory`: memory assigned to Python UDF's, sar_backscatter or Sentinel-3 data loading.
+- `executor-cores`: number of CPUs per worker (executor). The number of parallel tasks is executor-cores/task-cpus. We recommend to set it to the same value as task-cpu, or you might see GDAL reading errors.
 - `task-cpus`: CPUs assigned to a single task. UDF's using libraries like Tensorflow can benefit from further parallellization on the level of individual tasks.
 - `executor-request-cores`: this settings is only relevant for Kubernetes based backends, allows to overcommit CPU
 - `max-executors`: the maximum number of workers assigned to your job. Maximum number of parallel tasks is `max-executors*executor-cores/task-cpus`. Increasing this can inflate your costs, while not necessarily improving performance!
@@ -42,8 +44,9 @@ This is a short overview of the various options:
 
 ### Custom UDF dependencies
 
-User defined functions often depend on (specific versions of) libraries or require small auxiliary data files. The UDF specifications do not yet
-define a standardized manner to provide this other than having the ability to select from a predefined set of 'runtimes' that then again have a predefined configuration.
+User defined functions often depend on (specific versions of) libraries or require small auxiliary data files. 
+
+#### Using custom job option
 
 We solve this via the `udf-dependency-archives` job option, that allows to specify a list of zip files that should be included in the working directory of the UDF.
 
@@ -61,6 +64,12 @@ Known limitations:
 - Your dependencies need to be compatible with the Python version of the backend, currently 3.8.
 - Your dependencies need to be compatible with the OS of the backend, currently AlmaLinux 8.
 - The backend has a limited set of Python dependencies that are preloaded, and cannot be changed, such as numpy.
+
+#### Using inline dependency specification
+
+A new method to define dependencies is described [here](https://open-eo.github.io/openeo-python-client/udf.html#standard-for-declaring-python-udf-dependencies).
+It is more convenient, but still in beta phase. Especially larger packages might be problematic.
+
 
 ## Validity of signed URLs in batch job results
 
