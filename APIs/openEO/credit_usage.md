@@ -42,6 +42,6 @@ For instance, for a query at a 10m resolution, begin with a 10ha area and simply
 As shown above, this will usually incur a cost of only a few cents. 
 In the worst case, it might cost a few euros, but this would also indicate that the job takes multiple hours to run.
 
-Once an initial cost for a small area is established, it is possible to extrapolate to a larger area. If simple linear extrapolation shows that a larger job is affordable, proceed with a job on larger areas, like 50ha or up to 100x100km. This will show how the job scales and the associated cost. If at any point the cost appears unreasonable, do not hesitate to reach out on our [forum](https://forum.dataspace.copernicus.eu/) or [helpdesk](https://helpcenter.dataspace.copernicus.eu/hc/en-gb)!
+Once an initial cost for a small area is established, it is possible to extrapolate to a larger area. If simple linear extrapolation shows that a larger job is affordable, proceed with a job on larger areas, like 50ha or up to 100x100km. This will show how the job scales and the associated cost. If at any point the cost appears unreasonable, do not hesitate to reach out on our [forum](https://forum.dataspace.copernicus.eu/) or [help desk](https://helpcenter.dataspace.copernicus.eu/hc/en-gb)!
 
 For more comprehensive guidelines on large-scale processing, please refer to our documentation [here](./large_scale_processing.qmd).
