@@ -24,8 +24,9 @@ Usage metrics are shown in the OpenEO Web Editor for an example batch job:
 
 * 13,400,773 mb-seconds corresponds to 3.64 GB hours or 3.64 credits 
 * 5099 CPU seconds corresponds to 1.4 CPU hour, which translates to 2.12 credits
+* A fixed cost of 2 credits is charged per batch job for management overhead and storage.
   
-Summing this up, the total comes to 5.76 credits. With the current free tier offering 10,000 credits(¹), quite a few jobs like this can be run! 
+Summing this up, the total comes to 7.76 credits. With the current free tier offering 10,000 credits(¹), quite a few jobs like this can be run! 
 However, it is important to note that resource consumption (CPU and memory in this case) is not fixed over time. Performance characteristics of a particular cloud can fluctuate depending on the overall load.
 
 Cloud providers try to avoid this, but generally, they only manage to do so within the limits of a given SLA.
