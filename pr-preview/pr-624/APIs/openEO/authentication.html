@@ -1299,7 +1299,7 @@ Tip
 </div>
 <p>Once authentication is complete, the Python script will receive the necessary authentication tokens and print</p>
 <pre><code>Authorized successfully.</code></pre></li>
-<li><p>Other times, when valid (refresh) tokens are still present on the system, the openEO Python client library will automatically use these tokens and bypass the manual login process. The following will be visible immediately:</p>
+<li><p>Other times, when valid (refresh) tokens are still present on the system, the openEO Python client library will automatically use these tokens. As no manual login interaction is involved here, the following will be printed immediately on successful authentication:</p>
 <pre><code>Authenticated using refresh token.</code></pre></li>
 </ul>
 <p>In any case, <code>connection</code> is now authenticated and ready to make download or processing requests.</p>
@@ -1327,21 +1327,21 @@ Note
 <section id="refresh-tokens" class="level3">
 <h3 class="anchored" data-anchor-id="refresh-tokens">Refresh Tokens</h3>
 <p>Refresh tokens are long-lived tokens (order of weeks or months) that can be used to obtain new access tokens without the need for the user to re-authenticate.</p>
-<p>As mentioned in <a href="#sec-typical-authentication-flow">Section&nbsp;1</a>, <a href="https://open-eo.github.io/openeo-python-client/api.html#openeo.rest.connection.Connection.authenticate_oidc" target="_blank"><code>Connection.authenticate_oidc()</code></a> will require user to go through an interactive login flow in a browser, when there is no (valid) refresh token available. But when the openEO Python client library can find a valid refresh token on this system, this will be a non-interactive operation. This makes it a viable option for non-interactive and machine-to-machine authentication, if it is feasible to produce a new refresh token once in a while using an interactive login flow.</p>
+<p>As mentioned in <a href="#sec-typical-authentication-flow">Section&nbsp;1</a>, <a href="https://open-eo.github.io/openeo-python-client/api.html#openeo.rest.connection.Connection.authenticate_oidc" target="_blank"><code>Connection.authenticate_oidc()</code></a> will require the user to go through an interactive login flow in a browser, when there is no (valid) refresh token available. But when the openEO Python client library can find a valid refresh token on their system, this will be a non-interactive operation. This makes it a viable option for non-interactive and machine-to-machine authentication, if it is feasible to produce a new refresh token once in a while using an interactive login flow.</p>
 <p>To get this working, there are basically two aspects to cover (both of which have built-in support in the openEO Python client library):</p>
 <ol type="1">
 <li><p>Obtain and store a new refresh token.</p>
 <p>There are several authentication methods on the <code>Connection</code> object (e.g.&nbsp;the often used <code>authenticate_oidc()</code> method) and most these have an option <code>store_refresh_token</code> to enable storing of the refresh token obtained during the authentication process. Note that this is enabled by default in <code>authenticate_oidc()</code>, but not in <code>authenticate_oidc_device()</code>.</p>
-<p>The refresh token is stored in a private JSON file, by default, in a folder within the personal data directory (typically determined by environment variables such as <code>XDG_DATA_HOME</code> on Linux or <code>APPDATA</code> on Windows). The folder can also be configured directly using the <code>OPENEO_CONFIG_HOME</code> environment variable. The actual location can be verified with the <a href="https://open-eo.github.io/openeo-python-client/auth.html#auth-config-files-and-openeo-auth-helper-tool" target="_blank"><code>openeo-auth</code> command line tool</a>.</p></li>
+<p>The refresh token is stored in a private JSON file, by default, in a folder within the user’s personal data directory (typically determined by environment variables such as <code>XDG_DATA_HOME</code> on Linux or <code>APPDATA</code> on Windows). The folder can also be configured directly using the <code>OPENEO_CONFIG_HOME</code> environment variable. The actual location can be verified with the <a href="https://open-eo.github.io/openeo-python-client/auth.html#auth-config-files-and-openeo-auth-helper-tool" target="_blank"><code>openeo-auth</code> command line tool</a>.</p></li>
 <li><p>Load and use the refresh token</p>
 <p>When a valid refresh token is stored in a location accessible to the openEO Python client library, the user can authenticate directly with:</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>connection.authenticate_oidc_refresh_token()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Alternatively:</p>
 <ul>
-<li><p>If a user wants to keep the logic generic, the following can also be used</p>
+<li><p>If a user wants to keep their authentication logic generic, the following can also be used</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>connection.authenticate_oidc()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>This method will first try to use a refresh token if available, and fall back on other methods (e.g.&nbsp;device code flow) otherwise.</p></li>
-<li><p>If a user manages the storage and loading of the refresh token, it can be explicitly passed:</p>
+<li><p>If a user wants to manage their refresh token themselves, it can be passed explicitly:</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>connection.authenticate_oidc_refresh_token(</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    refresh_token<span class="op">=</span>your_refresh_token,</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
@@ -1384,19 +1384,19 @@ Warning
 <p>The use of client credentials in openEO is an experimental feature. It is not widely supported across openEO backends, and the setup procedure is not yet fully standardized or streamlined.</p>
 </div>
 </div>
-<p>The Sentinel Hub service in the Copernicus Data Space Ecosystem has a <a href="https://shapps.dataspace.copernicus.eu/dashboard">dashboard web app</a> and under the account settings there is a self-service feature to <a href="../../APIs/SentinelHub/Overview/Authentication.html#registering-oauth-client" target="_blank">register your own OAuth client</a>. The client id and client secret obtain here can also be used for the client credentials flow with the openEO service of Copernicus Data Space Ecosystem.</p>
+<p>The Sentinel Hub service in the Copernicus Data Space Ecosystem has a <a href="https://shapps.dataspace.copernicus.eu/dashboard">dashboard web app</a> and under the account settings there is a self-service feature to <a href="../../APIs/SentinelHub/Overview/Authentication.html#registering-oauth-client" target="_blank">register your own OAuth client</a>. The client id and client secret obtained here can also be used for the client credentials flow with the openEO service of Copernicus Data Space Ecosystem.</p>
 </section>
 <section id="caveats-and-considerations" class="level4">
 <h4 class="anchored" data-anchor-id="caveats-and-considerations">Caveats And Considerations</h4>
 <ul>
-<li><p>Treat the client secret securely, like a password. Take extra care to not leak it accidentally. For example, the simplicity of the <code>authenticate_oidc_client_credentials()</code> example snippet above, might be tempting to hard-code the client secret in scripts or notebooks, potentially leading to its permanent storage in version control repositories.</p>
+<li><p>Treat the client secret securely, like a password. Take extra care to not leak it accidentally. For example, given the simplicity of the <code>authenticate_oidc_client_credentials()</code> example snippet above, it might be tempting to hard-code the client secret in scripts or notebooks, potentially leading to its permanent storage in version control repositories.</p>
 <p>Instead, read the client secret from a secure location (e.g.&nbsp;a private file outside the reach of the version control repositories), or leverage environment variables (e.g as directly <a href="https://open-eo.github.io/openeo-python-client/auth.html#oidc-client-credentials-using-environment-variables" target="_blank">supported by the openEO Python client library</a>).</p></li>
-<li><p>The client credentials only identify OAuth client, not a personal user account.</p>
+<li><p>The client credentials only identify an OAuth client, not a personal user account.</p>
 <ul>
-<li>This means that openEO resources such as openEO batch jobs, their results, UDP’s, etc from one identity are not available to the other. For example, batch jobs created with client credentials cannot be listed when using a personal account.</li>
+<li>This means that openEO resources such as openEO batch jobs, their results, UDP’s, etc from one identity are not available to the other. For example, batch jobs originally created with client credentials cannot be listed when using a personal account.</li>
 <li>Likewise, the balances of processing credits are separate. However, it is possible to link the balance of the client credentials account to a personal account. To enable this, contact support and provide the client ID and user ID.</li>
 </ul></li>
-<li><p>The client credentials flow is not supported on the <a href="https://openeo.dataspace.copernicus.eu/">Copernicus Data Space Ecosystem openEO web editor</a>. As mentioned above, this practically means that tracking the progress and status of batch jobs created with client credentials is not possible. However, it is still possible to approximate the batch job overview of the web editor with a Jupyter Notebook using the openEO Python client library.</p></li>
+<li><p>The client credentials flow is not supported on the <a href="https://openeo.dataspace.copernicus.eu/">Copernicus Data Space Ecosystem openEO web editor</a>. As mentioned above, this practically means that it can not be used to track the progress and status of batch jobs created with client credentials. However, it is still possible to approximate the batch job overview of the web editor with a Jupyter Notebook using the openEO Python client library.</p></li>
 </ul>
 
 
