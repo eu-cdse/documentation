@@ -169,63 +169,12 @@ refresh token storage with a custom implementation through the
 
 ### Client Credentials Flow
 
-
-OpenID Connect also supports the so-called "client credentials flow",
-which is a non-interactive flow, based on a client id and a secret,
-that is suitable for machine-to-machine authentication.
-
-The openEO Python client library has built-in support for this flow,
-with the ['authenticate_oidc_client_credentials()` method](https://open-eo.github.io/openeo-python-client/auth.html#oidc-authentication-client-credentials-flow){target="_blank"}:
-
-```python
-connection.authenticate_oidc_client_credentials(
-    client_id=...,
-    client_secret=...,  # Note: Do not hard-code your secret here!
-)
-```
-
-#### Obtaining Client Credentials
-
-::: {.callout-warning}
-The use of client credentials in openEO is an experimental feature. 
-It is not widely supported across openEO backends, 
-and the setup procedure is not yet fully standardized or streamlined.
-:::
-
-The Sentinel Hub service in the Copernicus Data Space Ecosystem
-has a [dashboard web app](https://shapps.dataspace.copernicus.eu/dashboard)
-and under the account settings there is a self-service feature to
-[register your own OAuth client](../SentinelHub/Overview/Authentication.qmd#registering-oauth-client){target="_blank"}.
-The client id and client secret obtained here can also be used
-for the client credentials flow with the openEO service of Copernicus Data Space Ecosystem.
-
-#### Caveats And Considerations
-
--   Treat the client secret securely, like a password.
-    Take extra care to not leak it accidentally.
-    For example, given the simplicity of the `authenticate_oidc_client_credentials()` example snippet above, 
-    it might be tempting to hard-code the client secret in scripts or notebooks, 
-    potentially leading to its permanent storage in version control repositories.
-
-    Instead, read the client secret from a secure location
-    (e.g. a private file outside the reach of the version control repositories),
-    or leverage environment variables (e.g as directly [supported by the openEO Python client library](https://open-eo.github.io/openeo-python-client/auth.html#oidc-client-credentials-using-environment-variables){target="_blank"}).
--   The client credentials only identify an OAuth client, not a personal user account.
-
-    -   This means that openEO resources such as openEO batch jobs, their results, UDP's, etc
-        from one identity are not available to the other.
-        For example, batch jobs originally created with client credentials 
-        cannot be listed when using a personal account.
-    -   Likewise, the balances of processing credits are separate.
-        However, it is possible to link the balance of the client credentials account to a personal account. 
-        To enable this, contact support and provide the client ID and user ID.
-
--   The client credentials flow is not supported on the
-    [Copernicus Data Space Ecosystem openEO web editor](https://openeo.dataspace.copernicus.eu/).
-    As mentioned above, 
-    this practically means that it can not be used to track the progress and 
-    status of batch jobs created with client credentials.
-    However, it is still possible to approximate the batch job overview of the web editor
-    with a Jupyter Notebook using the openEO Python client library.
+OpenID Connect also provides the so-called "client credentials flow",
+which is a *non-interactive* flow, based on a static client id and a client secret,
+making it suitable for machine-to-machine authentication.
 
 
+See the documentation page on [client credentials](./authentication/client_credentials.qmd)
+for more information on client credentials usage
+in the context of the Copernicus Data Space Ecosystem,
+how to obtain them, pitfalls, and other considerations.
