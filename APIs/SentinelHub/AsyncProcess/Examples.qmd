@@ -101,3 +101,400 @@ request_id = response.json()['id']
 response = oauth.get(url=f"{url}/{request_id}")
 response.json()
 ```
+
+### Cloudless mosaic example
+
+``` python
+url = 'https://sh.dataspace.copernicus.eu/api/v1/async/process'
+
+evalscript = """
+//VERSION=3
+
+function setup() {
+  return {
+    input: [{
+      bands: [
+        "B04",
+        "B03",
+        "B02",
+        "SCL"
+      ]
+    }],
+    output: { bands: 3, sampleType: "UINT16" },
+    mosaicking: "ORBIT"
+  }
+}
+function preProcessScenes(collections) {
+  collections.scenes.orbits = collections.scenes.orbits.filter(function (orbit) {
+    var orbitDateFrom = new Date(orbit.dateFrom)
+    return orbitDateFrom.getTime() >= (collections.to.getTime() - 3 * 31 * 24 * 3600 * 1000);
+  })
+  return collections
+}
+function getValue(values) {
+  values.sort(function (a, b) { return a - b; });
+  return getFirstQuartile(values);
+}
+
+function getFirstQuartile(sortedValues) {
+  var index = Math.floor(sortedValues.length / 4);
+  return sortedValues[index];
+}
+function getDarkestPixel(sortedValues) {
+  return sortedValues[0]; // darkest pixel
+}
+function validate(samples) {
+  var scl = samples.SCL;
+
+  if (scl === 3) { // SC_CLOUD_SHADOW
+    return false;
+  } else if (scl === 9) { // SC_CLOUD_HIGH_PROBA
+    return false;
+  } else if (scl === 8) { // SC_CLOUD_MEDIUM_PROBA
+    return false;
+  } else if (scl === 7) { // SC_CLOUD_LOW_PROBA / UNCLASSIFIED
+    // return false;
+  } else if (scl === 10) { // SC_THIN_CIRRUS
+    return false;
+  } else if (scl === 11) { // SC_SNOW_ICE
+    return false;
+  } else if (scl === 1) { // SC_SATURATED_DEFECTIVE
+    return false;
+  } else if (scl === 2) { // SC_DARK_FEATURE_SHADOW
+    // return false;
+  }
+  return true;
+}
+
+function evaluatePixel(samples, scenes) {
+  var clo_b02 = []; var clo_b03 = []; var clo_b04 = [];
+  var clo_b02_invalid = []; var clo_b03_invalid = []; var clo_b04_invalid = [];
+  var a = 0; var a_invalid = 0;
+
+  for (var i = 0; i < samples.length; i++) {
+    var sample = samples[i];
+
+    if (sample.B02 > 0 && sample.B03 > 0 && sample.B04 > 0) {
+      var isValid = validate(sample);
+
+      if (isValid) {
+        clo_b02[a] = sample.B02;
+        clo_b03[a] = sample.B03;
+        clo_b04[a] = sample.B04;
+        a = a + 1;
+      } else {
+        clo_b02_invalid[a_invalid] = sample.B02;
+        clo_b03_invalid[a_invalid] = sample.B03;
+        clo_b04_invalid[a_invalid] = sample.B04;
+        a_invalid = a_invalid + 1;
+      }
+    }
+  }
+
+  var rValue;
+  var gValue;
+  var bValue;
+  if (a > 0) {
+    rValue = getValue(clo_b04);
+    gValue = getValue(clo_b03);
+    bValue = getValue(clo_b02);
+  } else if (a_invalid > 0) {
+    rValue = getValue(clo_b04_invalid);
+    gValue = getValue(clo_b03_invalid);
+    bValue = getValue(clo_b02_invalid);
+  } else {
+    rValue = 0;
+    gValue = 0;
+    bValue = 0;
+  }
+  return [rValue * 10000,
+  gValue * 10000,
+  bValue * 10000]
+}
+
+"""
+
+payload = {
+  "input" : {
+    "bounds" : {
+      "bbox" : [
+        11.193762,
+        44.684277,
+        18.622922,
+        47.872144
+      ],
+    },
+    "data" : [ {
+      "dataFilter" : {
+        "timeRange" : {
+          "from" : "2019-06-01T00:00:00Z",
+          "to" : "2019-10-31T23:59:59Z"
+        },
+        "mosaickingOrder": "leastCC"
+      },
+      "type" : "S2L2A"
+    } ]
+  },
+  "output" : {
+    "width" : 5000,
+    "height" : 5000,
+    "responses" : [ {
+      "identifier" : "default",
+      "format" : {
+        "type" : "image/tiff"
+      }
+    } ],
+    "delivery" : {
+      "s3" : {
+        "url": "s3://<your-bucket>/<path>",
+        "accessKey": "<your-bucket-access-key>",
+        "secretAccessKey": "<your-bucket-access-key-secret>"
+      }
+    }
+  },
+  "evalscript" : evalscript
+}
+
+headers = {
+  'Content-Type': 'application/json'
+}
+
+response = oauth.post(url, headers=headers, json=payload)
+response.json()
+```
+
+### Large true color example
+
+``` python
+url = 'https://sh.dataspace.copernicus.eu/api/v1/async/process'
+
+evalscript = """
+//VERSION=3
+
+function setup() {
+  return {
+    input: ["B02", "B03", "B04"],
+    output: {
+      bands: 3,
+      sampleType: "AUTO" // default value - scales the output values from [0,1] to [0,255].
+     }
+  }
+}
+
+function evaluatePixel(sample) {
+  return [2.5 * sample.B04, 2.5 * sample.B03, 2.5 * sample.B02]
+}
+"""
+
+payload = {
+  "input" : {
+    "bounds" : {
+      "bbox" : [
+        11.193762,
+        44.684277,
+        18.622922,
+        47.872144
+      ],
+    },
+    "data" : [ {
+      "dataFilter" : {
+        "timeRange" : {
+          "from" : "2022-10-01T00:00:00Z",
+          "to" : "2022-10-31T00:00:00Z"
+        },
+      },
+      "type" : "S2L1C"
+    } ]
+  },
+  "output" : {
+    "width" : 10000,
+    "height" : 10000,
+    "responses" : [ {
+      "identifier" : "default",
+      "format" : {
+        "type" : "image/tiff"
+      }
+    } ],
+    "delivery" : {
+      "s3" : {
+        "url": "s3://<your-bucket>/<path>",
+        "accessKey": "<your-bucket-access-key>",
+        "secretAccessKey": "<your-bucket-access-key-secret>"
+      }
+    }
+  },
+  "evalscript" : evalscript
+}
+
+headers = {
+  'Content-Type': 'application/json'
+}
+
+response = oauth.post(url, headers=headers, json=payload)
+response.json()
+```
+
+### Median NDVI over three years, which excludes CLM
+
+``` python
+url = 'https://sh.dataspace.copernicus.eu/api/v1/async/process'
+
+evalscript = """
+//VERSION=3
+
+function setup() {
+    return {
+      input: [{
+        bands: ["B08", "B04", "B03", "B02", "CLM", "SCL"],  //Requests required bands, s2cloudless mask and scene classification layer
+        units: "DN"
+      }],
+      output: {
+        bands: 4,
+        sampleType: SampleType.UINT16
+      },
+      mosaicking: "ORBIT"
+    };
+  }
+
+  function filterScenes (scenes, inputMetadata) {
+    return scenes.filter(function (scene) {
+      return scene.date.getTime()>=(inputMetadata.to.getTime()-12*30*24*3600*1000); //Defines the time range, e.g. from 1st June until 31st October counts 5 months with 30 days, 24 hours...
+    });
+  }
+
+  function getValue(values) {
+    values.sort( function(a,b) {return a - b;} );
+    return getMedian(values);
+  }
+
+  function getMedian(sortedValues) {
+    var index = Math.floor(sortedValues.length / 2);
+    return sortedValues[index];
+  }
+  function getDarkestPixel(sortedValues) {
+    return sortedValues[0]; // darkest pixel
+  }
+
+  function validate (samples) {
+    var scl = samples.SCL;
+    var clm = samples.CLM;
+
+    if (clm === 1 || clm === 255) {
+          return false;
+    } else if (scl === 1) { // SC_SATURATED_DEFECTIVE
+          return false;
+    } else if (scl === 3) { // SC_CLOUD_SHADOW
+          return false;
+    } else if (scl === 7) { // SC_CLOUD_LOW_PROBA
+          return false;
+    } else if (scl === 8) { // SC_CLOUD_MEDIUM_PROBA
+          return false;
+    } else if (scl === 9) { // SC_CLOUD_HIGH_PROBA
+          return false;
+    } else if (scl === 10) { // SC_THIN_CIRRUS
+          return false;
+    } else if (scl === 11) { // SC_SNOW_ICE
+      return false;
+    }  else {
+    return true;
+    }
+  }
+
+  function evaluatePixel(samples, scenes) {
+    var clo_b02 = []; var clo_b03 = []; var clo_b04 = []; var clo_b08 = [];
+    var clo_b02_invalid = []; var clo_b03_invalid = []; var clo_b04_invalid = []; var clo_b08_invalid = [];
+    var a = 0; var a_invalid = 0;
+
+    for (var i = 0; i < samples.length; i++) {
+      var sample = samples[i];
+      if (sample.B02 > 0 && sample.B03 > 0 && sample.B04 > 0 && sample.B08 > 0) {
+        var isValid = validate(sample);
+
+        if (isValid) {
+          clo_b02[a] = sample.B02;
+          clo_b03[a] = sample.B03;
+          clo_b04[a] = sample.B04;
+          clo_b08[a] = sample.B08;
+          a = a + 1;
+        } else {
+          clo_b02_invalid[a_invalid] = sample.B02;
+          clo_b03_invalid[a_invalid] = sample.B03;
+          clo_b04_invalid[a_invalid] = sample.B04;
+          clo_b08_invalid[a_invalid] = sample.B08;
+          a_invalid = a_invalid + 1;
+        }
+      }
+    }
+
+    var rValue;
+    var gValue;
+    var bValue;
+    var nirValue;
+
+    if (a > 0) {
+      nirValue = getValue(clo_b08);
+      rValue = getValue(clo_b04);
+      gValue = getValue(clo_b03);
+      bValue = getValue(clo_b02);
+    } else if (a_invalid > 0) {
+      nirValue = getValue(clo_b08_invalid);
+      rValue = getValue(clo_b04_invalid);
+      gValue = getValue(clo_b03_invalid);
+      bValue = getValue(clo_b02_invalid);
+    } else {
+      nirValue = 0;
+      rValue = 0;
+      gValue = 0;
+      bValue = 0;
+    }
+    return [nirValue, rValue, gValue, bValue]
+  }
+"""
+
+payload = {
+  "input" : {
+    "bounds" : {
+      "bbox" : [
+        11.193762,
+        44.684277,
+        18.622922,
+        47.872144
+      ],
+    },
+    "data" : [ {
+      "dataFilter" : {
+        "timeRange" : {
+          "from" : "2019-10-01T00:00:00Z",
+          "to" : "2022-10-01T00:00:00Z"
+        },
+      },
+      "type" : "S2L2A"
+    } ]
+  },
+  "output" : {
+    "width" : 5000,
+    "height" : 5000,
+    "responses" : [ {
+      "identifier" : "default",
+      "format" : {
+        "type" : "image/tiff"
+      }
+    } ],
+    "delivery" : {
+      "s3" : {
+        "url": "s3://<your-bucket>/<path>",
+        "accessKey": "<your-bucket-access-key>",
+        "secretAccessKey": "<your-bucket-access-key-secret>"
+      }
+    }
+  },
+  "evalscript" : evalscript
+}
+
+headers = {
+  'Content-Type': 'application/json'
+}
+
+response = oauth.post(url, headers=headers, json=payload)
+response.json()
+```

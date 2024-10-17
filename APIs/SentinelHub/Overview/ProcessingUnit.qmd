@@ -44,19 +44,19 @@ and the calculation rules are summarized in the following tables:
 execution costs.
 
   Surcharge                        Rules for calculation
-  -------------------------------- ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  \*\* Evalscript execution time   Execution of evalscript with duration shorter than 200ms, is covered within the base request. Execution of complex evalscripts (i.e. neural networks, large decision trees, etc.) with duration longer than 200m there is a surcharge of 0.5 PU per each additional started 100ms interval.
+  -------------------------------- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  \*\* Evalscript execution time   Execution of evalscript with duration shorter than 200ms, is covered within the base request. Execution of complex evalscripts (i.e. neural networks, large decision trees, etc.) with duration longer than 200ms there is a surcharge of 0.5 PU per each additional started 100ms interval.
 
 ## Sentinel-1 data processing - applicable to Process API, OGC API, Statistical API
 
 In addition to General data processing rules defined above, the
 following optional multiplicators apply as well:
 
-  Parameter/API                    Quantity for 1 PU   Rules for multiplication factors
-  -------------------------------- ------------------- -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  Orthorectification               N/A                 Requesting orthorectification will result in a multiplication factor of 2 due to additional processing requirements .
-  Radiometric Terrain Correction   N/A                 Requesting radiometric terrain correction will result in a multiplication factor of 2.5 due to additional processing requirements. The orthorectification factor is not additionally applied as it is a prerequisite.
-  Speckle Filtering                N/A                 Requesting speckle filtering will result in a multiplication factor of 2 due to additional processing requirements.
+  Parameter/API                    Rules for multiplication factors
+  -------------------------------- -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Orthorectification               Requesting orthorectification will result in a multiplication factor of 2 due to additional processing requirements .
+  Radiometric Terrain Correction   Requesting radiometric terrain correction will result in a multiplication factor of 2.5 due to additional processing requirements. The orthorectification factor is not additionally applied as it is a prerequisite.
+  Speckle Filtering                Requesting speckle filtering will result in a multiplication factor of 2 due to additional processing requirements.
 
 ## Data querying - applicable to Catalog API, OGC WFS
 
@@ -85,12 +85,29 @@ In addition to this:
 apply with the following exceptions:
 
 -   Minimal cost of a request is 100 PU.
--   Processing with batch processing API will result in a multiplication
-    factor of 1/3. Thus, three times more data can be processed
-    comparing to process API for the same amount of PUs.
+-   When using Batch Processing API, a multiplication factor of 1/3 will
+    be applied to all tiles with a size of at least 10,000 px. Thus, up
+    to three times more data can be processed compared to the Processing
+    API for the same amount of PUs. If the tiling grid contains tiles
+    smaller than 10,000 px, these tiles will be charged at the regular
+    rate (no multiplication factor)
 -   \*\* When data is delivered to a bucket in other region within the
     same system (i.e. Copernicus Data Space Ecosystem, AWS) there is
     additional cost of 0.03 PU per MB of data.
+
+## BatchV2 Processing API
+
+\"General data processing\" and \"Sentinel-1 data processing\" rules
+apply with the following exceptions:
+
+-   Minimal cost of a request is 100 PU.
+-   Processing with batch processing API will result in a multiplication
+    factor of 1/3 (only applies if processed tiles is bigger than 10.000
+    px). Thus, three times more data can be processed comparing to
+    process API for the same amount of PUs.
+-   \*\* When data is delivered to a bucket in other region within the
+    same system (i.e. Copernicus Data Space Ecosystem, AWS) there is
+    additional cost of 0.03 PU per MB of transferred data.
 
 ## Asynchronous Processing API
 
@@ -98,6 +115,12 @@ apply with the following exceptions:
 apply with the following exceptions:
 
 -   Minimal cost of a request is 10 PU.
+-   When using Asynchronous Processing API, a multiplication factor of
+    2/3 will be applied to all requests with an area of at least 10,000
+    px. Thus, up to 1.5 times more data can be processed compared to the
+    Processing API for the same amount of PUs. If the request defines an
+    area smaller than 10,000 px, this request will be charged at the
+    regular rate (no multiplication factor).
 -   When data is delivered to a bucket in other region within the same
     system (i.e. Copernicus Data Space Ecosystem, AWS) there is an
     additional cost of 0.03 PU per MB of data.
