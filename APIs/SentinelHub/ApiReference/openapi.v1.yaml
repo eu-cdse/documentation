@@ -563,6 +563,17 @@ components:
           - PLANET_SCOPE
           - PLANET_SKYSAT
           - MAXAR_WORLDVIEW
+    QuotaTpdiCollectionId:
+      name: collectionId
+      description: Collection ID
+      in: path
+      required: true
+      schema:
+        type: string
+        enum:
+          - AIRBUS_PLEIADES
+          - AIRBUS_SPOT
+          - MAXAR_WORLDVIEW
     DeliveryStatus:
       name: status
       description: Filter deliveries by status. Omit to get all deliveries.
@@ -582,51 +593,6 @@ components:
       in: query
       schema:
         $ref: '#/components/schemas/DeliveryArchiveFormat'
-    ConfigurationDatasetType:
-      name: datasetType
-      description: Dataset type
-      in: path
-      required: true
-      schema:
-        $ref: '#/components/schemas/DatasetType'
-    ConfigurationDataproductId:
-      name: id
-      description: Dataproduct ID
-      in: path
-      required: true
-      schema:
-        type: integer
-        format: int64
-    ConfigurationDatasetId:
-      name: datasetId
-      description: Dataset ID
-      in: path
-      required: true
-      schema:
-        type: string
-    ConfigurationDatasetSourceId:
-      name: id
-      description: Dataset source ID
-      in: path
-      required: true
-      schema:
-        type: integer
-        format: int64
-    WmsInstanceId:
-      name: instanceId
-      description: Instance ID
-      in: path
-      required: true
-      schema:
-        type: string
-        format: uuid
-    WmsLayerId:
-      name: layerId
-      description: Layer ID
-      in: path
-      required: true
-      schema:
-        type: string
   responses:
     '400':
       description: Bad request
@@ -6196,15 +6162,13 @@ components:
         description: Zarr storage specification version 2, Attributes
         url: https://zarr-specs.readthedocs.io/en/latest/v2/v2.0.html#attributes
       readOnly: true
-    TpdiCollectionId:
+    QuotaTpdiCollectionId:
       description: Collection ID
       type: string
       readOnly: true
       enum:
         - AIRBUS_PLEIADES
         - AIRBUS_SPOT
-        - PLANET_SCOPE
-        - PLANET_SKYSAT
         - MAXAR_WORLDVIEW
     NativeSearchQuery:
       oneOf:
@@ -6455,7 +6419,7 @@ components:
       type: object
       properties:
         collectionId:
-          $ref: '#/components/schemas/TpdiCollectionId'
+          $ref: '#/components/schemas/QuotaTpdiCollectionId'
         quotaSqkm:
           type: number
           description: >-
@@ -6464,10 +6428,7 @@ components:
           readOnly: true
         quotaUsed:
           type: number
-          description: >
-            Quota used in square kilometers. Note that for PlanetScope's
-            *Hectares under Management* pricing model this field does not apply
-            and may contain arbitrary values.
+          description: Quota used in square kilometers.
           readOnly: true
     QuotaExceededError:
       allOf:
@@ -6902,6 +6863,31 @@ components:
           externalDocs:
             description: Details on PlanetScope instruments
             url: https://developers.planet.com/docs/data/sensors/
+    AnalysisReadyPlanetScopeDataSpec:
+      type: object
+      required:
+        - dataFilter
+        - type
+        - id
+      properties:
+        dataFilter:
+          allOf:
+            - $ref: '#/components/schemas/PlanetSubscriptionDataFilterBase'
+        type:
+          type: string
+          enum:
+            - analysis_ready_ps
+          description: The Analysis Ready Type to subscribe to.
+        id:
+          type: string
+          enum:
+            - PS_ARD_SR_DAILY
+          description: |
+            The ID of the Analysis Ready type to subscribe to.
+          externalDocs:
+            description: Analysis Ready IDs
+            url: >-
+              https://developers.planet.com/docs/data/analysis-ready-ps/#available-ids
     PlanetDeliveryProvider:
       type: object
       properties:
@@ -7301,234 +7287,6 @@ components:
               minItems: 1
               items:
                 type: string
-    ResolvableDataProduct:
-      type: object
-      properties:
-        value:
-          $ref: '#/components/schemas/DataProduct'
-    DataProduct:
-      type: object
-      properties:
-        '@id':
-          description: Resource URL reference to the data product.
-          type: string
-        id:
-          type: integer
-          description: Identifier
-          format: int64
-        name:
-          type: string
-          description: Data product name.
-        description:
-          type: string
-          description: A description of the data product.
-        evalScript:
-          type: string
-          description: The evalscript of the data product.
-        dataset:
-          $ref: '#/components/schemas/ResourceReference'
-        baseProduct:
-          type: string
-        visualization:
-          type: string
-          description: |
-            Visualization type.
-
-            **Note**: Not present for every data product.
-        scriptVersion:
-          type: integer
-          description: Evalscript version.
-        listed:
-          type: boolean
-          description: If `false` the data product is deprecated.
-    DatasetDescriptor:
-      type: object
-      allOf:
-        - $ref: '#/components/schemas/ResourceReference'
-        - type: object
-          properties:
-            id:
-              description: Identifier
-              type: string
-            name:
-              type: string
-    ResolvableDatasetSourceDescriptor:
-      type: object
-      properties:
-        value:
-          $ref: '#/components/schemas/DatasetSourceDescriptor'
-    DatasetSourceDescriptor:
-      type: object
-      properties:
-        id:
-          description: Identifier
-          type: integer
-          format: int64
-        description:
-          type: string
-        settings:
-          $ref: '#/components/schemas/Settings'
-        dataset:
-          $ref: '#/components/schemas/ResourceReference'
-    Settings:
-      type: object
-      properties:
-        indexServiceUrl:
-          type: string
-    WmsInstanceUserData:
-      type: object
-      properties:
-        id:
-          description: Identifier
-          type: string
-          format: uuid
-        user_data:
-          type: object
-        instance:
-          $ref: '#/components/schemas/ResolvableWmsInstance'
-    WmsUserDataPayload:
-      type: object
-      properties:
-        user_data:
-          type: object
-    ResolvableWmsInstance:
-      type: object
-      properties:
-        value:
-          $ref: '#/components/schemas/WmsInstance'
-    WmsInstance:
-      type: object
-      properties:
-        id:
-          description: Identifier
-          type: string
-          format: uuid
-        name:
-          type: string
-        description:
-          type: string
-        areaOfInterest:
-          $ref: '#/components/schemas/Geometry'
-        userId:
-          type: string
-          format: uuid
-        created:
-          description: The date when the instance was created.
-          type: string
-          readOnly: true
-        lastUpdated:
-          description: The date when the instance was last updated.
-          type: string
-          readOnly: true
-        additionalData:
-          $ref: '#/components/schemas/WmsInstanceAdditionalData'
-        layers:
-          $ref: '#/components/schemas/ResolvableCollectionWmsLayer'
-    WmsInstanceAdditionalData:
-      type: object
-      properties:
-        showWarnings:
-          type: boolean
-        showLogo:
-          type: boolean
-        forceFormat:
-          type: string
-        imageQuality:
-          type: integer
-          format: int32
-        disabled:
-          type: boolean
-    ResolvableCollectionWmsLayer:
-      type: object
-      properties:
-        value:
-          type: array
-          items:
-            $ref: '#/components/schemas/WmsLayer'
-    ResolvableWmsLayer:
-      type: object
-      properties:
-        value:
-          $ref: '#/components/schemas/WmsLayer'
-    WmsLayer:
-      type: object
-      properties:
-        id:
-          description: Identifier
-          type: string
-        title:
-          type: string
-        description:
-          type: string
-        styles:
-          type: array
-          items:
-            $ref: '#/components/schemas/WmsLayerStyle'
-        orderHint:
-          type: integer
-          format: int32
-        instance:
-          $ref: '#/components/schemas/ResolvableWmsInstance'
-        lastUpdated:
-          description: The date when the instance was last updated.
-          type: string
-          readOnly: true
-        dataset:
-          $ref: '#/components/schemas/ResourceReference'
-        datasetSource:
-          $ref: '#/components/schemas/ResolvableDatasetSourceDescriptor'
-        defaultStyleName:
-          type: string
-        datasourceDefaults:
-          $ref: '#/components/schemas/WmsLayerDatasourceAttributes'
-        additionalData:
-          $ref: '#/components/schemas/WmsLayerAdditionalData'
-    WmsLayerStyle:
-      type: object
-      properties:
-        name:
-          type: string
-        description:
-          type: string
-        evalScript:
-          type: string
-        legend:
-          type: object
-        dataProduct:
-          $ref: '#/components/schemas/ResolvableDataProduct'
-    WmsLayerAdditionalData:
-      type: object
-      properties:
-        overlays:
-          type: array
-          items:
-            $ref: '#/components/schemas/WmsLayerOverlay'
-    WmsLayerOverlay:
-      type: object
-      properties:
-        type:
-          type: string
-    WmsLayerDatasourceAttributes:
-      type: object
-      properties:
-        upsampling:
-          $ref: '#/components/schemas/Interpolator'
-        downsampling:
-          $ref: '#/components/schemas/Interpolator'
-        type:
-          $ref: '#/components/schemas/DatasetType'
-    WmsLayerUserData:
-      type: object
-      properties:
-        id:
-          description: Identifier
-          type: string
-        user_data:
-          type: object
-        layer:
-          $ref: '#/components/schemas/ResolvableWmsLayer'
-        instance:
-          $ref: '#/components/schemas/ResolvableWmsInstance'
 tags:
   - name: process
     x-displayName: Process
@@ -7600,20 +7358,6 @@ tags:
       Quotas are managed centrally at the main Sentinel Hub deployment, thus the
       quota API is only available at the https://sh.dataspace.copernicus.eu
       endpoint.
-  - name: configuration_data_product
-    x-displayName: Data product
-  - name: configuration_dataset
-    x-displayName: Dataset
-  - name: configuration_dataset_source
-    x-displayName: Dataset source
-  - name: configuration_instance_user_data
-    x-displayName: Instance user data
-  - name: configuration_layer_user_data
-    x-displayName: Layer user data
-  - name: configuration_layer
-    x-displayName: Layer
-  - name: configuration_instance
-    x-displayName: Instance
 x-tagGroups:
   - name: Process API
     tags:
@@ -7658,15 +7402,6 @@ x-tagGroups:
       - dataimport_subscription_delivery
       - dataimport_subscription_tile_delivery
       - dataimport_quota
-  - name: Configuration
-    tags:
-      - configuration_data_product
-      - configuration_dataset
-      - configuration_dataset_source
-      - configuration_instance_user_data
-      - configuration_layer_user_data
-      - configuration_layer
-      - configuration_instance
 paths:
   /api/v1/process:
     post:
@@ -10814,7 +10549,7 @@ paths:
       tags:
         - dataimport_quota
       parameters:
-        - $ref: '#/components/parameters/TpdiCollectionId'
+        - $ref: '#/components/parameters/QuotaTpdiCollectionId'
       responses:
         '200':
           description: Successful response
@@ -10824,550 +10559,6 @@ paths:
                 $ref: '#/components/schemas/Quota'
         '401':
           $ref: '#/components/responses/401'
-        '404':
-          $ref: '#/components/responses/404'
-      security:
-        - OAuth2: []
-  /configuration/v1/datasets/{datasetType}/dataproducts:
-    get:
-      tags:
-        - configuration_data_product
-      summary: Search data product
-      operationId: getDataProducts
-      parameters:
-        - $ref: '#/components/parameters/ConfigurationDatasetType'
-        - $ref: '#/components/parameters/SearchBeanSearch'
-        - $ref: '#/components/parameters/SearchBeanCount'
-        - $ref: '#/components/parameters/SearchBeanViewtoken'
-        - $ref: '#/components/parameters/SearchBeanSort'
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/DataProduct'
-      security:
-        - OAuth2: []
-  /configuration/v1/datasets/{datasetType}/dataproducts/{id}:
-    get:
-      tags:
-        - configuration_data_product
-      summary: Get data product
-      description: Get an existing data product
-      operationId: getDataProduct
-      parameters:
-        - $ref: '#/components/parameters/ConfigurationDatasetType'
-        - $ref: '#/components/parameters/ConfigurationDataproductId'
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DataProduct'
-        '404':
-          $ref: '#/components/responses/404'
-      security:
-        - OAuth2: []
-  /configuration/v1/datasets:
-    get:
-      tags:
-        - configuration_dataset
-      summary: Get all datasets
-      description: Get all existing datasets
-      operationId: getAllDatasetDescriptors
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/DatasetDescriptor'
-      security:
-        - OAuth2: []
-  /configuration/v1/datasets/{datasetType}:
-    get:
-      tags:
-        - configuration_dataset
-      summary: Get dataset
-      description: Get an existing dataset
-      operationId: getDatasetDescriptor
-      parameters:
-        - $ref: '#/components/parameters/ConfigurationDatasetType'
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DatasetDescriptor'
-        '404':
-          $ref: '#/components/responses/404'
-      security:
-        - OAuth2: []
-  /configuration/v1/datasets/{datasetId}/sources:
-    get:
-      tags:
-        - configuration_dataset_source
-      summary: Get dataset sources
-      description: Get all existing dataset sources
-      operationId: getSourceDescriptors
-      parameters:
-        - $ref: '#/components/parameters/ConfigurationDatasetId'
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/DatasetSourceDescriptor'
-      security:
-        - OAuth2: []
-  /configuration/v1/datasets/{datasetId}/sources/{id}:
-    get:
-      tags:
-        - configuration_dataset_source
-      summary: Get dataset source
-      description: Get an existing dataset source
-      operationId: getSourceDescriptor
-      parameters:
-        - $ref: '#/components/parameters/ConfigurationDatasetId'
-        - $ref: '#/components/parameters/ConfigurationDatasetSourceId'
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DatasetSourceDescriptor'
-        '404':
-          $ref: '#/components/responses/404'
-      security:
-        - OAuth2: []
-  /configuration/v1/wms/instances/{instanceId}/userData:
-    get:
-      tags:
-        - configuration_instance_user_data
-      summary: Get instance user data
-      description: Get an existing WMS instance user data
-      operationId: getInstanceUserData
-      parameters:
-        - $ref: '#/components/parameters/WmsInstanceId'
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/WmsInstanceUserData'
-        '403':
-          $ref: '#/components/responses/403'
-        '404':
-          $ref: '#/components/responses/404'
-      security:
-        - OAuth2: []
-    put:
-      tags:
-        - configuration_instance_user_data
-      summary: Update instance user data
-      description: Update an existing WMS instance user data
-      operationId: updateInstanceUserData
-      parameters:
-        - $ref: '#/components/parameters/WmsInstanceId'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/WmsUserDataPayload'
-      responses:
-        '200':
-          description: Successful operation
-        '400':
-          $ref: '#/components/responses/400'
-        '403':
-          $ref: '#/components/responses/403'
-        '404':
-          $ref: '#/components/responses/404'
-      security:
-        - OAuth2: []
-    post:
-      tags:
-        - configuration_instance_user_data
-      summary: Create instance user data
-      description: Create a new WMS instance user data
-      operationId: createInstanceUserData
-      parameters:
-        - $ref: '#/components/parameters/WmsInstanceId'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/WmsUserDataPayload'
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/WmsInstanceUserData'
-        '400':
-          $ref: '#/components/responses/400'
-        '403':
-          $ref: '#/components/responses/403'
-        '404':
-          $ref: '#/components/responses/404'
-      security:
-        - OAuth2: []
-    delete:
-      tags:
-        - configuration_instance_user_data
-      summary: Delete instance user data
-      description: Delete an existing WMS instance user data
-      operationId: deleteInstanceUserData
-      parameters:
-        - $ref: '#/components/parameters/WmsInstanceId'
-      responses:
-        '200':
-          description: Successful operation
-        '403':
-          $ref: '#/components/responses/403'
-        '404':
-          $ref: '#/components/responses/404'
-      security:
-        - OAuth2: []
-  /configuration/v1/wms/instances/{instanceId}/{layerId}/userData:
-    get:
-      tags:
-        - configuration_layer_user_data
-      summary: Get layer user data
-      description: Get an existing WMS layer user data
-      operationId: getWmsLayerUserData
-      parameters:
-        - $ref: '#/components/parameters/WmsInstanceId'
-        - $ref: '#/components/parameters/WmsLayerId'
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/WmsLayerUserData'
-        '403':
-          $ref: '#/components/responses/403'
-        '404':
-          $ref: '#/components/responses/404'
-      security:
-        - OAuth2: []
-    put:
-      tags:
-        - configuration_layer_user_data
-      summary: Update layer user data
-      description: Update an existing layer user data
-      operationId: updateLayerUserData
-      parameters:
-        - $ref: '#/components/parameters/WmsInstanceId'
-        - $ref: '#/components/parameters/WmsLayerId'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/WmsUserDataPayload'
-      responses:
-        '200':
-          description: Successful operation
-        '400':
-          $ref: '#/components/responses/400'
-        '403':
-          $ref: '#/components/responses/403'
-        '404':
-          $ref: '#/components/responses/404'
-      security:
-        - OAuth2: []
-    post:
-      tags:
-        - configuration_layer_user_data
-      summary: Create layer user data
-      description: Create a new WMS layer user data
-      operationId: createWmsLayerUserData
-      parameters:
-        - $ref: '#/components/parameters/WmsInstanceId'
-        - $ref: '#/components/parameters/WmsLayerId'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/WmsUserDataPayload'
-      responses:
-        '201':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/WmsLayerUserData'
-        '400':
-          $ref: '#/components/responses/400'
-        '403':
-          $ref: '#/components/responses/403'
-        '404':
-          $ref: '#/components/responses/404'
-      security:
-        - OAuth2: []
-    delete:
-      tags:
-        - configuration_layer_user_data
-      summary: Delete layer user data
-      description: Delete an existing WMS layer user data
-      operationId: deleteLayerUserData
-      parameters:
-        - $ref: '#/components/parameters/WmsInstanceId'
-        - $ref: '#/components/parameters/WmsLayerId'
-      responses:
-        '200':
-          description: Successful operation
-        '403':
-          $ref: '#/components/responses/403'
-        '404':
-          $ref: '#/components/responses/404'
-      security:
-        - OAuth2: []
-  /configuration/v1/wms/instances/{instanceId}/layers:
-    get:
-      tags:
-        - configuration_layer
-      summary: Get layers
-      description: Get all WMS layers for a WMS instance
-      operationId: getWmsLayers
-      parameters:
-        - $ref: '#/components/parameters/WmsInstanceId'
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/WmsLayer'
-        '403':
-          $ref: '#/components/responses/403'
-        '404':
-          $ref: '#/components/responses/404'
-      security:
-        - OAuth2: []
-    post:
-      tags:
-        - configuration_layer
-      summary: Create layer
-      description: Create a new WMS layer
-      operationId: createWmsLayer
-      parameters:
-        - $ref: '#/components/parameters/WmsInstanceId'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/WmsLayer'
-      responses:
-        '201':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/WmsLayer'
-        '400':
-          $ref: '#/components/responses/400'
-        '403':
-          $ref: '#/components/responses/403'
-        '404':
-          $ref: '#/components/responses/404'
-        '409':
-          $ref: '#/components/responses/409'
-      security:
-        - OAuth2: []
-  /configuration/v1/wms/instances/{instanceId}/layers/{layerId}:
-    get:
-      tags:
-        - configuration_layer
-      summary: Get layer
-      description: Get an existing WMS layer
-      operationId: getWmsLayer
-      parameters:
-        - $ref: '#/components/parameters/WmsInstanceId'
-        - $ref: '#/components/parameters/WmsLayerId'
-        - name: expand
-          description: Add styles to response
-          in: query
-          schema:
-            type: boolean
-            default: false
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/WmsLayer'
-        '403':
-          $ref: '#/components/responses/403'
-        '404':
-          $ref: '#/components/responses/404'
-      security:
-        - OAuth2: []
-    put:
-      tags:
-        - configuration_layer
-      summary: Update layer
-      description: Update an existing WMS layer
-      operationId: updateWmsLayer
-      parameters:
-        - $ref: '#/components/parameters/WmsInstanceId'
-        - $ref: '#/components/parameters/WmsLayerId'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/WmsLayer'
-      responses:
-        '200':
-          description: Successful operation
-        '400':
-          $ref: '#/components/responses/400'
-        '403':
-          $ref: '#/components/responses/403'
-        '404':
-          $ref: '#/components/responses/404'
-      security:
-        - OAuth2: []
-    delete:
-      tags:
-        - configuration_layer
-      summary: Delete layer
-      description: Delete an existing WMS layer
-      operationId: deleteWmsLayer
-      parameters:
-        - $ref: '#/components/parameters/WmsInstanceId'
-        - $ref: '#/components/parameters/WmsLayerId'
-      responses:
-        '200':
-          description: Successful operation
-        '403':
-          $ref: '#/components/responses/403'
-        '404':
-          $ref: '#/components/responses/404'
-      security:
-        - OAuth2: []
-  /configuration/v1/wms/instances:
-    get:
-      tags:
-        - configuration_instance
-      summary: Get instances
-      description: Returns user's WMS instances
-      operationId: searchWmsInstances
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/WmsInstance'
-        '403':
-          $ref: '#/components/responses/403'
-      security:
-        - OAuth2: []
-    post:
-      tags:
-        - configuration_instance
-      summary: Create instance
-      description: Create a new WMS instance
-      operationId: createWmsInstance
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/WmsInstance'
-      responses:
-        '201':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/WmsInstance'
-        '400':
-          $ref: '#/components/responses/400'
-        '403':
-          $ref: '#/components/responses/403'
-        '409':
-          $ref: '#/components/responses/409'
-      security:
-        - OAuth2: []
-  /configuration/v1/wms/instances/{instanceId}:
-    get:
-      tags:
-        - configuration_instance
-      summary: Get instance
-      description: Get an existing WMS instance
-      operationId: getWmsInstance
-      parameters:
-        - $ref: '#/components/parameters/WmsInstanceId'
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/WmsInstance'
-        '403':
-          $ref: '#/components/responses/403'
-        '404':
-          $ref: '#/components/responses/404'
-      security:
-        - OAuth2: []
-    put:
-      tags:
-        - configuration_instance
-      summary: Update instance
-      description: Update an existing WMS instance
-      operationId: updateWmsInstance
-      parameters:
-        - $ref: '#/components/parameters/WmsInstanceId'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/WmsInstance'
-      responses:
-        '200':
-          description: Successful operation
-        '400':
-          $ref: '#/components/responses/400'
-        '403':
-          $ref: '#/components/responses/403'
-        '404':
-          $ref: '#/components/responses/404'
-      security:
-        - OAuth2: []
-    delete:
-      tags:
-        - configuration_instance
-      summary: Delete instance
-      description: Delete an existing WMS instance
-      operationId: deleteWmsInstance
-      parameters:
-        - $ref: '#/components/parameters/WmsInstanceId'
-      responses:
-        '200':
-          description: Successful operation
-        '403':
-          $ref: '#/components/responses/403'
         '404':
           $ref: '#/components/responses/404'
       security:
