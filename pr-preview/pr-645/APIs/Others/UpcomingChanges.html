@@ -1229,8 +1229,8 @@ window.onload = function() {
 <p>This page includes the list of upcoming changes to Catalog APIs.</p>
 <section id="catalogue-api-change-parameters-limits" class="level2">
 <h2 class="anchored" data-anchor-id="catalogue-api-change-parameters-limits">Catalogue API Change: parameters’ limits</h2>
-<p>We would like to inform you about an upcoming change to our OData, OpenSearch and STAC API interfaces, effective 30 October 2024.</p>
-<p>Starting from 30 October 2024, the number of skipped results will be limited to 10 000 items. Currently, there is no limit on the number of skipped items.</p>
+<p>We would like to inform you about an upcoming change to our OData, OpenSearch and STAC API interfaces, effective <strong>12 November 2024</strong>.</p>
+<p>Starting from <strong>12 November 2024</strong>, the number of skipped results will be limited to 10 000 items. Currently, there is no limit on the number of skipped items.</p>
 <p>This limit will affect the following parameters in each Catalogue API interface:</p>
 <ul>
 <li>OData interface: maximum value for the skip parameter will be set to 10 000</li>
@@ -1238,10 +1238,10 @@ window.onload = function() {
 <li>STAC interface: maximum value for ‘(page - 1) * limit’ will be set to 10 000, where by deafult page = 1 and limit = 20</li>
 </ul>
 <p>Please find below a list of parameters for each Catalogue API that will be affected by the change as well as the response which will be returned when the limit is exceeded.</p>
-<p>The affected query parameters for OData Catalogue interface:</p>
-<p>OData Catalogue API</p>
+<p><strong>The affected query parameters for OData Catalogue interface:</strong></p>
+<p><strong>OData Catalogue API</strong></p>
 <pre><code>skip</code></pre>
-<p>OData API request</p>
+<p><strong>OData API request</strong></p>
 <pre><code>https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name eq 'SENTINEL-3' and ContentDate/Start gt 2024-09-01&amp;$skip=10001&amp;$count=True</code></pre>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" aria-current="page">Current Response</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">New Response</a></li></ul>
@@ -1279,19 +1279,24 @@ window.onload = function() {
 </div>
 </div>
 <p>The <span class="citation" data-cites="odata.nextLink">@odata.nextLink</span> field, which is normally included in the API response to provide the next link for pagination, will not be shown if the skip parameter in the next link exceeds a limit of 10,000. Here’s a step-by-step breakdown:</p>
-<ol type="1">
-<li>OData query Example:</li>
-</ol>
+<p><strong>1. OData query Example:</strong></p>
 <pre><code>{url}odata/v1/Products?$skip=10000&amp;$top=1</code></pre>
-<p>In this query: - $skip=10000 means you’re telling the API to skip the first 10,000 records. - $top=1 means you want to retrieve only 1 record in the response. 2. Pagination Logic: The OData API usually provides a <span class="citation" data-cites="odata.nextLink">@odata.nextLink</span> in the response, which gives the URL to retrieve the next set of records in the sequence. This next link works by adjusting the skip value to keep moving forward through the data. 3. Skip + Top: In this example, skip + top = 10000 + 1 = 10001. This value exceeds the skip limit of 10,000. 4. Impact: Because this skip value (10001) exceeds the limit of 10,000, the API will not include the <span class="citation" data-cites="odata.nextLink">@odata.nextLink</span> in the response. Essentially, the API is signaling that it cannot paginate beyond this point.</p>
-<p>Important Note</p>
+<p>In this query:</p>
+<ul>
+<li>$skip=10000 means you’re telling the API to skip the first 10,000 records.</li>
+<li>$top=1 means you want to retrieve only 1 record in the response.</li>
+</ul>
+<p><strong>2. Pagination Logic:</strong> The OData API usually provides a <span class="citation" data-cites="odata.nextLink">@odata.nextLink</span> in the response, which gives the URL to retrieve the next set of records in the sequence. This next link works by adjusting the skip value to keep moving forward through the data.</p>
+<p><strong>3. Skip + Top:</strong> In this example, skip + top = 10000 + 1 = 10001. This value exceeds the skip limit of 10,000.</p>
+<p><strong>4. Impact:</strong> Because this skip value (10001) exceeds the limit of 10,000, the API will not include the <span class="citation" data-cites="odata.nextLink">@odata.nextLink</span> in the response. Essentially, the API is signaling that it cannot paginate beyond this point.</p>
+<p><strong>Important Note</strong></p>
 <p>After the change, when the skip value exceeds 10,000, the API will no longer return the <span class="citation" data-cites="odata.nextLink">@odata.nextLink</span> for further pagination, meaning you can’t retrieve records beyond this limit via pagination using <span class="citation" data-cites="odata.nextLink">@odata.nextLink</span>.</p>
-<p>The affected query parameters for OpenSearch interface:</p>
-<p>OpenSearch Catalogue API</p>
+<p><strong>The affected query parameters for OpenSearch interface:</strong></p>
+<p><strong>OpenSearch Catalogue API</strong></p>
 <pre><code>maxRecords
 page
 index</code></pre>
-<p>OpenSearch API request</p>
+<p><strong>OpenSearch API request</strong></p>
 <pre><code>https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel1/search.json?maxRecords=15&amp;exactCount=1&amp;index=12&amp;page=667&amp;productType=IW_SLC__1S</code></pre>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">Current Response</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">New Response</a></li></ul>
@@ -1383,8 +1388,8 @@ index</code></pre>
 </div>
 </div>
 </div>
-<p>Index limit in OpenSearch Catalogue API</p>
-<p>OpenSearch API request</p>
+<p><strong>Index limit in OpenSearch Catalogue API</strong></p>
+<p><strong>OpenSearch API request</strong></p>
 <pre><code>https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel1/search.json?&amp;index=10002&amp;productType=IW_SLC__1S</code></pre>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true">Current Response</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false">New Response</a></li></ul>
@@ -1456,12 +1461,13 @@ index</code></pre>
 </div>
 </div>
 </div>
+<p><strong>Important Note</strong></p>
 <p>After the change, when the ‘(page - 1) * maxRecords + index - 1’ value exceeds 10,000, the API will no longer return the ‘next’ link for further pagination, meaning you can’t retrieve records beyond this limit via pagination using ‘next’ link.</p>
-<p>The affected query parameters for STAC Catalogue API interface:</p>
-<p>STAC Catalogue API</p>
+<p><strong>The affected query parameters for STAC Catalogue API interface:</strong></p>
+<p><strong>STAC Catalogue API</strong></p>
 <pre><code>limit
 page</code></pre>
-<p>STAC API request</p>
+<p><strong>STAC API request</strong></p>
 <pre><code>https://catalogue.dataspace.copernicus.eu/stac/search?limit=1000&amp;page=12&amp;sortby=datetime</code></pre>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true">Current Response</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false">New Response</a></li></ul>
@@ -1511,9 +1517,9 @@ page</code></pre>
 </div>
 </div>
 </div>
-<p>Important Note</p>
+<p><strong>Important Note</strong></p>
 <p>After the change, when the ‘(page - 1) * limit’ value exceeds 10,000, the API will no longer return the ‘next’ link for further pagination, meaning you can’t retrieve records beyond this limit via pagination using ‘next’ link.</p>
-<p>We recommend reviewing the upcoming changes to Catalogue OData, OpenSearch and STAC API interfaces described above to avoid disruption to your current scripts or apps.</p>
+<p><strong>We recommend reviewing the upcoming changes to Catalogue OData, OpenSearch and STAC API interfaces described above to avoid disruption to your current scripts or apps.</strong></p>
 </section>
 <section id="odata-catalogue-api-response-format-change-rescheduled" class="level2">
 <h2 class="anchored" data-anchor-id="odata-catalogue-api-response-format-change-rescheduled">OData Catalogue API: Response Format Change Rescheduled</h2>
