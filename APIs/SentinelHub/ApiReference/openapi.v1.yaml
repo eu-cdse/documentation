@@ -492,6 +492,22 @@ components:
       schema:
         type: integer
         format: int64
+    BatchV2TaskId:
+      name: taskId
+      description: Task ID
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    BatchV2TilinggridsId:
+      name: id
+      description: Tilinggrids ID
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
     ByocCollectionId:
       name: collectionId
       in: path
@@ -5101,6 +5117,657 @@ components:
           description: Response object.
           items:
             $ref: '#/components/schemas/ProcessRequestOutputBatchResponse'
+    BatchV2ProcessRequest:
+      required:
+        - processRequest
+        - output
+        - input
+      type: object
+      properties:
+        processRequest:
+          $ref: '#/components/schemas/ProcessRequestForBatchV2'
+        input:
+          $ref: '#/components/schemas/BatchV2ProcessInput'
+        output:
+          $ref: '#/components/schemas/BatchV2ProcessOutput'
+        instanceType:
+          $ref: '#/components/schemas/InstanceType'
+        description:
+          description: Optional description that can be used to keep track of requests
+          type: string
+    MultiPartBatchV2Request:
+      type: object
+      properties:
+        request:
+          $ref: '#/components/schemas/BatchV2ProcessRequest'
+        evalscript:
+          description: Block of JavaScript code.
+          type: string
+    BatchV2ProcessTask:
+      type: object
+      properties:
+        id:
+          description: Unique identifier of the request
+          type: string
+          format: uuid
+        request:
+          $ref: '#/components/schemas/BatchV2ProcessRequest'
+        domainAccountId:
+          description: Account that submitted the request
+          type: string
+          format: uuid
+        status:
+          description: Current processing status of the request
+          type: string
+          enum:
+            - CREATED
+            - ANALYSING
+            - ANALYSIS_DONE
+            - PROCESSING
+            - DONE
+            - FAILED
+            - STOPPED
+        error:
+          description: >-
+            Error description for requests that were submitted but failed during
+            analysis or processing
+          type: string
+        userAction:
+          description: Last user action on the request
+          type: string
+          enum:
+            - NONE
+            - ANALYSE
+            - START
+            - STOP
+        userActionUpdated:
+          description: Time of last user action update in ISO 8601
+          type: string
+          format: date-time
+        created:
+          description: Creation time of the request in ISO 8601
+          type: string
+          format: date-time
+        completionPercentage:
+          type: number
+        lastUpdated:
+          description: Last updated time of the request in ISO 8601
+          type: string
+          format: date-time
+        costPU:
+          type: number
+        stoppedStatusReason:
+          description: Description of why job status is STOPPED
+          type: string
+          enum:
+            - OUT_OF_PU
+            - USER_ACTION
+            - UNHEALTHY
+    ProcessRequestOutputBatchV2Response:
+      type: object
+      required:
+        - format
+      properties:
+        identifier:
+          type: string
+          description: >
+            Response's identifier is used to connect the results of an
+            evalscript with the output file.
+
+            Each response identifier value must either match one of the values
+            in `setup()` -> `output.id` in the evalscript (see <a
+            href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Process/Examples/S2L1C.html#ndvi-image-and-value-multi-part-response-png-and-geotiff"
+            target="_blank">example</a>)
+
+            or be `userdata` (see <a
+            href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Process/Examples/S2L1C.html#true-color-and-metadata-multi-part-response-geotiff-and-json"
+            target="_blank">example</a>).
+          enum:
+            - <identifier>
+            - userdata
+        format:
+          description: |
+            Format object
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/ProcessRequestOutputFormatTiff'
+            - $ref: '#/components/schemas/ProcessRequestOutputFormatJson'
+            - $ref: '#/components/schemas/ProcessRequestOutputFormatZarr'
+    BatchV2ProcessRequestUpdatePayload:
+      type: object
+      properties:
+        description:
+          description: >
+            Optional description that can be used to keep track of requests. If
+            omitted, the description will not be changed.
+          type: string
+    BatchV2TilingGridInput:
+      title: TilingGridInput
+      required:
+        - id
+        - resolution
+        - type
+      properties:
+        type:
+          type: string
+          enum:
+            - tiling-grid
+        id:
+          description: Id of one of the supported tiling grids
+          type: integer
+          format: int64
+        resolution:
+          description: Output resolution in units of the tiling grid
+          type: number
+          format: double
+        bufferX:
+          description: >
+            Will expand each output tile horizontally (on the left and the
+            right) by number of pixels specified by this value. <br><br>
+            <b>Example:</b> <br> If bufferX is 5, the output tile will be wider
+            by 10 pixels. Coordinates of the tile are also moved accordingly by
+            the number of pixels multiplied by resolution in each direction.
+          type: integer
+          format: int16
+        bufferY:
+          description: >
+            Will expand each output tile vertically (on the top and the bottom)
+            by number of pixels specified by this value. See `bufferX` above for
+            an example.
+          type: integer
+          format: int16
+    BatchV2ProcessOutput:
+      title: ProcessOutput
+      description: >
+        Parameters that will be used for all output arrays, except where
+        overriden with `arrayOverrides`. Required unless `arrayOverrides`
+        includes all required fields for all output arrays. All fields are
+        standard Zarr fields. Further information can be found on the link
+        below.
+      oneOf:
+        - $ref: '#/components/schemas/BatchV2RasterOutput'
+        - $ref: '#/components/schemas/BatchV2ZarrOutput'
+    BatchV2ProcessInput:
+      title: ProcessInput
+      oneOf:
+        - $ref: '#/components/schemas/BatchV2GeoPackageInput'
+        - $ref: '#/components/schemas/BatchV2TilingGridInput'
+    BatchV2RasterOutput:
+      title: RasterOutput
+      type: object
+      required:
+        - delivery
+        - group
+        - type
+      properties:
+        type:
+          type: string
+          enum:
+            - raster
+        delivery:
+          description: >-
+            Path or path template specifying where batch processing results
+            shall be stored. Supported formats: <ul> <li>a valid S3 URL, e.g.
+            `s3://some-bucket/some/folder`.<br/> A subdirectory will be created
+            for this batch request, named after the request ID, and will contain
+            further subdirectories with the output tiles. This is equivalent to
+            the template
+            `s3://some-bucket/some/folder/<requestId>/<tileName>/<outputId>.<format>`.
+            </li> <li>a templated S3 URL, e.g.
+            `s3://some-bucket/some/folder/<tileName>.tif`. Templating allows
+            custom organization of the output files. Templates can contain the
+            following placeholders, which are replaced by respective actual
+            values when writing results: <ul> <li> `<requestId>` - the ID of
+            your batch request,</li> <li> `<tileName>` - the name (string ID) of
+            the tile within the used tiling grid,</li> <li> `<tileId>` - the
+            numerical ID of the tile within the used tiling grid,</li> <li>
+            `<outputId>` - the output (raster) identifier (e.g. `default`),</li>
+            <li> `<format>` - the filename extension of the output's format
+            (e.g. `tiff`).</li> </ul> The template must contain `<tileName>` or
+            `<tileId>` in order to ensure unique output files. In case of
+            multiple outputs, the template must also contain `<outputId>`. </li>
+            </ul> The request will fail if files already exist.
+          $ref: '#/components/schemas/ObjectStorageInfo'
+        overwrite:
+          description: >
+            If `true`, the request will **never** fail if files already exist.
+            Instead, any existing files will be overwritten, except if
+            `skipExisting` is `true` and **all** outputs for a tile exist.
+          default: false
+          type: boolean
+        skipExisting:
+          description: >
+            If `true`, any tiles for which **all** outputs already exist will be
+            skipped. Tiles for which only **some** of the outputs exist will
+            either be *fully overwritten* (if `overwrite` is `true`) or will
+            cause the whole request to fail.
+          default: false
+          type: boolean
+        cogOutput:
+          description: >-
+            If `true`, the results will be written as COG (cloud optimized
+            GeoTIFFs). All outputs must use the TIFF format and **cannot** use
+            `sampleType` INT8. We also suggest setting the evalscript output
+            object `nodataValue` (<a
+            href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Evalscript/V3.html#output-object-properties"
+            target="_blank">more details</a>) for correct overview generation.
+          default: false
+          type: boolean
+        cogParameters:
+          $ref: '#/components/schemas/BatchV2CogParameters'
+        createCollection:
+          description: >-
+            If `true`, the results will be written as BYOC tiles into a BYOC
+            collection. When `collectionId` is not provided, a new collection
+            will be created. Make sure the `cogOutput` = true  and that the
+            output format is a `image/tiff`. The data will still be stored into
+            users S3 bucket and linked as BYOC tiles. Make sure to allow full
+            access to Sentinel Hub from the bucket in order for BYOC to be able
+            to read the data (<a
+            href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/BatchV2.html#mandatory-bucket-settings"
+            target="_blank">more details</a>).
+          default: false
+          type: boolean
+        collectionId:
+          description: >-
+            Id of an existing BYOC collection into which the processing results
+            will be ingested.
+          type: uuid
+    ObjectStorageInfo:
+      type: object
+      required:
+        - s3
+        - s3
+      properties:
+        s3:
+          $ref: '#/components/schemas/S3BucketInfo'
+    S3BucketInfo:
+      type: object
+      required:
+        - url
+        - url
+      properties:
+        url:
+          type: string
+          description: >-
+            A URL pointing to an S3 bucket or an object in an S3 bucket. It can
+            contain prefixes, e.g. `s3://my-personal-bucket/some-folder` or
+            `s3://my-personal-bucket/some-folder/some-file.gpk`.
+        accessKey:
+          type: string
+          description: >-
+            access key, which allows programmatic access to the S3 bucket
+            specified in the `url` field.
+        secretAccessKey:
+          type: string
+          description: secret access key which must correspond to the access key.
+        regin:
+          type: string
+          description: >-
+            The region where the S3 bucket is located. If omitted, the region of
+            the deployment that the request is submitted to is assumed.
+    BatchV2CogParameters:
+      description: |
+        Allows to specify COG creation parameters.
+      type: object
+      properties:
+        overviewLevels:
+          description: >-
+            Corresponds to the *levels* parameter of
+            [gdaladdo](https://gdal.org/programs/gdaladdo.html).
+          type: array
+          items:
+            type: integer
+        overviewMinSize:
+          description: >
+            Corresponds to the *minsize* parameter of
+            [gdaladdo](https://gdal.org/programs/gdaladdo.html).
+
+            Default value minimum of blockxsize and blockysize
+          type: integer
+        resamplingAlgorithm:
+          type: string
+          enum:
+            - nearest
+            - average
+            - gauss
+            - cubic
+            - cubicspline
+            - lanczos
+            - average_magphase
+            - mode
+          description: >-
+            Corresponds to the value of the *-r* parameter of
+            [gdaladdo](https://gdal.org/programs/gdaladdo.html).
+          default: average
+        blockxsize:
+          description: >-
+            Corresponds to the *BLOCKXSIZE* parameter of [GDAL GTiff raster
+            driver](https://gdal.org/drivers/raster/gtiff.html).
+          type: integer
+          default: 1024
+        blockysize:
+          description: >-
+            Corresponds to the *BLOCKYSIZE* parameter of [GDAL GTiff raster
+            driver](https://gdal.org/drivers/raster/gtiff.html).
+          type: integer
+          default: 1024
+        usePredictor:
+          description: >
+            Whether predictor should be used for TIFF compression. If true, the
+            predictor "2" will be passed to [GDAL GTiff raster
+            driver](https://gdal.org/drivers/raster/gtiff.html) in case of
+            integer output and "3" for FLOAT32 output. If false, the value "1"
+            (no predictor) will be used.
+          type: boolean
+          default: true
+    BatchV2ZarrOutput:
+      title: ZarrOutput
+      description: |
+        Specifies Zarr creation parameters.
+
+        If this parameter is specified, all outputs in processRequest **must**
+        be of the type zarr/array and `output` can not be specified.
+        With Zarr output **only** WGS84 and LAEA grids **are supported**.
+      required:
+        - delivery
+        - group
+        - type
+      properties:
+        type:
+          type: string
+          enum:
+            - zarr
+        delivery:
+          description: >-
+            Path or path template specifying where batch processing results
+            shall be stored. Supported formats: <ul> <li>a valid S3 URL, e.g.
+            `s3://some-bucket/some/folder`.<br/> The output Zarr will be stored
+            to this folder (prefix). The request will fail if any files already
+            exist in the folder. </li> <li>a templated S3 URL, e.g.
+            `s3://some-bucket/some/folder/<requestId>`. The placeholder
+            `<requestId>` will be replaced by the ID of your batch request and
+            the output Zarr will be stored there. </li> </ul> The specified path
+            <b>must</b> not contain any subfolders or Zarr files such as
+            <code>.zattrs</code>, <code>.zgroup</code>, <code>.zmetadata</code>.
+          $ref: '#/components/schemas/ObjectStorageInfo'
+        group:
+          $ref: '#/components/schemas/BatchV2ZarrOutputGroup'
+        arrayParameters:
+          description: >
+            Parameters that will be used for all output arrays, except where
+            overriden with `arrayOverrides`. Required unless `arrayOverrides`
+            includes all required fields for all output arrays. All fields are
+            standard Zarr fields. Further information can be found on the link
+            below.
+          externalDocs:
+            description: Zarr metadata specification version 2, Attributes
+            url: https://zarr-specs.readthedocs.io/en/latest/v2/v2.0.html#metadata
+          allOf:
+            - $ref: '#/components/schemas/BatchV2ZarrOutputArrayParameters'
+        arrayOverrides:
+          $ref: '#/components/schemas/BatchV2ZarrOutputArrayOverrides'
+    BatchV2ZarrOutputGroup:
+      required:
+        - zarr_format
+      description: Zarr group level parameters
+      properties:
+        zarr_format:
+          description: Zarr format version. Currently only version 2 is supported.
+          example: 2
+          type: integer
+        coordinates:
+          description: Allows customization of certain output coordinate system parameters
+          properties:
+            origin:
+              type: string
+              description: |
+                Defines the origin of the output raster/sign of resolution:
+                 * `topLeft` (default): negative resolution along the Zarr y-axis, same as for TIFF output</li>
+                 * `bottomLeft`: positive resolution along the Zarr y-axis</li>
+
+                The resolution along the Zarr x-axis is always positive.
+              default: topLeft
+              enum:
+                - topLeft
+                - bottomLeft
+        customAttributes:
+          description: >
+            User-defined metadata to store into the group's `.zattrs` file.
+
+            For example, to include a copyright notice in the ouptut Zarr, you
+            could set this field to
+
+            `{"copyright": "My Company Ltd, 2023"}`.
+
+
+            **Note**: multiple fields are added to the group attributes by
+            default, such as "date_modified"
+
+            and the geospatial extent. Listing any such field in
+            `customAttributes` will override its default value.
+          type: object
+    BatchV2ZarrOutputArrayParameters:
+      required:
+        - dtype
+        - chunks
+        - order
+        - fill_value
+      properties:
+        dtype:
+          description: >
+            Data type/encoding. Allowed values depend on the `sampleType`
+            defined in `evalscript`:
+             * `|u1`: 8-bit unsigned integer, recommended for `sampleType` UINT8 and AUTO,
+             * `|i1`: 8-bit signed integer, recommended for `sampleType` INT8,
+             * `<u2`,`>u2`: 16-bit unsigned integer (little and big endian, respectively), recommended for `sampleType` UINT16, allowed for UINT8 and AUTO,
+             * `<i2`,`>i2`: 16-bit signed integer (little and big endian, respectively), recommended for `sampleType` INT16, allowed for UINT8, INT8 and AUTO,
+             * `<f4`, `>f4`, `<f8`, `>f8`: float (little/big endian single precision, little/big endian double precision, respectively),
+               recommended for `sampleType` FLOAT32, allowed for any `sampleType`.
+
+            *Recommended* values encode the chosen `sampleType` losslessly,
+            while other allowed values encode the same values in a wider data
+            type but do not add any more precision.
+          example: <f4
+          type: string
+          externalDocs:
+            description: Zarr data type specification version 2, Attributes
+            url: >-
+              https://zarr-specs.readthedocs.io/en/latest/v2/v2.0.html#data-type-encoding
+        order:
+          description: >-
+            Layout of values within each chunk of the array. Currently only "C"
+            is supported, which means row-major order.
+          type: string
+          default: C
+        chunks:
+          description: >
+            A list of integers defining the length of each dimension of a chunk
+            of the array, e.g. `[1, 1000, 1000]`.
+
+
+            The first element (time dimension chunking) must be 1.
+
+
+            The second and third (latidude/y and longitude/x-dimension chunking,
+            respectively)
+
+            must evenly divide the batch output tile raster size.
+
+            For example, when using the [LAEA 100km
+            grid](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Batch.html#tiling-grids)
+
+            with an output resolution of 50 m, each batch tile will be 2000 x
+            2000 pixels,
+
+            thus valid chunking sizes are 2000, 1000, 500, 400 etc.
+          example:
+            - 1
+            - 1000
+            - 1000
+          type: array
+          minItems: 3
+          maxItems: 3
+          items:
+            type: number
+            format: integer
+        fill_value:
+          type: number
+          description: >
+            A scalar value providing the default value for portions of the array
+            corresponding to non-existing chunks:
+
+            * any chunks consisting solely of this value will **not** be
+            written,
+
+            * the value will be included in the output Zarr metadata.
+
+
+            **Note**: `fill_value` must be representable by the array's `dtype`.
+
+
+            **Note**: any grid tiles that are within Zarr envelope but outside
+            of `processRequest.input.bounds.geometry` will not be processed by
+            batch at all.
+
+            No chunks will thus be written for those tiles, thus `fill_value` is
+            required to ensure a valid Zarr is created.
+        compressor:
+          description: >
+            Compressor type and parameters, which will be used to compress the
+            data chunks.
+          default:
+            id: blosc
+            cname: lz4
+            clevel: 5
+            shuffle: 1
+            blocksize: 0
+          type: object
+    BatchV2ZarrOutputArrayOverrides:
+      description: Overrides the values of `arrayParameters` for individual arrays.
+      type: object
+      additionalProperties:
+        x-additionalPropertiesName: array name
+        $ref: '#/components/schemas/BatchV2ArrayOverride'
+    BatchV2ArrayOverride:
+      type: object
+      description: >
+        Values for the particular output Zarr array. The array names are equal
+        to the identifiers of the outputs/responses of the `processRequest`.
+      allOf:
+        - $ref: '#/components/schemas/BatchV2ZarrOutputArrayParameters'
+        - type: object
+          properties:
+            customAttributes:
+              description: >
+                User-defined metadata to append to the array's `.zattrs` file.
+
+                For example, to include information on array's content and
+                units, you could set this field to
+
+                `{"long_name": "Chlorophyll-a concentration", "units":
+                "milligram m-3"}`
+
+
+                **Note**: the field "_ARRAY_DIMENSIONS" is added to the array
+                attributes by default.
+
+                Listing this field in `customAttributes` will override its
+                default value.
+              type: object
+    BatchV2TilingGridDescriptor:
+      type: object
+      properties:
+        id:
+          description: Identifier
+          type: integer
+          format: int64
+        name:
+          type: string
+        properties:
+          $ref: '#/components/schemas/BatchV2TilingGridDescriptorProperties'
+    BatchV2TilingGridDescriptorProperties:
+      type: object
+      properties:
+        tileWidth:
+          description: Width of each output tile, in units used by the grid
+          type: number
+          format: double
+        tileHeight:
+          description: Height of each output tile, in units used by the grid
+          type: number
+          format: double
+        resolutions:
+          description: List of supported resolutions, in units used by the grid
+          type: array
+          uniqueItems: true
+          items:
+            type: number
+            description: List of supported resolutions, in units used by the grid
+            format: double
+        unit:
+          description: Units used by the grid
+          type: string
+          enum:
+            - METRE
+            - DEGREE
+    BatchV2GeoPackageInput:
+      title: GeoPackageInput
+      properties:
+        type:
+          type: string
+          enum:
+            - geopackage
+        features:
+          description: >
+            Location on an object storage of a GeoPackage file containing the
+            features to be processed. <br/> The GeoPackage must adhere to the
+            requirements listed in the <a
+            href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/BatchV2.html#2-geopackage"
+            target="_blank">documentation</a>.
+          $ref: '#/components/schemas/ObjectStorageInfo'
+      required:
+        - type
+        - features
+    InstanceType:
+      title: InstanceType
+      description: Instance type to be used for processing.
+      type: string
+      enum:
+        - normal
+        - large
+    ProcessRequestForBatchV2:
+      type: object
+      description: >-
+        Batch processing equivalent of the <a href="#operation/process">Process
+        request</a>.
+      required:
+        - evalscript
+        - input
+        - output
+      properties:
+        input:
+          $ref: '#/components/schemas/ProcessRequestInput'
+        output:
+          $ref: '#/components/schemas/ProcessRequestOutputForBatchV2'
+        evalscript:
+          description: >
+            Your evalscript. For details, click
+
+            <a
+            href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Evalscript/V3.html"
+            target="_blank">here</a>.
+
+            <br/>Evalscript is not required here if using multipart upload.
+          type: string
+    ProcessRequestOutputForBatchV2:
+      type: object
+      properties:
+        responses:
+          type: array
+          description: Response object.
+          items:
+            $ref: '#/components/schemas/ProcessRequestOutputBatchV2Response'
     StatisticalRequest:
       required:
         - input
@@ -5526,32 +6193,6 @@ components:
           $ref: '#/components/schemas/ObjectStorageInfo'
         data:
           $ref: '#/components/schemas/ProcessRequestInputData'
-    ObjectStorageInfo:
-      type: object
-      required:
-        - s3
-      properties:
-        s3:
-          $ref: '#/components/schemas/S3BucketInfo'
-    S3BucketInfo:
-      type: object
-      required:
-        - url
-      properties:
-        url:
-          type: string
-          description: >-
-            A URL pointing to an S3 bucket or an object in an S3 bucket. It can
-            contain prefixes, e.g. `s3://my-personal-bucket/some-folder` or
-            `s3://my-personal-bucket/some-folder/some-file.gpk`.
-        accessKey:
-          type: string
-          description: >-
-            access key, which allows programmatic access to the S3 bucket
-            specified in the `url` field.
-        secretAccessKey:
-          type: string
-          description: secret access key which must correspond to the access key.
     ObjectStorageOutputInfo:
       type: object
       required:
@@ -7324,6 +7965,10 @@ tags:
     x-displayName: Tile
   - name: batch_tiling_grid
     x-displayName: Tiling grid
+  - name: batch_v2_process
+    x-displayName: Process
+  - name: batch_v2_tiling_grid
+    x-displayName: Tiling grid
   - name: statistical
     x-displayName: Statistical
   - name: batch_statistical
@@ -7377,6 +8022,10 @@ x-tagGroups:
       - batch_collection
       - batch_tile
       - batch_tiling_grid
+  - name: BatchV2 API
+    tags:
+      - batch_v2_process
+      - batch_v2_tiling_grid
   - name: Stats API
     tags:
       - statistical
@@ -8575,6 +9224,244 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TilingGridDescriptor'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+      security:
+        - OAuth2: []
+  /api/v2/batch/process:
+    post:
+      operationId: createNewBatchV2ProcessingRequest
+      summary: Submit new batch processing request
+      tags:
+        - batch_v2_process
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BatchV2ProcessRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/MultiPartBatchV2Request'
+      responses:
+        '201':
+          description: Request submitted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BatchV2ProcessTask'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+      security:
+        - OAuth2: []
+    get:
+      summary: Query batch process requests
+      operationId: getAllBatchV2ProcessRequests
+      tags:
+        - batch_v2_process
+      parameters:
+        - $ref: '#/components/parameters/SearchBeanCount'
+        - $ref: '#/components/parameters/SearchBeanViewtoken'
+        - $ref: '#/components/parameters/SearchBeanSearch'
+        - name: sort
+          description: |
+            Sort the batch process requests by given field.
+            Omit for default ordering.
+          in: query
+          schema:
+            type: string
+            enum:
+              - created
+              - created:desc
+              - status
+              - status:desc
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/BatchV2ProcessTask'
+                  links:
+                    $ref: '#/components/schemas/View'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+      security:
+        - OAuth2: []
+  /api/v2/batch/process/{taskId}:
+    get:
+      summary: Retrieve a single batch process task by ID
+      operationId: getSingleBatchV2ProcessTaskById
+      tags:
+        - batch_v2_process
+      parameters:
+        - $ref: '#/components/parameters/BatchV2TaskId'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BatchV2ProcessTask'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+      security:
+        - OAuth2: []
+    put:
+      summary: Update a batch process request
+      description: >
+        Only the requests that are not currently being processed nor waiting to
+        be processed can be updated.
+      operationId: updateBatchV2ProcessRequest
+      tags:
+        - batch_v2_process
+      parameters:
+        - $ref: '#/components/parameters/BatchV2RequestId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BatchV2ProcessRequestUpdatePayload'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BatchV2ProcessRequest'
+        '400':
+          $ref: '#/components/responses/401'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+      security:
+        - OAuth2: []
+  /api/v2/batch/process/{taskId}/analyse:
+    post:
+      summary: Request analysis of a batch process request
+      operationId: batchV2Analyse
+      tags:
+        - batch_v2_process
+      parameters:
+        - $ref: '#/components/parameters/BatchV2TaskId'
+      responses:
+        '204':
+          description: Success
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+      security:
+        - OAuth2: []
+  /api/v2/batch/process/{taskId}/start:
+    post:
+      summary: Start (confirm) processing of a batch process request
+      operationId: batchV2StartProcessRequest
+      tags:
+        - batch_v2_process
+      parameters:
+        - $ref: '#/components/parameters/BatchV2TaskId'
+      responses:
+        '204':
+          description: Success
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+      security:
+        - OAuth2: []
+  /api/v2/batch/process/{taskId}/stop:
+    post:
+      summary: Stop a batch process request
+      operationId: batchV2StopProcessRequest
+      tags:
+        - batch_v2_process
+      parameters:
+        - $ref: '#/components/parameters/BatchV2TaskId'
+      responses:
+        '204':
+          description: Success
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+      security:
+        - OAuth2: []
+  /api/v2/batch/tilinggrids:
+    get:
+      summary: Get properties of all supported tiling grids
+      operationId: getBatchV2TilingGridsProperties
+      tags:
+        - batch_v2_tiling_grid
+      parameters:
+        - $ref: '#/components/parameters/SearchBeanCount'
+        - $ref: '#/components/parameters/SearchBeanViewtoken'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/BatchV2TilingGridDescriptor'
+                  links:
+                    $ref: '#/components/schemas/View'
+        '401':
+          $ref: '#/components/responses/401'
+      security:
+        - OAuth2: []
+  /api/v2/batch/tilinggrids/{id}:
+    get:
+      summary: Get properties of a single tiling grid
+      operationId: getBatchV2TilingGridProperties
+      tags:
+        - batch_v2_tiling_grid
+      parameters:
+        - $ref: '#/components/parameters/BatchV2TilinggridsId'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BatchV2TilingGridDescriptor'
         '400':
           $ref: '#/components/responses/400'
         '401':
