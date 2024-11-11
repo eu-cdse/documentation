@@ -1,0 +1,219 @@
+---
+title: Migration
+---
+
+Due to a few breaking changes we\'ve made between the old Batch
+Processing API and Batch Processing V2, we\'ve prepared a migration
+guide on what has changed between the two APIs.
+
+------------------------------------------------------------------------
+
+### 1. Removal of collections support {#1-removal-of-collections-support}
+
+With Batch Processing V2, we have standardized how to leverage Sentinel
+Hub collections - please see [ingesting results into
+BYOC](/APIs/SentinelHub/BatchV2.qmd#ingesting-results-into-byoc) for the
+new streamlined approach.
+
+This allowed us to simplify and remove the need to create or reference
+[collections](/APIs/SentinelHub/Batch.qmd#batch-collection) directly
+when using Batch Processing V2 and to remove the endpoints below:
+`<br/>`{=html}
+
+-   [`POST api/v1/batch/collections`](/APIs/SentinelHub/ApiReference.html#tag/batch_collection/operation/createNewBatchCollection)
+-   [`GET api/v1/batch/collections`](/APIs/SentinelHub/ApiReference.html#tag/batch_collection/operation/getAllBatchCollections)
+-   [`GET api/v1/batch/collections/{collectionId}`](/APIs/SentinelHub/ApiReference.html#tag/batch_collection/operation/getSingleBatchCollectionById)
+-   [`PUT api/v1/batch/collections/{collectionId}`](/APIs/SentinelHub/ApiReference.html#tag/batch_collection/operation/updateBatchCollection)
+-   [`DELETE api/v1/batch/collections/{collectionId}`](/APIs/SentinelHub/ApiReference.html#tag/batch_collection/operation/deleteBatchCollection)
+
+The following fields concerning this functionality have also been
+removed from request/response schemas:
+
+-   `output.collectionId`
+-   `output.createCollection`
+
+------------------------------------------------------------------------
+
+### 2. Removal of tile status monitoring via REST endpoints {#2-removal-of-tile-status-monitoring-via-rest-endpoints}
+
+We\'ve removed the ability to monitor the status of your tiles via the
+provided REST endpoints. This has been instead supplemented by a
+mechanism that periodically uploads an SQLite database to the root
+folder of your specified bucket. More information about this
+functionality can be found
+[here](/APIs/SentinelHub/BatchV2.qmd#execution-database).
+
+The following endpoints have been removed:
+
+-   [`GET api/v1/batch/process/{requestId}/tiles`](/APIs/SentinelHub/ApiReference.qmd#tag/batch_tile/operation/getAllBatchProcessTiles)
+-   [`GET api/v1/batch/process/{requestId}/tiles/{tileId}`](/APIs/SentinelHub/ApiReference.qmd#tag/batch_tile/operation/getAllBatchProcessTiles)
+
+------------------------------------------------------------------------
+
+### 3. Changes to the `output` and `zarrOutput` properties {#3-changes-to-the-output-and-zarroutput-properties}
+
+We\'ve removed the `zarrOutput` property and have instead merged it with
+the `output` property. This means that the `output` property now
+supports both GeoTIFF and Zarr output. To specify which output format
+you want, you can use the `type` property within the `output` property,
+alongside all the other properties that were previously used for Zarr
+and GeoTiff output.
+
+An example of how to specify Zarr output:
+
+``` JSON
+{
+  "output": {
+    "type": "zarr",
+    "delivery": {
+      "s3": {
+        "url": "s3://<your-bucket>/<requestId>",
+        "accessKey": "<your-accessKey>",
+"secretAccessKey": "<your-secretAccessKey>"
+      }
+    },
+    "group": {
+      "zarr_format": 2
+    },
+    "arrayParameters": {
+      "dtype": "<u2",
+      "order": "C",
+      "chunks": [
+        1,
+        1000,
+        1000
+      ],
+      "fill_value": 0
+    },
+    "arrayOverrides": {
+      "maxNDVI": {
+        "dtype": "<f4",
+        "fill_value": "NaN"
+      }
+    }
+  }
+}
+```
+
+and an example of how to specify a GeoTiff output:
+
+``` JSON
+{
+  "output": {
+    "type": "raster",
+    "delivery": {
+      "s3": {
+        "url": "s3://<your-bucket>",
+        "accessKey": "<your-accessKey>",
+"secretAccessKey": "<your-secretAccessKey>"
+      }
+    },
+    "cogOutput": true,
+    "cogParameters": {
+      "resamplingAlgorithm": "gauss"
+    }
+  }
+}
+```
+
+### 4. Introduction of the `input` property {#4-introduction-of-the-input-property}
+
+We\'ve added a new property called `input`. This property is used in
+place of the `tilingGrid` property that has been since removed. The
+`input` property is used to specify the input format, which can be
+either a tiling grid or a GeoPackage. An example of how to specify a
+tiling grid input is as follows:
+
+``` JSON
+{
+  "input": {
+    "type" : "tiling-grid",
+    "id": 0,
+    "resolution": 60.0
+  }
+}
+```
+
+and an example of how to specify a GeoPackage input:
+
+``` JSON
+{
+  "input": {
+    "type" : "geopackage",
+    "features": {
+      "s3": {
+        "url": "s3://<my-bucket>/<path-to-geopackage>",
+        "accessKey": "<your-accessKey>",
+"secretAccessKey": "<your-secretAccessKey>"
+      }
+    }
+  }
+}
+```
+
+### 5. Templating and  paths {#5-templating-and-s3-paths}
+
+The path or path template of your request can now **only** be configured
+via the `output.delivery.s3.url` property for both GeoTiff and Zarr
+output.
+
+This means all other properties for specifying the path have been
+removed, namely:
+
+-   `bucketName`
+-   `output.defaultTilePath`
+-   `zarrOutput.path`
+
+Example for specifying paths for output:
+
+``` JSON
+{
+  "output": {
+    "delivery": {
+      "s3": {
+        "url": "s3://<your-bucket>/<path>",
+        "accessKey": "<your-accessKey>",
+"secretAccessKey": "<your-secretAccessKey>"
+      }
+    }
+   }
+}
+```
+
+------------------------------------------------------------------------
+
+### 6. Removal of several additional properties from request & response schemas {#6-removal-of-several-additional-properties-from-request--response-schemas}
+
+From the `/process` endpoint, we\'ve removed the following properties
+from the request schema:
+
+-   `tilingGridId`
+-   `resolution`
+
+The following fields have been removed from all response schemas:
+
+-   `valueEstimate`
+-   `tileCount`
+-   `tileWidthPx`
+-   `tileHeightPx`
+-   `userId`
+-   `tilingGridId`
+-   `resolution`
+
+------------------------------------------------------------------------
+
+## 7. Changes to Bucket Access
+
+Background In the previous version of our Batch API, accessing buckets
+required configuring bucket policies to allow full access to Sentinel
+Hub. However, in an effort to enhance security, this feature has been
+disabled in Batch Processing V2.
+
+New Approach Instead of using bucket policies, Batch Processing V2 now
+supports alternative approach for accessing bucket, similarly to Batch
+Statistical API. These approach is detailed in the [Bucket settings and
+access](/APIs/SentinelHub/BatchV2.qmd#bucket-settings-and-access)
+sections.
+
+Action Required When migrating to Batch Processing V2, ensure that you
+update your bucket access mechanisms to align with one mentioned above.
