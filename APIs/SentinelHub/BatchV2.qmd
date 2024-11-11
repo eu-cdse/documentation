@@ -1,0 +1,490 @@
+---
+title: Batch Processing V2 API
+---
+
+**The BatchV2 API is only available for users with Copernicus Service
+accounts.** Please refer to our [FAQ](/FAQ.qmd) on account typology
+change and [Submit A
+Request](https://helpcenter.dataspace.copernicus.eu/hc/en-gb/requests/new){target="_blank"}
+to our Copernicus Data Space Ecosystem Support Team to request your
+Copernicus Service account accordingly.
+
+------------------------------------------------------------------------
+
+## Migration guide
+
+If you\'re interested on how to migrate from [Batch Processing
+API](/APIs/SentinelHub/Batch.qmd) to **BatchV2**, please read the
+following guide:
+
+[BatchV2 Migration Guide](/APIs/SentinelHub/BatchV2/Migration.qmd)
+
+------------------------------------------------------------------------
+
+## Overview
+
+**BatchV2 Processing API** (or shortly \"**BatchV2 API**\") enables you
+to request data for large areas and/or longer time periods for any
+Sentinel Hub supported collection, including BYOC (bring your own data).
+It is an asynchronous REST service, meaning data won\'t be returned
+immediately but delivered to your specified object storage instead.
+
+### Workflow
+
+The Batch V2 Processing API comes with the set of REST APIs which
+support the execution of various workflows. The diagram below shows all
+possible statuses of a batch task:
+
+-   `CREATED`
+-   `ANALYSING`
+-   `ANALYSIS_DONE`
+-   `PROCESSING`
+-   `DONE`
+-   `FAILED`
+-   `STOPPED`
+
+and user\'s actions:
+
+-   `ANALYSE`
+-   `START`
+-   `STOP`
+
+which trigger transitions among them.
+
+``` {=html}
+<div class="mermaid" data-processed="true"><svg id="mermaid-1728999222784" width="100%" xmlns="http://www.w3.org/2000/svg" class="statediagram" height="698" style="max-width:866.5439453125px" viewBox="0 0 495.16796875 698"><style>.edgeLabel{font-size:14px;}#mermaid-1728999222784 {font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;fill:#333;}#mermaid-1728999222784 .error-icon{fill:#552222;}#mermaid-1728999222784 .error-text{fill:#552222;stroke:#552222;}#mermaid-1728999222784 .edge-thickness-normal{stroke-width:2px;}#mermaid-1728999222784 .edge-thickness-thick{stroke-width:3.5px;}#mermaid-1728999222784 .edge-pattern-solid{stroke-dasharray:0;}#mermaid-1728999222784 .edge-pattern-dashed{stroke-dasharray:3;}#mermaid-1728999222784 .edge-pattern-dotted{stroke-dasharray:2;}#mermaid-1728999222784 .marker{fill:#333333;stroke:#333333;}#mermaid-1728999222784 .marker.cross{stroke:#333333;}#mermaid-1728999222784 svg{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;}#mermaid-1728999222784 defs #statediagram-barbEnd{fill:#333333;stroke:#333333;}#mermaid-1728999222784 g.stateGroup text{fill:#9370DB;stroke:none;font-size:10px;}#mermaid-1728999222784 g.stateGroup text{fill:#333;stroke:none;font-size:10px;}#mermaid-1728999222784 g.stateGroup .state-title{font-weight:bolder;fill:#131300;}#mermaid-1728999222784 g.stateGroup rect{fill:#ECECFF;stroke:#9370DB;}#mermaid-1728999222784 g.stateGroup line{stroke:#333333;stroke-width:1;}#mermaid-1728999222784 .transition{stroke:#333333;stroke-width:1;fill:none;}#mermaid-1728999222784 .stateGroup .composit{fill:white;border-bottom:1px;}#mermaid-1728999222784 .stateGroup .alt-composit{fill:#e0e0e0;border-bottom:1px;}#mermaid-1728999222784 .state-note{stroke:#aaaa33;fill:#fff5ad;}#mermaid-1728999222784 .state-note text{fill:black;stroke:none;font-size:10px;}#mermaid-1728999222784 .stateLabel .box{stroke:none;stroke-width:0;fill:#ECECFF;opacity:0.5;}#mermaid-1728999222784 .edgeLabel .label rect{fill:#ECECFF;opacity:0.5;}#mermaid-1728999222784 .edgeLabel .label text{fill:#333;}#mermaid-1728999222784 .label div .edgeLabel{color:#333;}#mermaid-1728999222784 .stateLabel text{fill:#131300;font-size:10px;font-weight:bold;}#mermaid-1728999222784 .node circle.state-start{fill:#333333;stroke:#333333;}#mermaid-1728999222784 .node .fork-join{fill:#333333;stroke:#333333;}#mermaid-1728999222784 .node circle.state-end{fill:#9370DB;stroke:white;stroke-width:1.5;}#mermaid-1728999222784 .end-state-inner{fill:white;stroke-width:1.5;}#mermaid-1728999222784 .node rect{fill:#ECECFF;stroke:#9370DB;stroke-width:1px;}#mermaid-1728999222784 .node polygon{fill:#ECECFF;stroke:#9370DB;stroke-width:1px;}#mermaid-1728999222784 #statediagram-barbEnd{fill:#333333;}#mermaid-1728999222784 .statediagram-cluster rect{fill:#ECECFF;stroke:#9370DB;stroke-width:1px;}#mermaid-1728999222784 .cluster-label,#mermaid-1728999222784 .nodeLabel{color:#131300;}#mermaid-1728999222784 .statediagram-cluster rect.outer{rx:5px;ry:5px;}#mermaid-1728999222784 .statediagram-state .divider{stroke:#9370DB;}#mermaid-1728999222784 .statediagram-state .title-state{rx:5px;ry:5px;}#mermaid-1728999222784 .statediagram-cluster.statediagram-cluster .inner{fill:white;}#mermaid-1728999222784 .statediagram-cluster.statediagram-cluster-alt .inner{fill:#f0f0f0;}#mermaid-1728999222784 .statediagram-cluster .inner{rx:0;ry:0;}#mermaid-1728999222784 .statediagram-state rect.basic{rx:5px;ry:5px;}#mermaid-1728999222784 .statediagram-state rect.divider{stroke-dasharray:10,10;fill:#f0f0f0;}#mermaid-1728999222784 .note-edge{stroke-dasharray:5;}#mermaid-1728999222784 .statediagram-note rect{fill:#fff5ad;stroke:#aaaa33;stroke-width:1px;rx:0;ry:0;}#mermaid-1728999222784 .statediagram-note rect{fill:#fff5ad;stroke:#aaaa33;stroke-width:1px;rx:0;ry:0;}#mermaid-1728999222784 .statediagram-note text{fill:black;}#mermaid-1728999222784 .statediagram-note .nodeLabel{color:black;}#mermaid-1728999222784 .statediagram .edgeLabel{color:red;}#mermaid-1728999222784 #dependencyStart,#mermaid-1728999222784 #dependencyEnd{fill:#333333;stroke:#333333;stroke-width:1;}#mermaid-1728999222784 :root{--mermaid-font-family:"trebuchet ms",verdana,arial,sans-serif;}</style><g><defs><marker id="statediagram-barbEnd" refX="19" refY="7" markerWidth="20" markerHeight="14" markerUnits="strokeWidth" orient="auto"><path d="M 19,7 L9,13 L14,7 L9,1 Z"></path></marker></defs><g class="root"><g class="clusters"></g><g class="edgePaths"><path d="M267.97265625,22L267.97265625,26.166666666666668C267.97265625,30.333333333333332,267.97265625,38.666666666666664,267.97265625,47C267.97265625,55.333333333333336,267.97265625,63.666666666666664,267.97265625,67.83333333333333L267.97265625,72" id="edge0" class="edge-thickness-normal transition" style="fill:none" marker-end="url(#statediagram-barbEnd)"></path><path d="M267.97265625,105L267.97265625,110.66666666666667C267.97265625,116.33333333333333,267.97265625,127.66666666666667,267.97265625,139C267.97265625,150.33333333333334,267.97265625,161.66666666666666,267.97265625,167.33333333333334L267.97265625,173" id="edge1" class="edge-thickness-normal transition" style="fill:none" marker-end="url(#statediagram-barbEnd)"></path><path d="M267.97265625,206L267.97265625,210.16666666666666C267.97265625,214.33333333333334,267.97265625,222.66666666666666,267.97265625,231C267.97265625,239.33333333333334,267.97265625,247.66666666666666,267.97265625,251.83333333333334L267.97265625,256" id="edge2" class="edge-thickness-normal transition" style="fill:none" marker-end="url(#statediagram-barbEnd)"></path><path d="M306.72265625,271.85285132382893L330.9518229166667,276.2940427698574C355.1809895833333,280.73523421588595,403.6393229166667,289.617617107943,427.8684895833333,300.97547522063815C452.09765625,312.3333333333333,452.09765625,326.1666666666667,452.09765625,340C452.09765625,353.8333333333333,452.09765625,367.6666666666667,452.09765625,380.2083333333333C452.09765625,392.75,452.09765625,404,452.09765625,416.75C452.09765625,429.5,452.09765625,443.75,452.09765625,459.2916666666667C452.09765625,474.8333333333333,452.09765625,491.6666666666667,452.09765625,508.5C452.09765625,525.3333333333334,452.09765625,542.1666666666666,452.09765625,556.25C452.09765625,570.3333333333334,452.09765625,581.6666666666666,452.09765625,587.3333333333334L452.09765625,593" id="edge3" class="edge-thickness-normal transition" style="fill:none" marker-end="url(#statediagram-barbEnd)"></path><path d="M251.0357349537037,273.5L242.97053433641975,277.6666666666667C234.9053337191358,281.8333333333333,218.7749324845679,290.1666666666667,210.70973186728395,298.5C202.64453125,306.8333333333333,202.64453125,315.1666666666667,202.64453125,319.3333333333333L202.64453125,323.5" id="edge4" class="edge-thickness-normal transition" style="fill:none" marker-end="url(#statediagram-barbEnd)"></path><path d="M183.96089043674698,356.5L179.24279932228913,360.6666666666667C174.5247082078313,364.8333333333333,165.08852597891567,373.1666666666667,160.37043486445782,381.5C155.65234375,389.8333333333333,155.65234375,398.1666666666667,155.65234375,402.3333333333333L155.65234375,406.5" id="edge5" class="edge-thickness-normal transition" style="fill:none" marker-end="url(#statediagram-barbEnd)"></path><path d="M140.92269736842104,424L131.38349780701753,429.6666666666667C121.84429824561403,435.3333333333333,102.76589912280701,446.6666666666667,93.2266995614035,458C83.6875,469.3333333333333,83.6875,480.6666666666667,83.6875,486.3333333333333L83.6875,492" id="edge6" class="edge-thickness-normal transition" style="fill:none" marker-end="url(#statediagram-barbEnd)"></path><path d="M98.41344368811882,525L103.47083849009903,530.6666666666666C108.52823329207922,536.3333333333334,118.64302289603961,547.6666666666666,138.07046720297032,559C157.497911509901,570.3333333333334,186.23801051980197,581.6666666666666,200.6080600247525,587.3333333333334L214.97810952970298,593" id="edge7" class="edge-thickness-normal transition" style="fill:none" marker-end="url(#statediagram-barbEnd)"></path><path d="M176.3592379385965,424L189.76941703216372,429.6666666666667C203.179596125731,435.3333333333333,229.9999543128655,446.6666666666667,243.41013340643272,460.75C256.8203125,474.8333333333333,256.8203125,491.6666666666667,256.8203125,508.5C256.8203125,525.3333333333334,256.8203125,542.1666666666666,256.8203125,556.25C256.8203125,570.3333333333334,256.8203125,581.6666666666666,256.8203125,587.3333333333334L256.8203125,593" id="edge8" class="edge-thickness-normal transition" style="fill:none" marker-end="url(#statediagram-barbEnd)"></path><path d="M68.96155631188118,525L63.90416150990098,530.6666666666666C58.846766707920786,536.3333333333334,48.73197710396039,547.6666666666666,43.674582301980195,559C38.6171875,570.3333333333334,38.6171875,581.6666666666666,38.6171875,587.3333333333334L38.6171875,593" id="edge9" class="edge-thickness-normal transition" style="fill:none" marker-end="url(#statediagram-barbEnd)"></path><path d="M287.52807858910893,593L298.0741800742574,587.3333333333334C308.62028155940595,581.6666666666666,329.712484529703,570.3333333333334,340.25858601485146,556.25C350.8046875,542.1666666666666,350.8046875,525.3333333333334,350.8046875,508.5C350.8046875,491.6666666666667,350.8046875,474.8333333333333,350.8046875,459.2916666666667C350.8046875,443.75,350.8046875,429.5,350.8046875,416.75C350.8046875,404,350.8046875,392.75,335.9291698042169,382.9583333333333C321.0536521084337,373.1666666666667,291.3026167168675,364.8333333333333,276.4270990210843,360.6666666666667L261.5515813253012,356.5" id="edge10" class="edge-thickness-normal transition" style="fill:none" marker-end="url(#statediagram-barbEnd)"></path><path d="M38.6171875,626L38.6171875,630.1666666666666C38.6171875,634.3333333333334,38.6171875,642.6666666666666,75.68762445075043,652.0054532260447C112.75806140150087,661.3442397854227,186.89893530300174,671.6884795708455,223.96937225375214,676.8605994635568L261.0398092045026,682.0327193562682" id="edge11" class="edge-thickness-normal transition" style="fill:none" marker-end="url(#statediagram-barbEnd)"></path><path d="M452.09765625,626L452.09765625,630.1666666666666C452.09765625,634.3333333333334,452.09765625,642.6666666666666,422.55959286538854,651.9669003574071C393.02152948077713,661.2671340481473,333.9454027115542,671.5342680962948,304.40733932694275,676.6678351203685L274.8692759423313,681.8014021444421" id="edge12" class="edge-thickness-normal transition" style="fill:none" marker-end="url(#statediagram-barbEnd)"></path></g><g class="edgeLabels"><g class="edgeLabel"><g class="label" transform="translate(0, 0)"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display:inline-block;white-space:nowrap"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(267.97265625, 139)"><g class="label" transform="translate(-112.5234375, -9)"><rect rx="0" ry="0" width="225.046875" height="18"></rect><foreignObject width="225.046875" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display:inline-block;white-space:nowrap"><span class="edgeLabel">👤 START/ANALYSE</span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" transform="translate(0, 0)"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display:inline-block;white-space:nowrap"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" transform="translate(0, 0)"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display:inline-block;white-space:nowrap"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" transform="translate(0, 0)"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display:inline-block;white-space:nowrap"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" transform="translate(0, 0)"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display:inline-block;white-space:nowrap"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(83.6875, 458)"><g class="label" transform="translate(-73.984375, -9)"><rect rx="0" ry="0" width="147.96875" height="18"></rect><foreignObject width="147.96875" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display:inline-block;white-space:nowrap"><span class="edgeLabel">👤 START</span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(128.7578125, 559)"><g class="label" transform="translate(-70.140625, -9)"><rect rx="0" ry="0" width="140.28125" height="18"></rect><foreignObject width="140.28125" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display:inline-block;white-space:nowrap"><span class="edgeLabel">👤 STOP</span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(256.8203125, 508.5)"><g class="label" transform="translate(-70.140625, -9)"><rect rx="0" ry="0" width="140.28125" height="18"></rect><foreignObject width="140.28125" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display:inline-block;white-space:nowrap"><span class="edgeLabel">👤 STOP</span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" transform="translate(0, 0)"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display:inline-block;white-space:nowrap"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(350.8046875, 458)"><g class="label" transform="translate(-73.984375, -9)"><rect rx="0" ry="0" width="147.96875" height="18"></rect><foreignObject width="147.96875" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display:inline-block;white-space:nowrap"><span class="edgeLabel">👤 START</span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" transform="translate(0, 0)"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display:inline-block;white-space:nowrap"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" transform="translate(0, 0)"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display:inline-block;white-space:nowrap"><span class="edgeLabel"></span></div></foreignObject></g></g></g><g class="nodes"><g class="node default" id="state-root_start-0" transform="translate(267.97265625, 15)"><circle class="state-start" r="7" width="14" height="14"></circle></g><g class="node statediagram-state" id="state-CREATED-1" transform="translate(267.97265625, 88.5)"><rect class="basic label-container" x="-45.1328125" y="-16.5" width="90.265625" height="33"></rect><g class="label" transform="translate(-37.6328125, -9)"><foreignObject width="75.265625" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display:inline-block;white-space:nowrap"><span class="nodeLabel">CREATED</span></div></foreignObject></g></g><g class="node statediagram-state" id="state-ANALYSING-2" transform="translate(267.97265625, 189.5)"><rect class="basic label-container" x="-52.703125" y="-16.5" width="105.40625" height="33"></rect><g class="label" transform="translate(-45.203125, -9)"><foreignObject width="90.40625" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display:inline-block;white-space:nowrap"><span class="nodeLabel">ANALYSING</span></div></foreignObject></g></g><g class="node default" id="state-fork_state_analysis-4" transform="translate(267.97265625, 264.75)"><rect x="-35" y="-5" width="70" height="10" class="fork-join"></rect></g><g class="node statediagram-state" id="state-FAILED-12" transform="translate(452.09765625, 609.5)"><rect class="basic label-container" x="-35.0703125" y="-16.5" width="70.140625" height="33"></rect><g class="label" transform="translate(-27.5703125, -9)"><foreignObject width="55.140625" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display:inline-block;white-space:nowrap"><span class="nodeLabel">FAILED</span></div></foreignObject></g></g><g class="node statediagram-state" id="state-ANALYSIS_DONE-10" transform="translate(202.64453125, 340)"><rect class="basic label-container" x="-73.6015625" y="-16.5" width="147.203125" height="33"></rect><g class="label" transform="translate(-66.1015625, -9)"><foreignObject width="132.203125" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display:inline-block;white-space:nowrap"><span class="nodeLabel">ANALYSIS_DONE</span></div></foreignObject></g></g><g class="node default" id="state-fork_state_analysis_done-8" transform="translate(155.65234375, 415.25)"><rect x="-35" y="-5" width="70" height="10" class="fork-join"></rect></g><g class="node statediagram-state" id="state-PROCESSING-9" transform="translate(83.6875, 508.5)"><rect class="basic label-container" x="-60.84375" y="-16.5" width="121.6875" height="33"></rect><g class="label" transform="translate(-53.34375, -9)"><foreignObject width="106.6875" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display:inline-block;white-space:nowrap"><span class="nodeLabel">PROCESSING</span></div></foreignObject></g></g><g class="node statediagram-state" id="state-STOPPED-10" transform="translate(256.8203125, 609.5)"><rect class="basic label-container" x="-45.5859375" y="-16.5" width="91.171875" height="33"></rect><g class="label" transform="translate(-38.0859375, -9)"><foreignObject width="76.171875" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display:inline-block;white-space:nowrap"><span class="nodeLabel">STOPPED</span></div></foreignObject></g></g><g class="node statediagram-state" id="state-DONE-11" transform="translate(38.6171875, 609.5)"><rect class="basic label-container" x="-30.6171875" y="-16.5" width="61.234375" height="33"></rect><g class="label" transform="translate(-23.1171875, -9)"><foreignObject width="46.234375" height="18"><div xmlns="http://www.w3.org/1999/xhtml" style="display:inline-block;white-space:nowrap"><span class="nodeLabel">DONE</span></div></foreignObject></g></g><g class="node default" id="state-root_end-12" transform="translate(267.97265625, 683)"><circle class="state-start" r="7" width="14" height="14"></circle><circle class="state-end" r="5" width="10" height="10"></circle></g></g></g></g></svg></div>
+```
+
+The workflow starts when a user posts a new batch request. In this step
+the system:
+
+-   creates a new batch task with the status `CREATED`,
+-   validates the user\'s input (except the evalscript),
+-   ensures the user\'s account has at least 1000 PUs,
+-   uploads a JSON of the original request to the user\'s bucket,
+-   and returns the overview of the created task.
+
+The user can then decide to either request an additional analysis of the
+task or start the processing. When an additional analysis is requested:
+
+-   the status of the task changes to `ANALYSING`,
+-   the evalscript is validated,
+-   a [feature manifest](/APIs/SentinelHub/BatchV2.qmd#feature-manifest)
+    file is uploaded to the user\'s bucket,
+-   after the analysis is finished, the status of the task changes to
+    `ANALYSIS_DONE`.
+
+If the user chooses to directly start processing, the system still
+executes the analysis but when the analysis is done it automatically
+proceeds with processing. This is not explicitly shown in the diagram in
+order to keep it simple.
+
+When the user starts the processing:
+
+-   the status of the task changes to `PROCESSING` (this may take a
+    while, depending on the load on the service),
+-   the processing starts,
+-   an [execution
+    database](/APIs/SentinelHub/BatchV2.qmd#execution-database) is
+    periodically uploaded to the user\'s bucket,
+-   spent processing units are billed periodically.
+
+When the processing is finished, the status of the task changes to
+`DONE`.
+
+#### Stopping the request
+
+A task might be stopped for the following reasons:
+
+-   it\'s requested by a user (user action),
+-   user is out of processing units,
+-   something is wrong with the processing of the task (e.g. the system
+    is not able to process the data).
+
+A user may stop the request in following states: `ANALYSING`,
+`ANALYSIS_DONE` and `PROCESSING`. However:
+
+-   if the status is `ANALYSING`, the analysis will complete,
+-   if the status is `PROCESSING`, all features (polygons) that have
+    been processed or are being processed at that moment are charged
+    for,
+-   user is not allowed to restart the task in the next 30 minutes.
+
+------------------------------------------------------------------------
+
+## Input features
+
+BatchV2 API supports two ways of specifying the input features of your
+batch task:
+
+1.  Pre-defined [Tiling
+    Grid](/APIs/SentinelHub/BatchV2.qmd#1-tiling-grid)
+2.  User-defined
+    [GeoPackage](/APIs/SentinelHub/BatchV2.qmd#2-geopackage)
+
+### 1. Tiling grid {#1-tiling-grid}
+
+For more effective processing we divide the area of interest into tiles
+and process each tile separately. While `process` API uses grids which
+come together with each datasource for processing of the data, the
+`batch` API uses one of the predefined tiling grids. The predefined
+tiling grids 0-2 are based on the [Sentinel-2
+tiling](https://sentinel.esa.int/web/sentinel/missions/sentinel-2/data-products){target="_blank"}
+in WGS84/UTM projection with some adjustments:
+
+-   The width and height of tiles in the original Sentinel 2 grid is 100
+    km while the width and height of tiles in our grids are given in the
+    table below.
+-   All redundant tiles (i.e. fully overlapped tiles) are removed.
+
+All available tiling grids can be requested with (*NOTE: To run this
+example you need to first create an OAuth client as is explained
+[here](/APIs/SentinelHub/Overview/Authentication.qmd#python)*):
+
+``` python
+url = "https://sh.dataspace.copernicus.eu/api/v2/batch/tilinggrids/"
+
+response = oauth.request("GET", url)
+
+response.json()
+```
+
+This will return the list of available grids and information about tile
+size and available resolutions for each grid. Currently, available grids
+are:
+
+  name                  id   tile size   resolutions                        coverage                                                                  output CRS   download the grid \[zip with shp file\] \*\*
+  --------------------- ---- ----------- ---------------------------------- ------------------------------------------------------------------------- ------------ ----------------------------------------------------------------------------------------------------------------
+  UTM 20km grid         0    20040 m     10 m, 20 m, 30m\*, 60 m            World, latitudes from -80.7° to 80.7°                                     UTM          [UTM 20km grid](https://s3.eu-central-1.amazonaws.com/sh-batch-grids/tiling-grid-0.zip){target="_blank"}
+  UTM 10km grid         1    10000 m     10 m, 20 m                         World, latitudes from -80.6° to 80.6°                                     UTM          [UTM 10km grid](https://s3.eu-central-1.amazonaws.com/sh-batch-grids/tiling-grid-1.zip){target="_blank"}
+  UTM 100km grid        2    100080 m    30m\*, 60 m, 120 m, 240 m, 360 m   World, latitudes from -81° to 81°                                         UTM          [UTM 100km grid](https://s3.eu-central-1.amazonaws.com/sh-batch-grids/tiling-grid-2.zip){target="_blank"}
+  WGS84 1 degree grid   3    1 °         0.0001°, 0.0002°                   World, all latitudes                                                      WGS84        [WGS84 1 degree grid](https://s3.eu-central-1.amazonaws.com/sh-batch-grids/tiling-grid-3.zip){target="_blank"}
+  LAEA 100km grid       6    100000 m    40 m, 50 m, 100 m                  Europe, including Turkey, Iceland, Svalbald, Azores, and Canary Islands   EPSG:3035    [LAEA 100km grid](https://s3.eu-central-1.amazonaws.com/sh-batch-grids/tiling-grid-6.zip){target="_blank"}
+  LAEA 20km grid        7    20000 m     10 m, 20 m                         Europe, including Turkey, Iceland, Svalbald, Azores, and Canary Islands   EPSG:3035    [LAEA 20km grid](https://s3.eu-central-1.amazonaws.com/sh-batch-grids/tiling-grid-7.zip){target="_blank"}
+
+\*\* The geometries of the tiles are reprojected to WGS84 for download.
+Because of this and other reasons the geometries of the output rasters
+may differ from the tile geometries provided here.
+
+To use `20km` grid with 60 m resolution, for example, specify `id` and
+`resolution` parameters of the `tilingGrid` object when creating a new
+batch request (see an example of [full
+request](/APIs/SentinelHub/BatchV2/Examples.qmd#create-a-batchv2-processing-request))
+as:
+
+``` JSON
+{
+  ...
+  "tilingGrid": {
+    "id": 0,
+    "resolution": 60.0
+  },
+  ...
+}
+```
+
+### 2. GeoPackage {#2-geopackage}
+
+In addition to the predefined tiling grids, BatchV2 API now also support
+user-defined features through
+[GeoPackages](https://www.geopackage.org/spec/){target="_blank"}. This
+allows you to specify features of any shape as long as the underlying
+geometry is a POLYGON or MULTIPOLYGON in an **EPSG compliant** CRS
+listed [here](/APIs/SentinelHub/Process/Crs.qmd). The GeoPackage can
+also have multiple layers, offering more flexibility in specifying
+features in multiple CRS.
+
+The GeoPackage must adhere to the [GeoPackage
+spec](https://www.geopackage.org/spec/){target="_blank"} and contain at
+**least one feature table with any name**. The table must include a
+column that holds the geometry data. This column can be named
+arbitrarily, but it must be listed as the geometry column in the
+`gpkg_geometry_columns` table. The table schema should include the
+following columns:
+
+  Column       Type                      Example
+  ------------ ------------------------- ----------------------------------------------------------
+  id           INTEGER **(UNIQUE)**      1000
+  identifier   TEXT **(UNIQUE)**         FEATURE_NAME
+  geometry     POLYGON or MULTIPOLYGON   Feature geometry representation in GeoPackage WKB format
+  width        INTEGER                   1000
+  height       INTEGER                   1000
+  resolution   REAL                      0.005
+
+#### Caveats
+
+-   You must specify either both width and height, or alternatively,
+    specify resolution. If both values are provided, width and height
+    will be used, and resolution will be ignored.
+-   The feature table must use a CRS that is **EPSG compliant**.
+-   Both `id` and `identifier` values must not be null and unique across
+    all feature tables.
+
+An example of a batch task with GeoPackage input is available
+[here](/APIs/SentinelHub/BatchV2/Examples.qmd#option-3-geopackage-input-and-geotiff-output).
+
+------------------------------------------------------------------------
+
+## Processing results
+
+The outputs of a batch task will be stored to your object storage in
+either:
+
+1.  GeoTIFF (and JSON for metadata) or
+2.  Zarr format
+
+### 1. GeoTIFF output format {#1-geotiff-output-format}
+
+**The GeoTIFF format will be used if your request includes the
+`output.type` parameter set to `raster`, along with other relevant
+parameters specified in the [BatchV2 API
+reference](/APIs/SentinelHub/ApiReference.qmd#tag/batch_v2_process/operation/createNewBatchV2ProcessingRequest).
+An example of a batch task with GeoTIFF output is available
+[here](/APIs/SentinelHub/BatchV2/Examples.qmd#option-1-geotiff-format-output).**
+
+By default, the results will be organized in sub-folders where one
+sub-folder will be created for each feature. Each sub-folder might
+contain one or more images depending on how many outputs were defined in
+the [evalscript](/APIs/SentinelHub/Evalscript/V3.qmd#setup-function) of
+the request. For example:
+
+You can also customize the sub-folder structure and file naming as
+described in the `delivery` parameter under `output` in [BatchV2 API
+reference](/APIs/SentinelHub/ApiReference.qmd#tag/batch_v2_process/operation/createNewBatchV2ProcessingRequest).
+
+You can choose to return your GeoTIFF files as Cloud Optimized GeoTIFF
+(COG), by setting the `cogOutput` parameter under `output` in your
+request as `true`. Several advanced COG options can be selected as
+well - read about the parameter in [BatchV2 API
+reference](/APIs/SentinelHub/ApiReference.qmd#tag/batch_v2_process/operation/createNewBatchV2ProcessingRequest).
+
+The output projection depends on the selected input, either tiling grid
+or GeoPackage:
+
+1.  If the input is a tiling grid, the results of batch processing will
+    be in the projection of the selected [tiling
+    grid](/APIs/SentinelHub/BatchV2.qmd#1-tiling-grid). For UTM-based
+    grids, each part of the AOI (area of interest) is delivered in the
+    UTM zone with which it intersects. In other words, in case your AOI
+    intersects with more UTM zones, the results will be delivered as
+    tiles in different UTM zones (and thus different CRSs).
+2.  If the input is a GeoPackage, the results will be in the same CRS as
+    the input feature\'s CRS.
+
+### 2. Zarr output format {#2-zarr-output-format}
+
+The Zarr format will be used if your request includes the `output.type`
+parameter set to `zarr`, along with other relevant parameters specified
+in the [BatchV2 API
+reference](/APIs/SentinelHub/ApiReference.qmd#tag/batch_v2_process/operation/createNewBatchV2ProcessingRequest).
+An example of a batch request with Zarr output is available
+[here](/APIs/SentinelHub/BatchV2/Examples.qmd#option-2-zarr-format-output).
+Your request **must** only have one band per output and the
+`application/json` format in responses is **not** supported.
+
+The outputs of batch processing will be stored as a single Zarr group
+containing one data array for each evalscript output and multiple
+coordinate arrays. The output will be stored in a subfolder named after
+the `requestId` that you pass to the API in the `delivery.s3.url`
+parameter under `output`.
+
+------------------------------------------------------------------------
+
+## Ingesting results into BYOC
+
+#### Purpose
+
+Enables automatic ingestion of processing results into a BYOC
+collection, allowing you to:
+
+-   Access data with Processing API, by using the collection ID
+-   Create a configuration with custom layers
+-   Make OGC requests to a configuration
+-   View data in EO Browser
+
+In order to enable this functionality, user needs to specify either id
+of an existing BYOC collection (`collectionId`) or set
+`createCollection = true`.
+
+``` JSON
+{
+  ...
+  "output": {
+    ...
+    "createCollection": true,
+    "collectionId": "<byoc-collection-id>",
+    ...
+  },
+  ...
+}
+```
+
+If collectionId is provided, the existing collection will be used for
+data ingestion.
+
+If `createCollection` is set to `true` and `collectionId` is not
+provided, a new BYOC collection will be created automatically and the
+collection bands will be set according to the request output `responses`
+definitions.
+
+Regardless of whether the user specifies an existing collection or
+requests a new one, processed data will still be uploaded to the users
+bucket, where they will be available for download and analysis.
+
+When creating a new batch collection, one has to be careful to:
+
+-   Make sure that `cogOutput=true` and that the output format is a
+    `image/tiff`
+-   If an existing BYOC collection is used, make sure that `identifier`
+    and `sampleType` from the output definition(s) match the name and
+    the type of the BYOC band(s). Single band and multi-band outputs are
+    supported.
+-   If multi-band output is used in the request, the additionally
+    generated bands will be named using a numerical suffix in ascending
+    order (e.g. 2, \... 99). For example, if the
+    `output: { id: "result", bands: 3 }` is used in the evalscript setup
+    function, the produced BYOC bands will be named: `result` for band
+    1, `result2` for band 2 and `result3` for band 3. Make sure that no
+    other output band has any of these automatically generated names, as
+    this will throw an error during the analysis phase. The
+    `output: [{ id: "result", bands: 3 },{ id: "result2", bands: 1 }]`
+    will throw an exception.
+-   Keep sampleType in mind, as the values the evalscript returns when
+    creating a collection will be the values available when making a
+    request to access it.
+
+#### Mandatory bucket settings
+
+Regardless of the credentials provided on the request, your bucket needs
+to be configured to allow full access to Sentinel Hub. To do this,
+update your bucket policy to include the following statement (don\'t
+forget to replace \<bucket_name\> with your actual bucket name):
+
+``` JSON
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "Sentinel Hub permissions",
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "arn:aws:iam::ddf4c98b5e6647f0a246f0624c8341d9:root"
+      },
+      "Action": [
+        "s3:*"
+      ],
+      "Resource": [
+        "arn:aws:s3:::<bucket_name>",
+        "arn:aws:s3:::<bucket_name>/*"
+      ]
+    }
+  ]
+}
+```
+
+## Feature Manifest
+
+#### Purpose
+
+-   Provides a detailed overview of features scheduled for processing
+    during the `PROCESSING` step.
+-   Enables users to verify feature information and corresponding output
+    paths prior to processing.
+
+#### Key Information
+
+-   **File Type:**
+    [GeoPackage](https://www.geopackage.org/spec/){target="_blank"}
+-   **File Name:** `featureManifest-<requestId>.gpkg`
+-   **Location:** Root folder of the specified output delivery path
+-   **Structure:**
+    -   May contain multiple feature tables, one per distinct CRS used
+        by the features.
+    -   Table names follow the format `feature_<crs-id>` (e.g.
+        `feature_4326`).
+
+During task analysis, the system will upload a file to the user\'s
+bucket called the `featureManifest-<requestId>.gpkg`. This file is a
+GeoPackage that contains basic information about the features that will
+be processed during the `PROCESSING` step. It is intended to be used by
+users to check the features that will be processed and their
+corresponding output paths.
+
+If the output type is set to `raster`, the output paths will be the
+paths to the GeoTIFF files. If the output type is `zarr`, the output
+paths will just be the root of the output folder.
+
+The database may contain multiple feature tables, one feature table for
+each CRS of all features. The tables will be named `feature_<crs-id>`,
+e.g. `feature_4326`. `<br/>`{=html}The schema of feature tables inside
+the database is currently the following:
+
+  Name         Type       Description
+  ------------ ---------- -------------------------------------------------------------------
+  fid          INTEGER    Auto-incrementing ID
+  id           INTEGER    Numerical ID of the feature
+  identifier   TEXT       Textual ID of the feature
+  path         TEXT       The object storage path URI where the feature will be uploaded to
+  geometry     GEOMETRY   Feature geometry representation in GeoPackage WKB format
+
+------------------------------------------------------------------------
+
+## Execution database
+
+### Purpose
+
+The Execution Database serves as a monitoring tool for tracking the
+progress of feature execution within a specific task. It provides users
+with insight into the status of each feature being processed.
+
+### Key Information
+
+-   **File Type:** SQLite
+-   **File Name:** `execution-<requestId>.sqlite`
+-   **Location:** Root folder of specified output delivery path
+-   **Structure:**
+    -   Contains a single table called `features`.
+
+You can monitor the execution of your features for a specific task by
+checking the SQLite database that is uploaded to your bucket. The
+database contains the name and status of each feature. The database is
+updated periodically during the execution of the task.
+
+The database can be found in your bucket in the root output folder and
+is named `execution-<requestId>.sqlite`.
+
+The schema of the `features` table is currently the following:
+
+  Name        Type      Description
+  ----------- --------- ------------------------------------------------------------------
+  id          INTEGER   Numerical ID of the feature
+  name        TEXT      Textual ID of the feature
+  status      TEXT      Status of the feature (PENDING, DONE, FAILED, etc.)
+  error       TEXT      Error message in case processing has failed
+  delivered   BOOLEAN   `True` if output delivered to delivery bucket, otherwise `False`
+
+------------------------------------------------------------------------
+
+## Bucket settings and access
+
+The results will be delivered in your own bucket hosted at Copernicus
+Data Space Ecosystem. To access your bucket accessKey and
+secretAccessKey pair have to bo provided in your request.
+
+``` default
+s3 = {
+    "url": "s3://<your-bucket>/<path>",
+    "accessKey": "<your-bucket-access-key>",
+    "secretAccessKey": "<your-bucket-secret-access-key>"
+}
+```
+
+If you do not yet have a bucket at Copernicus Data Space Ecosystem,
+please follow [these
+steps](https://creodias.docs.cloudferro.com/en/latest/s3/Create-S3-bucket-and-use-it-in-Sentinel-Hub-requests.html){target="_blank"}
+to get one.
+
+## Examples
+
+[Example of Batch Processing
+Workflow](/APIs/SentinelHub/BatchV2/Examples.qmd)
