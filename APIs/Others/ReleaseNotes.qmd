@@ -6,6 +6,764 @@ aliases:
 
 This page includes the list of changes made to Catalog APIs for each release.
 
+##  Catalogue API Change: parameters' limits [2024-11-12]
+
+We would like to inform you about an upcoming change to our OData, OpenSearch and STAC API interfaces, effective **12 November 2024**.
+
+Starting from **12 November 2024**, the number of skipped results will be limited to 10 000 items. Currently, there is no limit on the number of skipped items.
+
+This limit will affect the following parameters in each Catalogue API interface:
+
+- OData interface: maximum value for the skip parameter will be set to 10 000
+- OpenSearch interface: maximum value for '(page - 1) * maxRecords + index - 1' will be set to 10 000, where by deafult maxRecords = 20, page = 1 and index = 1; maximum value for 'index' will be set to 10001
+- STAC interface: maximum value for '(page - 1) * limit' will be set to 10 000,  where by deafult page = 1 and limit = 20
+
+Please find below a list of parameters for each Catalogue API that will be affected by the change as well as the response which will be returned when the limit is exceeded.
+
+**The affected query parameters for OData Catalogue interface:**
+
+**OData Catalogue API**
+```
+skip
+```
+
+**OData API request**
+```
+https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name eq 'SENTINEL-3' and ContentDate/Start gt 2024-09-01&$skip=10001&$count=True
+```
+
+::: {.panel-tabset}
+
+# Current Response
+
+```{json}
+200 OK
+ 
+{
+    "@odata.context": "$metadata#Products",
+    "@odata.count": 457588,
+    "value": [...],
+    "@odata.nextLink": "https://catalogue.dataspace.copernicus.eu/odata/v1/Products?%24filter=Collection%2FName+eq+%27SENTINEL-3%27+and+ContentDate%2FStart+gt+2024-09-01&%24skip=10021&%24count=True"
+}
+```
+
+# New Response
+```{json}
+422 Unprocessable Entity
+ 
+{
+    "detail": [
+        {
+            "type": "less_than_equal",
+            "loc": [
+                "query",
+                "$skip"
+            ],
+            "msg": "Input should be less than or equal to 10000",
+            "input": "10001",
+            "ctx": {
+                "le": 10000
+            }
+        }
+    ]
+}
+```
+:::
+The @odata.nextLink field, which is normally included in the API response to provide the next link for pagination, will not be shown if the skip parameter in the next link exceeds a limit of 10,000. Here's a step-by-step breakdown:
+
+**1. OData query Example:**
+```
+{url}odata/v1/Products?$skip=10000&$top=1
+```
+
+In this query:
+
+- $skip=10000 means you're telling the API to skip the first 10,000 records.
+- $top=1 means you want to retrieve only 1 record in the response.
+
+**2. Pagination Logic:** The OData API usually provides a @odata.nextLink in the response, which gives the URL to retrieve the next set of records in the sequence. This next link works by adjusting the skip value to keep moving forward through the data.
+
+**3. Skip + Top:** In this example, skip + top = 10000 + 1 = 10001. This value exceeds the skip limit of 10,000.
+
+**4. Impact:** Because this skip value (10001) exceeds the limit of 10,000, the API will not include the @odata.nextLink in the response. Essentially, the API is signaling that it cannot paginate beyond this point.
+
+**Important Note**
+
+After the change, when the skip value exceeds 10,000, the API will no longer return the @odata.nextLink for further pagination, meaning you can't retrieve records beyond this limit via pagination using @odata.nextLink.
+
+**The affected query parameters for OpenSearch interface:**
+
+**OpenSearch Catalogue API**
+```
+maxRecords
+page
+index
+```
+
+**OpenSearch API request**
+```
+https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel1/search.json?maxRecords=15&exactCount=1&index=12&page=667&productType=IW_SLC__1S
+```
+
+::: {.panel-tabset}
+
+# Current Response
+
+```{json}
+200 OK
+ 
+{
+  "type": "FeatureCollection",
+  "properties": {
+    "id": "a70c9f16-fc45-5ecb-b1e9-4433f14946f4",
+    "totalResults": 2381730,
+    "exactCount": 1,
+    "startIndex": 10002,
+    "itemsPerPage": 15,
+    "query": {
+      "originalFilters": {
+        "productType": "IW_SLC__1S",
+        "collection": "SENTINEL-1"
+      },
+      "appliedFilters": {
+        "productType": "IW_SLC__1S",
+        "collection": "SENTINEL-1"
+      },
+      "processingTime": 10.239139726
+    },
+    "links": [
+      {
+        "rel": "self",
+        "type": "application/json",
+        "title": "self",
+        "href": "https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel1/search.json?maxRecords=15&exactCount=1&index=12&page=667&productType=IW_SLC__1S"
+      },
+      {
+        "rel": "search",
+        "type": "application/opensearchdescription+xml",
+        "title": "OpenSearch Description Document",
+        "href": "https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel1/describe.xml"
+      },
+      {
+        "rel": "previous",
+        "type": "application/json",
+        "title": "previous",
+        "href": "https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel1/search.json?maxRecords=15&exactCount=1&index=12&productType=IW_SLC__1S&page=666"
+      },
+      {
+        "rel": "first",
+        "type": "application/json",
+        "title": "first",
+        "href": "https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel1/search.json?maxRecords=15&exactCount=1&index=12&productType=IW_SLC__1S&page=1"
+      },
+      {
+        "rel": "next",
+        "type": "application/json",
+        "title": "next",
+        "href": "https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel1/search.json?maxRecords=15&exactCount=1&index=12&productType=IW_SLC__1S&page=668"
+      },
+      {
+        "rel": "last",
+        "type": "application/json",
+        "title": "last",
+        "href": "https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel1/search.json?maxRecords=15&exactCount=1&index=12&productType=IW_SLC__1S&page=158782"
+      }
+    ]
+  },
+    "features": [...]
+}
+```
+
+# New Response
+```{json}
+400 Bad Request
+ 
+{
+    "detail": {
+        "ErrorMessage": "Validation error.",
+        "ErrorCode": 400,
+        "ErrorDetail": [
+            {
+                "loc": [
+                    "page",
+                    "maxRecords",
+                    "index"
+                ],
+                "msg": "The '(page - 1) * maxRecords + index - 1' should be less than 10000. By default, 'maxRecords' is set to 20, while both 'page' and 'index' are set to 1 if not specified."
+            }
+        ],
+        "RequestID": "5ec27fc6-2b2d-4513-b61e-ccc09b8f0bba"
+    }
+}
+```
+:::
+
+**Index limit in OpenSearch Catalogue API**
+
+**OpenSearch API request**
+```
+https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel1/search.json?&index=10002&productType=IW_SLC__1S
+```
+
+::: {.panel-tabset}
+
+# Current Response
+
+```{json}
+200 OK
+ 
+{
+  "type": "FeatureCollection",
+  "properties": {
+    "id": "a70c9f16-fc45-5ecb-b1e9-4433f14946f4",
+    "totalResults": null,
+    "exactCount": 0,
+    "startIndex": 10002,
+    "itemsPerPage": 20,
+    "query": {
+      "originalFilters": {
+        "productType": "IW_SLC__1S",
+        "collection": "SENTINEL-1"
+      },
+      "appliedFilters": {
+        "productType": "IW_SLC__1S",
+        "collection": "SENTINEL-1"
+      },
+      "processingTime": 0.296336496
+    },
+    "links": [
+      {
+        "rel": "self",
+        "type": "application/json",
+        "title": "self",
+        "href": "https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel1/search.json?&index=10002&productType=IW_SLC__1S"
+      },
+      {
+        "rel": "search",
+        "type": "application/opensearchdescription+xml",
+        "title": "OpenSearch Description Document",
+        "href": "https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel1/describe.xml"
+      },
+      {
+        "rel": "next",
+        "type": "application/json",
+        "title": "next",
+        "href": "https://catalogue.dataspace.copernicus.eu/resto/api/collections/Sentinel1/search.json?index=10002&productType=IW_SLC__1S&page=2"
+      }
+    ]
+  },
+  "features": [...]
+}
+```
+
+# New Response
+```{json}
+400 Bad Request
+ 
+{
+  "detail": {
+    "ErrorMessage": "Validation error.",
+    "ErrorCode": 400,
+    "ErrorDetail": [
+      {
+        "loc": [
+          "index"
+        ],
+        "msg": "Input should be less than or equal to 10001."
+      }
+    ],
+    "RequestID": "09ff2890-c925-497a-a11d-95b308437b8e"
+  }
+}
+```
+:::
+
+**Important Note**
+
+After the change, when the '(page - 1) * maxRecords + index - 1' value exceeds 10,000, the API will no longer return the 'next' link for further pagination, meaning you can't retrieve records beyond this limit via pagination using 'next' link.
+
+**The affected query parameters for STAC Catalogue API interface:**
+
+**STAC Catalogue API**
+```
+limit
+page
+```
+
+**STAC API request**
+```
+https://catalogue.dataspace.copernicus.eu/stac/search?limit=1000&page=12&sortby=datetime
+```
+
+::: {.panel-tabset}
+
+# Current Response
+
+```{json}
+200 OK
+ 
+"type": "FeatureCollection",
+"features": [...],
+"links": [
+    {
+        "rel": "next",
+        "href": "https://catalogue.dataspace.copernicus.eu/stac/search?limit=1000&page=13&sortby=datetime",
+        "type": "application/json"
+    },
+    {
+        "rel": "prev",
+        "href": "https://catalogue.dataspace.copernicus.eu/stac/search?limit=1000&page=11&sortby=datetime",
+        "type": "application/json"
+    },
+    {
+        "rel": "first",
+        "href": "https://catalogue.dataspace.copernicus.eu/stac/search?limit=1000&page=1&sortby=datetime",
+        "type": "application/json"
+    },
+    {
+        "rel": "self",
+        "href": "https://catalogue.dataspace.copernicus.eu/stac/search?limit=1000&page=12&sortby=datetime",
+        "type": "application/json"
+    },
+    {
+        "rel": "root",
+        "href": "https://catalogue.dataspace.copernicus.eu/stac",
+        "type": "application/json"
+    }
+ ]
+} 
+```
+
+# New Response
+```{json}
+400 Bad Request
+ 
+{
+    "code": "400",
+    "description": "The '(page - 1) * limit' should be less than 10000. By default, 'limit' is set to 20 and 'page' is set to 1 if not specified."
+    "request_id": "4e681b43-5b47-4437-a0b1-f11b3c36a24a"
+}
+```
+:::
+
+**Important Note**
+
+After the change, when the '(page - 1) * limit' value exceeds 10,000, the API will no longer return the 'next' link for further pagination, meaning you can't retrieve records beyond this limit via pagination using 'next' link.
+
+**We recommend reviewing the upcoming changes to Catalogue OData, OpenSearch and STAC API interfaces described above to avoid disruption to your current scripts or apps.**
+
+## OData Catalogue API: Response Format Change [2024-09-24]
+
+We would like to inform you about an upcoming change to our OData API response format, effective **24th September 2024**.
+
+Starting from **24th September 2024**, the format of the `@odata.context` property in the OData API responses will be updated when using the `$expand` query option. The new `@odata.context` format will list all expanded entities separated by commas. This change is aimed at aligning Catalogue API with the OData standards and improving the consistency and clarity of Catalogue OData API responses.
+
+
+::: {.panel-tabset}
+
+# Current Format
+
+```{json}
+"@odata.context": "$metadata#Products(Attributes())(Locations())(Assets())"
+```
+
+# New Format
+```{json}
+"@odata.context": "$metadata#Products(Attributes(),Locations(),Assets())"
+```
+:::
+
+Below please find the example of ODate Catalogue API response before and after the described change:
+
+::: {.panel-tabset}
+
+# HTTPS Request
+
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Name eq 'S1A_IW_SLC__1SSV_20160107T110059_20160107T110126_009387_00D96C_5CE9.SAFE'&$expand=Attributes&$expand=Locations&$expand=Assets`](<https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Name eq 'S1A_IW_SLC__1SSV_20160107T110059_20160107T110126_009387_00D96C_5CE9.SAFE'&$expand=Attributes&$expand=Locations&$expand=Assets>){target="_blank"}
+
+
+# Current Response
+```{json}
+{
+  "@odata.context": "$metadata#Products(Attributes())(Locations())(Assets())",
+  "value": [
+    {
+      "@odata.mediaContentType": "application/octet-stream",
+      "Id": "72ac8773-c55d-526a-a9a9-22ddb9b595ef",
+      "Name": "S1A_IW_SLC__1SSV_20160107T110059_20160107T110126_009387_00D96C_5CE9.SAFE",
+      "ContentType": "application/octet-stream",
+      "ContentLength": 0,
+      "OriginDate": "2021-02-20T13:38:02.110Z",
+      "PublicationDate": "2021-02-20T13:52:41.446Z",
+      "ModificationDate": "2021-02-20T13:52:41.446Z",
+      "Online": true,
+      "EvictionDate": "9999-12-31T23:59:59.999Z",
+      "S3Path": "/eodata/Sentinel-1/SAR/SLC/2016/01/07/S1A_IW_SLC__1SSV_20160107T110059_20160107T110126_009387_00D96C_5CE9.SAFE",
+      "Checksum": [
+         
+      ],
+      "ContentDate": {
+        "Start": "2016-01-07T11:00:59.171Z",
+        "End": "2016-01-07T11:01:26.112Z"
+      },
+      "Footprint": "geography'SRID=4326;MULTIPOLYGON (((-79.007256 -3.315278, -78.661591 -1.686242, -80.881958 -1.204264, -81.230759 -2.827857, -79.007256 -3.315278)))'",
+      "GeoFootprint": {
+        "type": "MultiPolygon",
+        "coordinates": [
+          [
+            [
+              [
+                -79.007256,
+                -3.315278
+              ],
+              [
+                -78.661591,
+                -1.686242
+              ],
+              [
+                -80.881958,
+                -1.204264
+              ],
+              [
+                -81.230759,
+                -2.827857
+              ],
+              [
+                -79.007256,
+                -3.315278
+              ]
+            ]
+          ]
+        ]
+      },
+      "Attributes": [
+        {
+          "@odata.type": "#OData.CSC.StringAttribute",
+          "Name": "authority",
+          "Value": "ESA",
+          "ValueType": "String"
+        },
+        {
+          "@odata.type": "#OData.CSC.StringAttribute",
+          "Name": "coordinates",
+          "Value": "-3.315278,-79.007256 -2.827857,-81.230759 -1.204264,-80.881958 -1.686242,-78.661591 -3.315278,-79.007256",
+          "ValueType": "String"
+        },
+        {
+          "@odata.type": "#OData.CSC.IntegerAttribute",
+          "Name": "orbitNumber",
+          "Value": 9387,
+          "ValueType": "Integer"
+        },
+        {
+          "@odata.type": "#OData.CSC.StringAttribute",
+          "Name": "productType",
+          "Value": "IW_SLC__1S",
+          "ValueType": "String"
+        },
+        {
+          "@odata.type": "#OData.CSC.IntegerAttribute",
+          "Name": "sliceNumber",
+          "Value": 3,
+          "ValueType": "Integer"
+        },
+        {
+          "@odata.type": "#OData.CSC.StringAttribute",
+          "Name": "productClass",
+          "Value": "S",
+          "ValueType": "String"
+        },
+        {
+          "@odata.type": "#OData.CSC.DateTimeOffsetAttribute",
+          "Name": "endingDateTime",
+          "Value": "2016-01-07T11:01:26.112Z",
+          "ValueType": "DateTimeOffset"
+        },
+        {
+          "@odata.type": "#OData.CSC.StringAttribute",
+          "Name": "orbitDirection",
+          "Value": "DESCENDING",
+          "ValueType": "String"
+        },
+        {
+          "@odata.type": "#OData.CSC.StringAttribute",
+          "Name": "productGroupId",
+          "Value": "55660",
+          "ValueType": "String"
+        },
+        {
+          "@odata.type": "#OData.CSC.StringAttribute",
+          "Name": "operationalMode",
+          "Value": "IW",
+          "ValueType": "String"
+        },
+        {
+          "@odata.type": "#OData.CSC.StringAttribute",
+          "Name": "processingLevel",
+          "Value": "LEVEL1",
+          "ValueType": "String"
+        },
+        {
+          "@odata.type": "#OData.CSC.StringAttribute",
+          "Name": "swathIdentifier",
+          "Value": "IW1 IW2 IW3",
+          "ValueType": "String"
+        },
+        {
+          "@odata.type": "#OData.CSC.DateTimeOffsetAttribute",
+          "Name": "beginningDateTime",
+          "Value": "2016-01-07T11:00:59.171Z",
+          "ValueType": "DateTimeOffset"
+        },
+        {
+          "@odata.type": "#OData.CSC.StringAttribute",
+          "Name": "platformShortName",
+          "Value": "SENTINEL-1",
+          "ValueType": "String"
+        },
+        {
+          "@odata.type": "#OData.CSC.IntegerAttribute",
+          "Name": "spatialResolution",
+          "Value": "2.3",
+          "ValueType": "Integer"
+        },
+        {
+          "@odata.type": "#OData.CSC.StringAttribute",
+          "Name": "instrumentShortName",
+          "Value": "SAR",
+          "ValueType": "String"
+        },
+        {
+          "@odata.type": "#OData.CSC.IntegerAttribute",
+          "Name": "relativeOrbitNumber",
+          "Value": 40,
+          "ValueType": "Integer"
+        },
+        {
+          "@odata.type": "#OData.CSC.StringAttribute",
+          "Name": "polarisationChannels",
+          "Value": "VV",
+          "ValueType": "String"
+        },
+        {
+          "@odata.type": "#OData.CSC.StringAttribute",
+          "Name": "platformSerialIdentifier",
+          "Value": "A",
+          "ValueType": "String"
+        }
+      ],
+      "Assets": [
+         
+      ],
+      "Locations": [
+        {
+          "FormatType": "Extracted",
+          "DownloadLink": "https://catalogue.dataspace.copernicus.eu/odata/v1/Products(72ac8773-c55d-526a-a9a9-22ddb9b595ef)/$value",
+          "ContentLength": 0,
+          "Checksum": [
+             
+          ],
+          "S3Path": "/eodata/Sentinel-1/SAR/SLC/2016/01/07/S1A_IW_SLC__1SSV_20160107T110059_20160107T110126_009387_00D96C_5CE9.SAFE"
+        }
+      ]
+    }
+  ]
+}
+```
+
+# New Response
+```{json}
+{
+  "@odata.context": "$metadata#Products(Attributes(),Locations(),Assets())",
+  "value": [
+    {
+      "@odata.mediaContentType": "application/octet-stream",
+      "Id": "72ac8773-c55d-526a-a9a9-22ddb9b595ef",
+      "Name": "S1A_IW_SLC__1SSV_20160107T110059_20160107T110126_009387_00D96C_5CE9.SAFE",
+      "ContentType": "application/octet-stream",
+      "ContentLength": 0,
+      "OriginDate": "2021-02-20T13:38:02.110Z",
+      "PublicationDate": "2021-02-20T13:52:41.446Z",
+      "ModificationDate": "2021-02-20T13:52:41.446Z",
+      "Online": true,
+      "EvictionDate": "9999-12-31T23:59:59.999Z",
+      "S3Path": "/eodata/Sentinel-1/SAR/SLC/2016/01/07/S1A_IW_SLC__1SSV_20160107T110059_20160107T110126_009387_00D96C_5CE9.SAFE",
+      "Checksum": [
+         
+      ],
+      "ContentDate": {
+        "Start": "2016-01-07T11:00:59.171Z",
+        "End": "2016-01-07T11:01:26.112Z"
+      },
+      "Footprint": "geography'SRID=4326;MULTIPOLYGON (((-79.007256 -3.315278, -78.661591 -1.686242, -80.881958 -1.204264, -81.230759 -2.827857, -79.007256 -3.315278)))'",
+      "GeoFootprint": {
+        "type": "MultiPolygon",
+        "coordinates": [
+          [
+            [
+              [
+                -79.007256,
+                -3.315278
+              ],
+              [
+                -78.661591,
+                -1.686242
+              ],
+              [
+                -80.881958,
+                -1.204264
+              ],
+              [
+                -81.230759,
+                -2.827857
+              ],
+              [
+                -79.007256,
+                -3.315278
+              ]
+            ]
+          ]
+        ]
+      },
+      "Attributes": [
+        {
+          "@odata.type": "#OData.CSC.StringAttribute",
+          "Name": "authority",
+          "Value": "ESA",
+          "ValueType": "String"
+        },
+        {
+          "@odata.type": "#OData.CSC.StringAttribute",
+          "Name": "coordinates",
+          "Value": "-3.315278,-79.007256 -2.827857,-81.230759 -1.204264,-80.881958 -1.686242,-78.661591 -3.315278,-79.007256",
+          "ValueType": "String"
+        },
+        {
+          "@odata.type": "#OData.CSC.IntegerAttribute",
+          "Name": "orbitNumber",
+          "Value": 9387,
+          "ValueType": "Integer"
+        },
+        {
+          "@odata.type": "#OData.CSC.StringAttribute",
+          "Name": "productType",
+          "Value": "IW_SLC__1S",
+          "ValueType": "String"
+        },
+        {
+          "@odata.type": "#OData.CSC.IntegerAttribute",
+          "Name": "sliceNumber",
+          "Value": 3,
+          "ValueType": "Integer"
+        },
+        {
+          "@odata.type": "#OData.CSC.StringAttribute",
+          "Name": "productClass",
+          "Value": "S",
+          "ValueType": "String"
+        },
+        {
+          "@odata.type": "#OData.CSC.DateTimeOffsetAttribute",
+          "Name": "endingDateTime",
+          "Value": "2016-01-07T11:01:26.112Z",
+          "ValueType": "DateTimeOffset"
+        },
+        {
+          "@odata.type": "#OData.CSC.StringAttribute",
+          "Name": "orbitDirection",
+          "Value": "DESCENDING",
+          "ValueType": "String"
+        },
+        {
+          "@odata.type": "#OData.CSC.StringAttribute",
+          "Name": "productGroupId",
+          "Value": "55660",
+          "ValueType": "String"
+        },
+        {
+          "@odata.type": "#OData.CSC.StringAttribute",
+          "Name": "operationalMode",
+          "Value": "IW",
+          "ValueType": "String"
+        },
+        {
+          "@odata.type": "#OData.CSC.StringAttribute",
+          "Name": "processingLevel",
+          "Value": "LEVEL1",
+          "ValueType": "String"
+        },
+        {
+          "@odata.type": "#OData.CSC.StringAttribute",
+          "Name": "swathIdentifier",
+          "Value": "IW1 IW2 IW3",
+          "ValueType": "String"
+        },
+        {
+          "@odata.type": "#OData.CSC.DateTimeOffsetAttribute",
+          "Name": "beginningDateTime",
+          "Value": "2016-01-07T11:00:59.171Z",
+          "ValueType": "DateTimeOffset"
+        },
+        {
+          "@odata.type": "#OData.CSC.StringAttribute",
+          "Name": "platformShortName",
+          "Value": "SENTINEL-1",
+          "ValueType": "String"
+        },
+        {
+          "@odata.type": "#OData.CSC.IntegerAttribute",
+          "Name": "spatialResolution",
+          "Value": "2.3",
+          "ValueType": "Integer"
+        },
+        {
+          "@odata.type": "#OData.CSC.StringAttribute",
+          "Name": "instrumentShortName",
+          "Value": "SAR",
+          "ValueType": "String"
+        },
+        {
+          "@odata.type": "#OData.CSC.IntegerAttribute",
+          "Name": "relativeOrbitNumber",
+          "Value": 40,
+          "ValueType": "Integer"
+        },
+        {
+          "@odata.type": "#OData.CSC.StringAttribute",
+          "Name": "polarisationChannels",
+          "Value": "VV",
+          "ValueType": "String"
+        },
+        {
+          "@odata.type": "#OData.CSC.StringAttribute",
+          "Name": "platformSerialIdentifier",
+          "Value": "A",
+          "ValueType": "String"
+        }
+      ],
+      "Assets": [
+         
+      ],
+      "Locations": [
+        {
+          "FormatType": "Extracted",
+          "DownloadLink": "https://catalogue.dataspace.copernicus.eu/odata/v1/Products(72ac8773-c55d-526a-a9a9-22ddb9b595ef)/$value",
+          "ContentLength": 0,
+          "Checksum": [
+             
+          ],
+          "S3Path": "/eodata/Sentinel-1/SAR/SLC/2016/01/07/S1A_IW_SLC__1SSV_20160107T110059_20160107T110126_009387_00D96C_5CE9.SAFE"
+        }
+      ]
+    }
+  ]
+}
+```
+
+:::
+
+**We recommend reviewing the upcoming changes to Catalogue OData API described above to avoid disruption to your current scripts or apps.**
+
 ## Datetime precision change for OData, OpenSearch and STAC APIs [2024-09-02]
 
 Please be informed that starting from **2 September 2024**, the display precision of all attributes in datetime format within OData, OpenSearch and STAC API interfaces was extended to 6 digits. This change was made to align with the values provided in the product’s metadata and by data sources as well as to standardize the precision across all datetime attributes.
