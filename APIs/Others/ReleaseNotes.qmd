@@ -6,6 +6,418 @@ aliases:
 
 This page includes the list of changes made to Catalog APIs for each release.
 
+## OData Catalogue API: Response Format Change
+
+We would like to inform you about an upcoming change to our OData API response format, effective **24th September 2024**.
+
+Starting from **24th September 2024**, the format of the `@odata.context` property in the OData API responses will be updated when using the `$expand` query option. The new `@odata.context` format will list all expanded entities separated by commas. This change is aimed at aligning Catalogue API with the OData standards and improving the consistency and clarity of Catalogue OData API responses.
+
+
+::: {.panel-tabset}
+
+# Current Format
+
+```{json}
+"@odata.context": "$metadata#Products(Attributes())(Locations())(Assets())"
+```
+
+# New Format
+```{json}
+"@odata.context": "$metadata#Products(Attributes(),Locations(),Assets())"
+```
+:::
+
+Below please find the example of ODate Catalogue API response before and after the described change:
+
+::: {.panel-tabset}
+
+# HTTPS Request
+
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Name eq 'S1A_IW_SLC__1SSV_20160107T110059_20160107T110126_009387_00D96C_5CE9.SAFE'&$expand=Attributes&$expand=Locations&$expand=Assets`](<https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Name eq 'S1A_IW_SLC__1SSV_20160107T110059_20160107T110126_009387_00D96C_5CE9.SAFE'&$expand=Attributes&$expand=Locations&$expand=Assets>){target="_blank"}
+
+
+# Current Response
+```{json}
+{
+  "@odata.context": "$metadata#Products(Attributes())(Locations())(Assets())",
+  "value": [
+    {
+      "@odata.mediaContentType": "application/octet-stream",
+      "Id": "72ac8773-c55d-526a-a9a9-22ddb9b595ef",
+      "Name": "S1A_IW_SLC__1SSV_20160107T110059_20160107T110126_009387_00D96C_5CE9.SAFE",
+      "ContentType": "application/octet-stream",
+      "ContentLength": 0,
+      "OriginDate": "2021-02-20T13:38:02.110Z",
+      "PublicationDate": "2021-02-20T13:52:41.446Z",
+      "ModificationDate": "2021-02-20T13:52:41.446Z",
+      "Online": true,
+      "EvictionDate": "9999-12-31T23:59:59.999Z",
+      "S3Path": "/eodata/Sentinel-1/SAR/SLC/2016/01/07/S1A_IW_SLC__1SSV_20160107T110059_20160107T110126_009387_00D96C_5CE9.SAFE",
+      "Checksum": [
+         
+      ],
+      "ContentDate": {
+        "Start": "2016-01-07T11:00:59.171Z",
+        "End": "2016-01-07T11:01:26.112Z"
+      },
+      "Footprint": "geography'SRID=4326;MULTIPOLYGON (((-79.007256 -3.315278, -78.661591 -1.686242, -80.881958 -1.204264, -81.230759 -2.827857, -79.007256 -3.315278)))'",
+      "GeoFootprint": {
+        "type": "MultiPolygon",
+        "coordinates": [
+          [
+            [
+              [
+                -79.007256,
+                -3.315278
+              ],
+              [
+                -78.661591,
+                -1.686242
+              ],
+              [
+                -80.881958,
+                -1.204264
+              ],
+              [
+                -81.230759,
+                -2.827857
+              ],
+              [
+                -79.007256,
+                -3.315278
+              ]
+            ]
+          ]
+        ]
+      },
+      "Attributes": [
+        {
+          "@odata.type": "#OData.CSC.StringAttribute",
+          "Name": "authority",
+          "Value": "ESA",
+          "ValueType": "String"
+        },
+        {
+          "@odata.type": "#OData.CSC.StringAttribute",
+          "Name": "coordinates",
+          "Value": "-3.315278,-79.007256 -2.827857,-81.230759 -1.204264,-80.881958 -1.686242,-78.661591 -3.315278,-79.007256",
+          "ValueType": "String"
+        },
+        {
+          "@odata.type": "#OData.CSC.IntegerAttribute",
+          "Name": "orbitNumber",
+          "Value": 9387,
+          "ValueType": "Integer"
+        },
+        {
+          "@odata.type": "#OData.CSC.StringAttribute",
+          "Name": "productType",
+          "Value": "IW_SLC__1S",
+          "ValueType": "String"
+        },
+        {
+          "@odata.type": "#OData.CSC.IntegerAttribute",
+          "Name": "sliceNumber",
+          "Value": 3,
+          "ValueType": "Integer"
+        },
+        {
+          "@odata.type": "#OData.CSC.StringAttribute",
+          "Name": "productClass",
+          "Value": "S",
+          "ValueType": "String"
+        },
+        {
+          "@odata.type": "#OData.CSC.DateTimeOffsetAttribute",
+          "Name": "endingDateTime",
+          "Value": "2016-01-07T11:01:26.112Z",
+          "ValueType": "DateTimeOffset"
+        },
+        {
+          "@odata.type": "#OData.CSC.StringAttribute",
+          "Name": "orbitDirection",
+          "Value": "DESCENDING",
+          "ValueType": "String"
+        },
+        {
+          "@odata.type": "#OData.CSC.StringAttribute",
+          "Name": "productGroupId",
+          "Value": "55660",
+          "ValueType": "String"
+        },
+        {
+          "@odata.type": "#OData.CSC.StringAttribute",
+          "Name": "operationalMode",
+          "Value": "IW",
+          "ValueType": "String"
+        },
+        {
+          "@odata.type": "#OData.CSC.StringAttribute",
+          "Name": "processingLevel",
+          "Value": "LEVEL1",
+          "ValueType": "String"
+        },
+        {
+          "@odata.type": "#OData.CSC.StringAttribute",
+          "Name": "swathIdentifier",
+          "Value": "IW1 IW2 IW3",
+          "ValueType": "String"
+        },
+        {
+          "@odata.type": "#OData.CSC.DateTimeOffsetAttribute",
+          "Name": "beginningDateTime",
+          "Value": "2016-01-07T11:00:59.171Z",
+          "ValueType": "DateTimeOffset"
+        },
+        {
+          "@odata.type": "#OData.CSC.StringAttribute",
+          "Name": "platformShortName",
+          "Value": "SENTINEL-1",
+          "ValueType": "String"
+        },
+        {
+          "@odata.type": "#OData.CSC.IntegerAttribute",
+          "Name": "spatialResolution",
+          "Value": "2.3",
+          "ValueType": "Integer"
+        },
+        {
+          "@odata.type": "#OData.CSC.StringAttribute",
+          "Name": "instrumentShortName",
+          "Value": "SAR",
+          "ValueType": "String"
+        },
+        {
+          "@odata.type": "#OData.CSC.IntegerAttribute",
+          "Name": "relativeOrbitNumber",
+          "Value": 40,
+          "ValueType": "Integer"
+        },
+        {
+          "@odata.type": "#OData.CSC.StringAttribute",
+          "Name": "polarisationChannels",
+          "Value": "VV",
+          "ValueType": "String"
+        },
+        {
+          "@odata.type": "#OData.CSC.StringAttribute",
+          "Name": "platformSerialIdentifier",
+          "Value": "A",
+          "ValueType": "String"
+        }
+      ],
+      "Assets": [
+         
+      ],
+      "Locations": [
+        {
+          "FormatType": "Extracted",
+          "DownloadLink": "https://catalogue.dataspace.copernicus.eu/odata/v1/Products(72ac8773-c55d-526a-a9a9-22ddb9b595ef)/$value",
+          "ContentLength": 0,
+          "Checksum": [
+             
+          ],
+          "S3Path": "/eodata/Sentinel-1/SAR/SLC/2016/01/07/S1A_IW_SLC__1SSV_20160107T110059_20160107T110126_009387_00D96C_5CE9.SAFE"
+        }
+      ]
+    }
+  ]
+}
+```
+
+# New Response
+```{json}
+{
+  "@odata.context": "$metadata#Products(Attributes(),Locations(),Assets())",
+  "value": [
+    {
+      "@odata.mediaContentType": "application/octet-stream",
+      "Id": "72ac8773-c55d-526a-a9a9-22ddb9b595ef",
+      "Name": "S1A_IW_SLC__1SSV_20160107T110059_20160107T110126_009387_00D96C_5CE9.SAFE",
+      "ContentType": "application/octet-stream",
+      "ContentLength": 0,
+      "OriginDate": "2021-02-20T13:38:02.110Z",
+      "PublicationDate": "2021-02-20T13:52:41.446Z",
+      "ModificationDate": "2021-02-20T13:52:41.446Z",
+      "Online": true,
+      "EvictionDate": "9999-12-31T23:59:59.999Z",
+      "S3Path": "/eodata/Sentinel-1/SAR/SLC/2016/01/07/S1A_IW_SLC__1SSV_20160107T110059_20160107T110126_009387_00D96C_5CE9.SAFE",
+      "Checksum": [
+         
+      ],
+      "ContentDate": {
+        "Start": "2016-01-07T11:00:59.171Z",
+        "End": "2016-01-07T11:01:26.112Z"
+      },
+      "Footprint": "geography'SRID=4326;MULTIPOLYGON (((-79.007256 -3.315278, -78.661591 -1.686242, -80.881958 -1.204264, -81.230759 -2.827857, -79.007256 -3.315278)))'",
+      "GeoFootprint": {
+        "type": "MultiPolygon",
+        "coordinates": [
+          [
+            [
+              [
+                -79.007256,
+                -3.315278
+              ],
+              [
+                -78.661591,
+                -1.686242
+              ],
+              [
+                -80.881958,
+                -1.204264
+              ],
+              [
+                -81.230759,
+                -2.827857
+              ],
+              [
+                -79.007256,
+                -3.315278
+              ]
+            ]
+          ]
+        ]
+      },
+      "Attributes": [
+        {
+          "@odata.type": "#OData.CSC.StringAttribute",
+          "Name": "authority",
+          "Value": "ESA",
+          "ValueType": "String"
+        },
+        {
+          "@odata.type": "#OData.CSC.StringAttribute",
+          "Name": "coordinates",
+          "Value": "-3.315278,-79.007256 -2.827857,-81.230759 -1.204264,-80.881958 -1.686242,-78.661591 -3.315278,-79.007256",
+          "ValueType": "String"
+        },
+        {
+          "@odata.type": "#OData.CSC.IntegerAttribute",
+          "Name": "orbitNumber",
+          "Value": 9387,
+          "ValueType": "Integer"
+        },
+        {
+          "@odata.type": "#OData.CSC.StringAttribute",
+          "Name": "productType",
+          "Value": "IW_SLC__1S",
+          "ValueType": "String"
+        },
+        {
+          "@odata.type": "#OData.CSC.IntegerAttribute",
+          "Name": "sliceNumber",
+          "Value": 3,
+          "ValueType": "Integer"
+        },
+        {
+          "@odata.type": "#OData.CSC.StringAttribute",
+          "Name": "productClass",
+          "Value": "S",
+          "ValueType": "String"
+        },
+        {
+          "@odata.type": "#OData.CSC.DateTimeOffsetAttribute",
+          "Name": "endingDateTime",
+          "Value": "2016-01-07T11:01:26.112Z",
+          "ValueType": "DateTimeOffset"
+        },
+        {
+          "@odata.type": "#OData.CSC.StringAttribute",
+          "Name": "orbitDirection",
+          "Value": "DESCENDING",
+          "ValueType": "String"
+        },
+        {
+          "@odata.type": "#OData.CSC.StringAttribute",
+          "Name": "productGroupId",
+          "Value": "55660",
+          "ValueType": "String"
+        },
+        {
+          "@odata.type": "#OData.CSC.StringAttribute",
+          "Name": "operationalMode",
+          "Value": "IW",
+          "ValueType": "String"
+        },
+        {
+          "@odata.type": "#OData.CSC.StringAttribute",
+          "Name": "processingLevel",
+          "Value": "LEVEL1",
+          "ValueType": "String"
+        },
+        {
+          "@odata.type": "#OData.CSC.StringAttribute",
+          "Name": "swathIdentifier",
+          "Value": "IW1 IW2 IW3",
+          "ValueType": "String"
+        },
+        {
+          "@odata.type": "#OData.CSC.DateTimeOffsetAttribute",
+          "Name": "beginningDateTime",
+          "Value": "2016-01-07T11:00:59.171Z",
+          "ValueType": "DateTimeOffset"
+        },
+        {
+          "@odata.type": "#OData.CSC.StringAttribute",
+          "Name": "platformShortName",
+          "Value": "SENTINEL-1",
+          "ValueType": "String"
+        },
+        {
+          "@odata.type": "#OData.CSC.IntegerAttribute",
+          "Name": "spatialResolution",
+          "Value": "2.3",
+          "ValueType": "Integer"
+        },
+        {
+          "@odata.type": "#OData.CSC.StringAttribute",
+          "Name": "instrumentShortName",
+          "Value": "SAR",
+          "ValueType": "String"
+        },
+        {
+          "@odata.type": "#OData.CSC.IntegerAttribute",
+          "Name": "relativeOrbitNumber",
+          "Value": 40,
+          "ValueType": "Integer"
+        },
+        {
+          "@odata.type": "#OData.CSC.StringAttribute",
+          "Name": "polarisationChannels",
+          "Value": "VV",
+          "ValueType": "String"
+        },
+        {
+          "@odata.type": "#OData.CSC.StringAttribute",
+          "Name": "platformSerialIdentifier",
+          "Value": "A",
+          "ValueType": "String"
+        }
+      ],
+      "Assets": [
+         
+      ],
+      "Locations": [
+        {
+          "FormatType": "Extracted",
+          "DownloadLink": "https://catalogue.dataspace.copernicus.eu/odata/v1/Products(72ac8773-c55d-526a-a9a9-22ddb9b595ef)/$value",
+          "ContentLength": 0,
+          "Checksum": [
+             
+          ],
+          "S3Path": "/eodata/Sentinel-1/SAR/SLC/2016/01/07/S1A_IW_SLC__1SSV_20160107T110059_20160107T110126_009387_00D96C_5CE9.SAFE"
+        }
+      ]
+    }
+  ]
+}
+```
+
+:::
+
+**We recommend reviewing the upcoming changes to Catalogue OData API described above to avoid disruption to your current scripts or apps.**
+
 ## Datetime precision change for OData, OpenSearch and STAC APIs [2024-09-02]
 
 Please be informed that starting from **2 September 2024**, the display precision of all attributes in datetime format within OData, OpenSearch and STAC API interfaces was extended to 6 digits. This change was made to align with the values provided in the product’s metadata and by data sources as well as to standardize the precision across all datetime attributes.
