@@ -43,7 +43,7 @@ The following collections are currently available via STAC API:
   * **ENVISAT** (ENVISAT- Medium Resolution Imaging Spectrometer - MERIS)
   * **LANDSAT-5**
   * **LANDSAT-7**
-  * **LANDSAT-8**
+  * **LANDSAT-8-ESA**
   * **COP-DEM** (Copernicus DEM)
   * **TERRAAQUA** (Terra MODIS and Aqua MODIS)
   * **S2GLC** (S2GLC 2017)
@@ -318,5 +318,1336 @@ To list more than one collection:
 # HTTPS Request
 
 [`https://catalogue.dataspace.copernicus.eu/stac/search?collections=SENTINEL-1,SENTINEL-2`](https://catalogue.dataspace.copernicus.eu/stac/search?collections=SENTINEL-1,SENTINEL-2){target="_blank"}
+
+:::
+
+## STAC Advanced filters
+
+STAC Filter extensions allow users to search for items based on their attributes.
+
+Currently, those advanced filters are supported:
+
+* CQL2 JSON
+* Filter parameters: filter, filter-crs (default and only accepted CRS84), filter-lang (json)
+
+Endpoint URL for the POST method: 
+
+::: {.panel-tabset}
+
+# HTTPS Request
+
+[`https://catalogue.dataspace.copernicus.eu/stac/search`](https://catalogue.dataspace.copernicus.eu/stac/search){target="_blank"}
+
+:::
+
+Following endpoints have been added to allow users to check for available parameters when writing filter expressions.
+
+To access queryable names for STAC API Item Search filter across the entire catalogue:
+
+::: {.panel-tabset}
+
+# HTTPS Request
+
+[`https://catalogue.dataspace.copernicus.eu/stac/queryables`](https://catalogue.dataspace.copernicus.eu/stac/queryables){target="_blank"}
+
+:::
+
+
+To chceck queryable names for Copernicus Sentinel Missions:
+
+::: {.panel-tabset}
+
+# SENTINEL-1
+
+[`https://catalogue.dataspace.copernicus.eu/stac/collections/SENTINEL-1/queryables`](https://catalogue.dataspace.copernicus.eu/stac/collections/SENTINEL-1/queryables){target="_blank"}
+
+# SENTINEL-2
+
+[`https://catalogue.dataspace.copernicus.eu/stac/collections/SENTINEL-2/queryables`](https://catalogue.dataspace.copernicus.eu/stac/collections/SENTINEL-2/queryables){target="_blank"}
+
+# SENTINEL-3
+
+[`https://catalogue.dataspace.copernicus.eu/stac/collections/SENTINEL-3/queryables`](https://catalogue.dataspace.copernicus.eu/stac/collections/SENTINEL-3/queryables){target="_blank"}
+
+# SENTINEL-5P
+
+[`https://catalogue.dataspace.copernicus.eu/stac/collections/SENTINEL-5P/queryables`](https://catalogue.dataspace.copernicus.eu/stac/collections/SENTINEL-5P/queryables){target="_blank"}
+
+# SENTINEL-6
+
+[`https://catalogue.dataspace.copernicus.eu/stac/collections/SENTINEL-6/queryables`](https://catalogue.dataspace.copernicus.eu/stac/collections/SENTINEL-6/queryables){target="_blank"}
+
+# SENTINEL-1-RTC
+
+[`https://catalogue.dataspace.copernicus.eu/stac/collections/SENTINEL-1-RTC/queryables`](https://catalogue.dataspace.copernicus.eu/stac/collections/SENTINEL-1-RTC/queryables){target="_blank"}
+
+:::
+
+To check acceptable queryable names for Complementary data:
+
+::: {.panel-tabset}
+
+# GLOBAL-MOSAICS
+
+[`https://catalogue.dataspace.copernicus.eu/stac/collections/GLOBAL-MOSAICS/queryables`](https://catalogue.dataspace.copernicus.eu/stac/collections/GLOBAL-MOSAICS/queryables){target="_blank"}
+
+# SMOS
+
+[`https://catalogue.dataspace.copernicus.eu/stac/collections/SMOS/queryables`](https://catalogue.dataspace.copernicus.eu/stac/collections/SMOS/queryables){target="_blank"}
+
+# ENVISAT
+
+[`https://catalogue.dataspace.copernicus.eu/stac/collections/ENVISAT/queryables`](https://catalogue.dataspace.copernicus.eu/stac/collections/ENVISAT/queryables){target="_blank"}
+
+# LANDSAT-5
+
+[`https://catalogue.dataspace.copernicus.eu/stac/collections/LANDSAT-5/queryables`](https://catalogue.dataspace.copernicus.eu/stac/collections/LANDSAT-5/queryables){target="_blank"}
+
+# LANDSAT-7
+
+[`https://catalogue.dataspace.copernicus.eu/stac/collections/LANDSAT-7/queryables`](https://catalogue.dataspace.copernicus.eu/stac/collections/LANDSAT-7/queryables){target="_blank"}
+
+# LANDSAT-8
+
+[`https://catalogue.dataspace.copernicus.eu/stac/collections/LANDSAT-8-ESA/queryables`](https://catalogue.dataspace.copernicus.eu/stac/collections/LANDSAT-8-ESA/queryables){target="_blank"}
+
+# COP-DEM
+
+[`https://catalogue.dataspace.copernicus.eu/stac/collections/COP-DEM/queryables`](https://catalogue.dataspace.copernicus.eu/stac/collections/COP-DEM/queryables){target="_blank"}
+
+# TERRAAQUA
+
+[`https://catalogue.dataspace.copernicus.eu/stac/collections/TERRAAQUA/queryables`](https://catalogue.dataspace.copernicus.eu/stac/collections/TERRAAQUA/queryables){target="_blank"}
+
+# S2GLC
+
+[`https://catalogue.dataspace.copernicus.eu/stac/collections/S2GLC/queryables`](https://catalogue.dataspace.copernicus.eu/stac/collections/S2GLC/queryables){target="_blank"}
+
+:::
+
+
+### Query structure
+
+To search for products using STAC Advanced filters, users must define a query in a request body and use the POST method. Simplest expression, looking for a specific item:
+
+**POST**
+
+[`https://catalogue.dataspace.copernicus.eu/stac/search`](https://catalogue.dataspace.copernicus.eu/stac/search){target="_blank"}
+
+**Request body**:
+```{json}
+{
+    "filter-lang": "cql2-json",
+    "filter": {
+        "op": "and",
+        "args": [
+            {
+                "op": "=",
+                "args": [
+                    {
+                        "property": "collection"
+                    },
+                    "SENTINEL-1"
+                ]
+            },
+            {
+                "op": "=",
+                "args": [
+                    {
+                        "property": "id"
+                    },
+                    "S1A_IW_RAW__0SDV_20230106T110100_20230106T110132_046662_0597C3_F5B4.SAFE"
+                ]
+            }
+        ]
+    }
+}
+```
+
+To search within a specific collection, its name must be included in the request body.
+
+
+### Available operators
+
+Currently, those operators are supported:
+
+* **Comparison Operators:** EQUAL TO (=), NOT EQUAL TO (<>), LESS THAN (<), LESS THAN OR EQUAL TO (<=), GREATER THAN (>), GREATER THAN OR EQUAL TO (>=), IS NULL
+
+* **Advanced Comparison Operators:** LIKE, BETWEEN, IN, AND, OR, NOT
+
+* **Spatial Operators:** S_CONTAINS, S_CROSSES, S_DISJOINT, S_EQUALS, S_INTERSECTS, S_OVERLAPS, S_TOUCHES, S_WITHIN
+
+* **Temporal Operators:** T_AFTER, T_BEFORE, T_CONTAINS, T_DISJOINT, T_DURING, T_EQUALS, T_FINISHEDBY, T_FINISHES, T_INTERSECTS, T_MEETS, T_METBY, T_OVERLAPPEDBY, T_OVERLAPS, T_STARTEDBY, T_STARTS
+
+The following table describes available operators for given attributes:
+
+|    **Operator / property**    | **attribute string** | **attribute int** | **attribute float** | **attribute bool** | **attribute datetime** | **geometry** (footprint) | **id** (name) | **collection** | **start_datetime** (content_start_date) | **end_datetime** (content_end_date) |
+|:-----------------------------:|:--------------------:|:-----------------:|:-------------------:|:------------------:|:----------------------:|:------------------------:|:-------------:|:--------------:|:---------------------------------------:|:-----------------------------------:|
+| EQUAL TO (=)                  |                      |                   |                     |                    |                        |            N/A           |               |                |                                         |                                     |
+| NOT EQUAL TO (<>)             |          N/A         |                   |                     |         N/A        |                        |            N/A           |      N/A      |       N/A      |                                         |                                     |
+| LESS THAN (<)                 |          N/A         |                   |                     |         N/A        |                        |            N/A           |      N/A      |       N/A      |                                         |                                     |
+| LESS THEN OR EQUAL TO (<=)    |          N/A         |                   |                     |         N/A        |                        |            N/A           |      N/A      |       N/A      |                                         |                                     |
+| GREATER THAN (>)              |          N/A         |                   |                     |         N/A        |                        |            N/A           |      N/A      |       N/A      |                                         |                                     |
+| GREATER THAN OR EQUAL TO (>=) |          N/A         |                   |                     |         N/A        |                        |            N/A           |      N/A      |       N/A      |                                         |                                     |
+| IS NULL                       |                      |                   |                     |                    |                        |                          |               |                |                                         |                                     |
+| LIKE                          |          N/A         |        N/A        |         N/A         |         N/A        |           N/A          |            N/A           |               |       N/A      |                   N/A                   |                 N/A                 |
+| BETWEEN                       |          N/A         |                   |                     |         N/A        |           N/A          |            N/A           |      N/A      |       N/A      |                   N/A                   |                 N/A                 |
+| IN                            |                      |                   |                     |                    |                        |            N/A           |               |                |                                         |                                     |
+| SPATIAL Operators             |          N/A         |        N/A        |         N/A         |         N/A        |           N/A          |                          |      N/A      |       N/A      |                   N/A                   |                 N/A                 |
+| TEMPORAL Operators            |          N/A         |        N/A        |         N/A         |         N/A        |           N/A          |            N/A           |      N/A      |       N/A      |                                         |                                     |
+
+
+### Examples
+
+For each group of operators, examples are provided in the request body for the POST method and the following endpoint:
+
+**POST**
+
+[`https://catalogue.dataspace.copernicus.eu/stac/search`](https://catalogue.dataspace.copernicus.eu/stac/search){target="_blank"}
+
+
+#### Comparison Operators
+
+::: {.panel-tabset}
+
+# EQUAL TO
+```{json}
+{
+    "filter-lang": "cql2-json",
+    "filter": {
+        "op": "=",
+        "args": [
+            {
+                "property": "cloudCover"
+            },
+            10
+        ]
+    }
+}
+```
+
+# NOT EQUAL TO
+```{json}
+{
+    "filter-lang": "cql2-json",
+    "filter": {
+        "op": "<>",
+        "args": [
+            {
+                "property": "cloudCover"
+            },
+            10
+        ]
+    }
+}
+```
+
+# LESS THAN
+```{json}
+{
+    "filter-lang": "cql2-json",
+    "filter": {
+        "op": "<",
+        "args": [
+            {
+                "property": "cloudCover"
+            },
+            10
+        ]
+    }
+}
+```
+
+# LESS THAN OR EQUAL TO
+```{json}
+{
+    "filter-lang": "cql2-json",
+    "filter": {
+        "op": "<=",
+        "args": [
+            {
+                "property": "cloudCover"
+            },
+            10
+        ]
+    }
+}
+```
+
+# GREATER THAN
+```{json}
+{
+    "filter-lang": "cql2-json",
+    "filter": {
+        "op": ">",
+        "args": [
+            {
+                "property": "cloudCover"
+            },
+            10
+        ]
+    }
+}
+```
+
+# GREATER THAN OR EQUAL TO
+```{json}
+{
+    "filter-lang": "cql2-json",
+    "filter": {
+        "op": ">=",
+        "args": [
+            {
+                "property": "cloudCover"
+            },
+            10
+        ]
+    }
+}
+```
+
+# IS NULL
+```{json}
+{
+    "filter": {
+        "op": "and",
+        "args": [
+            {
+                "op": "=",
+                "args": [
+                    {
+                        "property": "collection"
+                    },
+                    "SENTINEL-3"
+                ]
+            },
+            {
+                "op": "isNull",
+                "args": [
+                    {
+                        "property": "cloudCover"
+                    }
+                ]
+            }
+        ]
+    }
+}
+```
+
+:::
+
+
+#### Advanced Comparison Operators
+
+::: {.panel-tabset}
+
+# LIKE
+```{json}
+{
+    "filter-lang": "cql2-json",
+    "filter": {
+        "op": "and",
+        "args": [
+            {
+                "op": "=",
+                "args": [
+                    {
+                        "property": "collection"
+                    },
+                    "SENTINEL-2"
+                ]
+            },
+            {
+                "op": "like",
+                "args": [
+                    {
+                        "property": "productType"
+                    },
+                    "AUX%"
+                ]
+            }
+        ]
+    }
+}
+```
+
+# BETWEEN
+```{json}
+{
+    "filter-lang": "cql2-json",
+    "filter": {
+        "op": "and",
+        "args": [
+            {
+                "op": "=",
+                "args": [
+                    {
+                        "property": "collection"
+                    },
+                    "SENTINEL-2"
+                ]
+            },
+            {
+                "op": "between",
+                "args": [
+                    {
+                        "property": "cloudCover"
+                    },
+                    10,
+                    50
+                ]
+            }
+        ]
+    }
+}
+```
+
+# IN
+```{json}
+{
+    "filter-lang": "cql2-json",
+    "filter": {
+        "op": "in",
+        "args": [
+            {
+                "property": "operationalMode"
+            },
+            [
+                "IW",
+                "EW",
+                "WV"
+            ]
+        ]
+    }
+}
+```
+
+# AND
+```{json}
+{
+    "filter-lang": "cql2-json",
+    "filter": {
+        "op": "and",
+        "args": [
+            {
+                "op": "=",
+                "args": [
+                    {
+                        "property": "id"
+                    },
+                    "S2A_MSIL1C_20240512T230341_N0510_R101_T59PRL_20240513T014351.SAFE"
+                ]
+            },
+            {
+                "op": "=",
+                "args": [
+                    {
+                        "property": "collection"
+                    },
+                    "SENTINEL-2"
+                ]
+            }
+        ]
+    }
+}
+```
+
+# OR
+```{json}
+{
+    "filter-lang": "cql2-json",
+    "filter": {
+        "op": "or",
+        "args": [
+            {
+                "op": ">",
+                "args": [
+                    {
+                        "property": "orbitNumber"
+                    },
+                    4000
+                ]
+            },
+            {
+                "op": "<",
+                "args": [
+                    {
+                        "property": "cloudCover"
+                    },
+                    10
+                ]
+            }
+        ]
+    }
+}
+```
+
+# NOT
+```{json}
+{
+    "filter-lang": "cql2-json",
+    "filter": {
+        "op": "not",
+        "args": [
+            {
+                "op": "=",
+                "args": [
+                    {
+                        "property": "collection"
+                    },
+                    "SENTINEL-3"
+                ]
+            }
+        ]
+    }
+}
+```
+
+:::
+
+
+#### Spatial Operators
+
+Spatial operators specify a  set of advanced functions based on Dimensionally Extended Nine-intersection Model (DE-9IM), enabling precise spatial queries and relationships between geometries in STAC API. The queries within spatial operators are supported for:
+
+* Bbox
+* Point
+* LineString
+* Polygon
+* MultiPoint
+* MultiLineString
+* MultiPolygon
+
+
+Check if the item's geometry contains a specified geometry:
+
+::: {.panel-tabset}
+
+# S_CONTAINS
+```{json}
+{
+    "filter-lang": "cql2-json",
+    "filter": {
+        "op": "s_contains",
+        "args": [
+            {
+                "property": "geometry"
+            },
+            {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            21.0,
+                            52.0
+                        ],
+                        [
+                            21.0,
+                            52.5
+                        ],
+                        [
+                            21.5,
+                            52.5
+                        ],
+                        [
+                            21.5,
+                            52.0
+                        ],
+                        [
+                            21.0,
+                            52.0
+                        ]
+                    ]
+                ]
+            }
+        ]
+    }
+}
+```
+
+:::
+
+Check if the item's geometry crosses within a specified geometry:
+
+::: {.panel-tabset}
+
+# S_CROSSES
+```{json}
+{
+    "filter-lang": "cql2-json",
+    "filter": {
+        "op": "s_crosses",
+        "args": [
+            {
+                "property": "geometry"
+            },
+            {
+                "type": "LineString",
+                "coordinates": [
+                    [
+                        20.5,
+                        52.0
+                    ],
+                    [
+                        21.5,
+                        52.5
+                    ]
+                ]
+            }
+        ]
+    }
+}
+```
+
+:::
+
+Check if the item's geometry doesn’t intersect with a specified geometry:
+
+::: {.panel-tabset}
+
+# S_DISJOINT
+```{json}
+{
+    "filter-lang": "cql2-json",
+    "filter": {
+        "op": "s_disjoint",
+        "args": [
+            {
+                "property": "geometry"
+            },
+            {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            21.5,
+                            53.0
+                        ],
+                        [
+                            21.5,
+                            53.5
+                        ],
+                        [
+                            22.0,
+                            53.5
+                        ],
+                        [
+                            22.0,
+                            53.0
+                        ],
+                        [
+                            21.5,
+                            53.0
+                        ]
+                    ]
+                ]
+            }
+        ]
+    }
+}
+```
+
+:::
+
+Check if the item's geometry exactly matches a specified geometry:
+
+::: {.panel-tabset}
+
+# S_EQUALS
+```{json}
+{
+    "filter-lang": "cql2-json",
+    "filter": {
+        "op": "s_equals",
+        "args": [
+            {
+                "property": "geometry"
+            },
+            {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            10.700306,
+                            49.665051
+                        ],
+                        [
+                            14.264574,
+                            50.068405
+                        ],
+                        [
+                            13.874475,
+                            51.689091
+                        ],
+                        [
+                            10.182405,
+                            51.28339
+                        ],
+                        [
+                            10.700306,
+                            49.665051
+                        ]
+                    ]
+                ]
+            }
+        ]
+    }
+}
+```
+
+:::
+
+Check if the item's geometry intersects with a specified geometry:
+
+::: {.panel-tabset}
+
+# S_INTERSECTS
+```{json}
+{
+    "filter-lang": "cql2-json",
+    "filter": {
+        "op": "s_intersects",
+        "args": [
+            {
+                "property": "geometry"
+            },
+            {
+                "type": "Point",
+                "coordinates": [
+                    36.319836,
+                    32.288087
+                ]
+            }
+        ]
+    }
+}
+```
+
+:::
+
+Check if the item's geometry overlaps with a specified geometry:
+
+::: {.panel-tabset}
+
+# S_OVERLAPS
+```{json}
+{
+    "filter-lang": "cql2-json",
+    "filter": {
+        "op": "s_overlaps",
+        "args": [
+            {
+                "property": "geometry"
+            },
+            {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            21.2,
+                            52.1
+                        ],
+                        [
+                            21.2,
+                            52.4
+                        ],
+                        [
+                            21.6,
+                            52.4
+                        ],
+                        [
+                            21.6,
+                            52.1
+                        ],
+                        [
+                            21.2,
+                            52.1
+                        ]
+                    ]
+                ]
+            }
+        ]
+    }
+}
+```
+
+:::
+
+Check if the item's geometry touches a specified geometry:
+
+::: {.panel-tabset}
+
+# S_TOUCHES
+```{json}
+{
+    "filter-lang": "cql2-json",
+    "filter": {
+        "op": "s_touches",
+        "args": [
+            {
+                "property": "geometry"
+            },
+            {
+                "type": "LineString",
+                "coordinates": [
+                    [
+                        21.0,
+                        52.0
+                    ],
+                    [
+                        21.5,
+                        52.0
+                    ]
+                ]
+            }
+        ]
+    }
+}
+```
+
+:::
+
+Check if the item's geometry is within a specified geometry:
+
+::: {.panel-tabset}
+
+# S_WITHIN
+```{json}
+{
+    "filter-lang": "cql2-json",
+    "filter": {
+        "op": "s_within",
+        "args": [
+            {
+                "property": "geometry"
+            },
+            {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            21.2,
+                            52.1
+                        ],
+                        [
+                            21.2,
+                            52.4
+                        ],
+                        [
+                            21.6,
+                            52.4
+                        ],
+                        [
+                            21.6,
+                            52.1
+                        ],
+                        [
+                            21.2,
+                            52.1
+                        ]
+                    ]
+                ]
+            }
+        ]
+    }
+}
+```
+
+:::
+
+
+#### Temporal Operators
+
+Temporal operators provide a set of advanced functions for working with datetime types, offering greater expressiveness while querying STAC API.
+
+Check if the item's datetime is after a specified datetime:
+
+::: {.panel-tabset}
+
+# T_AFTER
+```{json}
+{
+    "filter-lang": "cql2-json",
+    "filter": {
+        "op": "t_after",
+        "args": [
+            {
+                "property": "datetime"
+            },
+            {
+                "timestamp": "2023-01-01T00:00:00Z"
+            }
+        ]
+    }
+}
+```
+
+:::
+
+This query will retrieve items where the datetime property is later than 2023-01-01T00:00:00Z. It can be used with a timestamp, as in the example above, or with an interval e.g.:
+
+::: {.panel-tabset}
+
+# T_AFTER
+```{json}
+{
+    "filter-lang": "cql2-json",
+    "filter": {
+        "op": "t_after",
+        "args": [
+            {
+                "property": "datetime"
+            },
+            {
+                "interval": [
+                    "2023-01-01T00:00:00Z",
+                    "2023-01-31T23:59:59Z"
+                ]
+            }
+        ]
+    }
+}
+```
+
+:::
+
+Check if the item's datetime is before a specified datetime:
+
+::: {.panel-tabset}
+
+# T_BEFORE
+```{json}
+{
+    "filter-lang": "cql2-json",
+    "filter": {
+        "op": "t_before",
+        "args": [
+            {
+                "property": "datetime"
+            },
+            {
+                "timestamp": "2023-01-01T00:00:00Z"
+            }
+        ]
+    }
+}
+```
+
+:::
+
+This query will retrieve items where the datetime property is before 2023-01-01T00:00:00Z. It can be used with a timestamp or an interval.
+
+Check if a specified interval contains the item's datetime:
+
+::: {.panel-tabset}
+
+# T_CONTAINS
+```{json}
+{
+    "filter-lang": "cql2-json",
+    "filter": {
+        "op": "t_contains",
+        "args": [
+            {
+                "interval": [
+                    {
+                        "property": "start_datetime"
+                    },
+                    {
+                        "property": "end_datetime"
+                    }
+                ]
+            },
+            {
+                "interval": [
+                    "2023-01-01T00:00:00Z",
+                    "2023-01-31T23:59:59Z"
+                ]
+            }
+        ]
+    }
+}
+```
+
+:::
+
+Check if the item's datetime is outside a specified interval:
+
+::: {.panel-tabset}
+
+# T_DISJOINT
+```{json}
+{
+    "filter-lang": "cql2-json",
+    "filter": {
+        "op": "t_disjoint",
+        "args": [
+            {
+                "property": "datetime"
+            },
+            {
+                "timestamp": "2024-02-28T14:21:54.265255Z"
+            }
+        ]
+    }
+}
+```
+
+:::
+
+Check if the item's datetime falls within a specified interval:
+
+::: {.panel-tabset}
+
+# T_DURING
+```{json}
+{
+    "filter-lang": "cql2-json",
+    "filter": {
+        "op": "t_during",
+        "args": [
+            {
+                "interval": [
+                    {
+                        "property": "end_datetime"
+                    },
+                    {
+                        "property": "end_datetime"
+                    }
+                ]
+            },
+            {
+                "interval": [
+                    "2023-01-01T00:00:00Z",
+                    "2023-01-01T00:00:00Z"
+                ]
+            }
+        ]
+    }
+}
+```
+
+:::
+
+Check if the item's datetime exactly matches a specified datetime:
+
+::: {.panel-tabset}
+
+# T_EQUALS
+```{json}
+{
+    "filter-lang": "cql2-json",
+    "filter": {
+        "op": "t_equals",
+        "args": [
+            {
+                "property": "datetime"
+            },
+            {
+                "timestamp": "2023-01-01T00:00:00Z"
+            }
+        ]
+    }
+}
+```
+
+:::
+
+Check if a specified interval is finished by the item's datetime:
+
+::: {.panel-tabset}
+
+# T_FINISHEDBY
+```{json}
+{
+    "filter-lang": "cql2-json",
+    "filter": {
+        "op": "t_finishedby",
+        "args": [
+            {
+                "interval": [
+                    {
+                        "property": "start_datetime"
+                    },
+                    {
+                        "property": "end_datetime"
+                    }
+                ]
+            },
+            {
+                "interval": [
+                    "2023-01-01T00:00:00Z",
+                    "2023-01-30T00:00:00Z"
+                ]
+            }
+        ]
+    }
+}
+```
+
+:::
+
+Check if the item's datetime finishes a specified interval:
+
+::: {.panel-tabset}
+
+# T_FINISHES
+```{json}
+{
+    "filter-lang": "cql2-json",
+    "filter": {
+        "op": "t_finishes",
+        "args": [
+            {
+                "interval": [
+                    {
+                        "property": "start_datetime"
+                    },
+                    {
+                        "property": "end_datetime"
+                    }
+                ]
+            },
+            {
+                "interval": [
+                    "2023-01-01T00:00:00Z",
+                    "2023-01-15T00:00:00Z"
+                ]
+            }
+        ]
+    }
+}
+```
+
+:::
+
+Check if the item's datetime intersects with a specified interval:
+
+::: {.panel-tabset}
+
+# T_INTERSECTS
+```{json}
+{
+    "filter-lang": "cql2-json",
+    "filter": {
+        "op": "t_intersects",
+        "args": [
+            {
+                "property": "datetime"
+            },
+            {
+                "interval": [
+                    "2023-01-01T00:00:00Z",
+                    "2023-01-31T23:59:59Z"
+                ]
+            }
+        ]
+    }
+}
+```
+
+:::
+
+Check if the item's datetime meets a specified interval:
+
+::: {.panel-tabset}
+
+# T_MEETS
+```{json}
+{
+    "filter-lang": "cql2-json",
+    "filter": {
+        "op": "t_meets",
+        "args": [
+            {
+                "interval": [
+                    {
+                        "property": "start_datetime"
+                    },
+                    {
+                        "property": "end_datetime"
+                    }
+                ]
+            },
+            {
+                "interval": [
+                    "2023-01-10T00:00:00Z",
+                    "2023-01-15T00:00:00Z"
+                ]
+            }
+        ]
+    }
+}
+```
+
+:::
+
+Check if a specified interval meets the item's datetime:
+
+::: {.panel-tabset}
+
+# T_METBY
+```{json}
+{
+    "filter-lang": "cql2-json",
+    "filter": {
+        "op": "t_metby",
+        "args": [
+            {
+                "interval": [
+                    {
+                        "property": "start_datetime"
+                    },
+                    {
+                        "property": "end_datetime"
+                    }
+                ]
+            },
+            {
+                "interval": [
+                    "2023-01-10T00:00:00Z",
+                    "2023-01-15T00:00:00Z"
+                ]
+            }
+        ]
+    }
+}
+```
+
+:::
+
+Check if a specified interval meets the item's datetime:
+
+::: {.panel-tabset}
+
+# T_OVERLAPPEDBY
+```{json}
+{
+    "filter-lang": "cql2-json",
+    "filter": {
+        "op": "t_overlappedby",
+        "args": [
+            {
+                "interval": [
+                    {
+                        "property": "start_datetime"
+                    },
+                    {
+                        "property": "end_datetime"
+                    }
+                ]
+            },
+            {
+                "interval": [
+                    "2023-01-10T00:00:00Z",
+                    "2023-01-20T00:00:00Z"
+                ]
+            }
+        ]
+    }
+}
+```
+
+:::
+
+Check if the item's datetime overlaps with a specified interval:
+
+::: {.panel-tabset}
+
+# T_OVERLAPS
+```{json}
+{
+    "filter-lang": "cql2-json",
+    "filter": {
+        "op": "t_overlaps",
+        "args": [
+            {
+                "interval": [
+                    {
+                        "property": "start_datetime"
+                    },
+                    {
+                        "property": "end_datetime"
+                    }
+                ]
+            },
+            {
+                "interval": [
+                    "2023-01-10T00:00:00Z",
+                    "2023-01-20T00:00:00Z"
+                ]
+            }
+        ]
+    }
+}
+```
+
+:::
+
+Check if a specified interval is started by the item's datetime:
+
+::: {.panel-tabset}
+
+# T_STARTEDBY
+```{json}
+{
+    "filter-lang": "cql2-json",
+    "filter": {
+        "op": "t_startedby",
+        "args": [
+            {
+                "interval": [
+                    {
+                        "property": "start_datetime"
+                    },
+                    {
+                        "property": "end_datetime"
+                    }
+                ]
+            },
+            {
+                "interval": [
+                    "2023-01-01T00:00:00Z",
+                    "2023-01-15T00:00:00Z"
+                ]
+            }
+        ]
+    }
+}
+```
+
+:::
+
+Check if the item's datetime starts a specified interval:
+
+::: {.panel-tabset}
+
+# T_STARTS
+```{json}
+{
+    "filter-lang": "cql2-json",
+    "filter": {
+        "op": "t_starts",
+        "args": [
+            {
+                "interval": [
+                    {
+                        "property": "start_datetime"
+                    },
+                    {
+                        "property": "end_datetime"
+                    }
+                ]
+            },
+            {
+                "interval": [
+                    "2023-01-01T00:00:00Z",
+                    "2023-01-15T00:00:00Z"
+                ]
+            }
+        ]
+    }
+}
+```
 
 :::
