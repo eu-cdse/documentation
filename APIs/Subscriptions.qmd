@@ -7,7 +7,7 @@ This section provides the detailed description of PUSH and PULL subscriptions wi
 
 There two types of Subscriptions available for users:
 
-1. PULL Subscription - for PULL Subscription the service sends the notification to the individual user queue every time the new product is added to the Data Sapce Catalogue according to the set of filter parameters supplied within the subscription request. The notifications are stored in the queue until they are acknowledged by the client or until the limit of the messages on the queue for the client is exceeded. **The maximum length of the queue is 100 000 notifications.** For PULL Subscription, it is necessary to Read and Acknowledge notifications regularly to not exceed the queue limit. 
+1. PULL Subscription - for PULL Subscription the service sends the notification to the individual user queue every time the new product is added to the Data Space Catalogue according to the set of filter parameters supplied within the subscription request. The notifications are stored in the queue until they are acknowledged by the client or until the limit of the messages on the queue for the client is exceeded. **The maximum length of the queue is 100 000 notifications.** For PULL Subscription, it is necessary to Read and Acknowledge notifications regularly to not exceed the queue limit. 
 
 2. PUSH Subscription - for PUSH Subscription the service sends the notification to the user's endpoint every time the new product is added to the Data Space Catalogue according to the set of filter parameters supplied within the subscription request. For PUSH Subscription, it is mandatory to provide the user's endpoint for which the notifications are to be sent.
 
@@ -34,7 +34,7 @@ The terms used within the Subscriptions documentation are defined below.
 **Notification** - OData message automatically sent to client's endpoint (for PUSH subscriptions) or individual client's queue (for PULL notifications) every time the new product is published on Data Space Catalogue. 
 
 ### User Authorization
-For using Subscription Service you need an authorization token as only authorized users are allowed to create a subscription and access the subscription endpoints - all Subscription Service endpoints needs token.
+For using Subscription Service you need an authorization token as only authorized users are allowed to create a subscription and access the subscription endpoints - all Subscription Service endpoints needs the token.
 
 To get the token you can use the following scripts:
 
@@ -118,9 +118,11 @@ Below please find the description of the PULL Subscription Entity.
                 <td style="text-align: center; vertical-align: middle">Status</td>
                 <td style="text-align: center; vertical-align: middle">Subscription Status enumeration</td>
                 <td style="text-align: left; vertical-align: middle">The allowed values of the subscription status are:
-			<li>running</li>
-			<li>paused</li>
-			<li>cancelled</li>
+				<ul>
+				<li>running</li>
+				<li>paused</li>
+				<li>cancelled</li>
+				</ul>
 		<BR>The default value set to 'Status', if not provided by user, is 'running'.</td>
                 <td style="text-align: center; vertical-align: middle">running</td>
             </tr>
@@ -128,14 +130,16 @@ Below please find the description of the PULL Subscription Entity.
                 <td style="text-align: center; vertical-align: middle">SubscriptionEvent</td>
                 <td style="text-align: center; vertical-align: middle">Subscription Event enumeration</td>
                 <td style="text-align: left; vertical-align: middle">The subscription event to be monitored and for which notification is provided:
+				<ul>
 				<li>created</li>
+				</ul>
 				The default value set to "SubscriptionEvent", if not provided by user, is "created".<BR><BR>For "SubscriptionEvent" = "created" the notifications about newly added products to the Data Space Catalogue will be sent to the user's endpoint.</td>
                 <td style="text-align: center; vertical-align: middle">created</td>
             </tr>
             <tr>
                 <td style="text-align: center; vertical-align: middle">FilterParam</td>
                 <td style="text-align: center; vertical-align: middle">String</td>
-                <td style="text-align: left; vertical-align: middle">The filter parameters of the Subscription (refers to the $filter= parameter of any Products? query). The same filtering parameters as described for [OData Data Sapce Catalogue](https://documentation.dataspace.copernicus.eu/APIs/OData.html#filter-option) are available.</td>
+                <td style="text-align: left; vertical-align: middle">The filter parameters of the Subscription (refers to the $filter= parameter of any Products? query). The same filtering parameters as described for <a href="https://documentation.dataspace.copernicus.eu/APIs/OData.html#filter-option">OData Data Space Catalogue</a> are available.</td>
                 <td style="text-align: center; vertical-align: middle">Collection/Name eq 'SENTINEL-1' and Attributes/OData.CSC.StringAttribute/any
 (att:att/Name eq 'productType' and att/OData.CSC.StringAttribute/Value eq 'IW_SLC__1S')</td>
             </tr>
@@ -207,7 +211,7 @@ While creating a subscription, users can specify the Event they would like to be
 
 Within the Subscription create request, users can also provide the filtering parameters (e.g. productType, collection, geofootprint). The Subscription Service will then provide the notifications about newly added products to the Copernicus Data Space Ecosystem Catalogue according to the set of filter parameters supplied within the subscription request. If `FilterParam` is not provided within the subscription request body, it will be automatically set to empty and then the notifications about all newly added products will be generated. 
 
-Subscriptions enables the same filtering parameters as described for [OData Data Sapce Catalogue](https://documentation.dataspace.copernicus.eu/APIs/OData.html#filter-option). All filters should be provided in `FilterParam` field.
+Subscriptions enables the same filtering parameters as described for [OData Data Space Catalogue](https://documentation.dataspace.copernicus.eu/APIs/OData.html#filter-option). All filters should be provided in `FilterParam` field.
 
 To create PULL Subscription a request to the Data Space service should be submitted:
 
@@ -303,7 +307,7 @@ The whole response from the Subscripton Read endpoint is kept on the indivdual u
         "NotificationDate": "2024-03-13T13:39:59.000Z",
         "AckId": "MTcxMDc1NjcwNjUzMi0wOjk5MWM0NzMwLWNmNmYtNDMyYS05ZjZjLTQ3YmUwMjMwZmY0NQ==",
         "value": {
-            "@odata.context": "$metadata#Products(Assets())(Attributes())(Locations())/$entity",
+            "@odata.context": "$metadata#Products(Attributes(),Assets(),Locations())/$entity",
             "@odata.mediaContentType": "application/octet-stream",
             "Id": "d2ff986b-9454-43d6-95e0-1a0ae27019d7",
             "Name": "S1A_IW_SLC__1SDV_20240313T054626_20240313T054653_052959_066921_3759.SAFE",
@@ -313,7 +317,7 @@ The whole response from the Subscripton Read endpoint is kept on the indivdual u
             "PublicationDate": "2024-03-13T06:56:59.293Z",
             "ModificationDate": "2024-03-13T10:47:57.429Z",
             "Online": true,
-            "EvictionDate": "",
+            "EvictionDate": "9999-12-31T23:59:59.999999Z",
             "S3Path": "/eodata/Sentinel-1/SAR/IW_SLC__1S/2024/03/13/S1A_IW_SLC__1SDV_20240313T054626_20240313T054653_052959_066921_3759.SAFE",
             "Checksum": [
                 {
@@ -360,7 +364,7 @@ The whole response from the Subscripton Read endpoint is kept on the indivdual u
         "NotificationDate": "2024-03-13T13:39:59.000Z",
         "AckId": "MTcxMDc1NjcwNjY2NC0wOjk5MWM0NzMwLWNmNmYtNDMyYS05ZjZjLTQ3YmUwMjMwZmY0NQ==",
         "value": {
-            "@odata.context": "$metadata#Products(Assets())(Attributes())(Locations())/$entity"",
+            "@odata.context": "$metadata#Products(Attributes(),Assets(),Locations())/$entity",
             "@odata.mediaContentType": "application/octet-stream",
             "Id": "33ad5694-9208-4001-ae4f-6d7cd0579ce0",
             "Name": "S1A_IW_SLC__1SDV_20240313T092716_20240313T092732_052961_066935_89F2.SAFE",
@@ -370,7 +374,7 @@ The whole response from the Subscripton Read endpoint is kept on the indivdual u
             "PublicationDate": "2024-03-13T11:23:27.577Z",
             "ModificationDate": "2024-03-13T11:24:14.138Z",
             "Online": true,
-            "EvictionDate": "",
+            "EvictionDate": "9999-12-31T23:59:59.999999Z",
             "S3Path": "/eodata/Sentinel-1/SAR/IW_SLC__1S/2024/03/13/S1A_IW_SLC__1SDV_20240313T092716_20240313T092732_052961_066935_89F2.SAFE",
             "Checksum": [
                 {
@@ -564,9 +568,11 @@ Below please find the description of the Subscription Entity.
                 <td style="text-align: center; vertical-align: middle">Status</td>
                 <td style="text-align: center; vertical-align: middle">Subscription Status enumeration</td>
                 <td style="text-align: left; vertical-align: middle">The allowed values of the subscription status are:
-			<li>running</li>
-			<li>paused</li>
-			<li>cancelled</li>
+				<ul>
+				<li>running</li>
+				<li>paused</li>
+				<li>cancelled</li>
+				</ul>
 		<BR>The default value set to 'Status', if not provided by user, is 'running'.</td>
                 <td style="text-align: center; vertical-align: middle">running</td>
             </tr>
@@ -574,14 +580,16 @@ Below please find the description of the Subscription Entity.
                 <td style="text-align: center; vertical-align: middle">SubscriptionEvent</td>
                 <td style="text-align: center; vertical-align: middle">Subscription Event enumeration</td>
                 <td style="text-align: left; vertical-align: middle">The subscription event to be monitored and for which notification is provided:
+				<ul>
 				<li>created</li>
+				</ul>
 				The default value set to "SubscriptionEvent", if not provided by user, is "created".<BR><BR>For "SubscriptionEvent" = "created" the notifications about newly added products to the Data Space Catalogue will be sent to the user's endpoint.</td>
                 <td style="text-align: center; vertical-align: middle">created</td>
             </tr>
             <tr>
                 <td style="text-align: center; vertical-align: middle">FilterParam</td>
                 <td style="text-align: center; vertical-align: middle">String</td>
-                <td style="text-align: left; vertical-align: middle">The filter parameters of the Subscription (refers to the $filter= parameter of any Products? query). The same filtering parameters as described for [OData Data Sapce Catalogue](https://documentation.dataspace.copernicus.eu/APIs/OData.html#filter-option) are available.</td>
+                <td style="text-align: left; vertical-align: middle">The filter parameters of the Subscription (refers to the $filter= parameter of any Products? query). The same filtering parameters as described for <a href="#https://documentation.dataspace.copernicus.eu/APIs/OData.html#filter-option">OData Data Space Catalogue</a> are available.</td>
                 <td style="text-align: center; vertical-align: middle">Collection/Name eq 'SENTINEL-2' and Attributes/OData.CSC.StringAttribute/any(att:att/Name eq 'productType' and att/OData.CSC.StringAttribute/Value eq 'S2MSI2A')</td>
             </tr>
             <tr>
@@ -644,7 +652,7 @@ While creating a subscription, users can specify the Event they would like to be
 
 Within the Subscription create request, users can also provide the filtering parameters (e.g. productType, collection, geofootprint). The Subscription Service will then send the notification to the user about newly added products to the Copernicus Data Space Ecosystem Catalogue according to the set of filter parameters supplied within the subscription request. If `FilterParam` is not provided within the subscription request body, it will be automatically set to empty and then the notifications about all newly added products will be sent to user's endpoint. 
 
-Subscriptions enables the same filtering parameters as described for [OData Data Sapce Catalogue](https://documentation.dataspace.copernicus.eu/APIs/OData.html#filter-option). All filters should be provided in `FilterParam` field.
+Subscriptions enables the same filtering parameters as described for [OData Data Space Catalogue](https://documentation.dataspace.copernicus.eu/APIs/OData.html#filter-option). All filters should be provided in `FilterParam` field.
 
 To create a PUSH Subscription a request to the Subscription Service service should be submitted:
 
@@ -709,7 +717,7 @@ After creating the subscription, the notifications about new products entering t
     "SubscriptionId": "c06f2e68-fb9e-4e22-ac57-49566e8621fb",
     "NotificationDate": "2024-01-29T10:59:08.698Z",
     "value": {
-        "@odata.context": "$metadata#Products(Assets())(Attributes())(Locations())/$entity",
+        "@odata.context": "$metadata#Products(Attributes(),Assets(),Locations())/$entity",
         "@odata.mediaContentType": "application/octet-stream",
         "Id": "8d654e59-d7b6-4a53-b086-c9de764e506b",
         "Name": "S2A_MSIL2A_20240129T062121_N0510_R034_T44VMN_20240129T093752.SAFE",
@@ -745,7 +753,7 @@ After creating the subscription, the notifications about new products entering t
         "ModificationDate": "2024-01-29T10:59:08.201Z",
         "PublicationDate": "2024-01-29T10:58:20.247Z",
         "Online": true,
-        "EvictionDate": "",
+        "EvictionDate": "9999-12-31T23:59:59.999999Z",
         "S3Path": "/eodata/Sentinel-2/MSI/L2A/2024/01/29/S2A_MSIL2A_20240129T062121_N0510_R034_T44VMN_20240129T093752.SAFE",
         "Assets": [
             {
