@@ -1,0 +1,128 @@
+---
+title: Examples for BYOC
+---
+
+The requests below are written in python. To execute them you need to
+create an OAuth client as explained
+[here](/APIs/SentinelHub/Overview/Authentication.qmd#python). It is
+named `oauth` in these examples.
+
+### Check collection bands in catalog
+
+This example uses the publicly available [Sentinel-2 Level 3 Quarterly
+Mosaics](/Data/SentinelMissions/Sentinel2.html#sentinel-2-level-3-quarterly-mosaics)
+collection. To use your own collection, replace the ID used in the URL
+with `byoc-<your-collection-id>`.
+
+``` python
+url = "https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/collections/byoc-5460de54-082e-473a-b6ea-d5cbe3c17cca"
+response = oauth.get(url)
+```
+
+Bands can be found in the returned json object under
+`summaries.eo:bands`. An example of the returned `summaries` object that
+can be found in the above request\'s response:
+
+``` json
+{
+  "eo:bands": [
+    {
+      "name": "B02"
+    },
+    {
+      "name": "B03"
+    },
+    {
+      "name": "B04"
+    },
+    {
+      "name": "B08"
+    },
+    {
+      "name": "observations"
+    }
+  ],
+  "raster:bands": [
+    {
+      "data_type": "int16",
+      "nodata": -32768
+    },
+    {
+      "data_type": "int16",
+      "nodata": -32768
+    },
+    {
+      "data_type": "int16",
+      "nodata": -32768
+    },
+    {
+      "data_type": "int16",
+      "nodata": -32768
+    },
+    {
+      "data_type": "uint16",
+      "nodata": 0
+    }
+  ]
+}
+```
+
+### Create a True Color image from the gathered bands
+
+As mentioned above, this example uses a [Sentinel-2 Level 3 Quarterly
+Mosaics](/Data/SentinelMissions/Sentinel2.html#sentinel-2-level-3-quarterly-mosaics)
+collection. To use your own collection, replace the collection ID in
+`input.data.type`, specify the desired input and output bands in the
+[`setup function`](/APIs/SentinelHub/Evalscript/V3.qmd#setup-function)
+(you can use any subset of the input bands found in the `summaries`
+object for your collection), and then map the input bands to the output
+raster in the
+[`evaluatePixel function`](/APIs/SentinelHub/Evalscript/V3.qmd#evaluatepixel-function).
+
+``` python
+curl -X POST   https://sh.dataspace.copernicus.eu/api/v1/process   -H 'Authorization: Bearer <your access token>'   -F 'request={
+    "input": {
+        "bounds": {
+            "bbox": [
+              12.44693,
+              41.870072,
+              12.541001,
+              41.917096
+            ]
+        },
+        "data": [
+            {
+                "type": "byoc-5460de54-082e-473a-b6ea-d5cbe3c17cca",
+                "dataFilter": {
+                    "timeRange": {
+                        "from": "2023-01-01T00:00:00Z",
+                        "to": "2023-01-02T23:59:59Z"
+                    }
+                }
+            }
+        ]
+    },
+    "output": {
+        "width": 780,
+        "height": 523,
+        "responses": [
+          {
+            "identifier": "default",
+            "format": {
+              "type": "image/jpeg"
+            }
+          }
+        ]
+    }
+}'   -F 'evalscript=//VERSION=3
+function setup() {
+  return {
+    input: ["B02", "B03", "B04"],
+    output: { bands: 3 }
+  };
+}
+
+function evaluatePixel(sample) {
+  return [2.5 * sample.B04/10000, 2.5 * sample.B03/10000, 2.5 * sample.B02/10000];
+}'
+```
