@@ -1295,7 +1295,11 @@ window.onload = function() {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#custom-udf-dependencies" id="toc-custom-udf-dependencies" class="nav-link active" data-scroll-target="#custom-udf-dependencies">Custom UDF dependencies</a></li>
+  <li><a href="#custom-udf-dependencies" id="toc-custom-udf-dependencies" class="nav-link active" data-scroll-target="#custom-udf-dependencies">Custom UDF dependencies</a>
+  <ul>
+  <li><a href="#using-custom-job-option" id="toc-using-custom-job-option" class="nav-link" data-scroll-target="#using-custom-job-option">Using custom job option</a></li>
+  <li><a href="#using-inline-dependency-specification" id="toc-using-inline-dependency-specification" class="nav-link" data-scroll-target="#using-inline-dependency-specification">Using inline dependency specification</a></li>
+  </ul></li>
   <li><a href="#validity-of-signed-urls-in-batch-job-results" id="toc-validity-of-signed-urls-in-batch-job-results" class="nav-link" data-scroll-target="#validity-of-signed-urls-in-batch-job-results">Validity of signed URLs in batch job results</a>
   <ul>
   <li><a href="#learning-more" id="toc-learning-more" class="nav-link" data-scroll-target="#learning-more">Learning more</a></li>
@@ -1323,62 +1327,71 @@ window.onload = function() {
 
 </header>
 
-<p>Jobs running on the cloud get assigned a default amount of CPU and memory resources. This may not always be enough for your job, for instance, when using UDFs. Also, for very large jobs, you may want to optimise your resource settings for cost optimisation.</p>
-<p>The example below shows how to start a job with all options set to their default values. It is important to highlight that default settings are subject to change by the backend whenever needed.</p>
+<p>Jobs running on the cloud are assigned a default amount of CPU and memory resources. These defaults may not always be sufficient for a job, especially when using user-defined functions (UDFs). For very large jobs, optimising resource settings can help with cost optimisation.</p>
+<p>The example below shows how to start a job with all options set to their default values. It is important to note that default settings are subject to change by the backend whenever needed.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>job_options <span class="op">=</span> {</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"executor-memory"</span>: <span class="st">"2G"</span>,</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"executor-memoryOverhead"</span>: <span class="st">"1800m"</span>,</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"executor-cores"</span>: <span class="dv">1</span>,</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"task-cpus"</span>: <span class="dv">1</span>,</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"max-executors"</span>: <span class="dv">20</span>,</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"driver-memory"</span>: <span class="st">"2G"</span>,</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"driver-memoryOverhead"</span>: <span class="st">"1G"</span>,</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"driver-cores"</span>: <span class="dv">1</span>,</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">"udf-dependency-archives"</span>: [],</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">"logging-threshold"</span>: <span class="st">"info"</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>cube.execute_batch(job_options<span class="op">=</span>job_options)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>This is a short overview of the various options:</p>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"python-memory"</span>: <span class="va">None</span>, <span class="co">#the default is in fact to derive this from executor-memoryOverhead</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"executor-cores"</span>: <span class="dv">1</span>,</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"task-cpus"</span>: <span class="dv">1</span>,</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"max-executors"</span>: <span class="dv">20</span>,</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"driver-memory"</span>: <span class="st">"2G"</span>,</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"driver-memoryOverhead"</span>: <span class="st">"1G"</span>,</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">"driver-cores"</span>: <span class="dv">1</span>,</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">"udf-dependency-archives"</span>: [],</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">"logging-threshold"</span>: <span class="st">"info"</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>cube.execute_batch(job_options<span class="op">=</span>job_options)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Here is a brief overview of the various options:</p>
 <ul>
-<li><code>executor-memory</code>: memory assigned to your workers, for the JVM that executes most predefined processes</li>
-<li><code>executor-memoryOverhead</code>: memory assigned on top of the JVM, for instance to run UDF’s</li>
-<li><code>executor-cores</code>: number of CPUs per worker (executor). The number of parallel tasks is executor-cores/task-cpus</li>
-<li><code>task-cpus</code>: CPUs assigned to a single task. UDF’s using libraries like Tensorflow can benefit from further parallellization on the level of individual tasks.</li>
-<li><code>executor-request-cores</code>: this settings is only relevant for Kubernetes based backends, allows to overcommit CPU</li>
-<li><code>max-executors</code>: the maximum number of workers assigned to your job. Maximum number of parallel tasks is <code>max-executors*executor-cores/task-cpus</code>. Increasing this can inflate your costs, while not necessarily improving performance!</li>
-<li><code>driver-memory</code>: memory assigned to the spark ‘driver’ JVM that controls execution of your batch job</li>
-<li><code>driver-memoryOverhead</code>: memory assigned to the spark ‘driver’ on top of JVM memory, for Python processes.</li>
+<li><code>executor-memory</code>: memory allocated to the workers for the JVM that executes most predefined processes.</li>
+<li><code>executor-memoryOverhead</code>: allocated in addition to the JVM, for example, to run UDFs.</li>
+<li><code>python-memory</code>: memory assigned to Python UDFs, sar_backscatter or Sentinel-3 data loading tasks.</li>
+<li><code>executor-cores</code>: number of CPUs per worker (executor). The number of parallel tasks is calculated as executor-cores / task-cpus. Setting this value equal to task-cpus is recommended to avoid potential GDAL reading errors.</li>
+<li><code>task-cpus</code>: CPUs assigned to a single task. UDFs using libraries like Tensorflow can benefit from further parallelization at the individual task level.</li>
+<li><code>executor-request-cores</code>: this setting is only relevant for Kubernetes-based backends, allows overcommitting CPU</li>
+<li><code>max-executors</code>: the maximum number of workers assigned to the job. The maximum number of parallel tasks is <code>max-executors*executor-cores/task-cpus</code>. Increasing this can inflate costs, while not necessarily improving performance!</li>
+<li><code>driver-memory</code>: memory allocated to the Spark ‘driver’ JVM, which manages the execution of the batch job.</li>
+<li><code>driver-memoryOverhead</code>: memory assigned to the spark ‘driver’ on top of JVM memory for Python processes.</li>
 <li><code>logging-threshold</code>: the threshold for logging, set to ‘info’ by default, can be set to ‘debug’ to generate much more logging</li>
-<li><code>udf-dependency-archives</code>: an array of urls pointing to zip files with extra dependencies, see below</li>
+<li><code>udf-dependency-archives</code>: an array of URLs pointing to zip files with extra dependencies; see below</li>
 </ul>
 <section id="custom-udf-dependencies" class="level3">
 <h3 class="anchored" data-anchor-id="custom-udf-dependencies">Custom UDF dependencies</h3>
-<p>User defined functions often depend on (specific versions of) libraries or require small auxiliary data files. The UDF specifications do not yet define a standardized manner to provide this other than having the ability to select from a predefined set of ‘runtimes’ that then again have a predefined configuration.</p>
-<p>We solve this via the <code>udf-dependency-archives</code> job option, that allows to specify a list of zip files that should be included in the working directory of the UDF.</p>
-<p>This enables the following example workflow for Python UDF’s:</p>
+<p>User defined functions often depend on (specific versions of) libraries or require small auxiliary data files.</p>
+<section id="using-custom-job-option" class="level4">
+<h4 class="anchored" data-anchor-id="using-custom-job-option">Using custom job option</h4>
+<p>This is addressed using the <code>udf-dependency-archives</code> job option, which allows specifying a list of zip files to be included in the working directory of the UDF.</p>
+<p>Here is an example workflow for Python UDFs:</p>
 <ol type="1">
-<li>Create a Python ‘virtualenv’ with your dependencies</li>
-<li>Based on the ‘site-packages’ directory of the virtualenv, create a zip file with all dependencies</li>
-<li>Upload the zip to a url that can be reached by the backend.</li>
-<li>In job options, add <code>"udf-dependency-archives": ['https://yourhost.com/myEnv.zip#tmp/mydir']</code> The <code>#tmp/mydir</code> suffix indicates where you want to unzip your files, relative to the working directory.</li>
-<li>In your UDF, before trying to import libraries, add your directory to the Python path: <code>sys.path.insert(0, 'tmp/mydir')</code></li>
-<li>Now your libraries should be loaded before anything else!</li>
+<li>Create a Python virtual environment with the necessary dependencies.</li>
+<li>Create a zip file from the ‘site-packages’ directory of the virtual environment, including all dependencies.</li>
+<li>Upload the zip file to a URL accessible by the backend.</li>
+<li>In the job options, add <code>"udf-dependency-archives": ['https://yourhost.com/myEnv.zip#tmp/mydir']</code>. The <code>#tmp/mydir</code> suffix specifies where to unzip the files relative to the working directory.</li>
+<li>In the UDF, before importing libraries, add the directory to the Python path: <code>sys.path.insert(0, 'tmp/mydir')</code>.</li>
+<li>The libraries should now be loaded properly before any other imports.</li>
 </ol>
 <p>Known limitations:</p>
 <ul>
-<li>Your dependencies need to be compatible with the Python version of the backend, currently 3.8.</li>
-<li>Your dependencies need to be compatible with the OS of the backend, currently AlmaLinux 8.</li>
+<li>Dependencies must be compatible with the backend’s Python version, which is currently 3.8.</li>
+<li>Dependencies must be compatible with the backend’s operating system, which is currently AlmaLinux 8.</li>
 <li>The backend has a limited set of Python dependencies that are preloaded, and cannot be changed, such as numpy.</li>
 </ul>
 </section>
+<section id="using-inline-dependency-specification" class="level4">
+<h4 class="anchored" data-anchor-id="using-inline-dependency-specification">Using inline dependency specification</h4>
+<p>A new method to define dependencies is described <a href="https://open-eo.github.io/openeo-python-client/udf.html#standard-for-declaring-python-udf-dependencies">here</a>. It is more convenient, but still in the beta phase. Especially larger packages might be problematic.</p>
+</section>
+</section>
 <section id="validity-of-signed-urls-in-batch-job-results" class="level2">
 <h2 class="anchored" data-anchor-id="validity-of-signed-urls-in-batch-job-results">Validity of signed URLs in batch job results</h2>
-<p>Batch job results are accessible to the user via signed URLs stored in the result assets. Within the platform, these URLs have a validity (expiry time) of 7 days. Within these 7 days, the results of a batch job can be accessed by any person with the URL. Each time a user requests the results from the job endpoint (<code>GET /jobs/{job_id}/results</code>), a freshly signed URL (valid for 7 days) is created for the result assets.</p>
+<p>Batch job results are accessible to the user via signed URLs stored in the result assets. Within the platform, these URLs have a validity (expiry time) of 7 days. During this period, anyone with the URL can access the batch job results. Each time a user requests the results from the job endpoint (<code>GET /jobs/{job_id}/results</code>), a freshly signed URL (valid for seven days) is created for the result assets.</p>
 <section id="learning-more" class="level3">
 <h3 class="anchored" data-anchor-id="learning-more">Learning more</h3>
-<p>The topic of resource optimisation is a complex one, and here we just give a short summary. The goal of openEO is to hide most of these details from the user, but we realize that advanced users sometimes want to have a bit more insight, so in the spirit of being open, we give some hints.</p>
+<p>The topic of resource optimisation is complex, and this is just a brief overview. The goal of openEO is to simplify these details for users, but we understand that advanced users may seek more insight. In the spirit of openness, we offer a few hints for those looking to optimise their resources.</p>
 <p>To learn more about these options, we point to the <a href="https://github.com/Open-EO/openeo-geopyspark-driver/blob/faf5d5364a82e870e42efd2a8aee9742f305da9f/openeogeotrellis/backend.py#L1213">piece of code</a> that handles this.</p>
-<p>Most memory related options are translated to Apache Spark configuration settings, which are documented <a href="https://spark.apache.org/docs/3.3.1/configuration.html#application-properties">here</a>.</p>
+<p>Most memory-related options are translated to Apache Spark configuration settings, which are documented <a href="https://spark.apache.org/docs/3.3.1/configuration.html#application-properties">here</a>.</p>
 
 
 </section>
