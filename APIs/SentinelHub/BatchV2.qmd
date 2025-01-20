@@ -122,13 +122,13 @@ batch task:
 2.  User-defined
     [GeoPackage](/APIs/SentinelHub/BatchV2.qmd#2-geopackage)
 
-### 1. Tiling grid {#1-tiling-grid}
+### 1. Tiling Grid {#1-tiling-grid}
 
 For more effective processing we divide the area of interest into tiles
 and process each tile separately. While `process` API uses grids which
 come together with each datasource for processing of the data, the
-`batch` API uses one of the predefined tiling grids. The predefined
-tiling grids 0-2 are based on the [Sentinel-2
+`batch` API uses one of the predefined tiling grids. The tiling grids
+0-2 are based on the [Sentinel-2
 tiling](https://sentinel.esa.int/web/sentinel/missions/sentinel-2/data-products){target="_blank"}
 in WGS84/UTM projection with some adjustments:
 
@@ -175,7 +175,8 @@ as:
 ``` JSON
 {
   ...
-  "tilingGrid": {
+  "input": {
+    "type" : "tiling-grid",
     "id": 0,
     "resolution": 60.0
   },
@@ -185,7 +186,7 @@ as:
 
 ### 2. GeoPackage {#2-geopackage}
 
-In addition to the predefined tiling grids, BatchV2 API now also support
+In addition to the tiling grids, BatchV2 API now also support
 user-defined features through
 [GeoPackages](https://www.geopackage.org/spec/){target="_blank"}. This
 allows you to specify features of any shape as long as the underlying
@@ -202,14 +203,14 @@ arbitrarily, but it must be listed as the geometry column in the
 `gpkg_geometry_columns` table. The table schema should include the
 following columns:
 
-  Column       Type                      Example
-  ------------ ------------------------- ----------------------------------------------------------
-  id           INTEGER **(UNIQUE)**      1000
-  identifier   TEXT **(UNIQUE)**         FEATURE_NAME
-  geometry     POLYGON or MULTIPOLYGON   Feature geometry representation in GeoPackage WKB format
-  width        INTEGER                   1000
-  height       INTEGER                   1000
-  resolution   REAL                      0.005
+  Column             Type                      Example
+  ------------------ ------------------------- ----------------------------------------------------------
+  id - primary key   INTEGER **(UNIQUE)**      1000
+  identifier         TEXT **(UNIQUE)**         FEATURE_NAME
+  geometry           POLYGON or MULTIPOLYGON   Feature geometry representation in GeoPackage WKB format
+  width              INTEGER                   1000
+  height             INTEGER                   1000
+  resolution         REAL                      0.005
 
 #### Caveats
 
@@ -217,12 +218,56 @@ following columns:
     specify resolution. If both values are provided, width and height
     will be used, and resolution will be ignored.
 -   The feature table must use a CRS that is **EPSG compliant**.
--   Both `id` and `identifier` values must not be null and unique across
-    all feature tables.
--   There can be a maximum of 700,000 features in the GeoPackage.
+-   `identifier` values must not be null and unique across all feature
+    tables.
+-   There can be a maximum of 700.000 features in the GeoPackage.
+-   The feature output width and height cannot exceed 3500 by 3500
+    pixels or the equivalent in resolution.
+
+Below you will find a list of example GeoPackages that serve as a
+showcase of how a GeoPackage file should be structured. Please note that
+these examples do not serve as production-ready GeoPackages and should
+only be used for testing purposes. If you\'d like to use these tiling
+grids for processing, use the equivalent tiling grid with the tiling
+grid input instead.
+
+  name                  id   output CRS   geopackage
+  --------------------- ---- ------------ -----------------------------------------------------------------------------------------------------------------
+  UTM 20km grid         0    UTM          [UTM 20km grid](https://s3.eu-central-1.amazonaws.com/sh-batch-grids/tiling-grid-0.gpkg){target="_blank"}
+  UTM 10km grid         1    UTM          [UTM 10km grid](https://s3.eu-central-1.amazonaws.com/sh-batch-grids/tiling-grid-1.gpkg){target="_blank"}
+  UTM 100km grid        2    UTM          [UTM 100km grid](https://s3.eu-central-1.amazonaws.com/sh-batch-grids/tiling-grid-2.gpkg){target="_blank"}
+  WGS84 1 degree grid   3    WGS84        [WGS84 1 degree grid](https://s3.eu-central-1.amazonaws.com/sh-batch-grids/tiling-grid-3.gpkg){target="_blank"}
+  LAEA 100km grid       6    EPSG:3035    [LAEA 100km grid](https://s3.eu-central-1.amazonaws.com/sh-batch-grids/tiling-grid-6.gpkg){target="_blank"}
+  LAEA 20km grid        7    EPSG:3035    [LAEA 20km grid](https://s3.eu-central-1.amazonaws.com/sh-batch-grids/tiling-grid-7.gpkg){target="_blank"}
 
 An example of a batch task with GeoPackage input is available
 [here](/APIs/SentinelHub/BatchV2/Examples.qmd#option-3-geopackage-input-and-geotiff-output).
+
+### Area of Interest and PUs
+
+When using either [Tiling
+Grid](/APIs/SentinelHub/BatchV2.qmd#1-tiling-grid) or
+[GeoPackage](/APIs/SentinelHub/BatchV2.qmd#2-geopackage) as input, the
+features that end up being processed are determined by the
+`processRequest.input.bounds` parameter specified in the request, called
+Area of Interest or AOI.
+
+The way the AOI parameter is used and its effect depend on the input
+type used:
+
+-   Tiling grid: The AOI **must** be specified in the request. Only the
+    tiles (features) that intersect with the AOI will be processed.
+-   GeoPackage: The AOI can optionally be omitted. If the AOI is
+    omitted, all the features inside your GeoPackage will be processed.
+    Conversely, if AOI is specified, only the features that intersect
+    with the AOI will be processed.
+
+Please note that in both cases of input types, if the feature is only
+**partially** covered by the AOI, the feature will be processed in its
+**entirety**.
+
+You are only charged PUs for the features that are processed. If a
+feature does not intersect with the AOI, it will not be charged for.
 
 ------------------------------------------------------------------------
 
@@ -356,32 +401,11 @@ When creating a new batch collection, one has to be careful to:
 
 #### Mandatory bucket settings
 
-Regardless of the credentials provided on the request, your bucket needs
-to be configured to allow full access to Sentinel Hub. To do this,
-update your bucket policy to include the following statement (don\'t
-forget to replace \<bucket_name\> with your actual bucket name):
-
-``` JSON
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Sid": "Sentinel Hub permissions",
-      "Effect": "Allow",
-      "Principal": {
-        "AWS": "arn:aws:iam::ddf4c98b5e6647f0a246f0624c8341d9:root"
-      },
-      "Action": [
-        "s3:*"
-      ],
-      "Resource": [
-        "arn:aws:s3:::<bucket_name>",
-        "arn:aws:s3:::<bucket_name>/*"
-      ]
-    }
-  ]
-}
-```
+Regardless of the credentials provided in the request, you still need to
+set a bucket policy to allow Sentinel Hub services to access the data.
+For detailed instructions on how to configure your bucket policy, please
+refer to the [BYOC bucket settings
+documentation](/APIs/SentinelHub/Byoc.qmd#aws-bucket-settings).
 
 ## Feature Manifest
 
@@ -421,11 +445,13 @@ e.g. `feature_4326`. `<br/>`{=html}The schema of feature tables inside
 the database is currently the following:
 
   Name         Type       Description
-  ------------ ---------- -------------------------------------------------------------------
+  ------------ ---------- ----------------------------------------------------------------------------------
   fid          INTEGER    Auto-incrementing ID
-  id           INTEGER    Numerical ID of the feature
-  identifier   TEXT       Textual ID of the feature
-  path         TEXT       The object storage path URI where the feature will be uploaded to
+  outputId     TEXT       Output identifier defined in the `processRequest`
+  identifier   TEXT       ID of the feature
+  path         TEXT       The object storage path URI where the output of this feature will be uploaded to
+  width        INTEGER    Width of the feature in pixels
+  height       INTEGER    Height of the feature in pixels
   geometry     GEOMETRY   Feature geometry representation in GeoPackage WKB format
 
 ------------------------------------------------------------------------
