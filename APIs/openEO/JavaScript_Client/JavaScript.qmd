@@ -58,12 +58,13 @@ If you have trouble installing the client, feel free to [create a ticket](https:
 
 ## Exploring a back-end
 
-For this tutorial we will use the openEO instance of Copernicus Data Space Ecosystem, which is available at `https://openeo.dataspace.copernicus.eu`.
+For this tutorial we will use the [openEO federation backend](../federation/openeo_federation.md) of Copernicus Data Space Ecosystem, which is available at `https://openeofed.dataspace.copernicus.eu`.
+Use `https://openeo.dataspace.copernicus.eu` to limit the connection to the core CDSE offering.
 
 First we need to establish a connection to the back-end.
 
 ```js
-var con = await OpenEO.connect("https://openeo.dataspace.copernicus.eu");
+var con = await OpenEO.connect("https://openeofed.dataspace.copernicus.eu");
 
 ```
 
@@ -73,7 +74,7 @@ The JavaScript client uses [Promises (async/await)](https://medium.com/jspoint/j
 
 Promises:
 ```js
-OpenEO.connect("https://openeo.dataspace.copernicus.eu").then(function(con) {
+OpenEO.connect("https://openeofed.dataspace.copernicus.eu").then(function(con) {
   // Success
 }).catch(function(error) {
   // Error
@@ -84,7 +85,7 @@ async/await:
 
 ```js
 try {
-  var con = await OpenEO.connect("https://openeo.dataspace.copernicus.eu");
+  var con = await OpenEO.connect("https://openeofed.dataspace.copernicus.eu");
   // Success
 } catch (error) {
   // Error
@@ -133,10 +134,10 @@ response.collections.forEach(collection => {
 ```
 
 To get detailed information about a single collection, you can pass any of the collection IDs requested earlier to `describeCollection` and get a full object of [STAC compliant Collection metadata](https://github.com/radiantearth/stac-spec/tree/v1.0.0/collection-spec/collection-spec.md){target="_blank"} back.
-In this example we request information about the Sentinel-2 Level 1C data from Google:
+In this example we request information about the Sentinel-2 Level 1C data:
 
 ```js
-console.log(await con.describeCollection("COPERNICUS/S2"));
+console.log(await con.describeCollection("SENTINEL2_L1C"));
 ```
 
 To get the full set of metadata you should always use `describeCollection`.
@@ -359,7 +360,7 @@ const { OpenEO, Formula } = require('@openeo/js-client');
 
 async function example() {
   // Connect to the back-end
-  var con = await OpenEO.connect("https://openeo.dataspace.copernicus.eu");
+  var con = await OpenEO.connect("https://openeofed.dataspace.copernicus.eu");
   // Authenticate 
   await con.authenticateOIDC();
   // Create a process builder
