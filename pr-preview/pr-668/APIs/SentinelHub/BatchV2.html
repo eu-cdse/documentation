@@ -904,6 +904,12 @@ window.onload = function() {
  <span class="menu-text">Examples for DataFusion</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Process/Examples/BYOC.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Examples for BYOC</span></a>
+  </div>
+</li>
       </ul>
   </li>
       </ul>
@@ -1305,11 +1311,12 @@ window.onload = function() {
   </ul></li>
   <li><a href="#input-features" id="toc-input-features" class="nav-link" data-scroll-target="#input-features">Input features</a>
   <ul>
-  <li><a href="#1-tiling-grid" id="toc-1-tiling-grid" class="nav-link" data-scroll-target="#1-tiling-grid">1. Tiling grid</a></li>
+  <li><a href="#1-tiling-grid" id="toc-1-tiling-grid" class="nav-link" data-scroll-target="#1-tiling-grid">1. Tiling Grid</a></li>
   <li><a href="#2-geopackage" id="toc-2-geopackage" class="nav-link" data-scroll-target="#2-geopackage">2. GeoPackage</a>
   <ul class="collapse">
   <li><a href="#caveats" id="toc-caveats" class="nav-link" data-scroll-target="#caveats">Caveats</a></li>
   </ul></li>
+  <li><a href="#area-of-interest-and-pus" id="toc-area-of-interest-and-pus" class="nav-link" data-scroll-target="#area-of-interest-and-pus">Area of Interest and PUs</a></li>
   </ul></li>
   <li><a href="#processing-results" id="toc-processing-results" class="nav-link" data-scroll-target="#processing-results">Processing results</a>
   <ul>
@@ -1437,8 +1444,8 @@ window.onload = function() {
 <li>User-defined <a href="../../APIs/SentinelHub/BatchV2.html#2-geopackage">GeoPackage</a></li>
 </ol>
 <section id="1-tiling-grid" class="level3">
-<h3 class="anchored" data-anchor-id="1-tiling-grid">1. Tiling grid</h3>
-<p>For more effective processing we divide the area of interest into tiles and process each tile separately. While <code>process</code> API uses grids which come together with each datasource for processing of the data, the <code>batch</code> API uses one of the predefined tiling grids. The predefined tiling grids 0-2 are based on the <a href="https://sentinel.esa.int/web/sentinel/missions/sentinel-2/data-products" target="_blank">Sentinel-2 tiling</a> in WGS84/UTM projection with some adjustments:</p>
+<h3 class="anchored" data-anchor-id="1-tiling-grid">1. Tiling Grid</h3>
+<p>For more effective processing we divide the area of interest into tiles and process each tile separately. While <code>process</code> API uses grids which come together with each datasource for processing of the data, the <code>batch</code> API uses one of the predefined tiling grids. The tiling grids 0-2 are based on the <a href="https://sentinel.esa.int/web/sentinel/missions/sentinel-2/data-products" target="_blank">Sentinel-2 tiling</a> in WGS84/UTM projection with some adjustments:</p>
 <ul>
 <li>The width and height of tiles in the original Sentinel 2 grid is 100 km while the width and height of tiles in our grids are given in the table below.</li>
 <li>All redundant tiles (i.e.&nbsp;fully overlapped tiles) are removed.</li>
@@ -1523,16 +1530,17 @@ window.onload = function() {
 <p>To use <code>20km</code> grid with 60 m resolution, for example, specify <code>id</code> and <code>resolution</code> parameters of the <code>tilingGrid</code> object when creating a new batch request (see an example of <a href="../../APIs/SentinelHub/BatchV2/Examples.html#create-a-batchv2-processing-request">full request</a>) as:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="er">...</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"tilingGrid"</span><span class="fu">:</span> <span class="fu">{</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"id"</span><span class="fu">:</span> <span class="dv">0</span><span class="fu">,</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"resolution"</span><span class="fu">:</span> <span class="fl">60.0</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">},</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="er">...</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"input"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"type"</span> <span class="fu">:</span> <span class="st">"tiling-grid"</span><span class="fu">,</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"id"</span><span class="fu">:</span> <span class="dv">0</span><span class="fu">,</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"resolution"</span><span class="fu">:</span> <span class="fl">60.0</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">},</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="er">...</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="2-geopackage" class="level3">
 <h3 class="anchored" data-anchor-id="2-geopackage">2. GeoPackage</h3>
-<p>In addition to the predefined tiling grids, BatchV2 API now also support user-defined features through <a href="https://www.geopackage.org/spec/" target="_blank">GeoPackages</a>. This allows you to specify features of any shape as long as the underlying geometry is a POLYGON or MULTIPOLYGON in an <strong>EPSG compliant</strong> CRS listed <a href="../../APIs/SentinelHub/Process/Crs.html">here</a>. The GeoPackage can also have multiple layers, offering more flexibility in specifying features in multiple CRS.</p>
+<p>In addition to the tiling grids, BatchV2 API now also support user-defined features through <a href="https://www.geopackage.org/spec/" target="_blank">GeoPackages</a>. This allows you to specify features of any shape as long as the underlying geometry is a POLYGON or MULTIPOLYGON in an <strong>EPSG compliant</strong> CRS listed <a href="../../APIs/SentinelHub/Process/Crs.html">here</a>. The GeoPackage can also have multiple layers, offering more flexibility in specifying features in multiple CRS.</p>
 <p>The GeoPackage must adhere to the <a href="https://www.geopackage.org/spec/" target="_blank">GeoPackage spec</a> and contain at <strong>least one feature table with any name</strong>. The table must include a column that holds the geometry data. This column can be named arbitrarily, but it must be listed as the geometry column in the <code>gpkg_geometry_columns</code> table. The table schema should include the following columns:</p>
 <table class="table">
 <thead>
@@ -1544,7 +1552,7 @@ window.onload = function() {
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">id</td>
+<td style="text-align: left;">id - primary key</td>
 <td style="text-align: left;">INTEGER <strong>(UNIQUE)</strong></td>
 <td style="text-align: left;">1000</td>
 </tr>
@@ -1580,12 +1588,73 @@ window.onload = function() {
 <ul>
 <li>You must specify either both width and height, or alternatively, specify resolution. If both values are provided, width and height will be used, and resolution will be ignored.</li>
 <li>The feature table must use a CRS that is <strong>EPSG compliant</strong>.</li>
-<li>Both <code>id</code> and <code>identifier</code> values must not be null and unique across all feature tables.</li>
-<li>There can be a maximum of 700,000 features in the GeoPackage.</li>
+<li><code>identifier</code> values must not be null and unique across all feature tables.</li>
+<li>There can be a maximum of 700.000 features in the GeoPackage.</li>
+<li>The feature output width and height cannot exceed 3500 by 3500 pixels or the equivalent in resolution.</li>
 </ul>
+<p>Below you will find a list of example GeoPackages that serve as a showcase of how a GeoPackage file should be structured. Please note that these examples do not serve as production-ready GeoPackages and should only be used for testing purposes. If you'd like to use these tiling grids for processing, use the equivalent tiling grid with the tiling grid input instead.</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">name</th>
+<th style="text-align: left;">id</th>
+<th style="text-align: left;">output CRS</th>
+<th style="text-align: left;">geopackage</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">UTM 20km grid</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">UTM</td>
+<td style="text-align: left;"><a href="https://s3.eu-central-1.amazonaws.com/sh-batch-grids/tiling-grid-0.gpkg" target="_blank">UTM 20km grid</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">UTM 10km grid</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">UTM</td>
+<td style="text-align: left;"><a href="https://s3.eu-central-1.amazonaws.com/sh-batch-grids/tiling-grid-1.gpkg" target="_blank">UTM 10km grid</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">UTM 100km grid</td>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">UTM</td>
+<td style="text-align: left;"><a href="https://s3.eu-central-1.amazonaws.com/sh-batch-grids/tiling-grid-2.gpkg" target="_blank">UTM 100km grid</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">WGS84 1 degree grid</td>
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">WGS84</td>
+<td style="text-align: left;"><a href="https://s3.eu-central-1.amazonaws.com/sh-batch-grids/tiling-grid-3.gpkg" target="_blank">WGS84 1 degree grid</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">LAEA 100km grid</td>
+<td style="text-align: left;">6</td>
+<td style="text-align: left;">EPSG:3035</td>
+<td style="text-align: left;"><a href="https://s3.eu-central-1.amazonaws.com/sh-batch-grids/tiling-grid-6.gpkg" target="_blank">LAEA 100km grid</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">LAEA 20km grid</td>
+<td style="text-align: left;">7</td>
+<td style="text-align: left;">EPSG:3035</td>
+<td style="text-align: left;"><a href="https://s3.eu-central-1.amazonaws.com/sh-batch-grids/tiling-grid-7.gpkg" target="_blank">LAEA 20km grid</a></td>
+</tr>
+</tbody>
+</table>
 <p>An example of a batch task with GeoPackage input is available <a href="../../APIs/SentinelHub/BatchV2/Examples.html#option-3-geopackage-input-and-geotiff-output">here</a>.</p>
-<hr>
 </section>
+</section>
+<section id="area-of-interest-and-pus" class="level3">
+<h3 class="anchored" data-anchor-id="area-of-interest-and-pus">Area of Interest and PUs</h3>
+<p>When using either <a href="../../APIs/SentinelHub/BatchV2.html#1-tiling-grid">Tiling Grid</a> or <a href="../../APIs/SentinelHub/BatchV2.html#2-geopackage">GeoPackage</a> as input, the features that end up being processed are determined by the <code>processRequest.input.bounds</code> parameter specified in the request, called Area of Interest or AOI.</p>
+<p>The way the AOI parameter is used and its effect depend on the input type used:</p>
+<ul>
+<li>Tiling grid: The AOI <strong>must</strong> be specified in the request. Only the tiles (features) that intersect with the AOI will be processed.</li>
+<li>GeoPackage: The AOI can optionally be omitted. If the AOI is omitted, all the features inside your GeoPackage will be processed. Conversely, if AOI is specified, only the features that intersect with the AOI will be processed.</li>
+</ul>
+<p>Please note that in both cases of input types, if the feature is only <strong>partially</strong> covered by the AOI, the feature will be processed in its <strong>entirety</strong>.</p>
+<p>You are only charged PUs for the features that are processed. If a feature does not intersect with the AOI, it will not be charged for.</p>
+<hr>
 </section>
 </section>
 <section id="processing-results" class="level2">
@@ -1649,26 +1718,7 @@ window.onload = function() {
 </section>
 <section id="mandatory-bucket-settings" class="level4">
 <h4 class="anchored" data-anchor-id="mandatory-bucket-settings">Mandatory bucket settings</h4>
-<p>Regardless of the credentials provided on the request, your bucket needs to be configured to allow full access to Sentinel Hub. To do this, update your bucket policy to include the following statement (don't forget to replace &lt;bucket_name&gt; with your actual bucket name):</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"Version"</span><span class="fu">:</span> <span class="st">"2012-10-17"</span><span class="fu">,</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"Statement"</span><span class="fu">:</span> <span class="ot">[</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"Sid"</span><span class="fu">:</span> <span class="st">"Sentinel Hub permissions"</span><span class="fu">,</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"Effect"</span><span class="fu">:</span> <span class="st">"Allow"</span><span class="fu">,</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"Principal"</span><span class="fu">:</span> <span class="fu">{</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"AWS"</span><span class="fu">:</span> <span class="st">"arn:aws:iam::ddf4c98b5e6647f0a246f0624c8341d9:root"</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>      <span class="fu">},</span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"Action"</span><span class="fu">:</span> <span class="ot">[</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>        <span class="st">"s3:*"</span></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>      <span class="ot">]</span><span class="fu">,</span></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"Resource"</span><span class="fu">:</span> <span class="ot">[</span></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>        <span class="st">"arn:aws:s3:::&lt;bucket_name&gt;"</span><span class="ot">,</span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>        <span class="st">"arn:aws:s3:::&lt;bucket_name&gt;/*"</span></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>      <span class="ot">]</span></span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span></span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Regardless of the credentials provided in the request, you still need to set a bucket policy to allow Sentinel Hub services to access the data. For detailed instructions on how to configure your bucket policy, please refer to the <a href="../../APIs/SentinelHub/Byoc.html#aws-bucket-settings">BYOC bucket settings documentation</a>.</p>
 </section>
 </section>
 <section id="feature-manifest" class="level2">
@@ -1710,19 +1760,29 @@ window.onload = function() {
 <td style="text-align: left;">Auto-incrementing ID</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">id</td>
-<td style="text-align: left;">INTEGER</td>
-<td style="text-align: left;">Numerical ID of the feature</td>
+<td style="text-align: left;">outputId</td>
+<td style="text-align: left;">TEXT</td>
+<td style="text-align: left;">Output identifier defined in the <code>processRequest</code></td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">identifier</td>
 <td style="text-align: left;">TEXT</td>
-<td style="text-align: left;">Textual ID of the feature</td>
+<td style="text-align: left;">ID of the feature</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">path</td>
 <td style="text-align: left;">TEXT</td>
-<td style="text-align: left;">The object storage path URI where the feature will be uploaded to</td>
+<td style="text-align: left;">The object storage path URI where the output of this feature will be uploaded to</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">width</td>
+<td style="text-align: left;">INTEGER</td>
+<td style="text-align: left;">Width of the feature in pixels</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">height</td>
+<td style="text-align: left;">INTEGER</td>
+<td style="text-align: left;">Height of the feature in pixels</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">geometry</td>
@@ -1796,11 +1856,11 @@ window.onload = function() {
 <section id="bucket-settings-and-access" class="level2">
 <h2 class="anchored" data-anchor-id="bucket-settings-and-access">Bucket settings and access</h2>
 <p>The results will be delivered in your own bucket hosted at Copernicus Data Space Ecosystem. To access your bucket accessKey and secretAccessKey pair have to bo provided in your request.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>s3 = {</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    "url": "s3://&lt;your-bucket&gt;/&lt;path&gt;",</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    "accessKey": "&lt;your-bucket-access-key&gt;",</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    "secretAccessKey": "&lt;your-bucket-secret-access-key&gt;"</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>s3 = {</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    "url": "s3://&lt;your-bucket&gt;/&lt;path&gt;",</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    "accessKey": "&lt;your-bucket-access-key&gt;",</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    "secretAccessKey": "&lt;your-bucket-secret-access-key&gt;"</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>If you do not yet have a bucket at Copernicus Data Space Ecosystem, please follow <a href="https://creodias.docs.cloudferro.com/en/latest/s3/Create-S3-bucket-and-use-it-in-Sentinel-Hub-requests.html" target="_blank">these steps</a> to get one.</p>
 </section>
 <section id="examples" class="level2">
