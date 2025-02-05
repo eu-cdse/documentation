@@ -7,10 +7,6 @@ This function, referred to as the openEO federation, is available through the fo
 
 [https://openeofed.dataspace.copernicus.eu](https://openeofed.dataspace.copernicus.eu)
 
-Currently, we are actively encouraging early adopters and projects with specific needs to try this new capability.
-While it has already been extensively tested by users of other projects, the configuration in the CDSE is still new.
-As a result, we are offering this feature as a 'beta' service at first.
-This approach allows us to still adjust the configuration based on your feedback.
 
 When using the federated endpoint, you will be asked to give your consent to share basic user information with the other providers of the federation.
 Additionally, you will be requested to accept the new terms and conditions. You can withdraw your consent at any time through your CDSE account dashboard.
