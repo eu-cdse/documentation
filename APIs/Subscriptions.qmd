@@ -219,6 +219,12 @@ Within the Subscription create request, users can also provide the filtering par
 
 Subscriptions enables the same filtering parameters as described for [OData Data Space Catalogue](https://documentation.dataspace.copernicus.eu/APIs/OData.html#filter-option). All filters should be provided in `FilterParam` field.
 
+::: {.callout-tip} 
+To ensure efficient filtering when using the `created` and `modified` Events, it is recommended to review the [OData Products Endpoint](https://documentation.dataspace.copernicus.eu/APIs/OData.html#odata-products-endpoint). 
+
+For the `deleted` Event, it is beneficial to explore the [OData DeletedProducts Endpoint](https://documentation.dataspace.copernicus.eu/APIs/OData.html#odata-deletedproducts-endpoint).
+:::
+
 In case of deleted products, a notification will be sent when one of the following values of the `DeletionCause` parameter is met: 
 
 * Duplicated product
@@ -226,7 +232,7 @@ In case of deleted products, a notification will be sent when one of the followi
 * Corrupted product
 * Obsolete product or Other
 
-To create PULL Subscription a request to the Data Space service should be submitted:
+To create PULL Subscription, a request to the Data Space service should be submitted:
 
 ::: {.panel-tabset}
 
@@ -268,6 +274,8 @@ https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions
 
 :::
 
+To create PULL Subscription with a combination of two Events, `created` and `modified`, they should be listed separated by a comma.
+
 ### Read Subscription
 
 To read the subscription notifications from the client's queue, the request to subscription Read endpoint should be submitted:
@@ -305,7 +313,7 @@ The whole response from the Subscripton Read endpoint is kept on the indivdual u
 
 ::: {.panel-tabset}
 
-# Response example
+# Response example ("SubscriptionEvent": "created")
 
 ```{json}
 200 OK
@@ -428,7 +436,7 @@ The whole response from the Subscripton Read endpoint is kept on the indivdual u
 ]
 ```
 
-# Response example after 3 days
+# Response example after 3 days ("SubscriptionEvent": "created")
 
 ```{json}
 200 OK
@@ -453,6 +461,126 @@ The whole response from the Subscripton Read endpoint is kept on the indivdual u
 ]
 ```
 
+:::
+
+::: {.panel-tabset}
+
+# Response example ("SubscriptionEvent": "modified")
+
+```{json}
+200 OK
+
+[
+    {
+        "@odata.context": "$metadata#Notification/$entity",
+        "SubscriptionEvent": "modified",
+        "ProductId": "b6801a5d-0e66-43d7-afac-1280f0895bf1",
+        "ProductName": "S1A_IW_SLC__1SDV_20241123T044906_20241123T044930_056677_06F42F_97B3.SAFE",
+        "SubscriptionId": "f4074287-fce7-4bf3-9d53-5e619cd42fad",
+        "NotificationDate": "2025-02-10T08:30:48.905365Z",
+	"AckId": "MTcxMDc1NjcwNjY2NC0wOjk5MWM0NzMwLWNmNmYtNDMyYS05ZjZjLTQ3YmUwMjMwZmY0NQ==",
+        "value": {
+            "@odata.context": "$metadata#Products(Attributes(),Assets(),Locations())/$entity",
+            "@odata.mediaContentType": "application/octet-stream",
+            "Id": "b6801a5d-0e66-43d7-afac-1280f0895bf1",
+            "Name": "S1A_IW_SLC__1SDV_20241123T044906_20241123T044930_056677_06F42F_97B3.SAFE",
+            "ContentType": "application/octet-stream",
+            "ContentLength": 6353857709,
+            "OriginDate": "2024-11-23T06:28:41.550000Z",
+            "Checksum": [
+                {
+                    "Value": "40fbe8ddd886f24a323906af1e442155",
+                    "Algorithm": "MD5",
+                    "ChecksumDate": "2024-11-23T06:37:33.947488Z"
+                },
+                {
+                    "Value": "5c128944c135faefd8eb15b28f776541c1e4d0b21fa5064906b1882ca590527e",
+                    "Algorithm": "BLAKE3",
+                    "ChecksumDate": "2024-11-23T06:37:43.810075Z"
+                }
+            ],
+            "Footprint": "geography'SRID=4326;POLYGON ((15.389621 5.429769, 15.680731 6.842505, 13.45454 7.296846, 13.16956 5.8881, 15.389621 5.429769))'",
+            "GeoFootprint": {
+                "type": "Polygon",
+                "coordinates": [...
+            },
+            "ContentDate": {
+                "Start": "2024-11-23T04:49:06.776458Z",
+                "End": "2024-11-23T04:49:30.129633Z"
+            },
+            "Attributes": [...
+            ],
+            "ModificationDate": "2025-02-10T08:30:48.665109Z",
+            "PublicationDate": "2024-11-23T06:36:54.654519Z",
+            "Online": true,
+            "EvictionDate": "2025-03-12T08:28:16.409489Z",
+            "S3Path": "/eodata/Sentinel-1/SAR/IW_SLC__1S/2024/11/23/S1A_IW_SLC__1SDV_20241123T044906_20241123T044930_056677_06F42F_97B3.SAFE",
+            "Assets": [
+                {
+                    "Type": "QUICKLOOK",
+                    "Id": "358ec8f8-9894-411e-8c30-fdee50ab8d1e",
+                    "DownloadLink": "https://catalogue.dataspace.copernicus.eu/odata/v1/Assets(358ec8f8-9894-411e-8c30-fdee50ab8d1e)/$value",
+                    "S3Path": "/eodata/Sentinel-1/SAR/IW_SLC__1S/2024/11/23/S1A_IW_SLC__1SDV_20241123T044906_20241123T044930_056677_06F42F_97B3.SAFE"
+                }
+            ],
+            "Locations": [...
+            ]
+        }
+    }
+]
+```
+
+# Response example ("SubscriptionEvent": "deleted")
+
+```{json}
+200 OK
+
+[
+    {
+        "@odata.context": "$metadata#Notification/$entity",
+        "SubscriptionEvent": "deleted",
+        "ProductId": "232d796a-0552-4679-a1ed-b8cd3d002db2",
+        "ProductName": "S1A_IW_SLC__1SDV_20241111T044907_20241111T044931_056502_06ED2E_7F0A",
+        "SubscriptionId": "419890a6-1305-47b9-a1de-69ff0ccbdb0c",
+        "NotificationDate": "2025-02-10T08:30:04.127132Z",
+	"AckId": "MTcxMDc1NjcwNjY2NC0wOjk5MWM0NzMwLWNmNmYtNDMyYS05ZjZjLTQ3YmUwMjMwZmY0NQ==",
+        "value": {
+            "@odata.context": "$metadata#DeletedProducts(Attributes())/$entity",
+            "@odata.mediaContentType": "application/image-tiff",
+            "Id": "232d796a-0552-4679-a1ed-b8cd3d002db2",
+            "Name": "S1A_IW_SLC__1SDV_20241111T044907_20241111T044931_056502_06ED2E_7F0A",
+            "ContentType": "application/image-tiff",
+            "ContentLength": 999999,
+            "OriginDate": "2025-02-10T08:28:16.409494Z",
+            "Checksum": [
+                {
+                    "Value": "1efb9cf89aa30086e114705c20831606",
+                    "Algorithm": "MD5",
+                    "ChecksumDate": "2025-02-10T08:28:16.409494Z"
+                },
+                {
+                    "Value": "7a8e7280a1b37f14ecf6cf9216ec3f9e3824e5a7098d266168b8ce6b32598551",
+                    "Algorithm": "BLAKE3",
+                    "ChecksumDate": "2025-02-10T08:28:16.409494Z"
+                }
+            ],
+            "Footprint": "geography'SRID=4326;POLYGON ((14.412463 5.424546, 15.703652 6.837446, 13.453771 7.296696, 13.168763 5.887819, 14.412463 5.424546))'",
+            "GeoFootprint": {
+                "type": "Polygon",
+                "coordinates": [...
+            },
+            "ContentDate": {
+                "Start": "2025-02-09T08:28:16.409468Z",
+                "End": "2025-02-10T08:28:16.409494Z"
+            },
+            "Attributes": [...
+            ],
+            "DeletionDate": "2025-02-10T08:30:03.907283Z",
+            "DeletionCause": "Corrupted product"
+        }
+    }
+]
+```
 :::
 
 * If Subscription is `Cancelled`
@@ -673,6 +801,12 @@ Within the Subscription create request, users can also provide the filtering par
 
 Subscriptions enables the same filtering parameters as described for [OData Data Space Catalogue](https://documentation.dataspace.copernicus.eu/APIs/OData.html#filter-option). All filters should be provided in `FilterParam` field.
 
+::: {.callout-tip} 
+To ensure efficient filtering when using the "created" and "modified" Events, it is recommended to review the [OData Products Endpoint](https://documentation.dataspace.copernicus.eu/APIs/OData.html#odata-products-endpoint). 
+
+For the "deleted" Event, it is beneficial to explore the [OData DeletedProducts Endpoint](https://documentation.dataspace.copernicus.eu/APIs/OData.html#odata-deletedproducts-endpoint).
+:::
+
 In case of deleted products, a notification will be sent when one of the following values of the `DeletionCause` parameter is met: 
 
 * Duplicated product
@@ -732,7 +866,7 @@ After creating the subscription, the notifications about new products entering t
 
 ::: {.panel-tabset}
 
-# Notification example
+# Notification example ("SubscriptionEvent": "created")
 
 ```{json}
 {
@@ -793,6 +927,126 @@ After creating the subscription, the notifications about new products entering t
         ]
     }
 }
+```
+:::
+
+In case of other Events, `modified` and `deleted`, the response would be as follows:
+
+::: {.panel-tabset}
+
+# Response example ("SubscriptionEvent": "modified")
+
+```{json}
+200 OK
+
+[
+    {
+        "@odata.context": "$metadata#Notification/$entity",
+        "SubscriptionEvent": "modified",
+        "ProductId": "b6801a5d-0e66-43d7-afac-1280f0895bf1",
+        "ProductName": "S1A_IW_SLC__1SDV_20241123T044906_20241123T044930_056677_06F42F_97B3.SAFE",
+        "SubscriptionId": "f4074287-fce7-4bf3-9d53-5e619cd42fad",
+        "NotificationDate": "2025-02-10T08:30:48.905365Z",
+        "value": {
+            "@odata.context": "$metadata#Products(Attributes(),Assets(),Locations())/$entity",
+            "@odata.mediaContentType": "application/octet-stream",
+            "Id": "b6801a5d-0e66-43d7-afac-1280f0895bf1",
+            "Name": "S1A_IW_SLC__1SDV_20241123T044906_20241123T044930_056677_06F42F_97B3.SAFE",
+            "ContentType": "application/octet-stream",
+            "ContentLength": 6353857709,
+            "OriginDate": "2024-11-23T06:28:41.550000Z",
+            "Checksum": [
+                {
+                    "Value": "40fbe8ddd886f24a323906af1e442155",
+                    "Algorithm": "MD5",
+                    "ChecksumDate": "2024-11-23T06:37:33.947488Z"
+                },
+                {
+                    "Value": "5c128944c135faefd8eb15b28f776541c1e4d0b21fa5064906b1882ca590527e",
+                    "Algorithm": "BLAKE3",
+                    "ChecksumDate": "2024-11-23T06:37:43.810075Z"
+                }
+            ],
+            "Footprint": "geography'SRID=4326;POLYGON ((15.389621 5.429769, 15.680731 6.842505, 13.45454 7.296846, 13.16956 5.8881, 15.389621 5.429769))'",
+            "GeoFootprint": {
+                "type": "Polygon",
+                "coordinates": [...
+            },
+            "ContentDate": {
+                "Start": "2024-11-23T04:49:06.776458Z",
+                "End": "2024-11-23T04:49:30.129633Z"
+            },
+            "Attributes": [...
+            ],
+            "ModificationDate": "2025-02-10T08:30:48.665109Z",
+            "PublicationDate": "2024-11-23T06:36:54.654519Z",
+            "Online": true,
+            "EvictionDate": "2025-03-12T08:28:16.409489Z",
+            "S3Path": "/eodata/Sentinel-1/SAR/IW_SLC__1S/2024/11/23/S1A_IW_SLC__1SDV_20241123T044906_20241123T044930_056677_06F42F_97B3.SAFE",
+            "Assets": [
+                {
+                    "Type": "QUICKLOOK",
+                    "Id": "358ec8f8-9894-411e-8c30-fdee50ab8d1e",
+                    "DownloadLink": "https://catalogue.dataspace.copernicus.eu/odata/v1/Assets(358ec8f8-9894-411e-8c30-fdee50ab8d1e)/$value",
+                    "S3Path": "/eodata/Sentinel-1/SAR/IW_SLC__1S/2024/11/23/S1A_IW_SLC__1SDV_20241123T044906_20241123T044930_056677_06F42F_97B3.SAFE"
+                }
+            ],
+            "Locations": [...
+            ]
+        }
+    }
+]
+```
+
+# Response example ("SubscriptionEvent": "deleted")
+
+```{json}
+200 OK
+
+[
+    {
+        "@odata.context": "$metadata#Notification/$entity",
+        "SubscriptionEvent": "deleted",
+        "ProductId": "232d796a-0552-4679-a1ed-b8cd3d002db2",
+        "ProductName": "S1A_IW_SLC__1SDV_20241111T044907_20241111T044931_056502_06ED2E_7F0A",
+        "SubscriptionId": "419890a6-1305-47b9-a1de-69ff0ccbdb0c",
+        "NotificationDate": "2025-02-10T08:30:04.127132Z",
+        "value": {
+            "@odata.context": "$metadata#DeletedProducts(Attributes())/$entity",
+            "@odata.mediaContentType": "application/image-tiff",
+            "Id": "232d796a-0552-4679-a1ed-b8cd3d002db2",
+            "Name": "S1A_IW_SLC__1SDV_20241111T044907_20241111T044931_056502_06ED2E_7F0A",
+            "ContentType": "application/image-tiff",
+            "ContentLength": 999999,
+            "OriginDate": "2025-02-10T08:28:16.409494Z",
+            "Checksum": [
+                {
+                    "Value": "1efb9cf89aa30086e114705c20831606",
+                    "Algorithm": "MD5",
+                    "ChecksumDate": "2025-02-10T08:28:16.409494Z"
+                },
+                {
+                    "Value": "7a8e7280a1b37f14ecf6cf9216ec3f9e3824e5a7098d266168b8ce6b32598551",
+                    "Algorithm": "BLAKE3",
+                    "ChecksumDate": "2025-02-10T08:28:16.409494Z"
+                }
+            ],
+            "Footprint": "geography'SRID=4326;POLYGON ((14.412463 5.424546, 15.703652 6.837446, 13.453771 7.296696, 13.168763 5.887819, 14.412463 5.424546))'",
+            "GeoFootprint": {
+                "type": "Polygon",
+                "coordinates": [...
+            },
+            "ContentDate": {
+                "Start": "2025-02-09T08:28:16.409468Z",
+                "End": "2025-02-10T08:28:16.409494Z"
+            },
+            "Attributes": [...
+            ],
+            "DeletionDate": "2025-02-10T08:30:03.907283Z",
+            "DeletionCause": "Corrupted product"
+        }
+    }
+]
 ```
 :::
 
