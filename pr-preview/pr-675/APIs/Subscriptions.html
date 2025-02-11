@@ -1540,8 +1540,7 @@ Currently, the order of staging products is not feasible as all new products in 
 <li><code>created</code>, <code>modified</code></li>
 <li><code>deleted</code></li>
 </ul>
-<p>Within the Subscription create request, users can also provide the filtering parameters (e.g.&nbsp;productType, collection, geofootprint). The Subscription Service will then provide the notifications about newly added products to the Copernicus Data Space Ecosystem Catalogue, modified products or deleted products, according to the set of filter parameters supplied within the subscription request. If <code>FilterParam</code> is not provided within the subscription request body, it will be automatically set to empty and then the notifications about all newly added products will be generated.</p>
-<p>Subscriptions enables the same filtering parameters as described for <a href="https://documentation.dataspace.copernicus.eu/APIs/OData.html#filter-option">OData Data Space Catalogue</a>. All filters should be provided in <code>FilterParam</code> field.</p>
+<p>Within the Subscription create request, users can also provide the filtering parameters (e.g.&nbsp;productType, collection, geofootprint). The Subscription Service will then provide the notifications about newly added products to the Copernicus Data Space Ecosystem Catalogue, modified products or deleted products, according to the set of filter parameters supplied within the subscription request. If <code>FilterParam</code> is not provided within the subscription request body, it will be automatically set to empty and then the notifications about all products will be generated.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -1552,6 +1551,7 @@ Tip
 </div>
 </div>
 <div class="callout-body-container callout-body">
+<p>All filters should be provided in <code>FilterParam</code> field.</p>
 <p>To ensure efficient filtering when using the <code>created</code> and <code>modified</code> Events, it is recommended to review the <a href="https://documentation.dataspace.copernicus.eu/APIs/OData.html#filter-option">OData Products Endpoint Filter Option</a>.</p>
 <p>For the <code>deleted</code> Event, it is beneficial to explore the <a href="https://documentation.dataspace.copernicus.eu/APIs/OData.html#filter-option-1">OData DeletedProducts Endpoint Filter Option</a>.</p>
 </div>
@@ -1629,7 +1629,7 @@ https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions(991c4730-cf6f-4
 </ul>
 <p>The whole response from the Subscripton Read endpoint is kept on the indivdual user’s queue for three days. After three days, only the endpoint response without <code>value</code> and <code>ProductName</code> is available (as provided below).</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-7-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-1" role="tab" aria-controls="tabset-7-1" aria-selected="true">Response example</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-2" role="tab" aria-controls="tabset-7-2" aria-selected="false">Response example after 3 days</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-7-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-1" role="tab" aria-controls="tabset-7-1" aria-selected="true">Response example (created)</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-2" role="tab" aria-controls="tabset-7-2" aria-selected="false">Response example after 3 days (created)</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-3" role="tab" aria-controls="tabset-7-3" aria-selected="false">Response example (modified)</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-4" role="tab" aria-controls="tabset-7-4" aria-selected="false">Response example (deleted)</a></li></ul>
 <div class="tab-content">
 <div id="tabset-7-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-7-1-tab">
 <pre class="{json}"><code>200 OK
@@ -1773,13 +1773,7 @@ https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions(991c4730-cf6f-4
     }
 ]</code></pre>
 </div>
-</div>
-</div>
-<p>Below are example responses for the remaining Events:</p>
-<div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-8-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-1" role="tab" aria-controls="tabset-8-1" aria-selected="true">Response example (modified)</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-8-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-2" role="tab" aria-controls="tabset-8-2" aria-selected="false">Response example (deleted)</a></li></ul>
-<div class="tab-content">
-<div id="tabset-8-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-8-1-tab">
+<div id="tabset-7-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-3-tab">
 <pre class="{json}"><code>200 OK
 
 [
@@ -1790,7 +1784,7 @@ https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions(991c4730-cf6f-4
         "ProductName": "S1A_IW_SLC__1SDV_20241123T044906_20241123T044930_056677_06F42F_97B3.SAFE",
         "SubscriptionId": "f4074287-fce7-4bf3-9d53-5e619cd42fad",
         "NotificationDate": "2025-02-10T08:30:48.905365Z",
-    "AckId": "MTcxMDc1NjcwNjY2NC0wOjk5MWM0NzMwLWNmNmYtNDMyYS05ZjZjLTQ3YmUwMjMwZmY0NQ==",
+        "AckId": "MTcxMDc1NjcwNjY2NC0wOjk5MWM0NzMwLWNmNmYtNDMyYS05ZjZjLTQ3YmUwMjMwZmY0NQ==",
         "value": {
             "@odata.context": "$metadata#Products(Attributes(),Assets(),Locations())/$entity",
             "@odata.mediaContentType": "application/octet-stream",
@@ -1815,33 +1809,34 @@ https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions(991c4730-cf6f-4
             "GeoFootprint": {
                 "type": "Polygon",
                 "coordinates": [...
-            },
-            "ContentDate": {
-                "Start": "2024-11-23T04:49:06.776458Z",
-                "End": "2024-11-23T04:49:30.129633Z"
-            },
-            "Attributes": [...
-            ],
-            "ModificationDate": "2025-02-10T08:30:48.665109Z",
-            "PublicationDate": "2024-11-23T06:36:54.654519Z",
-            "Online": true,
-            "EvictionDate": "2025-03-12T08:28:16.409489Z",
-            "S3Path": "/eodata/Sentinel-1/SAR/IW_SLC__1S/2024/11/23/S1A_IW_SLC__1SDV_20241123T044906_20241123T044930_056677_06F42F_97B3.SAFE",
-            "Assets": [
-                {
-                    "Type": "QUICKLOOK",
-                    "Id": "358ec8f8-9894-411e-8c30-fdee50ab8d1e",
-                    "DownloadLink": "https://catalogue.dataspace.copernicus.eu/odata/v1/Assets(358ec8f8-9894-411e-8c30-fdee50ab8d1e)/$value",
-                    "S3Path": "/eodata/Sentinel-1/SAR/IW_SLC__1S/2024/11/23/S1A_IW_SLC__1SDV_20241123T044906_20241123T044930_056677_06F42F_97B3.SAFE"
-                }
-            ],
-            "Locations": [...
-            ]
+                },
+                "ContentDate": {
+                    "Start": "2024-11-23T04:49:06.776458Z",
+                    "End": "2024-11-23T04:49:30.129633Z"
+                },
+                "Attributes": [...
+                ],
+                "ModificationDate": "2025-02-10T08:30:48.665109Z",
+                "PublicationDate": "2024-11-23T06:36:54.654519Z",
+                "Online": true,
+                "EvictionDate": "2025-03-12T08:28:16.409489Z",
+                "S3Path": "/eodata/Sentinel-1/SAR/IW_SLC__1S/2024/11/23/S1A_IW_SLC__1SDV_20241123T044906_20241123T044930_056677_06F42F_97B3.SAFE",
+                "Assets": [
+                    {
+                        "Type": "QUICKLOOK",
+                        "Id": "358ec8f8-9894-411e-8c30-fdee50ab8d1e",
+                        "DownloadLink": "https://catalogue.dataspace.copernicus.eu/odata/v1/Assets(358ec8f8-9894-411e-8c30-fdee50ab8d1e)/$value",
+                        "S3Path": "/eodata/Sentinel-1/SAR/IW_SLC__1S/2024/11/23/S1A_IW_SLC__1SDV_20241123T044906_20241123T044930_056677_06F42F_97B3.SAFE"
+                    }
+                ],
+                "Locations": [...
+                ]
+            }
         }
     }
 ]</code></pre>
 </div>
-<div id="tabset-8-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-8-2-tab">
+<div id="tabset-7-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-4-tab">
 <pre class="{json}"><code>200 OK
 
 [
@@ -1852,7 +1847,7 @@ https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions(991c4730-cf6f-4
         "ProductName": "S1A_IW_SLC__1SDV_20241111T044907_20241111T044931_056502_06ED2E_7F0A",
         "SubscriptionId": "419890a6-1305-47b9-a1de-69ff0ccbdb0c",
         "NotificationDate": "2025-02-10T08:30:04.127132Z",
-    "AckId": "MTcxMDc1NjcwNjY2NC0wOjk5MWM0NzMwLWNmNmYtNDMyYS05ZjZjLTQ3YmUwMjMwZmY0NQ==",
+        "AckId": "MTcxMDc1NjcwNjY2NC0wOjk5MWM0NzMwLWNmNmYtNDMyYS05ZjZjLTQ3YmUwMjMwZmY0NQ==",
         "value": {
             "@odata.context": "$metadata#DeletedProducts(Attributes())/$entity",
             "@odata.mediaContentType": "application/image-tiff",
@@ -1877,15 +1872,16 @@ https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions(991c4730-cf6f-4
             "GeoFootprint": {
                 "type": "Polygon",
                 "coordinates": [...
-            },
-            "ContentDate": {
-                "Start": "2025-02-09T08:28:16.409468Z",
-                "End": "2025-02-10T08:28:16.409494Z"
-            },
-            "Attributes": [...
-            ],
-            "DeletionDate": "2025-02-10T08:30:03.907283Z",
-            "DeletionCause": "Corrupted product"
+                },
+                "ContentDate": {
+                    "Start": "2025-02-09T08:28:16.409468Z",
+                    "End": "2025-02-10T08:28:16.409494Z"
+                },
+                "Attributes": [...
+                ],
+                "DeletionDate": "2025-02-10T08:30:03.907283Z",
+                "DeletionCause": "Corrupted product"
+            }
         }
     }
 ]</code></pre>
@@ -1896,9 +1892,9 @@ https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions(991c4730-cf6f-4
 <li>If Subscription is <code>Cancelled</code></li>
 </ul>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-9-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-9-1" role="tab" aria-controls="tabset-9-1" aria-selected="true">Response example</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-8-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-1" role="tab" aria-controls="tabset-8-1" aria-selected="true">Response example</a></li></ul>
 <div class="tab-content">
-<div id="tabset-9-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-9-1-tab">
+<div id="tabset-8-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-8-1-tab">
 <pre class="{json}"><code>404 Not Found
  
 {
@@ -1916,18 +1912,18 @@ https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions(991c4730-cf6f-4
 <p>All notifications, after reading by the client, should be acknowledged to not exceed the limit of the queue. For acknowledging the notifications, the assigned parametr is added to the notification - ‘AckId’. Each product notification has its own AckId token, which should be used to acknowledge the notifications messages on the client’s queue. <strong>Using the ‘AckId’ token for a specific notification means acknowledging receipt of the notification for which the ‘AckId’ was assigned, along with all preceding messages.</strong> For example if user use READ endpoint with top parameter set to 10 and then use the AckID of 10th message in Ack endpoint then all 10 messages will be acknowledged and removed from subscription queue.</p>
 <p>To ack the notifications on the queue:</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-10-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-10-1" role="tab" aria-controls="tabset-10-1" aria-selected="true">HTTP Request</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-9-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-9-1" role="tab" aria-controls="tabset-9-1" aria-selected="true">HTTP Request</a></li></ul>
 <div class="tab-content">
-<div id="tabset-10-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-10-1-tab">
+<div id="tabset-9-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-9-1-tab">
 <pre class="{json}"><code>POST \
 https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions(991c4730-cf6f-432a-9f6c-47be0230ff45)/Ack?$ackid=token</code></pre>
 </div>
 </div>
 </div>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-11-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-11-1" role="tab" aria-controls="tabset-11-1" aria-selected="true">Request example</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-10-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-10-1" role="tab" aria-controls="tabset-10-1" aria-selected="true">Request example</a></li></ul>
 <div class="tab-content">
-<div id="tabset-11-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-11-1-tab">
+<div id="tabset-10-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-10-1-tab">
 <pre class="{json}"><code>POST \
 https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions(991c4730-cf6f-432a-9f6c-47be0230ff45)/Ack?$ackid=MTcxMDc1NjcwNjY2NC0wOjk5MWM0NzMwLWNmNmYtNDMyYS05ZjZjLTQ3YmUwMjMwZmY0NQ==</code></pre>
 </div>
@@ -1938,9 +1934,9 @@ https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions(991c4730-cf6f-4
 <li>If Subscription is <code>Active</code> or <code>Paused</code></li>
 </ul>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-12-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-12-1" role="tab" aria-controls="tabset-12-1" aria-selected="true">Response example</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-11-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-11-1" role="tab" aria-controls="tabset-11-1" aria-selected="true">Response example</a></li></ul>
 <div class="tab-content">
-<div id="tabset-12-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-12-1-tab">
+<div id="tabset-11-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-11-1-tab">
 <pre class="{json}"><code>200 OK
  
 {
@@ -1956,9 +1952,9 @@ https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions(991c4730-cf6f-4
 <li>If Subscription is <code>Cancelled</code></li>
 </ul>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-13-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-13-1" role="tab" aria-controls="tabset-13-1" aria-selected="true">Response example</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-12-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-12-1" role="tab" aria-controls="tabset-12-1" aria-selected="true">Response example</a></li></ul>
 <div class="tab-content">
-<div id="tabset-13-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-13-1-tab">
+<div id="tabset-12-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-12-1-tab">
 <pre class="{json}"><code>404 Not Found
  
 {
@@ -2112,8 +2108,7 @@ Currently, the order of staging products is not feasible as all new products in 
 <li><code>created</code>, <code>modified</code></li>
 <li><code>deleted</code></li>
 </ul>
-<p>Within the Subscription create request, users can also provide the filtering parameters (e.g.&nbsp;productType, collection, geofootprint). The Subscription Service will then send the notification to the user about newly added products to the Copernicus Data Space Ecosystem Catalogue, modified products or deleted products, according to the set of filter parameters supplied within the subscription request. If <code>FilterParam</code> is not provided within the subscription request body, it will be automatically set to empty and then the notifications about all newly added products will be sent to user’s endpoint.</p>
-<p>Subscriptions enables the same filtering parameters as described for <a href="https://documentation.dataspace.copernicus.eu/APIs/OData.html#filter-option">OData Data Space Catalogue</a>. All filters should be provided in <code>FilterParam</code> field.</p>
+<p>Within the Subscription create request, users can also provide the filtering parameters (e.g.&nbsp;productType, collection, geofootprint). The Subscription Service will then send the notification to the user about newly added products to the Copernicus Data Space Ecosystem Catalogue, modified products or deleted products, according to the set of filter parameters supplied within the subscription request. If <code>FilterParam</code> is not provided within the subscription request body, it will be automatically set to empty and then the notifications about all products will be sent to user’s endpoint.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -2124,6 +2119,7 @@ Tip
 </div>
 </div>
 <div class="callout-body-container callout-body">
+<p>All filters should be provided in <code>FilterParam</code> field.</p>
 <p>To ensure efficient filtering when using the “created” and “modified” Events, it is recommended to review the <a href="https://documentation.dataspace.copernicus.eu/APIs/OData.html#odata-products-endpoint">OData Products Endpoint</a>.</p>
 <p>For the “deleted” Event, it is beneficial to explore the <a href="https://documentation.dataspace.copernicus.eu/APIs/OData.html#odata-deletedproducts-endpoint">OData DeletedProducts Endpoint</a>.</p>
 </div>
@@ -2137,9 +2133,9 @@ Tip
 </ul>
 <p>To create a PUSH Subscription a request to the Subscription Service service should be submitted:</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-14-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-14-1" role="tab" aria-controls="tabset-14-1" aria-selected="true">HTTP request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-14-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-14-2" role="tab" aria-controls="tabset-14-2" aria-selected="false">Response example</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-13-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-13-1" role="tab" aria-controls="tabset-13-1" aria-selected="true">HTTP request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-13-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-13-2" role="tab" aria-controls="tabset-13-2" aria-selected="false">Response example</a></li></ul>
 <div class="tab-content">
-<div id="tabset-14-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-14-1-tab">
+<div id="tabset-13-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-13-1-tab">
 <pre class="{json}"><code>POST \
 https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions
  
@@ -2156,7 +2152,7 @@ https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions
   ]
 }</code></pre>
 </div>
-<div id="tabset-14-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-14-2-tab">
+<div id="tabset-13-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-13-2-tab">
 <pre class="{json}"><code>201 Created
  
 {
@@ -2178,11 +2174,11 @@ https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions
 </section>
 <section id="notification-sender" class="level3">
 <h3 class="anchored" data-anchor-id="notification-sender">Notification sender</h3>
-<p>After creating the subscription, the notifications about new products entering the Data Space Catalogue according to the set of subscription’s filter parameters should be automatically sent to user’s endpoint:</p>
+<p>After creating the subscription, the notifications about new products entering the Data Space Catalogue, modified or deleted products, according to the set of subscription’s filter parameters should be automatically sent to user’s endpoint:</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-15-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-15-1" role="tab" aria-controls="tabset-15-1" aria-selected="true">Notification example</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-14-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-14-1" role="tab" aria-controls="tabset-14-1" aria-selected="true">Response example (created)</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-14-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-14-2" role="tab" aria-controls="tabset-14-2" aria-selected="false">Response example (modified)</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-14-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-14-3" role="tab" aria-controls="tabset-14-3" aria-selected="false">Response example (deleted)</a></li></ul>
 <div class="tab-content">
-<div id="tabset-15-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-15-1-tab">
+<div id="tabset-14-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-14-1-tab">
 <pre class="{json}"><code>{
     "@odata.context": "$metadata#Notification/$entity",
     "SubscriptionEvent": "created",
@@ -2242,13 +2238,7 @@ https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions
     }
 }</code></pre>
 </div>
-</div>
-</div>
-<p>In case of other Events, <code>modified</code> and <code>deleted</code>, the response would be as follows:</p>
-<div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-16-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-16-1" role="tab" aria-controls="tabset-16-1" aria-selected="true">Response example (modified)</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-16-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-16-2" role="tab" aria-controls="tabset-16-2" aria-selected="false">Response example (deleted)</a></li></ul>
-<div class="tab-content">
-<div id="tabset-16-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-16-1-tab">
+<div id="tabset-14-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-14-2-tab">
 <pre class="{json}"><code>200 OK
 
 [
@@ -2283,33 +2273,34 @@ https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions
             "GeoFootprint": {
                 "type": "Polygon",
                 "coordinates": [...
-            },
-            "ContentDate": {
-                "Start": "2024-11-23T04:49:06.776458Z",
-                "End": "2024-11-23T04:49:30.129633Z"
-            },
-            "Attributes": [...
-            ],
-            "ModificationDate": "2025-02-10T08:30:48.665109Z",
-            "PublicationDate": "2024-11-23T06:36:54.654519Z",
-            "Online": true,
-            "EvictionDate": "2025-03-12T08:28:16.409489Z",
-            "S3Path": "/eodata/Sentinel-1/SAR/IW_SLC__1S/2024/11/23/S1A_IW_SLC__1SDV_20241123T044906_20241123T044930_056677_06F42F_97B3.SAFE",
-            "Assets": [
-                {
-                    "Type": "QUICKLOOK",
-                    "Id": "358ec8f8-9894-411e-8c30-fdee50ab8d1e",
-                    "DownloadLink": "https://catalogue.dataspace.copernicus.eu/odata/v1/Assets(358ec8f8-9894-411e-8c30-fdee50ab8d1e)/$value",
-                    "S3Path": "/eodata/Sentinel-1/SAR/IW_SLC__1S/2024/11/23/S1A_IW_SLC__1SDV_20241123T044906_20241123T044930_056677_06F42F_97B3.SAFE"
-                }
-            ],
-            "Locations": [...
-            ]
+                },
+                "ContentDate": {
+                    "Start": "2024-11-23T04:49:06.776458Z",
+                    "End": "2024-11-23T04:49:30.129633Z"
+                },
+                "Attributes": [...
+                ],
+                "ModificationDate": "2025-02-10T08:30:48.665109Z",
+                "PublicationDate": "2024-11-23T06:36:54.654519Z",
+                "Online": true,
+                "EvictionDate": "2025-03-12T08:28:16.409489Z",
+                "S3Path": "/eodata/Sentinel-1/SAR/IW_SLC__1S/2024/11/23/S1A_IW_SLC__1SDV_20241123T044906_20241123T044930_056677_06F42F_97B3.SAFE",
+                "Assets": [
+                    {
+                        "Type": "QUICKLOOK",
+                        "Id": "358ec8f8-9894-411e-8c30-fdee50ab8d1e",
+                        "DownloadLink": "https://catalogue.dataspace.copernicus.eu/odata/v1/Assets(358ec8f8-9894-411e-8c30-fdee50ab8d1e)/$value",
+                        "S3Path": "/eodata/Sentinel-1/SAR/IW_SLC__1S/2024/11/23/S1A_IW_SLC__1SDV_20241123T044906_20241123T044930_056677_06F42F_97B3.SAFE"
+                    }
+                ],
+                "Locations": [...
+                ]
+            }
         }
     }
 ]</code></pre>
 </div>
-<div id="tabset-16-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-16-2-tab">
+<div id="tabset-14-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-14-3-tab">
 <pre class="{json}"><code>200 OK
 
 [
@@ -2344,15 +2335,16 @@ https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions
             "GeoFootprint": {
                 "type": "Polygon",
                 "coordinates": [...
-            },
-            "ContentDate": {
-                "Start": "2025-02-09T08:28:16.409468Z",
-                "End": "2025-02-10T08:28:16.409494Z"
-            },
-            "Attributes": [...
-            ],
-            "DeletionDate": "2025-02-10T08:30:03.907283Z",
-            "DeletionCause": "Corrupted product"
+                },
+                "ContentDate": {
+                    "Start": "2025-02-09T08:28:16.409468Z",
+                    "End": "2025-02-10T08:28:16.409494Z"
+                },
+                "Attributes": [...
+                ],
+                "DeletionDate": "2025-02-10T08:30:03.907283Z",
+                "DeletionCause": "Corrupted product"
+            }
         }
     }
 ]</code></pre>
@@ -2370,13 +2362,13 @@ https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions
 <p>Users are able to check their existing subscriptions.</p>
 <p>To get information about the user’s Subscriptions (PUSH and PULL) the following endpoint should be used:</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-17-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-17-1" role="tab" aria-controls="tabset-17-1" aria-selected="true">HTTP request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-17-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-17-2" role="tab" aria-controls="tabset-17-2" aria-selected="false">Response example</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-15-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-15-1" role="tab" aria-controls="tabset-15-1" aria-selected="true">HTTP request</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-15-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-15-2" role="tab" aria-controls="tabset-15-2" aria-selected="false">Response example</a></li></ul>
 <div class="tab-content">
-<div id="tabset-17-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-17-1-tab">
+<div id="tabset-15-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-15-1-tab">
 <pre class="{json}"><code>GET \
 https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions/Info</code></pre>
 </div>
-<div id="tabset-17-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-17-2-tab">
+<div id="tabset-15-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-15-2-tab">
 <pre class="{json}"><code>200 OK
 
 [
@@ -2417,22 +2409,22 @@ https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions/Info</code></pr
 <p>Users are also able to get information about the specified subscription by its Id.</p>
 <p>To get information about the specified subscription:</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-18-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-18-1" role="tab" aria-controls="tabset-18-1" aria-selected="true">HTTP request</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-16-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-16-1" role="tab" aria-controls="tabset-16-1" aria-selected="true">HTTP request</a></li></ul>
 <div class="tab-content">
-<div id="tabset-18-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-18-1-tab">
+<div id="tabset-16-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-16-1-tab">
 <pre class="{json}"><code>GET \
 https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions(subscription_id)</code></pre>
 </div>
 </div>
 </div>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-19-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-19-1" role="tab" aria-controls="tabset-19-1" aria-selected="true">Request example</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-19-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-19-2" role="tab" aria-controls="tabset-19-2" aria-selected="false">Response example</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-17-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-17-1" role="tab" aria-controls="tabset-17-1" aria-selected="true">Request example</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-17-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-17-2" role="tab" aria-controls="tabset-17-2" aria-selected="false">Response example</a></li></ul>
 <div class="tab-content">
-<div id="tabset-19-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-19-1-tab">
+<div id="tabset-17-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-17-1-tab">
 <pre class="{json}"><code>GET \  
 https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions(7ca682c3-7b21-4e9b-95 2e-874798101340)</code></pre>
 </div>
-<div id="tabset-19-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-19-2-tab">
+<div id="tabset-17-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-17-2-tab">
 <pre class="{json}"><code>200 OK
 
 {
@@ -2474,9 +2466,9 @@ https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions(7ca682c3-7b21-4
 </ul>
 <p>To update an existing subscription:</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-20-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-20-1" role="tab" aria-controls="tabset-20-1" aria-selected="true">HTTP request</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-18-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-18-1" role="tab" aria-controls="tabset-18-1" aria-selected="true">HTTP request</a></li></ul>
 <div class="tab-content">
-<div id="tabset-20-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-20-1-tab">
+<div id="tabset-18-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-18-1-tab">
 <pre class="{json}"><code>PATCH \
 https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions(subscription_id)</code></pre>
 </div>
@@ -2484,16 +2476,16 @@ https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions(subscription_id
 </div>
 <p>To change the status of the subscription (<code>running</code>→<code>paused</code> or <code>paused</code>→<code>running</code>):</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-21-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-21-1" role="tab" aria-controls="tabset-21-1" aria-selected="true">Request example</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-21-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-21-2" role="tab" aria-controls="tabset-21-2" aria-selected="false">Response example</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-19-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-19-1" role="tab" aria-controls="tabset-19-1" aria-selected="true">Request example</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-19-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-19-2" role="tab" aria-controls="tabset-19-2" aria-selected="false">Response example</a></li></ul>
 <div class="tab-content">
-<div id="tabset-21-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-21-1-tab">
+<div id="tabset-19-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-19-1-tab">
 <pre class="{json}"><code>PATCH \
 https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions(7ca682c3-7b21-4e9b-952e-874798181340)
 {
   "Status": "paused"
 }</code></pre>
 </div>
-<div id="tabset-21-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-21-2-tab">
+<div id="tabset-19-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-19-2-tab">
 <pre class="{json}"><code>200 OK
  
 {
@@ -2515,9 +2507,9 @@ https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions(7ca682c3-7b21-4
 </div>
 <p>To change the subscription’s status from <code>running</code>/<code>paused</code> to <code>cancelled</code> <strong>(Deletion of the Subscription)</strong>:</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-22-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-22-1" role="tab" aria-controls="tabset-22-1" aria-selected="true">Request example</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-20-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-20-1" role="tab" aria-controls="tabset-20-1" aria-selected="true">Request example</a></li></ul>
 <div class="tab-content">
-<div id="tabset-22-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-22-1-tab">
+<div id="tabset-20-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-20-1-tab">
 <pre class="{json}"><code>PATCH \
 https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions(7ca682c3-7b21-4e9b-952e-874798181340)
 {
@@ -2532,22 +2524,22 @@ https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions(7ca682c3-7b21-4
 <p>In case of the Subscription deletion (PUSH or PULL), it is requested to provide subscription Id.</p>
 <p>To delete an existing subscription:</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-23-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-23-1" role="tab" aria-controls="tabset-23-1" aria-selected="true">HTTP request</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-21-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-21-1" role="tab" aria-controls="tabset-21-1" aria-selected="true">HTTP request</a></li></ul>
 <div class="tab-content">
-<div id="tabset-23-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-23-1-tab">
+<div id="tabset-21-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-21-1-tab">
 <pre class="{json}"><code>DELETE \
 https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions(subscription_id)</code></pre>
 </div>
 </div>
 </div>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-24-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-24-1" role="tab" aria-controls="tabset-24-1" aria-selected="true">Request example</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-24-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-24-2" role="tab" aria-controls="tabset-24-2" aria-selected="false">Response example</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-22-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-22-1" role="tab" aria-controls="tabset-22-1" aria-selected="true">Request example</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-22-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-22-2" role="tab" aria-controls="tabset-22-2" aria-selected="false">Response example</a></li></ul>
 <div class="tab-content">
-<div id="tabset-24-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-24-1-tab">
+<div id="tabset-22-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-22-1-tab">
 <pre class="{json}"><code>DELETE \
 https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions(7ca682c3-7b21-4e9b-952e-874798181340)</code></pre>
 </div>
-<div id="tabset-24-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-24-2-tab">
+<div id="tabset-22-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-22-2-tab">
 <pre class="{json}"><code>204 No Content</code></pre>
 </div>
 </div>
