@@ -199,21 +199,24 @@ def get_bandtable():
 #function encloding detail block (block under **Further details about the collection**)
 
 def detailblock(ID,license_button,cite):
-    #get temporal and spatial extent
-    spatial, temporal = get_extent()
-    
-    # include spectral band table
-    table = get_bandtable()
-
-    # get necessary links
-    link_block = necessary_links()
-
-    #combine all the details to be shown within the detailed block
-    if any(val for val in (table, link_block) if not val.isspace() and val != ""):
-        bandinfo = f"""<button onclick="toggleContent('{ID}')" class="expand-collapse">Further details about the data collection</button><div class="expand-content" id="{ID}" style="display:none;"><div class="row" style="display: flex; justify-content: space-around"><div class="column">{license_button}&nbsp;&nbsp;{cite}</div></div><div class="row" style="display: flex; justify-content: space-around"><div class="column">{spatial}</div><div class="column">{temporal}</div></div><div>{table}</div><div>{link_block}</div></div>"""
-    else:
+    if ID == "SENTINEL2_L2A" or ID == "SENTINEL2_L1C":
         bandinfo = ""
-    return bandinfo
+    else:
+        #get temporal and spatial extent
+        spatial, temporal = get_extent()
+    
+        # include spectral band table
+        table = get_bandtable()
+
+        # get necessary links
+        link_block = necessary_links()
+
+        #combine all the details to be shown within the detailed block
+        if any(val for val in (table, link_block) if not val.isspace() and val != ""):
+            bandinfo = f"""<button onclick="toggleContent('{ID}')" class="expand-collapse">Further details about the data collection</button><div class="expand-content" id="{ID}" style="display:none;"><div class="row" style="display: flex; justify-content: space-around"><div class="column">{license_button}&nbsp;&nbsp;{cite}</div></div><div class="row" style="display: flex; justify-content: space-around"><div class="column">{spatial}</div><div class="column">{temporal}</div></div><div>{table}</div><div>{link_block}</div></div>"""
+        else:
+            bandinfo = ""
+        return bandinfo
 
 ```
 
