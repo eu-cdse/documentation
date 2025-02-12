@@ -16,10 +16,7 @@ listing:
 
 
 
-The new prototype of the Copernicus Data Space Ecosystem STAC API was implemented in response to expectations and requirements to create a highly advanced tool that enables more efficient management of Earth observation data. Its goal is to provide a standards-based environment that systematizes structures and schemas through data cataloging. With this beta version, a significant step is being taken towards improving data discoverability and accessibility within the Copernicus Data Space Ecosystem.
-The new STAC provides a unify structure to define and catalog spatiotemporal assets. All fields included in Data Space API are consistent with the [STAC Specification](https://stacspec.org/en){target="_blank"}.
-
-The service implements the new STAC API Prototype in version v1.1. It is important to note that the new STAC catalogue does not replace the existing Copernicus Data Space Ecosystem Catalogue but serves as a complementary resource, expanding data discovery options. It includes a limited set of data collections and will be further developed and expanded throughout 2025. Continuous improvements and updates are being focused on refining its performance, enhancing stability, and evolving its capabilities. This will ensure that the new STAC catalogue becomes an increasingly powerful and reliable tool for users, facilitating a more robust and user-friendly access to Copernicus Data Space Ecosystem data and fostering innovation in data exploration.
+The new prototype of the SpatioTemporal Asset Catalogue (STAC) of the Copernicus Data Space Ecosystem (CDSE) has been implemented to foster discoverability and management of Earth Observation (EO) data. Its goal is to standardize metadata model to increase interoperability and applicability of the spatio-temporal datasets. The catalogue implements the new [`STAC specification of version 1.1`](https://github.com/radiantearth/stac-spec){target="_blank"}. It is important to note that the new STAC catalogue does not replace the existing CDSE Open Data Protocol (Odata) catalogue but serves as a complementary resource, expanding data discovery and accessibility options. It includes a limited set of data collections but more will be included in the upcoming months and further optimizations of its performance and stability will be performed.
 
 ## Endpoint URL
 
@@ -33,9 +30,9 @@ The new Copernicus Data Space Ecosystem STAC Catalog can be accessed using the f
 
 :::
 
-## STAC Browser
+## CDSE STAC Browser
 
-STAC Browser, which fully complies with the open STAC specification, serves as a comprehensive and searchable catalog of Earth observation and scientific datasets actively maintained and updated by the Copernicus Data Space Ecosystem. It uses standardized JSON API responses to offer an intuitive interface, allowing users to easily navigate and interact with STAC catalogue. 
+CDSE STAC Browser serves as a Graphical User Interface (GUI) to explore, filter, and preview EO products along with their comprehensive set of attributes. It uses standardized JSON API responses to offer an intuitive interface, allowing users to easily navigate and interact with the STAC catalogue. The source code of the CDSE STAC Browser in available on the [`GitHub`](https://github.com/eu-cdse/stac-browser-cdse){target="_blank"}. 
 
 The latest Copernicus Data Space Ecosystem STAC API Browser can be accessed using the following URL:
 
@@ -62,7 +59,7 @@ The navigation bar includes several options that facilitate easy exploration and
 
 * Browse: To navigate through available collections
 * Search: Redirects to the `/search` endpoint, allowing users to search within the data catalog
-* Log in: Redirects to the login page, allowing users to authenticate or register their accounts
+* Log in: Redirects to the CDSE login page, allowing users to authenticate or register a new account
 
 2. Links and Information:
 
@@ -92,7 +89,7 @@ After selecting a desired collection, users are redirected to its dedicated STAC
 
 The page is divided into two main sections below the header.
 
-On the left side, there is a collection description along with keywords, license information, and temporal extent. Below this, an interactive map displays the geographical location of the items currently shown on the page, as well as the collection's coverage area. Further down, additional information is presented in the following order: Assets, Providers, and Metadata, which is divided into more detailed sections such as general, SAR, cloud storage, processing, product, satellite, etc. These sections may vary depending on the collection.
+On the left side, there is a collection description along with keywords, license information, and temporal extent. Below this, an interactive map displays the geographical location of the items currently shown on the page, as well as the collection's spatial extent. Further down, additional information is presented in the following order: Assets, Providers, and Metadata, which is divided into more detailed sections such as general, SAR, cloud storage, processing, product, satellite, etc. These sections may vary depending on the collection.
 
 On the right side, there is an Items section displaying the currently filtered products. By clicking on a selected product, users can navigate to its dedicated endpoint. Next to the pagination bar, which allows users to browse through product pages, there is a toolbar that enables the display of available filtering options.
 
@@ -136,19 +133,22 @@ The layout of the selected product page is structured in a similar way. On the l
 
 ## Available Collections
 
-Currently, a limited number of collections are available, and these will be expanded over time. In this version of the STAC catalogue, Collections are defined as group of Items that share a set of common fields - properties and metadata. This facilitates data filtering and enables more efficient data management, as individual Items store only the values specific to them.
-
-The following collections from Copernicus Sentinel Mission or Complementary Data are currently available via new STAC API:
+Currently, a limited number of collections are available, and these will be expanded over time. The following collections from Copernicus Sentinel Mission or Complementary Data are currently available via new STAC API:
 
 * Sentinel-1 Ground Range Detected (GRD)
 * Sentinel-2 Global Mosaics
-* Sentinel-2 Level-1C
+* Sentinel-2 Level-1C (currently updated with historical data i.e. before 2025)
 * Sentinel-2 Level-2A
 
+The following collections will be added in the following chronological order:
+
+* February 2025 - Sentinel-1 Single Look Complex (SLC) 
+* March 2025 - Sentinel-5P products
+* March/Apri 2025 - Sentinel-3 products
   
 ## STAC Collections Search
 
-STAC Collections endpoint lets users get information about collections available in the Copernicus Data Space Ecosystem catalogue. 
+STAC Collections endpoint lets users get information about collections available in the CDSE catalogue. 
 
 To access the information about all STAC API Collections:
 
@@ -171,19 +171,19 @@ To access the information about a specified STAC API Collection (e.g. SENTINEL-2
 
 :::
 
-## Extensions
+## STAC API Extensions
 
-The extensions are continuously being developed, and the following are currently available:
+The STAC API extensions adds additional functionalities to the STAC core API. Currentyl CDSE STAC API support the following exentions:
 
 * `filter`
 * `query`
 * `fields`
 * `sort`
-* `free-text search`
+* `free-text search` for the /Collection endpoint only
 
 ### Filter Extension
 
-The Filter Extension provides an expressive mechanism for searching based on Item attributes. It offers more expressiveness compared to the [link query extension] and utilizes the standardized CQL2 query language. Users can apply various operators such as spatial, temporal, and property comparisons. The extension enhances search capabilities by allowing complex queries through GET and POST methods, using both text and JSON formats.
+The Filter Extension provides an expressive mechanism for searching based on Item's attributes. It offers more flexibility compared to the [link query extension] and utilizes the standardized CQL2 query language. Users can apply various operators such as spatial, temporal, and attribute comparisons. The extension enhances search capabilities by allowing complex queries through GET and POST methods, using both text and JSON formats.
 
 The implementation supports these conformance classes:
 
@@ -203,7 +203,7 @@ Queryables are terms that can be used in filter expressions to search through a 
 
 Following endpoints have been added to allow users to check for available parameters when writing filter expressions.
 
-To access queryable names for STAC API Item Search filter across the entire catalogue:
+To access queryable attributes for STAC API Item Search filter across the entire catalogue:
 
 ::: {.panel-tabset}
 
@@ -213,7 +213,7 @@ To access queryable names for STAC API Item Search filter across the entire cata
 
 :::
 
-To check acceptable queryable names for currently available collections:
+To check available queryable attributes for collections:
 
 ::: {.panel-tabset}
 
@@ -388,7 +388,7 @@ For POST method requests, the query should be included in the request body and s
 
 ### Fields Extension
 
-The Fields Extension allows users to request specific fields to be included or excluded from search responses. This helps optimize performance by reducing unnecessary data, especially when dealing with large or complex Item objects. It can be used in both GET and POST requests, with the fields parameter enabling the specification of fields to include or exclude. In GET requests, you can specify fields to exclude by prefixing them with a hyphen (e.g., -geometry). 
+The Fields Extension allows users to request specific set of attributes to be included or excluded from the search responses. This allows optimizing query performance by reducing unnecessary data, especially when dealing with large or complex Item objects. It can be used in both GET and POST requests, with the fields parameter enabling the specification of fields to include or exclude. In GET requests, you can specify fields to exclude by prefixing them with a hyphen (e.g., -geometry). 
 
 For POST method requests, the query should be included in the request body and sent to the following endpoint:
 
@@ -483,7 +483,7 @@ For POST method requests, the query should be included in the request body and s
 
 ### Free-text Search Extension
 
-The Free-text Search Extension enables users to conduct keyword-based searches on Item properties by utilizing the `q` parameter. This facilitates efficient searching across text fields, including titles, descriptions, and keywords. The extension is not supported for the Item search.
+The Free-text Search Extension enables users to conduct keyword-based searches on Item properties by utilizing the `q` parameter. This facilitates efficient searching across text fields, including titles, descriptions, and keywords on the /collections endpoint only. The extension is not supported for the Item search.
 
 ::: {.panel-tabset}
 
@@ -495,7 +495,7 @@ The Free-text Search Extension enables users to conduct keyword-based searches o
 
 ## Jupyter Notebook Examples
 
-In order to provide support to users exploring the extensions offered by the new STAC catalogue, a series of Jupyter Notebooks has been prepared to demonstrate their usage.
+In order to support the CDSE users with utilization of the new CDSE STAC API, a set of Jupyter Notebooks has been prepared.
 
 ::: {#StacExtensions}
 :::
