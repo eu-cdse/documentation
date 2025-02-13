@@ -3,13 +3,13 @@ title: Subscriptions
 ---
 This section provides the detailed description of PUSH and PULL subscriptions within the Copernicus Data Space Ecosystem Catalogue, its workflows and exemplary requests.
 
-**Subscription** services allow users to receive notifications in an automated way about the Event that has taken place in the Copernicus Data Space Ecosystem Catalogue. Currently, they inform users about newly added products to the Data Space Catalogue according to the set of filter parameters supplied within the subscription request.
+**Subscription** services allow users to receive notifications in an automated way about the Event that has taken place in the Copernicus Data Space Ecosystem Catalogue. They inform users about newly added products, modified products or deleted products from the Data Space Catalogue according to the set of filter parameters supplied within the subscription request.
 
 There two types of Subscriptions available for users:
 
-1. PULL Subscription - for PULL Subscription the service sends the notification to the individual user queue every time the new product is added to the Data Space Catalogue according to the set of filter parameters supplied within the subscription request. The notifications are stored in the queue until they are acknowledged by the client or until the limit of the messages on the queue for the client is exceeded. **The maximum length of the queue is 100 000 notifications.** For PULL Subscription, it is necessary to Read and Acknowledge notifications regularly to not exceed the queue limit. 
+1. PULL Subscription - for PULL Subscription the service sends the notification to the individual user queue every time the new product is added to the Data Space Catalogue, the product was modified or deleted, according to the set of filter parameters supplied within the subscription request. The notifications are stored in the queue until they are acknowledged by the client or until the limit of the messages on the queue for the client is exceeded. **The maximum length of the queue is 100 000 notifications.** For PULL Subscription, it is necessary to Read and Acknowledge notifications regularly to not exceed the queue limit. 
 
-2. PUSH Subscription - for PUSH Subscription the service sends the notification to the user's endpoint every time the new product is added to the Data Space Catalogue according to the set of filter parameters supplied within the subscription request. For PUSH Subscription, it is mandatory to provide the user's endpoint for which the notifications are to be sent.
+2. PUSH Subscription - for PUSH Subscription the service sends the notification to the user's endpoint every time the new product is added to the Data Space Catalogue, the product was modified or deleted, according to the set of filter parameters supplied within the subscription request. For PUSH Subscription, it is mandatory to provide the user's endpoint for which the notifications are to be sent.
 
 ::: {.callout-note} 
 
@@ -27,11 +27,11 @@ The terms used within the Subscriptions documentation are defined below.
 
 **Subscription Service** - HTTP API capable of manipulating subscriptions
 
-**PULL Subscription** - a client request for receiving PULL notifications of future product published on Data Space Catalogue. 
+**PULL Subscription** - a client request for receiving PULL notifications of Events that have taken place in Data Space Catalogue. 
 
-**PUSH Subscription** - a client request for receiving PUSH notifications of future product published on Data Space Catalogue. 
+**PUSH Subscription** - a client request for receiving PUSH notifications of Events that have taken place in Data Space Catalogue. 
 
-**Notification** - OData message automatically sent to client's endpoint (for PUSH subscriptions) or individual client's queue (for PULL notifications) every time the new product is published on Data Space Catalogue. 
+**Notification** - OData message automatically sent to client's endpoint (for PUSH subscriptions) or individual client's queue (for PULL notifications) every time the Events have taken place in Data Space Catalogue. 
 
 ### User Authorization
 For using Subscription Service you need an authorization token as only authorized users are allowed to create a subscription and access the subscription endpoints - all Subscription Service endpoints needs the token.
@@ -90,7 +90,7 @@ The client submits a subscription create request to Subscription Service. With t
 
 2. Product Notification
 
-After a new product is added to the Data Space Catalogue, the Subscription Service sends the notification to the client's queue. Therefore users should read and acknowledge the notifications on the queue regularly. In case the maximum size of the queue is exceeded, the oldest products notifications will be automatically removed with no possibility to be retrieved. If the subscription is paused, the new products' availability notifications will not be sent to the queue. 
+After a specific Event occurs in the Data Space Catalogue, the Subscription Service sends the notification to the client's queue. Therefore users should read and acknowledge the notifications on the queue regularly. In case the maximum size of the queue is exceeded, the oldest products notifications will be automatically removed with no possibility to be retrieved. If the subscription is paused, the new products' availability notifications will not be sent to the queue. 
 
 ### PULL Subscription Entity Description
 Below please find the description of the PULL Subscription Entity. 
@@ -132,8 +132,11 @@ Below please find the description of the PULL Subscription Entity.
                 <td style="text-align: left; vertical-align: middle">The subscription event to be monitored and for which notification is provided:
 				<ul>
 				<li>created</li>
+				<li>modified</li>
+				<li>created, modified</li>
+				<li>deleted</li>
 				</ul>
-				The default value set to "SubscriptionEvent", if not provided by user, is "created".<BR><BR>For "SubscriptionEvent" = "created" the notifications about newly added products to the Data Space Catalogue will be sent to the user's endpoint.</td>
+				The default value set to "SubscriptionEvent", if not provided by user, is "created".<BR><BR>For "SubscriptionEvent" = "created" the notifications about newly added products to the Data Space Catalogue will be sent to the user's endpoint.<BR><BR>For "SubscriptionEvent" = "modified" the notifications about updated products in the Data Space Catalogue will be sent to the user's endpoint.<BR><BR>For "SubscriptionEvent" = "deleted" the notifications about removed products from the Data Space Catalogue will be sent to the user's endpoint.</td>
                 <td style="text-align: center; vertical-align: middle">created</td>
             </tr>
             <tr>
@@ -205,15 +208,31 @@ Below please find the description of the PULL Subscription Entity.
 
 To create PULL Subscription users need to submit a subscription create request to the Subscription endpoint. 
 
-While creating a subscription, users can specify the Event they would like to be notified. For now, the following Event can be chosen:
+While creating a subscription, users can specify the Event they would like to be notified. For now, the following Events, or their combination, can be chosen:
 
-* Created
+* `created`
+* `modified`
+* `created`, `modified`
+* `deleted`
 
-Within the Subscription create request, users can also provide the filtering parameters (e.g. productType, collection, geofootprint). The Subscription Service will then provide the notifications about newly added products to the Copernicus Data Space Ecosystem Catalogue according to the set of filter parameters supplied within the subscription request. If `FilterParam` is not provided within the subscription request body, it will be automatically set to empty and then the notifications about all newly added products will be generated. 
+Within the Subscription create request, users can also provide the filtering parameters (e.g. productType, collection, geofootprint). The Subscription Service will then provide the notifications about newly added products to the Copernicus Data Space Ecosystem Catalogue, modified products or deleted products, according to the set of filter parameters supplied within the subscription request. If `FilterParam` is not provided within the subscription request body, it will be automatically set to empty and then the notifications about all products will be generated. 
 
-Subscriptions enables the same filtering parameters as described for [OData Data Space Catalogue](https://documentation.dataspace.copernicus.eu/APIs/OData.html#filter-option). All filters should be provided in `FilterParam` field.
+::: {.callout-tip} 
+All filters should be provided in `FilterParam` field.
 
-To create PULL Subscription a request to the Data Space service should be submitted:
+To ensure efficient filtering when using the `created` and `modified` Events, it is recommended to review the [OData Products Endpoint Filter Option](https://documentation.dataspace.copernicus.eu/APIs/OData.html#filter-option). 
+
+For the `deleted` Event, it is beneficial to explore the [OData DeletedProducts Endpoint Filter Option](https://documentation.dataspace.copernicus.eu/APIs/OData.html#filter-option-1).
+:::
+
+In case of deleted products, a notification will be sent when one of the following values of the `DeletionCause` parameter is met: 
+
+* Duplicated product
+* Missing checksum
+* Corrupted product
+* Obsolete product or Other
+
+To create PULL Subscription, a request to the Data Space service should be submitted:
 
 ::: {.panel-tabset}
 
@@ -255,6 +274,8 @@ https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions
 
 :::
 
+To create PULL Subscription with a combination of two Events, `created` and `modified`, they should be listed separated by a comma.
+
 ### Read Subscription
 
 To read the subscription notifications from the client's queue, the request to subscription Read endpoint should be submitted:
@@ -292,7 +313,7 @@ The whole response from the Subscripton Read endpoint is kept on the indivdual u
 
 ::: {.panel-tabset}
 
-# Response example
+# Response example (created)
 
 ```{json}
 200 OK
@@ -415,7 +436,7 @@ The whole response from the Subscripton Read endpoint is kept on the indivdual u
 ]
 ```
 
-# Response example after 3 days
+# Response example after 3 days (created)
 
 ```{json}
 200 OK
@@ -439,7 +460,124 @@ The whole response from the Subscripton Read endpoint is kept on the indivdual u
     }
 ]
 ```
+# Response example (modified)
 
+```{json}
+200 OK
+
+[
+    {
+        "@odata.context": "$metadata#Notification/$entity",
+        "SubscriptionEvent": "modified",
+        "ProductId": "b6801a5d-0e66-43d7-afac-1280f0895bf1",
+        "ProductName": "S1A_IW_SLC__1SDV_20241123T044906_20241123T044930_056677_06F42F_97B3.SAFE",
+        "SubscriptionId": "f4074287-fce7-4bf3-9d53-5e619cd42fad",
+        "NotificationDate": "2025-02-10T08:30:48.905365Z",
+        "AckId": "MTcxMDc1NjcwNjY2NC0wOjk5MWM0NzMwLWNmNmYtNDMyYS05ZjZjLTQ3YmUwMjMwZmY0NQ==",
+        "value": {
+            "@odata.context": "$metadata#Products(Attributes(),Assets(),Locations())/$entity",
+            "@odata.mediaContentType": "application/octet-stream",
+            "Id": "b6801a5d-0e66-43d7-afac-1280f0895bf1",
+            "Name": "S1A_IW_SLC__1SDV_20241123T044906_20241123T044930_056677_06F42F_97B3.SAFE",
+            "ContentType": "application/octet-stream",
+            "ContentLength": 6353857709,
+            "OriginDate": "2024-11-23T06:28:41.550000Z",
+            "Checksum": [
+                {
+                    "Value": "40fbe8ddd886f24a323906af1e442155",
+                    "Algorithm": "MD5",
+                    "ChecksumDate": "2024-11-23T06:37:33.947488Z"
+                },
+                {
+                    "Value": "5c128944c135faefd8eb15b28f776541c1e4d0b21fa5064906b1882ca590527e",
+                    "Algorithm": "BLAKE3",
+                    "ChecksumDate": "2024-11-23T06:37:43.810075Z"
+                }
+            ],
+            "Footprint": "geography'SRID=4326;POLYGON ((15.389621 5.429769, 15.680731 6.842505, 13.45454 7.296846, 13.16956 5.8881, 15.389621 5.429769))'",
+            "GeoFootprint": {
+                "type": "Polygon",
+                "coordinates": [...
+                },
+                "ContentDate": {
+                    "Start": "2024-11-23T04:49:06.776458Z",
+                    "End": "2024-11-23T04:49:30.129633Z"
+                },
+                "Attributes": [...
+                ],
+                "ModificationDate": "2025-02-10T08:30:48.665109Z",
+                "PublicationDate": "2024-11-23T06:36:54.654519Z",
+                "Online": true,
+                "EvictionDate": "2025-03-12T08:28:16.409489Z",
+                "S3Path": "/eodata/Sentinel-1/SAR/IW_SLC__1S/2024/11/23/S1A_IW_SLC__1SDV_20241123T044906_20241123T044930_056677_06F42F_97B3.SAFE",
+                "Assets": [
+                    {
+                        "Type": "QUICKLOOK",
+                        "Id": "358ec8f8-9894-411e-8c30-fdee50ab8d1e",
+                        "DownloadLink": "https://catalogue.dataspace.copernicus.eu/odata/v1/Assets(358ec8f8-9894-411e-8c30-fdee50ab8d1e)/$value",
+                        "S3Path": "/eodata/Sentinel-1/SAR/IW_SLC__1S/2024/11/23/S1A_IW_SLC__1SDV_20241123T044906_20241123T044930_056677_06F42F_97B3.SAFE"
+                    }
+                ],
+                "Locations": [...
+                ]
+            }
+        }
+    }
+]
+```
+
+# Response example (deleted)
+
+```{json}
+200 OK
+
+[
+    {
+        "@odata.context": "$metadata#Notification/$entity",
+        "SubscriptionEvent": "deleted",
+        "ProductId": "232d796a-0552-4679-a1ed-b8cd3d002db2",
+        "ProductName": "S1A_IW_SLC__1SDV_20241111T044907_20241111T044931_056502_06ED2E_7F0A",
+        "SubscriptionId": "419890a6-1305-47b9-a1de-69ff0ccbdb0c",
+        "NotificationDate": "2025-02-10T08:30:04.127132Z",
+        "AckId": "MTcxMDc1NjcwNjY2NC0wOjk5MWM0NzMwLWNmNmYtNDMyYS05ZjZjLTQ3YmUwMjMwZmY0NQ==",
+        "value": {
+            "@odata.context": "$metadata#DeletedProducts(Attributes())/$entity",
+            "@odata.mediaContentType": "application/image-tiff",
+            "Id": "232d796a-0552-4679-a1ed-b8cd3d002db2",
+            "Name": "S1A_IW_SLC__1SDV_20241111T044907_20241111T044931_056502_06ED2E_7F0A",
+            "ContentType": "application/image-tiff",
+            "ContentLength": 999999,
+            "OriginDate": "2025-02-10T08:28:16.409494Z",
+            "Checksum": [
+                {
+                    "Value": "1efb9cf89aa30086e114705c20831606",
+                    "Algorithm": "MD5",
+                    "ChecksumDate": "2025-02-10T08:28:16.409494Z"
+                },
+                {
+                    "Value": "7a8e7280a1b37f14ecf6cf9216ec3f9e3824e5a7098d266168b8ce6b32598551",
+                    "Algorithm": "BLAKE3",
+                    "ChecksumDate": "2025-02-10T08:28:16.409494Z"
+                }
+            ],
+            "Footprint": "geography'SRID=4326;POLYGON ((14.412463 5.424546, 15.703652 6.837446, 13.453771 7.296696, 13.168763 5.887819, 14.412463 5.424546))'",
+            "GeoFootprint": {
+                "type": "Polygon",
+                "coordinates": [...
+                },
+                "ContentDate": {
+                    "Start": "2025-02-09T08:28:16.409468Z",
+                    "End": "2025-02-10T08:28:16.409494Z"
+                },
+                "Attributes": [...
+                ],
+                "DeletionDate": "2025-02-10T08:30:03.907283Z",
+                "DeletionCause": "Corrupted product"
+            }
+        }
+    }
+]
+```
 :::
 
 * If Subscription is `Cancelled`
@@ -536,11 +674,11 @@ For PUSH notifications, the nominal scenario can be described as follows:
 1. Creation of the subscription
 
 The client submits a subscription create request to Subscription Service. The user's request needs to contain an endpoint URL to which the notifications will be sent and endpoint's credentials (if client's endpoint requires authentication). The user's endpoint credentials are stored safely in the dedicated vault. The request is processed by the Subscription Service, and a response is returned which includes a unique identifier assigned to the subscription (subscription's Id), subscription status (initially set to running), subscription request submission date, filtering parameters, stage order, priority of the subscription, subscription event to be monitored and client's endpoint URL.
-If client' notification endpoint is not submitted, then [PULL subscription](https://documentation.dataspace.copernicus.eu/APIs/Subscriptions.html#pull-subscriptions) will be created.
+If client's notification endpoint is not submitted, then [PULL subscription](https://documentation.dataspace.copernicus.eu/APIs/Subscriptions.html#pull-subscriptions) will be created.
 
 2. Product Notification 
 
-After a new product is added to the Copernicus Data Space Ecosystem Catalogue, the Subscription Service sends the notification to the client's endpoint. In case of user's endpoint unavailability, the PUSH notification is retried three times and then it fails. The notifications are sent to user's endpoint until the subscription is paused or deleted.
+After a new product is added to the Copernicus Data Space Ecosystem Catalogue, the product was modified or deleted, the Subscription Service sends the notification to the client's endpoint. In case of user's endpoint unavailability, the PUSH notification is retried three times and then it fails. The notifications are sent to user's endpoint until the subscription is paused or deleted.
 
 ### PUSH Subscription Entity Description
 Below please find the description of the Subscription Entity. 
@@ -582,8 +720,11 @@ Below please find the description of the Subscription Entity.
                 <td style="text-align: left; vertical-align: middle">The subscription event to be monitored and for which notification is provided:
 				<ul>
 				<li>created</li>
+				<li>modified</li>
+				<li>created, modified</li>
+				<li>deleted</li>
 				</ul>
-				The default value set to "SubscriptionEvent", if not provided by user, is "created".<BR><BR>For "SubscriptionEvent" = "created" the notifications about newly added products to the Data Space Catalogue will be sent to the user's endpoint.</td>
+				The default value set to "SubscriptionEvent", if not provided by user, is "created".<BR><BR>For "SubscriptionEvent" = "created" the notifications about newly added products to the Data Space Catalogue will be sent to the user's endpoint.<BR><BR>For "SubscriptionEvent" = "modified" the notifications about updated products in the Data Space Catalogue will be sent to the user's endpoint.<BR><BR>For "SubscriptionEvent" = "deleted" the notifications about removed products from the Data Space Catalogue will be sent to the user's endpoint.</td>
                 <td style="text-align: center; vertical-align: middle">created</td>
             </tr>
             <tr>
@@ -646,13 +787,29 @@ Below please find the description of the Subscription Entity.
 
 To create PUSH Subscription users should specify the notification endpoint to which PUSH notifications from the Subscription Service will be sent.
 
-While creating a subscription, users can specify the Event they would like to be notified. For now, the following Event can be chosen:
+While creating a subscription, users can specify the Event they would like to be notified. For now, the following Events, or their combination, can be chosen:
 
-* Created
+* `created`
+* `modified`
+* `created`, `modified`
+* `deleted`
 
-Within the Subscription create request, users can also provide the filtering parameters (e.g. productType, collection, geofootprint). The Subscription Service will then send the notification to the user about newly added products to the Copernicus Data Space Ecosystem Catalogue according to the set of filter parameters supplied within the subscription request. If `FilterParam` is not provided within the subscription request body, it will be automatically set to empty and then the notifications about all newly added products will be sent to user's endpoint. 
+Within the Subscription create request, users can also provide the filtering parameters (e.g. productType, collection, geofootprint). The Subscription Service will then send the notification to the user about newly added products to the Copernicus Data Space Ecosystem Catalogue, modified products or deleted products, according to the set of filter parameters supplied within the subscription request. If `FilterParam` is not provided within the subscription request body, it will be automatically set to empty and then the notifications about all products will be sent to user's endpoint. 
 
-Subscriptions enables the same filtering parameters as described for [OData Data Space Catalogue](https://documentation.dataspace.copernicus.eu/APIs/OData.html#filter-option). All filters should be provided in `FilterParam` field.
+::: {.callout-tip} 
+All filters should be provided in `FilterParam` field.
+
+To ensure efficient filtering when using the "created" and "modified" Events, it is recommended to review the [OData Products Endpoint](https://documentation.dataspace.copernicus.eu/APIs/OData.html#odata-products-endpoint). 
+
+For the "deleted" Event, it is beneficial to explore the [OData DeletedProducts Endpoint](https://documentation.dataspace.copernicus.eu/APIs/OData.html#odata-deletedproducts-endpoint).
+:::
+
+In case of deleted products, a notification will be sent when one of the following values of the `DeletionCause` parameter is met: 
+
+* Duplicated product
+* Missing checksum
+* Corrupted product
+* Obsolete product or Other
 
 To create a PUSH Subscription a request to the Subscription Service service should be submitted:
 
@@ -702,11 +859,11 @@ https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions
 
 ### Notification sender
 
-After creating the subscription, the notifications about new products entering the Data Space Catalogue according to the set of subscription's filter parameters should be automatically sent to user's endpoint:
+After creating the subscription, the notifications about new products entering the Data Space Catalogue, modified or deleted products, according to the set of subscription's filter parameters should be automatically sent to user's endpoint:
 
 ::: {.panel-tabset}
 
-# Notification example
+# Response example (created)
 
 ```{json}
 {
@@ -768,7 +925,124 @@ After creating the subscription, the notifications about new products entering t
     }
 }
 ```
+# Response example (modified)
+
+```{json}
+200 OK
+
+[
+    {
+        "@odata.context": "$metadata#Notification/$entity",
+        "SubscriptionEvent": "modified",
+        "ProductId": "b6801a5d-0e66-43d7-afac-1280f0895bf1",
+        "ProductName": "S1A_IW_SLC__1SDV_20241123T044906_20241123T044930_056677_06F42F_97B3.SAFE",
+        "SubscriptionId": "f4074287-fce7-4bf3-9d53-5e619cd42fad",
+        "NotificationDate": "2025-02-10T08:30:48.905365Z",
+        "value": {
+            "@odata.context": "$metadata#Products(Attributes(),Assets(),Locations())/$entity",
+            "@odata.mediaContentType": "application/octet-stream",
+            "Id": "b6801a5d-0e66-43d7-afac-1280f0895bf1",
+            "Name": "S1A_IW_SLC__1SDV_20241123T044906_20241123T044930_056677_06F42F_97B3.SAFE",
+            "ContentType": "application/octet-stream",
+            "ContentLength": 6353857709,
+            "OriginDate": "2024-11-23T06:28:41.550000Z",
+            "Checksum": [
+                {
+                    "Value": "40fbe8ddd886f24a323906af1e442155",
+                    "Algorithm": "MD5",
+                    "ChecksumDate": "2024-11-23T06:37:33.947488Z"
+                },
+                {
+                    "Value": "5c128944c135faefd8eb15b28f776541c1e4d0b21fa5064906b1882ca590527e",
+                    "Algorithm": "BLAKE3",
+                    "ChecksumDate": "2024-11-23T06:37:43.810075Z"
+                }
+            ],
+            "Footprint": "geography'SRID=4326;POLYGON ((15.389621 5.429769, 15.680731 6.842505, 13.45454 7.296846, 13.16956 5.8881, 15.389621 5.429769))'",
+            "GeoFootprint": {
+                "type": "Polygon",
+                "coordinates": [...
+                },
+                "ContentDate": {
+                    "Start": "2024-11-23T04:49:06.776458Z",
+                    "End": "2024-11-23T04:49:30.129633Z"
+                },
+                "Attributes": [...
+                ],
+                "ModificationDate": "2025-02-10T08:30:48.665109Z",
+                "PublicationDate": "2024-11-23T06:36:54.654519Z",
+                "Online": true,
+                "EvictionDate": "2025-03-12T08:28:16.409489Z",
+                "S3Path": "/eodata/Sentinel-1/SAR/IW_SLC__1S/2024/11/23/S1A_IW_SLC__1SDV_20241123T044906_20241123T044930_056677_06F42F_97B3.SAFE",
+                "Assets": [
+                    {
+                        "Type": "QUICKLOOK",
+                        "Id": "358ec8f8-9894-411e-8c30-fdee50ab8d1e",
+                        "DownloadLink": "https://catalogue.dataspace.copernicus.eu/odata/v1/Assets(358ec8f8-9894-411e-8c30-fdee50ab8d1e)/$value",
+                        "S3Path": "/eodata/Sentinel-1/SAR/IW_SLC__1S/2024/11/23/S1A_IW_SLC__1SDV_20241123T044906_20241123T044930_056677_06F42F_97B3.SAFE"
+                    }
+                ],
+                "Locations": [...
+                ]
+            }
+        }
+    }
+]
+```
+
+# Response example (deleted)
+
+```{json}
+200 OK
+
+[
+    {
+        "@odata.context": "$metadata#Notification/$entity",
+        "SubscriptionEvent": "deleted",
+        "ProductId": "232d796a-0552-4679-a1ed-b8cd3d002db2",
+        "ProductName": "S1A_IW_SLC__1SDV_20241111T044907_20241111T044931_056502_06ED2E_7F0A",
+        "SubscriptionId": "419890a6-1305-47b9-a1de-69ff0ccbdb0c",
+        "NotificationDate": "2025-02-10T08:30:04.127132Z",
+        "value": {
+            "@odata.context": "$metadata#DeletedProducts(Attributes())/$entity",
+            "@odata.mediaContentType": "application/image-tiff",
+            "Id": "232d796a-0552-4679-a1ed-b8cd3d002db2",
+            "Name": "S1A_IW_SLC__1SDV_20241111T044907_20241111T044931_056502_06ED2E_7F0A",
+            "ContentType": "application/image-tiff",
+            "ContentLength": 999999,
+            "OriginDate": "2025-02-10T08:28:16.409494Z",
+            "Checksum": [
+                {
+                    "Value": "1efb9cf89aa30086e114705c20831606",
+                    "Algorithm": "MD5",
+                    "ChecksumDate": "2025-02-10T08:28:16.409494Z"
+                },
+                {
+                    "Value": "7a8e7280a1b37f14ecf6cf9216ec3f9e3824e5a7098d266168b8ce6b32598551",
+                    "Algorithm": "BLAKE3",
+                    "ChecksumDate": "2025-02-10T08:28:16.409494Z"
+                }
+            ],
+            "Footprint": "geography'SRID=4326;POLYGON ((14.412463 5.424546, 15.703652 6.837446, 13.453771 7.296696, 13.168763 5.887819, 14.412463 5.424546))'",
+            "GeoFootprint": {
+                "type": "Polygon",
+                "coordinates": [...
+                },
+                "ContentDate": {
+                    "Start": "2025-02-09T08:28:16.409468Z",
+                    "End": "2025-02-10T08:28:16.409494Z"
+                },
+                "Attributes": [...
+                ],
+                "DeletionDate": "2025-02-10T08:30:03.907283Z",
+                "DeletionCause": "Corrupted product"
+            }
+        }
+    }
+]
+```
 :::
+
 
 ## PULL and PUSH Subscriptions Operations
 
