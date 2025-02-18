@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Documentation - Creating multi-mission, multi-temporal datacube</title>
+<title>Documentation - Access PROBA-V collection using openEO</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -93,9 +93,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
-<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 <meta name="zd-site-verification" content="xj9koofr1crilmoclgxsjd">
 <script type="text/javascript">
 
@@ -214,7 +211,7 @@ window.onload = function() {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Creating multi-mission, multi-temporal datacube</li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Access PROBA-V collection using openEO</li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
@@ -1316,7 +1313,7 @@ window.onload = function() {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Creating multi-mission, multi-temporal datacube</h1>
+<h1 class="title">Access PROBA-V collection using openEO</h1>
 </div>
 
 
@@ -1331,548 +1328,95 @@ window.onload = function() {
 
 </header>
 
-<div class="cell" data-pycharm="{&quot;is_executing&quot;:true}" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> openeo</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>PROBA-V was launched on May 6, 2013, to fill the gap in space-based vegetation measurements between SPOT-VGT (March 1998 – May 2014) and Sentinel-3. The mission objective of PROBA-V was to ensure continuity and consistency with the heritage of the SPOT-VGT mission.</p>
+<p>Researchers can access Proba-V data globally through the openEO API. Leveraging the simplicity of openEO, users can utilize its scalability and interoperability features to conduct in-depth data analyses.</p>
+<p>In this notebook, we will use the openEO platform to analyze the NDVI band from the Proba-V satellite product, enabling us to monitor vegetation health and changes over time.</p>
+<div class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># import the necessary packages</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> openeo</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.express <span class="im">as</span> px</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>This notebook shows how to combine timeseries data from two popular missions, Sentinel-1 and Sentinel-2, in a single datacube for further processing. It can be considered a basic template for many use cases.</p>
-<p>It uses precomputed backscatter if available and falls back to compute backscatter on the fly, which works globally but consumes more credits.</p>
-<p>We also create 10-daily composites and apply linear interpolation to avoid gaps. Specific methods may require different cloud masking and preprocessing options.</p>
+<p>The openEO standard enables access to datasets and processing capabilities beyond what CDSE offers, all through a single endpoint and interface. This simplifies workflows by removing the need to register on multiple platforms and learn their APIs. This feature is known as the openEO federation.</p>
+<p>In this notebook, we’ve utilized the CDSE openEO federation backend to access Proba-V data from the <a href="https://terrascope.be/">Terrascope</a> backend.</p>
+<p>For more details on the openEO federation, please visit the <a href="https://documentation.dataspace.copernicus.eu/APIs/openEO/federation/openeo_federation.html">openEO website</a>.</p>
 <div class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>c <span class="op">=</span> openeo.<span class="ex">connect</span>(<span class="st">"openeofed.dataspace.copernicus.eu"</span>)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>c.authenticate_oidc()</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>scl <span class="op">=</span> c.load_collection(</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"SENTINEL2_L2A"</span>,</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    temporal_extent<span class="op">=</span>[<span class="st">"2022-06-04"</span>, <span class="st">"2022-08-04"</span>],</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    bands<span class="op">=</span>[<span class="st">"SCL"</span>],</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    max_cloud_cover<span class="op">=</span><span class="dv">95</span>,</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>cloud_mask <span class="op">=</span> scl.process(</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">"to_scl_dilation_mask"</span>,</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    data<span class="op">=</span>scl,</span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    kernel1_size<span class="op">=</span><span class="dv">17</span>, kernel2_size<span class="op">=</span><span class="dv">77</span>,</span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    mask1_values<span class="op">=</span>[<span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>, <span class="dv">7</span>],</span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    mask2_values<span class="op">=</span>[<span class="dv">3</span>, <span class="dv">8</span>, <span class="dv">9</span>, <span class="dv">10</span>, <span class="dv">11</span>],</span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    erosion_kernel_size<span class="op">=</span><span class="dv">3</span>)</span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>sentinel2 <span class="op">=</span> c.load_collection(</span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>    <span class="st">"SENTINEL2_L2A"</span>,</span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>    temporal_extent<span class="op">=</span>[<span class="st">"2022-06-04"</span>, <span class="st">"2022-08-04"</span>],</span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    bands<span class="op">=</span>[<span class="st">"B02"</span>, <span class="st">"B03"</span>, <span class="st">"B04"</span>],</span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>    max_cloud_cover<span class="op">=</span><span class="dv">95</span>,</span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>sentinel2 <span class="op">=</span> sentinel2.mask(cloud_mask)</span>
-<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>sentinel2 <span class="op">=</span> sentinel2.aggregate_temporal_period(</span>
-<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>    <span class="st">"dekad"</span>, reducer<span class="op">=</span><span class="st">"median"</span></span>
-<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>).apply_dimension(dimension<span class="op">=</span><span class="st">"t"</span>, process<span class="op">=</span><span class="st">"array_interpolate_linear"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># establish the connection and authenticate</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>connection <span class="op">=</span> openeo.<span class="ex">connect</span>(<span class="st">"openeofed.dataspace.copernicus.eu"</span>).authenticate_oidc()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Authenticated using refresh token.</code></pre>
 </div>
 </div>
-<p>Some openEO backends offer precomputed Sentinel-1 backscatter. We <a href="https://open-eo.github.io/openeo-python-client/data_access.html#data-discovery">inspect the backend metadata</a> to check if such a collection is available otherwise we start from raw GRD and <a href="https://open-eo.github.io/openeo-python-client/cookbook/ard.html#sar-backscatter">compute it on the fly</a>.</p>
+<p>From a list of Proba-V collections, users can directly access the following 1-day, 5-day, and 10-day synthesis Proba-V data using openEO.</p>
 <div class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>S1_collection <span class="op">=</span> <span class="st">"SENTINEL1_GRD"</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="st">"SENTINEL1_GRD_SIGMA0"</span> <span class="kw">in</span> c.list_collection_ids():</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    S1_collection <span class="op">=</span> <span class="st">"SENTINEL1_GRD_SIGMA0"</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>S1_collection</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="3">
-<pre><code>'SENTINEL1_GRD_SIGMA0'</code></pre>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>collections <span class="op">=</span> connection.list_collections()</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter collections with "PROBA-V" in their title and print title and id</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> collection <span class="kw">in</span> collections:</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="st">"title"</span> <span class="kw">in</span> collection <span class="kw">and</span> <span class="st">"PROBA-V"</span> <span class="kw">in</span> collection[<span class="st">"title"</span>]:</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"ID: </span><span class="sc">{</span>collection<span class="sc">.</span>get(<span class="st">'id'</span>)<span class="sc">}</span><span class="ss">, Title: </span><span class="sc">{</span>collection<span class="sc">.</span>get(<span class="st">'title'</span>)<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>ID: PROBAV_L3_S10_TOC_333M, Title: PROBA-V S10 TOC 300 m COG: Decadal synthesis of S1's as Maximum Value Compositing (MVC), COG format - Collection 2
+ID: PROBAV_L3_S5_TOC_100M, Title: PROBA-V S5 TOC 100 m COG: Data corrected for atmospheric effects with the SMAC (Simplified Method for Atmosheric Corrections) algorithm, COG format - Collection 2
+ID: PROBAV_L3_S1_TOC_100M, Title: PROBA-V S1 TOC 100 m COG: Data corrected for atmospheric effects with the SMAC (Simplified Method for Atmosheric Corrections) algorithm, COG format - Collection 2
+ID: PROBAV_L3_S1_TOC_333M, Title: PROBA-V S1 TOC 300 m COG: Data corrected for atmospheric effects with the SMAC (Simplified Method for Atmosheric Corrections) algorithm, COG format - Collection 2</code></pre>
 </div>
 </div>
+<p>Users can obtain detailed descriptions of each collection by executing the command <code>connection.describe_collection("PROBAV_L3_S10_TOC_333M")</code>.</p>
+<p>For this example, we will use the <code>PROBAV_L3_S5_TOC_100M</code> collection.</p>
 <div class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>sentinel1 <span class="op">=</span> c.load_collection(</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    S1_collection, temporal_extent<span class="op">=</span>[<span class="st">"2022-06-04"</span>, <span class="st">"2022-08-04"</span>], bands<span class="op">=</span>[<span class="st">"VV"</span>, <span class="st">"VH"</span>]</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> S1_collection <span class="op">==</span> <span class="st">"SENTINEL1_GRD"</span>:</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    sentinel1 <span class="op">=</span> sentinel1.sar_backscatter(</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>        coefficient<span class="op">=</span><span class="st">"sigma0-ellipsoid"</span>,</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>        local_incidence_angle<span class="op">=</span><span class="va">False</span>,</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>        elevation_model<span class="op">=</span><span class="st">"COPERNICUS_30"</span>,</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>sentinel1 <span class="op">=</span> sentinel1.aggregate_temporal_period(</span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">"dekad"</span>, reducer<span class="op">=</span><span class="st">"median"</span></span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>).apply_dimension(dimension<span class="op">=</span><span class="st">"t"</span>, process<span class="op">=</span><span class="st">"array_interpolate_linear"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load data cube from PROBAV_L3_S5_TOC_100M collection.</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>cube <span class="op">=</span> connection.load_collection(</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"PROBAV_L3_S5_TOC_100M"</span>,</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    temporal_extent<span class="op">=</span>[<span class="st">"2021-01-01"</span>, <span class="st">"2021-12-01"</span>],</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    bands<span class="op">=</span>[<span class="st">"NDVI"</span>],</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Now we can simply combine both cubes. Resampling is performed implicitly if needed, but explicit resampling can also be specified.</p>
 <div class="cell" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>merged <span class="op">=</span> sentinel2.merge_cubes(sentinel1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># apply offset and rescale</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>cube <span class="op">=</span> cube.<span class="bu">apply</span>(<span class="kw">lambda</span> x: <span class="fl">0.004</span> <span class="op">*</span> x <span class="op">-</span> <span class="fl">0.08</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>The next block receives the combined Sentinel-1 and Sentinel-2 input and transforms it using any method. This can be, for instance, a neural network based on PyTorch.</p>
-<p>This example uses blocks of 128x128 pixels with an 8-pixel overlap. Sizes for the time and band dimensions are not specified so that they will be fully included.</p>
-<p>The UDF in this example also shows how to print statements to the log, which is an easy way to understand better the XArray data passed in. More information on UDFs can be found in <a href="https://open-eo.github.io/openeo-python-client/udf.html">the documentation</a>.</p>
+<p>Users can either download the NDVI data retrieved in the previous cell or proceed with further analysis.</p>
+<p>Here, we will create an NDVI time series. In the following cell, we will use the <code>DataCube.aggregate_spatial()</code> method to compute the mean NDVI for each specified field.</p>
 <div class="cell" data-execution_count="6">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>my_udf <span class="op">=</span> openeo.UDF(</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"""</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="st">from openeo.udf import XarrayDataCube</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="st">from openeo.udf.debug import inspect</span></span>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> read_json(filename: <span class="bu">str</span>) <span class="op">-&gt;</span> <span class="bu">dict</span>:</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> <span class="bu">open</span>(filename) <span class="im">as</span> <span class="bu">input</span>:</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>        field <span class="op">=</span> json.load(<span class="bu">input</span>)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> field</span>
 <span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="st">def apply_datacube(cube: XarrayDataCube, context: dict) -&gt; XarrayDataCube:</span></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="st">    array = cube.get_array()</span></span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="st">    inspect(array,level="ERROR",message="inspecting input cube")</span></span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="st">    array.values = 0.0001 * array.values</span></span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="st">    return cube</span></span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>fused <span class="op">=</span> merged.apply_neighborhood(</span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    my_udf,</span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>    size<span class="op">=</span>[</span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>        {<span class="st">"dimension"</span>: <span class="st">"x"</span>, <span class="st">"value"</span>: <span class="dv">112</span>, <span class="st">"unit"</span>: <span class="st">"px"</span>},</span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>        {<span class="st">"dimension"</span>: <span class="st">"y"</span>, <span class="st">"value"</span>: <span class="dv">112</span>, <span class="st">"unit"</span>: <span class="st">"px"</span>},</span>
-<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>    ],</span>
-<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>    overlap<span class="op">=</span>[</span>
-<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>        {<span class="st">"dimension"</span>: <span class="st">"x"</span>, <span class="st">"value"</span>: <span class="dv">8</span>, <span class="st">"unit"</span>: <span class="st">"px"</span>},</span>
-<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>        {<span class="st">"dimension"</span>: <span class="st">"y"</span>, <span class="st">"value"</span>: <span class="dv">8</span>, <span class="st">"unit"</span>: <span class="st">"px"</span>},</span>
-<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>    ],</span>
-<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>fields <span class="op">=</span> read_json(<span class="st">"polygons.geojson"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell" data-execution_count="7">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>spatial_extent <span class="op">=</span> {</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"west"</span>: <span class="fl">4.45</span>,</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"east"</span>: <span class="fl">4.70</span>,</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"south"</span>: <span class="fl">51.16</span>,</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"north"</span>: <span class="fl">51.22</span>,</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"crs"</span>: <span class="st">"epsg:4326"</span>,</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>job <span class="op">=</span> fused.filter_bbox(spatial_extent).execute_batch(</span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"result.nc"</span>, title<span class="op">=</span><span class="st">"Sentinel composite"</span>, filename_prefix<span class="op">=</span><span class="st">"merged_cube"</span></span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>0:00:00 Job 'vito-j-24080502c7b5492191eeec5b7c2090dd': send 'start'
-0:00:46 Job 'vito-j-24080502c7b5492191eeec5b7c2090dd': queued (progress 0%)
-0:00:51 Job 'vito-j-24080502c7b5492191eeec5b7c2090dd': queued (progress 0%)
-0:00:59 Job 'vito-j-24080502c7b5492191eeec5b7c2090dd': queued (progress 0%)
-0:01:09 Job 'vito-j-24080502c7b5492191eeec5b7c2090dd': queued (progress 0%)
-0:01:20 Job 'vito-j-24080502c7b5492191eeec5b7c2090dd': running (progress N/A)
-0:01:35 Job 'vito-j-24080502c7b5492191eeec5b7c2090dd': running (progress N/A)
-0:01:50 Job 'vito-j-24080502c7b5492191eeec5b7c2090dd': running (progress N/A)
-0:02:10 Job 'vito-j-24080502c7b5492191eeec5b7c2090dd': running (progress N/A)
-0:02:38 Job 'vito-j-24080502c7b5492191eeec5b7c2090dd': running (progress N/A)
-0:03:09 Job 'vito-j-24080502c7b5492191eeec5b7c2090dd': running (progress N/A)
-0:03:47 Job 'vito-j-24080502c7b5492191eeec5b7c2090dd': running (progress N/A)
-0:04:35 Job 'vito-j-24080502c7b5492191eeec5b7c2090dd': running (progress N/A)
-0:05:33 Job 'vito-j-24080502c7b5492191eeec5b7c2090dd': running (progress N/A)
-0:06:34 Job 'vito-j-24080502c7b5492191eeec5b7c2090dd': running (progress N/A)
-0:07:34 Job 'vito-j-24080502c7b5492191eeec5b7c2090dd': running (progress N/A)
-0:08:34 Job 'vito-j-24080502c7b5492191eeec5b7c2090dd': running (progress N/A)
-0:09:34 Job 'vito-j-24080502c7b5492191eeec5b7c2090dd': running (progress N/A)
-0:10:37 Job 'vito-j-24080502c7b5492191eeec5b7c2090dd': finished (progress 100%)</code></pre>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>ndvi_timeseries <span class="op">=</span> cube.aggregate_spatial(geometries<span class="op">=</span>fields, reducer<span class="op">=</span><span class="st">"mean"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>Finally, let us perform the computation synchronously and retrieve the results as a CSV file.</p>
+<div class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>ndvi_timeseries.download(<span class="st">"ProbaV.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>When the job is finished, are downloaded as netCDF and can be inspected using XArray or a desktop viewer like QGis.</p>
-<div class="cell" data-execution_count="9">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> xarray <span class="im">as</span> xr</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>xr.open_dataset(<span class="st">"result.nc"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="9">
-
-<div><svg style="position: absolute; width: 0; height: 0; overflow: hidden">
-<defs>
-<symbol id="icon-database" viewbox="0 0 32 32">
-<path d="M16 0c-8.837 0-16 2.239-16 5v4c0 2.761 7.163 5 16 5s16-2.239 16-5v-4c0-2.761-7.163-5-16-5z"></path>
-<path d="M16 17c-8.837 0-16-2.239-16-5v6c0 2.761 7.163 5 16 5s16-2.239 16-5v-6c0 2.761-7.163 5-16 5z"></path>
-<path d="M16 26c-8.837 0-16-2.239-16-5v6c0 2.761 7.163 5 16 5s16-2.239 16-5v-6c0 2.761-7.163 5-16 5z"></path>
-</symbol>
-<symbol id="icon-file-text2" viewbox="0 0 32 32">
-<path d="M28.681 7.159c-0.694-0.947-1.662-2.053-2.724-3.116s-2.169-2.030-3.116-2.724c-1.612-1.182-2.393-1.319-2.841-1.319h-15.5c-1.378 0-2.5 1.121-2.5 2.5v27c0 1.378 1.122 2.5 2.5 2.5h23c1.378 0 2.5-1.122 2.5-2.5v-19.5c0-0.448-0.137-1.23-1.319-2.841zM24.543 5.457c0.959 0.959 1.712 1.825 2.268 2.543h-4.811v-4.811c0.718 0.556 1.584 1.309 2.543 2.268zM28 29.5c0 0.271-0.229 0.5-0.5 0.5h-23c-0.271 0-0.5-0.229-0.5-0.5v-27c0-0.271 0.229-0.5 0.5-0.5 0 0 15.499-0 15.5 0v7c0 0.552 0.448 1 1 1h7v19.5z"></path>
-<path d="M23 26h-14c-0.552 0-1-0.448-1-1s0.448-1 1-1h14c0.552 0 1 0.448 1 1s-0.448 1-1 1z"></path>
-<path d="M23 22h-14c-0.552 0-1-0.448-1-1s0.448-1 1-1h14c0.552 0 1 0.448 1 1s-0.448 1-1 1z"></path>
-<path d="M23 18h-14c-0.552 0-1-0.448-1-1s0.448-1 1-1h14c0.552 0 1 0.448 1 1s-0.448 1-1 1z"></path>
-</symbol>
-</defs>
-</svg>
-<style>/* CSS stylesheet for displaying xarray objects in jupyterlab.
- *
- */
-
-:root {
-  --xr-font-color0: var(--jp-content-font-color0, rgba(0, 0, 0, 1));
-  --xr-font-color2: var(--jp-content-font-color2, rgba(0, 0, 0, 0.54));
-  --xr-font-color3: var(--jp-content-font-color3, rgba(0, 0, 0, 0.38));
-  --xr-border-color: var(--jp-border-color2, #e0e0e0);
-  --xr-disabled-color: var(--jp-layout-color3, #bdbdbd);
-  --xr-background-color: var(--jp-layout-color0, white);
-  --xr-background-color-row-even: var(--jp-layout-color1, white);
-  --xr-background-color-row-odd: var(--jp-layout-color2, #eeeeee);
-}
-
-html[theme=dark],
-body[data-theme=dark],
-body.vscode-dark {
-  --xr-font-color0: rgba(255, 255, 255, 1);
-  --xr-font-color2: rgba(255, 255, 255, 0.54);
-  --xr-font-color3: rgba(255, 255, 255, 0.38);
-  --xr-border-color: #1F1F1F;
-  --xr-disabled-color: #515151;
-  --xr-background-color: #111111;
-  --xr-background-color-row-even: #111111;
-  --xr-background-color-row-odd: #313131;
-}
-
-.xr-wrap {
-  display: block !important;
-  min-width: 300px;
-  max-width: 700px;
-}
-
-.xr-text-repr-fallback {
-  /* fallback to plain text repr when CSS is not injected (untrusted notebook) */
-  display: none;
-}
-
-.xr-header {
-  padding-top: 6px;
-  padding-bottom: 6px;
-  margin-bottom: 4px;
-  border-bottom: solid 1px var(--xr-border-color);
-}
-
-.xr-header > div,
-.xr-header > ul {
-  display: inline;
-  margin-top: 0;
-  margin-bottom: 0;
-}
-
-.xr-obj-type,
-.xr-array-name {
-  margin-left: 2px;
-  margin-right: 10px;
-}
-
-.xr-obj-type {
-  color: var(--xr-font-color2);
-}
-
-.xr-sections {
-  padding-left: 0 !important;
-  display: grid;
-  grid-template-columns: 150px auto auto 1fr 20px 20px;
-}
-
-.xr-section-item {
-  display: contents;
-}
-
-.xr-section-item input {
-  display: none;
-}
-
-.xr-section-item input + label {
-  color: var(--xr-disabled-color);
-}
-
-.xr-section-item input:enabled + label {
-  cursor: pointer;
-  color: var(--xr-font-color2);
-}
-
-.xr-section-item input:enabled + label:hover {
-  color: var(--xr-font-color0);
-}
-
-.xr-section-summary {
-  grid-column: 1;
-  color: var(--xr-font-color2);
-  font-weight: 500;
-}
-
-.xr-section-summary > span {
-  display: inline-block;
-  padding-left: 0.5em;
-}
-
-.xr-section-summary-in:disabled + label {
-  color: var(--xr-font-color2);
-}
-
-.xr-section-summary-in + label:before {
-  display: inline-block;
-  content: '►';
-  font-size: 11px;
-  width: 15px;
-  text-align: center;
-}
-
-.xr-section-summary-in:disabled + label:before {
-  color: var(--xr-disabled-color);
-}
-
-.xr-section-summary-in:checked + label:before {
-  content: '▼';
-}
-
-.xr-section-summary-in:checked + label > span {
-  display: none;
-}
-
-.xr-section-summary,
-.xr-section-inline-details {
-  padding-top: 4px;
-  padding-bottom: 4px;
-}
-
-.xr-section-inline-details {
-  grid-column: 2 / -1;
-}
-
-.xr-section-details {
-  display: none;
-  grid-column: 1 / -1;
-  margin-bottom: 5px;
-}
-
-.xr-section-summary-in:checked ~ .xr-section-details {
-  display: contents;
-}
-
-.xr-array-wrap {
-  grid-column: 1 / -1;
-  display: grid;
-  grid-template-columns: 20px auto;
-}
-
-.xr-array-wrap > label {
-  grid-column: 1;
-  vertical-align: top;
-}
-
-.xr-preview {
-  color: var(--xr-font-color3);
-}
-
-.xr-array-preview,
-.xr-array-data {
-  padding: 0 5px !important;
-  grid-column: 2;
-}
-
-.xr-array-data,
-.xr-array-in:checked ~ .xr-array-preview {
-  display: none;
-}
-
-.xr-array-in:checked ~ .xr-array-data,
-.xr-array-preview {
-  display: inline-block;
-}
-
-.xr-dim-list {
-  display: inline-block !important;
-  list-style: none;
-  padding: 0 !important;
-  margin: 0;
-}
-
-.xr-dim-list li {
-  display: inline-block;
-  padding: 0;
-  margin: 0;
-}
-
-.xr-dim-list:before {
-  content: '(';
-}
-
-.xr-dim-list:after {
-  content: ')';
-}
-
-.xr-dim-list li:not(:last-child):after {
-  content: ',';
-  padding-right: 5px;
-}
-
-.xr-has-index {
-  font-weight: bold;
-}
-
-.xr-var-list,
-.xr-var-item {
-  display: contents;
-}
-
-.xr-var-item > div,
-.xr-var-item label,
-.xr-var-item > .xr-var-name span {
-  background-color: var(--xr-background-color-row-even);
-  margin-bottom: 0;
-}
-
-.xr-var-item > .xr-var-name:hover span {
-  padding-right: 5px;
-}
-
-.xr-var-list > li:nth-child(odd) > div,
-.xr-var-list > li:nth-child(odd) > label,
-.xr-var-list > li:nth-child(odd) > .xr-var-name span {
-  background-color: var(--xr-background-color-row-odd);
-}
-
-.xr-var-name {
-  grid-column: 1;
-}
-
-.xr-var-dims {
-  grid-column: 2;
-}
-
-.xr-var-dtype {
-  grid-column: 3;
-  text-align: right;
-  color: var(--xr-font-color2);
-}
-
-.xr-var-preview {
-  grid-column: 4;
-}
-
-.xr-index-preview {
-  grid-column: 2 / 5;
-  color: var(--xr-font-color2);
-}
-
-.xr-var-name,
-.xr-var-dims,
-.xr-var-dtype,
-.xr-preview,
-.xr-attrs dt {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  padding-right: 10px;
-}
-
-.xr-var-name:hover,
-.xr-var-dims:hover,
-.xr-var-dtype:hover,
-.xr-attrs dt:hover {
-  overflow: visible;
-  width: auto;
-  z-index: 1;
-}
-
-.xr-var-attrs,
-.xr-var-data,
-.xr-index-data {
-  display: none;
-  background-color: var(--xr-background-color) !important;
-  padding-bottom: 5px !important;
-}
-
-.xr-var-attrs-in:checked ~ .xr-var-attrs,
-.xr-var-data-in:checked ~ .xr-var-data,
-.xr-index-data-in:checked ~ .xr-index-data {
-  display: block;
-}
-
-.xr-var-data > table {
-  float: right;
-}
-
-.xr-var-name span,
-.xr-var-data,
-.xr-index-name div,
-.xr-index-data,
-.xr-attrs {
-  padding-left: 25px !important;
-}
-
-.xr-attrs,
-.xr-var-attrs,
-.xr-var-data,
-.xr-index-data {
-  grid-column: 1 / -1;
-}
-
-dl.xr-attrs {
-  padding: 0;
-  margin: 0;
-  display: grid;
-  grid-template-columns: 125px auto;
-}
-
-.xr-attrs dt,
-.xr-attrs dd {
-  padding: 0;
-  margin: 0;
-  float: left;
-  padding-right: 10px;
-  width: auto;
-}
-
-.xr-attrs dt {
-  font-weight: normal;
-  grid-column: 1;
-}
-
-.xr-attrs dt:hover span {
-  display: inline-block;
-  background: var(--xr-background-color);
-  padding-right: 10px;
-}
-
-.xr-attrs dd {
-  grid-column: 2;
-  white-space: pre-wrap;
-  word-break: break-all;
-}
-
-.xr-icon-database,
-.xr-icon-file-text2,
-.xr-no-icon {
-  display: inline-block;
-  vertical-align: middle;
-  width: 1em;
-  height: 1.5em !important;
-  stroke-width: 0;
-  stroke: currentColor;
-  fill: currentColor;
-}
-</style><pre class="xr-text-repr-fallback">&lt;xarray.Dataset&gt;
-Dimensions:  (t: 7, x: 1762, y: 706)
-Coordinates:
-  * t        (t) datetime64[ns] 2022-06-01 2022-06-11 ... 2022-07-21 2022-08-01
-  * x        (x) float64 6.013e+05 6.013e+05 6.013e+05 ... 6.189e+05 6.189e+05
-  * y        (y) float64 5.676e+06 5.676e+06 5.676e+06 ... 5.669e+06 5.669e+06
-Data variables:
-    crs      |S1 ...
-    B02      (t, y, x) float64 ...
-    B03      (t, y, x) float64 ...
-    B04      (t, y, x) float64 ...
-    SCL      (t, y, x) float64 ...
-    VV       (t, y, x) float64 ...
-    VH       (t, y, x) float64 ...
-Attributes:
-    Conventions:  CF-1.9
-    institution:  openEO platform - Geotrellis backend: 0.38.6a1
-    description:  
-    title:        </pre><div class="xr-wrap" style="display:none"><div class="xr-header"><div class="xr-obj-type">xarray.Dataset</div></div><ul class="xr-sections"><li class="xr-section-item"><input id="section-9bbd6234-e638-4ce2-9e7e-d9d6cce2ad99" class="xr-section-summary-in" type="checkbox" disabled=""><label for="section-9bbd6234-e638-4ce2-9e7e-d9d6cce2ad99" class="xr-section-summary" title="Expand/collapse section">Dimensions:</label><div class="xr-section-inline-details"><ul class="xr-dim-list"><li><span class="xr-has-index">t</span>: 7</li><li><span class="xr-has-index">x</span>: 1762</li><li><span class="xr-has-index">y</span>: 706</li></ul></div><div class="xr-section-details"></div></li><li class="xr-section-item"><input id="section-7deceb70-7d20-47e5-872d-518736588f5c" class="xr-section-summary-in" type="checkbox" checked=""><label for="section-7deceb70-7d20-47e5-872d-518736588f5c" class="xr-section-summary">Coordinates: <span>(3)</span></label><div class="xr-section-inline-details"></div><div class="xr-section-details"><ul class="xr-var-list"><li class="xr-var-item"><div class="xr-var-name"><span class="xr-has-index">t</span></div><div class="xr-var-dims">(t)</div><div class="xr-var-dtype">datetime64[ns]</div><div class="xr-var-preview xr-preview">2022-06-01 ... 2022-08-01</div><input id="attrs-b08e3f2e-b8e9-4207-b16d-dda5fc1d6ac2" class="xr-var-attrs-in" type="checkbox"><label for="attrs-b08e3f2e-b8e9-4207-b16d-dda5fc1d6ac2" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use href="#icon-file-text2"></use></svg></label><input id="data-2f3228a0-2b21-49d0-8efb-dec51e29fa3b" class="xr-var-data-in" type="checkbox"><label for="data-2f3228a0-2b21-49d0-8efb-dec51e29fa3b" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"><dt><span>standard_name :</span></dt><dd>t</dd><dt><span>long_name :</span></dt><dd>t</dd><dt><span>axis :</span></dt><dd>T</dd></dl></div><div class="xr-var-data"><pre>array(['2022-06-01T00:00:00.000000000', '2022-06-11T00:00:00.000000000',
-       '2022-06-21T00:00:00.000000000', '2022-07-01T00:00:00.000000000',
-       '2022-07-11T00:00:00.000000000', '2022-07-21T00:00:00.000000000',
-       '2022-08-01T00:00:00.000000000'], dtype='datetime64[ns]')</pre></div></li><li class="xr-var-item"><div class="xr-var-name"><span class="xr-has-index">x</span></div><div class="xr-var-dims">(x)</div><div class="xr-var-dtype">float64</div><div class="xr-var-preview xr-preview">6.013e+05 6.013e+05 ... 6.189e+05</div><input id="attrs-cc44837a-fa16-415b-8a25-5806666c48bb" class="xr-var-attrs-in" type="checkbox"><label for="attrs-cc44837a-fa16-415b-8a25-5806666c48bb" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use href="#icon-file-text2"></use></svg></label><input id="data-391faace-e165-48be-8f73-d1cbc67609e0" class="xr-var-data-in" type="checkbox"><label for="data-391faace-e165-48be-8f73-d1cbc67609e0" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"><dt><span>standard_name :</span></dt><dd>projection_x_coordinate</dd><dt><span>long_name :</span></dt><dd>x coordinate of projection</dd><dt><span>units :</span></dt><dd>m</dd></dl></div><div class="xr-var-data"><pre>array([601265., 601275., 601285., ..., 618855., 618865., 618875.])</pre></div></li><li class="xr-var-item"><div class="xr-var-name"><span class="xr-has-index">y</span></div><div class="xr-var-dims">(y)</div><div class="xr-var-dtype">float64</div><div class="xr-var-preview xr-preview">5.676e+06 5.676e+06 ... 5.669e+06</div><input id="attrs-f4a71573-9156-4eff-87f9-0e1ee23f4fda" class="xr-var-attrs-in" type="checkbox"><label for="attrs-f4a71573-9156-4eff-87f9-0e1ee23f4fda" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use href="#icon-file-text2"></use></svg></label><input id="data-7b9ba299-2c94-43cc-818d-7713b89fada0" class="xr-var-data-in" type="checkbox"><label for="data-7b9ba299-2c94-43cc-818d-7713b89fada0" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"><dt><span>standard_name :</span></dt><dd>projection_y_coordinate</dd><dt><span>long_name :</span></dt><dd>y coordinate of projection</dd><dt><span>units :</span></dt><dd>m</dd></dl></div><div class="xr-var-data"><pre>array([5675665., 5675655., 5675645., ..., 5668635., 5668625., 5668615.])</pre></div></li></ul></div></li><li class="xr-section-item"><input id="section-7f817382-c2e3-47fc-9563-0b287f5e724e" class="xr-section-summary-in" type="checkbox" checked=""><label for="section-7f817382-c2e3-47fc-9563-0b287f5e724e" class="xr-section-summary">Data variables: <span>(7)</span></label><div class="xr-section-inline-details"></div><div class="xr-section-details"><ul class="xr-var-list"><li class="xr-var-item"><div class="xr-var-name"><span>crs</span></div><div class="xr-var-dims">()</div><div class="xr-var-dtype">|S1</div><div class="xr-var-preview xr-preview">...</div><input id="attrs-fa9dbc2c-0560-4168-a540-49ed881dbc0a" class="xr-var-attrs-in" type="checkbox"><label for="attrs-fa9dbc2c-0560-4168-a540-49ed881dbc0a" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use href="#icon-file-text2"></use></svg></label><input id="data-9ed96f11-c396-448d-a83c-12b3c2f37244" class="xr-var-data-in" type="checkbox"><label for="data-9ed96f11-c396-448d-a83c-12b3c2f37244" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"><dt><span>crs_wkt :</span></dt><dd>PROJCS["WGS 84 / UTM zone 31N", GEOGCS["WGS 84", DATUM["World Geodetic System 1984", SPHEROID["WGS 84", 6378137.0, 298.257223563, AUTHORITY["EPSG","7030"]], AUTHORITY["EPSG","6326"]], PRIMEM["Greenwich", 0.0, AUTHORITY["EPSG","8901"]], UNIT["degree", 0.017453292519943295], AXIS["Geodetic longitude", EAST], AXIS["Geodetic latitude", NORTH], AUTHORITY["EPSG","4326"]], PROJECTION["Transverse_Mercator", AUTHORITY["EPSG","9807"]], PARAMETER["central_meridian", 3.0], PARAMETER["latitude_of_origin", 0.0], PARAMETER["scale_factor", 0.9996], PARAMETER["false_easting", 500000.0], PARAMETER["false_northing", 0.0], UNIT["m", 1.0], AXIS["Easting", EAST], AXIS["Northing", NORTH], AUTHORITY["EPSG","32631"]]</dd><dt><span>spatial_ref :</span></dt><dd>PROJCS["WGS 84 / UTM zone 31N", GEOGCS["WGS 84", DATUM["World Geodetic System 1984", SPHEROID["WGS 84", 6378137.0, 298.257223563, AUTHORITY["EPSG","7030"]], AUTHORITY["EPSG","6326"]], PRIMEM["Greenwich", 0.0, AUTHORITY["EPSG","8901"]], UNIT["degree", 0.017453292519943295], AXIS["Geodetic longitude", EAST], AXIS["Geodetic latitude", NORTH], AUTHORITY["EPSG","4326"]], PROJECTION["Transverse_Mercator", AUTHORITY["EPSG","9807"]], PARAMETER["central_meridian", 3.0], PARAMETER["latitude_of_origin", 0.0], PARAMETER["scale_factor", 0.9996], PARAMETER["false_easting", 500000.0], PARAMETER["false_northing", 0.0], UNIT["m", 1.0], AXIS["Easting", EAST], AXIS["Northing", NORTH], AUTHORITY["EPSG","32631"]]</dd></dl></div><div class="xr-var-data"><pre>[1 values with dtype=|S1]</pre></div></li><li class="xr-var-item"><div class="xr-var-name"><span>B02</span></div><div class="xr-var-dims">(t, y, x)</div><div class="xr-var-dtype">float64</div><div class="xr-var-preview xr-preview">...</div><input id="attrs-cea3f9dd-4fe0-4aca-8814-2297bf8355f4" class="xr-var-attrs-in" type="checkbox"><label for="attrs-cea3f9dd-4fe0-4aca-8814-2297bf8355f4" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use href="#icon-file-text2"></use></svg></label><input id="data-5241e65e-5b9c-46cf-a3b8-7728e8275292" class="xr-var-data-in" type="checkbox"><label for="data-5241e65e-5b9c-46cf-a3b8-7728e8275292" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"><dt><span>long_name :</span></dt><dd>B02</dd><dt><span>units :</span></dt><dd></dd><dt><span>grid_mapping :</span></dt><dd>crs</dd></dl></div><div class="xr-var-data"><pre>[8707804 values with dtype=float64]</pre></div></li><li class="xr-var-item"><div class="xr-var-name"><span>B03</span></div><div class="xr-var-dims">(t, y, x)</div><div class="xr-var-dtype">float64</div><div class="xr-var-preview xr-preview">...</div><input id="attrs-1fa8a951-6c67-4cda-ac1c-e1ad43a8ce8c" class="xr-var-attrs-in" type="checkbox"><label for="attrs-1fa8a951-6c67-4cda-ac1c-e1ad43a8ce8c" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use href="#icon-file-text2"></use></svg></label><input id="data-e6f8de35-534f-491f-8197-2435b5890b38" class="xr-var-data-in" type="checkbox"><label for="data-e6f8de35-534f-491f-8197-2435b5890b38" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"><dt><span>long_name :</span></dt><dd>B03</dd><dt><span>units :</span></dt><dd></dd><dt><span>grid_mapping :</span></dt><dd>crs</dd></dl></div><div class="xr-var-data"><pre>[8707804 values with dtype=float64]</pre></div></li><li class="xr-var-item"><div class="xr-var-name"><span>B04</span></div><div class="xr-var-dims">(t, y, x)</div><div class="xr-var-dtype">float64</div><div class="xr-var-preview xr-preview">...</div><input id="attrs-f7a69d0a-5bb0-4916-9049-189a79660cbf" class="xr-var-attrs-in" type="checkbox"><label for="attrs-f7a69d0a-5bb0-4916-9049-189a79660cbf" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use href="#icon-file-text2"></use></svg></label><input id="data-9698388a-0af9-4686-b65e-d82ee42c254e" class="xr-var-data-in" type="checkbox"><label for="data-9698388a-0af9-4686-b65e-d82ee42c254e" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"><dt><span>long_name :</span></dt><dd>B04</dd><dt><span>units :</span></dt><dd></dd><dt><span>grid_mapping :</span></dt><dd>crs</dd></dl></div><div class="xr-var-data"><pre>[8707804 values with dtype=float64]</pre></div></li><li class="xr-var-item"><div class="xr-var-name"><span>SCL</span></div><div class="xr-var-dims">(t, y, x)</div><div class="xr-var-dtype">float64</div><div class="xr-var-preview xr-preview">...</div><input id="attrs-d0683e86-f377-49c4-b797-37df8b40326a" class="xr-var-attrs-in" type="checkbox"><label for="attrs-d0683e86-f377-49c4-b797-37df8b40326a" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use href="#icon-file-text2"></use></svg></label><input id="data-1be2ba04-ec81-46d6-bd53-f2a480c44284" class="xr-var-data-in" type="checkbox"><label for="data-1be2ba04-ec81-46d6-bd53-f2a480c44284" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"><dt><span>long_name :</span></dt><dd>SCL</dd><dt><span>units :</span></dt><dd></dd><dt><span>grid_mapping :</span></dt><dd>crs</dd></dl></div><div class="xr-var-data"><pre>[8707804 values with dtype=float64]</pre></div></li><li class="xr-var-item"><div class="xr-var-name"><span>VV</span></div><div class="xr-var-dims">(t, y, x)</div><div class="xr-var-dtype">float64</div><div class="xr-var-preview xr-preview">...</div><input id="attrs-d2ab793a-74b8-4891-9c1c-45e51ade81a7" class="xr-var-attrs-in" type="checkbox"><label for="attrs-d2ab793a-74b8-4891-9c1c-45e51ade81a7" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use href="#icon-file-text2"></use></svg></label><input id="data-887b3a23-0cb4-42e5-a578-2abe9c472208" class="xr-var-data-in" type="checkbox"><label for="data-887b3a23-0cb4-42e5-a578-2abe9c472208" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"><dt><span>long_name :</span></dt><dd>VV</dd><dt><span>units :</span></dt><dd></dd><dt><span>grid_mapping :</span></dt><dd>crs</dd></dl></div><div class="xr-var-data"><pre>[8707804 values with dtype=float64]</pre></div></li><li class="xr-var-item"><div class="xr-var-name"><span>VH</span></div><div class="xr-var-dims">(t, y, x)</div><div class="xr-var-dtype">float64</div><div class="xr-var-preview xr-preview">...</div><input id="attrs-ffe4312d-1fdd-4874-bd09-77eff7161316" class="xr-var-attrs-in" type="checkbox"><label for="attrs-ffe4312d-1fdd-4874-bd09-77eff7161316" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use href="#icon-file-text2"></use></svg></label><input id="data-6b78a809-d8c3-46b9-afc9-6703ce72330e" class="xr-var-data-in" type="checkbox"><label for="data-6b78a809-d8c3-46b9-afc9-6703ce72330e" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"><dt><span>long_name :</span></dt><dd>VH</dd><dt><span>units :</span></dt><dd></dd><dt><span>grid_mapping :</span></dt><dd>crs</dd></dl></div><div class="xr-var-data"><pre>[8707804 values with dtype=float64]</pre></div></li></ul></div></li><li class="xr-section-item"><input id="section-3dd5a7cf-1b1c-4bc9-ac9d-d4bfc490d4d4" class="xr-section-summary-in" type="checkbox"><label for="section-3dd5a7cf-1b1c-4bc9-ac9d-d4bfc490d4d4" class="xr-section-summary">Indexes: <span>(3)</span></label><div class="xr-section-inline-details"></div><div class="xr-section-details"><ul class="xr-var-list"><li class="xr-var-item"><div class="xr-index-name"><div>t</div></div><div class="xr-index-preview">PandasIndex</div><div></div><input id="index-d287898b-0d6a-40bc-b6e7-89dd5eaaf3be" class="xr-index-data-in" type="checkbox"><label for="index-d287898b-0d6a-40bc-b6e7-89dd5eaaf3be" title="Show/Hide index repr"><svg class="icon xr-icon-database"><use href="#icon-database"></use></svg></label><div class="xr-index-data"><pre>PandasIndex(DatetimeIndex(['2022-06-01', '2022-06-11', '2022-06-21', '2022-07-01',
-               '2022-07-11', '2022-07-21', '2022-08-01'],
-              dtype='datetime64[ns]', name='t', freq=None))</pre></div></li><li class="xr-var-item"><div class="xr-index-name"><div>x</div></div><div class="xr-index-preview">PandasIndex</div><div></div><input id="index-905c9cf9-1472-46a8-801f-8ab0559f60d1" class="xr-index-data-in" type="checkbox"><label for="index-905c9cf9-1472-46a8-801f-8ab0559f60d1" title="Show/Hide index repr"><svg class="icon xr-icon-database"><use href="#icon-database"></use></svg></label><div class="xr-index-data"><pre>PandasIndex(Index([601265.0, 601275.0, 601285.0, 601295.0, 601305.0, 601315.0, 601325.0,
-       601335.0, 601345.0, 601355.0,
-       ...
-       618785.0, 618795.0, 618805.0, 618815.0, 618825.0, 618835.0, 618845.0,
-       618855.0, 618865.0, 618875.0],
-      dtype='float64', name='x', length=1762))</pre></div></li><li class="xr-var-item"><div class="xr-index-name"><div>y</div></div><div class="xr-index-preview">PandasIndex</div><div></div><input id="index-2774e97c-00c0-4710-8d6c-063f3a2e0def" class="xr-index-data-in" type="checkbox"><label for="index-2774e97c-00c0-4710-8d6c-063f3a2e0def" title="Show/Hide index repr"><svg class="icon xr-icon-database"><use href="#icon-database"></use></svg></label><div class="xr-index-data"><pre>PandasIndex(Index([5675665.0, 5675655.0, 5675645.0, 5675635.0, 5675625.0, 5675615.0,
-       5675605.0, 5675595.0, 5675585.0, 5675575.0,
-       ...
-       5668705.0, 5668695.0, 5668685.0, 5668675.0, 5668665.0, 5668655.0,
-       5668645.0, 5668635.0, 5668625.0, 5668615.0],
-      dtype='float64', name='y', length=706))</pre></div></li></ul></div></li><li class="xr-section-item"><input id="section-017d8b2a-be9d-4e8f-a4b8-a627a22748fd" class="xr-section-summary-in" type="checkbox" checked=""><label for="section-017d8b2a-be9d-4e8f-a4b8-a627a22748fd" class="xr-section-summary">Attributes: <span>(4)</span></label><div class="xr-section-inline-details"></div><div class="xr-section-details"><dl class="xr-attrs"><dt><span>Conventions :</span></dt><dd>CF-1.9</dd><dt><span>institution :</span></dt><dd>openEO platform - Geotrellis backend: 0.38.6a1</dd><dt><span>description :</span></dt><dd></dd><dt><span>title :</span></dt><dd></dd></dl></div></li></ul></div></div>
+<p>In the following cell we will visualize the distribution of NDVI (Normalized Difference Vegetation Index) values over time using a box plot. This plot helps in understanding how vegetation health evolves over time</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the CSV file into a DataFrame</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>file_path <span class="op">=</span> <span class="st">"ProbaV.csv"</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_csv(file_path)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the box plot</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>px.box(</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    df,</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    x<span class="op">=</span><span class="st">"date"</span>,</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    y<span class="op">=</span><span class="st">"NDVI"</span>,</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>    title<span class="op">=</span><span class="st">"NDVI Over Time"</span>,</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>    labels<span class="op">=</span>{<span class="st">"date"</span>: <span class="st">"Date"</span>, <span class="st">"NDVI"</span>: <span class="st">"NDVI"</span>},</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="ProbaVplot.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">FInal Plot</figcaption>
+</figure>
 </div>
-<p>You can also inspect the result in the openEO editor: <img src="result.png" title="Batch job result" class="img-fluid" alt="Result in openEO editor"></p>
 
 
 

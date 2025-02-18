@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Documentation - Rescale RGB image for spatial chunks</title>
+<title>Documentation - EO Data Processing with the openEO MultiBackendJobManager</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -211,7 +211,7 @@ window.onload = function() {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Rescale RGB image for spatial chunks</li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">EO Data Processing with the openEO MultiBackendJobManager</li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
@@ -1305,15 +1305,35 @@ window.onload = function() {
 </nav>
 <div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#key-features" id="toc-key-features" class="nav-link active" data-scroll-target="#key-features">Key features</a></li>
+  <li><a href="#table-of-contents" id="toc-table-of-contents" class="nav-link" data-scroll-target="#table-of-contents">Table of Contents</a></li>
+  <li><a href="#import-libraries-and-define-constants" id="toc-import-libraries-and-define-constants" class="nav-link" data-scroll-target="#import-libraries-and-define-constants">Import Libraries and Define Constants</a></li>
+  <li><a href="#creating-the-jobs-database" id="toc-creating-the-jobs-database" class="nav-link" data-scroll-target="#creating-the-jobs-database">Creating the Jobs Database</a>
+  <ul>
+  <li><a href="#helper-function-creating-spatial-extents" id="toc-helper-function-creating-spatial-extents" class="nav-link" data-scroll-target="#helper-function-creating-spatial-extents">Helper Function: Creating Spatial Extents</a></li>
+  <li><a href="#helper-function-prepare-the-jobs-database" id="toc-helper-function-prepare-the-jobs-database" class="nav-link" data-scroll-target="#helper-function-prepare-the-jobs-database">Helper Function: Prepare the Jobs Database</a></li>
+  <li><a href="#visualizing-spatial-extents" id="toc-visualizing-spatial-extents" class="nav-link" data-scroll-target="#visualizing-spatial-extents">Visualizing Spatial Extents</a></li>
+  </ul></li>
+  <li><a href="#creating-the-job" id="toc-creating-the-job" class="nav-link" data-scroll-target="#creating-the-job">Creating the Job</a></li>
+  <li><a href="#managing-jobs-using-multibackendjobmanager" id="toc-managing-jobs-using-multibackendjobmanager" class="nav-link" data-scroll-target="#managing-jobs-using-multibackendjobmanager">Managing Jobs Using MultiBackendJobManager</a>
+  <ul>
+  <li><a href="#steps-to-run-the-jobs" id="toc-steps-to-run-the-jobs" class="nav-link" data-scroll-target="#steps-to-run-the-jobs">Steps to Run the Jobs:</a></li>
+  </ul></li>
+  <li><a href="#visualise-output" id="toc-visualise-output" class="nav-link" data-scroll-target="#visualise-output">Visualise Output</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
-<main class="content column-page-right" id="quarto-document-content">
+<main class="content column-body" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Rescale RGB image for spatial chunks</h1>
+<h1 class="title">EO Data Processing with the openEO MultiBackendJobManager</h1>
 </div>
 
 
@@ -1328,77 +1348,303 @@ window.onload = function() {
 
 </header>
 
-<p>This notebook shows a simple process for rescaling Sentinel 2 RGB images within polygon chunks that also showcases how to use <code>chunk_polygon()</code> with a (User Defined Function) UDF. (To be noted: chunk_polygon are experimental at the moment)</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># import necessary packages</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> openeo</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> openeo.api.process <span class="im">import</span> Parameter</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
+<p>In this notebook, we will demonstrate how to use the <a href="https://open-eo.github.io/openeo-python-client/cookbook/job_manager.html">MultiBackendJobManager</a> to set-up and track multiple jobs at once using OpenEO.</p>
+<p>This example will specifically focus on how to a manage a compositing workflow evaluated on various spatial locations.</p>
+<section id="key-features" class="level3">
+<h3 class="anchored" data-anchor-id="key-features">Key features</h3>
+<ol type="1">
+<li>Job Tracking: Keep track of jobs their statuses and results across different backends.</li>
+<li>Error Handling: Customizable handling of job errors and completed jobs.</li>
+<li>Database Support: Persist job metadata using CSV or Parquet files, allowing you to resume tracking after interruptions.</li>
+</ol>
+</section>
+<section id="table-of-contents" class="level3">
+<h3 class="anchored" data-anchor-id="table-of-contents">Table of Contents</h3>
+<ol type="1">
+<li><a href="#import-libraries-and-define-constants">Import Libraries and Define Constants</a></li>
+<li><a href="#preparing-the-jobs-database">Creating the Jobs Database</a></li>
+<li><a href="#creating-the-job">Creating the Job</a></li>
+<li><a href="#managing-jobs-using-multibackendjobmanager">Managing Jobs Using MultiBackendJobManager</a></li>
+</ol>
+</section>
+<section id="import-libraries-and-define-constants" class="level2">
+<h2 class="anchored" data-anchor-id="import-libraries-and-define-constants">Import Libraries and Define Constants</h2>
+<p>We will start by importing the necessary libraries and defining some constants for our compositing workflow.</p>
+<div class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> datetime</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> typing <span class="im">import</span> Dict, Any</span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> rasterio</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># connect with the backend</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>eoconn <span class="op">=</span> openeo.<span class="ex">connect</span>(<span class="st">"openeo.vito.be"</span>).authenticate_oidc()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> shapely.geometry <span class="im">import</span> box</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> geopandas <span class="im">as</span> gpd</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> rasterio</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> openeo</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> openeo.extra.job_management <span class="im">import</span> MultiBackendJobManager</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Constants</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>BASE_SPATIAL_START <span class="op">=</span> {<span class="st">"west"</span>: <span class="fl">664000.0</span>, <span class="st">"south"</span>: <span class="fl">5611120.0</span>, <span class="st">"crs"</span>: <span class="st">"EPSG:32631"</span>, <span class="st">"srs"</span>: <span class="st">"EPSG:32631"</span>}</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>SPATIAL_WINDOW_SIZE <span class="op">=</span> <span class="dv">10000</span>  <span class="co"># 10 km in meters</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>SPATIAL_WINDOW_GAP <span class="op">=</span> <span class="dv">10000</span>   <span class="co"># 10 km gap</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="creating-the-jobs-database" class="level2">
+<h2 class="anchored" data-anchor-id="creating-the-jobs-database">Creating the Jobs Database</h2>
+<p>The <code>MultiBackendJobManager</code> uses a jobs database to set-up, start and monitor all desired jobs. In what follows we will set up jobs database by populating it with all the varying input parameters for each job.</p>
+<p>In this example we will demonstrate how to set up the database using pandas. However, note that the jobs database can also be created manually if desired.</p>
+<section id="helper-function-creating-spatial-extents" class="level3">
+<h3 class="anchored" data-anchor-id="helper-function-creating-spatial-extents">Helper Function: Creating Spatial Extents</h3>
+<p>To automate the creation of our job database, we will define a few helper functions.</p>
+<p>The first helper function will generate a collection of spatial extents. Each spatial extent consists out of a 10km x 10km window.</p>
+<div class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_spatial_extent(offset_x: <span class="bu">int</span>, offset_y: <span class="bu">int</span>, base_extent: Dict[<span class="bu">str</span>, Any] <span class="op">=</span> BASE_SPATIAL_START) <span class="op">-&gt;</span> Dict[<span class="bu">str</span>, Any]:</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Create a spatial extent dictionary based on an offset for 10km by 10km windows."""</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">"west"</span>: base_extent[<span class="st">"west"</span>] <span class="op">+</span> offset_x <span class="op">*</span> (SPATIAL_WINDOW_SIZE <span class="op">+</span> SPATIAL_WINDOW_GAP),</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">"south"</span>: base_extent[<span class="st">"south"</span>] <span class="op">+</span> offset_y <span class="op">*</span> (SPATIAL_WINDOW_SIZE <span class="op">+</span> SPATIAL_WINDOW_GAP),</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"east"</span>: base_extent[<span class="st">"west"</span>] <span class="op">+</span> (offset_x <span class="op">+</span> <span class="dv">1</span>) <span class="op">*</span> SPATIAL_WINDOW_SIZE <span class="op">+</span> offset_x <span class="op">*</span> SPATIAL_WINDOW_GAP,</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"north"</span>: base_extent[<span class="st">"south"</span>] <span class="op">+</span> (offset_y <span class="op">+</span> <span class="dv">1</span>) <span class="op">*</span> SPATIAL_WINDOW_SIZE <span class="op">+</span> offset_y <span class="op">*</span> SPATIAL_WINDOW_GAP,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">"crs"</span>: base_extent[<span class="st">"crs"</span>],</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">"srs"</span>: base_extent[<span class="st">"srs"</span>]</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    }</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="helper-function-prepare-the-jobs-database" class="level3">
+<h3 class="anchored" data-anchor-id="helper-function-prepare-the-jobs-database">Helper Function: Prepare the Jobs Database</h3>
+<p>In this section, we prepare the jobs database through pandas. For each job we wish to run, we include all relevant input parameters. Since, in this example, we only want to vary the location, the Database will solely contain the spatial extents of interest.</p>
+<p>The helper function <code>prepare_jobs_db</code> creates this Database, defining spatial extents based on pre-defined offsets.</p>
+<div class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> prepare_jobs_db(max_offset:<span class="bu">int</span>) <span class="op">-&gt;</span> pd.DataFrame:</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Prepare a database using pandas, containing job configurations for benchmarking."""</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    jobs <span class="op">=</span> []</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Create combinations for the spatial grid</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> offset_x <span class="kw">in</span> <span class="bu">range</span>(max_offset):</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> offset_y <span class="kw">in</span> <span class="bu">range</span>(max_offset):</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>            jobs.append({</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>                <span class="st">"spatial_extent"</span>: create_spatial_extent(offset_x, offset_y),</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>            })</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> pd.DataFrame(jobs)</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>jobs_database <span class="op">=</span> prepare_jobs_db(max_offset <span class="op">=</span> <span class="dv">3</span>)</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(jobs_database)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                                      spatial_extent
+0  {'west': 664000.0, 'south': 5611120.0, 'east':...
+1  {'west': 664000.0, 'south': 5631120.0, 'east':...
+2  {'west': 664000.0, 'south': 5651120.0, 'east':...
+3  {'west': 684000.0, 'south': 5611120.0, 'east':...
+4  {'west': 684000.0, 'south': 5631120.0, 'east':...
+5  {'west': 684000.0, 'south': 5651120.0, 'east':...
+6  {'west': 704000.0, 'south': 5611120.0, 'east':...
+7  {'west': 704000.0, 'south': 5631120.0, 'east':...
+8  {'west': 704000.0, 'south': 5651120.0, 'east':...</code></pre>
+</div>
+</div>
+</section>
+<section id="visualizing-spatial-extents" class="level3">
+<h3 class="anchored" data-anchor-id="visualizing-spatial-extents">Visualizing Spatial Extents</h3>
+<p>Here, we illustrate how the defined windows map across the area of interest.</p>
+<div class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> visualize_spatial_extents(jobs_database: pd.DataFrame):</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Visualize spatial extents from the given DataFrame and overlay images for finished jobs."""</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    _, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">10</span>))</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Create a GeoDataFrame for spatial extents</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    geometries <span class="op">=</span> []</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> _, row <span class="kw">in</span> jobs_database.iterrows():</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>        extent <span class="op">=</span> row[<span class="st">"spatial_extent"</span>]</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>        rectangle <span class="op">=</span> box(extent[<span class="st">"west"</span>], extent[<span class="st">"south"</span>], extent[<span class="st">"east"</span>], extent[<span class="st">"north"</span>])</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>        geometries.append(rectangle)</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    gdf <span class="op">=</span> gpd.GeoDataFrame(geometry<span class="op">=</span>geometries)</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Plot the spatial extents</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    gdf.plot(ax<span class="op">=</span>ax, facecolor<span class="op">=</span><span class="st">'none'</span>, edgecolor<span class="op">=</span><span class="st">'blue'</span>)</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    plt.xlabel(<span class="st">"Easting (meters)"</span>)</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    plt.ylabel(<span class="st">"Northing (meters)"</span>)</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    plt.title(<span class="st">"Spatial Extents Visualization"</span>)</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>    plt.grid(<span class="va">True</span>)</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>    plt.show()</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Example usage</span></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>visualize_spatial_extents(jobs_database)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="ManagingMultipleLargeScaleJobs_files/figure-html/cell-5-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+</section>
+<section id="creating-the-job" class="level2">
+<h2 class="anchored" data-anchor-id="creating-the-job">Creating the Job</h2>
+<p>The next step is to define a <code>start_job</code> function. This function will instruct the <code>MultiBackendJobManager</code> on how to initiate a new job on the selected backend. The <code>start_job</code> functionality should adhere to the following structure <code>_start_job(row: pd.Series, connection: openeo.Connection, **kwargs)_</code>.</p>
+<p>In this example, the <code>MultiBackendJobManager</code> will iterate through the provided jobs database and run a basic compositing workflow for each individual row of the jobs database.</p>
+<p>While this example demonstrates a basic compositing workflow, the <code>MultiBackendJobManager</code> is capable of handling multiple high-computation jobs simultaneously.</p>
+<div class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> start_job(row: pd.Series, connection: openeo.Connection, <span class="op">**</span>kwargs) <span class="op">-&gt;</span> openeo.BatchJob:</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Start a new job using the specified row out of the jobs data base and connection."""</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Get the variable parameters from the dataframe</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    spatial_extent <span class="op">=</span> row[<span class="st">"spatial_extent"</span>]</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Build the openEO process</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    scl <span class="op">=</span> connection.load_collection(</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>        collection_id<span class="op">=</span><span class="st">"SENTINEL2_L2A"</span>,</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>        spatial_extent<span class="op">=</span>spatial_extent,</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>        temporal_extent<span class="op">=</span>[<span class="st">"2022-06-01"</span>,<span class="st">"2022-09-01"</span>],</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>        bands<span class="op">=</span>[<span class="st">"SCL"</span>],</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>        properties<span class="op">=</span>{<span class="st">"eo:cloud_cover"</span>: <span class="kw">lambda</span> x: x.lte(<span class="dv">60</span>)}</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    cloud_mask <span class="op">=</span> scl.process(</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>        <span class="st">"to_scl_dilation_mask"</span>,</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>        data<span class="op">=</span>scl,</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>        kernel1_size<span class="op">=</span><span class="dv">17</span>, kernel2_size<span class="op">=</span><span class="dv">77</span>,</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>        mask1_values<span class="op">=</span>[<span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>, <span class="dv">7</span>],</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>        mask2_values<span class="op">=</span>[<span class="dv">3</span>, <span class="dv">8</span>, <span class="dv">9</span>, <span class="dv">10</span>, <span class="dv">11</span>],</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>        erosion_kernel_size<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>    s2_cube <span class="op">=</span> connection.load_collection(</span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>        collection_id<span class="op">=</span><span class="st">"SENTINEL2_L2A"</span>,</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>        spatial_extent<span class="op">=</span>spatial_extent,</span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>        temporal_extent<span class="op">=</span>[<span class="st">"2022-06-01"</span>,<span class="st">"2022-09-01"</span>],</span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>        bands<span class="op">=</span>[<span class="st">"B02"</span>, <span class="st">"B03"</span>, <span class="st">"B04"</span>],</span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>        properties<span class="op">=</span>{<span class="st">"eo:cloud_cover"</span>: <span class="kw">lambda</span> x: x.lte(<span class="dv">60</span>)}</span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Mask out clouds</span></span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>    s2_cube <span class="op">=</span> s2_cube.mask(cloud_mask)</span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Create monthly composites by taking the mean</span></span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>    s2_cube <span class="op">=</span> s2_cube.aggregate_temporal_period(</span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>        period <span class="op">=</span> <span class="st">"month"</span>,</span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>        reducer <span class="op">=</span> <span class="st">"mean"</span></span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Fill gaps in the data using linear interpolation</span></span>
+<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>    s2_cube <span class="op">=</span> s2_cube.apply_dimension(</span>
+<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a>        dimension <span class="op">=</span> <span class="st">"t"</span>,</span>
+<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a>        process <span class="op">=</span> <span class="st">"array_interpolate_linear"</span></span>
+<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a>    s2_cube.save_result(<span class="bu">format</span> <span class="op">=</span> <span class="st">"GTiff"</span>)</span>
+<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> s2_cube.create_job(</span>
+<span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a>        title<span class="op">=</span><span class="st">'MultiBackendJobManager - Example'</span></span>
+<span id="cb6-50"><a href="#cb6-50" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="managing-jobs-using-multibackendjobmanager" class="level2">
+<h2 class="anchored" data-anchor-id="managing-jobs-using-multibackendjobmanager">Managing Jobs Using MultiBackendJobManager</h2>
+<p>With our jobs database and job definition set up, we can now run the jobs using the <code>MultiBackendJobManager</code>. This involves defining a path to where we will store the job tracker which contains the job statuses and metadata.</p>
+<section id="steps-to-run-the-jobs" class="level3">
+<h3 class="anchored" data-anchor-id="steps-to-run-the-jobs">Steps to Run the Jobs:</h3>
+<ol type="1">
+<li><p>Provide a path towards the job tracker: The predefined jobs database contains all the input parameters for the jobs we intend to run with the MultiBackendJobManager. Typically, this database will serve as the foundation for the job tracker. By specifying a unique path, the job tracker will be created, incorporating all the information from the original jobs database.</p>
+<p>Aditionally, the job tracker will also include a ‘status’ column, allowing you to easily monitor which jobs have been created, are currently running, have finished, or encountered an error. Furthermore, job usage metrics are added as the job is finished.</p>
+<p><strong>Caution:</strong> If the specified job tracker path, points to an existing jobs database (either a .csv or .parquet file), that file will be used as the job tracker, and the input jobs database will be disregarded.</p></li>
+</ol>
+<p><br></p>
+<ol start="2" type="1">
+<li><p>Initialize the MultiBackendJobManager: We create an instance of the <code>MultiBackendJobManager</code> and add a backend of our choice, which will be responsible for executing the jobs.</p>
+<p><strong>Caution:</strong> The number of parallel jobs refers to how many jobs the job manager tracks at once. However, the backend itself limits the actual number of jobs that can start and run at the same time to 2.</p></li>
+</ol>
+<p><br></p>
+<ol start="3" type="1">
+<li>Run Multiple Jobs: Use <code>manager.run_jobs</code> to create the desired jobs and send them to the backend. The selected job tracker will be updated on the actual job statuses and usage metris.</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate a unique name for the tracker</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>job_tracker <span class="op">=</span> <span class="st">'community_example_job_tracker.parquet'</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Initiate MultiBackendJobManager </span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>manager <span class="op">=</span> MultiBackendJobManager()  </span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>connection <span class="op">=</span> openeo.<span class="ex">connect</span>(url<span class="op">=</span><span class="st">"openeo.dataspace.copernicus.eu"</span>).authenticate_oidc()</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>manager.add_backend(<span class="st">"cdse"</span>, connection<span class="op">=</span>connection, parallel_jobs<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Run the jobs</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>manager.run_jobs(df<span class="op">=</span>jobs_database, start_job<span class="op">=</span>start_job, job_db<span class="op">=</span>job_tracker)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Authenticated using refresh token.</code></pre>
 </div>
 </div>
-<p>User can choose among different backend available <a href="https://hub.openeo.org/">here</a> to connect to the backend of their choice. Regarding the authentication process OpenID connect (oidc) is recommended, but not always straightforward to use. In cases where you are unable to connect with the backend use basic authentication method explained <a href="https://openeo.org/documentation/1.0/authentication.html#openid-connect">here</a>.</p>
-<div class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># function to load geojson file</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> read_json(path: Path) <span class="op">-&gt;</span> <span class="bu">dict</span>:</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> <span class="bu">open</span>(path) <span class="im">as</span> <span class="bu">input</span>:</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>        field <span class="op">=</span> json.load(<span class="bu">input</span>)</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>        <span class="bu">input</span>.close()</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> field</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+</section>
+<section id="visualise-output" class="level2">
+<h2 class="anchored" data-anchor-id="visualise-output">Visualise Output</h2>
+<p>Once a job is finalized, the output is automatically downloaded into a dedicated folder named after the job ID. The data is saved in GeoTIFF format.</p>
+<p>With this data in hand, we can now visualize the results of our various jobs.</p>
+<div class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> normalize(array):</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    array_min, array_max <span class="op">=</span> array.<span class="bu">min</span>(), array.<span class="bu">max</span>()</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> ((array <span class="op">-</span> array_min) <span class="op">/</span> (array_max <span class="op">-</span> array_min) <span class="op">*</span> <span class="dv">1024</span>).astype(np.uint8)</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> visualize_output(output_df: pd.DataFrame, date:<span class="bu">str</span>):</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Visualize output images for finished jobs within their spatial extents."""</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">10</span>))</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    x_min, x_max, y_min, y_max <span class="op">=</span> <span class="bu">float</span>(<span class="st">'inf'</span>), <span class="bu">float</span>(<span class="st">'-inf'</span>), <span class="bu">float</span>(<span class="st">'inf'</span>), <span class="bu">float</span>(<span class="st">'-inf'</span>)</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Plot each output image for finished jobs</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> index, row <span class="kw">in</span> output_df.iterrows():</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Convert the spatial_extent string representation back to a dictionary</span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>        extent <span class="op">=</span> row[<span class="st">"spatial_extent"</span>]    </span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>        image_path <span class="op">=</span> <span class="ss">f"job_</span><span class="sc">{</span>row[<span class="st">'id'</span>]<span class="sc">}</span><span class="ss">/openEO_</span><span class="sc">{</span>date<span class="sc">}</span><span class="ss">Z.tif"</span>  <span class="co"># Adjust path based on your setup</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>        <span class="cf">with</span> rasterio.<span class="bu">open</span>(image_path) <span class="im">as</span> src:</span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>            band_blue <span class="op">=</span> src.read(<span class="dv">1</span>)</span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>            band_green <span class="op">=</span> src.read(<span class="dv">2</span>)</span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>            band_red <span class="op">=</span> src.read(<span class="dv">3</span>)</span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>            band_blue <span class="op">=</span> normalize(band_blue)</span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>            band_green <span class="op">=</span> normalize(band_green)</span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>            band_red <span class="op">=</span> normalize(band_red)</span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>            rgb_image <span class="op">=</span> np.dstack((band_red, band_green, band_blue))</span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Update axis limits based on current extent</span></span>
+<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a>            extent_bounds <span class="op">=</span> [extent[<span class="st">"west"</span>], extent[<span class="st">"east"</span>], extent[<span class="st">"south"</span>], extent[<span class="st">"north"</span>]]</span>
+<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a>            x_min <span class="op">=</span> <span class="bu">min</span>(x_min, extent[<span class="st">"west"</span>])</span>
+<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a>            x_max <span class="op">=</span> <span class="bu">max</span>(x_max, extent[<span class="st">"east"</span>])</span>
+<span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a>            y_min <span class="op">=</span> <span class="bu">min</span>(y_min, extent[<span class="st">"south"</span>])</span>
+<span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a>            y_max <span class="op">=</span> <span class="bu">max</span>(y_max, extent[<span class="st">"north"</span>])</span>
+<span id="cb9-39"><a href="#cb9-39" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb9-40"><a href="#cb9-40" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Display the image within its extent</span></span>
+<span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a>            ax.imshow(rgb_image, extent<span class="op">=</span>extent_bounds, origin<span class="op">=</span><span class="st">'upper'</span>, cmap<span class="op">=</span><span class="st">'viridis'</span>, alpha<span class="op">=</span><span class="fl">0.6</span>)</span>
+<span id="cb9-42"><a href="#cb9-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-43"><a href="#cb9-43" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Draw a box around the extent</span></span>
+<span id="cb9-44"><a href="#cb9-44" aria-hidden="true" tabindex="-1"></a>            ax.add_patch(plt.Rectangle((extent[<span class="st">"west"</span>], extent[<span class="st">"south"</span>]),</span>
+<span id="cb9-45"><a href="#cb9-45" aria-hidden="true" tabindex="-1"></a>                                        extent[<span class="st">"east"</span>] <span class="op">-</span> extent[<span class="st">"west"</span>],</span>
+<span id="cb9-46"><a href="#cb9-46" aria-hidden="true" tabindex="-1"></a>                                        extent[<span class="st">"north"</span>] <span class="op">-</span> extent[<span class="st">"south"</span>],</span>
+<span id="cb9-47"><a href="#cb9-47" aria-hidden="true" tabindex="-1"></a>                                        linewidth<span class="op">=</span><span class="dv">1</span>, edgecolor<span class="op">=</span><span class="st">'blue'</span>, facecolor<span class="op">=</span><span class="st">'none'</span>))</span>
+<span id="cb9-48"><a href="#cb9-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-49"><a href="#cb9-49" aria-hidden="true" tabindex="-1"></a>    ax.set_xlim(x_min <span class="op">-</span> SPATIAL_WINDOW_GAP<span class="op">/</span><span class="dv">5</span>, x_max <span class="op">+</span> SPATIAL_WINDOW_GAP<span class="op">/</span><span class="dv">5</span>)</span>
+<span id="cb9-50"><a href="#cb9-50" aria-hidden="true" tabindex="-1"></a>    ax.set_ylim(y_min <span class="op">-</span> SPATIAL_WINDOW_GAP<span class="op">/</span><span class="dv">5</span>, y_max <span class="op">+</span> SPATIAL_WINDOW_GAP<span class="op">/</span><span class="dv">5</span>)</span>
+<span id="cb9-51"><a href="#cb9-51" aria-hidden="true" tabindex="-1"></a>    plt.xlabel(<span class="st">"Easting (meters)"</span>)</span>
+<span id="cb9-52"><a href="#cb9-52" aria-hidden="true" tabindex="-1"></a>    plt.ylabel(<span class="st">"Northing (meters)"</span>)</span>
+<span id="cb9-53"><a href="#cb9-53" aria-hidden="true" tabindex="-1"></a>    plt.title(<span class="st">"Output Images Visualization within Spatial Extents"</span>)</span>
+<span id="cb9-54"><a href="#cb9-54" aria-hidden="true" tabindex="-1"></a>    plt.grid(<span class="va">True</span>)</span>
+<span id="cb9-55"><a href="#cb9-55" aria-hidden="true" tabindex="-1"></a>    plt.show()</span>
+<span id="cb9-56"><a href="#cb9-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-57"><a href="#cb9-57" aria-hidden="true" tabindex="-1"></a><span class="co"># Example usage</span></span>
+<span id="cb9-58"><a href="#cb9-58" aria-hidden="true" tabindex="-1"></a>output_df <span class="op">=</span> pd.read_parquet(job_tracker)</span>
+<span id="cb9-59"><a href="#cb9-59" aria-hidden="true" tabindex="-1"></a>visualize_output(output_df, <span class="st">'2022-07-01'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="ManagingMultipleLargeScaleJobs_files/figure-html/cell-8-output-1.png" class="img-fluid"></p>
 </div>
-<p>To use the data collection, a user must use the correct backend with the data collection. Then using load_collection, they can specify bands, temporal extent (i.e.&nbsp;interested time interval) and even spatial extent. In this example, we have loaded the entire collection so that process (including UDF) can later be applied to spatial chunks.</p>
-<div class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load your data cube based on your prefernce</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>S2_cube <span class="op">=</span> eoconn.load_collection(</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"SENTINEL2_L2A"</span>,</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    temporal_extent <span class="op">=</span> [<span class="st">"2022-06-04"</span>, <span class="st">"2022-08-04"</span>],</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    bands <span class="op">=</span> [<span class="st">"B02"</span>, <span class="st">"B03"</span>, <span class="st">"B04"</span>]</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>Here we tried in presenting a method to create and use UDF as an openEO feature. In a similar manner user can create their own UDF as needed to apply to their data cube. More information on <a href="https://open-eo.github.io/openeo-python-client/udf.html">UDF</a>.</p>
-<div class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a UDF object from inline source code.</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>my_udf <span class="op">=</span> openeo.UDF(<span class="st">"""</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="st">from openeo.udf import XarrayDataCube</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="st">def apply_datacube(cube: XarrayDataCube, context: dict) -&gt; XarrayDataCube:</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="st">    array = cube.get_array()</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="st">    array.values = 0.0001 * array.values</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="st">    return cube</span></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>We used the chunk_polygon method to apply our UDF over a spatial chunk of the datacube. In the case of a simple process that does not require UDF, you can directly load your spatial extent in the dataset.</p>
-<p>Furthermore, since we loaded our collection for specific time intervals, it can include multiple time dimensions. Thus <a href="https://processes.openeo.org/#reduce_dimension">reduce_dimension</a> applies a reducer to a data cube dimension by collapsing all the pixel values along the time dimension into an output value computed by the reducer.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># apply rescale to chunks of polygon</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>aoi <span class="op">=</span> read_json(<span class="st">"cologne_aoi.geojson"</span>)</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>rescaled_chunks <span class="op">=</span> S2_cube.chunk_polygon(chunks<span class="op">=</span>aoi,process<span class="op">=</span>my_udf)</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co"># perform time dimension reduction</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>Rrescaled_chunks <span class="op">=</span> rescaled_chunks.reduce_dimension(dimension<span class="op">=</span><span class="st">"t"</span>, reducer<span class="op">=</span><span class="st">"mean"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>Once the process is completed, you can also save it as your process using <a href="https://open-eo.github.io/openeo-python-client/udp.html">save_user_defined_process</a> that can later be used for a similar task. Otherwise, you can download the result either by direct download (in case of the small spatial extent with few processing) or perform create a <a href="https://open-eo.github.io/openeo-python-client/batch_jobs.html">batch job</a> in case it is a heavy task over a large extent.</p>
-<div class="cell" data-execution_count="8">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">## download your result either using synchronous method or batch</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co"># synchronous download</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># rescaled_chunks.download("rescaled_test_v1.tiff")</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Or perform batch processing if area is comparatively large</span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>batch_job <span class="op">=</span> Rrescaled_chunks.create_job(out_format <span class="op">=</span> <span class="st">"GTiff"</span>, title<span class="op">=</span><span class="st">"rescaled_chunks2"</span>)</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>batch_job.start_and_wait()</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>results <span class="op">=</span> batch_job.get_results()</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>results.download_files()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
