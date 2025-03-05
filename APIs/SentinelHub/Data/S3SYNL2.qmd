@@ -1,0 +1,259 @@
+---
+title: Sentinel-3 SYN L2
+---
+
+## About Sentinel-3 SYN L2 Data
+
+General information about Sentinel-3 mission can be found
+[here](/Data/SentinelMissions/Sentinel3.qmd). Sentinel Hub offers
+[Sentinel-3 SYN Level 2](/Data/SentinelMissions/Sentinel3.qmd#sentinel-3-syn-level-2)
+products.
+
+## Accessing Sentinel-3 SYN L2 Data
+
+To access data you need to send a POST request to our `process` API. The
+requested data will be returned as the response to your request. Each
+POST request can be tailored to get you exactly the data you require. To
+do this requires setting various parameters which depend on the
+datasource you are querying. This chapter will help you understand the
+parameters for S3SYN L2 data. To see examples of such requests go
+[here](/APIs/SentinelHub/Process/Examples/S3SYN.qmd), and for an
+overview of all API parameters see the [API
+Reference](/APIs/SentinelHub/ApiReference.qmd).
+
+### Data type identifier: sentinel-3-synergy-l2
+
+Use `sentinel-3-synergy-l2` as the value of the
+`input.data.type` parameter in your API requests. This is mandatory and
+will ensure you get Sentinel-3 SYN L2 data.
+
+### Filtering Options
+
+This chapter will explain the `input.data.dataFilter` object of the
+`S3SYNL2` `process` API.
+
+#### mosaickingOrder
+
+Sets the order of overlapping tiles from which the output result is
+mosaicked. The tiling is based on ESA\'s [Product Dissemination
+Units](https://sentinels.copernicus.eu/web/sentinel/search?p_p_id=com_liferay_portal_search_web_search_results_portlet_SearchResultsPortlet_INSTANCE_XIxtnlMxlnwC&p_p_lifecycle=0&p_p_state=maximized&p_p_mode=view&_com_liferay_portal_search_web_search_results_portlet_SearchResultsPortlet_INSTANCE_XIxtnlMxlnwC_mvcPath=%2Fview_content.jsp&_com_liferay_portal_search_web_search_results_portlet_SearchResultsPortlet_INSTANCE_XIxtnlMxlnwC_redirect=%2Fweb%2Fsentinel%2Fsearch%3Fq%3Dnight%2520crows%2520diamonds%2520site%252C%25E3%2580%2590Site%253A%2520NCD4%252ECOM%25E3%2580%2591%25E3%2580%259030%2525OFF%2520code%253A%2520NC2024%25E3%2580%2591night%2520crows%2520diamonds%2520site%252Cwhere%2520to%2520buy%2520night%2520crows%2520diamond%252Cnight%2520crows%2520diamond%2520site%252Cbest%2520night%2520crows%2520diamond%2520site%252Cbest%2520night%2520crows%2520diamonds%2520site%252C....6f43%26tag%3Dyear-2017%26category%3D4208307%26delta%3D4%26start%3D180&_com_liferay_portal_search_web_search_results_portlet_SearchResultsPortlet_INSTANCE_XIxtnlMxlnwC_assetEntryId=1741471&_com_liferay_portal_search_web_search_results_portlet_SearchResultsPortlet_INSTANCE_XIxtnlMxlnwC_type=content&p_l_back_url=%2Fweb%2Fsentinel%2Fsearch%3Fq%3Dnight%2520crows%2520diamonds%2520site%252C%25E3%2580%2590Site%253A%2520NCD4%252ECOM%25E3%2580%2591%25E3%2580%259030%2525OFF%2520code%253A%2520NC2024%25E3%2580%2591night%2520crows%2520diamonds%2520site%252Cwhere%2520to%2520buy%2520night%2520crows%2520diamond%252Cnight%2520crows%2520diamond%2520site%252Cbest%2520night%2520crows%2520diamond%2520site%252Cbest%2520night%2520crows%2520diamonds%2520site%252C....6f43%26tag%3Dyear-2017%26category%3D4208307%26delta%3D4%26start%3D180){target="_blank"}
+for easier distribution.
+
+  Value             Description                                                       Notes
+  ----------------- ----------------------------------------------------------------- -------------------------------------------------------------------------------------------------------
+  **mostRecent**    the pixel will be selected from the most recently acquired tile   If there are multiple products with the same timestamp then NTC will be used over NRT. Default value.
+  **leastRecent**   the pixel will be selected from the oldest acquired tile          If there are multiple products with the same timestamp then NTC will be used over NRT.
+
+### Processing Options
+
+This chapter will explain the `input.data.processing` object of the
+`S3SYNL2` `process` API.
+
+  Parameter      Description                                                                   Values                                                                                                                                                                                                                                                                                                                                                                                    Default
+  -------------- ----------------------------------------------------------------------------- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -------------
+  upsampling     Defines the interpolation used for processing, regardless of the resolution   **NEAREST** - [nearest neighbour interpolation](https://en.wikipedia.org/wiki/Nearest-neighbor_interpolation){target="_blank"} `<br/>`{=html} **BILINEAR** - [bilinear interpolation](https://en.wikipedia.org/wiki/Bilinear_interpolation){target="_blank"} `<br/>`{=html} **BICUBIC** - [bicubic interpolation](https://en.wikipedia.org/wiki/Bicubic_interpolation){target="_blank"}   **NEAREST**
+  downsampling   Not used, use `upsampling` instead                                            N/A                                                                                                                                                                                                                                                                                                                                                                                       Ignored
+
+### Available Bands and Data
+
+This chapter will explain the bands and data which can be set in the
+[evalscript input
+object](/APIs/SentinelHub/Evalscript/V3.qmd#input-object-properties).
+Any string listed in the column **Name** can be an element of the
+`input.bands` array in your evalscript.
+
+::: {.callout-note}
+
+Types `SY_2_VGP` and `SY_2_AOD` are currently not supported.
+
+:::
+
+#### Sentinel-3 SYN SY_2_SYN
+
+  Name                        Description                                                                                       Wavelength centre (nm)   Resolution (m)
+  --------------------------- ------------------------------------------------------------------------------------------------ ------------------------ ----------------
+  B01                         Aerosol correction, improved water constituent retrieval                                                   400                  300
+  B02                         Yellow substance and detrital pigments (turbidity)                                                        412.5                 300
+  B03                         Chlorophyll absorption maximum, biogeochemistry, vegetation                                               442.5                 300
+  B04                         Chlorophyll                                                                                                490                  300
+  B05                         Chlorophyll, sediment, turbidity, red tide                                                                 510                  300
+  B06                         Chlorophyll reference (minimum)                                                                            560                  300
+  B07                         Sediment loading                                                                                           620                  300
+  B08                         2nd Chlorophyll absorption maximum, sediment, yellow substance / vegetation                                665                  300
+  B09                         Improved fluorescence retrieval                                                                           673.75                300
+  B10                         Chlorophyll fluorescence peak, red edge                                                                   681.25                300
+  B11                         Chlorophyll fluorescence baseline, red edge transition                                                    708.75                300
+  B12                         O`<sub>`{=html}2`</sub>`{=html} absorption / clouds, vegetation                                           753.75                300
+  B16                         Atmospheric / aerosol correction                                                                          778.75                300
+  B17                         Atmospheric / aerosol correction, clouds, pixel co-registration                                            865                  300
+  B18                         Water vapour absorption reference. Common reference band with SLSTR. Vegetation monitoring                 885                  300
+  B21                         Atmospheric / aerosol correction, snow grain size                                                          1020                 300
+  S1                          Cloud screening, vegetation monitoring, aerosol                                                           554.27                500
+  S2                          NDVI, vegetation monitoring, aerosol                                                                      659.47                500
+  S3                          NDVI, cloud flagging, pixel co-registration                                                                868                  500
+  S5                          Cloud clearing, ice, snow, vegetation monitoring                                                          1613.40               500
+  S6                          Vegetation state and cloud clearing                                                                       2255.70               500
+  dataMask                    The mask of data/no data pixels ([more](/APIs/SentinelHub/UserGuides/Datamask.qmd)).                      N/A\*               N/A\*\*
+
+  \*dataMask has no wavelength information, as it carries only boolean
+  information on whether a pixel has data or not. See the chapter on Units
+  for more. `<br/>`{=html} \*\*dataMask has no source resolution as it is
+  calculated for each output pixel.
+
+#### Sentinel-3 SYN SY_2_V10
+
+  Name                        Description                                                                                       Wavelength centre (nm)   Resolution (m)
+  --------------------------- ------------------------------------------------------------------------------------------------ ------------------------ ----------------
+  B0_V10                      Surface reflectance for B0 channel                                                                         450                  1000
+  B2_V10                      Surface reflectance for B2 channel                                                                         645                  1000
+  B3_V10                      Surface reflectance for B3 channel                                                                         835                  1000
+  MIR_V10                     Surface reflectance for MIR channel                                                                        1665                 1000
+  NDVI_V10                    Normalized difference vegetation index, computed from surface reflectances                                 N/A                  1000
+  OG_V10                      Total column ozone                                                                                         N/A                  1000
+  SAA_V10                     Sun azimuth angle                                                                                          N/A                  1000
+  SZA_V10                     Sun zenith angle                                                                                           N/A                  1000
+  VAA_V10                     Viewing (observation) azimuth angle                                                                        N/A                  1000
+  VZA_V10                     Viewing (observation) zenith angle                                                                         N/A                  1000
+  WVG_V10                     Total Column Water Vapor                                                                                   N/A                  1000
+  AG_V10                      Aerosol optical thickness at 550 nm                                                                        550                  1000
+
+#### Sentinel-3 SYN SY_2_VG1
+
+  Name                        Description                                                                                       Wavelength centre (nm)   Resolution (m)
+  --------------------------- ------------------------------------------------------------------------------------------------ ------------------------ ----------------
+  B0_VG1                      Surface reflectance for B0 channel                                                                         450                  1000
+  B2_VG1                      Surface reflectance for B2 channel                                                                         645                  1000
+  B3_VG1                      Surface reflectance for B3 channel                                                                         835                  1000
+  MIR_VG1                     Surface reflectance for MIR channel                                                                        1665                 1000
+  NDVI_VG1                    Normalized difference vegetation index, computed from surface reflectances                                 N/A                  1000
+  TOA_NDVI_VG1                Normalized difference vegetation index, computed from TOA reflectances                                     N/A                  1000
+  OG_VG1                      Total column ozone                                                                                         N/A                  1000
+  SAA_VG1                     Sun azimuth angle                                                                                          N/A                  1000
+  SZA_VG1                     Sun zenith angle                                                                                           N/A                  1000
+  VAA_VG1                     Viewing (observation) azimuth angle                                                                        N/A                  1000
+  VZA_VG1                     Viewing (observation) zenith angle                                                                         N/A                  1000
+  WVG_VG1                     Total Column Water Vapor                                                                                   N/A                  1000
+  AG_VG1                      Aerosol optical thickness at 550 nm                                                                        550                  1000
+
+For more about Sentinel-3 SYN bands, visit
+`<a href="https://sentiwiki.copernicus.eu/web/synergy-products#SYNERGYProducts-ResolutionS3-Synergy-Products-PD-Resolution" target="_blank">`{=html}
+this Copernicus website`</a>`{=html}.
+
+### Units
+
+The data values for each band in your custom script are presented in the
+units as specified here. In case more than one unit is available for a
+given band, you may optionally set the value of `input.units` in your
+evalscript `setup` function to one of the values in the
+`Sentinel Hub Units` column. Doing so will present data in that unit.
+The Sentinel Hub `units` parameter combines the physical quantity and
+corresponding units of measurement values. As such, some names more
+closely resemble physical quantities, others resemble units of
+measurement.
+
+The `Source Format` specifies how and with what precision the digital
+numbers (`DN`) from which the unit is derived are encoded. Bands
+requested in `DN` units contain exactly the pixel values of the source
+data. Note that resampling may produce interpolated values. `DN` is also
+used whenever a band is derived computationally (like dataMask); such
+bands can be identified by having `DN` units and `N/A` source format.
+`DN` values are typically not offered if they do not simply represent
+any physical quantity, in particular, when `DN` values require
+source-specific (i.e. non-global) conversion to physical quantities.
+
+Values in non-`DN` units are computed from the source (`DN`) values with
+at least float32 precision. Note that the conversion might be nonlinear,
+therefore the full value range and quantization step size of such a band
+can be hard to predict. Band values in evalscripts always behave as
+floating point numbers, regardless of the actual precision.
+
+The `Typical Range` indicates what values are common for a given band
+and unit, however outliers can be expected.
+
+::: {.callout-note}
+
+Types `SY_2_VGP` and `SY_2_AOD` are currently not supported.
+
+:::
+
+#### Sentinel-3 SYN SY_2_SYN
+
+  Band                                   Physical Quantity (units)                             Sentinel Hub Units      Source Format   Typical Range                        Notes
+  -------------------------------------- ----------------------------------------------------- ----------------------- --------------- ------------------------------------ ----------------------------------------------------------------------------------------------------------------------------------
+  Optical bands `<br/>`{=html} Bx - Sy   Reflectance (unitless)                                REFLECTANCE (default)   UINT16          0 - 0.4                              Higher values in infrared bands. Reflectance values can easily be above 1.
+  dataMask                               N/A                                                   DN                      N/A             0 - no data`<br/>`{=html} 1 - data
+
+#### Sentinel-3 SYN SY_2_V10
+
+  Band                                   Physical Quantity (units)                             Sentinel Hub Units      Source Format   Typical Range
+  -------------------------------------- ----------------------------------------------------- ----------------------- --------------- ------------------------------------
+  B0_V10                                 Reflectance (unitless)                                REFLECTANCE (default)   INT16           0 - 10000
+  B2_V10                                 Reflectance (unitless)                                REFLECTANCE (default)   INT16           0 - 10000
+  B3_V10                                 Reflectance (unitless)                                REFLECTANCE (default)   INT16           0 - 10000
+  MIR_V10                                Reflectance (unitless)                                REFLECTANCE (default)   INT16           0 - 10000
+  NDVI_V10                               NDVI from surface reflectance (unitless)              INDEX                   UINT8           0 - 250
+  OG_V10                                 Total column ozone (atm.cm)                           ATMCM                   UINT8           0 - 250
+  SAA_V10                                Angle (degrees)                                       DEGREES                 INT8            -180 - 180
+  SZA_V10                                Angle (degrees)                                       DEGREES                 UINT8           0 - 180
+  VAA_V10                                Angle (degrees)                                       DEGREES                 INT8            -180 - 180
+  VZA_V10                                Angle (degrees)                                       DEGREES                 UINT8           0 - 180
+  WVG_V10                                Total Column Water Vapor (g/cm2)                      GRAMS_CM2               UINT8           0 - 254
+  AG_V10                                 Aerosol optical thickness (unitless)                  OPTICAL_DEPTH           UINT8           0 - 254
+
+#### Sentinel-3 SYN SY_2_VG1
+
+  Band                                   Physical Quantity (units)                             Sentinel Hub Units      Source Format   Typical Range
+  -------------------------------------- ----------------------------------------------------- ----------------------- --------------- ------------------------------------
+  B0_VG1                                 Reflectance (unitless)                                REFLECTANCE (default)   INT16           0 - 10000
+  B2_VG1                                 Reflectance (unitless)                                REFLECTANCE (default)   INT16           0 - 10000
+  B3_VG1                                 Reflectance (unitless)                                REFLECTANCE (default)   INT16           0 - 10000
+  MIR_VG1                                Reflectance (unitless)                                REFLECTANCE (default)   INT16           0 - 10000
+  NDVI_VG1                               NDVI from surface reflectance (unitless)              INDEX                   UINT8           0 - 250
+  TOA_NDVI_VG1                           NDVI from TOA reflectance (unitless)                  INDEX                   UINT8           0 - 250
+  OG_VG1                                 Total column ozone (atm.cm)                           ATMCM                   UINT8           0 - 250
+  SAA_VG1                                Angle (degrees)                                       DEGREES                 INT8            -180 - 180
+  SZA_VG1                                Angle (degrees)                                       DEGREES                 UINT8           0 - 180
+  VAA_VG1                                Angle (degrees)                                       DEGREES                 INT8            -180 - 180
+  VZA_VG1                                Angle (degrees)                                       DEGREES                 UINT8           0 - 180
+  WVG_VG1                                Total Column Water Vapor (g/cm2)                      GRAMS_CM2               UINT8           0 - 254
+  AG_VG1                                 Aerosol optical thickness (unitless)                  OPTICAL_DEPTH           UINT8           0 - 254
+
+### Mosaicking
+
+All [mosaicking](/APIs/SentinelHub/Evalscript/V3.qmd#mosaicking) types
+are supported.
+
+### Scenes Object
+
+[`scenes` object](/APIs/SentinelHub/Evalscript/V3.qmd#scenes) stores
+metadata. An example of metadata available in `scenes` object for
+Sentinel-3 SYN when mosaicking is `ORBIT`:
+
+  Property name         Value
+  --------------------- -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  tiles\[i\].date       `'2025-03-04T10:35:35.476738Z'`
+  tiles\[i\].shId       `881338`
+  tiles\[i\].dataPath   `'http://data.cloudferro.com/EODATA/Sentinel-3/SYNERGY/SY_2_SYN___/2025/03/04/S3A_SY_2_SYN____20250304T103535_20250304T103835_20250304T184713_0180_123_165_2160_PS1_O_ST_002.SEN3'`
+
+Properties of a `scenes` object can differ depending on the selected
+mosaicking and in which evalscript function the object is accessed.
+[Working with metadata in
+evalscript](/APIs/SentinelHub/UserGuides/Metadata.qmd) user guide
+explains all details and provides examples.
+
+## Catalog API Capabilities
+
+To access Sentinel-3 SYN product metadata you need to send search
+request to our [Catalog API](/APIs/SentinelHub/Catalog.qmd). The
+requested metadata will be returned as JSON formatted response to your
+request.
+
+### Collection identifier: sentinel-3-synergy-l2
+
+### Distinct extension
+
+-   `date`
+
+## Examples
+
+[S3SYN examples](/APIs/SentinelHub/Process/Examples/S3SYN.qmd)
