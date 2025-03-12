@@ -420,6 +420,114 @@ url = "https://sh.dataspace.copernicus.eu/api/v1/process"
 response = oauth.post(url, json=request)
 ```
 
+### Monitoring low pressure clouds with Sentinel-3 OLCI and Sentinel-5P
+
+``` python
+evalscript = """
+//VERSION=3
+function setup() {
+  return {
+    input: [
+      {
+        datasource: "s3olci",
+        bands: ["B04", "B06", "B08"],
+      },
+      {
+        datasource: "s5pl2",
+        bands: ["CLOUD_TOP_PRESSURE"],
+      },
+    ],
+    output: [
+      {
+        bands: 3,
+      },
+    ],
+  }
+}
+
+var minVal = 10000.0
+var maxVal = 110000.0
+var diff = maxVal - minVal
+var limits = [
+  minVal,
+  minVal + 0.125 * diff,
+  minVal + 0.375 * diff,
+  minVal + 0.625 * diff,
+  minVal + 0.875 * diff,
+  maxVal,
+]
+var colors = [
+  [0, 0, 0.5],
+  [0, 0, 1],
+  [0, 1, 1],
+  [1, 1, 0],
+  [1, 0, 0],
+  [0.5, 0, 0],
+]
+
+function evaluatePixel(
+  samples,
+  inputData,
+  inputMetadata,
+  customData,
+  outputMetadata
+) {
+  var S5 = samples.s5pl2[0]
+  var S3 = samples.s3olci[0]
+  var CLOUD_TOP_PRESSURE = S5.CLOUD_TOP_PRESSURE
+
+  if (CLOUD_TOP_PRESSURE > 0) {
+    return colorBlend(CLOUD_TOP_PRESSURE, limits, colors)
+  }
+  return [S3.B08 * 3, S3.B06 * 3, S3.B04 * 3.5]
+}
+"""
+
+request = {
+    "input": {
+        "bounds": {
+            "bbox": [
+                -154.82,
+                21.96,
+                -135.66,
+                13.56,
+            ],
+            "properties": {"crs": "http://www.opengis.net/def/crs/OGC/1.3/CRS84"},
+        },
+        "data": [
+            {
+                "id": "s3olci",
+                "type": "sentinel-3-olci",
+                "dataFilter": {
+                    "timeRange": {
+                        "from": "2020-07-24T00:00:00Z",
+                        "to": "2020-07-24T23:59:59Z",
+                    }
+                },
+            },
+            {
+                "id": "s5pl2",
+                "type": "sentinel-5p-l2",
+                "dataFilter": {
+                    "timeRange": {
+                        "from": "2020-07-24T00:00:00Z",
+                        "to": "2020-07-24T23:59:59Z",
+                    }
+                },
+            },
+        ],
+    },
+    "output": {
+        "width": 1024,
+        "height": 449,
+    },
+    "evalscript": evalscript,
+}
+
+url = "https://sh.dataspace.copernicus.eu/api/v1/process"
+response = oauth.post(url, json=request)
+```
+
 ### Fire monitoring with Sentinel-1 and Sentinel-2
 
 ``` python
@@ -542,114 +650,6 @@ request = {
     "output": {
         "width": 1024,
         "height": 1024,
-    },
-    "evalscript": evalscript,
-}
-
-url = "https://sh.dataspace.copernicus.eu/api/v1/process"
-response = oauth.post(url, json=request)
-```
-
-### Monitoring low pressure clouds with Sentinel-3 OLCI and Sentinel-5P
-
-``` python
-evalscript = """
-//VERSION=3
-function setup() {
-  return {
-    input: [
-      {
-        datasource: "s3olci",
-        bands: ["B04", "B06", "B08"],
-      },
-      {
-        datasource: "s5pl2",
-        bands: ["CLOUD_TOP_PRESSURE"],
-      },
-    ],
-    output: [
-      {
-        bands: 3,
-      },
-    ],
-  }
-}
-
-var minVal = 10000.0
-var maxVal = 110000.0
-var diff = maxVal - minVal
-var limits = [
-  minVal,
-  minVal + 0.125 * diff,
-  minVal + 0.375 * diff,
-  minVal + 0.625 * diff,
-  minVal + 0.875 * diff,
-  maxVal,
-]
-var colors = [
-  [0, 0, 0.5],
-  [0, 0, 1],
-  [0, 1, 1],
-  [1, 1, 0],
-  [1, 0, 0],
-  [0.5, 0, 0],
-]
-
-function evaluatePixel(
-  samples,
-  inputData,
-  inputMetadata,
-  customData,
-  outputMetadata
-) {
-  var S5 = samples.s5pl2[0]
-  var S3 = samples.s3olci[0]
-  var CLOUD_TOP_PRESSURE = S5.CLOUD_TOP_PRESSURE
-
-  if (CLOUD_TOP_PRESSURE > 0) {
-    return colorBlend(CLOUD_TOP_PRESSURE, limits, colors)
-  }
-  return [S3.B08 * 3, S3.B06 * 3, S3.B04 * 3.5]
-}
-"""
-
-request = {
-    "input": {
-        "bounds": {
-            "bbox": [
-                -154.82,
-                21.96,
-                -135.66,
-                13.56,
-            ],
-            "properties": {"crs": "http://www.opengis.net/def/crs/OGC/1.3/CRS84"},
-        },
-        "data": [
-            {
-                "id": "s3olci",
-                "type": "sentinel-3-olci",
-                "dataFilter": {
-                    "timeRange": {
-                        "from": "2020-07-24T00:00:00Z",
-                        "to": "2020-07-24T23:59:59Z",
-                    }
-                },
-            },
-            {
-                "id": "s5pl2",
-                "type": "sentinel-5p-l2",
-                "dataFilter": {
-                    "timeRange": {
-                        "from": "2020-07-24T00:00:00Z",
-                        "to": "2020-07-24T23:59:59Z",
-                    }
-                },
-            },
-        ],
-    },
-    "output": {
-        "width": 1024,
-        "height": 449,
     },
     "evalscript": evalscript,
 }
