@@ -486,9 +486,19 @@ The schema of the `features` table is currently the following:
   ----------- --------- ------------------------------------------------------------------
   id          INTEGER   Numerical ID of the feature
   name        TEXT      Textual ID of the feature
-  status      TEXT      Status of the feature (PENDING, DONE, FAILED, etc.)
+  status      TEXT      Status of the feature
   error       TEXT      Error message in case processing has failed
   delivered   BOOLEAN   `True` if output delivered to delivery bucket, otherwise `False`
+
+The status of the feature can be one of the following:
+
+-   **PENDING**: The feature is waiting to be processed.
+-   **DONE**: Feature was successfully processed. `<br/>`{=html}Caveat:
+    If there was no data to process for this feature, the feature will
+    still be marked with status `DONE` but with a \'**No data**\'
+    message in the error column.
+-   **FATAL**: Feature has failed X amount of times and will not be
+    retried. The error column details the issue.
 
 ------------------------------------------------------------------------
 
