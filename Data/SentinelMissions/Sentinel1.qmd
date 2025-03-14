@@ -57,26 +57,28 @@ Sentinel Hub offers the following processing options in the [Sentinel-1 GRD proc
     - **Copernicus 30m DEM**
     - **Copernicus 90m DEM**
 
-## openEO processing options 
+## openEO processing options
 
-When working with the SENTINEL1_GRD data collection through openEO, SAR backscatter computation is automatically applied. Unfortunately, the default backscatter coefficient "gamma0-terrain" is not yet supported in the openEO backend implementation of Copernicus Data Space Ecosystem, typically resulting in an error like "Backscatter coefficient 'gamma0-terrain' is not supported."
+When working with the SENTINEL1_GRD data collection through openEO,
+SAR backscatter computation is automatically applied using the "sigma0-ellipsoid" coefficient
+(ground area computed with ellipsoid earth model).
 
-As a workaround, it is currently recommended to explicitly specify the [`sar_backscatter()`](https://processes.openeo.org/draft/#sar_backscatter){target="_blank"} process with the supported coefficient "sigma0-ellipsoid".
-
-- **sigma0-ellipsoid**: ground area computed with ellipsoid earth model
-
-For example:
+While "sigma0-ellipsoid" is the only option at the moment and used as default,
+it is optional to make this explicit with a
+[`sar_backscatter()`](https://processes.openeo.org/draft/#sar_backscatter){target="_blank"} process
+in your workflow for self-documenting purposes:
 
 ```python
 
 sentinel1 = connection.load_collection(
     "SENTINEL1_GRD",
     temporal_extent = ["2022-06-04", "2022-08-04"],
-    bands = ["VV","VH"]
+    spatial_extent = {"west": 4.0, "south": 48.0, "east": 4.1, "north": 48.1},
+    bands = ["VV","VH"],
 )
-
-  sentinel1 = sentinel1.sar_backscatter(
-      coefficient='sigma0-ellipsoid')
+sentinel1 = sentinel1.sar_backscatter(
+    coefficient="sigma0-ellipsoid",
+)
 ```
 
 The product is orthorectified using the Copernicus 30m DEM. No RTC or speckle filtering is applied to this product.
