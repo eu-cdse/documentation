@@ -568,6 +568,10 @@ def CLMSOffer(c):
                     catalogue = c['summaries']['DataAvailability'][i-1]['Catalogue']
                 except Exception:
                     catalogue = ''
+                try:
+                    odata = c['summaries']['DataAvailability'][i-1]['OData']
+                except Exception:
+                    odata = ''
 
                 if product_id == "HIGH RESOLUTION LAYERS (HRL)":
                     t.append([product_type, product,sub_product,specific_product,catalogue,product_link])
@@ -582,8 +586,8 @@ def CLMSOffer(c):
                     headers = ["Product Type", "Products","Specific Products","Spatial","S3 path","Product Detail"]
                     note += footnotes
                 else:
-                    t.append([product_type, specific_product, spatial, temporal,catalogue, product_link])
-                    headers = ["Product Type", "Specific Products", "Spatial Extext","Temporal Extent","S3 path","Product Detail"]
+                    t.append([product_type, specific_product, spatial, temporal,catalogue,odata,product_link])
+                    headers = ["Product Type", "Specific Products", "Spatial Extext","Temporal Extent","S3 path","OData","Product Detail"]
                     note += footnotes
                 
             # Find and remove empty columns
