@@ -585,9 +585,21 @@ def CLMSOffer(c):
                     t.append([product_type, specific_product, sub_product,spatial,catalogue, product_link])
                     headers = ["Product Type", "Products","Specific Products","Spatial","S3 path","Product Detail"]
                     note += footnotes
+                elif product_id == "Vegetation Indices":
+                    t.append([product_type, specific_product, spatial, temporal,catalogue,odata,product_link])
+                    headers = ["Product Type", "Dataset", "Spatial Extent","Temporal Extent","S3 path","OData","Product Detail"]
+                    note += footnotes
+                elif product_id == "Land Surface Temperature":
+                    t.append([product_type, specific_product, spatial, temporal,catalogue,odata,product_link])
+                    headers = ["Product Type", "Dataset", "Spatial Extent","Temporal Extent","S3 path","OData","Product Detail"]
+                    note += footnotes
+                elif product_id == "Dynamic Land Cover":
+                    t.append([product_type, specific_product, spatial, temporal,catalogue,odata,product_link])
+                    headers = ["Product Type", "Dataset", "Spatial Extent","Temporal Extent","S3 path","OData","Product Detail"]
+                    note += footnotes
                 else:
                     t.append([product_type, specific_product, spatial, temporal,catalogue,odata,product_link])
-                    headers = ["Product Type", "Specific Products", "Spatial Extext","Temporal Extent","S3 path","OData","Product Detail"]
+                    headers = ["Product Type", "Specific Products", "Spatial Extent","Temporal Extent","S3 path","OData","Product Detail"]
                     note += footnotes
                 
             # Find and remove empty columns
