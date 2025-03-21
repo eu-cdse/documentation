@@ -2398,21 +2398,18 @@ N/A*
 </section>
 <section id="openeo-processing-options" class="level2">
 <h2 class="anchored" data-anchor-id="openeo-processing-options">openEO processing options</h2>
-<p>When working with the SENTINEL1_GRD data collection through openEO, SAR backscatter computation is automatically applied. Unfortunately, the default backscatter coefficient “gamma0-terrain” is not yet supported in the openEO backend implementation of Copernicus Data Space Ecosystem, typically resulting in an error like “Backscatter coefficient ‘gamma0-terrain’ is not supported.”</p>
-<p>As a workaround, it is currently recommended to explicitly specify the <a href="https://processes.openeo.org/draft/#sar_backscatter" target="_blank"><code>sar_backscatter()</code></a> process with the supported coefficient “sigma0-ellipsoid”.</p>
-<ul>
-<li><strong>sigma0-ellipsoid</strong>: ground area computed with ellipsoid earth model</li>
-</ul>
-<p>For example:</p>
+<p>When working with the SENTINEL1_GRD data collection through openEO, SAR backscatter computation is automatically applied using the “sigma0-ellipsoid” coefficient (ground area computed with ellipsoid earth model).</p>
+<p>While “sigma0-ellipsoid” is the only option at the moment and used as default, it is optional to make this explicit with a <a href="https://processes.openeo.org/draft/#sar_backscatter" target="_blank"><code>sar_backscatter()</code></a> process in your workflow for self-documenting purposes:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>sentinel1 <span class="op">=</span> connection.load_collection(</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"SENTINEL1_GRD"</span>,</span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    temporal_extent <span class="op">=</span> [<span class="st">"2022-06-04"</span>, <span class="st">"2022-08-04"</span>],</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    bands <span class="op">=</span> [<span class="st">"VV"</span>,<span class="st">"VH"</span>]</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  sentinel1 <span class="op">=</span> sentinel1.sar_backscatter(</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>      coefficient<span class="op">=</span><span class="st">'sigma0-ellipsoid'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    spatial_extent <span class="op">=</span> {<span class="st">"west"</span>: <span class="fl">4.0</span>, <span class="st">"south"</span>: <span class="fl">48.0</span>, <span class="st">"east"</span>: <span class="fl">4.1</span>, <span class="st">"north"</span>: <span class="fl">48.1</span>},</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    bands <span class="op">=</span> [<span class="st">"VV"</span>,<span class="st">"VH"</span>],</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>sentinel1 <span class="op">=</span> sentinel1.sar_backscatter(</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    coefficient<span class="op">=</span><span class="st">"sigma0-ellipsoid"</span>,</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>The product is orthorectified using the Copernicus 30m DEM. No RTC or speckle filtering is applied to this product.</p>
 </section>
 <section id="on-demand-processing-options" class="level2">
