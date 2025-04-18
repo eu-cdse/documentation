@@ -587,3 +587,72 @@ And hereinafter a sample OData query on productType attribute:
 :::
 
 
+# COG products of VHR datasets {#cog-products-of-vhr-datasets}
+
+The primary optical CCM data collections are being processed into Cloud-Optimized GeoTIFF (COG) format to enable the View service for all eligible users. The native data will remain available as is, with COG products added as an extension to the catalog. 
+
+The COG products can also be accessed via data searches using [S3 Access](https://documentation.dataspace.copernicus.eu/APIs/S3.html), [OData](https://documentation.dataspace.copernicus.eu/APIs/OData.html) and the [Copernicus Browser](https://browser.dataspace.copernicus.eu/). The same access rights valid for native products described at [Copernicus Contributing Missions User Categories](https://dataspace.copernicus.eu/explore-data/data-collections/copernicus-contributing-missions/ccm-user-categories) remain applicable.
+
+## Metadata updates
+
+Certain CCM-specific metadata parameters have been customized for the COG products (e.g., product type) to define specific attributes and relevant allowable values for data searches.
+
+All previously documented OData queries remain valid. However, to easily distinguish COG products from their native counterparts, the following catalog metadata changes have been implemented:
+
+1. **Product Names in CDSE catalogue**: a -COG suffix has been added to product names. Example: 
+SP07_NAO_MS4_2A_20210729T064948_20210729T064958_TOU_1234_90f0.DIMA -> SP07_NAO_MS4_2A_20210729T064948_20210729T064958_TOU_1234_90f0.DIMA-COG 
+2. **Product Names in S3 interface**: for technical constraints and avoid data overwriting, a _COG suffix has been added to product names before the final dot when present. Example: 
+KS04_AIS_MSP_1G_20170517T121901_20170517T121903_TOU_1234_4169.DIMA_3b0deec3 -> KS04_AIS_MSP_1G_20170517T121901_20170517T121903_TOU_1234_4169_COG.DIMA_3b0deec3 
+3. **Product Types**: A -COG suffix has been appended to product types. Example: 
+PHR_BUN__3_71F4 -> PHR_BUN__3_71F4-COG
+
+## Data access
+
+COG products are available not only for visualization but also for direct access via S3, OData, and Copernicus Browser, following the same procedures and access rights as native products, except for the metadata updates described above (i.e., the -COG suffix in product names and types).
+
+## Reflectance calculation from native data
+
+To ensure optimal visualization in the Copernicus Browser, native products have been processed to convert radiance values into reflectance values for the COGified products. This procedure, described below, is being applied to VHR 2021 and VHR 2018 coverages, and will be implemented for VHR 2024 once the dataset is delivered and processed.
+
+The radiometric values of VHR campaign data are provided either as Digital Numbers (DNs) or scaled radiance with 16-bit depth. Scaled radiance values can be treated as DNs. The metadata for each delivered dataset includes the necessary information to convert DNs to Top of Atmosphere (TOA) Reflectance. This information is structured within a common metadata format, specifically in the MTD_TL file included in the product package.
+
+This metadata structure allows end-users to automate the reflectance conversion process by extracting key parameters from the relevant metadata tags. The essential reflectance conversion parameters provided in the metadata include:
+
+* Formula to convert DN into radiance (L=DN*GAIN+BIAS) 
+* Gain 
+* Bias 
+* Solar irradiance value for each spectral band 
+* Solar zenith/elevation angle at the time of acquisition 
+* Earth-Sun distance formula 
+* Earth-Sun distance value in astronomical units for Day of the Year - DOY 
+* Formula to convert radiance into reflectance 
+* Coefficient of the formula to convert radiance into reflectance
+
+Within the MTD_TL file, a dedicated metadata block provides gain and bias values for each spectral band, allowing conversion from DN to radiance:
+
+![](_images/CCM/cog_of_vhr_dn_to_radiance.png){fig-align="center"}
+
+Additionally, the MTD_TL file includes the gain and bias values required for radiance-to-reflectance conversion, which are derived from Earth-Sun distance, solar irradiance values, and solar elevation:
+
+![](_images/CCM/cog_of_vhr_radiance_to_reflectance.png){fig-align="center"}
+
+## Reflectance Calculation Workflow
+
+The reflectance conversion process follows two main steps: 
+
+1. Radiance calculation from DN
+2. Reflectance calculation from radiance
+
+Processing steps: 
+
+1. **Extract metadata**: Read the MTD_TL.xml file to retrieve gain and bias values.
+2. **Read raster data**: Open the image files and generate associated VRT (Virtual Raster Table) files.
+3. Apply scale transformations: Modify the VRT file by adding scale_ratio and scale_offset fields, computed as follows:
+  Radiance calculation: L = DN x G1 + B1
+  Reflectance calculation: R = L x G2 + B2
+  Final scale parameters: 
+      ScaleRatio = G1 x G2 
+      ScaleOffset = B1 x G2 + B2
+4. **Generate COG output**: Create the COG file, applying scale_ratio and scale_offset to modify pixel values accordingly
+
+Credits for the support in this procedure: Airbus DS.
