@@ -40,7 +40,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting-549806ee2085284f45b00abea8c6df48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-6dcd777c164bd073615891cb0ad97e25.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-d7ebe2d49fe4df30c8a9add5695454a8.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": true,
@@ -871,8 +871,8 @@ window.onload = function() {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/SentinelHub/Process/Examples/S3SYN.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Examples for S3SYN</span></a>
+  <a href="../../APIs/SentinelHub/Process/Examples/S3SYNL2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Examples for S3SYNL2</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -1432,6 +1432,13 @@ window.onload = function() {
   <li><a href="#sar-data" id="toc-sar-data" class="nav-link" data-scroll-target="#sar-data">SAR data</a></li>
   <li><a href="#copernicus-dem" id="toc-copernicus-dem" class="nav-link" data-scroll-target="#copernicus-dem">Copernicus DEM</a></li>
   </ul></li>
+  </ul></li>
+  <li><a href="#cog-products-of-vhr-datasets" id="toc-cog-products-of-vhr-datasets" class="nav-link" data-scroll-target="#cog-products-of-vhr-datasets">COG products of VHR datasets</a>
+  <ul>
+  <li><a href="#metadata-updates" id="toc-metadata-updates" class="nav-link" data-scroll-target="#metadata-updates">Metadata updates</a></li>
+  <li><a href="#data-access" id="toc-data-access" class="nav-link" data-scroll-target="#data-access">Data access</a></li>
+  <li><a href="#reflectance-calculation-from-native-data" id="toc-reflectance-calculation-from-native-data" class="nav-link" data-scroll-target="#reflectance-calculation-from-native-data">Reflectance calculation from native data</a></li>
+  <li><a href="#reflectance-calculation-workflow" id="toc-reflectance-calculation-workflow" class="nav-link" data-scroll-target="#reflectance-calculation-workflow">Reflectance Calculation Workflow</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -4078,24 +4085,6 @@ IAD
 </div>
 </div>
 <p>More details on the structure of OData queries and available functionalities can be found in the <a href="../../APIs/OData.html" target="_blank">OData</a> documentation.</p>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Note
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p><strong>COGified data</strong>, processed to enable the VISUALISE service for the optical Europe VHR collections, will only be available for download via the OData interface and not through the Copernicus Browser.</p>
-<p>The product/image names will be updated as follows:</p>
-<p>Native name:</p>
-<p>SP05_HRG_J___<em>3_20060504T114303_20060504T114303_CDS</em>_0000.EEEE_42289e36</p>
-<p>COGified data name:</p>
-<p>SP05_HRG_J___<em>3_20060504T114303_20060504T114303_CDS</em>_0000.EEEE_42289e36-COG</p>
-</div>
-</div>
 </section>
 <section id="filters-panel-and-values-in-the-copernicus-browser" class="level2">
 <h2 class="anchored" data-anchor-id="filters-panel-and-values-in-the-copernicus-browser">Filters panel and values in the Copernicus Browser</h2>
@@ -5425,9 +5414,73 @@ Note
 </div>
 </div>
 </div>
-
-
 </section>
+</section>
+</section>
+<section id="cog-products-of-vhr-datasets" class="level1">
+<h1>COG products of VHR datasets</h1>
+<p>The primary optical CCM data collections are being processed into Cloud-Optimized GeoTIFF (COG) format to enable the View service for all eligible users. The native data will remain available as is, with COG products added as an extension to the catalog.</p>
+<p>The COG products can also be accessed via data searches using <a href="https://documentation.dataspace.copernicus.eu/APIs/S3.html">S3 Access</a>, <a href="https://documentation.dataspace.copernicus.eu/APIs/OData.html">OData</a> and the <a href="https://browser.dataspace.copernicus.eu/">Copernicus Browser</a>. The same access rights valid for native products described at <a href="https://dataspace.copernicus.eu/explore-data/data-collections/copernicus-contributing-missions/ccm-user-categories">Copernicus Contributing Missions User Categories</a> remain applicable.</p>
+<section id="metadata-updates" class="level2">
+<h2 class="anchored" data-anchor-id="metadata-updates">Metadata updates</h2>
+<p>Certain CCM-specific metadata parameters have been customized for the COG products (e.g., product type) to define specific attributes and relevant allowable values for data searches.</p>
+<p>All previously documented OData queries remain valid. However, to easily distinguish COG products from their native counterparts, the following catalog metadata changes have been implemented:</p>
+<ol type="1">
+<li><strong>Product Names in CDSE catalogue</strong>: a -COG suffix has been added to product names. Example: SP07_NAO_MS4_2A_20210729T064948_20210729T064958_TOU_1234_90f0.DIMA -&gt; SP07_NAO_MS4_2A_20210729T064948_20210729T064958_TOU_1234_90f0.DIMA-COG</li>
+<li><strong>Product Names in S3 interface</strong>: for technical constraints and avoid data overwriting, a _COG suffix has been added to product names before the final dot when present. Example: KS04_AIS_MSP_1G_20170517T121901_20170517T121903_TOU_1234_4169.DIMA_3b0deec3 -&gt; KS04_AIS_MSP_1G_20170517T121901_20170517T121903_TOU_1234_4169_COG.DIMA_3b0deec3</li>
+<li><strong>Product Types</strong>: A -COG suffix has been appended to product types. Example: PHR_BUN__3_71F4 -&gt; PHR_BUN__3_71F4-COG</li>
+</ol>
+</section>
+<section id="data-access" class="level2">
+<h2 class="anchored" data-anchor-id="data-access">Data access</h2>
+<p>COG products are available not only for visualization but also for direct access via S3, OData, and Copernicus Browser, following the same procedures and access rights as native products, except for the metadata updates described above (i.e., the -COG suffix in product names and types).</p>
+</section>
+<section id="reflectance-calculation-from-native-data" class="level2">
+<h2 class="anchored" data-anchor-id="reflectance-calculation-from-native-data">Reflectance calculation from native data</h2>
+<p>To ensure optimal visualization in the Copernicus Browser, native products have been processed to convert radiance values into reflectance values for the COGified products. This procedure, described below, is being applied to VHR 2021 and VHR 2018 coverages, and will be implemented for VHR 2024 once the dataset is delivered and processed.</p>
+<p>The radiometric values of VHR campaign data are provided either as Digital Numbers (DNs) or scaled radiance with 16-bit depth. Scaled radiance values can be treated as DNs. The metadata for each delivered dataset includes the necessary information to convert DNs to Top of Atmosphere (TOA) Reflectance. This information is structured within a common metadata format, specifically in the MTD_TL file included in the product package.</p>
+<p>This metadata structure allows end-users to automate the reflectance conversion process by extracting key parameters from the relevant metadata tags. The essential reflectance conversion parameters provided in the metadata include:</p>
+<ul>
+<li>Formula to convert DN into radiance (L=DN*GAIN+BIAS)</li>
+<li>Gain</li>
+<li>Bias</li>
+<li>Solar irradiance value for each spectral band</li>
+<li>Solar zenith/elevation angle at the time of acquisition</li>
+<li>Earth-Sun distance formula</li>
+<li>Earth-Sun distance value in astronomical units for Day of the Year - DOY</li>
+<li>Formula to convert radiance into reflectance</li>
+<li>Coefficient of the formula to convert radiance into reflectance</li>
+</ul>
+<p>Within the MTD_TL file, a dedicated metadata block provides gain and bias values for each spectral band, allowing conversion from DN to radiance:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="_images/CCM/cog_of_vhr_dn_to_radiance.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+<p>Additionally, the MTD_TL file includes the gain and bias values required for radiance-to-reflectance conversion, which are derived from Earth-Sun distance, solar irradiance values, and solar elevation:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="_images/CCM/cog_of_vhr_radiance_to_reflectance.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+</section>
+<section id="reflectance-calculation-workflow" class="level2">
+<h2 class="anchored" data-anchor-id="reflectance-calculation-workflow">Reflectance Calculation Workflow</h2>
+<p>The reflectance conversion process follows two main steps:</p>
+<ol type="1">
+<li>Radiance calculation from DN</li>
+<li>Reflectance calculation from radiance</li>
+</ol>
+<p>Processing steps:</p>
+<ol type="1">
+<li><strong>Extract metadata</strong>: Read the MTD_TL.xml file to retrieve gain and bias values.</li>
+<li><strong>Read raster data</strong>: Open the image files and generate associated VRT (Virtual Raster Table) files.</li>
+<li><strong>Apply scale transformations</strong>: Modify the VRT file by adding scale_ratio and scale_offset fields, computed as follows: Radiance calculation: L = DN x G1 + B1 Reflectance calculation: R = L x G2 + B2 Final scale parameters: ScaleRatio = G1 x G2 ScaleOffset = B1 x G2 + B2</li>
+<li><strong>Generate COG output</strong>: Create the COG file, applying scale_ratio and scale_offset to modify pixel values accordingly</li>
+</ol>
+<p>Credits for the support in this procedure: Airbus DS.</p>
+
+
 </section>
 </section>
 
