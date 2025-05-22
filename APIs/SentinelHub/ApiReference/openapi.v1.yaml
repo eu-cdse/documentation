@@ -6374,6 +6374,7 @@ components:
         isConfigured:
           description: It's set to true, if the collection has bands.
           type: boolean
+          readOnly: true
         created:
           description: >-
             The date when the collection was created. Older collections don't
@@ -6414,6 +6415,7 @@ components:
         extent:
           description: The collection extent in WGS84.
           $ref: '#/components/schemas/Polygon'
+          readOnly: true
         hasSensingTimes:
           type: string
           enum:
@@ -6433,13 +6435,19 @@ components:
           description: The sensing time in ISO 8601 of the most recent tile.
           readOnly: true
         storageIdentifier:
-          type: string
-          description: >
-            The identifier of the storage where the bucket resides.
+          $ref: '#/components/schemas/StorageIdentifier'
+          default: waw3-1
 
+    StorageIdentifier:
+      type: string
+      enum:
+        - waw3-1
+        - waw3-2
+      description: >
+        The identifier of the storage where the bucket resides.
 
-            For the default storage, you don't have to set this. The possible
-            values are deployment-specific.
+        For the default storage, you don't have to set this.
+
     BYOCFormat:
       type: object
       required:
@@ -6680,6 +6688,9 @@ components:
           description: >
             The prefix within the bucket where the Zarr is stored. Must end with
             '/' but not start with it and must contain a Zarr group.
+        storageIdentifier:
+          $ref: '#/components/schemas/StorageIdentifier'
+          default: waw3-1
         status:
           type: string
           enum:
