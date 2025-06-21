@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Wildfire mapping using Sentinel-2 – Documentation</title>
+<title>Forest Fire Analysis: Saving Multiple Results in One Job – Documentation</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -57,7 +57,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </style>
 
 
-<script src="../../../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="../../../../../site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="../../../../../site_libs/clipboard/clipboard.min.js"></script>
 <script src="../../../../../site_libs/quarto-search/autocomplete.umd.js"></script>
 <script src="../../../../../site_libs/quarto-search/fuse.min.js"></script>
@@ -99,6 +99,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 <meta name="zd-site-verification" content="xj9koofr1crilmoclgxsjd">
 <script type="text/javascript">
 
@@ -217,7 +220,7 @@ window.onload = function() {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Wildfire mapping using Sentinel-2</li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Forest Fire Analysis: Saving Multiple Results in One Job</li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -1381,17 +1384,8 @@ window.onload = function() {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#using-normalized-difference-vegetation-index-ndvi" id="toc-using-normalized-difference-vegetation-index-ndvi" class="nav-link active" data-scroll-target="#using-normalized-difference-vegetation-index-ndvi">Using Normalized Difference Vegetation Index (NDVI)</a>
+  <li><a href="#calculate-nbr" id="toc-calculate-nbr" class="nav-link active" data-scroll-target="#calculate-nbr">Calculate NBR</a>
   <ul>
-  <li><a href="#pre-event-ndvi" id="toc-pre-event-ndvi" class="nav-link" data-scroll-target="#pre-event-ndvi">Pre-event NDVI</a></li>
-  <li><a href="#near-real-timenrt-mode-ndvi" id="toc-near-real-timenrt-mode-ndvi" class="nav-link" data-scroll-target="#near-real-timenrt-mode-ndvi">Near Real Time(NRT) Mode NDVI</a></li>
-  <li><a href="#post-event-ndvi" id="toc-post-event-ndvi" class="nav-link" data-scroll-target="#post-event-ndvi">Post-event NDVI</a></li>
-  <li><a href="#plot-the-ndvi" id="toc-plot-the-ndvi" class="nav-link" data-scroll-target="#plot-the-ndvi">Plot the NDVI</a></li>
-  </ul></li>
-  <li><a href="#with-normalized-burn-rationbr" id="toc-with-normalized-burn-rationbr" class="nav-link" data-scroll-target="#with-normalized-burn-rationbr">With Normalized Burn Ratio(NBR)</a>
-  <ul>
-  <li><a href="#nrt-mode-for-nbr" id="toc-nrt-mode-for-nbr" class="nav-link" data-scroll-target="#nrt-mode-for-nbr">NRT mode for NBR</a></li>
-  <li><a href="#post-event-mode-for-nbr" id="toc-post-event-mode-for-nbr" class="nav-link" data-scroll-target="#post-event-mode-for-nbr">Post-event mode for NBR</a></li>
   <li><a href="#plot-the-nbr" id="toc-plot-the-nbr" class="nav-link" data-scroll-target="#plot-the-nbr">Plot the NBR</a></li>
   </ul></li>
   <li><a href="#ground-truth" id="toc-ground-truth" class="nav-link" data-scroll-target="#ground-truth">Ground Truth</a></li>
@@ -1403,7 +1397,7 @@ window.onload = function() {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Wildfire mapping using Sentinel-2</h1>
+<h1 class="title">Forest Fire Analysis: Saving Multiple Results in One Job</h1>
 </div>
 
 
@@ -1420,350 +1414,223 @@ window.onload = function() {
 </header>
 
 
-<p>In this notebook, we want to show a use case of mapping wildfire using Sentinel-2 following the method discussed in the work of <a href="https://www.mdpi.com/2072-4292/12/13/2162#">Nolde et al.&nbsp;(2020)</a>. Here, we want to replicate only a part of the workflow. Thus, it involves calculating cloud-free differences in NDVI for pre and post-fire data and comparing them.</p>
-<div id="821d957e-61c3-4477-8a6b-2a8050d86031" class="cell" data-execution_count="1">
+<p>Wildfires have a significant impact on ecosystems, making it crucial to detect and analyze affected areas efficiently. In this notebook, we demonstrate how to use Sentinel-2 collections offered in the Copernicus Data Space Ecosystem (CDSE) to map wildfire, following the approach outlined in <a href="https://www.mdpi.com/2072-4292/12/13/2162#">Nolde et al.&nbsp;(2020)</a>.</p>
+<p>Here, we want to replicate only a part of the workflow. It involves calculating cloud-free NBR for pre, near-real-time(nrt) and post-fire data and comparing them.</p>
+<p>Beyond showcasing this use case, we highlight the power of openEO’s <a href="https://open-eo.github.io/openeo-python-client/api.html#module-openeo.rest.multiresult"><code>MultiResult</code></a> functionality, which allows multiple results to be retrieved within a single process call. This improves efficiency by enabling seamless access to both intermediate and final outputs in a structured manner.</p>
+<div id="cell-2" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> scipy</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> openeo</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> openeo.extra.spectral_indices <span class="im">import</span> compute_indices</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.patches <span class="im">as</span> mpatches</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> rasterio</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> rasterio.plot <span class="im">import</span> show</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> openeo <span class="im">import</span> MultiResult</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> openeo.extra.spectral_indices <span class="im">import</span> compute_indices</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.patches <span class="im">as</span> mpatches</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> rasterio</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> rasterio.plot <span class="im">import</span> show</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="c1a1ca9d-dc02-4160-9848-91edb43eca43" class="cell" data-execution_count="2">
+<div id="cell-3" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>connection <span class="op">=</span> openeo.<span class="ex">connect</span>(<span class="st">"openeo.dataspace.copernicus.eu"</span>).authenticate_oidc()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Authenticated using refresh token.</code></pre>
 </div>
 </div>
-<p>For this usecase we select an area in Jaen/Spain where fire was noted on 2017/08/03 <em>(source: https://emergency.copernicus.eu/mapping/list-of-components/EMSR219)</em></p>
-<div id="fd2960ba-132d-40cd-9925-78b9c591f44c" class="cell" data-execution_count="3">
+<p>To begin, we established a connection to CDSE backend in the previous step. The next step is to identify and define the area of interest (AOI) where we want to detect the wildfire and the temporal range for which we want to analyze the data.</p>
+<p>For this usecase we select an area in Jaen/Spain where fire was noted on 2017/08/03 <em>(source: https://emergency.copernicus.eu/mapping/list-of-components/EMSR219)</em>.</p>
+<div id="cell-5" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>extent <span class="op">=</span> {<span class="st">"west"</span>: <span class="op">-</span><span class="fl">2.6910</span>, <span class="st">"south"</span>: <span class="fl">38.2239</span>, <span class="st">"east"</span>: <span class="op">-</span><span class="fl">2.5921</span>, <span class="st">"north"</span>: <span class="fl">38.3002</span>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>As locations with forest fire often have cloud cover, which hinders the calculation of forest fire-affected areas, we want to get a cloud-free pre-event datacube. Thus, let us define a simple Python function to pre-process pre-event NDVI. Here we use the concept of BAP which means the best available cloud-free pixels right before or right after the forest fire event, this is obtained via cloud masking and temporal reduction with “first” in post event datacube and “last” in pre event datacube.ent date.</p>
-<p>Hence: * We first create a cloud mask with an <code>SCL</code> band where we filter out pixels which have a cloud effect; * Subsequently, a <code>Gaussian kernel</code> is created since the cloud masks are frequently noisy and may not completely encompass the cloud region; * Next, we apply a smoothing function to the selected mask coupled with a morphometric dilation to increase and smooth the mask area. Here, for dilation, we select 11 pixels; * Following this, a binary mask is produced by applying a threshold of 0.1. This implies that to be classified as cloud-free pixels, the pixels that have undergone smoothing and dilation should exhibit a value below 0.1. * Once the required <code>mask</code> is generated, it is applied to the data cube; * Finally, once the masked datacube is available, we want to select each cloud-free pixel as near the forest fire date as possible. To achieve this, we reduce the time dimension (<code>reduce_dimension</code>) based on the “last” criterion, which selects the nearest cloud-free pixel to the event date.</p>
-<div id="285a8bf7-2a20-426d-89b4-d435e4a98dbd" class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># define a function to identify cloud-free pixels in the available data-cube</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> getBAP(scl, data, reducer<span class="op">=</span><span class="st">"first"</span>):</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    mask <span class="op">=</span> (scl <span class="op">==</span> <span class="dv">3</span>) <span class="op">|</span> (scl <span class="op">==</span> <span class="dv">8</span>) <span class="op">|</span> (scl <span class="op">==</span> <span class="dv">9</span>) <span class="op">|</span> (scl <span class="op">==</span> <span class="dv">10</span>)</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># mask is a bit noisy, so we apply smoothening</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 2D gaussian kernel</span></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    g <span class="op">=</span> scipy.signal.windows.gaussian(<span class="dv">11</span>, std<span class="op">=</span><span class="fl">1.6</span>)</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    kernel <span class="op">=</span> np.outer(g, g)</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    kernel <span class="op">=</span> kernel <span class="op">/</span> kernel.<span class="bu">sum</span>()</span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Morphological dilation of mask: convolution + threshold</span></span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    mask <span class="op">=</span> mask.apply_kernel(kernel)</span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    mask <span class="op">=</span> mask <span class="op">&gt;</span> <span class="fl">0.1</span></span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    data_masked <span class="op">=</span> data.mask(mask)</span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    <span class="co"># now select Best Available Pixel based on the mask</span></span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> data_masked.reduce_dimension(reducer<span class="op">=</span>reducer, dimension<span class="op">=</span><span class="st">"t"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Since the objective is to analyze the differences between pre-, nrt- and post-forestfire, we will define separate time ranges for each as shown below:</p>
+<div id="cell-7" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>pre_temporal_extent <span class="op">=</span> [<span class="st">"2017-05-03"</span>, <span class="st">"2017-08-03"</span>]</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>nrt_temporal_extent <span class="op">=</span> [<span class="st">"2017-08-03"</span>, <span class="st">"2017-08-08"</span>]</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>post_temporal_extent <span class="op">=</span> [<span class="st">"2017-08-03"</span>, <span class="st">"2017-11-03"</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<section id="using-normalized-difference-vegetation-index-ndvi" class="level2">
-<h2 class="anchored" data-anchor-id="using-normalized-difference-vegetation-index-ndvi">Using Normalized Difference Vegetation Index (NDVI)</h2>
-<section id="pre-event-ndvi" class="level3">
-<h3 class="anchored" data-anchor-id="pre-event-ndvi">Pre-event NDVI</h3>
-<p>Let us load Sentinel-2 L2A as our pre-event datacube to calculate NDVI.</p>
-<div id="3fe06edd-4d42-4ec6-a06f-85f6ddebf512" class="cell" data-execution_count="19">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># load S2 pre-collection</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>s2pre <span class="op">=</span> connection.load_collection(</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"SENTINEL2_L2A"</span>,</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    temporal_extent<span class="op">=</span>[<span class="st">"2017-05-03"</span>, <span class="st">"2017-08-03"</span>],</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    spatial_extent<span class="op">=</span>extent,</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    bands<span class="op">=</span>[<span class="st">"B04"</span>, <span class="st">"B08"</span>, <span class="st">"B12"</span>],</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    max_cloud_cover<span class="op">=</span><span class="dv">90</span>,</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>s2pre_scl <span class="op">=</span> connection.load_collection(</span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">"SENTINEL2_L2A"</span>,</span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    temporal_extent<span class="op">=</span>[<span class="st">"2017-05-03"</span>, <span class="st">"2017-08-03"</span>],</span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    spatial_extent<span class="op">=</span>extent,</span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    bands<span class="op">=</span>[<span class="st">"SCL"</span>],</span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    max_cloud_cover<span class="op">=</span><span class="dv">90</span>,</span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate ndvi</span></span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>ndvi_pre <span class="op">=</span> s2pre.ndvi()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Wildfire regions often have cloud cover, making it difficult to assess the severity of affected areas accurately. This is especially problematic when comparing data from just before or after the forestfire event. To address this, we preprocess the NBR data using the following method, which selects cloud-free pixels right before or after the fire event. The function uses a combination of cloud masking, smoothing, and morphological operations to filter out unreliable data. By doing this, the resulting data becomes more reliable and can better reflect the actual conditions of the land before and after the forestfire.</p>
+<div id="cell-9" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># define a function to identify cloud-free pixels in the available data-cube</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_cloud_free_pixels(scl, data, reducer<span class="op">=</span><span class="st">"first"</span>):</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    mask <span class="op">=</span> (scl <span class="op">==</span> <span class="dv">3</span>) <span class="op">|</span> (scl <span class="op">==</span> <span class="dv">8</span>) <span class="op">|</span> (scl <span class="op">==</span> <span class="dv">9</span>) <span class="op">|</span> (scl <span class="op">==</span> <span class="dv">10</span>)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># mask is a bit noisy, so we apply smoothening</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 2D gaussian kernel</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    g <span class="op">=</span> scipy.signal.windows.gaussian(<span class="dv">11</span>, std<span class="op">=</span><span class="fl">1.6</span>)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    kernel <span class="op">=</span> np.outer(g, g)</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    kernel <span class="op">=</span> kernel <span class="op">/</span> kernel.<span class="bu">sum</span>()</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Morphological dilation of mask: convolution + threshold</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    mask <span class="op">=</span> mask.apply_kernel(kernel)</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    mask <span class="op">=</span> mask <span class="op">&gt;</span> <span class="fl">0.1</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    data_masked <span class="op">=</span> data.mask(mask)</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    <span class="co"># now select Pixel with the requested reducer</span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> data_masked.reduce_dimension(reducer<span class="op">=</span>reducer, dimension<span class="op">=</span><span class="st">"t"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="6f7dc4db-1b87-46cc-b91b-c9e438cd7a4d" class="cell" data-execution_count="6">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a Pre-event cloud free mosiac</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>ndvi_pre <span class="op">=</span> getBAP(s2pre_scl, ndvi_pre, reducer<span class="op">=</span><span class="st">"last"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div id="7499dc24-2d7f-4423-bf41-fa422c79e728" class="cell" data-execution_count="7">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>ndvi_pre.download(<span class="st">"NDVI.tiff"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>During the forest fire, we want to know the location of the forest fire as soon as possible. However, it means that the images are often filled with smoke and clouds right after the fire events, which hinders its performance with many cloud-covered pixels where we cannot map the forest fire.</p>
-<p>Therefore, here, we want to show two modes of operation:</p>
-<pre><code>(i) NRT mode and 
-(ii) Post-event mode. </code></pre>
-<p>In NRT mode, we try to map based on the first available image right after the forest fire event. In post-event mode, we perform pre-processing similar to the pre-event data to obtain cloud-free images. The NRT mode is generally used for the first-response and quick actions, whereas the post mode is used for scientific studies.</p>
-</section>
-<section id="near-real-timenrt-mode-ndvi" class="level3">
-<h3 class="anchored" data-anchor-id="near-real-timenrt-mode-ndvi">Near Real Time(NRT) Mode NDVI</h3>
-<div id="acfcd62e-9f56-4dca-9d7a-be90f873ba17" class="cell" data-execution_count="20">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># load S2 Near-real-time(NRT) collection</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>s2nrt <span class="op">=</span> connection.load_collection(</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"SENTINEL2_L2A"</span>,</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    temporal_extent<span class="op">=</span>[<span class="st">"2017-08-03"</span>, <span class="st">"2017-08-08"</span>],</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    spatial_extent<span class="op">=</span>extent,</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    bands<span class="op">=</span>[<span class="st">"B04"</span>, <span class="st">"B08"</span>, <span class="st">"B12"</span>],</span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    max_cloud_cover<span class="op">=</span><span class="dv">90</span>,</span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>s2nrt_scl <span class="op">=</span> connection.load_collection(</span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">"SENTINEL2_L2A"</span>,</span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>    temporal_extent<span class="op">=</span>[<span class="st">"2017-08-03"</span>, <span class="st">"2017-08-08"</span>],</span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>    spatial_extent<span class="op">=</span>extent,</span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>    bands<span class="op">=</span>[<span class="st">"SCL"</span>],</span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>    max_cloud_cover<span class="op">=</span><span class="dv">90</span>,</span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>ndvi_nrt <span class="op">=</span> s2nrt.ndvi()</span>
-<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>ndvi_nrt <span class="op">=</span> getBAP(s2nrt_scl, ndvi_nrt, reducer<span class="op">=</span><span class="st">"first"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>Now, we have both pre and post event NDVI data we calculate dNDVI (differential NDVI) to find locations where forest fire has occured.</p>
-<div id="336e6cbe-bb49-4b33-be5a-b3d4e642d490" class="cell" data-execution_count="9">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># download NDVI for NRT mode for comparison</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>ndvi_nrt.download(<span class="st">"NRT_NDVI.tiff"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div id="84f207f0-9605-40c0-b821-cbfea57caa96" class="cell" data-execution_count="10">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># download signal of fire in near real time</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>fire_nrt <span class="op">=</span> ndvi_pre <span class="op">-</span> ndvi_nrt</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>fire_nrt.download(<span class="st">"NRT_Fire.tiff"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</section>
-<section id="post-event-ndvi" class="level3">
-<h3 class="anchored" data-anchor-id="post-event-ndvi">Post-event NDVI</h3>
-<p>In post-event mode, similar to pre-event data, we collect <strong>long-term</strong> image time series and prepare the data to calculate cloud-free NDVI pixels. Notably, here we use the reducer as “first” mainly because this is a post-event time series, and we would like to obtain a cloud-free pixel with NDVI as soon as possible from the forest fire event, therefore selecting the first available cloud-free pixel ensures that we get the earliest cloud-free pixel.</p>
-<div id="d5362852-4503-403a-afee-2b32af8bf19e" class="cell" data-execution_count="21">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># load S2 post collection</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>s2post <span class="op">=</span> connection.load_collection(</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"SENTINEL2_L2A"</span>,</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    temporal_extent<span class="op">=</span>[<span class="st">"2017-08-03"</span>, <span class="st">"2017-11-03"</span>],</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    spatial_extent<span class="op">=</span>extent,</span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    bands<span class="op">=</span>[<span class="st">"B04"</span>, <span class="st">"B08"</span>, <span class="st">"B12"</span>],</span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    max_cloud_cover<span class="op">=</span><span class="dv">90</span>,</span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>s2post_scl <span class="op">=</span> connection.load_collection(</span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">"SENTINEL2_L2A"</span>,</span>
-<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>    temporal_extent<span class="op">=</span>[<span class="st">"2017-08-03"</span>, <span class="st">"2017-11-03"</span>],</span>
-<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>    spatial_extent<span class="op">=</span>extent,</span>
-<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>    bands<span class="op">=</span>[<span class="st">"SCL"</span>],</span>
-<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>    max_cloud_cover<span class="op">=</span><span class="dv">90</span>,</span>
-<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate post ndvi mosaic</span></span>
-<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>ndvi_post <span class="op">=</span> s2post.ndvi()</span>
-<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>ndvi_post <span class="op">=</span> getBAP(s2post_scl, ndvi_post, reducer<span class="op">=</span><span class="st">"first"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div id="a14b3837-7b1a-4dd9-a614-02403a87a066" class="cell" data-execution_count="13">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># download NDVI for post-event mode for comparison</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>ndvi_post.download(<span class="st">"Post_NDVI.tiff"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div id="174b83b3-c10c-4ee9-bde1-ece56d031334" class="cell" data-execution_count="14">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>fire_mosiac <span class="op">=</span> ndvi_pre <span class="op">-</span> ndvi_post</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>fire_mosiac.download(<span class="st">"Mosiac_Fire.tiff"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</section>
-<section id="plot-the-ndvi" class="level3">
-<h3 class="anchored" data-anchor-id="plot-the-ndvi">Plot the NDVI</h3>
-<div id="f6f36f92-a731-4f79-ace5-d5016dc0b503" class="cell" data-execution_count="15">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>ndvi <span class="op">=</span> rasterio.<span class="bu">open</span>(<span class="st">"NDVI.tiff"</span>)</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>ndvi_nrt <span class="op">=</span> rasterio.<span class="bu">open</span>(<span class="st">"NRT_NDVI.tiff"</span>)</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>ndvi_mosiac <span class="op">=</span> rasterio.<span class="bu">open</span>(<span class="st">"Post_NDVI.tiff"</span>)</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>f, axarr <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">3</span>, dpi<span class="op">=</span><span class="dv">100</span>, figsize<span class="op">=</span>(<span class="dv">18</span>, <span class="dv">6</span>))</span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>im <span class="op">=</span> show(ndvi.read(<span class="dv">1</span>), vmin<span class="op">=</span><span class="dv">0</span>, vmax<span class="op">=</span><span class="dv">1</span>, transform<span class="op">=</span>ndvi.transform, ax<span class="op">=</span>axarr[<span class="dv">0</span>])</span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>axarr[<span class="dv">0</span>].set_title(<span class="st">"Pre Event NDVI"</span>)</span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>im <span class="op">=</span> show(ndvi_nrt.read(<span class="dv">1</span>), vmin<span class="op">=</span><span class="dv">0</span>, vmax<span class="op">=</span><span class="dv">1</span>, transform<span class="op">=</span>ndvi_nrt.transform, ax<span class="op">=</span>axarr[<span class="dv">1</span>])</span>
-<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>axarr[<span class="dv">1</span>].set_title(<span class="st">"Post Event NDVI (NRT)"</span>)</span>
-<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>im <span class="op">=</span> show(</span>
-<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>    ndvi_mosiac.read(<span class="dv">1</span>), vmin<span class="op">=</span><span class="dv">0</span>, vmax<span class="op">=</span><span class="dv">1</span>, transform<span class="op">=</span>ndvi_mosiac.transform, ax<span class="op">=</span>axarr[<span class="dv">2</span>]</span>
-<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>axarr[<span class="dv">2</span>].set_title(<span class="st">"Post Event NDVI (Mosiac)"</span>)</span>
-<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="ForestFire_files/figure-html/cell-15-output-1.png" class="img-fluid figure-img"></p>
-</figure>
-</div>
-</div>
-</div>
-<p>As we can see there is a drop in NDVI at the locations with forest fire (see end of page for ground truth). This shows that with the adopted approach we can identify locations with forest fire.</p>
-<p>Moreover, we can also observe that in the NDVI NRT mode and NDVI Mosiac mode there is not much difference, the reason could be because the cloud cover was not present in the NRT image. This shows that if there is no cloud cover, both modes operate similarly. Now, based on these image we calculated the difference in NDVI which is the likely locations of forest fire; let’s visualize them, too.</p>
-<div id="6ec5fda8-e460-467f-9643-86a97df29791" class="cell" data-execution_count="16">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>fire_nrt <span class="op">=</span> rasterio.<span class="bu">open</span>(<span class="st">"NRT_Fire.tiff"</span>)</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>fire_mosiac <span class="op">=</span> rasterio.<span class="bu">open</span>(<span class="st">"Mosiac_Fire.tiff"</span>)</span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>cmap <span class="op">=</span> matplotlib.colors.ListedColormap([<span class="st">"black"</span>, <span class="st">"firebrick"</span>])</span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>values <span class="op">=</span> [<span class="st">"Absence"</span>, <span class="st">"Presence"</span>]</span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>colors <span class="op">=</span> [<span class="st">"black"</span>, <span class="st">"firebrick"</span>]</span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>f, axarr <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, dpi<span class="op">=</span><span class="dv">100</span>, figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">6</span>))</span>
-<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>im <span class="op">=</span> show(</span>
-<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>    fire_nrt.read(<span class="dv">1</span>) <span class="op">&gt;</span> <span class="fl">0.5</span>,</span>
-<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>    vmin<span class="op">=</span><span class="dv">0</span>,</span>
-<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>    vmax<span class="op">=</span><span class="dv">1</span>,</span>
-<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>    transform<span class="op">=</span>fire_nrt.transform,</span>
-<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>    ax<span class="op">=</span>axarr[<span class="dv">0</span>],</span>
-<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>    cmap<span class="op">=</span>cmap,</span>
-<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>axarr[<span class="dv">0</span>].set_title(<span class="st">"Forest Fire NRT mode"</span>)</span>
-<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a>im <span class="op">=</span> show(</span>
-<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a>    fire_mosiac.read(<span class="dv">1</span>) <span class="op">&gt;</span> <span class="fl">0.5</span>,</span>
-<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a>    vmin<span class="op">=</span><span class="dv">0</span>,</span>
-<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a>    vmax<span class="op">=</span><span class="dv">1</span>,</span>
-<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a>    transform<span class="op">=</span>fire_mosiac.transform,</span>
-<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a>    ax<span class="op">=</span>axarr[<span class="dv">1</span>],</span>
-<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a>    cmap<span class="op">=</span>cmap,</span>
-<span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb17-28"><a href="#cb17-28" aria-hidden="true" tabindex="-1"></a>axarr[<span class="dv">1</span>].set_title(<span class="st">"Forest Fire Post Mode"</span>)</span>
-<span id="cb17-29"><a href="#cb17-29" aria-hidden="true" tabindex="-1"></a>patches <span class="op">=</span> [</span>
-<span id="cb17-30"><a href="#cb17-30" aria-hidden="true" tabindex="-1"></a>    mpatches.Patch(color<span class="op">=</span>colors[i], label<span class="op">=</span><span class="st">"Fire </span><span class="sc">{l}</span><span class="st">"</span>.<span class="bu">format</span>(l<span class="op">=</span>values[i]))</span>
-<span id="cb17-31"><a href="#cb17-31" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(values))</span>
-<span id="cb17-32"><a href="#cb17-32" aria-hidden="true" tabindex="-1"></a>]</span>
-<span id="cb17-33"><a href="#cb17-33" aria-hidden="true" tabindex="-1"></a>f.legend(handles<span class="op">=</span>patches, bbox_to_anchor<span class="op">=</span>(<span class="fl">0.95</span>, <span class="fl">0.2</span>), loc<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb17-34"><a href="#cb17-34" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="ForestFire_files/figure-html/cell-16-output-1.png" class="img-fluid figure-img"></p>
-</figure>
-</div>
-</div>
-</div>
-<p>Here, we can see that the burnt area is quite nicely mapped in both modes and compared to the ground truth image shown at the end of this notebook, the burned area mapping is quite accurate. Moreover, this can still be improved with the NBR data, as suggested by Nolde et al.(2020). Let’s try the same with NBR.</p>
-</section>
-</section>
-<section id="with-normalized-burn-rationbr" class="level2">
-<h2 class="anchored" data-anchor-id="with-normalized-burn-rationbr">With Normalized Burn Ratio(NBR)</h2>
-<p>This whole process can also be done with NBR as the <a href="https://www.mdpi.com/2072-4292/12/13/2162#">paper</a> suggests that NBR produces higher accuracy, but due to the unavailability of SWIR band in medium-resolution satellites, they opted to use NDVI.</p>
+<section id="calculate-nbr" class="level2">
+<h2 class="anchored" data-anchor-id="calculate-nbr">Calculate NBR</h2>
+<p>Though, NDVI is a good indicator of vegetation health, the Normalized Burn Ratio (NBR) index could be a better choice, which is more sensitive to burnt areas as suggested by Nolde et al.(2020).</p>
 <p><em>Quoted: “Optionally, the system can utilize the Normalized Burn Ratio (NBR) index ([40], see Equations (3) and (4)) instead of the NDVI. This index features superior capabilities for burnt area discrimination compared to the NDVI”</em></p>
-<p>Thus, further in this notebook, we also showcase the same process as above with NBR. In this case, all processing steps are the same except for the calculation of NBR instead of NDVI.</p>
-<div id="21582e7c-79c7-4298-8240-b1da3f63c881" class="cell" data-execution_count="22">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>nbr_pre <span class="op">=</span> compute_indices(s2pre, indices<span class="op">=</span>[<span class="st">"NBR"</span>])</span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>nbr_pre <span class="op">=</span> getBAP(s2pre_scl, nbr_pre, reducer<span class="op">=</span><span class="st">"last"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Therefore, we define a reusable function to streamline the process of computing NBR for different time periods. This function loads the Sentinel-2 L2A collection, calculates NBR, and applies the <code>get_cloud_free_pixels</code> method. By adjusting the time range and reducer, we can use the same function for pre-fire, near-real-time, and post-fire NBR calculations.</p>
+<p>To analyze the vegetation state before the wildfire, we load the Sentinel-2 L2A collection with few bands and calculate the NBR. Similarly, we calculate the NBR for the near-real-time and post-fire period with different time ranges and reducers passed to the method.</p>
+<p>For NBR computation, we rely on the <a href="https://open-eo.github.io/openeo-python-client/cookbook/spectral_indices.html#openeo.extra.spectral_indices.compute_indices"><code>compute_indices</code></a> process of openEO. It simplifies the generation of vegetation indices by internally performing band math. It supports a wide range of indices and ensures consistency and readability in remote sensing workflows, reducing the need to manually implement index formulas. The list of supported indices can be found in this <a href="https://awesome-ee-spectral-indices.readthedocs.io/en/latest/">documentation</a>.</p>
+<div id="cell-12" class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> cal_nbr(temporal_extent, reducer):</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    s2_cube <span class="op">=</span> connection.load_collection(</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>        <span class="st">"SENTINEL2_L2A"</span>,</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>        temporal_extent<span class="op">=</span>temporal_extent,</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>        spatial_extent<span class="op">=</span>extent,</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>        bands<span class="op">=</span>[<span class="st">"B08"</span>, <span class="st">"B12"</span>],</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>        max_cloud_cover<span class="op">=</span><span class="dv">90</span>,</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    scl <span class="op">=</span> connection.load_collection(</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>        <span class="st">"SENTINEL2_L2A"</span>,</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>        temporal_extent<span class="op">=</span>temporal_extent,</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>        spatial_extent<span class="op">=</span>extent,</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>        bands<span class="op">=</span>[<span class="st">"SCL"</span>],</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>        max_cloud_cover<span class="op">=</span><span class="dv">90</span>,</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>    <span class="co"># compute NBR</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>    nbr <span class="op">=</span> compute_indices(s2_cube, indices<span class="op">=</span>[<span class="st">"NBR"</span>])</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>    <span class="co"># get cloud free pixel</span></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>    nbr_cloud_free <span class="op">=</span> get_cloud_free_pixels(scl, nbr, reducer<span class="op">=</span>reducer)</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> nbr_cloud_free</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="2bf757c5-9a97-4542-a4d3-66dcf72cc23c" class="cell" data-execution_count="23">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>nbr_pre.download(<span class="st">"NBR.tiff"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>To analyze wildfire impact, we compute NBR for three key phases, each requiring a different temporal range and reducer to handle cloud cover effectively: 1. Pre-event NBR – We use the “last” reducer to select the most recent cloud-free pixel before the fire, ensuring an accurate baseline for comparison. 2. Near-Real-Time (NRT) NBR – Since immediate detection is crucial, we use the “first” reducer to select the earliest available image after the fire, even if some cloud cover remains. 3. Post-event NBR – Similar to pre-event processing, we use the “first” reducer to capture the earliest cloud-free pixel after the fire, ensuring reliable post-fire assessment.</p>
+<div id="cell-14" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>nbr_pre <span class="op">=</span> cal_nbr(pre_temporal_extent, <span class="st">"last"</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>nbr_nrt <span class="op">=</span> cal_nbr(nrt_temporal_extent, <span class="st">"first"</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>nbr_post <span class="op">=</span> cal_nbr(post_temporal_extent, <span class="st">"first"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<section id="nrt-mode-for-nbr" class="level3">
-<h3 class="anchored" data-anchor-id="nrt-mode-for-nbr">NRT mode for NBR</h3>
-<div id="83ca5eec-e4e7-4542-99c3-0a60892e6b7f" class="cell" data-execution_count="25">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>nbr_nrt <span class="op">=</span> compute_indices(s2nrt, indices<span class="op">=</span>[<span class="st">"NBR"</span>])</span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>nbr_nrt <span class="op">=</span> getBAP(s2nrt_scl, nbr_nrt, reducer<span class="op">=</span><span class="st">"first"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>At this stage, we have only defined the workflow but have not executed it yet. Rather than running separate jobs for each temporal stage (pre-fire, near-real-time, and post-fire), we save it these results so that we can combine them into a single openEO job in later stage.</p>
+<div id="cell-16" class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># first result</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>nbr_pre_result <span class="op">=</span> nbr_pre.save_result(<span class="bu">format</span><span class="op">=</span><span class="st">"GTiff"</span>, options<span class="op">=</span>{<span class="st">"filename_prefix"</span>: <span class="st">"NBR"</span>})</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co"># save NBR for NRT mode for comparison as second result</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>nbr_nrt_result <span class="op">=</span> nbr_nrt.save_result(<span class="bu">format</span><span class="op">=</span><span class="st">"GTiff"</span>, options<span class="op">=</span>{<span class="st">"filename_prefix"</span>: <span class="st">"NRT_NBR"</span>})</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="co"># save NBR for post-event mode for comparison</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>nbr_post_result <span class="op">=</span> nbr_post.save_result(<span class="bu">format</span><span class="op">=</span><span class="st">"GTiff"</span>, options<span class="op">=</span>{<span class="st">"filename_prefix"</span>: <span class="st">"Post_NBR"</span>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="cea77634-dfde-42fc-b424-c21563382998" class="cell" data-execution_count="26">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>nbr_nrt.download(<span class="st">"NRT_NBR.tiff"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="cell-17" class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># a quick view on the process graph</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>nbr_post_result</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="9">
+
+    <script>
+    if (!window.customElements || !window.customElements.get('openeo-model-builder')) {
+        var el = document.createElement('script');
+        el.src = "https://cdn.jsdelivr.net/npm/@openeo/vue-components@2/assets/openeo.min.js";
+        document.head.appendChild(el);
+
+        var font = document.createElement('font');
+        font.as = "font";
+        font.type = "font/woff2";
+        font.crossOrigin = true;
+        font.href = "https://use.fontawesome.com/releases/v5.13.0/webfonts/fa-solid-900.woff2"
+        document.head.appendChild(font);
+    }
+    </script>
+    <openeo-model-builder>
+        <script type="application/json">{"id": "475ccacd093549e183cd5161d06a24c7", "explicit-zoom": true, "height": "400px", "value": {"process_graph": {"loadcollection1": {"process_id": "load_collection", "arguments": {"bands": ["B08", "B12"], "id": "SENTINEL2_L2A", "properties": {"eo:cloud_cover": {"process_graph": {"lte1": {"process_id": "lte", "arguments": {"x": {"from_parameter": "value"}, "y": 90}, "result": true}}}}, "spatial_extent": {"west": -2.691, "south": 38.2239, "east": -2.5921, "north": 38.3002}, "temporal_extent": ["2017-08-03", "2017-11-03"]}}, "applydimension1": {"process_id": "apply_dimension", "arguments": {"data": {"from_node": "loadcollection1"}, "dimension": "bands", "process": {"process_graph": {"arrayelement1": {"process_id": "array_element", "arguments": {"data": {"from_parameter": "data"}, "index": 0}}, "arrayelement2": {"process_id": "array_element", "arguments": {"data": {"from_parameter": "data"}, "index": 1}}, "subtract1": {"process_id": "subtract", "arguments": {"x": {"from_node": "arrayelement1"}, "y": {"from_node": "arrayelement2"}}}, "add1": {"process_id": "add", "arguments": {"x": {"from_node": "arrayelement1"}, "y": {"from_node": "arrayelement2"}}}, "divide1": {"process_id": "divide", "arguments": {"x": {"from_node": "subtract1"}, "y": {"from_node": "add1"}}}, "arraycreate1": {"process_id": "array_create", "arguments": {"data": [{"from_node": "divide1"}]}, "result": true}}}}}, "renamelabels1": {"process_id": "rename_labels", "arguments": {"data": {"from_node": "applydimension1"}, "dimension": "bands", "target": ["NBR"]}}, "loadcollection2": {"process_id": "load_collection", "arguments": {"bands": ["SCL"], "id": "SENTINEL2_L2A", "properties": {"eo:cloud_cover": {"process_graph": {"lte2": {"process_id": "lte", "arguments": {"x": {"from_parameter": "value"}, "y": 90}, "result": true}}}}, "spatial_extent": {"west": -2.691, "south": 38.2239, "east": -2.5921, "north": 38.3002}, "temporal_extent": ["2017-08-03", "2017-11-03"]}}, "apply1": {"process_id": "apply", "arguments": {"data": {"from_node": "loadcollection2"}, "process": {"process_graph": {"eq1": {"process_id": "eq", "arguments": {"x": {"from_parameter": "x"}, "y": 3}, "result": true}}}}}, "apply2": {"process_id": "apply", "arguments": {"data": {"from_node": "loadcollection2"}, "process": {"process_graph": {"eq2": {"process_id": "eq", "arguments": {"x": {"from_parameter": "x"}, "y": 8}, "result": true}}}}}, "mergecubes1": {"process_id": "merge_cubes", "arguments": {"cube1": {"from_node": "apply1"}, "cube2": {"from_node": "apply2"}, "overlap_resolver": {"process_graph": {"or1": {"process_id": "or", "arguments": {"x": {"from_parameter": "x"}, "y": {"from_parameter": "y"}}, "result": true}}}}}, "apply3": {"process_id": "apply", "arguments": {"data": {"from_node": "loadcollection2"}, "process": {"process_graph": {"eq3": {"process_id": "eq", "arguments": {"x": {"from_parameter": "x"}, "y": 9}, "result": true}}}}}, "mergecubes2": {"process_id": "merge_cubes", "arguments": {"cube1": {"from_node": "mergecubes1"}, "cube2": {"from_node": "apply3"}, "overlap_resolver": {"process_graph": {"or2": {"process_id": "or", "arguments": {"x": {"from_parameter": "x"}, "y": {"from_parameter": "y"}}, "result": true}}}}}, "apply4": {"process_id": "apply", "arguments": {"data": {"from_node": "loadcollection2"}, "process": {"process_graph": {"eq4": {"process_id": "eq", "arguments": {"x": {"from_parameter": "x"}, "y": 10}, "result": true}}}}}, "mergecubes3": {"process_id": "merge_cubes", "arguments": {"cube1": {"from_node": "mergecubes2"}, "cube2": {"from_node": "apply4"}, "overlap_resolver": {"process_graph": {"or3": {"process_id": "or", "arguments": {"x": {"from_parameter": "x"}, "y": {"from_parameter": "y"}}, "result": true}}}}}, "applykernel1": {"process_id": "apply_kernel", "arguments": {"border": 0, "data": {"from_node": "mergecubes3"}, "factor": 1.0, "kernel": [[3.5713954074985053e-06, 2.0713152601434825e-05, 8.128458481216907e-05, 0.00021583600643790027, 0.0003877870659458747, 0.0004714291802648667, 0.0003877870659458747, 0.00021583600643790027, 8.128458481216907e-05, 2.0713152601434825e-05, 3.5713954074985053e-06], [2.0713152601434825e-05, 0.00012013082891620589, 0.00047142918026486666, 0.001251791982720796, 0.002249062833237385, 0.002734165063631252, 0.002249062833237385, 0.001251791982720796, 0.00047142918026486666, 0.00012013082891620589, 2.0713152601434825e-05], [8.128458481216907e-05, 0.00047142918026486666, 0.0018500286230458429, 0.004912404863932368, 0.008825992939554635, 0.01072967868685566, 0.008825992939554635, 0.004912404863932368, 0.0018500286230458429, 0.00047142918026486666, 8.128458481216907e-05], [0.00021583600643790027, 0.001251791982720796, 0.004912404863932368, 0.013043971994042173, 0.023435772887621185, 0.028490654205643125, 0.023435772887621185, 0.013043971994042173, 0.004912404863932368, 0.001251791982720796, 0.00021583600643790027], [0.0003877870659458747, 0.002249062833237385, 0.008825992939554635, 0.023435772887621185, 0.04210645738054507, 0.05118843414323286, 0.04210645738054507, 0.023435772887621185, 0.008825992939554635, 0.002249062833237385, 0.0003877870659458747], [0.0004714291802648667, 0.002734165063631252, 0.01072967868685566, 0.028490654205643125, 0.05118843414323286, 0.0622293100166331, 0.05118843414323286, 0.028490654205643125, 0.01072967868685566, 0.002734165063631252, 0.0004714291802648667], [0.0003877870659458747, 0.002249062833237385, 0.008825992939554635, 0.023435772887621185, 0.04210645738054507, 0.05118843414323286, 0.04210645738054507, 0.023435772887621185, 0.008825992939554635, 0.002249062833237385, 0.0003877870659458747], [0.00021583600643790027, 0.001251791982720796, 0.004912404863932368, 0.013043971994042173, 0.023435772887621185, 0.028490654205643125, 0.023435772887621185, 0.013043971994042173, 0.004912404863932368, 0.001251791982720796, 0.00021583600643790027], [8.128458481216907e-05, 0.00047142918026486666, 0.0018500286230458429, 0.004912404863932368, 0.008825992939554635, 0.01072967868685566, 0.008825992939554635, 0.004912404863932368, 0.0018500286230458429, 0.00047142918026486666, 8.128458481216907e-05], [2.0713152601434825e-05, 0.00012013082891620589, 0.00047142918026486666, 0.001251791982720796, 0.002249062833237385, 0.002734165063631252, 0.002249062833237385, 0.001251791982720796, 0.00047142918026486666, 0.00012013082891620589, 2.0713152601434825e-05], [3.5713954074985053e-06, 2.0713152601434825e-05, 8.128458481216907e-05, 0.00021583600643790027, 0.0003877870659458747, 0.0004714291802648667, 0.0003877870659458747, 0.00021583600643790027, 8.128458481216907e-05, 2.0713152601434825e-05, 3.5713954074985053e-06]], "replace_invalid": 0}}, "apply5": {"process_id": "apply", "arguments": {"data": {"from_node": "applykernel1"}, "process": {"process_graph": {"gt1": {"process_id": "gt", "arguments": {"x": {"from_parameter": "x"}, "y": 0.1}, "result": true}}}}}, "mask1": {"process_id": "mask", "arguments": {"data": {"from_node": "renamelabels1"}, "mask": {"from_node": "apply5"}}}, "reducedimension1": {"process_id": "reduce_dimension", "arguments": {"data": {"from_node": "mask1"}, "dimension": "t", "reducer": {"process_graph": {"first1": {"process_id": "first", "arguments": {"data": {"from_parameter": "data"}}, "result": true}}}}}, "saveresult1": {"process_id": "save_result", "arguments": {"data": {"from_node": "reducedimension1"}, "format": "GTiff", "options": {"filename_prefix": "Post_NBR"}}, "result": true}}}}</script>
+    </openeo-model-builder>
+    
 </div>
-<div id="c70433c6-bba2-4257-8317-afa004126eac" class="cell" data-execution_count="27">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># download signal of fire in near real-time</span></span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>fire_nrt_nbr <span class="op">=</span> nbr_pre <span class="op">-</span> nbr_nrt</span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>fire_nrt_nbr.download(<span class="st">"NRT_NBR_Fire.tiff"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</section>
-<section id="post-event-mode-for-nbr" class="level3">
-<h3 class="anchored" data-anchor-id="post-event-mode-for-nbr">Post-event mode for NBR</h3>
-<div id="01524481-8d1c-4bf8-8654-72dfaf11bfa0" class="cell" data-execution_count="29">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>nbr_post <span class="op">=</span> compute_indices(s2post, indices<span class="op">=</span>[<span class="st">"NBR"</span>])</span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>nbr_post <span class="op">=</span> getBAP(s2post_scl, nbr_post, reducer<span class="op">=</span><span class="st">"first"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>As mentioned above, let us make the use of openEO’s <a href="https://open-eo.github.io/openeo-python-client/api.html#module-openeo.rest.multiresult"><code>MultiResult</code></a> feature, which allows us to save multiple results from different steps in a single job.</p>
+<p>Using <a href="https://open-eo.github.io/openeo-python-client/api.html#module-openeo.rest.multiresult"><code>MultiResult</code></a> is beneficial because it enables efficient execution by reducing redundant result-saving steps. Instead of running individual computations for each NBR dataset, we bundle them together and execute them in one go. This approach optimizes resource usage and minimizes processing overhead.</p>
+<p>Handling multiple outputs in a single job ensures consistency in the results and makes tracking and organising different NBR datasets easier. This is particularly useful when dealing with complex workflows that involve multiple processing steps.</p>
+<p>To implement this, we combine different NBR results into a MultiResult object and create a job to execute.</p>
+<div id="cell-19" class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>multi_result_nbr <span class="op">=</span> MultiResult([nbr_pre_result,nbr_nrt_result,nbr_post_result])</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>nbr_job <span class="op">=</span> multi_result_nbr.create_job(title<span class="op">=</span><span class="st">"Multiple save result NBR"</span>)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>nbr_job.start_and_wait()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>0:00:00 Job 'j-250406173152426fa668ccda730a76ad': send 'start'
+0:00:23 Job 'j-250406173152426fa668ccda730a76ad': created (progress 0%)
+0:00:28 Job 'j-250406173152426fa668ccda730a76ad': created (progress 0%)
+0:00:34 Job 'j-250406173152426fa668ccda730a76ad': created (progress 0%)
+0:00:42 Job 'j-250406173152426fa668ccda730a76ad': created (progress 0%)
+0:00:52 Job 'j-250406173152426fa668ccda730a76ad': created (progress 0%)
+0:01:05 Job 'j-250406173152426fa668ccda730a76ad': created (progress 0%)
+0:01:20 Job 'j-250406173152426fa668ccda730a76ad': running (progress N/A)
+0:01:39 Job 'j-250406173152426fa668ccda730a76ad': running (progress N/A)
+0:02:03 Job 'j-250406173152426fa668ccda730a76ad': running (progress N/A)
+0:02:33 Job 'j-250406173152426fa668ccda730a76ad': running (progress N/A)
+0:03:11 Job 'j-250406173152426fa668ccda730a76ad': running (progress N/A)
+0:03:58 Job 'j-250406173152426fa668ccda730a76ad': running (progress N/A)
+0:04:56 Job 'j-250406173152426fa668ccda730a76ad': finished (progress 100%)</code></pre>
 </div>
-<div id="ad0f3ba6-ae20-43e1-9242-f4739e79e0a2" class="cell" data-execution_count="30">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>nbr_post.download(<span class="st">"Post_NBR.tiff"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="10">
+
+    <script>
+    if (!window.customElements || !window.customElements.get('openeo-job')) {
+        var el = document.createElement('script');
+        el.src = "https://cdn.jsdelivr.net/npm/@openeo/vue-components@2/assets/openeo.min.js";
+        document.head.appendChild(el);
+
+        var font = document.createElement('font');
+        font.as = "font";
+        font.type = "font/woff2";
+        font.crossOrigin = true;
+        font.href = "https://use.fontawesome.com/releases/v5.13.0/webfonts/fa-solid-900.woff2"
+        document.head.appendChild(font);
+    }
+    </script>
+    <openeo-job>
+        <script type="application/json">{"currency": "credits", "job": {"costs": 5, "created": "2025-04-06T17:31:52Z", "id": "j-250406173152426fa668ccda730a76ad", "process": {"process_graph": {"apply1": {"arguments": {"data": {"from_node": "loadcollection2"}, "process": {"process_graph": {"eq1": {"arguments": {"x": {"from_parameter": "x"}, "y": 3}, "process_id": "eq", "result": true}}}}, "process_id": "apply"}, "apply10": {"arguments": {"data": {"from_node": "applykernel2"}, "process": {"process_graph": {"gt2": {"arguments": {"x": {"from_parameter": "x"}, "y": 0.1}, "process_id": "gt", "result": true}}}}, "process_id": "apply"}, "apply11": {"arguments": {"data": {"from_node": "loadcollection6"}, "process": {"process_graph": {"eq9": {"arguments": {"x": {"from_parameter": "x"}, "y": 3}, "process_id": "eq", "result": true}}}}, "process_id": "apply"}, "apply12": {"arguments": {"data": {"from_node": "loadcollection6"}, "process": {"process_graph": {"eq10": {"arguments": {"x": {"from_parameter": "x"}, "y": 8}, "process_id": "eq", "result": true}}}}, "process_id": "apply"}, "apply13": {"arguments": {"data": {"from_node": "loadcollection6"}, "process": {"process_graph": {"eq11": {"arguments": {"x": {"from_parameter": "x"}, "y": 9}, "process_id": "eq", "result": true}}}}, "process_id": "apply"}, "apply14": {"arguments": {"data": {"from_node": "loadcollection6"}, "process": {"process_graph": {"eq12": {"arguments": {"x": {"from_parameter": "x"}, "y": 10}, "process_id": "eq", "result": true}}}}, "process_id": "apply"}, "apply15": {"arguments": {"data": {"from_node": "applykernel3"}, "process": {"process_graph": {"gt3": {"arguments": {"x": {"from_parameter": "x"}, "y": 0.1}, "process_id": "gt", "result": true}}}}, "process_id": "apply"}, "apply2": {"arguments": {"data": {"from_node": "loadcollection2"}, "process": {"process_graph": {"eq2": {"arguments": {"x": {"from_parameter": "x"}, "y": 8}, "process_id": "eq", "result": true}}}}, "process_id": "apply"}, "apply3": {"arguments": {"data": {"from_node": "loadcollection2"}, "process": {"process_graph": {"eq3": {"arguments": {"x": {"from_parameter": "x"}, "y": 9}, "process_id": "eq", "result": true}}}}, "process_id": "apply"}, "apply4": {"arguments": {"data": {"from_node": "loadcollection2"}, "process": {"process_graph": {"eq4": {"arguments": {"x": {"from_parameter": "x"}, "y": 10}, "process_id": "eq", "result": true}}}}, "process_id": "apply"}, "apply5": {"arguments": {"data": {"from_node": "applykernel1"}, "process": {"process_graph": {"gt1": {"arguments": {"x": {"from_parameter": "x"}, "y": 0.1}, "process_id": "gt", "result": true}}}}, "process_id": "apply"}, "apply6": {"arguments": {"data": {"from_node": "loadcollection4"}, "process": {"process_graph": {"eq5": {"arguments": {"x": {"from_parameter": "x"}, "y": 3}, "process_id": "eq", "result": true}}}}, "process_id": "apply"}, "apply7": {"arguments": {"data": {"from_node": "loadcollection4"}, "process": {"process_graph": {"eq6": {"arguments": {"x": {"from_parameter": "x"}, "y": 8}, "process_id": "eq", "result": true}}}}, "process_id": "apply"}, "apply8": {"arguments": {"data": {"from_node": "loadcollection4"}, "process": {"process_graph": {"eq7": {"arguments": {"x": {"from_parameter": "x"}, "y": 9}, "process_id": "eq", "result": true}}}}, "process_id": "apply"}, "apply9": {"arguments": {"data": {"from_node": "loadcollection4"}, "process": {"process_graph": {"eq8": {"arguments": {"x": {"from_parameter": "x"}, "y": 10}, "process_id": "eq", "result": true}}}}, "process_id": "apply"}, "applydimension1": {"arguments": {"data": {"from_node": "loadcollection1"}, "dimension": "bands", "process": {"process_graph": {"add1": {"arguments": {"x": {"from_node": "arrayelement1"}, "y": {"from_node": "arrayelement2"}}, "process_id": "add"}, "arraycreate1": {"arguments": {"data": [{"from_node": "divide1"}]}, "process_id": "array_create", "result": true}, "arrayelement1": {"arguments": {"data": {"from_parameter": "data"}, "index": 0}, "process_id": "array_element"}, "arrayelement2": {"arguments": {"data": {"from_parameter": "data"}, "index": 1}, "process_id": "array_element"}, "divide1": {"arguments": {"x": {"from_node": "subtract1"}, "y": {"from_node": "add1"}}, "process_id": "divide"}, "subtract1": {"arguments": {"x": {"from_node": "arrayelement1"}, "y": {"from_node": "arrayelement2"}}, "process_id": "subtract"}}}}, "process_id": "apply_dimension"}, "applydimension2": {"arguments": {"data": {"from_node": "loadcollection3"}, "dimension": "bands", "process": {"process_graph": {"add2": {"arguments": {"x": {"from_node": "arrayelement3"}, "y": {"from_node": "arrayelement4"}}, "process_id": "add"}, "arraycreate2": {"arguments": {"data": [{"from_node": "divide2"}]}, "process_id": "array_create", "result": true}, "arrayelement3": {"arguments": {"data": {"from_parameter": "data"}, "index": 0}, "process_id": "array_element"}, "arrayelement4": {"arguments": {"data": {"from_parameter": "data"}, "index": 1}, "process_id": "array_element"}, "divide2": {"arguments": {"x": {"from_node": "subtract2"}, "y": {"from_node": "add2"}}, "process_id": "divide"}, "subtract2": {"arguments": {"x": {"from_node": "arrayelement3"}, "y": {"from_node": "arrayelement4"}}, "process_id": "subtract"}}}}, "process_id": "apply_dimension"}, "applydimension3": {"arguments": {"data": {"from_node": "loadcollection5"}, "dimension": "bands", "process": {"process_graph": {"add3": {"arguments": {"x": {"from_node": "arrayelement5"}, "y": {"from_node": "arrayelement6"}}, "process_id": "add"}, "arraycreate3": {"arguments": {"data": [{"from_node": "divide3"}]}, "process_id": "array_create", "result": true}, "arrayelement5": {"arguments": {"data": {"from_parameter": "data"}, "index": 0}, "process_id": "array_element"}, "arrayelement6": {"arguments": {"data": {"from_parameter": "data"}, "index": 1}, "process_id": "array_element"}, "divide3": {"arguments": {"x": {"from_node": "subtract3"}, "y": {"from_node": "add3"}}, "process_id": "divide"}, "subtract3": {"arguments": {"x": {"from_node": "arrayelement5"}, "y": {"from_node": "arrayelement6"}}, "process_id": "subtract"}}}}, "process_id": "apply_dimension"}, "applykernel1": {"arguments": {"border": 0, "data": {"from_node": "mergecubes3"}, "factor": 1, "kernel": [[3.5713954074985053e-06, 2.0713152601434825e-05, 8.128458481216907e-05, 0.00021583600643790027, 0.0003877870659458747, 0.0004714291802648667, 0.0003877870659458747, 0.00021583600643790027, 8.128458481216907e-05, 2.0713152601434825e-05, 3.5713954074985053e-06], [2.0713152601434825e-05, 0.00012013082891620589, 0.00047142918026486666, 0.001251791982720796, 0.002249062833237385, 0.002734165063631252, 0.002249062833237385, 0.001251791982720796, 0.00047142918026486666, 0.00012013082891620589, 2.0713152601434825e-05], [8.128458481216907e-05, 0.00047142918026486666, 0.0018500286230458429, 0.004912404863932368, 0.008825992939554635, 0.01072967868685566, 0.008825992939554635, 0.004912404863932368, 0.0018500286230458429, 0.00047142918026486666, 8.128458481216907e-05], [0.00021583600643790027, 0.001251791982720796, 0.004912404863932368, 0.013043971994042173, 0.023435772887621185, 0.028490654205643125, 0.023435772887621185, 0.013043971994042173, 0.004912404863932368, 0.001251791982720796, 0.00021583600643790027], [0.0003877870659458747, 0.002249062833237385, 0.008825992939554635, 0.023435772887621185, 0.04210645738054507, 0.05118843414323286, 0.04210645738054507, 0.023435772887621185, 0.008825992939554635, 0.002249062833237385, 0.0003877870659458747], [0.0004714291802648667, 0.002734165063631252, 0.01072967868685566, 0.028490654205643125, 0.05118843414323286, 0.0622293100166331, 0.05118843414323286, 0.028490654205643125, 0.01072967868685566, 0.002734165063631252, 0.0004714291802648667], [0.0003877870659458747, 0.002249062833237385, 0.008825992939554635, 0.023435772887621185, 0.04210645738054507, 0.05118843414323286, 0.04210645738054507, 0.023435772887621185, 0.008825992939554635, 0.002249062833237385, 0.0003877870659458747], [0.00021583600643790027, 0.001251791982720796, 0.004912404863932368, 0.013043971994042173, 0.023435772887621185, 0.028490654205643125, 0.023435772887621185, 0.013043971994042173, 0.004912404863932368, 0.001251791982720796, 0.00021583600643790027], [8.128458481216907e-05, 0.00047142918026486666, 0.0018500286230458429, 0.004912404863932368, 0.008825992939554635, 0.01072967868685566, 0.008825992939554635, 0.004912404863932368, 0.0018500286230458429, 0.00047142918026486666, 8.128458481216907e-05], [2.0713152601434825e-05, 0.00012013082891620589, 0.00047142918026486666, 0.001251791982720796, 0.002249062833237385, 0.002734165063631252, 0.002249062833237385, 0.001251791982720796, 0.00047142918026486666, 0.00012013082891620589, 2.0713152601434825e-05], [3.5713954074985053e-06, 2.0713152601434825e-05, 8.128458481216907e-05, 0.00021583600643790027, 0.0003877870659458747, 0.0004714291802648667, 0.0003877870659458747, 0.00021583600643790027, 8.128458481216907e-05, 2.0713152601434825e-05, 3.5713954074985053e-06]], "replace_invalid": 0}, "process_id": "apply_kernel"}, "applykernel2": {"arguments": {"border": 0, "data": {"from_node": "mergecubes6"}, "factor": 1, "kernel": [[3.5713954074985053e-06, 2.0713152601434825e-05, 8.128458481216907e-05, 0.00021583600643790027, 0.0003877870659458747, 0.0004714291802648667, 0.0003877870659458747, 0.00021583600643790027, 8.128458481216907e-05, 2.0713152601434825e-05, 3.5713954074985053e-06], [2.0713152601434825e-05, 0.00012013082891620589, 0.00047142918026486666, 0.001251791982720796, 0.002249062833237385, 0.002734165063631252, 0.002249062833237385, 0.001251791982720796, 0.00047142918026486666, 0.00012013082891620589, 2.0713152601434825e-05], [8.128458481216907e-05, 0.00047142918026486666, 0.0018500286230458429, 0.004912404863932368, 0.008825992939554635, 0.01072967868685566, 0.008825992939554635, 0.004912404863932368, 0.0018500286230458429, 0.00047142918026486666, 8.128458481216907e-05], [0.00021583600643790027, 0.001251791982720796, 0.004912404863932368, 0.013043971994042173, 0.023435772887621185, 0.028490654205643125, 0.023435772887621185, 0.013043971994042173, 0.004912404863932368, 0.001251791982720796, 0.00021583600643790027], [0.0003877870659458747, 0.002249062833237385, 0.008825992939554635, 0.023435772887621185, 0.04210645738054507, 0.05118843414323286, 0.04210645738054507, 0.023435772887621185, 0.008825992939554635, 0.002249062833237385, 0.0003877870659458747], [0.0004714291802648667, 0.002734165063631252, 0.01072967868685566, 0.028490654205643125, 0.05118843414323286, 0.0622293100166331, 0.05118843414323286, 0.028490654205643125, 0.01072967868685566, 0.002734165063631252, 0.0004714291802648667], [0.0003877870659458747, 0.002249062833237385, 0.008825992939554635, 0.023435772887621185, 0.04210645738054507, 0.05118843414323286, 0.04210645738054507, 0.023435772887621185, 0.008825992939554635, 0.002249062833237385, 0.0003877870659458747], [0.00021583600643790027, 0.001251791982720796, 0.004912404863932368, 0.013043971994042173, 0.023435772887621185, 0.028490654205643125, 0.023435772887621185, 0.013043971994042173, 0.004912404863932368, 0.001251791982720796, 0.00021583600643790027], [8.128458481216907e-05, 0.00047142918026486666, 0.0018500286230458429, 0.004912404863932368, 0.008825992939554635, 0.01072967868685566, 0.008825992939554635, 0.004912404863932368, 0.0018500286230458429, 0.00047142918026486666, 8.128458481216907e-05], [2.0713152601434825e-05, 0.00012013082891620589, 0.00047142918026486666, 0.001251791982720796, 0.002249062833237385, 0.002734165063631252, 0.002249062833237385, 0.001251791982720796, 0.00047142918026486666, 0.00012013082891620589, 2.0713152601434825e-05], [3.5713954074985053e-06, 2.0713152601434825e-05, 8.128458481216907e-05, 0.00021583600643790027, 0.0003877870659458747, 0.0004714291802648667, 0.0003877870659458747, 0.00021583600643790027, 8.128458481216907e-05, 2.0713152601434825e-05, 3.5713954074985053e-06]], "replace_invalid": 0}, "process_id": "apply_kernel"}, "applykernel3": {"arguments": {"border": 0, "data": {"from_node": "mergecubes9"}, "factor": 1, "kernel": [[3.5713954074985053e-06, 2.0713152601434825e-05, 8.128458481216907e-05, 0.00021583600643790027, 0.0003877870659458747, 0.0004714291802648667, 0.0003877870659458747, 0.00021583600643790027, 8.128458481216907e-05, 2.0713152601434825e-05, 3.5713954074985053e-06], [2.0713152601434825e-05, 0.00012013082891620589, 0.00047142918026486666, 0.001251791982720796, 0.002249062833237385, 0.002734165063631252, 0.002249062833237385, 0.001251791982720796, 0.00047142918026486666, 0.00012013082891620589, 2.0713152601434825e-05], [8.128458481216907e-05, 0.00047142918026486666, 0.0018500286230458429, 0.004912404863932368, 0.008825992939554635, 0.01072967868685566, 0.008825992939554635, 0.004912404863932368, 0.0018500286230458429, 0.00047142918026486666, 8.128458481216907e-05], [0.00021583600643790027, 0.001251791982720796, 0.004912404863932368, 0.013043971994042173, 0.023435772887621185, 0.028490654205643125, 0.023435772887621185, 0.013043971994042173, 0.004912404863932368, 0.001251791982720796, 0.00021583600643790027], [0.0003877870659458747, 0.002249062833237385, 0.008825992939554635, 0.023435772887621185, 0.04210645738054507, 0.05118843414323286, 0.04210645738054507, 0.023435772887621185, 0.008825992939554635, 0.002249062833237385, 0.0003877870659458747], [0.0004714291802648667, 0.002734165063631252, 0.01072967868685566, 0.028490654205643125, 0.05118843414323286, 0.0622293100166331, 0.05118843414323286, 0.028490654205643125, 0.01072967868685566, 0.002734165063631252, 0.0004714291802648667], [0.0003877870659458747, 0.002249062833237385, 0.008825992939554635, 0.023435772887621185, 0.04210645738054507, 0.05118843414323286, 0.04210645738054507, 0.023435772887621185, 0.008825992939554635, 0.002249062833237385, 0.0003877870659458747], [0.00021583600643790027, 0.001251791982720796, 0.004912404863932368, 0.013043971994042173, 0.023435772887621185, 0.028490654205643125, 0.023435772887621185, 0.013043971994042173, 0.004912404863932368, 0.001251791982720796, 0.00021583600643790027], [8.128458481216907e-05, 0.00047142918026486666, 0.0018500286230458429, 0.004912404863932368, 0.008825992939554635, 0.01072967868685566, 0.008825992939554635, 0.004912404863932368, 0.0018500286230458429, 0.00047142918026486666, 8.128458481216907e-05], [2.0713152601434825e-05, 0.00012013082891620589, 0.00047142918026486666, 0.001251791982720796, 0.002249062833237385, 0.002734165063631252, 0.002249062833237385, 0.001251791982720796, 0.00047142918026486666, 0.00012013082891620589, 2.0713152601434825e-05], [3.5713954074985053e-06, 2.0713152601434825e-05, 8.128458481216907e-05, 0.00021583600643790027, 0.0003877870659458747, 0.0004714291802648667, 0.0003877870659458747, 0.00021583600643790027, 8.128458481216907e-05, 2.0713152601434825e-05, 3.5713954074985053e-06]], "replace_invalid": 0}, "process_id": "apply_kernel"}, "loadcollection1": {"arguments": {"bands": ["B08", "B12"], "id": "SENTINEL2_L2A", "properties": {"eo:cloud_cover": {"process_graph": {"lte1": {"arguments": {"x": {"from_parameter": "value"}, "y": 90}, "process_id": "lte", "result": true}}}}, "spatial_extent": {"east": -2.5921, "north": 38.3002, "south": 38.2239, "west": -2.691}, "temporal_extent": ["2017-05-03", "2017-08-03"]}, "process_id": "load_collection"}, "loadcollection2": {"arguments": {"bands": ["SCL"], "id": "SENTINEL2_L2A", "properties": {"eo:cloud_cover": {"process_graph": {"lte2": {"arguments": {"x": {"from_parameter": "value"}, "y": 90}, "process_id": "lte", "result": true}}}}, "spatial_extent": {"east": -2.5921, "north": 38.3002, "south": 38.2239, "west": -2.691}, "temporal_extent": ["2017-05-03", "2017-08-03"]}, "process_id": "load_collection"}, "loadcollection3": {"arguments": {"bands": ["B08", "B12"], "id": "SENTINEL2_L2A", "properties": {"eo:cloud_cover": {"process_graph": {"lte3": {"arguments": {"x": {"from_parameter": "value"}, "y": 90}, "process_id": "lte", "result": true}}}}, "spatial_extent": {"east": -2.5921, "north": 38.3002, "south": 38.2239, "west": -2.691}, "temporal_extent": ["2017-08-03", "2017-08-08"]}, "process_id": "load_collection"}, "loadcollection4": {"arguments": {"bands": ["SCL"], "id": "SENTINEL2_L2A", "properties": {"eo:cloud_cover": {"process_graph": {"lte4": {"arguments": {"x": {"from_parameter": "value"}, "y": 90}, "process_id": "lte", "result": true}}}}, "spatial_extent": {"east": -2.5921, "north": 38.3002, "south": 38.2239, "west": -2.691}, "temporal_extent": ["2017-08-03", "2017-08-08"]}, "process_id": "load_collection"}, "loadcollection5": {"arguments": {"bands": ["B08", "B12"], "id": "SENTINEL2_L2A", "properties": {"eo:cloud_cover": {"process_graph": {"lte5": {"arguments": {"x": {"from_parameter": "value"}, "y": 90}, "process_id": "lte", "result": true}}}}, "spatial_extent": {"east": -2.5921, "north": 38.3002, "south": 38.2239, "west": -2.691}, "temporal_extent": ["2017-08-03", "2017-11-03"]}, "process_id": "load_collection"}, "loadcollection6": {"arguments": {"bands": ["SCL"], "id": "SENTINEL2_L2A", "properties": {"eo:cloud_cover": {"process_graph": {"lte6": {"arguments": {"x": {"from_parameter": "value"}, "y": 90}, "process_id": "lte", "result": true}}}}, "spatial_extent": {"east": -2.5921, "north": 38.3002, "south": 38.2239, "west": -2.691}, "temporal_extent": ["2017-08-03", "2017-11-03"]}, "process_id": "load_collection"}, "mask1": {"arguments": {"data": {"from_node": "renamelabels1"}, "mask": {"from_node": "apply5"}}, "process_id": "mask"}, "mask2": {"arguments": {"data": {"from_node": "renamelabels2"}, "mask": {"from_node": "apply10"}}, "process_id": "mask"}, "mask3": {"arguments": {"data": {"from_node": "renamelabels3"}, "mask": {"from_node": "apply15"}}, "process_id": "mask"}, "mergecubes1": {"arguments": {"cube1": {"from_node": "apply1"}, "cube2": {"from_node": "apply2"}, "overlap_resolver": {"process_graph": {"or1": {"arguments": {"x": {"from_parameter": "x"}, "y": {"from_parameter": "y"}}, "process_id": "or", "result": true}}}}, "process_id": "merge_cubes"}, "mergecubes2": {"arguments": {"cube1": {"from_node": "mergecubes1"}, "cube2": {"from_node": "apply3"}, "overlap_resolver": {"process_graph": {"or2": {"arguments": {"x": {"from_parameter": "x"}, "y": {"from_parameter": "y"}}, "process_id": "or", "result": true}}}}, "process_id": "merge_cubes"}, "mergecubes3": {"arguments": {"cube1": {"from_node": "mergecubes2"}, "cube2": {"from_node": "apply4"}, "overlap_resolver": {"process_graph": {"or3": {"arguments": {"x": {"from_parameter": "x"}, "y": {"from_parameter": "y"}}, "process_id": "or", "result": true}}}}, "process_id": "merge_cubes"}, "mergecubes4": {"arguments": {"cube1": {"from_node": "apply6"}, "cube2": {"from_node": "apply7"}, "overlap_resolver": {"process_graph": {"or4": {"arguments": {"x": {"from_parameter": "x"}, "y": {"from_parameter": "y"}}, "process_id": "or", "result": true}}}}, "process_id": "merge_cubes"}, "mergecubes5": {"arguments": {"cube1": {"from_node": "mergecubes4"}, "cube2": {"from_node": "apply8"}, "overlap_resolver": {"process_graph": {"or5": {"arguments": {"x": {"from_parameter": "x"}, "y": {"from_parameter": "y"}}, "process_id": "or", "result": true}}}}, "process_id": "merge_cubes"}, "mergecubes6": {"arguments": {"cube1": {"from_node": "mergecubes5"}, "cube2": {"from_node": "apply9"}, "overlap_resolver": {"process_graph": {"or6": {"arguments": {"x": {"from_parameter": "x"}, "y": {"from_parameter": "y"}}, "process_id": "or", "result": true}}}}, "process_id": "merge_cubes"}, "mergecubes7": {"arguments": {"cube1": {"from_node": "apply11"}, "cube2": {"from_node": "apply12"}, "overlap_resolver": {"process_graph": {"or7": {"arguments": {"x": {"from_parameter": "x"}, "y": {"from_parameter": "y"}}, "process_id": "or", "result": true}}}}, "process_id": "merge_cubes"}, "mergecubes8": {"arguments": {"cube1": {"from_node": "mergecubes7"}, "cube2": {"from_node": "apply13"}, "overlap_resolver": {"process_graph": {"or8": {"arguments": {"x": {"from_parameter": "x"}, "y": {"from_parameter": "y"}}, "process_id": "or", "result": true}}}}, "process_id": "merge_cubes"}, "mergecubes9": {"arguments": {"cube1": {"from_node": "mergecubes8"}, "cube2": {"from_node": "apply14"}, "overlap_resolver": {"process_graph": {"or9": {"arguments": {"x": {"from_parameter": "x"}, "y": {"from_parameter": "y"}}, "process_id": "or", "result": true}}}}, "process_id": "merge_cubes"}, "reducedimension1": {"arguments": {"data": {"from_node": "mask1"}, "dimension": "t", "reducer": {"process_graph": {"last1": {"arguments": {"data": {"from_parameter": "data"}}, "process_id": "last", "result": true}}}}, "process_id": "reduce_dimension"}, "reducedimension2": {"arguments": {"data": {"from_node": "mask2"}, "dimension": "t", "reducer": {"process_graph": {"first1": {"arguments": {"data": {"from_parameter": "data"}}, "process_id": "first", "result": true}}}}, "process_id": "reduce_dimension"}, "reducedimension3": {"arguments": {"data": {"from_node": "mask3"}, "dimension": "t", "reducer": {"process_graph": {"first2": {"arguments": {"data": {"from_parameter": "data"}}, "process_id": "first", "result": true}}}}, "process_id": "reduce_dimension"}, "renamelabels1": {"arguments": {"data": {"from_node": "applydimension1"}, "dimension": "bands", "target": ["NBR"]}, "process_id": "rename_labels"}, "renamelabels2": {"arguments": {"data": {"from_node": "applydimension2"}, "dimension": "bands", "target": ["NBR"]}, "process_id": "rename_labels"}, "renamelabels3": {"arguments": {"data": {"from_node": "applydimension3"}, "dimension": "bands", "target": ["NBR"]}, "process_id": "rename_labels"}, "saveresult1": {"arguments": {"data": {"from_node": "reducedimension1"}, "format": "GTiff", "options": {"filename_prefix": "NBR"}}, "process_id": "save_result"}, "saveresult2": {"arguments": {"data": {"from_node": "reducedimension2"}, "format": "GTiff", "options": {"filename_prefix": "NRT_NBR"}}, "process_id": "save_result"}, "saveresult3": {"arguments": {"data": {"from_node": "reducedimension3"}, "format": "GTiff", "options": {"filename_prefix": "Post_NBR"}}, "process_id": "save_result", "result": true}}}, "progress": 100, "status": "finished", "title": "Multiple save result NBR", "updated": "2025-04-06T17:36:11Z", "usage": {"cpu": {"unit": "cpu-seconds", "value": 403.07959371}, "duration": {"unit": "seconds", "value": 232}, "input_pixel": {"unit": "mega-pixel", "value": 82.6875}, "max_executor_memory": {"unit": "gb", "value": 1.794036865234375}, "memory": {"unit": "mb-seconds", "value": 3489605.192708333}, "network_received": {"unit": "b", "value": 1762062463}}}}</script>
+    </openeo-job>
+    
 </div>
-<div id="d337f85c-74ee-41ac-92e5-d6535eadf02e" class="cell" data-execution_count="31">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>fire_nrt_mosiac <span class="op">=</span> nbr_pre <span class="op">-</span> nbr_post</span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>fire_nrt_mosiac.download(<span class="st">"Mosiac_NBR_Fire.tiff"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</section>
+<div id="cell-20" class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>results <span class="op">=</span> nbr_job.get_results()</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>results.download_files(<span class="st">"data/out"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="12">
+<pre><code>[WindowsPath('data/out/NBR.tif'),
+ WindowsPath('data/out/NRT_NBR.tif'),
+ WindowsPath('data/out/Post_NBR.tif'),
+ WindowsPath('data/out/job-results.json')]</code></pre>
+</div>
+</div>
 <section id="plot-the-nbr" class="level3">
 <h3 class="anchored" data-anchor-id="plot-the-nbr">Plot the NBR</h3>
 <p>Now we have the NBR and its difference which can be treated as a proxy of forest fire. Let’s visualize them, first the NBR alone and then the mapped forest fire from it.</p>
-<div id="57d29779-80a3-4b60-9560-e2265f13817c" class="cell" data-execution_count="34">
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>nbr <span class="op">=</span> rasterio.<span class="bu">open</span>(<span class="st">"NBR.tiff"</span>)</span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>nbr_nrt <span class="op">=</span> rasterio.<span class="bu">open</span>(<span class="st">"NRT_NBR.tiff"</span>)</span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>nbr_mosiac <span class="op">=</span> rasterio.<span class="bu">open</span>(<span class="st">"Post_NBR.tiff"</span>)</span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>f, axarr <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">3</span>, dpi<span class="op">=</span><span class="dv">100</span>, figsize<span class="op">=</span>(<span class="dv">18</span>, <span class="dv">6</span>))</span>
-<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>im <span class="op">=</span> show(nbr.read(<span class="dv">1</span>), vmin<span class="op">=</span><span class="dv">0</span>, vmax<span class="op">=</span><span class="dv">1</span>, transform<span class="op">=</span>nbr.transform, ax<span class="op">=</span>axarr[<span class="dv">0</span>])</span>
-<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>axarr[<span class="dv">0</span>].set_title(<span class="st">"Pre Event NBR"</span>)</span>
-<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>im <span class="op">=</span> show(nbr_nrt.read(<span class="dv">1</span>), vmin<span class="op">=</span><span class="dv">0</span>, vmax<span class="op">=</span><span class="dv">1</span>, transform<span class="op">=</span>nbr_nrt.transform, ax<span class="op">=</span>axarr[<span class="dv">1</span>])</span>
-<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>axarr[<span class="dv">1</span>].set_title(<span class="st">"Post Event NBR (NRT)"</span>)</span>
-<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>im <span class="op">=</span> show(</span>
-<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>    nbr_mosiac.read(<span class="dv">1</span>), vmin<span class="op">=</span><span class="dv">0</span>, vmax<span class="op">=</span><span class="dv">1</span>, transform<span class="op">=</span>nbr_mosiac.transform, ax<span class="op">=</span>axarr[<span class="dv">2</span>]</span>
-<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>axarr[<span class="dv">2</span>].set_title(<span class="st">"Post Event NBR (Mosiac)"</span>)</span>
-<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="cell-23" class="cell" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>nbr <span class="op">=</span> rasterio.<span class="bu">open</span>(<span class="st">"data/out/NBR.tif"</span>)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>nbr_nrt <span class="op">=</span> rasterio.<span class="bu">open</span>(<span class="st">"data/out/NRT_NBR.tif"</span>)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>nbr_mosiac <span class="op">=</span> rasterio.<span class="bu">open</span>(<span class="st">"data/out/Post_NBR.tif"</span>)</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>f, axarr <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">3</span>, dpi<span class="op">=</span><span class="dv">100</span>, figsize<span class="op">=</span>(<span class="dv">18</span>, <span class="dv">6</span>))</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>im <span class="op">=</span> show(nbr.read(<span class="dv">1</span>), vmin<span class="op">=</span><span class="dv">0</span>, vmax<span class="op">=</span><span class="dv">1</span>, transform<span class="op">=</span>nbr.transform, ax<span class="op">=</span>axarr[<span class="dv">0</span>])</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>axarr[<span class="dv">0</span>].set_title(<span class="st">"Pre Event NBR"</span>)</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>im <span class="op">=</span> show(nbr_nrt.read(<span class="dv">1</span>), vmin<span class="op">=</span><span class="dv">0</span>, vmax<span class="op">=</span><span class="dv">1</span>, transform<span class="op">=</span>nbr_nrt.transform, ax<span class="op">=</span>axarr[<span class="dv">1</span>])</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>axarr[<span class="dv">1</span>].set_title(<span class="st">"NRT Event NBR"</span>)</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>im <span class="op">=</span> show(</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>    nbr_mosiac.read(<span class="dv">1</span>), vmin<span class="op">=</span><span class="dv">0</span>, vmax<span class="op">=</span><span class="dv">1</span>, transform<span class="op">=</span>nbr_mosiac.transform, ax<span class="op">=</span>axarr[<span class="dv">2</span>]</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>axarr[<span class="dv">2</span>].set_title(<span class="st">"Post Event NBR"</span>)</span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="ForestFire_files/figure-html/cell-25-output-1.png" class="img-fluid figure-img"></p>
+<p><img src="ForestFire_files/figure-html/cell-13-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
 </div>
 <p>As we can see, the location of the forest fire is quite prominent in the post-event NBR images compared to that of the pre-event NBR images. This shows that the approach with NBR has better visibility of forest fire signals than the NDVI-based approach. Now, let’s see how the final output of the forest fire area looks with the NBR difference image.</p>
-<div id="273e0a78-c953-463b-87f2-fd748f399845" class="cell" data-execution_count="35">
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>fire_nbr_nrt <span class="op">=</span> rasterio.<span class="bu">open</span>(<span class="st">"NRT_NBR_Fire.tiff"</span>)</span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>fire_nbr_mosiac <span class="op">=</span> rasterio.<span class="bu">open</span>(<span class="st">"Mosiac_NBR_Fire.tiff"</span>)</span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>cmap <span class="op">=</span> matplotlib.colors.ListedColormap([<span class="st">"black"</span>, <span class="st">"firebrick"</span>])</span>
-<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>values <span class="op">=</span> [<span class="st">"Absence"</span>, <span class="st">"Presence"</span>]</span>
-<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>colors <span class="op">=</span> [<span class="st">"black"</span>, <span class="st">"firebrick"</span>]</span>
-<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>f, axarr <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, dpi<span class="op">=</span><span class="dv">100</span>, figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">6</span>))</span>
-<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>im <span class="op">=</span> show(</span>
-<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>    fire_nbr_nrt.read(<span class="dv">1</span>) <span class="op">&gt;</span> <span class="fl">0.5</span>,</span>
-<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>    vmin<span class="op">=</span><span class="dv">0</span>,</span>
-<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>    vmax<span class="op">=</span><span class="dv">1</span>,</span>
-<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>    transform<span class="op">=</span>fire_nbr_nrt.transform,</span>
-<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>    ax<span class="op">=</span>axarr[<span class="dv">0</span>],</span>
-<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>    cmap<span class="op">=</span>cmap,</span>
-<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a>axarr[<span class="dv">0</span>].set_title(<span class="st">"Forest Fire NRT mode"</span>)</span>
-<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a>im <span class="op">=</span> show(</span>
-<span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a>    fire_nbr_mosiac.read(<span class="dv">1</span>) <span class="op">&gt;</span> <span class="fl">0.5</span>,</span>
-<span id="cb27-22"><a href="#cb27-22" aria-hidden="true" tabindex="-1"></a>    vmin<span class="op">=</span><span class="dv">0</span>,</span>
-<span id="cb27-23"><a href="#cb27-23" aria-hidden="true" tabindex="-1"></a>    vmax<span class="op">=</span><span class="dv">1</span>,</span>
-<span id="cb27-24"><a href="#cb27-24" aria-hidden="true" tabindex="-1"></a>    transform<span class="op">=</span>fire_nbr_mosiac.transform,</span>
-<span id="cb27-25"><a href="#cb27-25" aria-hidden="true" tabindex="-1"></a>    ax<span class="op">=</span>axarr[<span class="dv">1</span>],</span>
-<span id="cb27-26"><a href="#cb27-26" aria-hidden="true" tabindex="-1"></a>    cmap<span class="op">=</span>cmap,</span>
-<span id="cb27-27"><a href="#cb27-27" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb27-28"><a href="#cb27-28" aria-hidden="true" tabindex="-1"></a>axarr[<span class="dv">1</span>].set_title(<span class="st">"Forest Fire Mosiac Mode"</span>)</span>
-<span id="cb27-29"><a href="#cb27-29" aria-hidden="true" tabindex="-1"></a>patches <span class="op">=</span> [</span>
-<span id="cb27-30"><a href="#cb27-30" aria-hidden="true" tabindex="-1"></a>    mpatches.Patch(color<span class="op">=</span>colors[i], label<span class="op">=</span><span class="st">"Fire </span><span class="sc">{l}</span><span class="st">"</span>.<span class="bu">format</span>(l<span class="op">=</span>values[i]))</span>
-<span id="cb27-31"><a href="#cb27-31" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(values))</span>
-<span id="cb27-32"><a href="#cb27-32" aria-hidden="true" tabindex="-1"></a>]</span>
-<span id="cb27-33"><a href="#cb27-33" aria-hidden="true" tabindex="-1"></a>f.legend(handles<span class="op">=</span>patches, bbox_to_anchor<span class="op">=</span>(<span class="fl">0.95</span>, <span class="fl">0.2</span>), loc<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb27-34"><a href="#cb27-34" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="ForestFire_files/figure-html/cell-26-output-1.png" class="img-fluid figure-img"></p>
-</figure>
-</div>
-</div>
-</div>
-<p>We can see here with the use of NBR, the final forest fire area map looks much more complete and less noisy/pixelated compared to the NDVI-based approach. In general, we can see that both NDVI and NBR-based approaches are good for mapping wildfires in near real-time as well as post-event analysis basis. This data can further be used for planning, mitigation and management of forest fire prevention.</p>
 </section>
 </section>
 <section id="ground-truth" class="level2">

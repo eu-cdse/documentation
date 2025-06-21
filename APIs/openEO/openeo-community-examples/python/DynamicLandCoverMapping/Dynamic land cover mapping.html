@@ -1469,15 +1469,7 @@ window.onload = function() {
 <li>Use a UDF to apply your own ML model, using for instance ONNX</li>
 </ol>
 <p>This notebook focuses on option (1) for training and option (1) for inference.</p>
-<pre class="mermaid"><code>flowchart TD
-    DATA_FUSION("Data Preprocessing &amp;amp; Fusion") --&gt; POINT_EXTRACT("Labeled point extraction&lt;br&gt;aggregate_spatial") &amp; n1["Labeled patch extraction&lt;br&gt;filter_spatial"] &amp; n2["Inference&lt;br&gt;apply_neighborhood/predict_random_forest"]
-    POINT_EXTRACT --&gt; n7["Model training&lt;br&gt;fit_class_random_forest"] &amp; n3["CSV/Parquet"]
-    n1 --&gt; n4["NetCDF/GTiff/Zarr"]
-    n2 --&gt; n5["Final Map&lt;br&gt;Cloud Optimized Geotiff"]
-    n3 --&gt; n6["STAC API + Object Storage&lt;br&gt;export_workspace"]
-    n4 --&gt; n6
-    n5 --&gt; n6
-    n7 --&gt; n8["STAC&lt;br&gt;ML Model"]</code></pre>
+<p><img src="ml_suggestion.svg" class="img-fluid"></p>
 </section>
 <section id="methodology" class="level3">
 <h3 class="anchored" data-anchor-id="methodology">Methodology</h3>
@@ -1508,21 +1500,21 @@ window.onload = function() {
 <h3 class="anchored" data-anchor-id="implementation">Implementation</h3>
 <p>First, we load a dataset containing target labels. For the model to function correctly, these target labels must be integers. Additionally, we extract target points from the target polygons.</p>
 <div id="c1db8d91" class="cell" data-execution_count="23">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>mask <span class="op">=</span> box(<span class="fl">4.4</span>, <span class="fl">50.2</span>, <span class="fl">5.6</span>, <span class="fl">51.2</span>)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> gpd.read_file(</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"https://artifactory.vgt.vito.be/auxdata-public/openeo/LUCAS_2018_Copernicus.gpkg"</span>,</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    mask<span class="op">=</span>mask,</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>y[<span class="st">"geometry"</span>] <span class="op">=</span> y[<span class="st">"geometry"</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: x.centroid)</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>y[<span class="st">"LC1"</span>] <span class="op">=</span> y[<span class="st">"LC1"</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: <span class="bu">ord</span>(x[<span class="dv">0</span>]) <span class="op">-</span> <span class="dv">65</span>)</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>y_train, y_test <span class="op">=</span> train_test_split(y, test_size<span class="op">=</span><span class="fl">0.25</span>, random_state<span class="op">=</span><span class="dv">333</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>mask <span class="op">=</span> box(<span class="fl">4.4</span>, <span class="fl">50.2</span>, <span class="fl">5.6</span>, <span class="fl">51.2</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> gpd.read_file(</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"https://artifactory.vgt.vito.be/auxdata-public/openeo/LUCAS_2018_Copernicus.gpkg"</span>,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    mask<span class="op">=</span>mask,</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>y[<span class="st">"geometry"</span>] <span class="op">=</span> y[<span class="st">"geometry"</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: x.centroid)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>y[<span class="st">"LC1"</span>] <span class="op">=</span> y[<span class="st">"LC1"</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: <span class="bu">ord</span>(x[<span class="dv">0</span>]) <span class="op">-</span> <span class="dv">65</span>)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>y_train, y_test <span class="op">=</span> train_test_split(y, test_size<span class="op">=</span><span class="fl">0.25</span>, random_state<span class="op">=</span><span class="dv">333</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div id="48d73446" class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>y_train[<span class="st">"target"</span>] <span class="op">=</span> y_train.LC1</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>y_train <span class="op">=</span> y_train[[<span class="st">"target"</span>, <span class="st">"geometry"</span>]]</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>y_test[<span class="st">"target"</span>] <span class="op">=</span> y_test.LC1</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>y_test <span class="op">=</span> y_test[[<span class="st">"target"</span>, <span class="st">"geometry"</span>]]</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>y_train</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>y_train[<span class="st">"target"</span>] <span class="op">=</span> y_train.LC1</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>y_train <span class="op">=</span> y_train[[<span class="st">"target"</span>, <span class="st">"geometry"</span>]]</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>y_test[<span class="st">"target"</span>] <span class="op">=</span> y_test.LC1</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>y_test <span class="op">=</span> y_test[[<span class="st">"target"</span>, <span class="st">"geometry"</span>]]</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>y_train</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="3">
 <div>
 
@@ -1599,7 +1591,7 @@ window.onload = function() {
 </div>
 </div>
 <div id="6490464f" class="cell" data-execution_count="13">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>c <span class="op">=</span> openeo.<span class="ex">connect</span>(<span class="st">"openeo.dataspace.copernicus.eu"</span>).authenticate_oidc()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>c <span class="op">=</span> openeo.<span class="ex">connect</span>(<span class="st">"openeo.dataspace.copernicus.eu"</span>).authenticate_oidc()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Authenticated using refresh token.</code></pre>
 </div>
@@ -1610,244 +1602,244 @@ window.onload = function() {
 <p>In ML applications, it is important that inputs for training and applying the model are computed in exactly the same way.</p>
 <p>The code block below contains the full feature generation, which thanks to the use of openEO is <strong>remarkably short</strong>.</p>
 <div id="86454dda" class="cell" data-execution_count="11">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> connection():</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> c</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co"># create sentinel-2 10-daily composite</span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> sentinel2_composite(</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    start_date,</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    end_date,</span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    connection_provider,</span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    provider,</span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    index_dict<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    s2_list<span class="op">=</span>[],</span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>    processing_opts<span class="op">=</span>{},</span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>    sampling<span class="op">=</span><span class="va">False</span>,</span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>    stepsize<span class="op">=</span><span class="dv">10</span>,</span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>    overlap<span class="op">=</span><span class="dv">10</span>,</span>
-<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>    reducer<span class="op">=</span><span class="st">"median"</span>,</span>
-<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>    luc<span class="op">=</span><span class="va">False</span>,</span>
-<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>    cloud_procedure<span class="op">=</span><span class="st">"sen2cor"</span>,</span>
-<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>):</span>
-<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
-<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a><span class="co">    Compute a cloud-masked, gap-filled, Sentinel-2 datacube, composited at 10-daily intervals.</span></span>
-<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
-<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>    <span class="co"># define the temporal extent for the Sentinel-2 data</span></span>
-<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>    temp_ext_s2 <span class="op">=</span> [start_date.isoformat(), end_date.isoformat()]</span>
-<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>    <span class="co"># properties to filter the data</span></span>
-<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>    props <span class="op">=</span> {<span class="st">"eo:cloud_cover"</span>: <span class="kw">lambda</span> v: v <span class="op">&lt;=</span> <span class="dv">80</span>}</span>
-<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>    bands <span class="op">=</span> [<span class="st">"B03"</span>, <span class="st">"B04"</span>, <span class="st">"B05"</span>, <span class="st">"B06"</span>, <span class="st">"B07"</span>, <span class="st">"B08"</span>, <span class="st">"B11"</span>, <span class="st">"B12"</span>]</span>
-<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>    idx_list <span class="op">=</span> [<span class="st">"NDVI"</span>, <span class="st">"NDMI"</span>, <span class="st">"NDRE1"</span>, <span class="st">"NDRE2"</span>, <span class="st">"NDRE5"</span>]</span>
-<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>    <span class="co"># establish a connection to the data source</span></span>
-<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>    c <span class="op">=</span> connection_provider()</span>
-<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>    scl <span class="op">=</span> c.load_collection(</span>
-<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>        <span class="st">"SENTINEL2_L2A"</span>, temporal_extent<span class="op">=</span>temp_ext_s2, bands<span class="op">=</span><span class="st">"SCL"</span>, properties<span class="op">=</span>props</span>
-<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>    cloud_mask <span class="op">=</span> scl.process(</span>
-<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>        <span class="st">"to_scl_dilation_mask"</span>,</span>
-<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a>        data<span class="op">=</span>scl,</span>
-<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a>        kernel1_size<span class="op">=</span><span class="dv">17</span>, kernel2_size<span class="op">=</span><span class="dv">77</span>,</span>
-<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a>        mask1_values<span class="op">=</span>[<span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>, <span class="dv">7</span>],</span>
-<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a>        mask2_values<span class="op">=</span>[<span class="dv">3</span>, <span class="dv">8</span>, <span class="dv">9</span>, <span class="dv">10</span>, <span class="dv">11</span>],</span>
-<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a>        erosion_kernel_size<span class="op">=</span><span class="dv">3</span></span>
-<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a>    s2 <span class="op">=</span> c.load_collection(</span>
-<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a>        <span class="st">"SENTINEL2_L2A"</span>, temporal_extent<span class="op">=</span>temp_ext_s2, bands<span class="op">=</span>bands, properties<span class="op">=</span>props</span>
-<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a>    <span class="co"># apply cloud masking</span></span>
-<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a>    s2 <span class="op">=</span> s2.mask(cloud_mask)</span>
-<span id="cb7-53"><a href="#cb7-53" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-54"><a href="#cb7-54" aria-hidden="true" tabindex="-1"></a>    <span class="co"># compute the spectral indices</span></span>
-<span id="cb7-55"><a href="#cb7-55" aria-hidden="true" tabindex="-1"></a>    indices <span class="op">=</span> compute_and_rescale_indices(s2, index_dict)</span>
-<span id="cb7-56"><a href="#cb7-56" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-57"><a href="#cb7-57" aria-hidden="true" tabindex="-1"></a>    <span class="co"># combine the original bands with the computed indices</span></span>
-<span id="cb7-58"><a href="#cb7-58" aria-hidden="true" tabindex="-1"></a>    combined <span class="op">=</span> s2.merge_cubes(indices)</span>
-<span id="cb7-59"><a href="#cb7-59" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-60"><a href="#cb7-60" aria-hidden="true" tabindex="-1"></a>    <span class="co"># filter the combined collection to include the desired bands and indices</span></span>
-<span id="cb7-61"><a href="#cb7-61" aria-hidden="true" tabindex="-1"></a>    result_indices <span class="op">=</span> combined.filter_bands(s2_list <span class="op">+</span> idx_list)</span>
-<span id="cb7-62"><a href="#cb7-62" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-63"><a href="#cb7-63" aria-hidden="true" tabindex="-1"></a>    <span class="co"># aggregate the filtered collection to 10-daily intervals using the specified reducer</span></span>
-<span id="cb7-64"><a href="#cb7-64" aria-hidden="true" tabindex="-1"></a>    idx_dekad <span class="op">=</span> result_indices.aggregate_temporal_period(<span class="st">"dekad"</span>, reducer<span class="op">=</span><span class="st">"median"</span>)</span>
-<span id="cb7-65"><a href="#cb7-65" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-66"><a href="#cb7-66" aria-hidden="true" tabindex="-1"></a>    <span class="co"># apply linear interpolation to fill any temporal gaps</span></span>
-<span id="cb7-67"><a href="#cb7-67" aria-hidden="true" tabindex="-1"></a>    idx_dekad <span class="op">=</span> idx_dekad.apply_dimension(</span>
-<span id="cb7-68"><a href="#cb7-68" aria-hidden="true" tabindex="-1"></a>        dimension<span class="op">=</span><span class="st">"t"</span>, process<span class="op">=</span><span class="st">"array_interpolate_linear"</span></span>
-<span id="cb7-69"><a href="#cb7-69" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb7-70"><a href="#cb7-70" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> idx_dekad</span>
-<span id="cb7-71"><a href="#cb7-71" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-72"><a href="#cb7-72" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-73"><a href="#cb7-73" aria-hidden="true" tabindex="-1"></a><span class="co"># create Sentinel-1 12 day composite</span></span>
-<span id="cb7-74"><a href="#cb7-74" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> sentinel1_composite(</span>
-<span id="cb7-75"><a href="#cb7-75" aria-hidden="true" tabindex="-1"></a>    start_date,</span>
-<span id="cb7-76"><a href="#cb7-76" aria-hidden="true" tabindex="-1"></a>    end_date,</span>
-<span id="cb7-77"><a href="#cb7-77" aria-hidden="true" tabindex="-1"></a>    connection_provider<span class="op">=</span>connection,</span>
-<span id="cb7-78"><a href="#cb7-78" aria-hidden="true" tabindex="-1"></a>    provider<span class="op">=</span><span class="st">"Terrascope"</span>,</span>
-<span id="cb7-79"><a href="#cb7-79" aria-hidden="true" tabindex="-1"></a>    processing_opts<span class="op">=</span>{},</span>
-<span id="cb7-80"><a href="#cb7-80" aria-hidden="true" tabindex="-1"></a>    relativeOrbit<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb7-81"><a href="#cb7-81" aria-hidden="true" tabindex="-1"></a>    orbitDirection<span class="op">=</span><span class="st">"ascending"</span>,</span>
-<span id="cb7-82"><a href="#cb7-82" aria-hidden="true" tabindex="-1"></a>    sampling<span class="op">=</span><span class="va">False</span>,</span>
-<span id="cb7-83"><a href="#cb7-83" aria-hidden="true" tabindex="-1"></a>    stepsize<span class="op">=</span><span class="dv">12</span>,</span>
-<span id="cb7-84"><a href="#cb7-84" aria-hidden="true" tabindex="-1"></a>    overlap<span class="op">=</span><span class="dv">6</span>,</span>
-<span id="cb7-85"><a href="#cb7-85" aria-hidden="true" tabindex="-1"></a>    reducer<span class="op">=</span><span class="st">"mean"</span>,</span>
-<span id="cb7-86"><a href="#cb7-86" aria-hidden="true" tabindex="-1"></a>):</span>
-<span id="cb7-87"><a href="#cb7-87" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
-<span id="cb7-88"><a href="#cb7-88" aria-hidden="true" tabindex="-1"></a><span class="co">    Compute a Sentinel-1 datacube, composited at 12-day intervals.</span></span>
-<span id="cb7-89"><a href="#cb7-89" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
-<span id="cb7-90"><a href="#cb7-90" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-91"><a href="#cb7-91" aria-hidden="true" tabindex="-1"></a>    c <span class="op">=</span> connection_provider()</span>
-<span id="cb7-92"><a href="#cb7-92" aria-hidden="true" tabindex="-1"></a>    <span class="co"># define the temporal extent for the Sentinel-1 data</span></span>
-<span id="cb7-93"><a href="#cb7-93" aria-hidden="true" tabindex="-1"></a>    temp_ext_s1 <span class="op">=</span> [start_date.isoformat(), end_date.isoformat()]</span>
-<span id="cb7-94"><a href="#cb7-94" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-95"><a href="#cb7-95" aria-hidden="true" tabindex="-1"></a>    s1 <span class="op">=</span> c.load_collection(</span>
-<span id="cb7-96"><a href="#cb7-96" aria-hidden="true" tabindex="-1"></a>        <span class="st">"SENTINEL1_GRD"</span>, temporal_extent<span class="op">=</span>temp_ext_s1, bands<span class="op">=</span>[<span class="st">"VH"</span>, <span class="st">"VV"</span>], properties<span class="op">=</span>[</span>
-<span id="cb7-97"><a href="#cb7-97" aria-hidden="true" tabindex="-1"></a>        openeo.collection_property(<span class="st">"sat:orbit_state"</span>) <span class="op">==</span> orbitDirection,</span>
-<span id="cb7-98"><a href="#cb7-98" aria-hidden="true" tabindex="-1"></a>    ]</span>
-<span id="cb7-99"><a href="#cb7-99" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb7-100"><a href="#cb7-100" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-101"><a href="#cb7-101" aria-hidden="true" tabindex="-1"></a>    <span class="co"># apply SAR backscatter processing to the collection</span></span>
-<span id="cb7-102"><a href="#cb7-102" aria-hidden="true" tabindex="-1"></a>    s1 <span class="op">=</span> s1.sar_backscatter(coefficient<span class="op">=</span><span class="st">"sigma0-ellipsoid"</span>)</span>
-<span id="cb7-103"><a href="#cb7-103" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-104"><a href="#cb7-104" aria-hidden="true" tabindex="-1"></a>    <span class="co"># apply band-wise processing to create a ratio and log-transformed bands</span></span>
-<span id="cb7-105"><a href="#cb7-105" aria-hidden="true" tabindex="-1"></a>    s1 <span class="op">=</span> s1.apply_dimension(</span>
-<span id="cb7-106"><a href="#cb7-106" aria-hidden="true" tabindex="-1"></a>        dimension<span class="op">=</span><span class="st">"bands"</span>,</span>
-<span id="cb7-107"><a href="#cb7-107" aria-hidden="true" tabindex="-1"></a>        process<span class="op">=</span><span class="kw">lambda</span> x: array_create(</span>
-<span id="cb7-108"><a href="#cb7-108" aria-hidden="true" tabindex="-1"></a>            [</span>
-<span id="cb7-109"><a href="#cb7-109" aria-hidden="true" tabindex="-1"></a>                <span class="fl">30.0</span> <span class="op">*</span> x[<span class="dv">0</span>] <span class="op">/</span> x[<span class="dv">1</span>],  <span class="co"># Ratio of VH to VV</span></span>
-<span id="cb7-110"><a href="#cb7-110" aria-hidden="true" tabindex="-1"></a>                <span class="fl">30.0</span> <span class="op">+</span> <span class="fl">10.0</span> <span class="op">*</span> x[<span class="dv">0</span>].log(base<span class="op">=</span><span class="dv">10</span>),  <span class="co"># Log-transformed VH</span></span>
-<span id="cb7-111"><a href="#cb7-111" aria-hidden="true" tabindex="-1"></a>                <span class="fl">30.0</span> <span class="op">+</span> <span class="fl">10.0</span> <span class="op">*</span> x[<span class="dv">1</span>].log(base<span class="op">=</span><span class="dv">10</span>),  <span class="co"># Log-transformed VV</span></span>
-<span id="cb7-112"><a href="#cb7-112" aria-hidden="true" tabindex="-1"></a>            ]</span>
-<span id="cb7-113"><a href="#cb7-113" aria-hidden="true" tabindex="-1"></a>        ),</span>
-<span id="cb7-114"><a href="#cb7-114" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb7-115"><a href="#cb7-115" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-116"><a href="#cb7-116" aria-hidden="true" tabindex="-1"></a>    s1 <span class="op">=</span> s1.rename_labels(<span class="st">"bands"</span>, [<span class="st">"ratio"</span>] <span class="op">+</span> s1.metadata.band_names)</span>
-<span id="cb7-117"><a href="#cb7-117" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-118"><a href="#cb7-118" aria-hidden="true" tabindex="-1"></a>    <span class="co"># scale to int16</span></span>
-<span id="cb7-119"><a href="#cb7-119" aria-hidden="true" tabindex="-1"></a>    s1 <span class="op">=</span> s1.linear_scale_range(<span class="dv">0</span>, <span class="dv">30</span>, <span class="dv">0</span>, <span class="dv">30000</span>)</span>
-<span id="cb7-120"><a href="#cb7-120" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-121"><a href="#cb7-121" aria-hidden="true" tabindex="-1"></a>    <span class="co"># aggregate the collection to 12-day intervals using the specified reducer</span></span>
-<span id="cb7-122"><a href="#cb7-122" aria-hidden="true" tabindex="-1"></a>    s1_dekad <span class="op">=</span> s1.aggregate_temporal_period(period<span class="op">=</span><span class="st">"dekad"</span>, reducer<span class="op">=</span><span class="st">"median"</span>)</span>
-<span id="cb7-123"><a href="#cb7-123" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-124"><a href="#cb7-124" aria-hidden="true" tabindex="-1"></a>    <span class="co"># apply linear interpolation to fill any temporal gaps</span></span>
-<span id="cb7-125"><a href="#cb7-125" aria-hidden="true" tabindex="-1"></a>    s1_dekad <span class="op">=</span> s1_dekad.apply_dimension(</span>
-<span id="cb7-126"><a href="#cb7-126" aria-hidden="true" tabindex="-1"></a>        dimension<span class="op">=</span><span class="st">"t"</span>, process<span class="op">=</span><span class="st">"array_interpolate_linear"</span></span>
-<span id="cb7-127"><a href="#cb7-127" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb7-128"><a href="#cb7-128" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> s1_dekad</span>
-<span id="cb7-129"><a href="#cb7-129" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-130"><a href="#cb7-130" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-131"><a href="#cb7-131" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_statistics_fill_nan(base_features, start_date, end_date, stepsize):</span>
-<span id="cb7-132"><a href="#cb7-132" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
-<span id="cb7-133"><a href="#cb7-133" aria-hidden="true" tabindex="-1"></a><span class="co">    Computes statistics over a datacube.</span></span>
-<span id="cb7-134"><a href="#cb7-134" aria-hidden="true" tabindex="-1"></a><span class="co">    For correct statistics, the datacube needs to be preprocessed to</span></span>
-<span id="cb7-135"><a href="#cb7-135" aria-hidden="true" tabindex="-1"></a><span class="co">    contain observation at equitemporal intervals, without nodata values.</span></span>
-<span id="cb7-136"><a href="#cb7-136" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-137"><a href="#cb7-137" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
-<span id="cb7-138"><a href="#cb7-138" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-139"><a href="#cb7-139" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> computeStats(input_timeseries, sample_stepsize, offset):</span>
-<span id="cb7-140"><a href="#cb7-140" aria-hidden="true" tabindex="-1"></a>        tsteps <span class="op">=</span> <span class="bu">list</span>(</span>
-<span id="cb7-141"><a href="#cb7-141" aria-hidden="true" tabindex="-1"></a>            [</span>
-<span id="cb7-142"><a href="#cb7-142" aria-hidden="true" tabindex="-1"></a>                input_timeseries.array_element(offset <span class="op">+</span> sample_stepsize <span class="op">*</span> index)</span>
-<span id="cb7-143"><a href="#cb7-143" aria-hidden="true" tabindex="-1"></a>                <span class="cf">for</span> index <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">0</span>, <span class="dv">6</span>)</span>
-<span id="cb7-144"><a href="#cb7-144" aria-hidden="true" tabindex="-1"></a>            ]</span>
-<span id="cb7-145"><a href="#cb7-145" aria-hidden="true" tabindex="-1"></a>        )</span>
-<span id="cb7-146"><a href="#cb7-146" aria-hidden="true" tabindex="-1"></a>        tsteps[<span class="dv">1</span>] <span class="op">=</span> if_(is_nodata(tsteps[<span class="dv">1</span>]), tsteps[<span class="dv">2</span>], tsteps[<span class="dv">1</span>])</span>
-<span id="cb7-147"><a href="#cb7-147" aria-hidden="true" tabindex="-1"></a>        tsteps[<span class="dv">4</span>] <span class="op">=</span> if_(is_nodata(tsteps[<span class="dv">4</span>]), tsteps[<span class="dv">3</span>], tsteps[<span class="dv">4</span>])</span>
-<span id="cb7-148"><a href="#cb7-148" aria-hidden="true" tabindex="-1"></a>        tsteps[<span class="dv">0</span>] <span class="op">=</span> if_(is_nodata(tsteps[<span class="dv">0</span>]), tsteps[<span class="dv">1</span>], tsteps[<span class="dv">0</span>])</span>
-<span id="cb7-149"><a href="#cb7-149" aria-hidden="true" tabindex="-1"></a>        tsteps[<span class="dv">5</span>] <span class="op">=</span> if_(is_nodata(tsteps[<span class="dv">5</span>]), tsteps[<span class="dv">4</span>], tsteps[<span class="dv">5</span>])</span>
-<span id="cb7-150"><a href="#cb7-150" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> array_concat(</span>
-<span id="cb7-151"><a href="#cb7-151" aria-hidden="true" tabindex="-1"></a>            array_concat(</span>
-<span id="cb7-152"><a href="#cb7-152" aria-hidden="true" tabindex="-1"></a>                input_timeseries.quantiles(probabilities<span class="op">=</span>[<span class="fl">0.25</span>, <span class="fl">0.5</span>, <span class="fl">0.75</span>]),</span>
-<span id="cb7-153"><a href="#cb7-153" aria-hidden="true" tabindex="-1"></a>                input_timeseries.sd(),</span>
-<span id="cb7-154"><a href="#cb7-154" aria-hidden="true" tabindex="-1"></a>            ),</span>
-<span id="cb7-155"><a href="#cb7-155" aria-hidden="true" tabindex="-1"></a>            tsteps,</span>
-<span id="cb7-156"><a href="#cb7-156" aria-hidden="true" tabindex="-1"></a>        )</span>
-<span id="cb7-157"><a href="#cb7-157" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-158"><a href="#cb7-158" aria-hidden="true" tabindex="-1"></a>    tot_samples <span class="op">=</span> (end_date <span class="op">-</span> start_date).days <span class="op">//</span> stepsize</span>
-<span id="cb7-159"><a href="#cb7-159" aria-hidden="true" tabindex="-1"></a>    nr_tsteps <span class="op">=</span> <span class="dv">6</span></span>
-<span id="cb7-160"><a href="#cb7-160" aria-hidden="true" tabindex="-1"></a>    sample_stepsize <span class="op">=</span> tot_samples <span class="op">//</span> nr_tsteps</span>
-<span id="cb7-161"><a href="#cb7-161" aria-hidden="true" tabindex="-1"></a>    offset <span class="op">=</span> <span class="bu">int</span>(sample_stepsize <span class="op">/</span> <span class="dv">2</span> <span class="op">+</span> (tot_samples <span class="op">%</span> nr_tsteps) <span class="op">/</span> <span class="dv">2</span>)</span>
-<span id="cb7-162"><a href="#cb7-162" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-163"><a href="#cb7-163" aria-hidden="true" tabindex="-1"></a>    features <span class="op">=</span> base_features.apply_dimension(</span>
-<span id="cb7-164"><a href="#cb7-164" aria-hidden="true" tabindex="-1"></a>        dimension<span class="op">=</span><span class="st">"t"</span>,</span>
-<span id="cb7-165"><a href="#cb7-165" aria-hidden="true" tabindex="-1"></a>        target_dimension<span class="op">=</span><span class="st">"bands"</span>,</span>
-<span id="cb7-166"><a href="#cb7-166" aria-hidden="true" tabindex="-1"></a>        process<span class="op">=</span><span class="kw">lambda</span> x: computeStats(x, sample_stepsize, offset),</span>
-<span id="cb7-167"><a href="#cb7-167" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb7-168"><a href="#cb7-168" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-169"><a href="#cb7-169" aria-hidden="true" tabindex="-1"></a>    tstep_labels <span class="op">=</span> [</span>
-<span id="cb7-170"><a href="#cb7-170" aria-hidden="true" tabindex="-1"></a>        <span class="st">"t"</span> <span class="op">+</span> <span class="bu">str</span>(offset <span class="op">+</span> sample_stepsize <span class="op">*</span> index) <span class="cf">for</span> index <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">0</span>, <span class="dv">6</span>)</span>
-<span id="cb7-171"><a href="#cb7-171" aria-hidden="true" tabindex="-1"></a>    ]</span>
-<span id="cb7-172"><a href="#cb7-172" aria-hidden="true" tabindex="-1"></a>    all_bands <span class="op">=</span> [</span>
-<span id="cb7-173"><a href="#cb7-173" aria-hidden="true" tabindex="-1"></a>        band <span class="op">+</span> <span class="st">"_"</span> <span class="op">+</span> stat</span>
-<span id="cb7-174"><a href="#cb7-174" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> band <span class="kw">in</span> base_features.metadata.band_names</span>
-<span id="cb7-175"><a href="#cb7-175" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> stat <span class="kw">in</span> [<span class="st">"p25"</span>, <span class="st">"p50"</span>, <span class="st">"p75"</span>, <span class="st">"sd"</span>] <span class="op">+</span> tstep_labels</span>
-<span id="cb7-176"><a href="#cb7-176" aria-hidden="true" tabindex="-1"></a>    ]</span>
-<span id="cb7-177"><a href="#cb7-177" aria-hidden="true" tabindex="-1"></a>    features <span class="op">=</span> features.rename_labels(<span class="st">"bands"</span>, all_bands)</span>
-<span id="cb7-178"><a href="#cb7-178" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> features</span>
-<span id="cb7-179"><a href="#cb7-179" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-180"><a href="#cb7-180" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-181"><a href="#cb7-181" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> load_lc_features(</span>
-<span id="cb7-182"><a href="#cb7-182" aria-hidden="true" tabindex="-1"></a>    provider,</span>
-<span id="cb7-183"><a href="#cb7-183" aria-hidden="true" tabindex="-1"></a>    feature_raster,</span>
-<span id="cb7-184"><a href="#cb7-184" aria-hidden="true" tabindex="-1"></a>    start_date,</span>
-<span id="cb7-185"><a href="#cb7-185" aria-hidden="true" tabindex="-1"></a>    end_date,</span>
-<span id="cb7-186"><a href="#cb7-186" aria-hidden="true" tabindex="-1"></a>    stepsize_s2<span class="op">=</span><span class="dv">10</span>,</span>
-<span id="cb7-187"><a href="#cb7-187" aria-hidden="true" tabindex="-1"></a>    stepsize_s1<span class="op">=</span><span class="dv">12</span>,</span>
-<span id="cb7-188"><a href="#cb7-188" aria-hidden="true" tabindex="-1"></a>    processing_opts<span class="op">=</span>{},</span>
-<span id="cb7-189"><a href="#cb7-189" aria-hidden="true" tabindex="-1"></a>    index_dict<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb7-190"><a href="#cb7-190" aria-hidden="true" tabindex="-1"></a>    connection_provider<span class="op">=</span>connection,</span>
-<span id="cb7-191"><a href="#cb7-191" aria-hidden="true" tabindex="-1"></a>):</span>
-<span id="cb7-192"><a href="#cb7-192" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-193"><a href="#cb7-193" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">not</span> index_dict:</span>
-<span id="cb7-194"><a href="#cb7-194" aria-hidden="true" tabindex="-1"></a>        idx_list <span class="op">=</span> [<span class="st">"NDVI"</span>, <span class="st">"NDMI"</span>, <span class="st">"NDRE1"</span>, <span class="st">"NDRE2"</span>, <span class="st">"NDRE5"</span>]</span>
-<span id="cb7-195"><a href="#cb7-195" aria-hidden="true" tabindex="-1"></a>        s2_list <span class="op">=</span> [<span class="st">"B06"</span>, <span class="st">"B12"</span>]</span>
-<span id="cb7-196"><a href="#cb7-196" aria-hidden="true" tabindex="-1"></a>        index_dict <span class="op">=</span> {idx: [<span class="op">-</span><span class="dv">1</span>, <span class="dv">1</span>] <span class="cf">for</span> idx <span class="kw">in</span> idx_list}</span>
-<span id="cb7-197"><a href="#cb7-197" aria-hidden="true" tabindex="-1"></a>        index_dict[<span class="st">"ANIR"</span>] <span class="op">=</span> [<span class="dv">0</span>, <span class="dv">1</span>]</span>
-<span id="cb7-198"><a href="#cb7-198" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-199"><a href="#cb7-199" aria-hidden="true" tabindex="-1"></a>    final_index_dict <span class="op">=</span> {</span>
-<span id="cb7-200"><a href="#cb7-200" aria-hidden="true" tabindex="-1"></a>        <span class="st">"collection"</span>: {<span class="st">"input_range"</span>: [<span class="dv">0</span>, <span class="dv">8000</span>], <span class="st">"output_range"</span>: [<span class="dv">0</span>, <span class="dv">30000</span>]},</span>
-<span id="cb7-201"><a href="#cb7-201" aria-hidden="true" tabindex="-1"></a>        <span class="st">"indices"</span>: {</span>
-<span id="cb7-202"><a href="#cb7-202" aria-hidden="true" tabindex="-1"></a>            index: {<span class="st">"input_range"</span>: index_dict[index], <span class="st">"output_range"</span>: [<span class="dv">0</span>, <span class="dv">30000</span>]}</span>
-<span id="cb7-203"><a href="#cb7-203" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> index <span class="kw">in</span> index_dict</span>
-<span id="cb7-204"><a href="#cb7-204" aria-hidden="true" tabindex="-1"></a>        },</span>
-<span id="cb7-205"><a href="#cb7-205" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb7-206"><a href="#cb7-206" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-207"><a href="#cb7-207" aria-hidden="true" tabindex="-1"></a>    idx_dekad <span class="op">=</span> sentinel2_composite(</span>
-<span id="cb7-208"><a href="#cb7-208" aria-hidden="true" tabindex="-1"></a>        start_date,</span>
-<span id="cb7-209"><a href="#cb7-209" aria-hidden="true" tabindex="-1"></a>        end_date,</span>
-<span id="cb7-210"><a href="#cb7-210" aria-hidden="true" tabindex="-1"></a>        connection_provider,</span>
-<span id="cb7-211"><a href="#cb7-211" aria-hidden="true" tabindex="-1"></a>        provider,</span>
-<span id="cb7-212"><a href="#cb7-212" aria-hidden="true" tabindex="-1"></a>        final_index_dict,</span>
-<span id="cb7-213"><a href="#cb7-213" aria-hidden="true" tabindex="-1"></a>        s2_list,</span>
-<span id="cb7-214"><a href="#cb7-214" aria-hidden="true" tabindex="-1"></a>        processing_opts<span class="op">=</span>processing_opts,</span>
-<span id="cb7-215"><a href="#cb7-215" aria-hidden="true" tabindex="-1"></a>        sampling<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb7-216"><a href="#cb7-216" aria-hidden="true" tabindex="-1"></a>        stepsize<span class="op">=</span>stepsize_s2,</span>
-<span id="cb7-217"><a href="#cb7-217" aria-hidden="true" tabindex="-1"></a>        luc<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb7-218"><a href="#cb7-218" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb7-219"><a href="#cb7-219" aria-hidden="true" tabindex="-1"></a>    idx_features <span class="op">=</span> compute_statistics_fill_nan(</span>
-<span id="cb7-220"><a href="#cb7-220" aria-hidden="true" tabindex="-1"></a>        idx_dekad, start_date, end_date, stepsize<span class="op">=</span>stepsize_s2</span>
-<span id="cb7-221"><a href="#cb7-221" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb7-222"><a href="#cb7-222" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-223"><a href="#cb7-223" aria-hidden="true" tabindex="-1"></a>    s1_dekad <span class="op">=</span> sentinel1_composite(</span>
-<span id="cb7-224"><a href="#cb7-224" aria-hidden="true" tabindex="-1"></a>        start_date,</span>
-<span id="cb7-225"><a href="#cb7-225" aria-hidden="true" tabindex="-1"></a>        end_date,</span>
-<span id="cb7-226"><a href="#cb7-226" aria-hidden="true" tabindex="-1"></a>        connection_provider,</span>
-<span id="cb7-227"><a href="#cb7-227" aria-hidden="true" tabindex="-1"></a>        provider,</span>
-<span id="cb7-228"><a href="#cb7-228" aria-hidden="true" tabindex="-1"></a>        processing_opts<span class="op">=</span>processing_opts,</span>
-<span id="cb7-229"><a href="#cb7-229" aria-hidden="true" tabindex="-1"></a>        sampling<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb7-230"><a href="#cb7-230" aria-hidden="true" tabindex="-1"></a>        stepsize<span class="op">=</span>stepsize_s1,</span>
-<span id="cb7-231"><a href="#cb7-231" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb7-232"><a href="#cb7-232" aria-hidden="true" tabindex="-1"></a>    s1_features <span class="op">=</span> compute_statistics_fill_nan(</span>
-<span id="cb7-233"><a href="#cb7-233" aria-hidden="true" tabindex="-1"></a>        s1_dekad, start_date, end_date, stepsize<span class="op">=</span>stepsize_s1</span>
-<span id="cb7-234"><a href="#cb7-234" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb7-235"><a href="#cb7-235" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-236"><a href="#cb7-236" aria-hidden="true" tabindex="-1"></a>    features <span class="op">=</span> idx_features.merge_cubes(s1_features)</span>
-<span id="cb7-237"><a href="#cb7-237" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-238"><a href="#cb7-238" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> features, features.metadata.band_names</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> connection():</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> c</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co"># create sentinel-2 10-daily composite</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> sentinel2_composite(</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    start_date,</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    end_date,</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    connection_provider,</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    provider,</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    index_dict<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    s2_list<span class="op">=</span>[],</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    processing_opts<span class="op">=</span>{},</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    sampling<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    stepsize<span class="op">=</span><span class="dv">10</span>,</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>    overlap<span class="op">=</span><span class="dv">10</span>,</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    reducer<span class="op">=</span><span class="st">"median"</span>,</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>    luc<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>    cloud_procedure<span class="op">=</span><span class="st">"sen2cor"</span>,</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>):</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a><span class="co">    Compute a cloud-masked, gap-filled, Sentinel-2 datacube, composited at 10-daily intervals.</span></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>    <span class="co"># define the temporal extent for the Sentinel-2 data</span></span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>    temp_ext_s2 <span class="op">=</span> [start_date.isoformat(), end_date.isoformat()]</span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>    <span class="co"># properties to filter the data</span></span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>    props <span class="op">=</span> {<span class="st">"eo:cloud_cover"</span>: <span class="kw">lambda</span> v: v <span class="op">&lt;=</span> <span class="dv">80</span>}</span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>    bands <span class="op">=</span> [<span class="st">"B03"</span>, <span class="st">"B04"</span>, <span class="st">"B05"</span>, <span class="st">"B06"</span>, <span class="st">"B07"</span>, <span class="st">"B08"</span>, <span class="st">"B11"</span>, <span class="st">"B12"</span>]</span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>    idx_list <span class="op">=</span> [<span class="st">"NDVI"</span>, <span class="st">"NDMI"</span>, <span class="st">"NDRE1"</span>, <span class="st">"NDRE2"</span>, <span class="st">"NDRE5"</span>]</span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>    <span class="co"># establish a connection to the data source</span></span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>    c <span class="op">=</span> connection_provider()</span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>    scl <span class="op">=</span> c.load_collection(</span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>        <span class="st">"SENTINEL2_L2A"</span>, temporal_extent<span class="op">=</span>temp_ext_s2, bands<span class="op">=</span><span class="st">"SCL"</span>, properties<span class="op">=</span>props</span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>    cloud_mask <span class="op">=</span> scl.process(</span>
+<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>        <span class="st">"to_scl_dilation_mask"</span>,</span>
+<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a>        data<span class="op">=</span>scl,</span>
+<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a>        kernel1_size<span class="op">=</span><span class="dv">17</span>, kernel2_size<span class="op">=</span><span class="dv">77</span>,</span>
+<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a>        mask1_values<span class="op">=</span>[<span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>, <span class="dv">7</span>],</span>
+<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a>        mask2_values<span class="op">=</span>[<span class="dv">3</span>, <span class="dv">8</span>, <span class="dv">9</span>, <span class="dv">10</span>, <span class="dv">11</span>],</span>
+<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a>        erosion_kernel_size<span class="op">=</span><span class="dv">3</span></span>
+<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a>    s2 <span class="op">=</span> c.load_collection(</span>
+<span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a>        <span class="st">"SENTINEL2_L2A"</span>, temporal_extent<span class="op">=</span>temp_ext_s2, bands<span class="op">=</span>bands, properties<span class="op">=</span>props</span>
+<span id="cb6-50"><a href="#cb6-50" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb6-51"><a href="#cb6-51" aria-hidden="true" tabindex="-1"></a>    <span class="co"># apply cloud masking</span></span>
+<span id="cb6-52"><a href="#cb6-52" aria-hidden="true" tabindex="-1"></a>    s2 <span class="op">=</span> s2.mask(cloud_mask)</span>
+<span id="cb6-53"><a href="#cb6-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-54"><a href="#cb6-54" aria-hidden="true" tabindex="-1"></a>    <span class="co"># compute the spectral indices</span></span>
+<span id="cb6-55"><a href="#cb6-55" aria-hidden="true" tabindex="-1"></a>    indices <span class="op">=</span> compute_and_rescale_indices(s2, index_dict)</span>
+<span id="cb6-56"><a href="#cb6-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-57"><a href="#cb6-57" aria-hidden="true" tabindex="-1"></a>    <span class="co"># combine the original bands with the computed indices</span></span>
+<span id="cb6-58"><a href="#cb6-58" aria-hidden="true" tabindex="-1"></a>    combined <span class="op">=</span> s2.merge_cubes(indices)</span>
+<span id="cb6-59"><a href="#cb6-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-60"><a href="#cb6-60" aria-hidden="true" tabindex="-1"></a>    <span class="co"># filter the combined collection to include the desired bands and indices</span></span>
+<span id="cb6-61"><a href="#cb6-61" aria-hidden="true" tabindex="-1"></a>    result_indices <span class="op">=</span> combined.filter_bands(s2_list <span class="op">+</span> idx_list)</span>
+<span id="cb6-62"><a href="#cb6-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-63"><a href="#cb6-63" aria-hidden="true" tabindex="-1"></a>    <span class="co"># aggregate the filtered collection to 10-daily intervals using the specified reducer</span></span>
+<span id="cb6-64"><a href="#cb6-64" aria-hidden="true" tabindex="-1"></a>    idx_dekad <span class="op">=</span> result_indices.aggregate_temporal_period(<span class="st">"dekad"</span>, reducer<span class="op">=</span><span class="st">"median"</span>)</span>
+<span id="cb6-65"><a href="#cb6-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-66"><a href="#cb6-66" aria-hidden="true" tabindex="-1"></a>    <span class="co"># apply linear interpolation to fill any temporal gaps</span></span>
+<span id="cb6-67"><a href="#cb6-67" aria-hidden="true" tabindex="-1"></a>    idx_dekad <span class="op">=</span> idx_dekad.apply_dimension(</span>
+<span id="cb6-68"><a href="#cb6-68" aria-hidden="true" tabindex="-1"></a>        dimension<span class="op">=</span><span class="st">"t"</span>, process<span class="op">=</span><span class="st">"array_interpolate_linear"</span></span>
+<span id="cb6-69"><a href="#cb6-69" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb6-70"><a href="#cb6-70" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> idx_dekad</span>
+<span id="cb6-71"><a href="#cb6-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-72"><a href="#cb6-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-73"><a href="#cb6-73" aria-hidden="true" tabindex="-1"></a><span class="co"># create Sentinel-1 12 day composite</span></span>
+<span id="cb6-74"><a href="#cb6-74" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> sentinel1_composite(</span>
+<span id="cb6-75"><a href="#cb6-75" aria-hidden="true" tabindex="-1"></a>    start_date,</span>
+<span id="cb6-76"><a href="#cb6-76" aria-hidden="true" tabindex="-1"></a>    end_date,</span>
+<span id="cb6-77"><a href="#cb6-77" aria-hidden="true" tabindex="-1"></a>    connection_provider<span class="op">=</span>connection,</span>
+<span id="cb6-78"><a href="#cb6-78" aria-hidden="true" tabindex="-1"></a>    provider<span class="op">=</span><span class="st">"Terrascope"</span>,</span>
+<span id="cb6-79"><a href="#cb6-79" aria-hidden="true" tabindex="-1"></a>    processing_opts<span class="op">=</span>{},</span>
+<span id="cb6-80"><a href="#cb6-80" aria-hidden="true" tabindex="-1"></a>    relativeOrbit<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-81"><a href="#cb6-81" aria-hidden="true" tabindex="-1"></a>    orbitDirection<span class="op">=</span><span class="st">"ascending"</span>,</span>
+<span id="cb6-82"><a href="#cb6-82" aria-hidden="true" tabindex="-1"></a>    sampling<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb6-83"><a href="#cb6-83" aria-hidden="true" tabindex="-1"></a>    stepsize<span class="op">=</span><span class="dv">12</span>,</span>
+<span id="cb6-84"><a href="#cb6-84" aria-hidden="true" tabindex="-1"></a>    overlap<span class="op">=</span><span class="dv">6</span>,</span>
+<span id="cb6-85"><a href="#cb6-85" aria-hidden="true" tabindex="-1"></a>    reducer<span class="op">=</span><span class="st">"mean"</span>,</span>
+<span id="cb6-86"><a href="#cb6-86" aria-hidden="true" tabindex="-1"></a>):</span>
+<span id="cb6-87"><a href="#cb6-87" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb6-88"><a href="#cb6-88" aria-hidden="true" tabindex="-1"></a><span class="co">    Compute a Sentinel-1 datacube, composited at 12-day intervals.</span></span>
+<span id="cb6-89"><a href="#cb6-89" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb6-90"><a href="#cb6-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-91"><a href="#cb6-91" aria-hidden="true" tabindex="-1"></a>    c <span class="op">=</span> connection_provider()</span>
+<span id="cb6-92"><a href="#cb6-92" aria-hidden="true" tabindex="-1"></a>    <span class="co"># define the temporal extent for the Sentinel-1 data</span></span>
+<span id="cb6-93"><a href="#cb6-93" aria-hidden="true" tabindex="-1"></a>    temp_ext_s1 <span class="op">=</span> [start_date.isoformat(), end_date.isoformat()]</span>
+<span id="cb6-94"><a href="#cb6-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-95"><a href="#cb6-95" aria-hidden="true" tabindex="-1"></a>    s1 <span class="op">=</span> c.load_collection(</span>
+<span id="cb6-96"><a href="#cb6-96" aria-hidden="true" tabindex="-1"></a>        <span class="st">"SENTINEL1_GRD"</span>, temporal_extent<span class="op">=</span>temp_ext_s1, bands<span class="op">=</span>[<span class="st">"VH"</span>, <span class="st">"VV"</span>], properties<span class="op">=</span>[</span>
+<span id="cb6-97"><a href="#cb6-97" aria-hidden="true" tabindex="-1"></a>        openeo.collection_property(<span class="st">"sat:orbit_state"</span>) <span class="op">==</span> orbitDirection,</span>
+<span id="cb6-98"><a href="#cb6-98" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb6-99"><a href="#cb6-99" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb6-100"><a href="#cb6-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-101"><a href="#cb6-101" aria-hidden="true" tabindex="-1"></a>    <span class="co"># apply SAR backscatter processing to the collection</span></span>
+<span id="cb6-102"><a href="#cb6-102" aria-hidden="true" tabindex="-1"></a>    s1 <span class="op">=</span> s1.sar_backscatter(coefficient<span class="op">=</span><span class="st">"sigma0-ellipsoid"</span>)</span>
+<span id="cb6-103"><a href="#cb6-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-104"><a href="#cb6-104" aria-hidden="true" tabindex="-1"></a>    <span class="co"># apply band-wise processing to create a ratio and log-transformed bands</span></span>
+<span id="cb6-105"><a href="#cb6-105" aria-hidden="true" tabindex="-1"></a>    s1 <span class="op">=</span> s1.apply_dimension(</span>
+<span id="cb6-106"><a href="#cb6-106" aria-hidden="true" tabindex="-1"></a>        dimension<span class="op">=</span><span class="st">"bands"</span>,</span>
+<span id="cb6-107"><a href="#cb6-107" aria-hidden="true" tabindex="-1"></a>        process<span class="op">=</span><span class="kw">lambda</span> x: array_create(</span>
+<span id="cb6-108"><a href="#cb6-108" aria-hidden="true" tabindex="-1"></a>            [</span>
+<span id="cb6-109"><a href="#cb6-109" aria-hidden="true" tabindex="-1"></a>                <span class="fl">30.0</span> <span class="op">*</span> x[<span class="dv">0</span>] <span class="op">/</span> x[<span class="dv">1</span>],  <span class="co"># Ratio of VH to VV</span></span>
+<span id="cb6-110"><a href="#cb6-110" aria-hidden="true" tabindex="-1"></a>                <span class="fl">30.0</span> <span class="op">+</span> <span class="fl">10.0</span> <span class="op">*</span> x[<span class="dv">0</span>].log(base<span class="op">=</span><span class="dv">10</span>),  <span class="co"># Log-transformed VH</span></span>
+<span id="cb6-111"><a href="#cb6-111" aria-hidden="true" tabindex="-1"></a>                <span class="fl">30.0</span> <span class="op">+</span> <span class="fl">10.0</span> <span class="op">*</span> x[<span class="dv">1</span>].log(base<span class="op">=</span><span class="dv">10</span>),  <span class="co"># Log-transformed VV</span></span>
+<span id="cb6-112"><a href="#cb6-112" aria-hidden="true" tabindex="-1"></a>            ]</span>
+<span id="cb6-113"><a href="#cb6-113" aria-hidden="true" tabindex="-1"></a>        ),</span>
+<span id="cb6-114"><a href="#cb6-114" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb6-115"><a href="#cb6-115" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-116"><a href="#cb6-116" aria-hidden="true" tabindex="-1"></a>    s1 <span class="op">=</span> s1.rename_labels(<span class="st">"bands"</span>, [<span class="st">"ratio"</span>] <span class="op">+</span> s1.metadata.band_names)</span>
+<span id="cb6-117"><a href="#cb6-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-118"><a href="#cb6-118" aria-hidden="true" tabindex="-1"></a>    <span class="co"># scale to int16</span></span>
+<span id="cb6-119"><a href="#cb6-119" aria-hidden="true" tabindex="-1"></a>    s1 <span class="op">=</span> s1.linear_scale_range(<span class="dv">0</span>, <span class="dv">30</span>, <span class="dv">0</span>, <span class="dv">30000</span>)</span>
+<span id="cb6-120"><a href="#cb6-120" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-121"><a href="#cb6-121" aria-hidden="true" tabindex="-1"></a>    <span class="co"># aggregate the collection to 12-day intervals using the specified reducer</span></span>
+<span id="cb6-122"><a href="#cb6-122" aria-hidden="true" tabindex="-1"></a>    s1_dekad <span class="op">=</span> s1.aggregate_temporal_period(period<span class="op">=</span><span class="st">"dekad"</span>, reducer<span class="op">=</span><span class="st">"median"</span>)</span>
+<span id="cb6-123"><a href="#cb6-123" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-124"><a href="#cb6-124" aria-hidden="true" tabindex="-1"></a>    <span class="co"># apply linear interpolation to fill any temporal gaps</span></span>
+<span id="cb6-125"><a href="#cb6-125" aria-hidden="true" tabindex="-1"></a>    s1_dekad <span class="op">=</span> s1_dekad.apply_dimension(</span>
+<span id="cb6-126"><a href="#cb6-126" aria-hidden="true" tabindex="-1"></a>        dimension<span class="op">=</span><span class="st">"t"</span>, process<span class="op">=</span><span class="st">"array_interpolate_linear"</span></span>
+<span id="cb6-127"><a href="#cb6-127" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb6-128"><a href="#cb6-128" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> s1_dekad</span>
+<span id="cb6-129"><a href="#cb6-129" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-130"><a href="#cb6-130" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-131"><a href="#cb6-131" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_statistics_fill_nan(base_features, start_date, end_date, stepsize):</span>
+<span id="cb6-132"><a href="#cb6-132" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb6-133"><a href="#cb6-133" aria-hidden="true" tabindex="-1"></a><span class="co">    Computes statistics over a datacube.</span></span>
+<span id="cb6-134"><a href="#cb6-134" aria-hidden="true" tabindex="-1"></a><span class="co">    For correct statistics, the datacube needs to be preprocessed to</span></span>
+<span id="cb6-135"><a href="#cb6-135" aria-hidden="true" tabindex="-1"></a><span class="co">    contain observation at equitemporal intervals, without nodata values.</span></span>
+<span id="cb6-136"><a href="#cb6-136" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-137"><a href="#cb6-137" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb6-138"><a href="#cb6-138" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-139"><a href="#cb6-139" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> computeStats(input_timeseries, sample_stepsize, offset):</span>
+<span id="cb6-140"><a href="#cb6-140" aria-hidden="true" tabindex="-1"></a>        tsteps <span class="op">=</span> <span class="bu">list</span>(</span>
+<span id="cb6-141"><a href="#cb6-141" aria-hidden="true" tabindex="-1"></a>            [</span>
+<span id="cb6-142"><a href="#cb6-142" aria-hidden="true" tabindex="-1"></a>                input_timeseries.array_element(offset <span class="op">+</span> sample_stepsize <span class="op">*</span> index)</span>
+<span id="cb6-143"><a href="#cb6-143" aria-hidden="true" tabindex="-1"></a>                <span class="cf">for</span> index <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">0</span>, <span class="dv">6</span>)</span>
+<span id="cb6-144"><a href="#cb6-144" aria-hidden="true" tabindex="-1"></a>            ]</span>
+<span id="cb6-145"><a href="#cb6-145" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb6-146"><a href="#cb6-146" aria-hidden="true" tabindex="-1"></a>        tsteps[<span class="dv">1</span>] <span class="op">=</span> if_(is_nodata(tsteps[<span class="dv">1</span>]), tsteps[<span class="dv">2</span>], tsteps[<span class="dv">1</span>])</span>
+<span id="cb6-147"><a href="#cb6-147" aria-hidden="true" tabindex="-1"></a>        tsteps[<span class="dv">4</span>] <span class="op">=</span> if_(is_nodata(tsteps[<span class="dv">4</span>]), tsteps[<span class="dv">3</span>], tsteps[<span class="dv">4</span>])</span>
+<span id="cb6-148"><a href="#cb6-148" aria-hidden="true" tabindex="-1"></a>        tsteps[<span class="dv">0</span>] <span class="op">=</span> if_(is_nodata(tsteps[<span class="dv">0</span>]), tsteps[<span class="dv">1</span>], tsteps[<span class="dv">0</span>])</span>
+<span id="cb6-149"><a href="#cb6-149" aria-hidden="true" tabindex="-1"></a>        tsteps[<span class="dv">5</span>] <span class="op">=</span> if_(is_nodata(tsteps[<span class="dv">5</span>]), tsteps[<span class="dv">4</span>], tsteps[<span class="dv">5</span>])</span>
+<span id="cb6-150"><a href="#cb6-150" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> array_concat(</span>
+<span id="cb6-151"><a href="#cb6-151" aria-hidden="true" tabindex="-1"></a>            array_concat(</span>
+<span id="cb6-152"><a href="#cb6-152" aria-hidden="true" tabindex="-1"></a>                input_timeseries.quantiles(probabilities<span class="op">=</span>[<span class="fl">0.25</span>, <span class="fl">0.5</span>, <span class="fl">0.75</span>]),</span>
+<span id="cb6-153"><a href="#cb6-153" aria-hidden="true" tabindex="-1"></a>                input_timeseries.sd(),</span>
+<span id="cb6-154"><a href="#cb6-154" aria-hidden="true" tabindex="-1"></a>            ),</span>
+<span id="cb6-155"><a href="#cb6-155" aria-hidden="true" tabindex="-1"></a>            tsteps,</span>
+<span id="cb6-156"><a href="#cb6-156" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb6-157"><a href="#cb6-157" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-158"><a href="#cb6-158" aria-hidden="true" tabindex="-1"></a>    tot_samples <span class="op">=</span> (end_date <span class="op">-</span> start_date).days <span class="op">//</span> stepsize</span>
+<span id="cb6-159"><a href="#cb6-159" aria-hidden="true" tabindex="-1"></a>    nr_tsteps <span class="op">=</span> <span class="dv">6</span></span>
+<span id="cb6-160"><a href="#cb6-160" aria-hidden="true" tabindex="-1"></a>    sample_stepsize <span class="op">=</span> tot_samples <span class="op">//</span> nr_tsteps</span>
+<span id="cb6-161"><a href="#cb6-161" aria-hidden="true" tabindex="-1"></a>    offset <span class="op">=</span> <span class="bu">int</span>(sample_stepsize <span class="op">/</span> <span class="dv">2</span> <span class="op">+</span> (tot_samples <span class="op">%</span> nr_tsteps) <span class="op">/</span> <span class="dv">2</span>)</span>
+<span id="cb6-162"><a href="#cb6-162" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-163"><a href="#cb6-163" aria-hidden="true" tabindex="-1"></a>    features <span class="op">=</span> base_features.apply_dimension(</span>
+<span id="cb6-164"><a href="#cb6-164" aria-hidden="true" tabindex="-1"></a>        dimension<span class="op">=</span><span class="st">"t"</span>,</span>
+<span id="cb6-165"><a href="#cb6-165" aria-hidden="true" tabindex="-1"></a>        target_dimension<span class="op">=</span><span class="st">"bands"</span>,</span>
+<span id="cb6-166"><a href="#cb6-166" aria-hidden="true" tabindex="-1"></a>        process<span class="op">=</span><span class="kw">lambda</span> x: computeStats(x, sample_stepsize, offset),</span>
+<span id="cb6-167"><a href="#cb6-167" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb6-168"><a href="#cb6-168" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-169"><a href="#cb6-169" aria-hidden="true" tabindex="-1"></a>    tstep_labels <span class="op">=</span> [</span>
+<span id="cb6-170"><a href="#cb6-170" aria-hidden="true" tabindex="-1"></a>        <span class="st">"t"</span> <span class="op">+</span> <span class="bu">str</span>(offset <span class="op">+</span> sample_stepsize <span class="op">*</span> index) <span class="cf">for</span> index <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">0</span>, <span class="dv">6</span>)</span>
+<span id="cb6-171"><a href="#cb6-171" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb6-172"><a href="#cb6-172" aria-hidden="true" tabindex="-1"></a>    all_bands <span class="op">=</span> [</span>
+<span id="cb6-173"><a href="#cb6-173" aria-hidden="true" tabindex="-1"></a>        band <span class="op">+</span> <span class="st">"_"</span> <span class="op">+</span> stat</span>
+<span id="cb6-174"><a href="#cb6-174" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> band <span class="kw">in</span> base_features.metadata.band_names</span>
+<span id="cb6-175"><a href="#cb6-175" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> stat <span class="kw">in</span> [<span class="st">"p25"</span>, <span class="st">"p50"</span>, <span class="st">"p75"</span>, <span class="st">"sd"</span>] <span class="op">+</span> tstep_labels</span>
+<span id="cb6-176"><a href="#cb6-176" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb6-177"><a href="#cb6-177" aria-hidden="true" tabindex="-1"></a>    features <span class="op">=</span> features.rename_labels(<span class="st">"bands"</span>, all_bands)</span>
+<span id="cb6-178"><a href="#cb6-178" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> features</span>
+<span id="cb6-179"><a href="#cb6-179" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-180"><a href="#cb6-180" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-181"><a href="#cb6-181" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> load_lc_features(</span>
+<span id="cb6-182"><a href="#cb6-182" aria-hidden="true" tabindex="-1"></a>    provider,</span>
+<span id="cb6-183"><a href="#cb6-183" aria-hidden="true" tabindex="-1"></a>    feature_raster,</span>
+<span id="cb6-184"><a href="#cb6-184" aria-hidden="true" tabindex="-1"></a>    start_date,</span>
+<span id="cb6-185"><a href="#cb6-185" aria-hidden="true" tabindex="-1"></a>    end_date,</span>
+<span id="cb6-186"><a href="#cb6-186" aria-hidden="true" tabindex="-1"></a>    stepsize_s2<span class="op">=</span><span class="dv">10</span>,</span>
+<span id="cb6-187"><a href="#cb6-187" aria-hidden="true" tabindex="-1"></a>    stepsize_s1<span class="op">=</span><span class="dv">12</span>,</span>
+<span id="cb6-188"><a href="#cb6-188" aria-hidden="true" tabindex="-1"></a>    processing_opts<span class="op">=</span>{},</span>
+<span id="cb6-189"><a href="#cb6-189" aria-hidden="true" tabindex="-1"></a>    index_dict<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-190"><a href="#cb6-190" aria-hidden="true" tabindex="-1"></a>    connection_provider<span class="op">=</span>connection,</span>
+<span id="cb6-191"><a href="#cb6-191" aria-hidden="true" tabindex="-1"></a>):</span>
+<span id="cb6-192"><a href="#cb6-192" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-193"><a href="#cb6-193" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">not</span> index_dict:</span>
+<span id="cb6-194"><a href="#cb6-194" aria-hidden="true" tabindex="-1"></a>        idx_list <span class="op">=</span> [<span class="st">"NDVI"</span>, <span class="st">"NDMI"</span>, <span class="st">"NDRE1"</span>, <span class="st">"NDRE2"</span>, <span class="st">"NDRE5"</span>]</span>
+<span id="cb6-195"><a href="#cb6-195" aria-hidden="true" tabindex="-1"></a>        s2_list <span class="op">=</span> [<span class="st">"B06"</span>, <span class="st">"B12"</span>]</span>
+<span id="cb6-196"><a href="#cb6-196" aria-hidden="true" tabindex="-1"></a>        index_dict <span class="op">=</span> {idx: [<span class="op">-</span><span class="dv">1</span>, <span class="dv">1</span>] <span class="cf">for</span> idx <span class="kw">in</span> idx_list}</span>
+<span id="cb6-197"><a href="#cb6-197" aria-hidden="true" tabindex="-1"></a>        index_dict[<span class="st">"ANIR"</span>] <span class="op">=</span> [<span class="dv">0</span>, <span class="dv">1</span>]</span>
+<span id="cb6-198"><a href="#cb6-198" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-199"><a href="#cb6-199" aria-hidden="true" tabindex="-1"></a>    final_index_dict <span class="op">=</span> {</span>
+<span id="cb6-200"><a href="#cb6-200" aria-hidden="true" tabindex="-1"></a>        <span class="st">"collection"</span>: {<span class="st">"input_range"</span>: [<span class="dv">0</span>, <span class="dv">8000</span>], <span class="st">"output_range"</span>: [<span class="dv">0</span>, <span class="dv">30000</span>]},</span>
+<span id="cb6-201"><a href="#cb6-201" aria-hidden="true" tabindex="-1"></a>        <span class="st">"indices"</span>: {</span>
+<span id="cb6-202"><a href="#cb6-202" aria-hidden="true" tabindex="-1"></a>            index: {<span class="st">"input_range"</span>: index_dict[index], <span class="st">"output_range"</span>: [<span class="dv">0</span>, <span class="dv">30000</span>]}</span>
+<span id="cb6-203"><a href="#cb6-203" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> index <span class="kw">in</span> index_dict</span>
+<span id="cb6-204"><a href="#cb6-204" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb6-205"><a href="#cb6-205" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb6-206"><a href="#cb6-206" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-207"><a href="#cb6-207" aria-hidden="true" tabindex="-1"></a>    idx_dekad <span class="op">=</span> sentinel2_composite(</span>
+<span id="cb6-208"><a href="#cb6-208" aria-hidden="true" tabindex="-1"></a>        start_date,</span>
+<span id="cb6-209"><a href="#cb6-209" aria-hidden="true" tabindex="-1"></a>        end_date,</span>
+<span id="cb6-210"><a href="#cb6-210" aria-hidden="true" tabindex="-1"></a>        connection_provider,</span>
+<span id="cb6-211"><a href="#cb6-211" aria-hidden="true" tabindex="-1"></a>        provider,</span>
+<span id="cb6-212"><a href="#cb6-212" aria-hidden="true" tabindex="-1"></a>        final_index_dict,</span>
+<span id="cb6-213"><a href="#cb6-213" aria-hidden="true" tabindex="-1"></a>        s2_list,</span>
+<span id="cb6-214"><a href="#cb6-214" aria-hidden="true" tabindex="-1"></a>        processing_opts<span class="op">=</span>processing_opts,</span>
+<span id="cb6-215"><a href="#cb6-215" aria-hidden="true" tabindex="-1"></a>        sampling<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb6-216"><a href="#cb6-216" aria-hidden="true" tabindex="-1"></a>        stepsize<span class="op">=</span>stepsize_s2,</span>
+<span id="cb6-217"><a href="#cb6-217" aria-hidden="true" tabindex="-1"></a>        luc<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb6-218"><a href="#cb6-218" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb6-219"><a href="#cb6-219" aria-hidden="true" tabindex="-1"></a>    idx_features <span class="op">=</span> compute_statistics_fill_nan(</span>
+<span id="cb6-220"><a href="#cb6-220" aria-hidden="true" tabindex="-1"></a>        idx_dekad, start_date, end_date, stepsize<span class="op">=</span>stepsize_s2</span>
+<span id="cb6-221"><a href="#cb6-221" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb6-222"><a href="#cb6-222" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-223"><a href="#cb6-223" aria-hidden="true" tabindex="-1"></a>    s1_dekad <span class="op">=</span> sentinel1_composite(</span>
+<span id="cb6-224"><a href="#cb6-224" aria-hidden="true" tabindex="-1"></a>        start_date,</span>
+<span id="cb6-225"><a href="#cb6-225" aria-hidden="true" tabindex="-1"></a>        end_date,</span>
+<span id="cb6-226"><a href="#cb6-226" aria-hidden="true" tabindex="-1"></a>        connection_provider,</span>
+<span id="cb6-227"><a href="#cb6-227" aria-hidden="true" tabindex="-1"></a>        provider,</span>
+<span id="cb6-228"><a href="#cb6-228" aria-hidden="true" tabindex="-1"></a>        processing_opts<span class="op">=</span>processing_opts,</span>
+<span id="cb6-229"><a href="#cb6-229" aria-hidden="true" tabindex="-1"></a>        sampling<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb6-230"><a href="#cb6-230" aria-hidden="true" tabindex="-1"></a>        stepsize<span class="op">=</span>stepsize_s1,</span>
+<span id="cb6-231"><a href="#cb6-231" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb6-232"><a href="#cb6-232" aria-hidden="true" tabindex="-1"></a>    s1_features <span class="op">=</span> compute_statistics_fill_nan(</span>
+<span id="cb6-233"><a href="#cb6-233" aria-hidden="true" tabindex="-1"></a>        s1_dekad, start_date, end_date, stepsize<span class="op">=</span>stepsize_s1</span>
+<span id="cb6-234"><a href="#cb6-234" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb6-235"><a href="#cb6-235" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-236"><a href="#cb6-236" aria-hidden="true" tabindex="-1"></a>    features <span class="op">=</span> idx_features.merge_cubes(s1_features)</span>
+<span id="cb6-237"><a href="#cb6-237" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-238"><a href="#cb6-238" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> features, features.metadata.band_names</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="random-forest-model-training" class="level3">
@@ -1855,29 +1847,29 @@ window.onload = function() {
 <p>Now that our preprocessing pipeline is defined, we can train the model using a built-in process.</p>
 <p>This is very convenient for quick experiments. More advanced users do train their models offline, as it gives them access to more complex ML architectures.</p>
 <div id="23d85e2c" class="cell" data-execution_count="28">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load land cover features from the specified source and time period</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>features, feature_list <span class="op">=</span> load_lc_features(</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"cdse"</span>, <span class="st">"both"</span>, datetime.date(<span class="dv">2022</span>, <span class="dv">3</span>, <span class="dv">1</span>), datetime.date(<span class="dv">2022</span>, <span class="dv">10</span>, <span class="dv">31</span>)</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> features.aggregate_spatial(json.loads(y_train.to_json()), reducer<span class="op">=</span><span class="st">"mean"</span>)</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Train a random forest classifier using the aggregated features</span></span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>ml_model <span class="op">=</span> X.fit_class_random_forest(</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    target<span class="op">=</span>json.loads(y_train.to_json()), num_trees<span class="op">=</span><span class="dv">200</span></span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> ml_model.save_ml_model()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load land cover features from the specified source and time period</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>features, feature_list <span class="op">=</span> load_lc_features(</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"cdse"</span>, <span class="st">"both"</span>, datetime.date(<span class="dv">2022</span>, <span class="dv">3</span>, <span class="dv">1</span>), datetime.date(<span class="dv">2022</span>, <span class="dv">10</span>, <span class="dv">31</span>)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> features.aggregate_spatial(json.loads(y_train.to_json()), reducer<span class="op">=</span><span class="st">"mean"</span>)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Train a random forest classifier using the aggregated features</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>ml_model <span class="op">=</span> X.fit_class_random_forest(</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    target<span class="op">=</span>json.loads(y_train.to_json()), num_trees<span class="op">=</span><span class="dv">200</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> ml_model.save_ml_model()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div id="3a2ca79d-012c-4c0c-9e34-3aae60ac518f" class="cell" data-execution_count="29">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>job_options <span class="op">=</span> {</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"executor-memory"</span>: <span class="st">"2G"</span>,</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"python-memory"</span>: <span class="st">"2500m"</span>,</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>job_options <span class="op">=</span> {</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"executor-memory"</span>: <span class="st">"2G"</span>,</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"python-memory"</span>: <span class="st">"2500m"</span>,</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div id="c378cd16" class="cell" data-scrolled="true" data-execution_count="30">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>training_job <span class="op">=</span> model.create_job(</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    title<span class="op">=</span><span class="st">"Training-job Dynamic LC"</span>, job_options<span class="op">=</span>job_options</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>training_job.start_and_wait()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>training_job <span class="op">=</span> model.create_job(</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    title<span class="op">=</span><span class="st">"Training-job Dynamic LC"</span>, job_options<span class="op">=</span>job_options</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>training_job.start_and_wait()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>0:00:00 Job 'j-25021215404741dbb245f0171966f6fc': send 'start'
 0:00:15 Job 'j-25021215404741dbb245f0171966f6fc': created (progress 0%)
@@ -1950,16 +1942,16 @@ window.onload = function() {
 </div>
 </div>
 <div id="0fa411da-e39e-4705-983c-152ba624bb3d" class="cell" data-execution_count="33">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f""" The total openEO credits consumed when executing training the model is </span><span class="sc">{</span>training_job<span class="sc">.</span>describe()[<span class="st">'costs'</span>]<span class="sc">}</span><span class="ss"> credits."""</span></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f""" The total openEO credits consumed when executing training the model is </span><span class="sc">{</span>training_job<span class="sc">.</span>describe()[<span class="st">'costs'</span>]<span class="sc">}</span><span class="ss"> credits."""</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> The total openEO credits consumed when executing training the model is 80 credits.</code></pre>
 </div>
 </div>
 <div id="b8a0e2e7-3e05-4faf-9456-d3a1f49dd77d" class="cell" data-execution_count="32">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>results <span class="op">=</span> training_job.get_results()</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>results.download_files()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>results <span class="op">=</span> training_job.get_results()</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>results.download_files()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="32">
 <pre><code>[PosixPath('/home/driesj/code/notebooks/openeo-community-examples/python/DynamicLandCoverMapping/randomforest.model.tar.gz'),
  PosixPath('/home/driesj/code/notebooks/openeo-community-examples/python/DynamicLandCoverMapping/job-results.json')]</code></pre>
@@ -1967,26 +1959,26 @@ window.onload = function() {
 </div>
 <p>Subsequently, we can calculate several validation metrics from our test set. To achieve this, we perform inference for the points in our y-test set and write these predictions to a netCDF file. The function <code>calculate_validation_metrics</code> (a client-side helper function, not part of openEO itself) then load the y-test GeoJSON and the netCDF with predicted values. It extracts the points and stores the predicted values alongside their target labels in a dataframe.</p>
 <div id="706cc56a-ed35-447b-988f-d17601a67b13" class="cell" data-execution_count="16">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>links <span class="op">=</span> results.get_metadata()[<span class="st">"links"</span>]</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>ml_model_metadata_url <span class="op">=</span> [</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    link <span class="cf">for</span> link <span class="kw">in</span> links <span class="cf">if</span> <span class="st">"ml_model_metadata.json"</span> <span class="kw">in</span> link[<span class="st">"href"</span>]</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>][<span class="dv">0</span>][<span class="st">"href"</span>]</span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(ml_model_metadata_url)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>links <span class="op">=</span> results.get_metadata()[<span class="st">"links"</span>]</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>ml_model_metadata_url <span class="op">=</span> [</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    link <span class="cf">for</span> link <span class="kw">in</span> links <span class="cf">if</span> <span class="st">"ml_model_metadata.json"</span> <span class="kw">in</span> link[<span class="st">"href"</span>]</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>][<span class="dv">0</span>][<span class="st">"href"</span>]</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(ml_model_metadata_url)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>https://openeo.dataspace.copernicus.eu/openeo/1.2/jobs/j-25021215404741dbb245f0171966f6fc/results/items/MzJjYzdkZGItZjdlMS00YjFjLTk3OTYtZjlmZTM5Y2I4ZmVi/23ce7a67aa53bb51e0b499556c007238/ml_model_metadata.json?expires=1740057830</code></pre>
 </div>
 </div>
 <div id="f69aa542-9a4e-41e6-b230-e7c0735129fb" class="cell" data-execution_count="17">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> MlModel.load_ml_model(connection<span class="op">=</span>c, <span class="bu">id</span><span class="op">=</span>ml_model_metadata_url)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> MlModel.load_ml_model(connection<span class="op">=</span>c, <span class="bu">id</span><span class="op">=</span>ml_model_metadata_url)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div id="ae8b889a-e835-4aec-9a8c-d38bb8097da5" class="cell" data-execution_count="38">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>base_path <span class="op">=</span> Path.cwd() <span class="op">/</span> <span class="st">"results"</span> <span class="op">/</span> <span class="st">"testarea"</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>validation_path <span class="op">=</span> base_path <span class="op">/</span> <span class="st">"validation"</span></span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>validation_path.mkdir(parents<span class="op">=</span><span class="va">True</span>, exist_ok<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>y_test.to_file(filename<span class="op">=</span><span class="bu">str</span>(validation_path <span class="op">/</span> <span class="st">"y_test.geojson"</span>), driver<span class="op">=</span><span class="st">"GeoJSON"</span>)</span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>cube <span class="op">=</span> features</span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>cube</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>base_path <span class="op">=</span> Path.cwd() <span class="op">/</span> <span class="st">"results"</span> <span class="op">/</span> <span class="st">"testarea"</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>validation_path <span class="op">=</span> base_path <span class="op">/</span> <span class="st">"validation"</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>validation_path.mkdir(parents<span class="op">=</span><span class="va">True</span>, exist_ok<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>y_test.to_file(filename<span class="op">=</span><span class="bu">str</span>(validation_path <span class="op">/</span> <span class="st">"y_test.geojson"</span>), driver<span class="op">=</span><span class="st">"GeoJSON"</span>)</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>cube <span class="op">=</span> features</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>cube</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="38">
 
     <script>
@@ -2010,28 +2002,28 @@ window.onload = function() {
 </div>
 </div>
 <div id="d461f58e" class="cell" data-scrolled="true">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>predicted <span class="op">=</span> (</span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>    cube.predict_random_forest(model<span class="op">=</span>model, dimension<span class="op">=</span><span class="st">"bands"</span>)</span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    .linear_scale_range(<span class="dv">0</span>, <span class="dv">255</span>, <span class="dv">0</span>, <span class="dv">255</span>)</span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>    .aggregate_spatial(json.loads(y_test.to_json()), reducer<span class="op">=</span><span class="st">"mean"</span>)</span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>)  <span class="co"># "https://github.com/openEOPlatform/sample-notebooks/raw/main/resources/landcover/model_item.json"</span></span>
-<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>test_job <span class="op">=</span> predicted.execute_batch(</span>
-<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>    out_format<span class="op">=</span><span class="st">"CSV"</span>, title<span class="op">=</span><span class="st">"dynamic land cover prediction"</span></span>
-<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>test_job.get_results().download_files()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>predicted <span class="op">=</span> (</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    cube.predict_random_forest(model<span class="op">=</span>model, dimension<span class="op">=</span><span class="st">"bands"</span>)</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    .linear_scale_range(<span class="dv">0</span>, <span class="dv">255</span>, <span class="dv">0</span>, <span class="dv">255</span>)</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    .aggregate_spatial(json.loads(y_test.to_json()), reducer<span class="op">=</span><span class="st">"mean"</span>)</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>)  <span class="co"># "https://github.com/openEOPlatform/sample-notebooks/raw/main/resources/landcover/model_item.json"</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>test_job <span class="op">=</span> predicted.execute_batch(</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>    out_format<span class="op">=</span><span class="st">"CSV"</span>, title<span class="op">=</span><span class="st">"dynamic land cover prediction"</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>test_job.get_results().download_files()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div id="2671f2cf" class="cell" data-execution_count="40">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_csv(<span class="st">"timeseries.csv"</span>)</span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>df.index <span class="op">=</span> df.feature_index</span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df.sort_index()</span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>df.columns <span class="op">=</span> [<span class="st">"feature_index"</span>, <span class="st">"predicted"</span>]</span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>gdf <span class="op">=</span> gpd.read_file(validation_path <span class="op">/</span> <span class="st">"y_test.geojson"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_csv(<span class="st">"timeseries.csv"</span>)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>df.index <span class="op">=</span> df.feature_index</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df.sort_index()</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>df.columns <span class="op">=</span> [<span class="st">"feature_index"</span>, <span class="st">"predicted"</span>]</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>gdf <span class="op">=</span> gpd.read_file(validation_path <span class="op">/</span> <span class="st">"y_test.geojson"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div id="e23e748a-eff9-4752-84e0-888dafdec332" class="cell" data-execution_count="41">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>gdf[<span class="st">"predicted"</span>] <span class="op">=</span> df.predicted<span class="co">#.astype(int)</span></span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>gdf <span class="op">=</span> gdf.dropna()</span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>ConfusionMatrixDisplay.from_predictions(gdf[<span class="st">"target"</span>], gdf[<span class="st">"predicted"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>gdf[<span class="st">"predicted"</span>] <span class="op">=</span> df.predicted<span class="co">#.astype(int)</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>gdf <span class="op">=</span> gdf.dropna()</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>ConfusionMatrixDisplay.from_predictions(gdf[<span class="st">"target"</span>], gdf[<span class="st">"predicted"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -2041,7 +2033,7 @@ window.onload = function() {
 </div>
 </div>
 <div id="52b9847b-b6b2-4b29-ad45-a5499f884872" class="cell" data-execution_count="42">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>accuracy_score(gdf[<span class="st">"target"</span>], gdf[<span class="st">"predicted"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>accuracy_score(gdf[<span class="st">"target"</span>], gdf[<span class="st">"predicted"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="42">
 <pre><code>0.851063829787234</code></pre>
 </div>
@@ -2058,52 +2050,52 @@ window.onload = function() {
 </ul>
 </div>
 <div id="37164a78" class="cell">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>features, feature_list <span class="op">=</span> load_lc_features(</span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"cdse"</span>,</span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"both"</span>,</span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>    datetime.date(<span class="dv">2022</span>, <span class="dv">3</span>, <span class="dv">1</span>),</span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>    datetime.date(<span class="dv">2022</span>, <span class="dv">10</span>, <span class="dv">31</span>),</span>
-<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>    processing_opts<span class="op">=</span><span class="bu">dict</span>(tile_size<span class="op">=</span><span class="dv">256</span>),</span>
-<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>cube <span class="op">=</span> features.filter_bbox({<span class="st">"west"</span>: <span class="fl">5.1</span>, <span class="st">"east"</span>: <span class="fl">5.4</span>, <span class="st">"south"</span>: <span class="fl">50.6</span>, <span class="st">"north"</span>: <span class="fl">50.8</span>})</span>
-<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>predicted <span class="op">=</span> cube.predict_random_forest(</span>
-<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>    model<span class="op">=</span>model, dimension<span class="op">=</span><span class="st">"bands"</span></span>
-<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>).linear_scale_range(<span class="dv">0</span>, <span class="dv">255</span>, <span class="dv">0</span>, <span class="dv">255</span>)</span>
-<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>inf_job <span class="op">=</span> predicted.execute_batch(out_format<span class="op">=</span><span class="st">"GTiff"</span>,title<span class="op">=</span><span class="st">"Generate landcover map"</span>, filename_prefix<span class="op">=</span><span class="st">"dynamic_landcover_map"</span>)</span>
-<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>inf_job.get_results().download_files()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>features, feature_list <span class="op">=</span> load_lc_features(</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"cdse"</span>,</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"both"</span>,</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>    datetime.date(<span class="dv">2022</span>, <span class="dv">3</span>, <span class="dv">1</span>),</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>    datetime.date(<span class="dv">2022</span>, <span class="dv">10</span>, <span class="dv">31</span>),</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>    processing_opts<span class="op">=</span><span class="bu">dict</span>(tile_size<span class="op">=</span><span class="dv">256</span>),</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>cube <span class="op">=</span> features.filter_bbox({<span class="st">"west"</span>: <span class="fl">5.1</span>, <span class="st">"east"</span>: <span class="fl">5.4</span>, <span class="st">"south"</span>: <span class="fl">50.6</span>, <span class="st">"north"</span>: <span class="fl">50.8</span>})</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>predicted <span class="op">=</span> cube.predict_random_forest(</span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>    model<span class="op">=</span>model, dimension<span class="op">=</span><span class="st">"bands"</span></span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>).linear_scale_range(<span class="dv">0</span>, <span class="dv">255</span>, <span class="dv">0</span>, <span class="dv">255</span>)</span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>inf_job <span class="op">=</span> predicted.execute_batch(out_format<span class="op">=</span><span class="st">"GTiff"</span>,title<span class="op">=</span><span class="st">"Generate landcover map"</span>, filename_prefix<span class="op">=</span><span class="st">"dynamic_landcover_map"</span>)</span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a>inf_job.get_results().download_files()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div id="5fa4f3ae-c4b1-4867-9170-68213c0000ff" class="cell" data-execution_count="20">
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>src <span class="op">=</span> rasterio.<span class="bu">open</span>(<span class="st">"dynamic_landcover_map.tif"</span>)</span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>categories <span class="op">=</span> {<span class="st">"Crop"</span>: <span class="dv">1</span>, <span class="st">"Wood"</span>: <span class="dv">2</span>, <span class="st">"Shrubland"</span>: <span class="dv">3</span>, <span class="st">"Grass"</span>: <span class="dv">4</span>, <span class="st">"Bareland"</span>: <span class="dv">5</span>}</span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Define colors for each category</span></span>
-<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>colors <span class="op">=</span> [<span class="st">"pink"</span>, <span class="st">"green"</span>, <span class="st">"lightgreen"</span>, <span class="st">"yellow"</span>, <span class="st">"brown"</span>]</span>
-<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a colormap based on the defined colors</span></span>
-<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>cmap <span class="op">=</span> ListedColormap(colors, name<span class="op">=</span><span class="st">"custom_cmap"</span>, N<span class="op">=</span><span class="bu">len</span>(colors))</span>
-<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>d <span class="op">=</span> src.read(<span class="dv">1</span>,masked<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">8</span>))</span>
-<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a>plt.imshow(</span>
-<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>    d, cmap<span class="op">=</span>cmap, interpolation<span class="op">=</span><span class="st">"nearest"</span>, vmin<span class="op">=</span><span class="dv">1</span>, vmax<span class="op">=</span><span class="bu">len</span>(colors) <span class="op">+</span> <span class="dv">1</span></span>
-<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a>plt.axis(<span class="st">"off"</span>)</span>
-<span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-19"><a href="#cb26-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Add colorbar to show the correspondence between values and colors</span></span>
-<span id="cb26-20"><a href="#cb26-20" aria-hidden="true" tabindex="-1"></a>cbar <span class="op">=</span> plt.colorbar(</span>
-<span id="cb26-21"><a href="#cb26-21" aria-hidden="true" tabindex="-1"></a>    ticks<span class="op">=</span>np.arange(<span class="fl">1.5</span>, <span class="bu">len</span>(categories) <span class="op">+</span> <span class="dv">1</span>),</span>
-<span id="cb26-22"><a href="#cb26-22" aria-hidden="true" tabindex="-1"></a>    aspect<span class="op">=</span><span class="dv">55</span>,</span>
-<span id="cb26-23"><a href="#cb26-23" aria-hidden="true" tabindex="-1"></a>    orientation<span class="op">=</span><span class="st">"horizontal"</span>,</span>
-<span id="cb26-24"><a href="#cb26-24" aria-hidden="true" tabindex="-1"></a>    fraction<span class="op">=</span><span class="fl">0.0113</span>,</span>
-<span id="cb26-25"><a href="#cb26-25" aria-hidden="true" tabindex="-1"></a>    pad<span class="op">=</span><span class="fl">0.04</span>,</span>
-<span id="cb26-26"><a href="#cb26-26" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb26-27"><a href="#cb26-27" aria-hidden="true" tabindex="-1"></a>cbar.ax.set_xticklabels(<span class="bu">list</span>(categories.keys()))</span>
-<span id="cb26-28"><a href="#cb26-28" aria-hidden="true" tabindex="-1"></a>cbar.set_label(<span class="st">"Land Use Categories"</span>)</span>
-<span id="cb26-29"><a href="#cb26-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-30"><a href="#cb26-30" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>src <span class="op">=</span> rasterio.<span class="bu">open</span>(<span class="st">"dynamic_landcover_map.tif"</span>)</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>categories <span class="op">=</span> {<span class="st">"Crop"</span>: <span class="dv">1</span>, <span class="st">"Wood"</span>: <span class="dv">2</span>, <span class="st">"Shrubland"</span>: <span class="dv">3</span>, <span class="st">"Grass"</span>: <span class="dv">4</span>, <span class="st">"Bareland"</span>: <span class="dv">5</span>}</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Define colors for each category</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>colors <span class="op">=</span> [<span class="st">"pink"</span>, <span class="st">"green"</span>, <span class="st">"lightgreen"</span>, <span class="st">"yellow"</span>, <span class="st">"brown"</span>]</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a colormap based on the defined colors</span></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>cmap <span class="op">=</span> ListedColormap(colors, name<span class="op">=</span><span class="st">"custom_cmap"</span>, N<span class="op">=</span><span class="bu">len</span>(colors))</span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>d <span class="op">=</span> src.read(<span class="dv">1</span>,masked<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">8</span>))</span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>plt.imshow(</span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>    d, cmap<span class="op">=</span>cmap, interpolation<span class="op">=</span><span class="st">"nearest"</span>, vmin<span class="op">=</span><span class="dv">1</span>, vmax<span class="op">=</span><span class="bu">len</span>(colors) <span class="op">+</span> <span class="dv">1</span></span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a>plt.axis(<span class="st">"off"</span>)</span>
+<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Add colorbar to show the correspondence between values and colors</span></span>
+<span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a>cbar <span class="op">=</span> plt.colorbar(</span>
+<span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a>    ticks<span class="op">=</span>np.arange(<span class="fl">1.5</span>, <span class="bu">len</span>(categories) <span class="op">+</span> <span class="dv">1</span>),</span>
+<span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a>    aspect<span class="op">=</span><span class="dv">55</span>,</span>
+<span id="cb25-23"><a href="#cb25-23" aria-hidden="true" tabindex="-1"></a>    orientation<span class="op">=</span><span class="st">"horizontal"</span>,</span>
+<span id="cb25-24"><a href="#cb25-24" aria-hidden="true" tabindex="-1"></a>    fraction<span class="op">=</span><span class="fl">0.0113</span>,</span>
+<span id="cb25-25"><a href="#cb25-25" aria-hidden="true" tabindex="-1"></a>    pad<span class="op">=</span><span class="fl">0.04</span>,</span>
+<span id="cb25-26"><a href="#cb25-26" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb25-27"><a href="#cb25-27" aria-hidden="true" tabindex="-1"></a>cbar.ax.set_xticklabels(<span class="bu">list</span>(categories.keys()))</span>
+<span id="cb25-28"><a href="#cb25-28" aria-hidden="true" tabindex="-1"></a>cbar.set_label(<span class="st">"Land Use Categories"</span>)</span>
+<span id="cb25-29"><a href="#cb25-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-30"><a href="#cb25-30" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">

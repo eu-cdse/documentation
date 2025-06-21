@@ -1492,14 +1492,14 @@ window.onload = function() {
 <section id="visualize-the-tiling-grid" class="level3">
 <h3 class="anchored" data-anchor-id="visualize-the-tiling-grid">Visualize the tiling grid</h3>
 <p>We use Plotly to create an interactive visualization of the spatial grid. This allows us to examine the layout of tiles across the area of interest and ensure that the grid aligns correctly with our region.</p>
-<div id="cell-8" class="cell" data-execution_count="16">
+<div id="cell-8" class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert geometries to GeoJSON serializable format</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> px.choropleth_mapbox(</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> px.choropleth_map(</span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    grid_df,</span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    geojson<span class="op">=</span>grid_df,</span>
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    locations<span class="op">=</span>grid_df.index,</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    mapbox_style<span class="op">=</span><span class="st">"carto-positron"</span>,</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    map_style<span class="op">=</span><span class="st">"carto-positron"</span>,</span>
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    center<span class="op">=</span>{<span class="st">"lat"</span>: <span class="fl">51.15</span>, <span class="st">"lon"</span>: <span class="fl">4.4</span>},</span>
 <span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    zoom<span class="op">=</span><span class="dv">8</span>,</span>
 <span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    title<span class="op">=</span><span class="st">"Spatial Grid for Antwerp Region"</span></span>
@@ -1560,7 +1560,7 @@ window.onload = function() {
 <span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>This color scheme makes it easy to distinguish between different statuses. The <code>plot_job_status</code> function generates an interactive map.</p>
-<div id="cell-14" class="cell" data-execution_count="19">
+<div id="cell-14" class="cell">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the color mapping for job statuses</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plot_job_status(status_df, color_dict):</span>
@@ -1573,13 +1573,13 @@ window.onload = function() {
 <span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    center_lat <span class="op">=</span> (miny <span class="op">+</span> maxy) <span class="op">/</span> <span class="dv">2</span></span>
 <span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    center_lon <span class="op">=</span> (minx <span class="op">+</span> maxx) <span class="op">/</span> <span class="dv">2</span></span>
 <span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    fig <span class="op">=</span> px.choropleth_mapbox(</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    fig <span class="op">=</span> px.choropleth_map(</span>
 <span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>        status_plot,</span>
 <span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>        geojson<span class="op">=</span>status_plot.geometry.__geo_interface__,</span>
 <span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>        locations<span class="op">=</span>status_plot.index,</span>
 <span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>        color<span class="op">=</span><span class="st">'status'</span>,</span>
 <span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>        color_discrete_map<span class="op">=</span>color_dict,</span>
-<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>        mapbox_style<span class="op">=</span><span class="st">"carto-positron"</span>,</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>        map_style<span class="op">=</span><span class="st">"carto-positron"</span>,</span>
 <span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>        center<span class="op">=</span>{<span class="st">"lat"</span>: center_lat, <span class="st">"lon"</span>: center_lon},</span>
 <span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>        zoom<span class="op">=</span><span class="dv">8</span>,</span>
 <span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>        title<span class="op">=</span><span class="st">"Job Status Overview"</span></span>

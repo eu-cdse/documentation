@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Parcel delineation using Sentinel-2 – Documentation</title>
+<title>Advanced use of federated processing – Documentation</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -57,7 +57,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </style>
 
 
-<script src="../../../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="../../../../../site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="../../../../../site_libs/clipboard/clipboard.min.js"></script>
 <script src="../../../../../site_libs/quarto-search/autocomplete.umd.js"></script>
 <script src="../../../../../site_libs/quarto-search/fuse.min.js"></script>
@@ -99,6 +99,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 <meta name="zd-site-verification" content="xj9koofr1crilmoclgxsjd">
 <script type="text/javascript">
 
@@ -217,7 +220,7 @@ window.onload = function() {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Parcel delineation using Sentinel-2</li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Advanced use of federated processing</li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -1381,15 +1384,9 @@ window.onload = function() {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
-  <li><a href="#authentication" id="toc-authentication" class="nav-link" data-scroll-target="#authentication">Authentication</a></li>
-  <li><a href="#load-collection" id="toc-load-collection" class="nav-link" data-scroll-target="#load-collection">Load collection</a>
-  <ul>
-  <li><a href="#select-usable-observations" id="toc-select-usable-observations" class="nav-link" data-scroll-target="#select-usable-observations">Select usable observations</a></li>
-  </ul></li>
-  <li><a href="#calculate-ndvi" id="toc-calculate-ndvi" class="nav-link" data-scroll-target="#calculate-ndvi">Calculate NDVI</a></li>
-  <li><a href="#apply-a-neural-network" id="toc-apply-a-neural-network" class="nav-link" data-scroll-target="#apply-a-neural-network">Apply a neural network</a></li>
-  <li><a href="#segmentation-postprocessing" id="toc-segmentation-postprocessing" class="nav-link" data-scroll-target="#segmentation-postprocessing">Segmentation postprocessing</a></li>
+  <li><a href="#visual-hints-in-openeo-editor" id="toc-visual-hints-in-openeo-editor" class="nav-link active" data-scroll-target="#visual-hints-in-openeo-editor">Visual hints in openEO editor</a></li>
+  <li><a href="#indicating-use-of-a-specific-backend" id="toc-indicating-use-of-a-specific-backend" class="nav-link" data-scroll-target="#indicating-use-of-a-specific-backend">Indicating use of a specific backend</a></li>
+  <li><a href="#federated-processing" id="toc-federated-processing" class="nav-link" data-scroll-target="#federated-processing">Federated processing</a></li>
   </ul>
 </nav>
     </div>
@@ -1398,7 +1395,7 @@ window.onload = function() {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Parcel delineation using Sentinel-2</h1>
+<h1 class="title">Advanced use of federated processing</h1>
 </div>
 
 
@@ -1415,307 +1412,384 @@ window.onload = function() {
 </header>
 
 
-<p>Authors:</p>
-<ul>
-<li>Kristof van Tricht (VITO)</li>
-<li>Jeroen Dries (VITO)</li>
-<li>Victor Verhaert (VITO)</li>
-<li>Manu Goudar (VITO)</li>
-</ul>
-<p>Tuning:</p>
-<ul>
-<li>Kasper Bonte (VITO)</li>
-<li>Bart Driessen (VITO)</li>
-</ul>
-<section id="introduction" class="level2">
-<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
-<p>In this notebook we will be performing parcel delineation using Sentinel-2 data retrieved from- and processed on openEO. The models are generated using a U-Net and are pretrained. So in this notebook, we are dealing with the inference part of training a model. We will however also show how you can retrieve features from openEO, so that you know how the entire workflow looks like.</p>
-<div id="4b696e31" class="cell" data-pycharm="{&quot;is_executing&quot;:true}" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> openeo</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> openeo <span class="im">import</span> processes <span class="im">as</span> eop</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> xarray <span class="im">as</span> xr</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># openeo version</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>openeo.client_version()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Federations of openEO backends allow to interact with multiple backends in a transparent manner. It can however help to understand a bit more about the federated nature of the backend to effectively work with a federation.</p>
+<p>Note that the capabilities shown here may depend on the <a href="https://github.com/Open-EO/openeo-api/tree/master/extensions/federation">federation extension</a> of the openEO API. The open source <a href="https://open-eo.github.io/openeo-aggregator/">openEO Aggregator</a> component provides the federated endpoint.</p>
+<section id="visual-hints-in-openeo-editor" class="level3">
+<h3 class="anchored" data-anchor-id="visual-hints-in-openeo-editor">Visual hints in openEO editor</h3>
+<p>For starters, you may want to know the current members of the federation. The web editor shows this as part of the server info:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="FederatedProcessing_files/figure-html/e2cd2234-e86d-4d1a-854b-7b2ee6e5c58f-1-3372530e-911c-45ff-83e4-1205264d8d72.png" class="img-fluid figure-img"></p>
+<figcaption>backend listing</figcaption>
+</figure>
+</div>
+<p>and you can get the same information when working in Python or Jupyter notebooks by requesting capabilities:</p>
+<div id="9fafc951-e900-4b78-b47a-eb5f6cff77e6" class="cell" data-executetime="{&quot;end_time&quot;:&quot;2025-06-19T18:42:02.041637Z&quot;,&quot;start_time&quot;:&quot;2025-06-19T18:42:01.171773Z&quot;}" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> openeo</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>openeo.<span class="ex">connect</span>(<span class="st">'openeofed.dataspace.copernicus.eu'</span>).capabilities()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="1">
-<pre><code>'0.40.0'</code></pre>
+
+    <script>
+    if (!window.customElements || !window.customElements.get('openeo-capabilities')) {
+        var el = document.createElement('script');
+        el.src = "https://cdn.jsdelivr.net/npm/@openeo/vue-components@2/assets/openeo.min.js";
+        document.head.appendChild(el);
+
+        var font = document.createElement('font');
+        font.as = "font";
+        font.type = "font/woff2";
+        font.crossOrigin = true;
+        font.href = "https://use.fontawesome.com/releases/v5.13.0/webfonts/fa-solid-900.woff2"
+        document.head.appendChild(font);
+    }
+    </script>
+    <openeo-capabilities>
+        <script type="application/json">{"url": "https://openeofed.dataspace.copernicus.eu", "capabilities": {"_backend_deploy_metadata": {"date": "2025-06-15T19:36:37Z", "versions": {"openeo": "0.41.0", "openeo_aggregator": "0.47.0a1.dev20250517+512", "openeo_driver": "0.135.0a1.dev20250516+1145"}}, "_partitioned_job_tracking": true, "api_version": "1.2.0", "backend_version": "0.47.0a1", "billing": {"currency": "credits"}, "conformsTo": ["https://api.openeo.org/1.2.0", "https://api.openeo.org/extensions/remote-process-definition/0.1.0", "https://api.openeo.org/extensions/processing-parameters/0.1.0", "https://api.stacspec.org/v1.0.0/collections", "https://api.openeo.org/extensions/federation/0.1.0"], "description": "Federated openEO Aggregator instance, provided by Copernicus Data Space Ecosystem.", "endpoints": [{"methods": ["GET"], "path": "/file_formats"}, {"methods": ["GET"], "path": "/processing_parameters"}, {"methods": ["GET"], "path": "/udf_runtimes"}, {"methods": ["GET"], "path": "/credentials/oidc"}, {"methods": ["GET"], "path": "/me"}, {"methods": ["GET"], "path": "/collections"}, {"methods": ["GET"], "path": "/collections/{collection_id}"}, {"methods": ["POST"], "path": "/validation"}, {"methods": ["POST"], "path": "/result"}, {"methods": ["GET"], "path": "/processes"}, {"methods": ["GET"], "path": "/processes/{namespace}"}, {"methods": ["GET"], "path": "/processes/{namespace}/{process_id}"}, {"methods": ["GET", "POST"], "path": "/jobs"}, {"methods": ["DELETE", "GET"], "path": "/jobs/{job_id}"}, {"methods": ["DELETE", "GET", "POST"], "path": "/jobs/{job_id}/results"}, {"methods": ["GET"], "path": "/jobs/{job_id}/results/{user_base64}/{secure_key}"}, {"methods": ["GET"], "path": "/jobs/{job_id}/results/items/{user_base64}/{secure_key}/{item_id}"}, {"methods": ["GET"], "path": "/jobs/{job_id}/results/items/{item_id}"}, {"methods": ["GET"], "path": "/jobs/{job_id}/results/assets/{path:filename}"}, {"methods": ["GET"], "path": "/jobs/{job_id}/results/assets/{user_base64}/{secure_key}/{path:filename}"}, {"methods": ["GET"], "path": "/jobs/{job_id}/logs"}, {"methods": ["GET"], "path": "/service_types"}, {"methods": ["GET", "POST"], "path": "/services"}, {"methods": ["DELETE", "GET"], "path": "/services/{service_id}"}, {"methods": ["GET"], "path": "/services/{service_id}/logs"}, {"methods": ["DELETE", "GET", "PUT"], "path": "/process_graphs/{process_graph_id}"}, {"methods": ["GET"], "path": "/process_graphs"}], "federation": {"cdse": {"description": "This openEO service runs on the [Copernicus Data Space Ecosystem](https://dataspace.copernicus.eu/)\nand offers data access and processing on full archives of Copernicus data, such as the Sentinels.", "last_status_check": "2025-06-19T18:41:49Z", "status": "online", "title": "Copernicus Data Space Ecosystem openEO API", "url": "https://openeo.dataspace.copernicus.eu/openeo/1.1/"}, "terrascope": {"description": "OpenEO API to the Terrascope/VITO Remote Sensing product catalog and processing services (using GeoPySpark driver).", "last_status_check": "2025-06-19T18:41:49Z", "status": "online", "title": "VITO Remote Sensing openEO API", "url": "https://openeo-cdse.vito.be/openeo/1.1/"}}, "id": "copernicusdataspaceecosystemopeneoaggregator-0.47.0a1", "links": [{"href": "https://openeofed.dataspace.copernicus.eu/.well-known/openeo", "rel": "version-history", "type": "application/json"}, {"href": "https://openeofed.dataspace.copernicus.eu/openeo/1.2/collections", "rel": "data", "type": "application/json"}, {"href": "https://openeofed.dataspace.copernicus.eu/openeo/1.2/conformance", "rel": "conformance", "type": "application/json"}, {"href": "https://openeo.cloud/aup", "rel": "terms-of-service", "type": "text/html"}, {"href": "https://terrascope.be/en/privacy-policy", "rel": "privacy-policy", "type": "text/html"}], "processing:software": {"openeo": "0.41.0", "openeo_aggregator": "0.47.0a1.dev20250517+512", "openeo_driver": "0.135.0a1.dev20250516+1145"}, "production": true, "stac_extensions": ["https://stac-extensions.github.io/processing/v1.1.0/schema.json"], "stac_version": "0.9.0", "title": "Copernicus Data Space Ecosystem openEO Aggregator", "type": "Catalog", "version": "1.2.0"}}</script>
+    </openeo-capabilities>
+    
 </div>
 </div>
-<div id="84244e02" class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">## creates a output directory if it doesn't exist.</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>base_path <span class="op">=</span> Path(<span class="st">"results"</span>)</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="kw">not</span> base_path.is_dir():</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    base_path.mkdir()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>For processes, you can similarly find out which backends support a given process. This is important, because it determines whether your process graph will work on more than one backend:</p>
+<div id="d49479a6-c112-45d3-af89-4592aca0dff8" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>connection <span class="op">=</span> openeo.<span class="ex">connect</span>(<span class="st">'openeofed.dataspace.copernicus.eu'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="0176c848-d3de-4cbf-8392-595f58e7812b" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>connection.describe_process(<span class="st">"add"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="3">
+
+    <script>
+    if (!window.customElements || !window.customElements.get('openeo-process')) {
+        var el = document.createElement('script');
+        el.src = "https://cdn.jsdelivr.net/npm/@openeo/vue-components@2/assets/openeo.min.js";
+        document.head.appendChild(el);
+
+        var font = document.createElement('font');
+        font.as = "font";
+        font.type = "font/woff2";
+        font.crossOrigin = true;
+        font.href = "https://use.fontawesome.com/releases/v5.13.0/webfonts/fa-solid-900.woff2"
+        document.head.appendChild(font);
+    }
+    </script>
+    <openeo-process>
+        <script type="application/json">{"show-graph": true, "provide-download": false, "process": {"categories": ["math"], "deprecated": false, "description": "Sums up the two numbers `x` and `y` (*`x + y`*) and returns the computed sum.\n\nNo-data values are taken into account so that `null` is returned if any element is such a value.\n\nThe computations follow [IEEE Standard 754](https://ieeexplore.ieee.org/document/8766229) whenever the processing environment supports it.", "examples": [{"arguments": {"x": 5, "y": 2.5}, "returns": 7.5}, {"arguments": {"x": -2, "y": -4}, "returns": -6}, {"arguments": {"x": 1, "y": null}, "returns": null}], "experimental": false, "federation:backends": ["cdse", "terrascope"], "id": "add", "links": [{"href": "http://mathworld.wolfram.com/Sum.html", "rel": "about", "title": "Sum explained by Wolfram MathWorld"}, {"href": "https://ieeexplore.ieee.org/document/8766229", "rel": "about", "title": "IEEE Standard 754-2019 for Floating-Point Arithmetic"}], "parameters": [{"description": "The first summand.", "name": "x", "schema": {"type": ["number", "null"]}}, {"description": "The second summand.", "name": "y", "schema": {"type": ["number", "null"]}}], "returns": {"description": "The computed sum of the two numbers.", "schema": {"type": ["number", "null"]}}, "summary": "Addition of two numbers"}}</script>
+    </openeo-process>
+    
+</div>
+</div>
+<p>For collections, the federation uses the ‘summaries’ to indicate which backends host a certain collection:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="FederatedProcessing_files/figure-html/dc037698-fd54-4c21-92aa-0317c438b575-1-8edc7c76-860e-48f4-bd54-5088d747be9f.png" class="img-fluid figure-img"></p>
+<figcaption>image.png</figcaption>
+</figure>
+</div>
+<div id="5c789e66-889a-4e5c-8d1a-84822001315c" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> collection_id <span class="kw">in</span> connection.list_collection_ids():</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    collection_metadata <span class="op">=</span> connection.describe_collection(collection_id)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    federation_backends <span class="op">=</span> collection_metadata[<span class="st">"summaries"</span>][<span class="st">"federation:backends"</span>]</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Provided by </span><span class="sc">{</span><span class="bu">repr</span>(federation_backends)<span class="sc">:16s}</span><span class="ss">: </span><span class="sc">{</span>collection_id<span class="sc">}</span><span class="ss"> "</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Provided by ['cdse']        : SENTINEL3_OLCI_L1B 
+Provided by ['cdse']        : SENTINEL3_SLSTR 
+Provided by ['cdse']        : SENTINEL_5P_L2 
+Provided by ['cdse']        : COPERNICUS_VEGETATION_PHENOLOGY_PRODUCTIVITY_10M_SEASON1 
+Provided by ['cdse']        : COPERNICUS_VEGETATION_PHENOLOGY_PRODUCTIVITY_10M_SEASON2 
+Provided by ['cdse']        : ESA_WORLDCOVER_10M_2021_V2 
+Provided by ['cdse']        : COPERNICUS_VEGETATION_INDICES 
+Provided by ['cdse']        : SENTINEL2_L1C 
+Provided by ['cdse']        : SENTINEL2_L2A 
+Provided by ['cdse']        : SENTINEL1_GRD 
+Provided by ['cdse']        : COPERNICUS_30 
+Provided by ['cdse']        : LANDSAT8_L2 
+Provided by ['cdse']        : SENTINEL3_SYN_L2_SYN 
+Provided by ['cdse']        : SENTINEL3_SLSTR_L2_LST 
+Provided by ['cdse']        : SENTINEL1_GLOBAL_MOSAICS 
+Provided by ['cdse']        : SENTINEL3_OLCI_L2_LAND 
+Provided by ['cdse']        : SENTINEL3_OLCI_L2_WATER 
+Provided by ['cdse']        : SENTINEL3_SYN_L2_AOD 
+Provided by ['terrascope']  : ESA_WORLDCEREAL_ACTIVECROPLAND 
+Provided by ['terrascope']  : ESA_WORLDCEREAL_IRRIGATION 
+Provided by ['terrascope']  : ESA_WORLDCEREAL_TEMPORARYCROPS 
+Provided by ['terrascope']  : ESA_WORLDCEREAL_WINTERCEREALS 
+Provided by ['terrascope']  : ESA_WORLDCEREAL_MAIZE 
+Provided by ['terrascope']  : ESA_WORLDCEREAL_SPRINGCEREALS 
+Provided by ['terrascope']  : CGLS_GDMP300_V1_GLOBAL 
+Provided by ['terrascope']  : CGLS_GDMP_V2_GLOBAL 
+Provided by ['terrascope']  : CGLS_LAI300_V1_GLOBAL 
+Provided by ['terrascope']  : CGLS_FCOVER300_V1_GLOBAL 
+Provided by ['terrascope']  : CGLS_FAPAR300_V1_GLOBAL 
+Provided by ['terrascope']  : CGLS_NDVI300_V2_GLOBAL 
+Provided by ['terrascope']  : SENTINEL3_SYNERGY_VG1 
+Provided by ['terrascope']  : SENTINEL3_SYNERGY_VG10 
+Provided by ['terrascope']  : TERRASCOPE_S2_FAPAR_V2 
+Provided by ['terrascope']  : TERRASCOPE_S2_NDVI_V2 
+Provided by ['terrascope']  : TERRASCOPE_S2_LAI_V2 
+Provided by ['terrascope']  : PROBAV_L3_S10_TOC_333M 
+Provided by ['terrascope']  : PROBAV_L3_S5_TOC_100M 
+Provided by ['terrascope']  : PROBAV_L3_S1_TOC_100M 
+Provided by ['terrascope']  : PROBAV_L3_S1_TOC_333M 
+Provided by ['terrascope']  : TERRASCOPE_S5P_L3_NO2_TD 
+Provided by ['terrascope']  : TERRASCOPE_S5P_L3_NO2_TM 
+Provided by ['terrascope']  : TERRASCOPE_S5P_L3_NO2_TY 
+Provided by ['terrascope']  : TERRASCOPE_S5P_L3_CO_TD 
+Provided by ['terrascope']  : TERRASCOPE_S5P_L3_CO_TM 
+Provided by ['terrascope']  : TERRASCOPE_S5P_L3_CO_TY 
+Provided by ['terrascope']  : TERRASCOPE_S5P_L3_HCHO_TD 
+Provided by ['terrascope']  : TERRASCOPE_S5P_L3_HCHO_TM 
+Provided by ['terrascope']  : TERRASCOPE_S5P_L3_HCHO_TY 
+Provided by ['terrascope']  : TERRASCOPE_S5P_L3_CH4_TD 
+Provided by ['terrascope']  : TERRASCOPE_S5P_L3_CH4_TM 
+Provided by ['terrascope']  : TERRASCOPE_S5P_L3_CH4_TY 
+Provided by ['terrascope']  : TERRASCOPE_S5P_L3_NO2_CAMS_TD 
+Provided by ['terrascope']  : TERRASCOPE_S5P_L3_NO2_CAMS_TM 
+Provided by ['terrascope']  : TERRASCOPE_S5P_L3_NO2_CAMS_TY 
+Provided by ['terrascope']  : TERRASCOPE_S5P_L3_NO2_SURFACE_TD 
+Provided by ['terrascope']  : TERRASCOPE_S5P_L3_NO2_SURFACE_TM 
+Provided by ['terrascope']  : TERRASCOPE_S5P_L3_NO2_SURFACE_TY 
+Provided by ['terrascope']  : TERRASCOPE_S5P_L3_SO2CBR_TD 
+Provided by ['terrascope']  : TERRASCOPE_S5P_L3_SO2CBR_TM 
+Provided by ['terrascope']  : TERRASCOPE_S5P_L3_SO2CBR_TY 
+Provided by ['terrascope']  : ESA_WORLDCOVER_10M_2020_V1 
+Provided by ['terrascope']  : CGLS_NDVI_LTS_V2_GLOBAL 
+Provided by ['terrascope']  : CGLS_NDVI_LTS_V3_GLOBAL 
+Provided by ['terrascope']  : CGLS_SSM_V1_EUROPE 
+Provided by ['terrascope']  : CGLS_FAPAR_V2_GLOBAL 
+Provided by ['terrascope']  : CGLS_LAI_V2_GLOBAL 
+Provided by ['terrascope']  : CGLS_FCOVER_V2_GLOBAL 
+Provided by ['terrascope']  : CGLS_NDVI300_V1_GLOBAL 
+Provided by ['terrascope']  : CGLS_NDVI_V3_GLOBAL 
+Provided by ['terrascope']  : CGLS_NDVI_V2_GLOBAL 
+Provided by ['terrascope']  : CGLS_SWI_V1_EUROPE 
+Provided by ['terrascope']  : AGERA5 </code></pre>
+</div>
+</div>
+<div id="eaa61db9-f11e-4c26-9973-ae361b394fd3" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>temporal_extent <span class="op">=</span> <span class="st">"2024-08"</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>spatial_extent <span class="op">=</span> {<span class="st">"west"</span>: <span class="fl">5.07</span>, <span class="st">"south"</span>: <span class="fl">51.21</span>, <span class="st">"east"</span>: <span class="fl">5.10</span>, <span class="st">"north"</span>: <span class="fl">51.23</span>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="authentication" class="level2">
-<h2 class="anchored" data-anchor-id="authentication">Authentication</h2>
-<p>We first need to connect to an openEO provider. Most providers require you to register an account, and provide you with a basic amount of processing credits. In this notebook we will use the Copernicus Data Scpace Ecosystem as openEO provider.</p>
-<p>All the known openEO providers and their services: https://hub.openeo.org/</p>
-<p>More info on authentication: https://open-eo.github.io/openeo-python-client/auth.html</p>
-<p>Run the <code>authenticate_oidc()</code> method again in case you can no longer connect. The token expires after a certain time.</p>
-<div id="b0b816c7" class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>backend_url <span class="op">=</span> <span class="st">"openeo.dataspace.copernicus.eu/"</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>eoconn <span class="op">=</span> openeo.<span class="ex">connect</span>(backend_url)</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>eoconn.authenticate_oidc()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="indicating-use-of-a-specific-backend" class="level3">
+<h3 class="anchored" data-anchor-id="indicating-use-of-a-specific-backend">Indicating use of a specific backend</h3>
+<p>As collections can be offered on multiple backends, your batch job can end up on multiple backends based on a logic that is internal to the specific federation configuration.</p>
+<p>This can have a few drawbacks:</p>
+<ul>
+<li>Job results might differ slightly between backends</li>
+<li>Cost and performance might differ</li>
+</ul>
+<p>To avoid this, you can be explicit about which backend to use for a given ‘load_collection’ call, by using the property filtering mechanism:</p>
+<div id="d035af91-c1ef-4e77-90e2-15afca3f67ad" class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>connection <span class="op">=</span> connection.authenticate_oidc()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Authenticated using refresh token.</code></pre>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="3">
-<pre><code>&lt;Connection to 'https://openeo.dataspace.copernicus.eu/openeo/1.2/' with OidcBearerAuth&gt;</code></pre>
+</div>
+<div id="568d8632-97ac-4674-98aa-87ff7a608748" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> openeo <span class="im">import</span> collection_property</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>terrascope_job <span class="op">=</span> (</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    connection.load_collection(</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">"ESA_WORLDCEREAL_ACTIVECROPLAND"</span>,                </span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>        properties<span class="op">=</span>[collection_property(<span class="st">"federation:backends"</span>)<span class="op">==</span><span class="st">"terrascope"</span>]</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    .filter_temporal(extent<span class="op">=</span>temporal_extent)</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    .filter_bbox(spatial_extent)</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>).create_job()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="166c7a29-682f-4a3e-bb8c-5d5fa74ae7dc" class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>terrascope_job</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="8">
+
+    <script>
+    if (!window.customElements || !window.customElements.get('openeo-job')) {
+        var el = document.createElement('script');
+        el.src = "https://cdn.jsdelivr.net/npm/@openeo/vue-components@2/assets/openeo.min.js";
+        document.head.appendChild(el);
+
+        var font = document.createElement('font');
+        font.as = "font";
+        font.type = "font/woff2";
+        font.crossOrigin = true;
+        font.href = "https://use.fontawesome.com/releases/v5.13.0/webfonts/fa-solid-900.woff2"
+        document.head.appendChild(font);
+    }
+    </script>
+    <openeo-job>
+        <script type="application/json">{"currency": "credits", "job": {"created": "2025-06-19T18:44:36Z", "id": "terrascope-j-25061918443646efa3997e187abf3c2d", "process": {"process_graph": {"filterbbox1": {"arguments": {"data": {"from_node": "filtertemporal1"}, "extent": {"east": 5.1, "north": 51.23, "south": 51.21, "west": 5.07}}, "process_id": "filter_bbox"}, "filtertemporal1": {"arguments": {"data": {"from_node": "loadcollection1"}, "extent": ["2024-08-01", "2024-09-01"]}, "process_id": "filter_temporal"}, "loadcollection1": {"arguments": {"id": "ESA_WORLDCEREAL_ACTIVECROPLAND", "properties": {"federation:backends": {"process_graph": {"eq1": {"arguments": {"x": {"from_parameter": "value"}, "y": "terrascope"}, "process_id": "eq", "result": true}}}}, "spatial_extent": null, "temporal_extent": null}, "process_id": "load_collection"}, "saveresult1": {"arguments": {"data": {"from_node": "filterbbox1"}, "format": "GTiff", "options": {}}, "process_id": "save_result", "result": true}}}, "progress": 0, "status": "created", "updated": "2025-06-19T18:44:36Z"}}</script>
+    </openeo-job>
+    
 </div>
 </div>
 </section>
-<section id="load-collection" class="level2">
-<h2 class="anchored" data-anchor-id="load-collection">Load collection</h2>
-<p>We start off by loading in a collection. In this case, we are loading in Sentinel-2 L2A. More information on the collections available can be displayed with <code>eoconn.list_collections()</code>. Use <code>eoconn.describe_collection("SENTINEL2_L2A")</code> for example to get the description of a specific collection.</p>
-<p>More information on finding and loading data: https://open-eo.github.io/openeo-python-client/data_access.html</p>
-<div id="51b00b88" class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>bbox <span class="op">=</span> [<span class="fl">5.0</span>, <span class="fl">51.2</span>, <span class="fl">5.1</span>, <span class="fl">51.3</span>]</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>year <span class="op">=</span> <span class="st">"2021"</span>   <span class="co"># in string format represents an temporal extent of 2021-01-01 to 2022-01-01</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="federated-processing" class="level3">
+<h3 class="anchored" data-anchor-id="federated-processing">Federated processing</h3>
+<p>Federated processing happens when a single job requires work on multiple backends. The most common trigger for federated processing is when datasets are not available on the same backend.</p>
+<p>Thanks to federated processing, you do not need to worry about setting up scripts to move datasets between processing centers. Do know that the data still needs to be moved, which does come at a cost. For larger scale processing, it may still be less costly to perform a bulk transfer of intermediate datasets in an optimized manner.</p>
+<p>To keep the demo simple but not too trivial, we’re going to build the following process graph:</p>
+<pre><code>    (at CDSE)            (at Terrascope)
+  SENTINEL2_L2A       TERRASCOPE_S2_NDVI_V2
+        |                      |
+  filter_temporal        filter_temporal
+        |                      |
+  filter_spatial         filter_spatial
+        |                      |
+  reduce_dimension      reduce_dimension
+   (temporal mean)      (temporal mean)
+              \           /
+               merge_cubes
+                    |
+                save_result</code></pre>
+<ul>
+<li>two <code>load_collection</code> nodes, each one targetting a different backend</li>
+<li>basic processing on each collection: spatio-temporal filtering and doing the temporal mean</li>
+<li>merge that together in a single cube</li>
+</ul>
+<p>Load and process the <code>SENTINEL2_L2A</code> data (targeting the CDSE backend):</p>
+<div id="59328135-6010-4554-994b-cb2d1d47f807" class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>cube1 <span class="op">=</span> (</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    connection.load_collection(</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>        <span class="st">"SENTINEL2_L2A"</span>,</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>        bands<span class="op">=</span>[<span class="st">"B02"</span>],</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>        max_cloud_cover<span class="op">=</span><span class="dv">50</span>,</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    .filter_temporal(extent<span class="op">=</span>temporal_extent)</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    .filter_bbox(spatial_extent)</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>cube1 <span class="op">=</span> cube1.reduce_temporal(<span class="st">"mean"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<section id="select-usable-observations" class="level3">
-<h3 class="anchored" data-anchor-id="select-usable-observations">Select usable observations</h3>
-<p>Compute cloud mask to mask the bands</p>
-<div id="4f211a0e-d475-48c1-9800-75d7b5ac1f27" class="cell" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>scl <span class="op">=</span> eoconn.load_collection(</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"SENTINEL2_L2A"</span>,</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    temporal_extent<span class="op">=</span>year,</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    spatial_extent<span class="op">=</span><span class="bu">dict</span>(<span class="bu">zip</span>([<span class="st">"west"</span>, <span class="st">"south"</span>, <span class="st">"east"</span>, <span class="st">"north"</span>], bbox)),</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    bands<span class="op">=</span>[<span class="st">"SCL"</span>],</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    max_cloud_cover<span class="op">=</span><span class="dv">10</span>,</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>cloud_mask <span class="op">=</span> scl.process(</span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">"to_scl_dilation_mask"</span>,</span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    data<span class="op">=</span>scl,</span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    kernel1_size<span class="op">=</span><span class="dv">17</span>, kernel2_size<span class="op">=</span><span class="dv">77</span>,</span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    mask1_values<span class="op">=</span>[<span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>, <span class="dv">7</span>],</span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>    mask2_values<span class="op">=</span>[<span class="dv">3</span>, <span class="dv">8</span>, <span class="dv">9</span>, <span class="dv">10</span>, <span class="dv">11</span>],</span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    erosion_kernel_size<span class="op">=</span><span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Load and process the <code>TERRASCOPE_S2_NDVI_V2</code> data (targeting Terrascope):</p>
+<div id="6ef4b3af-74e7-4f3a-b34c-28954aac6e28" class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>cube2 <span class="op">=</span> (</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    connection.load_collection(</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>        <span class="st">"TERRASCOPE_S2_NDVI_V2"</span>,</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>        bands<span class="op">=</span>[<span class="st">"NDVI_10M"</span>]</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    .filter_temporal(extent<span class="op">=</span>temporal_extent)</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    .filter_bbox(spatial_extent)</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>cube2 <span class="op">=</span> cube2.reduce_temporal(<span class="st">"mean"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Select bands with usable observations to compute ndvi by applying a strict cloud cover. Select data where the cloud cover is less than 10%.</p>
-<div id="cf0d8661" class="cell" data-execution_count="6">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>s2_bands <span class="op">=</span> eoconn.load_collection(</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"SENTINEL2_L2A"</span>,</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    temporal_extent<span class="op">=</span>year,             </span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    spatial_extent<span class="op">=</span><span class="bu">dict</span>(<span class="bu">zip</span>([<span class="st">"west"</span>, <span class="st">"south"</span>, <span class="st">"east"</span>, <span class="st">"north"</span>], bbox)),</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    bands<span class="op">=</span>[<span class="st">"B04"</span>, <span class="st">"B08"</span>],</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    max_cloud_cover<span class="op">=</span><span class="dv">10</span>,</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>s2_bands_masked <span class="op">=</span> s2_bands.mask(cloud_mask)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Merge both cubes:</p>
+<div id="1b6f5a6c-42dd-4fce-addb-94fb9bbad40d" class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>merged <span class="op">=</span> cube1.merge_cubes(cube2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</section>
-</section>
-<section id="calculate-ndvi" class="level2">
-<h2 class="anchored" data-anchor-id="calculate-ndvi">Calculate NDVI</h2>
-<p>The delineation will be estimated based on the NDVI. The <code>ndvi</code> process can be used for these calculations.</p>
-<div id="d4af75cd-c2c0-4953-93b6-81572539650f" class="cell" data-execution_count="35">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>ndviband <span class="op">=</span> s2_bands_masked.ndvi(red<span class="op">=</span><span class="st">"B04"</span>, nir<span class="op">=</span><span class="st">"B08"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>We want the final result in netCDF format:</p>
+<div id="b2acfc10-4da0-49b9-949a-75b8e694a9b5" class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>saved <span class="op">=</span> merged.save_result(<span class="bu">format</span><span class="op">=</span><span class="st">"netCDF"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Note that the openEO Python clients generates an openEO process graph, which is then sent to one of the backends selected by the platform based on the operations that you are using. This process graph is then executed on selected platform. However, if you want to inspect intermediate results, you can, for example using <code>ndviband.download(...)</code> like below. Executing this line will allow you to inspect the NDVI images.</p>
-<div id="d1c6077a-d215-4ec3-a30f-d68b37037d7a" class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>ndviband.download(base_path <span class="op">/</span> <span class="st">"ndvi.nc"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>The intermediate result (here only 3 of them are ploted) of the NDVI looks as shown below:</p>
-<div id="653080b7-ca87-4132-943f-5d1d69189303" class="cell" data-execution_count="9">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co">## Load your dataset</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>ndvi_data <span class="op">=</span> xr.open_dataset(base_path <span class="op">/</span> <span class="st">"ndvi.nc"</span>)</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co">## Access the "var" variable</span></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>var <span class="op">=</span> ndvi_data[<span class="st">"var"</span>]</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Select the 3 time steps</span></span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>v1 <span class="op">=</span> var.isnull().mean(dim<span class="op">=</span>[<span class="st">'x'</span>, <span class="st">'y'</span>])</span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>var1 <span class="op">=</span> var.sel(t <span class="op">=</span> (v1.sortby(v1)).t[:<span class="dv">3</span>])</span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="co">## plot data</span></span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>var1.plot(x<span class="op">=</span><span class="st">"x"</span>, y<span class="op">=</span><span class="st">"y"</span>, col<span class="op">=</span><span class="st">"t"</span>, col_wrap<span class="op">=</span><span class="dv">3</span>, cmap<span class="op">=</span><span class="st">"viridis"</span>,</span>
-<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>          vmin<span class="op">=</span><span class="dv">0</span>, vmax<span class="op">=</span><span class="dv">1</span>, aspect<span class="op">=</span><span class="fl">0.66</span>, size<span class="op">=</span><span class="dv">6</span>)</span>
-<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a><span class="co">## Close the dataset</span></span>
-<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>ndvi_data.close()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="Parcel delineation_files/figure-html/cell-10-output-1.png" class="img-fluid figure-img"></p>
-</figure>
+<div id="e7730d25-a5da-42ce-a15e-a246be4f99b1" class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>job <span class="op">=</span> saved.create_job(</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    title<span class="op">=</span><span class="st">"Deep graph splitting demo"</span>,</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    job_options<span class="op">=</span>{</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">"split_strategy"</span>: {</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>            <span class="st">"crossbackend"</span>: {</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>                <span class="st">"method"</span>: <span class="st">"deep"</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>            },</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>    },</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>    validate<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>job.job_id</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="13">
+<pre><code>'agg-pj-20250619-184509'</code></pre>
 </div>
 </div>
-</div>
-</section>
-<section id="apply-a-neural-network" class="level2">
-<h2 class="anchored" data-anchor-id="apply-a-neural-network">Apply a neural network</h2>
-<p>We now apply a neural network, that requires 128x128 pixel ‘chunks’ input. To avoid discontinuities between neighboring chunks, we work with an overlap of 32 pixels in all directions. The U-Net itself is trained on an input size of (x,y,1), that is, just one grayscale channel as an input, which is just one NDVI tile. However, we are using 12 NDVI images as an input (the 12 images selected in the previous step). That is because we are doing inference using 3 different models, 4 times per model. The final prediction is then the median of all predictions per pixel.</p>
-<p>As you may know, a U-Net just like any other CNN applies a filter over an image. This can be done using <code>apply_neighborhood</code>, an openEO process defined here: https://openeo.org/documentation/1.0/processes.html#apply_neighborhood .</p>
-<p>Further preprocessing of the data and the inference logic of the models is coded in an UDF. UDF’s are used to implement any custom code. It can therefore be used to quickly transfer code that you already wrote outside of openEO, or it can be used to implement features that are not present in openEO yet. It does however come at a cost of being slower than using openEO functionalities, due to optimization reasons. UDF’s are explained here: https://open-eo.github.io/openeo-python-client/udf.html</p>
-<p>The pretrained models are converted to onnx models to allow for interoperability between different AI tools. More information on onnx and how to conveert your models from a specific framework can be found on <a href="https://onnx.ai/">their website</a>. The onnxruntime package and other dependencies, used in <code>udf_segmentation.py</code>, have to be passed to the backend. This is done by passing a dependency archive as a job option, alongside the models.</p>
-<p><strong>Important note</strong>: The memory job options have been set to make make sure that the back-end has sufficient memory to perform the inference. Larger spatial/temporal extants might require higher memory settings.</p>
-<div id="b08b7194-ea10-4db8-895e-356fdfa65028" class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>dependencies_url <span class="op">=</span> (</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"https://artifactory.vgt.vito.be:443/auxdata-public/openeo/onnx_dependencies.zip"</span></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>models_url <span class="op">=</span> <span class="st">"https://artifactory.vgt.vito.be:443/artifactory/auxdata-public/openeo/parcelDelination/BelgiumCropMap_unet_3BandsGenerator_Models.zip"</span></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>job_options <span class="op">=</span> {</span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">'udf-dependency-archives'</span>: [</span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f"</span><span class="sc">{</span>dependencies_url<span class="sc">}</span><span class="ss">#onnx_deps"</span>,</span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f"</span><span class="sc">{</span>models_url<span class="sc">}</span><span class="ss">#onnx_models"</span>],</span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"driver-memory"</span>: <span class="st">"4G"</span>,</span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">"driver-memoryOverhead"</span>: <span class="st">"4G"</span>,</span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">"driver-cores"</span>: <span class="st">"1"</span>,</span>
-<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">"executor-memory"</span>: <span class="st">"2000m"</span>,</span>
-<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">"executor-memoryOverhead"</span>: <span class="st">"256m"</span>,</span>
-<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">"python-memory"</span>: <span class="st">"4G"</span>,</span>
-<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>    <span class="st">"executor-cores"</span>: <span class="st">"1"</span>,</span>
-<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">"max-executors"</span>: <span class="st">"20"</span>,</span>
-<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>    <span class="st">"logging-threshold"</span>: <span class="st">"info"</span></span>
-<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a> }</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div id="49e47c0d-9b19-4168-bbf4-50e1314c4770" class="cell" data-execution_count="11">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co">## Apply the segmentation UDF using `apply_neighborhood`</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co">## An overlap of 32px is used, resulting in a 128x128 pixel input</span></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co"># specify the udf to use</span></span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>segment_udf <span class="op">=</span> openeo.UDF.from_file(<span class="st">'udf_segmentation.py'</span>)</span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="co"># segment_udf = openeo.UDF.from_url("https://raw.githubusercontent.com/Open-EO/openeo-community-examples/main/python/ParcelDelineation/udf_segmentation.py")</span></span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>segmentationband <span class="op">=</span> ndviband.apply_neighborhood(</span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    process<span class="op">=</span>segment_udf,</span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>    size<span class="op">=</span>[</span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>        {<span class="st">"dimension"</span>: <span class="st">"x"</span>, <span class="st">"value"</span>: <span class="dv">64</span>, <span class="st">"unit"</span>: <span class="st">"px"</span>},</span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>        {<span class="st">"dimension"</span>: <span class="st">"y"</span>, <span class="st">"value"</span>: <span class="dv">64</span>, <span class="st">"unit"</span>: <span class="st">"px"</span>},</span>
-<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>    ],</span>
-<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>    overlap<span class="op">=</span>[</span>
-<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>        {<span class="st">"dimension"</span>: <span class="st">"x"</span>, <span class="st">"value"</span>: <span class="dv">32</span>, <span class="st">"unit"</span>: <span class="st">"px"</span>},</span>
-<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>        {<span class="st">"dimension"</span>: <span class="st">"y"</span>, <span class="st">"value"</span>: <span class="dv">32</span>, <span class="st">"unit"</span>: <span class="st">"px"</span>},</span>
-<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>    ],</span>
-<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div id="2d6cab84-053c-4cf0-80cc-719b372e8a08" class="cell" data-execution_count="12">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>segmentation_job <span class="op">=</span> segmentationband.create_job(</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    title<span class="op">=</span><span class="st">"segmentation_onnx_job"</span>, out_format<span class="op">=</span><span class="st">"NetCDF"</span>, job_options<span class="op">=</span>job_options</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>segmentation_job.start_and_wait()</span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>segmentation_job.download_result(base_path <span class="op">/</span> <span class="st">"delineation.nc"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>0:00:00 Job 'j-250610202940469388cfcd19998f595f': send 'start'
-0:00:14 Job 'j-250610202940469388cfcd19998f595f': created (progress 0%)
-0:00:19 Job 'j-250610202940469388cfcd19998f595f': created (progress 0%)
-0:00:26 Job 'j-250610202940469388cfcd19998f595f': created (progress 0%)
-0:00:34 Job 'j-250610202940469388cfcd19998f595f': running (progress N/A)
-0:00:44 Job 'j-250610202940469388cfcd19998f595f': running (progress N/A)
-0:00:56 Job 'j-250610202940469388cfcd19998f595f': running (progress N/A)
-0:01:12 Job 'j-250610202940469388cfcd19998f595f': running (progress N/A)
-0:01:31 Job 'j-250610202940469388cfcd19998f595f': running (progress N/A)
-0:01:55 Job 'j-250610202940469388cfcd19998f595f': running (progress N/A)
-0:02:25 Job 'j-250610202940469388cfcd19998f595f': running (progress N/A)
-0:03:02 Job 'j-250610202940469388cfcd19998f595f': running (progress N/A)
-0:03:49 Job 'j-250610202940469388cfcd19998f595f': running (progress N/A)
-0:04:48 Job 'j-250610202940469388cfcd19998f595f': running (progress N/A)
-0:05:48 Job 'j-250610202940469388cfcd19998f595f': running (progress N/A)
-0:06:48 Job 'j-250610202940469388cfcd19998f595f': finished (progress 100%)</code></pre>
-</div>
-<div class="cell-output cell-output-display" data-execution_count="12">
-<pre><code>WindowsPath('results/delineation.nc')</code></pre>
+<div id="7f2d5695-87df-45ed-b97d-fdb292ac20f9" class="cell" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>job.start()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="14">
+
+    <script>
+    if (!window.customElements || !window.customElements.get('openeo-job')) {
+        var el = document.createElement('script');
+        el.src = "https://cdn.jsdelivr.net/npm/@openeo/vue-components@2/assets/openeo.min.js";
+        document.head.appendChild(el);
+
+        var font = document.createElement('font');
+        font.as = "font";
+        font.type = "font/woff2";
+        font.crossOrigin = true;
+        font.href = "https://use.fontawesome.com/releases/v5.13.0/webfonts/fa-solid-900.woff2"
+        document.head.appendChild(font);
+    }
+    </script>
+    <openeo-job>
+        <script type="application/json">{"currency": "credits", "job": {"created": "2025-06-19T18:45:09Z", "id": "agg-pj-20250619-184509", "process": {"process_graph": {"filterbbox1": {"arguments": {"data": {"from_node": "filtertemporal1"}, "extent": {"east": 5.1, "north": 51.23, "south": 51.21, "west": 5.07}}, "process_id": "filter_bbox"}, "filterbbox2": {"arguments": {"data": {"from_node": "filtertemporal2"}, "extent": {"east": 5.1, "north": 51.23, "south": 51.21, "west": 5.07}}, "process_id": "filter_bbox"}, "filtertemporal1": {"arguments": {"data": {"from_node": "loadcollection1"}, "extent": ["2024-08-01", "2024-09-01"]}, "process_id": "filter_temporal"}, "filtertemporal2": {"arguments": {"data": {"from_node": "loadcollection2"}, "extent": ["2024-08-01", "2024-09-01"]}, "process_id": "filter_temporal"}, "loadcollection1": {"arguments": {"bands": ["B02"], "id": "SENTINEL2_L2A", "properties": {"eo:cloud_cover": {"process_graph": {"lte1": {"arguments": {"x": {"from_parameter": "value"}, "y": 50}, "process_id": "lte", "result": true}}}}, "spatial_extent": null, "temporal_extent": null}, "process_id": "load_collection"}, "loadcollection2": {"arguments": {"bands": ["NDVI_10M"], "id": "TERRASCOPE_S2_NDVI_V2", "spatial_extent": null, "temporal_extent": null}, "process_id": "load_collection"}, "mergecubes1": {"arguments": {"cube1": {"from_node": "reducedimension1"}, "cube2": {"from_node": "reducedimension2"}}, "process_id": "merge_cubes"}, "reducedimension1": {"arguments": {"data": {"from_node": "filterbbox1"}, "dimension": "t", "reducer": {"process_graph": {"mean1": {"arguments": {"data": {"from_parameter": "data"}}, "process_id": "mean", "result": true}}}}, "process_id": "reduce_dimension"}, "reducedimension2": {"arguments": {"data": {"from_node": "filterbbox2"}, "dimension": "t", "reducer": {"process_graph": {"mean2": {"arguments": {"data": {"from_parameter": "data"}}, "process_id": "mean", "result": true}}}}, "process_id": "reduce_dimension"}, "saveresult1": {"arguments": {"data": {"from_node": "mergecubes1"}, "format": "netCDF", "options": {}}, "process_id": "save_result", "result": true}}}, "progress": 0, "status": "running", "title": "Deep graph splitting demo"}}</script>
+    </openeo-job>
+    
 </div>
 </div>
-<p>The result of the U-Net is a map with more clearly defined boundaries, however the result is not optimal. We will therefore post-process our U-Net result by applying non-ML filters.</p>
-<div id="2e1f1044-9966-414f-afb0-711169521df6" class="cell" data-execution_count="13">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co">## Load your dataset</span></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>ds <span class="op">=</span> xr.open_dataset(base_path <span class="op">/</span> <span class="st">"delineation.nc"</span>)</span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="co">## Access the "var" variable</span></span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>var <span class="op">=</span> ds[<span class="st">"var"</span>]</span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="co">## Plot the data</span></span>
-<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>var.plot(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">14</span>), cmap<span class="op">=</span><span class="st">"gray"</span>)  <span class="co"># Use a colormap that suits your data</span></span>
-<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Parcel Delineation"</span>)</span>
-<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
-<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a><span class="co">## Close the dataset</span></span>
-<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>ds.close()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="Parcel delineation_files/figure-html/cell-14-output-1.png" class="img-fluid figure-img"></p>
-</figure>
+<p>As this batch job is federated, it requires doing work on 2 different backends. This involves creating partial jobs, which will also be visible in your job listing:</p>
+<div id="b0ac2322-953e-4d04-b8c6-edc733c7ea2f" class="cell" data-execution_count="15">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>connection.list_jobs(limit<span class="op">=</span><span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="15">
+
+    <script>
+    if (!window.customElements || !window.customElements.get('openeo-data-table')) {
+        var el = document.createElement('script');
+        el.src = "https://cdn.jsdelivr.net/npm/@openeo/vue-components@2/assets/openeo.min.js";
+        document.head.appendChild(el);
+
+        var font = document.createElement('font');
+        font.as = "font";
+        font.type = "font/woff2";
+        font.crossOrigin = true;
+        font.href = "https://use.fontawesome.com/releases/v5.13.0/webfonts/fa-solid-900.woff2"
+        document.head.appendChild(font);
+    }
+    </script>
+    <openeo-data-table>
+        <script type="application/json">{"columns": {"id": {"name": "ID", "primaryKey": true}, "title": {"name": "Title"}, "status": {"name": "Status"}, "created": {"name": "Submitted", "format": "Timestamp", "sort": "desc"}, "updated": {"name": "Last update", "format": "Timestamp"}}, "data": [{"created": "2025-06-19T18:45:09Z", "id": "cdse-j-2506191845094a2292cbe064029ffd4f", "progress": 0, "status": "created", "title": "Crossbackend job pj-20250619-184509:cdse:reducedimension1", "updated": "2025-06-19T18:45:09Z"}, {"created": "2025-06-19T16:58:01Z", "id": "cdse-j-25061916580146fd8d4c7dc9844cc674", "status": "error", "updated": "2025-06-19T17:01:10Z"}, {"created": "2025-06-19T16:53:47Z", "id": "cdse-j-2506191653474846b35de371b2fae137", "status": "error", "updated": "2025-06-19T16:56:08Z"}, {"created": "2025-06-19T18:45:10Z", "id": "terrascope-j-25061918451044768186a77a67ccb58d", "progress": 0, "status": "queued", "title": "Crossbackend job pj-20250619-184509:main", "updated": "2025-06-19T18:45:53Z"}, {"created": "2025-06-19T18:44:36Z", "id": "terrascope-j-25061918443646efa3997e187abf3c2d", "progress": 0, "status": "created", "updated": "2025-06-19T18:44:36Z"}, {"created": "2025-06-12T13:29:20Z", "id": "terrascope-j-2506121329204653864fdf31271ab3dd", "progress": 0, "status": "created", "updated": "2025-06-12T13:29:20Z"}, {"created": "2025-06-12T13:14:46Z", "id": "agg-pj-20250612-131446", "progress": 100, "status": "finished", "title": "Deep graph splitting demo"}, {"created": "2025-06-19T18:45:09Z", "id": "agg-pj-20250619-184509", "progress": 0, "status": "running", "title": "Deep graph splitting demo"}]}</script>
+    </openeo-data-table>
+    
 </div>
 </div>
-</div>
-</section>
-<section id="segmentation-postprocessing" class="level2">
-<h2 class="anchored" data-anchor-id="segmentation-postprocessing">Segmentation postprocessing</h2>
-<p>We postprocess the output from the neural network using a sobel filter and Felzenszwalb’s algorithm, which are then merged. This time, we work on larger chunks, to reduce the need for stitching the vector output.</p>
-<div id="b4dfd26c-3160-438d-b489-7e7832d41bd2" class="cell" data-execution_count="28">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co">## Apply the sobel felzenszwalb UDF using `apply_neighborhood`</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>segment_udf1 <span class="op">=</span> openeo.UDF.from_file(<span class="st">'udf_sobel_felzenszwalb.py'</span>)</span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="co"># segment_udf1 = openeo.UDF.from_url("https://raw.githubusercontent.com/Open-EO/openeo-community-examples/refs/heads/main/python/ParcelDelineation/udf_sobel_felzenszwalb.py")</span></span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>sobel_felzenszwalb <span class="op">=</span> segmentationband.apply_neighborhood(</span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    process<span class="op">=</span>segment_udf1,</span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>    size<span class="op">=</span>[</span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>        {<span class="st">"dimension"</span>: <span class="st">"x"</span>, <span class="st">"value"</span>: <span class="dv">2048</span>, <span class="st">"unit"</span>: <span class="st">"px"</span>},</span>
-<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>        {<span class="st">"dimension"</span>: <span class="st">"y"</span>, <span class="st">"value"</span>: <span class="dv">2048</span>, <span class="st">"unit"</span>: <span class="st">"px"</span>},</span>
-<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>    ],</span>
-<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>    overlap<span class="op">=</span>[</span>
-<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>        {<span class="st">"dimension"</span>: <span class="st">"x"</span>, <span class="st">"value"</span>: <span class="dv">0</span>, <span class="st">"unit"</span>: <span class="st">"px"</span>},</span>
-<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>        {<span class="st">"dimension"</span>: <span class="st">"y"</span>, <span class="st">"value"</span>: <span class="dv">0</span>, <span class="st">"unit"</span>: <span class="st">"px"</span>},</span>
-<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>    ],</span>
-<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div id="59d5b35d-e2a5-4a22-ab9f-2df12d8f996a" class="cell" data-execution_count="50">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>sobel_felzenszwalb_job <span class="op">=</span> sobel_felzenszwalb.create_job(</span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>    title<span class="op">=</span><span class="st">"sobel_felzenszwalb"</span>, out_format<span class="op">=</span><span class="st">"NetCDF"</span>, job_options<span class="op">=</span>job_options</span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>sobel_felzenszwalb_job.start_and_wait()</span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>sobel_felzenszwalb_job.download_result(base_path <span class="op">/</span> <span class="st">"delineation_filtered.nc"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>0:00:00 Job 'j-2506110813354bb4b7e35369f19a949b': send 'start'
-0:00:14 Job 'j-2506110813354bb4b7e35369f19a949b': created (progress 0%)
-0:00:19 Job 'j-2506110813354bb4b7e35369f19a949b': created (progress 0%)
-0:00:26 Job 'j-2506110813354bb4b7e35369f19a949b': created (progress 0%)
-0:00:33 Job 'j-2506110813354bb4b7e35369f19a949b': running (progress N/A)
-0:00:43 Job 'j-2506110813354bb4b7e35369f19a949b': running (progress N/A)
-0:00:56 Job 'j-2506110813354bb4b7e35369f19a949b': running (progress N/A)
-0:01:11 Job 'j-2506110813354bb4b7e35369f19a949b': running (progress N/A)
-0:01:31 Job 'j-2506110813354bb4b7e35369f19a949b': running (progress N/A)
-0:01:55 Job 'j-2506110813354bb4b7e35369f19a949b': running (progress N/A)
-0:02:25 Job 'j-2506110813354bb4b7e35369f19a949b': running (progress N/A)
-0:03:02 Job 'j-2506110813354bb4b7e35369f19a949b': running (progress N/A)
-0:03:49 Job 'j-2506110813354bb4b7e35369f19a949b': running (progress N/A)
-0:04:47 Job 'j-2506110813354bb4b7e35369f19a949b': running (progress N/A)
-0:05:48 Job 'j-2506110813354bb4b7e35369f19a949b': running (progress N/A)
-0:06:48 Job 'j-2506110813354bb4b7e35369f19a949b': running (progress N/A)
-0:07:48 Job 'j-2506110813354bb4b7e35369f19a949b': running (progress N/A)
-0:08:48 Job 'j-2506110813354bb4b7e35369f19a949b': running (progress N/A)
-0:09:49 Job 'j-2506110813354bb4b7e35369f19a949b': finished (progress 100%)</code></pre>
-</div>
-<div class="cell-output cell-output-display" data-execution_count="50">
-<pre><code>WindowsPath('results/delineation_filtered.nc')</code></pre>
+<div id="59999896-a2c4-439b-b037-9fcfda354967" class="cell" data-execution_count="16">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>job</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="16">
+
+    <script>
+    if (!window.customElements || !window.customElements.get('openeo-job')) {
+        var el = document.createElement('script');
+        el.src = "https://cdn.jsdelivr.net/npm/@openeo/vue-components@2/assets/openeo.min.js";
+        document.head.appendChild(el);
+
+        var font = document.createElement('font');
+        font.as = "font";
+        font.type = "font/woff2";
+        font.crossOrigin = true;
+        font.href = "https://use.fontawesome.com/releases/v5.13.0/webfonts/fa-solid-900.woff2"
+        document.head.appendChild(font);
+    }
+    </script>
+    <openeo-job>
+        <script type="application/json">{"currency": "credits", "job": {"created": "2025-06-19T18:45:09Z", "id": "agg-pj-20250619-184509", "process": {"process_graph": {"filterbbox1": {"arguments": {"data": {"from_node": "filtertemporal1"}, "extent": {"east": 5.1, "north": 51.23, "south": 51.21, "west": 5.07}}, "process_id": "filter_bbox"}, "filterbbox2": {"arguments": {"data": {"from_node": "filtertemporal2"}, "extent": {"east": 5.1, "north": 51.23, "south": 51.21, "west": 5.07}}, "process_id": "filter_bbox"}, "filtertemporal1": {"arguments": {"data": {"from_node": "loadcollection1"}, "extent": ["2024-08-01", "2024-09-01"]}, "process_id": "filter_temporal"}, "filtertemporal2": {"arguments": {"data": {"from_node": "loadcollection2"}, "extent": ["2024-08-01", "2024-09-01"]}, "process_id": "filter_temporal"}, "loadcollection1": {"arguments": {"bands": ["B02"], "id": "SENTINEL2_L2A", "properties": {"eo:cloud_cover": {"process_graph": {"lte1": {"arguments": {"x": {"from_parameter": "value"}, "y": 50}, "process_id": "lte", "result": true}}}}, "spatial_extent": null, "temporal_extent": null}, "process_id": "load_collection"}, "loadcollection2": {"arguments": {"bands": ["NDVI_10M"], "id": "TERRASCOPE_S2_NDVI_V2", "spatial_extent": null, "temporal_extent": null}, "process_id": "load_collection"}, "mergecubes1": {"arguments": {"cube1": {"from_node": "reducedimension1"}, "cube2": {"from_node": "reducedimension2"}}, "process_id": "merge_cubes"}, "reducedimension1": {"arguments": {"data": {"from_node": "filterbbox1"}, "dimension": "t", "reducer": {"process_graph": {"mean1": {"arguments": {"data": {"from_parameter": "data"}}, "process_id": "mean", "result": true}}}}, "process_id": "reduce_dimension"}, "reducedimension2": {"arguments": {"data": {"from_node": "filterbbox2"}, "dimension": "t", "reducer": {"process_graph": {"mean2": {"arguments": {"data": {"from_parameter": "data"}}, "process_id": "mean", "result": true}}}}, "process_id": "reduce_dimension"}, "saveresult1": {"arguments": {"data": {"from_node": "mergecubes1"}, "format": "netCDF", "options": {}}, "process_id": "save_result", "result": true}}}, "progress": 0, "status": "running", "title": "Deep graph splitting demo"}}</script>
+    </openeo-job>
+    
 </div>
 </div>
-<div id="360f9ba0-41d9-429d-b9e6-e5a42214419b" class="cell" data-execution_count="51">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co">## Load your dataset</span></span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>ds <span class="op">=</span> xr.open_dataset(base_path <span class="op">/</span> <span class="st">"delineation_filtered.nc"</span>)</span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="co">## Access the "var" variable</span></span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>var <span class="op">=</span> ds[<span class="st">"var"</span>]</span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a><span class="co">## Plot the data</span></span>
-<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>var.plot(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">14</span>), cmap<span class="op">=</span><span class="st">"viridis"</span>)  <span class="co"># Use a colormap that suits your data</span></span>
-<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Parcel Delineation - filtered"</span>)</span>
-<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
-<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a><span class="co">## Close the dataset</span></span>
-<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>ds.close()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="Parcel delineation_files/figure-html/cell-17-output-1.png" class="img-fluid figure-img"></p>
-</figure>
-</div>
+<p>When the job is finished, you can just get results like with any other job!</p>
+<div id="f65d7d74-3ccb-4d67-a173-e453a38fd03d" class="cell" data-execution_count="17">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>job</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="17">
+
+    <script>
+    if (!window.customElements || !window.customElements.get('openeo-job')) {
+        var el = document.createElement('script');
+        el.src = "https://cdn.jsdelivr.net/npm/@openeo/vue-components@2/assets/openeo.min.js";
+        document.head.appendChild(el);
+
+        var font = document.createElement('font');
+        font.as = "font";
+        font.type = "font/woff2";
+        font.crossOrigin = true;
+        font.href = "https://use.fontawesome.com/releases/v5.13.0/webfonts/fa-solid-900.woff2"
+        document.head.appendChild(font);
+    }
+    </script>
+    <openeo-job>
+        <script type="application/json">{"currency": "credits", "job": {"created": "2025-06-19T18:45:09Z", "id": "agg-pj-20250619-184509", "process": {"process_graph": {"filterbbox1": {"arguments": {"data": {"from_node": "filtertemporal1"}, "extent": {"east": 5.1, "north": 51.23, "south": 51.21, "west": 5.07}}, "process_id": "filter_bbox"}, "filterbbox2": {"arguments": {"data": {"from_node": "filtertemporal2"}, "extent": {"east": 5.1, "north": 51.23, "south": 51.21, "west": 5.07}}, "process_id": "filter_bbox"}, "filtertemporal1": {"arguments": {"data": {"from_node": "loadcollection1"}, "extent": ["2024-08-01", "2024-09-01"]}, "process_id": "filter_temporal"}, "filtertemporal2": {"arguments": {"data": {"from_node": "loadcollection2"}, "extent": ["2024-08-01", "2024-09-01"]}, "process_id": "filter_temporal"}, "loadcollection1": {"arguments": {"bands": ["B02"], "id": "SENTINEL2_L2A", "properties": {"eo:cloud_cover": {"process_graph": {"lte1": {"arguments": {"x": {"from_parameter": "value"}, "y": 50}, "process_id": "lte", "result": true}}}}, "spatial_extent": null, "temporal_extent": null}, "process_id": "load_collection"}, "loadcollection2": {"arguments": {"bands": ["NDVI_10M"], "id": "TERRASCOPE_S2_NDVI_V2", "spatial_extent": null, "temporal_extent": null}, "process_id": "load_collection"}, "mergecubes1": {"arguments": {"cube1": {"from_node": "reducedimension1"}, "cube2": {"from_node": "reducedimension2"}}, "process_id": "merge_cubes"}, "reducedimension1": {"arguments": {"data": {"from_node": "filterbbox1"}, "dimension": "t", "reducer": {"process_graph": {"mean1": {"arguments": {"data": {"from_parameter": "data"}}, "process_id": "mean", "result": true}}}}, "process_id": "reduce_dimension"}, "reducedimension2": {"arguments": {"data": {"from_node": "filterbbox2"}, "dimension": "t", "reducer": {"process_graph": {"mean2": {"arguments": {"data": {"from_parameter": "data"}}, "process_id": "mean", "result": true}}}}, "process_id": "reduce_dimension"}, "saveresult1": {"arguments": {"data": {"from_node": "mergecubes1"}, "format": "netCDF", "options": {}}, "process_id": "save_result", "result": true}}}, "progress": 50, "status": "running", "title": "Deep graph splitting demo"}}</script>
+    </openeo-job>
+    
 </div>
 </div>
 
