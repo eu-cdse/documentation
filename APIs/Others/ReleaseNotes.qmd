@@ -6,6 +6,92 @@ aliases:
 
 This page includes the list of changes made to Catalog APIs for each release.
 
+## OData Catalog Subscriptions Change: SubscriptionType Field Required [2025-07-09]
+
+We would like to inform you about an upcoming change to our OData API interface within Catalog Subscriptions Service, **effective 8 July 2025**.
+
+
+Starting from **8 July 2025**, users will be obligated to define the `SubscriptionType` field in the request when creating a subscription. Depending on the type, the possible values will be:
+
+* push
+* pull
+
+The value must be entered in the lowercase letters. The `SubscriptionType` field will also be displayed in the response.
+
+**Currently, the requests are defined as follows:**
+
+::: {.panel-tabset}
+
+# PULL Subscription request body example
+
+```{json}
+{
+    "StageOrder": true,
+    "FilterParam": "Collection/Name eq 'SENTINEL-1' and Attributes/OData.CSC.StringAttribute/any(att:att/Name eq 'productType' and att/OData.CSC.StringAttribute/Value eq 'IW_SLC__1S')",
+    "Priority": 1,
+    "Status": "running",
+    "SubscriptionEvent": [
+        "created"
+    ]
+}
+```
+
+# PUSH Subscription request body example
+```{json}
+{
+    "StageOrder": true,
+    "FilterParam": "Collection/Name eq 'SENTINEL-2' and Attributes/OData.CSC.StringAttribute/any(att:att/Name eq 'productType' and att/OData.CSC.StringAttribute/Value eq 'S2MSI2A')",
+    "Priority": 1,
+    "NotificationEndpoint": "https://userservice/notification",
+    "NotificationEpUsername": "serviceusername",
+    "NotificationEpPassword": "********",
+    "Status": "running",
+    "SubscriptionEvent": [
+        "created"
+    ]
+}
+```
+:::
+
+**Upon the implementation of the change, requests must be defined in the following manner:**
+
+::: {.panel-tabset}
+
+# PULL Subscription request body example
+
+```{json}
+{
+    "StageOrder": true,
+    "FilterParam": "Collection/Name eq 'SENTINEL-1' and Attributes/OData.CSC.StringAttribute/any(att:att/Name eq 'productType' and att/OData.CSC.StringAttribute/Value eq 'IW_SLC__1S')",
+    "Priority": 1,
+    "Status": "running",
+    "SubscriptionEvent": [
+        "created"
+    ],
+    "SubscriptionType": "pull"
+}
+```
+
+# PUSH Subscription request body example
+```{json}
+{
+    "StageOrder": true,
+    "FilterParam": "Collection/Name eq 'SENTINEL-2' and Attributes/OData.CSC.StringAttribute/any(att:att/Name eq 'productType' and att/OData.CSC.StringAttribute/Value eq 'S2MSI2A')",
+    "Priority": 1,
+    "NotificationEndpoint": "https://userservice/notification",
+    "NotificationEpUsername": "serviceusername",
+    "NotificationEpPassword": "********",
+    "Status": "running",
+    "SubscriptionEvent": [
+        "created"
+    ],
+    "SubscriptionType": "push"
+}
+```
+:::
+
+**We recommend reviewing the upcoming changes described above to avoid disruption to your current services.**
+
 ## Catalogue API Change: DateTimeOffset Attributes Format Change [2025-03-17]
 
 We would like to inform you about an upcoming change to our OData and STAC APIs interfaces, effective **17 March 2025**.
