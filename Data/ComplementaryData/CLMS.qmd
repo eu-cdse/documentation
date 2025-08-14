@@ -41,6 +41,12 @@ Thank you for your continued support.
 
 :::
 
+:::{.callout-tip} 
+
+The CLMS data collections can also be accessed using CLMS-specific metadata parameters.  See the sections [Catalogue and search attributes](#catalogue-and-search-attributes) and [CLMS OData metadata specification](#clms-odata-metadata-specification).
+
+:::
+
 <br><br>
 
 # Land Cover and Land Use Mapping {#landcover-landusemapping}
@@ -87,7 +93,344 @@ constellation = "CLMStoCDSE_bio"
 {{< include ../_render_collections.qmd >}}
 
 
+<br><br>
 
+# Catalogue and search attributes {#catalogue-and-search-attributes}
+
+All data sets in the CLMS collection can be accessed using CLMS-specific metadata parameters.<br>
+This section explains the specific attributes and the relevant allowable values that can be utilized in data searches via the OData API and the Copernicus Browser.
+
+For further guidance on how to use OData and the Browser, kindly refer to the [OData](../../APIs/OData.html) and [About the Browser](../../Applications/Browser.html) pages.
+
+## Examples of OData queries
+
+Below are some (not exhaustive) examples of OData queries that you can use and modify according to your needs.<br>
+List of acceptable expand attribute names for CLMS:
+
+::: {.panel-tabset}
+
+# HTTPS Request
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/Attributes(CLMS)`](https://catalogue.dataspace.copernicus.eu/odata/v1/Attributes(CLMS)){target="_blank"}
+
+:::
+
+A description of all metadata including the additional attributes can be found in [CLMS OData metadata specification](#clms-odata-metadata-specification).
+
+To search the entire CLMS collection:
+
+::: {.panel-tabset}
+
+# HTTPS Request
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name%20eq%20%27CLMS%27`](https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name%20eq%20%27CLMS%27){target="_blank"}
+
+:::
+
+:::{.callout-tip} 
+
+Please be aware that the results are paginated and limited to 20 products per page. The @odata.nextLink at the bottom of the response provides the link for the next 20 products.<br>    
+Information for disabling this page limitation can be found in the [OData Top option](https://documentation.dataspace.copernicus.eu/APIs/OData.html#top-option) documentation.
+
+:::
+
+To search all products in COG format of a specific dataset (e.g. wb_global_100m_monthly_v1) within the CLMS collection:
+
+A list of all dataset identifiers is available [here](#table-datasetidentifier).
+
+::: {.panel-tabset}
+
+# HTTPS Request
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name%20eq%20%27CLMS%27%20and%20Attributes/OData.CSC.StringAttribute/any(att:att/Name%20eq%20%27datasetIdentifier%27%20and%20att/OData.CSC.StringAttribute/Value%20eq%20%27wb_global_100m_monthly_v1%27)%20and%20Attributes/OData.CSC.StringAttribute/any(att:att/Name%20eq%20%27fileFormat%27%20and%20att/OData.CSC.StringAttribute/Value%20eq%20%27cog%27)&$count=true&$expand=Attributes`](https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name%20eq%20%27CLMS%27%20and%20Attributes/OData.CSC.StringAttribute/any(att:att/Name%20eq%20%27datasetIdentifier%27%20and%20att/OData.CSC.StringAttribute/Value%20eq%20%27wb_global_100m_monthly_v1%27)%20and%20Attributes/OData.CSC.StringAttribute/any(att:att/Name%20eq%20%27fileFormat%27%20and%20att/OData.CSC.StringAttribute/Value%20eq%20%27cog%27)&$count=true&$expand=Attributes){target="_blank"}
+
+:::
+
+To search for CLMS specific product by name:
+
+::: {.panel-tabset}
+
+# HTTPS Request
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Name%20eq%20%27c_gls_SWI_202505201200_GLOBE_ASCAT_V3.2.1_nc%27&$expand=Attributes`](https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Name%20eq%20%27c_gls_SWI_202505201200_GLOBE_ASCAT_V3.2.1_nc%27&$expand=Attributes){target="_blank"}
+
+:::
+
+To search for CLMS collection and products within all CLMS data sets acquired between two dates:
+
+::: {.panel-tabset}
+
+# HTTPS Request
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name%20eq%20%27CLMS%27%20and%20ContentDate/Start%20gt%202005-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T00:11:00.000Z`](https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name%20eq%20%27CLMS%27%20and%20ContentDate/Start%20gt%202005-05-03T00:00:00.000Z%20and%20ContentDate/Start%20lt%202022-05-03T00:11:00.000Z){target="_blank"}
+
+:::
+
+To search for CLMS collection products within all CLMS data sets with footprints intersecting specific coordinates:
+
+::: {.panel-tabset}
+
+# HTTPS Request
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name%20eq%20%27CLMS%27%20and%20OData.CSC.Intersects(area=geography%27SRID=4326;POLYGON((12.655118166047592%2047.44667197521409,21.39065656328509%2048.347694733853245,28.334291357162826%2041.877123516783655,17.47086198383573%2040.35854475076158,12.655118166047592%2047.44667197521409))%27)&$top=20`](https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name%20eq%20%27CLMS%27%20and%20OData.CSC.Intersects(area=geography%27SRID=4326;POLYGON((12.655118166047592%2047.44667197521409,21.39065656328509%2048.347694733853245,28.334291357162826%2041.877123516783655,17.47086198383573%2040.35854475076158,12.655118166047592%2047.44667197521409))%27)&$top=20){target="_blank"}
+
+:::
+
+To search for CLMS collection products acquired between two dates with footprints intersecting specific coordinates:
+
+::: {.panel-tabset}
+
+# HTTPS Request
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name%20eq%20%27CLMS%27%20and%20OData.CSC.Intersects(area=geography%27SRID=4326;POLYGON((12.655118166047592%2047.44667197521409,21.39065656328509%2048.347694733853245,28.334291357162826%2041.877123516783655,17.47086198383573%2040.35854475076158,12.655118166047592%2047.44667197521409))%27)%20and%20ContentDate/Start%20gt%202021-05-20T00:00:00.000Z%20and%20ContentDate/Start%20lt%202021-07-21T00:00:00.000Z`](https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name%20eq%20%27CLMS%27%20and%20OData.CSC.Intersects(area=geography%27SRID=4326;POLYGON((12.655118166047592%2047.44667197521409,21.39065656328509%2048.347694733853245,28.334291357162826%2041.877123516783655,17.47086198383573%2040.35854475076158,12.655118166047592%2047.44667197521409))%27)%20and%20ContentDate/Start%20gt%202021-05-20T00:00:00.000Z%20and%20ContentDate/Start%20lt%202021-07-21T00:00:00.000Z){target="_blank"}
+
+:::
+
+To search for CLMS collection products acquired for a specific tile or grid. In the example below the request will search for the C0086 tile within the swi time series collection (12,5km daily v3).
+
+::: {.panel-tabset}
+
+# HTTPS Request
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name%20eq%20%27CLMS%27%20and%20Attributes/OData.CSC.StringAttribute/any(att:att/Name%20eq%20%27datasetIdentifier%27%20and%20att/OData.CSC.StringAttribute/Value%20eq%20%27swi-timeseries_global_12.5km_daily_v3%27)%20and%20Attributes/OData.CSC.StringAttribute/any(att:att/Name%20eq%20%27cellID%27%20and%20att/OData.CSC.StringAttribute/Value%20eq%20%27C0086%27)&$count=true&$expand=Attributes`](https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name%20eq%20%27CLMS%27%20and%20Attributes/OData.CSC.StringAttribute/any(att:att/Name%20eq%20%27datasetIdentifier%27%20and%20att/OData.CSC.StringAttribute/Value%20eq%20%27swi-timeseries_global_12.5km_daily_v3%27)%20and%20Attributes/OData.CSC.StringAttribute/any(att:att/Name%20eq%20%27cellID%27%20and%20att/OData.CSC.StringAttribute/Value%20eq%20%27C0086%27)&$count=true&$expand=Attributes){target="_blank"}
+
+:::
+
+More details on the structure of OData queries and available functionalities can be found in the [OData](../../APIs/OData.html){target="_blank"} documentation.
+
+<br><br>
+
+# CLMS OData metadata specification {#clms-odata-metadata-specification}
+
+<br>
+**Overall table with CLMS OData metadata attributes** 
+
+::: {#table-clms-odata-metadata-attributes}
+
+| CLMS OData<br>Metadata field | Mandatory | Format | Description | Values | Example |
+|------------------------------|-----------|--------|-------------|--------|---------|
+| @odata.context  | Yes | String | Describes the context of the metadata | \$metadata#Products(Attributes()) | "@odata.context": "\$metadata#Products(Attributes())", |
+| Name            | Yes | String | Unique name of the product.<br>For netcdf products, the Name is the product file name with '_nc'.<br>For cloud optimized geotiff products, the Name is the product file name of the identical netcdf product, with '_cog'.<br>For vector products in geojosn format, the Name is het product file name with '_geojson'. |  | "Name": "c_gls_NDVI_199901010000_GLOBE_VGT_V3.0.1_nc", |
+| EvictionDate    | Yes | DateTimeOffset | Date of eviction, removal of the product from the Odata catalogue. | 9999-12-31T23:59:59.999999Z |  "EvictionDate": "9999-12-31T23:59:59.999999Z", |
+| OriginDate      | Yes | DateTimeOffset | Date of first creation of the product file. For CLMS data this is the mtime attribute from the rclone copyto info. |  |  "OriginDate": "2021-02-08T14:03:32Z", |
+| NominalDate     | Yes | DateTimeOffset | The nominal date is the reference date for the data acquisition period covered by the product. This date will be used to extract YYYY/MM/DD in the folderstructure.  |  |  {<br>"Name": "nominalDate",  //can YYYY MM DD be extracted from this nominalDate<br>"ValueType": "DateTimeOffset",<br>"Value": "1999-01-01T00:00:00Z"<br>}, |
+| Online          | Yes | Boolean | Indicates if the product is online or not. | TRUE | Online: true, |
+| ContentType     | Yes | String | Describes the content type of the product.<br>The generic mime-type "application/octet-stream" shall be used as default.<br>User can not filter on this attribute but through the file format attribute. | "application/octet-stream";"application/netcdf"; "application/tiff"; "application/geo+json" |  "ContentType": "application/netcdf", |
+| Link            | Yes | String | Source file location |  | "Link": "s3://CLMS-ARCHIVE-INGESTION/netcdf/ndvi/ndvi_1km_v3_10daily/1999/19990101/c_gls_NDVI_199901010000_GLOBE_VGT_V3.0.1_cog/", |
+| CollectionName  | Yes | String | mandatory collectionName | CLMS |  "CollectionName": "CLMS", |
+| Component       | Yes | String | Component to which the dataset belongs | Possible values:<br>- landcover_landuse<br>- bio-geophysical | {<br>"Name": "component",<br>"ValueType": "String",<br>"Value": "bio-geophysical"<br>}, |
+| ProductType     | Yes| String | Indicates a group of products from a well-defined type. | [ProductType list](#table-producttype) | "ProductType": "vegetation_indices",  |
+| DatasetIdentifier | Yes | String | Uniquely identifies the dataset. The dataset is a group of products belonging to the same dataset / collection / parentIdentifier.  | [DatasetIdentifier list](#table-datasetidentifier) |  {<br>"Name": "datasetIdentifier",<br>"ValueType": "String",<br>"Value": "ndvi_global_1km_10daily_v3"<br>},  |
+| TargetFormat    | Yes | String | The format of the product when stored in CDSE S3 bucket. It depends how the data should be stored in CDSE S3 storage environment. | "EXTRACTED" ; "COMPRESSED" | "TargetFormat": "EXTRACTED", |
+| DecompressionStep | Yes | Boolean | Indicates whether decompression is needed. | FALSE | "DecompressionStep": false, |
+| CompressionType | Yes | String | Indicates the type of decompression. | NULL | "CompresionType": null, |
+| ContentDate:Start | Yes | DateTimeOffset | Beginning date of the content period of the product.<br>For products with consolidations, this will not be the same as the sensing start date but the start date of the nominal 10daily period. |  | "ContentDate": {<br>"Start": "1999-01-01T00:00:00Z",<br>"End": "1999-01-10T23:59:59Z"<br>}, |
+| ContentDate:End | Yes | DateTimeOffset | Ending date of the content period of the product.<br>For products with consolidations, this will not be the same as the sensing end date but the end date of the nominal 10daily period. |  |  |
+| GeoFootprint    | Yes |  | Represents the spatial extent as a polygon in the WGS 84 coordinate system with EPSG code EPSG:4326. |  |  "GeoFootprint": {<br>"type": "Polygon",<br>"coordinates": [<br>[<br>[<br>-180.0044642857,<br>80.0044642857<br>],<br>[<br>-180.0044642857,<br>-59.9955357143<br>],<br>[<br>179.9955357143,<br>-59.9955357143<br>],<br>[<br>179.9955357143,<br>80.0044642857<br>],<br>[<br>-180.0044642857,<br>80.0044642857<br>]<br>]<br>]<br>}, |
+| Attributes:datasetAlias | Yes | String | Provides an alias to group multiple datasets with same product category but with different version numbers. | datasetIdentifier minus version number | {<br>"Name": "datasetAlias",<br>"ValueType": "String",<br>"Value": "ndvi_global_1km_10daily"<br>}, |
+| Attributes:datasetShortName | Yes | String | Short name for the dataset.  | [DatasetShortName List](#table-datasetshortname) | {<br>"Name": "datasetShortName",<br>"ValueType": "String",<br>"Value": "ndvi"<br>}, |
+| Attributes:consolidationPeriod | No | Integer | Consolidation period for the collection where multiple consolidations are produced. | 0; 1; 2; 5; 6 | {<br>"Name": "consolidationPeriod",<br>"ValueType": "Integer",<br>"Value": 2<br>}, |
+| Attributes:processingCenter | Yes | String | Processing Center that produces the products. | [ProcessingCenter List](#table-processingcenter) | {<br>"Name": "processingCenter",<br>"ValueType": "String",<br>"Value": "VITO"<br>}, |
+| Attributes:missionShortName | Yes | String | List of the platforms providing the acquisitions used for producing the product. (All platforms in uppercase.)<br>If multiple values, use comma separator without whitespace. | [GitHub - EOAssets](https://github.com/copernicus-land/EOAssets) | {<br>"Name": "missionShortName",<br>"ValueType": "String",<br>"Value": "SPOT4,SENTINEL3"<br>},  |
+| Attributes:platformShortName | Yes | String | List of the platformShortNames providing the acquisitions used for producing the product. This is used to search and filter on platform. If multiple values, use comma separator without whitespace. | [GitHub - EOAssets](https://github.com/copernicus-land/EOAssets) | {<br>"Name": "platformShortName",<br>"ValueType": "String",<br>"Value":"SPOT4,SENTINEL3A,SENTINEL3B"<br>}, |
+| Attributes:platformAcronym | Yes | String | List of the platformAcronyms providing the acquisitions used for producing the product.  If multiple values, use comma separator without whitespace. | [GitHub - EOAssets](https://github.com/copernicus-land/EOAssets) | {<br>"Name": "platformAcronym",<br>"ValueType": "String",<br>"Value":"SPOT4,S3A,S3B"<br>}, |
+| Attributes:instrumentShortName | Yes | String | List of the instruments providing the acquisitions used for producing the product. This is used to search and filter on instrument.  If multiple values, use comma separator without whitespace. | [GitHub - EOAssets](https://github.com/copernicus-land/EOAssets) | {<br>"Name": "instrumentShortName",<br>"ValueType": "String",<br>"Value": "VEGETATION,OLCI,SLSTR"<br>}, |
+| Attributes:datasetVersion | Yes | Integer | Version of the collection represented as a number. |  | {<br>"Name": "datasetVersion",<br>"ValueType": "Integer",<br>"Value": 3<br>}, |
+| Attributes:productVersion | Yes | String | Version of the product represented with a minor 'v' which means not always the in the same way as in the file name. e.g v3.0.1 / v2.0 etc…. |vN.N.N | {<br>"Name": "productVersion",<br>"ValueType": "String",<br>"Value": "v3.0.1"<br>}, |
+| Attributes:fileFormat | Yes | String | Format of the product. | [FileFormat List](#table-fileformat) | {<br>"Name": "fileFormat",<br>"ValueType": "String",<br>"Value": "cog"<br>}, |
+| Attributes:temporalRepeatRate |Yes  | String |  | Possible values:<br>- daily<br>- 10daily<br>- monthly<br>- yearly | {<br>"Name": " temporalRepeatRate",<br>"ValueType": "String",<br>"Value": "10daily"<br>}, |
+| Attributes:areaOfInterest | Yes | String |  | Possible values:<br>- global<br>- europe<br>- northern hemisphere<br>- baltic<br>- hotspots<br>- pan tropical<br> | {<br>"Name": "areaOfInterest",<br>"ValueType": "String",<br>"Value": "global"<br>}, |
+| Attributes:gridLabel | No | String | Labels the nominal grid spacing in the format as been used in the datasetIdentifier, including the unit. |  |  {<br>"Name": "gridLabel",<br>"ValueType": "String",<br>"Value": "1km"<br>}, |
+| Attributes:metricGridSpacing | No | Integer | Refers to the nominal grid spacing of the product, expressed in meters. The purpose of this additional field is to filter on the nominal grid spacing as a number eg. metricGridSpacing > 300. |  |  {<br>"Name": "metricGridSpacing",<br>"ValueType": "Integer",<br>"Value": "1000"<br>}, |
+| Attributes:vppSeason | No | String | Vegetation phenology and productivity (VPP) season number. | S1; S2 |  |
+| Attributes:vppSubParameter | No | String | Vegetation phenology and productivity (VPP) sub-parameter acronym. | MINV;MAXD; LENGTH; SOSD; EOSD; EOSV; TPROD; QA;MAXV; AMPL; SOSV; LSLOPE; EOSD; RSLOPE; SPROD |  |
+| Attributes:swiSubParameter | No | String | Soil Water Index (SWI) sub-parameter acronym. | CI; DGG; FM; TC; WF |  |
+| Attributes:wlLakeName | No | String | Name of the lake (full name), in local language wherever possible (a choice might be done if the lake shore several different countries). |  |  |
+| Attributes:wlRiverName | No | String | Name of the river (full name), in local language wherever possible (a choice might be done if the lake shore several different countries). |  |  |
+| Attributes:wlBasinName | No | String | Hydrological basin or catchment name (full name), in English. |  |  |
+| Attributes:cellID | No | String | Cell identifier describing the respective tile or sample. | SWI grid e.g. : C0014, C0646... ; MGRS e.g. T32, P18… |  |
+
+: {tbl-colwidths="[15,8,10,35,15,17]"}
+
+::: 
+
+<br><br>
+**ProductType List** 
+
+::: {#table-producttype}
+
+| ProductType                                      | 
+|--------------------------------------------------|
+| dynamic_land_cover                               |
+| surface_soil_moisture                            |
+| soil_water_index                                 |
+| snow_cover_extent                                |
+| snow_water_equivalent                            |
+| land_surface_temperature                         |
+| lake_surface_water_temperature                   |
+| top-of-canopy_reflectances                       |
+| burnt_area                                       |
+| vegetation_properties                            |               
+| vegetation_indices                               | 
+| vegetation_phenology_and_productivity_parameters |  
+| dry-gross_dry_matter_productivity                |
+| net-gross_primary_production                     |
+| water_bodies                                     |
+| river_and_lake_water_level                       |
+| lake_water_quality                               |
+| river_and_lake_ice_extent                        |
+
+::: 
+
+<br><br>
+**DatasetIdentifier List** 
+
+::: {#table-datasetidentifier}
+
+| Dataset Identifier       | 
+|--------------------------|
+| lc_global_100m_yearly_v3 |
+| ssm_europe_1km_daily_v1 |
+| swi_europe_1km_daily_v1 |
+| swi_global_12.5km_daily_v3 |
+| swi-timeseries_global_12.5km_daily_v3 |
+| swi-static_global_12.5km_daily_v3 |
+| swi_global_12.5km_10daily_v3 |
+| sce_europe_500m_daily_v1 |
+| sce_northernhemisphere_1km_daily_v1 |
+| swe_northernhemisphere_5km_daily_v1 |
+| lst_global_5km_hourly_v1 |
+| lst_global_5km_hourly_v2 |
+| lst-daily-cycle_global_5km_10daily_v1 |
+| lst-daily-cycle_global_5km_10daily_v2 |
+| lst-tci_global_5km_10daily_v1 |
+| lst-tci_global_5km_10daily_v2 |
+| lswt-nrt_global_1km_10daily_v1 |
+| lswt-offline_global_1km_10daily_v1 |
+| toc_global_300m_daily_v2 |
+| ba_global_300m_daily_v3 |
+| ba_global_300m_monthly_v3 |
+| fcover_global_300m_10daily_v1 |
+| fcover_global_1km_10daily_v1 |
+| fcover_global_1km_10daily_v2 |
+| fapar_global_300m_10daily_v1 |
+| fapar_global_1km_10daily_v1 |
+| fapar_global_1km_10daily_v2 |
+| lai_global_1km_10daily_v2 |
+| lai_global_1km_10daily_v1 |
+| lai_global_300m_10daily_v1 |
+| ndvi_global_1km_10daily_v3 |
+| ndvi_global_1km_10daily_v2 |
+| ndvi_global_300m_10daily_v2 |
+| ndvi_global_300m_10daily_v1 |
+| ndvi-sts_global_1km_10daily_v3 |
+| ndvi-lts_global_1km_10daily_v3 |
+| ndvi-lts_global_1km_10daily_v2 |
+| lsp_global_300m_yearly_v1 |
+| dmp_global_300m_10daily_v1 |
+| dmp_global_1km_10daily_v2 |
+| gdmp_global_300m_10daily_v1 |
+| gdmp_global_1km_10daily_v2 |
+| npp_global_300m_10daily_v1 |
+| gpp_global_300m_10daily_v1 |
+| wb_global_100m_monthly_v1 |
+| wb_global_1km_10daily_v2 |
+| wb_global_300m_monthly_v2 |
+| wb_global_300m_10daily_v1 |
+| wl-lakes_global_vector_daily_v2 |
+| wl-rivers_global_vector_daily_v2 |
+| lwq-nrt_global_100m_10daily_v1 |
+| lwq-reproc_global_300m_10daily_v1 |
+| lwq-nrt_global_1km_10daily_v1 |
+| lwq-nrt_global_300m_10daily_v1 |
+| lwq-reproc_global_1km_10daily_v1 |
+| lwq-nrt_global_100m_10daily_v2 |
+| lwq-nrt_global_300m_10daily_v2 |
+| lie_baltic_250m_daily_v1 |
+| lie_northernhemisphere_500m_daily_v1 |
+| lie_europe_250m_daily_v2 |
+| swe_global_1km_daily_v1 |
+| lsc_global_10m_monthly_v1 |
+| lsc_global_10m_yearly_v1 |
+| lcm_global_10m_yearly_v1 |
+| lcm_global_100m_yearly_v1 |
+| tcd_pantropical_10m_yearly_v1 |
+
+::: 
+
+<br><br>
+**DatasetShortName List** 
+
+::: {#table-datasetshortname}
+
+| Dataset Short Name   | 
+|----------------------|
+| lc                   |
+| ssm                  |
+| swi                  |
+| swi-ts               |
+| swi-sl               |
+| swi                  |
+| swe                  |
+| sce                  |
+| lst                  |
+| lst-dc               |
+| lst-tci              |
+| lswt                 |
+| tcr                  |
+| ba                   |
+| fgvc                 |
+| fapar                |
+| lai                  |
+| ndvi                 |
+| ndvi-sts             |
+| ndvi-lts             |
+| lsp                  |
+| dmp                  |
+| gdmp                 |
+| npp                  |
+| gpp                  |
+| wb                   |
+| lwl                  |
+| rwl                  |
+| lwq                  |
+| lie                  |
+| lsc                  |
+| lcm                  |
+| tcd                  |
+
+::: 
+
+<br><br>
+**ProcessingCenter List** 
+
+::: {#table-processingcenter}
+
+| Processing Center    | 
+|----------------------|
+| Brockmann Consult    |
+| CLS                  |
+| Enveo                |
+| EODC                 |
+| FMI                  |
+| IPMA                 |
+| Syke                 |
+| Univ. of Reading     |
+| VITO                 |
+| SIRS                 |
+| GAF                  |
+
+::: 
+
+<br><br>
+**FileFormat List** 
+
+::: {#table-fileformat}
+
+|formatName    | formatShortname -><br>[Attributes:fileFormat] | fileExtension       | 
+|--------------|-----------------------------------------------|---------------------|
+| Cloud Optimize GeoTiff                | cog                  | .tiff               |
+| NetCDF                                | nc                   | .nc                 |
+| Geospatial JavaScript Object Notation | geojson              | .geojson            |
+| Shapefile                             | shp                  | .shp + .shx + .dbf  |
+
+: {tbl-colwidths="[50,30,20]"}
+
+::: 
+
+<br>
 
 <!--
 Remove completely on request of Pierlorenzo MARASCO (JRC)
