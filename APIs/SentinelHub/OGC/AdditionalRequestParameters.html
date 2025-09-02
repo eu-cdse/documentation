@@ -1885,7 +1885,6 @@ window.onload = function() {
   <ul>
   <li><a href="#additional-request-parameters" id="toc-additional-request-parameters" class="nav-link active" data-scroll-target="#additional-request-parameters">Additional Request Parameters</a>
   <ul>
-  <li><a href="#preview-modes" id="toc-preview-modes" class="nav-link" data-scroll-target="#preview-modes">Preview modes</a></li>
   <li><a href="#atmospheric-correction" id="toc-atmospheric-correction" class="nav-link" data-scroll-target="#atmospheric-correction">Atmospheric correction</a></li>
   </ul></li>
   </ul>
@@ -1915,7 +1914,7 @@ window.onload = function() {
 
 <section id="additional-request-parameters" class="level2">
 <h2 class="anchored" data-anchor-id="additional-request-parameters">Additional Request Parameters</h2>
-<p>WMS/WMTS/WFS/WCS services support many custom parameters which affect the generation of the service responses. In the following table, all the available custom parameters, such as <a href="#preview-modes">preview modes</a>, are listed. All these parameters are optional.</p>
+<p>WMS/WMTS/WFS/WCS services support many custom parameters which affect the generation of the service responses. In the following table, all the available custom parameters are listed. All these parameters are optional.</p>
 <p>For the examples on how to use them, see this <a href="../../../APIs/SentinelHub/OGC/Examples.html">documentation</a>.</p>
 <p>Note that atmospheric correction is not a parameter anymore, as we now only support L2A atmospheric correction. Read more about it <a href="#atmospheric-correction">here</a>.</p>
 <table class="caption-top table">
@@ -1958,41 +1957,34 @@ window.onload = function() {
 <td style="text-align: left;"><strong>WMS/WMTS/WCS</strong> (when REQUEST = "GetMap", "GetTile" or "GetCoverage")</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">PREVIEW</td>
-<td style="text-align: left;">See <a href="#preview-modes">Preview modes</a> for details.</td>
-<td style="text-align: left;">0</td>
-<td style="text-align: left;">0, 1, 2</td>
-<td style="text-align: left;"><strong>WMS/WMTS/WCS</strong> (when REQUEST = "GetMap", "GetTile" or "GetCoverage")</td>
-</tr>
-<tr class="even">
 <td style="text-align: left;">GEOMETRY</td>
 <td style="text-align: left;">Outputs imagery only within the given geometry and cropped to the geometry's minimum bounding box.</td>
 <td style="text-align: left;"></td>
 <td style="text-align: left;">one WKT string, one WKB hex string, or a list of coordinate pairs representing a polygon (pairs separated by semicolons, components by comma, i.e.&nbsp;1 1, 2 2;...) Coordinates should be specified using the CRS of the request (i.e.&nbsp;same CRS as BBOX).</td>
 <td style="text-align: left;"><strong>WMS/WMTS/WCS</strong> (when REQUEST = "GetMap", "GetTile" or "GetCoverage")</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;">QUALITY</td>
 <td style="text-align: left;">Used only when requesting JPEGs.</td>
 <td style="text-align: left;">90</td>
 <td style="text-align: left;">0 - 100; where 0 is the lowest and 100 the highest quality</td>
 <td style="text-align: left;"><strong>WMS/WMTS/WCS</strong> (when REQUEST = "GetMap", "GetTile" or "GetCoverage")</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;">UPSAMPLING</td>
 <td style="text-align: left;">Sets the image upsampling method. Used when the requested resolution is higher than the source resolution.</td>
 <td style="text-align: left;">NEAREST</td>
 <td style="text-align: left;">NEAREST, BILINEAR, BICUBIC</td>
 <td style="text-align: left;"><strong>WMS/WMTS/WCS</strong> (when REQUEST = "GetMap", "GetTile" or "GetCoverage")</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;">DOWNSAMPLING</td>
 <td style="text-align: left;">Sets the image downsampling method. Used when the requested resolution is lower than the source resolution.</td>
 <td style="text-align: left;">NEAREST</td>
 <td style="text-align: left;">NEAREST, BILINEAR, BICUBIC, BOX</td>
 <td style="text-align: left;"><strong>WMS/WMTS/WCS</strong> (when REQUEST = "GetMap", "GetTile" or "GetCoverage")</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;">WARNINGS</td>
 <td style="text-align: left;">Enables or disables the display of in-image warnings, like "No data available for the specified area".</td>
 <td style="text-align: left;">YES</td>
@@ -2001,32 +1993,6 @@ window.onload = function() {
 </tr>
 </tbody>
 </table>
-<section id="preview-modes" class="level3">
-<h3 class="anchored" data-anchor-id="preview-modes">Preview modes</h3>
-<p>Preview modes make it possible to receive data from across all zoom levels. Sentinel Hub is optimised for full resolution data access as this is what most users need. There are, however, some cases when lower resolution previews of the data make sense as well. This is done by adding the URL parameter PREVIEW. Optional, default="0". Supported values:</p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Values</th>
-<th style="text-align: left;">Info</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">PREVIEW=0</td>
-<td style="text-align: left;">Only high resolution data from Sentinel-2 is used. This corresponds to real world distances up to 200m/pixel. This is the default.</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">PREVIEW=1</td>
-<td style="text-align: left;">Allows zooming further out, up to a point. Up to 200m/pixel it displays the same data as PREVIEW=0. In addition to this it uses lower resolution data for real world distances up to 1500m/pixel. <br> <br> With resolutions between 200m/pixel and 1500m/pixel cloud filtering is no longer applied.</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">PREVIEW=2</td>
-<td style="text-align: left;">Allows any zoom level but is limited to a maximum of one month of data when most zoomed out. Up to 1500m/pixel it displays the same data as PREVIEW=1. With resolutions lower than 1500m/pixel (more zoomed out) it limits the data to one month prior to the "TO" date. <br> <br> With resolutions less than 200m/pixel (more zoomed out) cloud filtering is no longer applied.</td>
-</tr>
-</tbody>
-</table>
-</section>
 <section id="atmospheric-correction" class="level3">
 <h3 class="anchored" data-anchor-id="atmospheric-correction">Atmospheric correction</h3>
 <p>Satellite images sometimes seem washed out or foggy, as atmosphere absorbs and scatters light on its way to the ground. We can correct for this to get clearer images using atmospheric correction. ESA provides a <a href="http://step.esa.int/main/snap-supported-plugins/sen2cor/" target="_blank">Sen2Cor</a> processor, that applies atmospheric correction to the input Sentinel-2 L1C data with global coverage. The resulting product is called S2L2A data. To use Atmospheric correction, use the <a href="../../../APIs/SentinelHub/Data/S2L2A.html">Sentinel-2 L2A (S2L2A) data collection.</a></p>
