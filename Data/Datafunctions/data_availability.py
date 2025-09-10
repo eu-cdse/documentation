@@ -15,6 +15,7 @@ def main(c):
         "Landsat-5": ComplementaryOffer,
         "Landsat-7": ComplementaryOffer,
         "Landsat-8": ComplementaryOffer,
+        "Landsat-9": ComplementaryOffer,
         "Commercial data": VHROffer,            
         "AdditionalComplementaryData": Additional,      
         "CAMS": CAMSOffer,
