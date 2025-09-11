@@ -136,11 +136,6 @@ def DataFetch(c,i):
         odata = c['summaries']['DataAvailability'][i]['OData']
     except Exception:
         odata = ''
-    try:
-        source = c['summaries']['DataAvailability'][i]['Source']
-    except Exception:
-        source = ''
-
 
     return type,status,access,product_type,specific_product,spatial,temporal,product_link,catalogue,footnotes,provider,satellite,resolution,opensearch,odata
 
@@ -297,10 +292,10 @@ def ComplementaryOffer(c):
         empty_columns = []  # Track empty columns
 
         for i in range(0, data_offer):
-            type,status,access,product_type,specific_product,spatial,temporal,product_link,source,catalogue,footnotes,provider,satellite,resolution,opensearch,odata = DataFetch(c,i)
-            t.append([type, status, access, spatial, temporal, source, catalogue])
+            type,status,access,product_type,specific_product,spatial,temporal,product_link,catalogue,footnotes,provider,satellite,resolution,opensearch,odata = DataFetch(c,i)
+            t.append([type, status, access, spatial, temporal, catalogue])
             note += footnotes
-            headers = ["Product","Archive Status", "Access Type", "Spatial Extent", "Temporal Extent", "Source", "Catalogue"]
+            headers = ["Product","Archive Status", "Access Type", "Spatial Extent", "Temporal Extent", "Catalogue"]
 
         # Find and remove empty columns
         t,headers=removeempty(t,headers)
