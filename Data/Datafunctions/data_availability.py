@@ -136,6 +136,10 @@ def DataFetch(c,i):
         odata = c['summaries']['DataAvailability'][i]['OData']
     except Exception:
         odata = ''
+    try:
+        source = c['summaries']['DataAvailability'][i]['Source']
+    except Exception:
+        source = ''
 
 
     return type,status,access,product_type,specific_product,spatial,temporal,product_link,catalogue,footnotes,provider,satellite,resolution,opensearch,odata
