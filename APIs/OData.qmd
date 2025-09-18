@@ -188,6 +188,8 @@ The following collections are currently available:
   * **COP-DEM** (Copernicus DEM)
   * **TERRAAQUA** (Terra MODIS and Aqua MODIS)
   * **S2GLC** (S2GLC 2017)
+* Copernicus Services
+  * **CLMS** (Copernicus Land Monitoring Service)
 
 * Copernicus Contributing Missions (CCM)
 
@@ -512,6 +514,27 @@ df[columns_to_print].head(3)
 
 :::
 
+To search all products of a specific dataset under CLMS (for example for the products belonging to swi-timeseries_global_12.5km_daily_v3):
+
+::: {.panel-tabset}
+
+# HTTPS Request
+
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Attributes/OData.CSC.StringAttribute/any(att:att/Name eq 'datasetIdentifier' and att/OData.CSC.StringAttribute/Value eq 'swi-timeseries_global_12.5km_daily_v3')`](https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Attributes/OData.CSC.StringAttribute/any(att:att/Name%20eq %27datasetIdentifier%27%20and%20att/OData.CSC.StringAttribute/Value%20eq%20%27swi-timeseries_global_12.5km_daily_v3%27)){target="_blank"}
+
+# Python
+```{python}
+json = requests.get("https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Attributes/OData.CSC.StringAttribute/any(att:att/Name eq 'datasetIdentifier' and att/OData.CSC.StringAttribute/Value eq 'swi-timeseries_global_12.5km_daily_v3')").json()
+df = pd.DataFrame.from_dict(json['value'])
+
+# Print only specific columns
+columns_to_print = ['Id', 'Name','S3Path','GeoFootprint']  
+df[columns_to_print].head(3)
+
+```
+
+:::
+
 #### List of OData query attributes by collection
 
 To check acceptable attribute names for all Collections:
@@ -561,6 +584,16 @@ To check acceptable attribute names for Copernicus Contributing Missions (CCM):
 # CCM
 
 [`https://catalogue.dataspace.copernicus.eu/odata/v1/Attributes(CCM)`](https://catalogue.dataspace.copernicus.eu/odata/v1/Attributes(CCM)){target="_blank"}
+
+:::
+
+To check acceptable attribute names for Copernicus Services:
+
+::: {.panel-tabset}
+
+# CLMS
+
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/Attributes(CLMS)`](https://catalogue.dataspace.copernicus.eu/odata/v1/Attributes(CLMS)){target="_blank"}
 
 :::
 
