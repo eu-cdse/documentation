@@ -136,8 +136,12 @@ def DataFetch(c,i):
         odata = c['summaries']['DataAvailability'][i]['OData']
     except Exception:
         odata = ''
+    try:
+        Origin = c['summaries']['DataAvailability'][i]['Origin']
+    except Exception:
+        Origin = ''
 
-    return type,status,access,product_type,specific_product,spatial,temporal,product_link,catalogue,footnotes,provider,satellite,resolution,opensearch,odata
+    return type,status,access,product_type,specific_product,spatial,temporal,product_link,catalogue,footnotes,provider,satellite,resolution,opensearch,odata,Origin
 
 def auxillary(c):
     tabletitle = "Offered Data"
@@ -292,10 +296,10 @@ def ComplementaryOffer(c):
         empty_columns = []  # Track empty columns
 
         for i in range(0, data_offer):
-            type,status,access,product_type,specific_product,spatial,temporal,product_link,catalogue,footnotes,provider,satellite,resolution,opensearch,odata = DataFetch(c,i)
-            t.append([type, status, access, spatial, temporal, catalogue])
+            type,status,access,product_type,specific_product,spatial,temporal,product_link,catalogue,footnotes,provider,satellite,resolution,opensearch,odata,Origin = DataFetch(c,i)
+            t.append([type, status, access, spatial, temporal, catalogue,Origin])
             note += footnotes
-            headers = ["Product","Archive Status", "Access Type", "Spatial Extent", "Temporal Extent", "Catalogue"]
+            headers = ["Product","Archive Status", "Access Type", "Spatial Extent", "Temporal Extent", "Catalogue","Origin"]
 
         # Find and remove empty columns
         t,headers=removeempty(t,headers)
