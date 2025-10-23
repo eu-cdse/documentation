@@ -605,6 +605,12 @@ window.onload = function() {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../../APIs/openEO/openeo-backend/docs/load_stac.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Loading external data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../../APIs/openEO/large_scale_processing.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Large scale processing</span></a>
   </div>
@@ -1372,7 +1378,7 @@ window.onload = function() {
       <ul id="quarto-sidebar-section-40" class="collapse list-unstyled sidebar-section depth3 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/SentinelHub/Evalscript/V3.html" class="sidebar-item-text sidebar-link">
+  <a href="../../APIs/SentinelHub/Evalscript/V3.qmd" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Evalscript V3</span></a>
   </div>
 </li>
@@ -2045,7 +2051,7 @@ window.onload = function() {
 <li>The COG header size must not exceed one megabyte.</li>
 <li>The internal tile size must be between 256 x 256 and 2048 x 2048.</li>
 <li>The projection needs to be one of: WGS84 (EPSG:4326), WebMercator (EPGS:3857), any UTM zone (EPSG:32601-32660, 32701-32760), or Europe LAEA (EPSG:3035).</li>
-<li>Photometric interpretation that is not 1 (0 is imaged as black) or 2 (RGB) is only supported with no compression and deflate or zstd compression.</li>
+<li>Photometric interpretation must be 1 (0 is imaged as black) or 2 (RGB).</li>
 <li>The COG must not cross any of the two poles.</li>
 <li>The band name should be a valid JavaScript identifier so it can be safely used in evalscripts; valid identifiers are case-sensitive, can contain Unicode letters, $, _, and digits (0-9), but may not start with a digit, and should not be one of the reserved JavaScript keywords.</li>
 <li>There can be at most 100 bands.</li>
@@ -2054,8 +2060,8 @@ window.onload = function() {
 <li>All files of each tile needs to have consistent extension (so a tile cannot contain both B1.tiff and B2.TIF).</li>
 <li>The maximum allowable difference between the intersection of all file bounding boxes and each individual file is one pixel of that file [1].</li>
 <li>All files of each band need to have the same bit depth.</li>
-<li>Files can be compressed with DEFLATE, ZLIB, ZSTD, PIXTIFF_ZIP, PACKBITS or LZW compression method. JPEG compression is not supported.</li>
-<li>Supported sample types and bit depths are the same as those supported for outputs, as well as reading unsigned integer 1, 2, 4 bit files. See also <a href="../../APIs/SentinelHub/Evalscript/V3.html#sampletype">sampleType</a>.</li>
+<li>Files can be compressed with any of the following compression methods: DEFLATE, ZLIB, ZSTD, PIXTIFF_ZIP, PACKBITS, LZW. ZSTD is recommended. Note JPEG compression is not supported.</li>
+<li>Supported sample types and bit depths are the same as those supported for outputs, as well as reading unsigned integer 1, 2, 4 bit files. See also <a href="../../APIs/SentinelHub/Evalscript/Functions.html#sampletype">sampleType</a>.</li>
 </ul>
 <p>Bands can have different resolutions.</p>
 <p>For best performance we recommend the following setting for COGs: deflate compressed with 1024x1024 pixel internal tiling.</p>
@@ -2302,7 +2308,7 @@ Note
 <section id="a-note-about-cover-geometries" class="level3">
 <h3 class="anchored" data-anchor-id="a-note-about-cover-geometries">A note about cover geometries</h3>
 <p>Each tile ingested also requires a cover geometry. A cover geometry is a geometry which outlines the valid data part of the tile. Nodata therefore should not be contained in the cover geometry. In the simplest case, the cover geometry will equal the bounding box of the file being ingested.</p>
-<p>The cover geometry is important because it tells the system where it can expect to find data. As a consequence, this determines how data is rendered where tiles overlap. If you have tiles with overlapping cover geometries and you for example request <a href="../../APIs/SentinelHub/Evalscript/V3.html#mosaicking">mosaicking SIMPLE</a>, only the data from one tile will be rendered where two (or more) cover geometries intersect. This is true even if this data is nodata or if it lies outside the tile bounding box. Sentinel Hub will render such areas as nodata even if other tiles in the data collection contain valid data for this area. Having quality cover geometries is therefore important for collections where many tiles containing nodata overlap. Not all cases need precise cover geometries, however. A single tile or a regularly gridded collection with a single date and coordinate reference system can get away with cover geometries equalling the bounding box.</p>
+<p>The cover geometry is important because it tells the system where it can expect to find data. As a consequence, this determines how data is rendered where tiles overlap. If you have tiles with overlapping cover geometries and you for example request <a href="../../APIs/SentinelHub/Evalscript/Functions.html#mosaicking">mosaicking SIMPLE</a>, only the data from one tile will be rendered where two (or more) cover geometries intersect. This is true even if this data is nodata or if it lies outside the tile bounding box. Sentinel Hub will render such areas as nodata even if other tiles in the data collection contain valid data for this area. Having quality cover geometries is therefore important for collections where many tiles containing nodata overlap. Not all cases need precise cover geometries, however. A single tile or a regularly gridded collection with a single date and coordinate reference system can get away with cover geometries equalling the bounding box.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="Byoc/img/overlapping-tiles.svg" class="img-fluid figure-img"></p>
@@ -2351,7 +2357,7 @@ Note
 <section id="workarounds" class="level4">
 <h4 class="anchored" data-anchor-id="workarounds">Workarounds</h4>
 <p>In case your input data is complex and cannot be adequately simply outlined it is nevertheless possible to obtain pixel-precise rendering. In this case, set the cover geometry to any which covers all the valid input pixels. The file bounding box as the default is such an example. What follows is doing the mosaicking in the custom script with the help of <a href="../../APIs/SentinelHub/UserGuides/Datamask.html">dataMask</a>.</p>
-<p>First, set the <a href="../../APIs/SentinelHub/Evalscript/V3.html#mosaicking">mosaicking</a> parameter within <code>setup</code> to <code>TILE</code> (<code>mosaicking: Mosaicking.TILE</code>) and add the <code>dataMask</code> to the array of input bands.</p>
+<p>First, set the <a href="../../APIs/SentinelHub/Evalscript/Functions.html#mosaicking">mosaicking</a> parameter within <code>setup</code> to <code>TILE</code> (<code>mosaicking: Mosaicking.TILE</code>) and add the <code>dataMask</code> to the array of input bands.</p>
 <p>Then use something like the following as your evalscript. Since <code>dataMask</code> precisely determines which pixels are valid and which ones are not, the moment a valid pixel is found this can be returned, alternatively the next scene should be checked.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode javascript code-with-copy"><code class="sourceCode javascript"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">evaluatePixel</span>(samples<span class="op">,</span> scenes) {</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (<span class="kw">let</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> samples<span class="op">.</span><span class="at">length</span><span class="op">;</span> i<span class="op">++</span>) {</span>
