@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Evalscript (custom script) – Documentation</title>
+<title>Evalscript – Documentation</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -29,7 +63,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="../../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../../">
-<link href="../../APIs/SentinelHub/Evalscript/V3.html" rel="next">
+<link href="../../APIs/SentinelHub/Evalscript/Functions.html" rel="next">
 <link href="../../APIs/SentinelHub/Data/DataFusion.html" rel="prev">
 <link href="../../_images/logos/favicon.png" rel="icon" type="image/png">
 <script src="../../site_libs/quarto-html/quarto.js"></script>
@@ -1344,14 +1378,20 @@ window.onload = function() {
       <ul id="quarto-sidebar-section-40" class="collapse list-unstyled sidebar-section depth3 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/SentinelHub/Evalscript/V3.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Evalscript V3</span></a>
+  <a href="../../APIs/SentinelHub/Evalscript/Functions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Functions</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/SentinelHub/Evalscript/Functions.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Utility Functions</span></a>
+  <a href="../../APIs/SentinelHub/Evalscript/Utilities.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Utilities</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/SentinelHub/Evalscript/Examples.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Examples</span></a>
   </div>
 </li>
       </ul>
@@ -1919,7 +1959,28 @@ window.onload = function() {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#examples" id="toc-examples" class="nav-link active" data-scroll-target="#examples">Examples</a></li>
+  <li><a href="#transparency" id="toc-transparency" class="nav-link active" data-scroll-target="#transparency">Transparency</a>
+  <ul>
+  <li><a href="#transparent-nodata-pixels" id="toc-transparent-nodata-pixels" class="nav-link" data-scroll-target="#transparent-nodata-pixels">Transparent <code>NoData</code> Pixels</a>
+  <ul class="collapse">
+  <li><a href="#transparent-nodata-pixels-and-sampletype-uint16" id="toc-transparent-nodata-pixels-and-sampletype-uint16" class="nav-link" data-scroll-target="#transparent-nodata-pixels-and-sampletype-uint16">Transparent <code>NoData</code> pixels and sampleType: <code>UINT16</code></a></li>
+  <li><a href="#transparent-nodata-pixels-and-sampletype-uint8" id="toc-transparent-nodata-pixels-and-sampletype-uint8" class="nav-link" data-scroll-target="#transparent-nodata-pixels-and-sampletype-uint8">Transparent <code>NoData</code> pixels and sampleType: <code>UINT8</code></a></li>
+  </ul></li>
+  <li><a href="#transparent-data-pixels" id="toc-transparent-data-pixels" class="nav-link" data-scroll-target="#transparent-data-pixels">Transparent Data Pixels</a></li>
+  </ul></li>
+  <li><a href="#data-mask" id="toc-data-mask" class="nav-link" data-scroll-target="#data-mask">Data Mask</a>
+  <ul>
+  <li><a href="#general-notes" id="toc-general-notes" class="nav-link" data-scroll-target="#general-notes">General notes</a></li>
+  <li><a href="#example-1-assign-an-arbitrary-value-99-to-nodata-pixels" id="toc-example-1-assign-an-arbitrary-value-99-to-nodata-pixels" class="nav-link" data-scroll-target="#example-1-assign-an-arbitrary-value-99-to-nodata-pixels">Example 1: Assign an arbitrary value (99) to <code>NoData</code> pixels</a></li>
+  <li><a href="#example-2-use-values-in-datamask-as-the-transparency-band" id="toc-example-2-use-values-in-datamask-as-the-transparency-band" class="nav-link" data-scroll-target="#example-2-use-values-in-datamask-as-the-transparency-band">Example 2: Use values in <code>dataMask</code> as the transparency band</a></li>
+  </ul></li>
+  <li><a href="#working-with-metadata-in-evalscripts" id="toc-working-with-metadata-in-evalscripts" class="nav-link" data-scroll-target="#working-with-metadata-in-evalscripts">Working with Metadata in Evalscripts</a>
+  <ul>
+  <li><a href="#check-which-metadata-is-available" id="toc-check-which-metadata-is-available" class="nav-link" data-scroll-target="#check-which-metadata-is-available">Check Which Metadata is Available</a></li>
+  <li><a href="#properties-of-scenes-object-and-mosaicking-orbit" id="toc-properties-of-scenes-object-and-mosaicking-orbit" class="nav-link" data-scroll-target="#properties-of-scenes-object-and-mosaicking-orbit">Properties of Scenes Object and Mosaicking <code>ORBIT</code></a></li>
+  <li><a href="#properties-of-scenes-object-and-mosaicking-tile" id="toc-properties-of-scenes-object-and-mosaicking-tile" class="nav-link" data-scroll-target="#properties-of-scenes-object-and-mosaicking-tile">Properties of Scenes Object and Mosaicking <code>TILE</code></a></li>
+  <li><a href="#output-metadata-into-userdata.json-file" id="toc-output-metadata-into-userdata.json-file" class="nav-link" data-scroll-target="#output-metadata-into-userdata.json-file">Output Metadata into <code>userdata.json</code> file</a></li>
+  </ul></li>
   <li><a href="#tutorials-and-other-related-materials" id="toc-tutorials-and-other-related-materials" class="nav-link" data-scroll-target="#tutorials-and-other-related-materials">Tutorials and Other Related Materials</a></li>
   </ul>
 </nav>
@@ -1929,7 +1990,7 @@ window.onload = function() {
 
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../APIs.html">APIs</a></li><li class="breadcrumb-item"><a href="../../APIs/SentinelHub.html">Sentinel Hub</a></li><li class="breadcrumb-item"><a href="../../APIs/SentinelHub/Evalscript.html">Evalscript (custom script)</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">Evalscript (custom script)</h1>
+<h1 class="title">Evalscript</h1>
 </div>
 
 
@@ -1946,23 +2007,486 @@ window.onload = function() {
 </header>
 
 
-<p>An evalscript (or "custom script") is a piece of Javascript code which defines how the satellite data shall be processed by Sentinel Hub and what values the service shall return. It is a required part of any <a href="../../APIs/SentinelHub/Process.html">process</a>, <a href="../../APIs/SentinelHub/Batch.html">batch processing</a> or <a href="../../APIs/SentinelHub/OGC.html">OGC request</a>.</p>
-<p>Evalscripts can use any JavaScript function or language structures, along with certain <a href="../../APIs/SentinelHub/Evalscript/Functions.html">utility functions</a> we provide for your convenience. For running evalscripts we use the <a href="https://v8.dev/" target="_blank">Chrome V8</a> JavaScript engine.</p>
-<p>In the <a href="../../APIs/SentinelHub/Evalscript/V3.html">Evalscript V3</a> section you will find a technical documentation with detailed explanations of parameters and functions you can use in your evalscripts.</p>
-<section id="examples" class="level3">
-<h3 class="anchored" data-anchor-id="examples">Examples</h3>
-<p>Examples of various evalscritps can be found on our <a href="https://custom-scripts.sentinel-hub.com/" target="_blank">Custom Scripts Repository</a>.</p>
-</section>
-<section id="tutorials-and-other-related-materials" class="level3">
-<h3 class="anchored" data-anchor-id="tutorials-and-other-related-materials">Tutorials and Other Related Materials</h3>
+<p>An evalscript (or custom script) is a piece of Javascript code that defines how the platform processes satellite data and what values the service returns. It is a required part of any <a href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Process.html">Processing</a>, <a href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Batch.html">Batch processing</a> or <a href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/OGC.html">OGC API request</a>.</p>
+<p>The evalscript <a href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Evalscript/Functions.html">functions</a> section contains detailed explanations of parameters and functions that can be used in evalscripts. Evalscripts can use any JavaScript function or language structure and include certain <a href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Evalscript/Utilities.html">utility functions</a> specific to the platform. Evalscripts run the <a href="https://v8.dev/">Chrome V8</a> JavaScript engine.</p>
+<p>Evalscripts can be used to calculate a spectral index, create visualizations, do multi-temporal analysis and visualization, use data fusion, and do statistical analysis. Other things, such as setting the resolution of output, setting the projection of output, and defining the time range of requests, are set as <a href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/ApiReference.html">request parameters</a> for the various APIs.</p>
+<section id="transparency" class="level2">
+<h2 class="anchored" data-anchor-id="transparency">Transparency</h2>
+<p>Parts of the image can be made fully or partially transparent by including the fourth output channel, the <a href="https://en.wikipedia.org/wiki/Alpha_compositing">alpha channel</a>. The value 0 in the alpha channel makes a pixel fully transparent, while the maximum value in the alpha channel makes it fully opaque (not transparent). The values in between will make the pixel proportionally transparent. The maximum value in the alpha channel depends on an image bit depth as specified by <a href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Evalscript/Functions.html#sampletype">sampleType</a>:</p>
 <ul>
-<li>A PDF tutorial on writing simple evalscripts for beginners: <a href="https://www.sentinel-hub.com/explore/education/custom-scripts-tutorial/" target="_blank">Custom scripts tutorial</a></li>
-<li>A webinar on writing evalscripts for beginners: <a href="https://www.youtube.com/watch?v=cgAH2beNYoU" target="_blank">Custom Scripts</a>, September 28, 2020</li>
-<li>A webinar on multi-temporal scripts and data fusion: <a href="https://www.youtube.com/watch?v=kbw3OyYkbA4" target="_blank">Multi-temporal Scripts and Data Fusion</a>, March 3, 2021</li>
-<li>A blog on good scripting practices: <a href="https://medium.com/sentinel-hub/custom-scripts-faster-cheaper-better-83f73894658a" target="_blank">Custom Scripts: Faster, Cheaper, Better!</a>, November 18, 2019</li>
-<li>A blog post on color maps: <a href="https://medium.com/sentinel-hub/perceptually-uniform-color-maps-in-satellite-imagery-3e3e24e30af5" target="_blank">PUCK - Perceptually Uniform Color Maps in Satellite Imagery</a>, January 28, 2021</li>
-<li>A blog post on sampleType: <a href="https://medium.com/sentinel-hub/sampletype-whats-all-the-fuss-about-d7348b4de647" target="_blank">SampleType: what’s all the fuss about?</a>, February 15, 2022</li>
-<li>More blog posts and useful links can be found on our <a href="https://www.sentinel-hub.com/develop/custom-scripts/" target="_blank">Sentinel Hub website</a>.</li>
+<li>for <code>sampleType</code> <code>AUTO</code> or <code>FLOAT32</code>: values in the alpha channel should be from the interval [0, 1]</li>
+<li>for <code>sampleType</code> <code>UINT8</code>: values in the alpha channel should be from the interval [0, 255]</li>
+<li>for <code>sampleType</code> <code>UINT16</code>: values in the alpha channel should be from the interval [0, 65535]</li>
+</ul>
+<p>PNG and TIFF are output file formats that support transparency, while JPEG does not.</p>
+<section id="transparent-nodata-pixels" class="level3">
+<h3 class="anchored" data-anchor-id="transparent-nodata-pixels">Transparent <code>NoData</code> Pixels</h3>
+<p><code>NoData</code> pixels are identified by the value 0 in the <code>dataMask</code> band. In the following evalscript, if the wetness index (NDWI) is positive, the returned value will be 0, making water areas transparent and only land visible in the returned image.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">//VERSION=3</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">setup</span>() {</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> {</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">input</span><span class="op">:</span> [<span class="st">'B02'</span><span class="op">,</span> <span class="st">'B03'</span><span class="op">,</span> <span class="st">'B04'</span><span class="op">,</span> <span class="st">'B08'</span>]<span class="op">,</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">output</span><span class="op">:</span> { <span class="dt">bands</span><span class="op">:</span> <span class="dv">4</span> }<span class="op">,</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  }<span class="op">;</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">evaluatePixel</span>(sample) {</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> NDWI <span class="op">=</span> (sample<span class="op">.</span><span class="at">B03</span> <span class="op">-</span> sample<span class="op">.</span><span class="at">B08</span>) <span class="op">/</span> (sample<span class="op">.</span><span class="at">B03</span> <span class="op">+</span> sample<span class="op">.</span><span class="at">B08</span>)<span class="op">;</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> transparency <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (NDWI <span class="op">&lt;</span> <span class="dv">0</span>) {</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    transparency <span class="op">=</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> [<span class="fl">2.5</span> <span class="op">*</span> sample<span class="op">.</span><span class="at">B04</span><span class="op">,</span> <span class="fl">2.5</span> <span class="op">*</span> sample<span class="op">.</span><span class="at">B03</span><span class="op">,</span> <span class="fl">2.5</span> <span class="op">*</span> sample<span class="op">.</span><span class="at">B02</span><span class="op">,</span> transparency]<span class="op">;</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><a href="https://browser.dataspace.copernicus.eu/?zoom=9&amp;lat=42.79339&amp;lng=11.27884&amp;themeId=DEFAULT-THEME&amp;visualizationUrl=U2FsdGVkX197%2BXX6HgflbXbu1I7iR7%2BhYa8ANkhinFSbbzK8NfhIEzCiuXOrvuvWReaYwlISmjJYHX8cZPunVnedWnKqdK1c3%2F9jop3WhxG0lS5xx5OUzYlMJHu4ktcC&amp;evalscripturl=https%3A%2F%2Fcustom-scripts.sentinel-hub.com%2Fcustom-scripts%2Fsentinel-2%2Fndvi%2Feob.js&amp;datasetId=S2_L2A_CDAS&amp;fromTime=2020-07-12T00%3A00%3A00.000Z&amp;toTime=2020-07-12T23%3A59%3A59.999Z&amp;demSource3D=%22MAPZEN%22&amp;cloudCoverage=30&amp;dateMode=SINGLE#custom-script">Explore in Copernicus Browser</a></p>
+<p>This approach works when the <code>AUTO</code> or <code>FLOAT32</code> sample types are being requested. To achieve the same transparency, scale the output values for other sample types. See the examples below for guidance.</p>
+<section id="transparent-nodata-pixels-and-sampletype-uint16" class="level4">
+<h4 class="anchored" data-anchor-id="transparent-nodata-pixels-and-sampletype-uint16">Transparent <code>NoData</code> pixels and sampleType: <code>UINT16</code></h4>
+<p>When using <code>sampleType</code> <code>UINT16</code>, the range of output values in an image becomes [0, 65535]. The value 65535 must be returned in the alpha channel for pixels that should not be transparent, as shown in the example below.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">//VERSION=3</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">setup</span>() {</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> {</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">input</span><span class="op">:</span> [<span class="st">'B04'</span><span class="op">,</span> <span class="st">'B03'</span><span class="op">,</span> <span class="st">'B02'</span><span class="op">,</span> <span class="st">'dataMask'</span>]<span class="op">,</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">output</span><span class="op">:</span> { <span class="dt">bands</span><span class="op">:</span> <span class="dv">4</span><span class="op">,</span> <span class="dt">sampleType</span><span class="op">:</span> <span class="st">'UINT16'</span> }<span class="op">,</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  }<span class="op">;</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">evaluatePixel</span>(samples<span class="op">,</span> scenes) {</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> [</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    samples<span class="op">.</span><span class="at">B04</span> <span class="op">*</span> <span class="fl">3.5</span> <span class="op">*</span> <span class="dv">65535</span><span class="op">,</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    samples<span class="op">.</span><span class="at">B03</span> <span class="op">*</span> <span class="fl">3.5</span> <span class="op">*</span> <span class="dv">65535</span><span class="op">,</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    samples<span class="op">.</span><span class="at">B02</span> <span class="op">*</span> <span class="fl">3.5</span> <span class="op">*</span> <span class="dv">65535</span><span class="op">,</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    samples<span class="op">.</span><span class="at">dataMask</span> <span class="op">*</span> <span class="dv">65535</span><span class="op">,</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  ]<span class="op">;</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="transparent-nodata-pixels-and-sampletype-uint8" class="level4">
+<h4 class="anchored" data-anchor-id="transparent-nodata-pixels-and-sampletype-uint8">Transparent <code>NoData</code> pixels and sampleType: <code>UINT8</code></h4>
+<p>The same logic applies to <code>sampleType</code> <code>UINT8</code>, except that the range of output values in this case is [0, 255]. The same evalscript as above but for <code>UINT8</code>:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">//VERSION=3</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">setup</span>() {</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> {</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">input</span><span class="op">:</span> [<span class="st">'B04'</span><span class="op">,</span> <span class="st">'B03'</span><span class="op">,</span> <span class="st">'B02'</span><span class="op">,</span> <span class="st">'dataMask'</span>]<span class="op">,</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">output</span><span class="op">:</span> { <span class="dt">bands</span><span class="op">:</span> <span class="dv">4</span><span class="op">,</span> <span class="dt">sampleType</span><span class="op">:</span> <span class="st">'UINT8'</span> }<span class="op">,</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  }<span class="op">;</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">evaluatePixel</span>(samples<span class="op">,</span> scenes) {</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> [</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    samples<span class="op">.</span><span class="at">B04</span> <span class="op">*</span> <span class="fl">3.5</span> <span class="op">*</span> <span class="dv">255</span><span class="op">,</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    samples<span class="op">.</span><span class="at">B03</span> <span class="op">*</span> <span class="fl">3.5</span> <span class="op">*</span> <span class="dv">255</span><span class="op">,</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    samples<span class="op">.</span><span class="at">B02</span> <span class="op">*</span> <span class="fl">3.5</span> <span class="op">*</span> <span class="dv">255</span><span class="op">,</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    samples<span class="op">.</span><span class="at">dataMask</span> <span class="op">*</span> <span class="dv">255</span><span class="op">,</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  ]<span class="op">;</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+</section>
+<section id="transparent-data-pixels" class="level3">
+<h3 class="anchored" data-anchor-id="transparent-data-pixels">Transparent Data Pixels</h3>
+<p>To use some other condition for turning pixels transparent, return the condition in the fourth channel and output four bands in the <code>setup()</code> function. The example below shows how to return the Sentinel-2 L1C <a href="https://custom-scripts.sentinel-hub.com/sentinel-2/ndvi/">NDVI index</a> and values larger than 0.6 as transparent. This example also leaves the <code>NoData</code> pixels non-transparent and thus does not need to use the <code>dataMask</code> input band.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">//VERSION=3</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">setup</span>() {</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> {</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">input</span><span class="op">:</span> [<span class="st">'B02'</span><span class="op">,</span> <span class="st">'B03'</span><span class="op">,</span> <span class="st">'B04'</span><span class="op">,</span> <span class="st">'B08'</span>]<span class="op">,</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">output</span><span class="op">:</span> { <span class="dt">bands</span><span class="op">:</span> <span class="dv">4</span> }<span class="op">,</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  }<span class="op">;</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">evaluatePixel</span>(samples<span class="op">,</span> scenes) {</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="kw">var</span> NDVI <span class="op">=</span> (samples<span class="op">.</span><span class="at">B08</span> <span class="op">-</span> samples<span class="op">.</span><span class="at">B04</span>) <span class="op">/</span> (samples<span class="op">.</span><span class="at">B08</span> <span class="op">+</span> samples<span class="op">.</span><span class="at">B04</span>)<span class="op">;</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> [samples<span class="op">.</span><span class="at">B04</span> <span class="op">*</span> <span class="fl">2.5</span><span class="op">,</span> samples<span class="op">.</span><span class="at">B03</span> <span class="op">*</span> <span class="fl">2.5</span><span class="op">,</span> samples<span class="op">.</span><span class="at">B02</span> <span class="op">*</span> <span class="fl">2.5</span><span class="op">,</span> NDVI <span class="op">&lt;</span> <span class="fl">0.6</span>]<span class="op">;</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+</section>
+<section id="data-mask" class="level2">
+<h2 class="anchored" data-anchor-id="data-mask">Data Mask</h2>
+<p>Evalscripts allow control over which parts (pixels) of the image to return. This way, parts with <code>NoData</code> can be removed. The setup function allows a user to request <code>dataMask</code> as an input array element and then use it in the <code>evaluatePixel</code> function in the same manner as any other input band.</p>
+<section id="general-notes" class="level4">
+<h4 class="anchored" data-anchor-id="general-notes">General notes</h4>
+<p><code>dataMask</code> has a value of 0 for <code>NoData</code> pixels and 1 elsewhere.</p>
+<p>What <code>NoData</code> means:</p>
+<ul>
+<li>All pixels that lie outside of the requested polygon (if specified).</li>
+<li>All pixels where no source data was found.</li>
+<li>All pixels where there is data explicitly set to the <code>NoData</code> value.</li>
+</ul>
+<p>All <code>NoData</code> pixels, as defined above, have a <code>dataMask</code> value of 0. All band values for these pixels are also 0, except for Landsat data collections, where band values for <code>NoData</code> pixels are NaN.</p>
+<p><code>NoData</code> pixels are treated like any other in the evalscript. Their value is applied to the evalscript like any other pixel. For example, <code>return [sample.B04*sample.B03]</code> returns 0 for <code>NoData</code> pixels, while <code>return [sample.B04/sample.B03]</code> would return “Infinity” (if <code>sampleType</code> is <code>FLOAT32</code>) due to division by zero or “NaN.” To treat <code>NoData</code> pixels differently, they should be handled explicitly in evalscripts. See the examples below.</p>
+</section>
+<section id="example-1-assign-an-arbitrary-value-99-to-nodata-pixels" class="level4">
+<h4 class="anchored" data-anchor-id="example-1-assign-an-arbitrary-value-99-to-nodata-pixels">Example 1: Assign an arbitrary value (99) to <code>NoData</code> pixels</h4>
+<div class="sourceCode" id="cb5"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">//VERSION=3</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">setup</span>() {</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> {</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">input</span><span class="op">:</span> [<span class="st">'B02'</span><span class="op">,</span> <span class="st">'B03'</span><span class="op">,</span> <span class="st">'B04'</span><span class="op">,</span> <span class="st">'dataMask'</span>]<span class="op">,</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">output</span><span class="op">:</span> { <span class="dt">bands</span><span class="op">:</span> <span class="dv">3</span> }<span class="op">,</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  }<span class="op">;</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">evaluatePixel</span>(sample) {</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (sample<span class="op">.</span><span class="at">dataMask</span> <span class="op">==</span> <span class="dv">1</span>) {</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> [<span class="fl">2.5</span> <span class="op">*</span> sample<span class="op">.</span><span class="at">B04</span><span class="op">,</span> <span class="fl">2.5</span> <span class="op">*</span> sample<span class="op">.</span><span class="at">B03</span><span class="op">,</span> <span class="fl">2.5</span> <span class="op">*</span> sample<span class="op">.</span><span class="at">B02</span>]<span class="op">;</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> [<span class="dv">99</span><span class="op">,</span> <span class="dv">99</span><span class="op">,</span> <span class="dv">99</span>]<span class="op">;</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="example-2-use-values-in-datamask-as-the-transparency-band" class="level4">
+<h4 class="anchored" data-anchor-id="example-2-use-values-in-datamask-as-the-transparency-band">Example 2: Use values in <code>dataMask</code> as the transparency band</h4>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>To use this example, set the <code>output.responses.format.type</code> parameter of your processing API request to <code>image/png</code> or <code>image/tiff</code>. The PNG format will automatically interpret the fourth band as transparency.</p>
+</div>
+</div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">//VERSION=3</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">setup</span>() {</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> {</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">input</span><span class="op">:</span> [<span class="st">'B02'</span><span class="op">,</span> <span class="st">'B03'</span><span class="op">,</span> <span class="st">'B04'</span><span class="op">,</span> <span class="st">'dataMask'</span>]<span class="op">,</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">output</span><span class="op">:</span> { <span class="dt">bands</span><span class="op">:</span> <span class="dv">4</span> }<span class="op">,</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  }<span class="op">;</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">evaluatePixel</span>(sample) {</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> [</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    <span class="fl">2.5</span> <span class="op">*</span> sample<span class="op">.</span><span class="at">B04</span><span class="op">,</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    <span class="fl">2.5</span> <span class="op">*</span> sample<span class="op">.</span><span class="at">B03</span><span class="op">,</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    <span class="fl">2.5</span> <span class="op">*</span> sample<span class="op">.</span><span class="at">B02</span><span class="op">,</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    sample<span class="op">.</span><span class="at">dataMask</span><span class="op">,</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>  ]<span class="op">;</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+</section>
+<section id="working-with-metadata-in-evalscripts" class="level2">
+<h2 class="anchored" data-anchor-id="working-with-metadata-in-evalscripts">Working with Metadata in Evalscripts</h2>
+<p>Metadata provided in raster format is available as additional bands in the collection. Like any other input band, this metadata can be accessed and processed in evalscripts. Basic examples and metadata are listed in the <a href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Data.html">data section</a> for each data collection (e.g., <a href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Data/S2L1C.html#available-bands-and-data">sunAzimuthAngles</a>).</p>
+<section id="check-which-metadata-is-available" class="level3">
+<h3 class="anchored" data-anchor-id="check-which-metadata-is-available">Check Which Metadata is Available</h3>
+<p>Metadata is stored in two objects, which are called <a href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Evalscript/Functions.html#inputmetadata"><code>inputMetadata</code></a> and <a href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Evalscript/Functions.html#scenes"><code>scenes</code></a>. The properties of the <code>scenes</code> object can be different depending on the selection of:</p>
+<ul>
+<li>mosaicking (e.g., <code>ORBIT</code> or <code>TILE</code>)</li>
+<li>data collection (e.g., Sentinel-2 L2A, Sentinel-1, Sentinel-5p)</li>
+<li>function in the evalscript (e.g., <code>evaluatePixel</code>, <code>preProcessScenes</code>, <code>updateOutputMetadata</code>)</li>
+</ul>
+<p>A convenient way to check which metadata is available to be requested in scenes is to write all object properties to the userdata.json file. This basic <a href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Process/Examples/S2L1C.html#true-color-and-metadata-multi-part-response-geotiff-and-json">example</a> shows how to do this with the Processing API.</p>
+</section>
+<section id="properties-of-scenes-object-and-mosaicking-orbit" class="level3">
+<h3 class="anchored" data-anchor-id="properties-of-scenes-object-and-mosaicking-orbit">Properties of Scenes Object and Mosaicking <code>ORBIT</code></h3>
+<p>This example shows:</p>
+<ul>
+<li>Accessing metadata when mosaicking is <code>ORBIT</code> using <code>scenes.orbits</code></li>
+<li>Passing metadata from <code>scenes</code> to the userdata.json file using <code>outputMetadata.userData</code> in <code>updateOutputMetadata</code>function</li>
+</ul>
+<div class="sourceCode" id="cb7"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>evalscript <span class="op">=</span> <span class="st">"""</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co">//VERSION=3</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">setup</span>() {</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a> <span class="cf">return</span> {</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>   <span class="dt">input</span><span class="op">:</span> [<span class="st">"B02"</span><span class="op">,</span> <span class="st">"dataMask"</span>]<span class="op">,</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>   <span class="dt">mosaicking</span><span class="op">:</span> Mosaicking<span class="op">.</span><span class="at">ORBIT</span><span class="op">,</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>   <span class="dt">output</span><span class="op">:</span> {</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>     <span class="dt">id</span><span class="op">:</span> <span class="st">"default"</span><span class="op">,</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>     <span class="dt">bands</span><span class="op">:</span> <span class="dv">1</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>   }</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a> }</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">evaluatePixel</span>(samples<span class="op">,</span> scenes<span class="op">,</span> inputMetadata<span class="op">,</span> customData<span class="op">,</span> outputMetadata) {</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a> <span class="co">//Average value of band B02 based on the requested scenes</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a> <span class="kw">var</span> sumOfValidSamplesB02 <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a> <span class="kw">var</span> numberOfValidSamples <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a> <span class="cf">for</span> (i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> samples<span class="op">.</span><span class="at">length</span><span class="op">;</span> i<span class="op">++</span>) {</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>   <span class="kw">var</span> sample <span class="op">=</span> samples[i]</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>   <span class="cf">if</span> (sample<span class="op">.</span><span class="at">dataMask</span> <span class="op">==</span> <span class="dv">1</span>){</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>       sumOfValidSamplesB02 <span class="op">+=</span> sample<span class="op">.</span><span class="at">B02</span></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>       numberOfValidSamples <span class="op">+=</span> <span class="dv">1</span></span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>   }</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a> }</span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a> <span class="cf">return</span> [sumOfValidSamplesB02 <span class="op">/</span> numberOfValidSamples]</span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">updateOutputMetadata</span>(scenes<span class="op">,</span> inputMetadata<span class="op">,</span> outputMetadata) {</span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a> outputMetadata<span class="op">.</span><span class="at">userData</span> <span class="op">=</span> {</span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>   <span class="st">"inputMetadata"</span><span class="op">:</span> inputMetadata</span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a> }</span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a> outputMetadata<span class="op">.</span><span class="at">userData</span>[<span class="st">"orbits"</span>] <span class="op">=</span> scenes<span class="op">.</span><span class="at">orbits</span></span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>request <span class="op">=</span> {</span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a> <span class="st">"input"</span><span class="op">:</span> {</span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>   <span class="st">"bounds"</span><span class="op">:</span> {</span>
+<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a>     <span class="st">"bbox"</span><span class="op">:</span> [<span class="fl">13.8</span><span class="op">,</span> <span class="fl">45.8</span><span class="op">,</span> <span class="fl">13.9</span><span class="op">,</span> <span class="fl">45.9</span>]</span>
+<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a>   }<span class="op">,</span></span>
+<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a>   <span class="st">"data"</span><span class="op">:</span> [{</span>
+<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a>     <span class="st">"type"</span><span class="op">:</span> <span class="st">"sentinel-2-l1c"</span><span class="op">,</span></span>
+<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a>     <span class="st">"dataFilter"</span><span class="op">:</span> {</span>
+<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a>       <span class="st">"timeRange"</span><span class="op">:</span> {</span>
+<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a>         <span class="st">"from"</span><span class="op">:</span> <span class="st">"2020-12-01T00:00:00Z"</span><span class="op">,</span></span>
+<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a>         <span class="st">"to"</span><span class="op">:</span> <span class="st">"2020-12-06T23:59:59Z"</span></span>
+<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a>       }</span>
+<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a>     }</span>
+<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a>   }]</span>
+<span id="cb7-53"><a href="#cb7-53" aria-hidden="true" tabindex="-1"></a> }<span class="op">,</span></span>
+<span id="cb7-54"><a href="#cb7-54" aria-hidden="true" tabindex="-1"></a> <span class="st">"output"</span><span class="op">:</span> {</span>
+<span id="cb7-55"><a href="#cb7-55" aria-hidden="true" tabindex="-1"></a>   <span class="st">"responses"</span><span class="op">:</span> [{</span>
+<span id="cb7-56"><a href="#cb7-56" aria-hidden="true" tabindex="-1"></a>       <span class="st">"identifier"</span><span class="op">:</span> <span class="st">"default"</span><span class="op">,</span></span>
+<span id="cb7-57"><a href="#cb7-57" aria-hidden="true" tabindex="-1"></a>       <span class="st">"format"</span><span class="op">:</span> {</span>
+<span id="cb7-58"><a href="#cb7-58" aria-hidden="true" tabindex="-1"></a>         <span class="st">"type"</span><span class="op">:</span> <span class="st">"image/tiff"</span></span>
+<span id="cb7-59"><a href="#cb7-59" aria-hidden="true" tabindex="-1"></a>       }</span>
+<span id="cb7-60"><a href="#cb7-60" aria-hidden="true" tabindex="-1"></a>     }<span class="op">,</span></span>
+<span id="cb7-61"><a href="#cb7-61" aria-hidden="true" tabindex="-1"></a>     {</span>
+<span id="cb7-62"><a href="#cb7-62" aria-hidden="true" tabindex="-1"></a>       <span class="st">"identifier"</span><span class="op">:</span> <span class="st">"userdata"</span><span class="op">,</span></span>
+<span id="cb7-63"><a href="#cb7-63" aria-hidden="true" tabindex="-1"></a>       <span class="st">"format"</span><span class="op">:</span> {</span>
+<span id="cb7-64"><a href="#cb7-64" aria-hidden="true" tabindex="-1"></a>         <span class="st">"type"</span><span class="op">:</span> <span class="st">"application/json"</span></span>
+<span id="cb7-65"><a href="#cb7-65" aria-hidden="true" tabindex="-1"></a>       }</span>
+<span id="cb7-66"><a href="#cb7-66" aria-hidden="true" tabindex="-1"></a>     }</span>
+<span id="cb7-67"><a href="#cb7-67" aria-hidden="true" tabindex="-1"></a>   ]</span>
+<span id="cb7-68"><a href="#cb7-68" aria-hidden="true" tabindex="-1"></a> }<span class="op">,</span></span>
+<span id="cb7-69"><a href="#cb7-69" aria-hidden="true" tabindex="-1"></a> <span class="st">"evalscript"</span><span class="op">:</span> evalscript</span>
+<span id="cb7-70"><a href="#cb7-70" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="properties-of-scenes-object-and-mosaicking-tile" class="level3">
+<h3 class="anchored" data-anchor-id="properties-of-scenes-object-and-mosaicking-tile">Properties of Scenes Object and Mosaicking <code>TILE</code></h3>
+<p>This example shows how to:</p>
+<ul>
+<li>Access scenes metadata when mosaicking is <code>TILE</code> using <code>scenes.tiles</code> and writing it to the userdata.json file</li>
+<li>Calculate a maximum value of band B02 and writing it to the userdata.json file.</li>
+</ul>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Note that a global variable <code>maxValueB02</code> is used to assign a value to it in the <code>evaluatePixel</code> function but not to write its value to metadata in the <code>updateOutputMetadata</code> function. The advantage of this approach is that <code>maxValueB02</code> is written to metadata only once and not for each output pixel.</p>
+</div>
+</div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>evalscript <span class="op">=</span> <span class="st">"""</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co">//VERSION=3</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">setup</span>() {</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a> <span class="cf">return</span> {</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>   <span class="dt">input</span><span class="op">:</span> [<span class="st">"B02"</span><span class="op">,</span> <span class="st">"dataMask"</span>]<span class="op">,</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>   <span class="dt">mosaicking</span><span class="op">:</span> Mosaicking<span class="op">.</span><span class="at">TILE</span><span class="op">,</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>   <span class="dt">output</span><span class="op">:</span> {</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>     <span class="dt">id</span><span class="op">:</span> <span class="st">"default"</span><span class="op">,</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>     <span class="dt">bands</span><span class="op">:</span> <span class="dv">1</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>   }</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a> }</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> maxValueB02 <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">evaluatePixel</span>(samples<span class="op">,</span> scenes<span class="op">,</span> inputMetadata<span class="op">,</span> customData<span class="op">,</span> outputMetadata) {</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a> <span class="co">//Average value of band B02 based on the requested tiles</span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a> <span class="kw">var</span> sumOfValidSamplesB02 <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a> <span class="kw">var</span> numberOfValidSamples <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a> <span class="cf">for</span> (i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> samples<span class="op">.</span><span class="at">length</span><span class="op">;</span> i<span class="op">++</span>) {</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>   <span class="kw">var</span> sample <span class="op">=</span> samples[i]</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>   <span class="cf">if</span> (sample<span class="op">.</span><span class="at">dataMask</span> <span class="op">==</span> <span class="dv">1</span>){</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>       sumOfValidSamplesB02 <span class="op">+=</span> sample<span class="op">.</span><span class="at">B02</span></span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>       numberOfValidSamples <span class="op">+=</span> <span class="dv">1</span></span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>       <span class="cf">if</span> (sample<span class="op">.</span><span class="at">B02</span> <span class="op">&gt;</span> maxValueB02){</span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>           maxValueB02 <span class="op">=</span> sample<span class="op">.</span><span class="at">B02</span></span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>       }</span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>   }</span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a> }</span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a> <span class="cf">return</span> [sumOfValidSamplesB02 <span class="op">/</span> numberOfValidSamples]</span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">updateOutputMetadata</span>(scenes<span class="op">,</span> inputMetadata<span class="op">,</span> outputMetadata) {</span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a> outputMetadata<span class="op">.</span><span class="at">userData</span> <span class="op">=</span> { <span class="st">"tiles"</span><span class="op">:</span>  scenes<span class="op">.</span><span class="at">tiles</span> }</span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a> outputMetadata<span class="op">.</span><span class="at">userData</span><span class="op">.</span><span class="at">maxValueB02</span> <span class="op">=</span> maxValueB02</span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a>request <span class="op">=</span> {</span>
+<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a> <span class="st">"input"</span><span class="op">:</span> {</span>
+<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a>   <span class="st">"bounds"</span><span class="op">:</span> {</span>
+<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a>     <span class="st">"bbox"</span><span class="op">:</span> [<span class="fl">13.8</span><span class="op">,</span> <span class="fl">45.8</span><span class="op">,</span> <span class="fl">13.9</span><span class="op">,</span> <span class="fl">45.9</span>]</span>
+<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a>   }<span class="op">,</span></span>
+<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a>   <span class="st">"data"</span><span class="op">:</span> [{</span>
+<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a>     <span class="st">"type"</span><span class="op">:</span> <span class="st">"sentinel-2-l1c"</span><span class="op">,</span></span>
+<span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a>     <span class="st">"dataFilter"</span><span class="op">:</span> {</span>
+<span id="cb8-47"><a href="#cb8-47" aria-hidden="true" tabindex="-1"></a>       <span class="st">"timeRange"</span><span class="op">:</span> {</span>
+<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a>         <span class="st">"from"</span><span class="op">:</span> <span class="st">"2020-12-01T00:00:00Z"</span><span class="op">,</span></span>
+<span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a>         <span class="st">"to"</span><span class="op">:</span> <span class="st">"2020-12-06T23:59:59Z"</span></span>
+<span id="cb8-50"><a href="#cb8-50" aria-hidden="true" tabindex="-1"></a>       }</span>
+<span id="cb8-51"><a href="#cb8-51" aria-hidden="true" tabindex="-1"></a>     }</span>
+<span id="cb8-52"><a href="#cb8-52" aria-hidden="true" tabindex="-1"></a>   }]</span>
+<span id="cb8-53"><a href="#cb8-53" aria-hidden="true" tabindex="-1"></a> }<span class="op">,</span></span>
+<span id="cb8-54"><a href="#cb8-54" aria-hidden="true" tabindex="-1"></a> <span class="st">"output"</span><span class="op">:</span> {</span>
+<span id="cb8-55"><a href="#cb8-55" aria-hidden="true" tabindex="-1"></a>   <span class="st">"responses"</span><span class="op">:</span> [{</span>
+<span id="cb8-56"><a href="#cb8-56" aria-hidden="true" tabindex="-1"></a>       <span class="st">"identifier"</span><span class="op">:</span> <span class="st">"default"</span><span class="op">,</span></span>
+<span id="cb8-57"><a href="#cb8-57" aria-hidden="true" tabindex="-1"></a>       <span class="st">"format"</span><span class="op">:</span> {</span>
+<span id="cb8-58"><a href="#cb8-58" aria-hidden="true" tabindex="-1"></a>         <span class="st">"type"</span><span class="op">:</span> <span class="st">"image/tiff"</span></span>
+<span id="cb8-59"><a href="#cb8-59" aria-hidden="true" tabindex="-1"></a>       }</span>
+<span id="cb8-60"><a href="#cb8-60" aria-hidden="true" tabindex="-1"></a>     }<span class="op">,</span></span>
+<span id="cb8-61"><a href="#cb8-61" aria-hidden="true" tabindex="-1"></a>     {</span>
+<span id="cb8-62"><a href="#cb8-62" aria-hidden="true" tabindex="-1"></a>       <span class="st">"identifier"</span><span class="op">:</span> <span class="st">"userdata"</span><span class="op">,</span></span>
+<span id="cb8-63"><a href="#cb8-63" aria-hidden="true" tabindex="-1"></a>       <span class="st">"format"</span><span class="op">:</span> {</span>
+<span id="cb8-64"><a href="#cb8-64" aria-hidden="true" tabindex="-1"></a>         <span class="st">"type"</span><span class="op">:</span> <span class="st">"application/json"</span></span>
+<span id="cb8-65"><a href="#cb8-65" aria-hidden="true" tabindex="-1"></a>       }</span>
+<span id="cb8-66"><a href="#cb8-66" aria-hidden="true" tabindex="-1"></a>     }</span>
+<span id="cb8-67"><a href="#cb8-67" aria-hidden="true" tabindex="-1"></a>   ]</span>
+<span id="cb8-68"><a href="#cb8-68" aria-hidden="true" tabindex="-1"></a> }<span class="op">,</span></span>
+<span id="cb8-69"><a href="#cb8-69" aria-hidden="true" tabindex="-1"></a> <span class="st">"evalscript"</span><span class="op">:</span> evalscript</span>
+<span id="cb8-70"><a href="#cb8-70" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="output-metadata-into-userdata.json-file" class="level3">
+<h3 class="anchored" data-anchor-id="output-metadata-into-userdata.json-file">Output Metadata into <code>userdata.json</code> file</h3>
+<p>This example shows how to write several pieces of information to the <code>userdata.json</code> file:</p>
+<ul>
+<li>A version of the software used to process the data. This information comes from <code>inputMetadata</code>.</li>
+<li>Dates when the data used for processing were acquired. This information comes from <code>scene.tiles</code>.</li>
+<li>Values set by the user and used for processing, such as thresholds (e.g., <code>ndviThreshold</code>) and an array of values (e.g., <code>notAllowedDates</code>).</li>
+<li>Dates of all available tiles before filtering out those acquired on dates given in the notAllowedDates array. These dates are listed in the <code>tilesPPSDates</code> property of <code>userData</code>. Note how to use the global variable tilesPPS: assign it a value in <code>preProcessScenes</code> and output it in the <code>updateOutputMetadata</code> function.</li>
+<li>Dates of all tiles available after the filtering. These dates are listed in the <code>tilesDates</code> property of <code>userData</code>.</li>
+<li>Description of the processing implemented in the evalscript and links to external resources.</li>
+</ul>
+<div class="sourceCode" id="cb9"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>evalscript <span class="op">=</span> <span class="st">"""</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co">//VERSION=3</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">setup</span>() {</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a> <span class="cf">return</span> {</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>   <span class="dt">input</span><span class="op">:</span> [<span class="st">"B08"</span><span class="op">,</span> <span class="st">"B04"</span><span class="op">,</span> <span class="st">"dataMask"</span>]<span class="op">,</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>   <span class="dt">mosaicking</span><span class="op">:</span> Mosaicking<span class="op">.</span><span class="at">TILE</span><span class="op">,</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>   <span class="dt">output</span><span class="op">:</span> {</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>     <span class="dt">id</span><span class="op">:</span> <span class="st">"default"</span><span class="op">,</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>     <span class="dt">bands</span><span class="op">:</span> <span class="dv">1</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>   }</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a> }</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="co">// User's inputs</span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> notAllowedDates <span class="op">=</span> [<span class="st">"2020-12-06"</span><span class="op">,</span> <span class="st">"2020-12-09"</span>]</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> ndviThreshold <span class="op">=</span> <span class="fl">0.2</span></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> tilesPPS <span class="op">=</span> []</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">preProcessScenes</span>(collections) {</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a> tilesPPS <span class="op">=</span> collections<span class="op">.</span><span class="at">scenes</span><span class="op">.</span><span class="at">tiles</span></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a> collections<span class="op">.</span><span class="at">scenes</span><span class="op">.</span><span class="at">tiles</span> <span class="op">=</span> collections<span class="op">.</span><span class="at">scenes</span><span class="op">.</span><span class="at">tiles</span><span class="op">.</span><span class="fu">filter</span>(<span class="kw">function</span>(tile) {</span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>   <span class="kw">var</span> tileDate <span class="op">=</span> tile<span class="op">.</span><span class="at">date</span><span class="op">.</span><span class="fu">split</span>(<span class="st">"T"</span>)[<span class="dv">0</span>]<span class="op">;</span></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>   <span class="cf">return</span> <span class="op">!</span>notAllowedDates<span class="op">.</span><span class="fu">includes</span>(tileDate)<span class="op">;</span></span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a> })</span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a> <span class="cf">return</span> collections</span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">evaluatePixel</span>(samples<span class="op">,</span> scenes<span class="op">,</span> inputMetadata<span class="op">,</span> customData<span class="op">,</span> outputMetadata) {</span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a> <span class="kw">var</span> valid_ndvi_sum <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a> <span class="kw">var</span> numberOfValidSamples <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a> <span class="cf">for</span> (i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> samples<span class="op">.</span><span class="at">length</span><span class="op">;</span> i<span class="op">++</span>) {</span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>   <span class="kw">var</span> sample <span class="op">=</span> samples[i]</span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>   <span class="cf">if</span> (sample<span class="op">.</span><span class="at">dataMask</span> <span class="op">==</span> <span class="dv">1</span>){</span>
+<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a>       <span class="kw">var</span> ndvi <span class="op">=</span> (sample<span class="op">.</span><span class="at">B08</span> <span class="op">-</span> sample<span class="op">.</span><span class="at">B04</span>)<span class="op">/</span>(sample<span class="op">.</span><span class="at">B08</span> <span class="op">+</span> sample<span class="op">.</span><span class="at">B04</span>)</span>
+<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a>       <span class="cf">if</span> (ndvi <span class="op">&lt;=</span> ndviThreshold){</span>
+<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a>         valid_ndvi_sum <span class="op">+=</span> ndvi</span>
+<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a>         numberOfValidSamples <span class="op">+=</span> <span class="dv">1</span></span>
+<span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a>       }</span>
+<span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a>   }</span>
+<span id="cb9-39"><a href="#cb9-39" aria-hidden="true" tabindex="-1"></a> }</span>
+<span id="cb9-40"><a href="#cb9-40" aria-hidden="true" tabindex="-1"></a> <span class="cf">return</span> [valid_ndvi_sum <span class="op">/</span> numberOfValidSamples]</span>
+<span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb9-42"><a href="#cb9-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-43"><a href="#cb9-43" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">updateOutputMetadata</span>(scenes<span class="op">,</span> inputMetadata<span class="op">,</span> outputMetadata) {</span>
+<span id="cb9-44"><a href="#cb9-44" aria-hidden="true" tabindex="-1"></a> outputMetadata<span class="op">.</span><span class="at">userData</span> <span class="op">=</span> {</span>
+<span id="cb9-45"><a href="#cb9-45" aria-hidden="true" tabindex="-1"></a>   <span class="st">"inputMetadata.serviceVersion"</span><span class="op">:</span> inputMetadata<span class="op">.</span><span class="at">serviceVersion</span></span>
+<span id="cb9-46"><a href="#cb9-46" aria-hidden="true" tabindex="-1"></a> }</span>
+<span id="cb9-47"><a href="#cb9-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-48"><a href="#cb9-48" aria-hidden="true" tabindex="-1"></a> outputMetadata<span class="op">.</span><span class="at">userData</span><span class="op">.</span><span class="at">description</span> <span class="op">=</span> <span class="st">"The evalscript calculates average ndvi "</span> <span class="op">+</span></span>
+<span id="cb9-49"><a href="#cb9-49" aria-hidden="true" tabindex="-1"></a> <span class="st">"in a requested time period. Data collected on notAllowedDates is excluded. "</span> <span class="op">+</span></span>
+<span id="cb9-50"><a href="#cb9-50" aria-hidden="true" tabindex="-1"></a> <span class="st">"ndvi values greater than ndviThreshold are excluded. "</span> <span class="op">+</span></span>
+<span id="cb9-51"><a href="#cb9-51" aria-hidden="true" tabindex="-1"></a> <span class="st">"More about ndvi: https://www.indexdatabase.de/db/i-single.php?id=58."</span></span>
+<span id="cb9-52"><a href="#cb9-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-53"><a href="#cb9-53" aria-hidden="true" tabindex="-1"></a> <span class="co">// Extract dates for all available tiles (before filtering)</span></span>
+<span id="cb9-54"><a href="#cb9-54" aria-hidden="true" tabindex="-1"></a> <span class="kw">var</span> tilePPSDates <span class="op">=</span> []</span>
+<span id="cb9-55"><a href="#cb9-55" aria-hidden="true" tabindex="-1"></a> <span class="cf">for</span> (i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> tilesPPS<span class="op">.</span><span class="at">length</span><span class="op">;</span> i<span class="op">++</span>){</span>
+<span id="cb9-56"><a href="#cb9-56" aria-hidden="true" tabindex="-1"></a>   tilePPSDates<span class="op">.</span><span class="fu">push</span>(tilesPPS[i]<span class="op">.</span><span class="at">date</span>)</span>
+<span id="cb9-57"><a href="#cb9-57" aria-hidden="true" tabindex="-1"></a> }</span>
+<span id="cb9-58"><a href="#cb9-58" aria-hidden="true" tabindex="-1"></a> outputMetadata<span class="op">.</span><span class="at">userData</span><span class="op">.</span><span class="at">tilesPPSDates</span> <span class="op">=</span> tilePPSDates</span>
+<span id="cb9-59"><a href="#cb9-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-60"><a href="#cb9-60" aria-hidden="true" tabindex="-1"></a> <span class="co">// Extract dates for tiles after filtering out tiles with "notAllowedDates"</span></span>
+<span id="cb9-61"><a href="#cb9-61" aria-hidden="true" tabindex="-1"></a> <span class="kw">var</span> tileDates <span class="op">=</span> []</span>
+<span id="cb9-62"><a href="#cb9-62" aria-hidden="true" tabindex="-1"></a> <span class="cf">for</span> (i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> scenes<span class="op">.</span><span class="at">tiles</span><span class="op">.</span><span class="at">length</span><span class="op">;</span> i<span class="op">++</span>){</span>
+<span id="cb9-63"><a href="#cb9-63" aria-hidden="true" tabindex="-1"></a>   tileDates<span class="op">.</span><span class="fu">push</span>(scenes<span class="op">.</span><span class="at">tiles</span>[i]<span class="op">.</span><span class="at">date</span>)</span>
+<span id="cb9-64"><a href="#cb9-64" aria-hidden="true" tabindex="-1"></a> }</span>
+<span id="cb9-65"><a href="#cb9-65" aria-hidden="true" tabindex="-1"></a> outputMetadata<span class="op">.</span><span class="at">userData</span><span class="op">.</span><span class="at">tilesDates</span> <span class="op">=</span> tileDates</span>
+<span id="cb9-66"><a href="#cb9-66" aria-hidden="true" tabindex="-1"></a> outputMetadata<span class="op">.</span><span class="at">userData</span><span class="op">.</span><span class="at">notAllowedDates</span> <span class="op">=</span> notAllowedDates</span>
+<span id="cb9-67"><a href="#cb9-67" aria-hidden="true" tabindex="-1"></a> outputMetadata<span class="op">.</span><span class="at">userData</span><span class="op">.</span><span class="at">ndviThreshold</span> <span class="op">=</span> ndviThreshold</span>
+<span id="cb9-68"><a href="#cb9-68" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb9-69"><a href="#cb9-69" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span>
+<span id="cb9-70"><a href="#cb9-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-71"><a href="#cb9-71" aria-hidden="true" tabindex="-1"></a>request <span class="op">=</span> {</span>
+<span id="cb9-72"><a href="#cb9-72" aria-hidden="true" tabindex="-1"></a> <span class="st">"input"</span><span class="op">:</span> {</span>
+<span id="cb9-73"><a href="#cb9-73" aria-hidden="true" tabindex="-1"></a>   <span class="st">"bounds"</span><span class="op">:</span> {</span>
+<span id="cb9-74"><a href="#cb9-74" aria-hidden="true" tabindex="-1"></a>     <span class="st">"bbox"</span><span class="op">:</span> [<span class="fl">13.8</span><span class="op">,</span> <span class="fl">45.8</span><span class="op">,</span> <span class="fl">13.9</span><span class="op">,</span> <span class="fl">45.9</span>]</span>
+<span id="cb9-75"><a href="#cb9-75" aria-hidden="true" tabindex="-1"></a>   }<span class="op">,</span></span>
+<span id="cb9-76"><a href="#cb9-76" aria-hidden="true" tabindex="-1"></a>   <span class="st">"data"</span><span class="op">:</span> [{</span>
+<span id="cb9-77"><a href="#cb9-77" aria-hidden="true" tabindex="-1"></a>     <span class="st">"type"</span><span class="op">:</span> <span class="st">"sentinel-2-l1c"</span><span class="op">,</span></span>
+<span id="cb9-78"><a href="#cb9-78" aria-hidden="true" tabindex="-1"></a>     <span class="st">"dataFilter"</span><span class="op">:</span> {</span>
+<span id="cb9-79"><a href="#cb9-79" aria-hidden="true" tabindex="-1"></a>       <span class="st">"timeRange"</span><span class="op">:</span> {</span>
+<span id="cb9-80"><a href="#cb9-80" aria-hidden="true" tabindex="-1"></a>         <span class="st">"from"</span><span class="op">:</span> <span class="st">"2020-12-01T00:00:00Z"</span><span class="op">,</span></span>
+<span id="cb9-81"><a href="#cb9-81" aria-hidden="true" tabindex="-1"></a>         <span class="st">"to"</span><span class="op">:</span> <span class="st">"2020-12-15T23:59:59Z"</span></span>
+<span id="cb9-82"><a href="#cb9-82" aria-hidden="true" tabindex="-1"></a>       }</span>
+<span id="cb9-83"><a href="#cb9-83" aria-hidden="true" tabindex="-1"></a>     }</span>
+<span id="cb9-84"><a href="#cb9-84" aria-hidden="true" tabindex="-1"></a>   }]</span>
+<span id="cb9-85"><a href="#cb9-85" aria-hidden="true" tabindex="-1"></a> }<span class="op">,</span></span>
+<span id="cb9-86"><a href="#cb9-86" aria-hidden="true" tabindex="-1"></a> <span class="st">"output"</span><span class="op">:</span> {</span>
+<span id="cb9-87"><a href="#cb9-87" aria-hidden="true" tabindex="-1"></a>   <span class="st">"responses"</span><span class="op">:</span> [{</span>
+<span id="cb9-88"><a href="#cb9-88" aria-hidden="true" tabindex="-1"></a>       <span class="st">"identifier"</span><span class="op">:</span> <span class="st">"default"</span><span class="op">,</span></span>
+<span id="cb9-89"><a href="#cb9-89" aria-hidden="true" tabindex="-1"></a>       <span class="st">"format"</span><span class="op">:</span> {</span>
+<span id="cb9-90"><a href="#cb9-90" aria-hidden="true" tabindex="-1"></a>         <span class="st">"type"</span><span class="op">:</span> <span class="st">"image/tiff"</span></span>
+<span id="cb9-91"><a href="#cb9-91" aria-hidden="true" tabindex="-1"></a>       }</span>
+<span id="cb9-92"><a href="#cb9-92" aria-hidden="true" tabindex="-1"></a>     }<span class="op">,</span></span>
+<span id="cb9-93"><a href="#cb9-93" aria-hidden="true" tabindex="-1"></a>     {</span>
+<span id="cb9-94"><a href="#cb9-94" aria-hidden="true" tabindex="-1"></a>       <span class="st">"identifier"</span><span class="op">:</span> <span class="st">"userdata"</span><span class="op">,</span></span>
+<span id="cb9-95"><a href="#cb9-95" aria-hidden="true" tabindex="-1"></a>       <span class="st">"format"</span><span class="op">:</span> {</span>
+<span id="cb9-96"><a href="#cb9-96" aria-hidden="true" tabindex="-1"></a>         <span class="st">"type"</span><span class="op">:</span> <span class="st">"application/json"</span></span>
+<span id="cb9-97"><a href="#cb9-97" aria-hidden="true" tabindex="-1"></a>       }</span>
+<span id="cb9-98"><a href="#cb9-98" aria-hidden="true" tabindex="-1"></a>     }</span>
+<span id="cb9-99"><a href="#cb9-99" aria-hidden="true" tabindex="-1"></a>   ]</span>
+<span id="cb9-100"><a href="#cb9-100" aria-hidden="true" tabindex="-1"></a> }<span class="op">,</span></span>
+<span id="cb9-101"><a href="#cb9-101" aria-hidden="true" tabindex="-1"></a> <span class="st">"evalscript"</span><span class="op">:</span> evalscript</span>
+<span id="cb9-102"><a href="#cb9-102" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>A Jupyter Notebook with all the examples may be downloaded <a href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Evalscript/resources/metadata_sh_docs.ipynb" download="metadata_sh_docs.ipynb">here</a>.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="tutorials-and-other-related-materials" class="level2">
+<h2 class="anchored" data-anchor-id="tutorials-and-other-related-materials">Tutorials and Other Related Materials</h2>
+<ul>
+<li><a href="https://github.com/eu-cdse/notebook-samples/tree/main/sentinelhub/custom_scripts#interactive-intro-to-evalscripts">Interactive Intro to Evalscripts</a></li>
+<li><a href="https://www.youtube.com/watch?v=7mkEVukGQ4o&amp;t=36s">Webinar - An Introduction to Working with Custom Scripts with the Sentinel Hub APIs in CDSE</a>, October 14, 2025</li>
+<li>Explore a blog on good scripting practices: <a href="https://medium.com/sentinel-hub/custom-scripts-faster-cheaper-better-83f73894658a">Custom Scripts: Faster, Cheaper, Better!</a>, November 18, 2019</li>
+<li>Explore a blog post on sampleType: <a href="https://medium.com/sentinel-hub/sampletype-whats-all-the-fuss-about-d7348b4de647">SampleType: what’s all the fuss about?</a>, February 15, 2022</li>
+<li>Explore a PDF tutorial on writing simple evalscripts for beginners: <a href="https://www.sentinel-hub.com/explore/education/custom-scripts-tutorial/">Custom scripts tutorial</a></li>
+<li>Explore a webinar on writing evalscripts for beginners: <a href="https://www.youtube.com/watch?v=cgAH2beNYoU">Custom Scripts</a>, September 28, 2020</li>
+<li>Explore a webinar on multi-temporal scripts and data fusion: <a href="https://www.youtube.com/watch?v=kbw3OyYkbA4">Multi-temporal Scripts and Data Fusion</a>, March 3, 2021</li>
+<li>Explore a blog post on color maps: <a href="https://medium.com/sentinel-hub/perceptually-uniform-color-maps-in-satellite-imagery-3e3e24e30af5">PUCK - Perceptually Uniform Color Maps in Satellite Imagery</a>, January 28, 2021</li>
+<li><a href="https://custom-scripts.sentinel-hub.com/">Custom Scripts Repository</a>.</li>
 </ul>
 
 
@@ -2400,8 +2924,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../../APIs/SentinelHub/Evalscript/V3.html" class="pagination-link" aria-label="Evalscript V3">
-        <span class="nav-page-text">Evalscript V3</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../../APIs/SentinelHub/Evalscript/Functions.html" class="pagination-link" aria-label="Functions">
+        <span class="nav-page-text">Functions</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
