@@ -1927,6 +1927,10 @@ window.onload = function() {
   <ul>
   <li><a href="#source-datasets-and-preprocessing" id="toc-source-datasets-and-preprocessing" class="nav-link active" data-scroll-target="#source-datasets-and-preprocessing">Source Datasets and Preprocessing</a></li>
   <li><a href="#embedding-generation" id="toc-embedding-generation" class="nav-link" data-scroll-target="#embedding-generation">Embedding Generation</a></li>
+  <li><a href="#data-storage-and-structure" id="toc-data-storage-and-structure" class="nav-link" data-scroll-target="#data-storage-and-structure">Data Storage and Structure</a></li>
+  <li><a href="#public-access-via-s3" id="toc-public-access-via-s3" class="nav-link" data-scroll-target="#public-access-via-s3">Public Access via S3</a></li>
+  <li><a href="#use-cases-and-applications" id="toc-use-cases-and-applications" class="nav-link" data-scroll-target="#use-cases-and-applications">Use Cases and Applications</a></li>
+  <li><a href="#reference" id="toc-reference" class="nav-link" data-scroll-target="#reference">Reference</a></li>
   </ul>
 </nav>
     </div>
@@ -2059,6 +2063,120 @@ Major-TOM/Core-S1RTC - Sentinel-1 Radiometrically Terrain Corrected (RTC) SAR pr
 </tbody>
 </table>
 <p>These embeddings represent high-dimensional latent vectors capturing the spectral, spatial, and contextual characteristics of each image fragment.</p>
+</section>
+<section id="data-storage-and-structure" class="level2">
+<h2 class="anchored" data-anchor-id="data-storage-and-structure">Data Storage and Structure</h2>
+<p>Embeddings and metadata are stored in GeoParquet files, which extend standard Parquet by supporting geometry-type columns while retaining columnar efficiency, compression, and interoperability with geospatial pipelines. Each record includes:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 18%">
+<col style="width: 14%">
+<col style="width: 66%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Field</th>
+<th style="text-align: right;">Type</th>
+<th style="text-align: center;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">unique_id</td>
+<td style="text-align: right;">string</td>
+<td style="text-align: center;">hash generated from geometry, time, product_id, and embedding model</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">embedding</td>
+<td style="text-align: right;">array</td>
+<td style="text-align: center;">raw embedding array</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">grid_cell</td>
+<td style="text-align: right;">string</td>
+<td style="text-align: center;">Major TOM cell</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">grid_row_u</td>
+<td style="text-align: right;">int</td>
+<td style="text-align: center;">Major TOM cell row</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">grid_col_r</td>
+<td style="text-align: right;">int</td>
+<td style="text-align: center;">Major TOM cell col</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">product_id</td>
+<td style="text-align: right;">string</td>
+<td style="text-align: center;">ID of the original product</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">timestamp</td>
+<td style="text-align: right;">string</td>
+<td style="text-align: center;">Timestamp of the sample</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">centre_lat</td>
+<td style="text-align: right;">float</td>
+<td style="text-align: center;">Centre of the fragment latitude</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">centre_lon</td>
+<td style="text-align: right;">float</td>
+<td style="text-align: center;">Centre of the fragment longitude</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">geometry</td>
+<td style="text-align: right;">geometry</td>
+<td style="text-align: center;">Polygon footprint (WGS84) of the fragment</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">utm_footprint</td>
+<td style="text-align: right;">string</td>
+<td style="text-align: center;">Polygon footprint (image UTM) of the fragment</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">utm_crs</td>
+<td style="text-align: right;">string</td>
+<td style="text-align: center;">CRS of the original product</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">pixel_bbox</td>
+<td style="text-align: right;">bbox</td>
+<td style="text-align: center;">Boundary box of the fragment (pixels)</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="public-access-via-s3" class="level2">
+<h2 class="anchored" data-anchor-id="public-access-via-s3">Public Access via S3</h2>
+<p>The embeddings are available on EODATA S3 for direct download and integration into machine learning workflows:</p>
+<ul>
+<li>s3://EODATA/auxdata/MajorTOM/embeddings/Core-S1RTC-DeCUR/</li>
+<li>s3://EODATA/auxdata/MajorTOM/embeddings/Core-S1RTC-SSL4EO/</li>
+<li>s3://EODATA/auxdata/MajorTOM/embeddings/Core-S2L1C-DeCUR/</li>
+<li>s3://EODATA/auxdata/MajorTOM/embeddings/Core-S2L1C-SSL4EO/</li>
+<li>s3://EODATA/auxdata/MajorTOM/embeddings/Core-S2L2A-MMEarth/</li>
+<li>s3://EODATA/auxdata/MajorTOM/embeddings/Core-S2RGB-DINOv2/</li>
+<li>s3://EODATA/auxdata/MajorTOM/embeddings/Core-S2RGB-SigLIP/</li>
+</ul>
+<p>Each path corresponds to a specific source dataset, sensing modality, and pre-trained model, enabling tailored selection of embeddings depending on application needs.</p>
+</section>
+<section id="use-cases-and-applications" class="level2">
+<h2 class="anchored" data-anchor-id="use-cases-and-applications">Use Cases and Applications</h2>
+<p>The Major TOM embedding datasets are designed for large-scale geospatial machine learning tasks, including but not limited to:</p>
+<ul>
+<li>Semantic segmentation and classification of land cover and land use.</li>
+<li>Change detection over time for environmental monitoring.</li>
+<li>Multi-modal data fusion leveraging combined SAR and optical data.</li>
+<li>Feature extraction for downstream AI models requiring compact, high-dimensional representations.</li>
+</ul>
+<p>The integration of dense embeddings with comprehensive metadata ensures reproducibility, transparency, and reliable linkage between latent representations and their original geospatial context.</p>
+</section>
+<section id="reference" class="level2">
+<h2 class="anchored" data-anchor-id="reference">Reference</h2>
+<p>Czerkawski, M., Kluczek, M., &amp; Bojanowski, J. S. (2024). Global and Dense Embeddings of Earth: Major TOM Floating in the Latent Space. <a href="https://arxiv.org/abs/2412.05600">arXiv:2412.05600</a>.</p>
 
 
 </section>
