@@ -34,21 +34,88 @@ These embeddings represent high-dimensional latent vectors capturing the spectra
 
 Embeddings and metadata are stored in GeoParquet files, which extend standard Parquet by supporting geometry-type columns while retaining columnar efficiency, compression, and interoperability with geospatial pipelines. Each record includes:
 
-|         Field        |         Type    |                                  Description                                 |
-|:--------------------:|----------------:|:----------------------------------------------------------------------------:|
-|       unique_id      |       string    |     hash generated from   geometry, time, product_id, and embedding model    |
-|       embedding      |        array    |     raw embedding array                                                      |
-|       grid_cell      |       string    |     Major TOM cell                                                           |
-|       grid_row_u     |          int    |     Major TOM cell row                                                       |
-|       grid_col_r     |          int    |     Major TOM cell col                                                       |
-|       product_id     |       string    |     ID of the original   product                                             |
-|       timestamp      |       string    |     Timestamp of the sample                                                  |
-|       centre_lat     |        float    |     Centre of the fragment   latitude                                        |
-|       centre_lon     |        float    |     Centre of the fragment   longitude                                       |
-|        geometry      |     geometry    |     Polygon footprint   (WGS84) of the fragment                              |
-|     utm_footprint    |       string    |     Polygon footprint (image   UTM) of the fragment                          |
-|        utm_crs       |       string    |     CRS of the original   product                                            |
-|       pixel_bbox     |         bbox    |     Boundary box of the   fragment (pixels)                                  |
+```{=html}
+
+<div class="table-responsive">
+    <table class="table-quotas">
+        <thead>
+            <tr>
+                    <th style="text-align: center; vertical-align: middle; width:48%">Field</th>
+                    <th style="text-align: center; vertical-align: middle; width:35%">Type</th>
+                    <th style="text-align: center; vertical-align: middle; width:80%">Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="text-align: center; vertical-align: middle">unique_id</td>
+                <td style="text-align: center; vertical-align: middle">string</td>
+                <td style="text-align: left; vertical-align: middle">hash generated from geometry, time, product_id, and embedding model</td>
+            </tr>
+            <tr>
+                <td style="text-align: center; vertical-align: middle">embedding</td>
+                <td style="text-align: center; vertical-align: middle">array</td>
+                <td style="text-align: left; vertical-align: middle">raw embedding array</td>
+            </tr>
+            <tr>
+                <td style="text-align: center; vertical-align: middle">grid_cell</td>
+                <td style="text-align: center; vertical-align: middle">string</td>
+                <td style="text-align: left; vertical-align: middle">Major TOM cell</td>
+            </tr>
+            <tr>
+                <td style="text-align: center; vertical-align: middle">grid_row_u</td>
+                <td style="text-align: center; vertical-align: middle">int</td>
+                <td style="text-align: left; vertical-align: middle">Major TOM cell row </td>
+            </tr>
+            <tr>
+                <td style="text-align: center; vertical-align: middle">grid_col_r</td>
+                <td style="text-align: center; vertical-align: middle">int</td>
+                <td style="text-align: left; vertical-align: middle">Major TOM cell col</td>
+            </tr>
+            <tr>
+                <td style="text-align: center; vertical-align: middle">product_id</td>
+                <td style="text-align: center; vertical-align: middle">string</td>
+                <td style="text-align: left; vertical-align: middle">ID of the original product</td>
+            </tr>
+            <tr>
+                <td style="text-align: center; vertical-align: middle">timestamp</td>
+                <td style="text-align: center; vertical-align: middle">string</td>
+                <td style="text-align: left; vertical-align: middle">Timestamp of the sample</td>
+            </tr>
+			<tr>
+                <td style="text-align: center; vertical-align: middle">centre_lat</td>
+                <td style="text-align: center; vertical-align: middle">float</td>
+                <td style="text-align: left; vertical-align: middle">Centre of the fragment latitude</td>
+            </tr>
+			<tr>
+                <td style="text-align: center; vertical-align: middle">centre_lon</td>
+                <td style="text-align: center; vertical-align: middle">float</td>
+                <td style="text-align: left; vertical-align: middle">Centre of the fragment longitude</td>
+            </tr>
+			<tr>
+                <td style="text-align: center; vertical-align: middle">geometry</td>
+                <td style="text-align: center; vertical-align: middle">geometry</td>
+                <td style="text-align: left; vertical-align: middle">Polygon footprint (WGS84) of the fragment</td>
+            </tr>
+			<tr>
+                <td style="text-align: center; vertical-align: middle">utm_footprint</td>
+                <td style="text-align: center; vertical-align: middle">string</td>
+                <td style="text-align: left; vertical-align: middle">Polygon footprint (image UTM) of the fragment</td>
+            </tr>
+			<tr>
+                <td style="text-align: center; vertical-align: middle">utm_crs</td>
+                <td style="text-align: center; vertical-align: middle">string</td>
+                <td style="text-align: left; vertical-align: middle">CRS of the original product</td>
+            </tr>
+            <tr>
+                <td style="text-align: center; vertical-align: middle">pixel_bbox</td>
+                <td style="text-align: center; vertical-align: middle">bbox</td>
+                <td style="text-align: left; vertical-align: middle">Boundary box of the fragment (pixels)</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+```
 
 ## Public Access via S3
 
