@@ -29,3 +29,52 @@ Embeddings are computed using state-of-the-art (SOTA) self-supervised and superv
 |     Core-S2L2A-MMEarth    |     Sentinel-2   Level 2A (MSI)    |        39,727,477,454       |     Multi-Spectral    |       Core-S2L2A      |            MMEarth           |       60   TB     |
 
 These embeddings represent high-dimensional latent vectors capturing the spectral, spatial, and contextual characteristics of each image fragment.
+
+## Data Storage and Structure
+
+Embeddings and metadata are stored in GeoParquet files, which extend standard Parquet by supporting geometry-type columns while retaining columnar efficiency, compression, and interoperability with geospatial pipelines. Each record includes:
+
+|         Field        |         Type    |                                  Description                                 |
+|:--------------------:|----------------:|:----------------------------------------------------------------------------:|
+|       unique_id      |       string    |     hash generated from   geometry, time, product_id, and embedding model    |
+|       embedding      |        array    |     raw embedding array                                                      |
+|       grid_cell      |       string    |     Major TOM cell                                                           |
+|       grid_row_u     |          int    |     Major TOM cell row                                                       |
+|       grid_col_r     |          int    |     Major TOM cell col                                                       |
+|       product_id     |       string    |     ID of the original   product                                             |
+|       timestamp      |       string    |     Timestamp of the sample                                                  |
+|       centre_lat     |        float    |     Centre of the fragment   latitude                                        |
+|       centre_lon     |        float    |     Centre of the fragment   longitude                                       |
+|        geometry      |     geometry    |     Polygon footprint   (WGS84) of the fragment                              |
+|     utm_footprint    |       string    |     Polygon footprint (image   UTM) of the fragment                          |
+|        utm_crs       |       string    |     CRS of the original   product                                            |
+|       pixel_bbox     |         bbox    |     Boundary box of the   fragment (pixels)                                  |
+
+## Public Access via S3
+
+The embeddings are available on EODATA S3 for direct download and integration into machine learning workflows:
+
+* s3://EODATA/auxdata/MajorTOM/embeddings/Core-S1RTC-DeCUR/
+* s3://EODATA/auxdata/MajorTOM/embeddings/Core-S1RTC-SSL4EO/
+* s3://EODATA/auxdata/MajorTOM/embeddings/Core-S2L1C-DeCUR/
+* s3://EODATA/auxdata/MajorTOM/embeddings/Core-S2L1C-SSL4EO/
+* s3://EODATA/auxdata/MajorTOM/embeddings/Core-S2L2A-MMEarth/
+* s3://EODATA/auxdata/MajorTOM/embeddings/Core-S2RGB-DINOv2/
+* s3://EODATA/auxdata/MajorTOM/embeddings/Core-S2RGB-SigLIP/
+
+Each path corresponds to a specific source dataset, sensing modality, and pre-trained model, enabling tailored selection of embeddings depending on application needs.
+
+## Use Cases and Applications
+
+The Major TOM embedding datasets are designed for large-scale geospatial machine learning tasks, including but not limited to:
+
+* Semantic segmentation and classification of land cover and land use.
+*	Change detection over time for environmental monitoring.
+*	Multi-modal data fusion leveraging combined SAR and optical data.
+*	Feature extraction for downstream AI models requiring compact, high-dimensional representations.
+
+The integration of dense embeddings with comprehensive metadata ensures reproducibility, transparency, and reliable linkage between latent representations and their original geospatial context.
+
+## Reference
+
+Czerkawski, M., Kluczek, M., & Bojanowski, J. S. (2024). Global and Dense Embeddings of Earth: Major TOM Floating in the Latent Space. [arXiv:2412.05600](https://arxiv.org/abs/2412.05600). 
