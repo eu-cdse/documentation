@@ -1,0 +1,147 @@
+---
+title: Global Embedding Dataset 
+---
+
+The Global Embedding Dataset represents a dense, large-scale collection of satellite image embeddings derived from the Major TOM Core datasets: Major-TOM/Core-S2L1C, Major-TOM/Core-S2L2A, and Major-TOM/Core-S1RTC (Francis and Czerkawski, 2024). These datasets provide access to over 60 TB of AI-ready Copernicus data with multiple sensing modalities, including multi-spectral (MSI), true-color RGB, and Synthetic Aperture Radar (SAR), at various processing levels.
+
+## Source Datasets and Preprocessing
+
+<ol>
+  <li>Major-TOM/Core-S2L1C - Sentinel-2 Level 1C imagery, multi-spectral (10 m resolution)</li>
+  <li>Major-TOM/Core-S2L2A - Sentinel-2 Level 2A imagery, true-color and multi-spectral</li>
+  <li>Major-TOM/Core-S1RTC - Sentinel-1 Radiometrically Terrain Corrected (RTC) SAR products</li>
+</ol> 
+
+Each image covers 10.68 × 10.68 km, corresponding to 1,068 × 1,068 pixels at 10 m resolution, representing a complete Major TOM grid cell plus margins. Since most pre-trained deep neural networks require smaller inputs (commonly 224×224 pixels), the images are fragmented into tiles. This fragmentation process avoids excessive information loss from resizing, which is critical in remote sensing applications where fine spatial details are essential.
+
+## Embedding Generation
+
+Embeddings are computed using state-of-the-art (SOTA) self-supervised and supervised models:
+
+|           Dataset         |               Modality             |     Number of Embeddings    |      Sensing Type     |     Source Dataset    |          Source Model        |        Size       |
+|:-------------------------:|:----------------------------------:|:---------------------------:|:---------------------:|:---------------------:|:----------------------------:|:-----------------:|
+|      Core-S2L1C-SSL4EO    |        Sentinel-2   Level 1C       |          56,147,150         |     Multi-Spectral    |       Core-S2L1C      |      SSL4EO-ResNet50-DINO    |     252.9   GB    |
+|      Core-S1RTC-SSL4EO    |           Sentinel-1   RTC         |          36,748,875         |           SAR         |       Core-S1RTC      |      SSL4EO-ResNet50-MOCO    |     332.5   GB    |
+|      Core-S2RGB-DINOv2    |     Sentinel-2   Level 2A (RGB)    |          56,147,150         |      True   Colour    |       Core-S2L2A      |             DINOv2           |     223.1   GB    |
+|      Core-S2RGB-SigLIP    |     Sentinel-2   Level 2A (RGB)    |          20,212,974         |      True   Colour    |       Core-S2L2A      |       SigLIP-SO400M-384      |      41.3   GB    |
+|      Core-S2L1C-DeCUR     |        Sentinel-2   Level 1C       |          56,147,150         |     Multi-Spectral    |       Core-S2L1C      |     SSL4EO-ResNet50-DeCUR    |     252.9   GB    |
+|      Core-S1RTC-DeCUR     |           Sentinel-1   RTC         |          36,748,875         |           SAR         |       Core-S1RTC      |     SSL4EO-ResNet50-DeCUR    |     332.5   GB    |
+|     Core-S2L2A-MMEarth    |     Sentinel-2   Level 2A (MSI)    |        39,727,477,454       |     Multi-Spectral    |       Core-S2L2A      |            MMEarth           |       60   TB     |
+
+These embeddings represent high-dimensional latent vectors capturing the spectral, spatial, and contextual characteristics of each image fragment.
+
+## Data Storage and Structure
+
+Embeddings and metadata are stored in GeoParquet files, which extend standard Parquet by supporting geometry-type columns while retaining columnar efficiency, compression, and interoperability with geospatial pipelines. Each record includes:
+
+```{=html}
+
+<div class="table-responsive">
+    <table class="table-quotas">
+        <thead>
+            <tr>
+                    <th style="text-align: center; vertical-align: middle; width:48%">Field</th>
+                    <th style="text-align: center; vertical-align: middle; width:35%">Type</th>
+                    <th style="text-align: center; vertical-align: middle; width:80%">Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="text-align: center; vertical-align: middle">unique_id</td>
+                <td style="text-align: center; vertical-align: middle">string</td>
+                <td style="text-align: left; vertical-align: middle">hash generated from geometry, time, product_id, and embedding model</td>
+            </tr>
+            <tr>
+                <td style="text-align: center; vertical-align: middle">embedding</td>
+                <td style="text-align: center; vertical-align: middle">array</td>
+                <td style="text-align: left; vertical-align: middle">raw embedding array</td>
+            </tr>
+            <tr>
+                <td style="text-align: center; vertical-align: middle">grid_cell</td>
+                <td style="text-align: center; vertical-align: middle">string</td>
+                <td style="text-align: left; vertical-align: middle">Major TOM cell</td>
+            </tr>
+            <tr>
+                <td style="text-align: center; vertical-align: middle">grid_row_u</td>
+                <td style="text-align: center; vertical-align: middle">int</td>
+                <td style="text-align: left; vertical-align: middle">Major TOM cell row </td>
+            </tr>
+            <tr>
+                <td style="text-align: center; vertical-align: middle">grid_col_r</td>
+                <td style="text-align: center; vertical-align: middle">int</td>
+                <td style="text-align: left; vertical-align: middle">Major TOM cell col</td>
+            </tr>
+            <tr>
+                <td style="text-align: center; vertical-align: middle">product_id</td>
+                <td style="text-align: center; vertical-align: middle">string</td>
+                <td style="text-align: left; vertical-align: middle">ID of the original product</td>
+            </tr>
+            <tr>
+                <td style="text-align: center; vertical-align: middle">timestamp</td>
+                <td style="text-align: center; vertical-align: middle">string</td>
+                <td style="text-align: left; vertical-align: middle">Timestamp of the sample</td>
+            </tr>
+			<tr>
+                <td style="text-align: center; vertical-align: middle">centre_lat</td>
+                <td style="text-align: center; vertical-align: middle">float</td>
+                <td style="text-align: left; vertical-align: middle">Centre of the fragment latitude</td>
+            </tr>
+			<tr>
+                <td style="text-align: center; vertical-align: middle">centre_lon</td>
+                <td style="text-align: center; vertical-align: middle">float</td>
+                <td style="text-align: left; vertical-align: middle">Centre of the fragment longitude</td>
+            </tr>
+			<tr>
+                <td style="text-align: center; vertical-align: middle">geometry</td>
+                <td style="text-align: center; vertical-align: middle">geometry</td>
+                <td style="text-align: left; vertical-align: middle">Polygon footprint (WGS84) of the fragment</td>
+            </tr>
+			<tr>
+                <td style="text-align: center; vertical-align: middle">utm_footprint</td>
+                <td style="text-align: center; vertical-align: middle">string</td>
+                <td style="text-align: left; vertical-align: middle">Polygon footprint (image UTM) of the fragment</td>
+            </tr>
+			<tr>
+                <td style="text-align: center; vertical-align: middle">utm_crs</td>
+                <td style="text-align: center; vertical-align: middle">string</td>
+                <td style="text-align: left; vertical-align: middle">CRS of the original product</td>
+            </tr>
+            <tr>
+                <td style="text-align: center; vertical-align: middle">pixel_bbox</td>
+                <td style="text-align: center; vertical-align: middle">bbox</td>
+                <td style="text-align: left; vertical-align: middle">Boundary box of the fragment (pixels)</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+```
+
+## Public Access via S3
+
+The embeddings are available on EODATA S3 for direct download and integration into machine learning workflows:
+
+* s3://EODATA/auxdata/MajorTOM/embeddings/Core-S1RTC-DeCUR/
+* s3://EODATA/auxdata/MajorTOM/embeddings/Core-S1RTC-SSL4EO/
+* s3://EODATA/auxdata/MajorTOM/embeddings/Core-S2L1C-DeCUR/
+* s3://EODATA/auxdata/MajorTOM/embeddings/Core-S2L1C-SSL4EO/
+* s3://EODATA/auxdata/MajorTOM/embeddings/Core-S2L2A-MMEarth/
+* s3://EODATA/auxdata/MajorTOM/embeddings/Core-S2RGB-DINOv2/
+* s3://EODATA/auxdata/MajorTOM/embeddings/Core-S2RGB-SigLIP/
+
+Each path corresponds to a specific source dataset, sensing modality, and pre-trained model, enabling tailored selection of embeddings depending on application needs.
+
+## Use Cases and Applications
+
+The Major TOM embedding datasets are designed for large-scale geospatial machine learning tasks, including but not limited to:
+
+* Semantic segmentation and classification of land cover and land use.
+*	Change detection over time for environmental monitoring.
+*	Multi-modal data fusion leveraging combined SAR and optical data.
+*	Feature extraction for downstream AI models requiring compact, high-dimensional representations.
+
+The integration of dense embeddings with comprehensive metadata ensures reproducibility, transparency, and reliable linkage between latent representations and their original geospatial context.
+
+## Reference
+
+Czerkawski, M., Kluczek, M., & Bojanowski, J. S. (2024). Global and Dense Embeddings of Earth: Major TOM Floating in the Latent Space. [arXiv:2412.05600](https://arxiv.org/abs/2412.05600). 
