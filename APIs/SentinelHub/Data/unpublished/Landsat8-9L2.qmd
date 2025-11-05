@@ -1,0 +1,145 @@
+---
+title: Landsat 8-9 L2
+---
+
+## About Landsat 8-9 OLI-TIRS Collection 2 Level 2 Data
+
+### Mission Information
+
+Landsat 8-9 OLI-TIRS Collection 2 Level 2 Data collection includes both Landsat 8 and the most recently launched Landsat 9 satellites (provided by NASA/USGS), both carrying the Operational Land Imager (OLI) and the Thermal Infrared Sensor (TIRS), providing seasonal coverage of the global landmass. Landsat 8-9 Level 2 provides global surface reflectance and surface temperature science products. Level 2 science products are generated from Collection 2 Level-1 inputs that meet the <76 degrees Solar Zenith Angle constraint and include the required auxiliary data inputs to generate a scientifically viable product. Learn more about the collection [here](https://www.usgs.gov/centers/eros/science/usgs-eros-archive-landsat-archives-landsat-8-9-olitirs-collection-2-level-2).
+
+### Basic Facts
+
+| Property |Info|
+| --- | --- |
+| **Spatial resolution** | 30 m (the thermal bands are re-sampled from 100 m) |
+| **Sensor** | Operational Land Imager (OLI for Landsat 8 and OLI-2 for Landsat 9) with 9 spectral bands and Thermal Infrared Sensor (TIRS for Landsat 8 and TIRS-2 for Landsat 9) with 2 thermal bands |
+| **Revisit time** | 8 days (16 days for each of the two sensors) |
+| **Spatial coverage** | Whole globe |
+| **CDSE Data Availability**	| Since January 2021 \[1\] |
+| **Common usage/purpose** | Vegetation monitoring, land use, land cover maps and monitoring of changes. |
+
+\[1\]: While the general data availability for Landsat 8 is since March 2013, and for Landsat 9 since November 2021, the data on CDSE is available since January 2021.
+
+## Accessing Data
+
+To access data you need to send a POST request to our `process` API. The requested data will be returned as the response to your request. Each POST request can be tailored to get you exactly the data you require. To do this requires setting various parameters which depend on the collection you are querying. This chapter will help you understand the parameters for Landsat 8-9 Level 2 data. For an overview of all API parameters see the [API Reference](/APIs/SentinelHub/ApiReference.qmd).
+
+### Data type identifier: landsat-ot-l2
+
+Use `landsat-ot-l2` \[1\] as the value of the `input.data.type parameter` in your API requests. This is mandatory and will ensure you get Landsat 8-9 Level 2 data.
+
+\[1\]: `landsat-ot-l2` stands for Landsat OLI-TIRS Level 2.
+
+### Filtering Options
+
+This chapter will explain the `input.data.dataFilter` object of the `process` API.
+
+#### mosaickingOrder
+
+Sets the order of overlapping tiles from which the output result is mosaicked. Note that tiles will in most cases come from the same orbit/acquisition. The tiling is done by USGS for easier distribution.
+
+| Value | Description | Notes|
+| ---  | --- | --- |
+| **mostRecent** | (default) The pixel will be selected from the most recently acquired tile |
+| **leastRecent** | similar to **mostRecent** but in reverse order |
+| **leastCC** | The pixel is selected from the tile with the lowest cloud coverage | This information is estimated per tile (each covering about 31,100 sq. km) so local cloud coverage may differ |
+#### tiers
+
+Selects product tiers.
+
+| Value | Description |
+| ---  | --- |
+| **TIER_1** | selects Tier 1 products |
+| **ALL_TIERS** | selected by default. selects Tier 1 and Tier 2 products |
+
+#### maxCloudCoverage
+
+Sets the upper limit for cloud coverage in percent based on the precomputed cloud coverage estimate for each tile as present in the tile metadata. Satellite data will therefore not be retrieved for tiles with a higher cloud coverage estimate. For example, by setting the value to `20`, only tiles with at most 20% cloud coverage will be used. Note that this parameter is set per tile and might not be directly applicable to the chosen area of interest.
+
+### Processing Options
+
+This chapter will explain the `input.data.processing` object of the `process` API.
+
+| Parameter | Description |
+| --- | --- |
+| upsampling | [The same as for S2L1C.](/APIs/SentinelHub/Data/S2L1C.qmd#processing-options) |
+| downsampling | [The same as for S2L1C.](/APIs/SentinelHub/Data/S2L1C.qmd#processing-options) |
+
+### Available Bands and Data
+
+Information in this chapter is useful when defining [`input` object](/APIs/SentinelHub/Evalscript/Functions.qmd#input-object-properties) in evalscript.
+Any string listed in the column **Name** can be an element of the `input.bands` array in your evalscript.
+
+| Name | Description | Resolution |
+| --- | --- | --- |
+| B01 | Ultra Blue (443 nm) | 30m |
+| B02 | Blue (482 nm) | 30m |
+| B03 | Green (561.5 nm) | 30m |
+| B04 | Red (654.5 nm) | 30m |
+| B05 | Near Infrared (NIR) (865 nm) | 30m |
+| B06 | Shortwave Infrared (SWIR) 1 (1608.5 nm) | 30m |
+| B07 | Shortwave Infrared (SWIR) 2 (2200.5 nm) | 30m |
+| B10 | Thermal Infrared (TIRS) 1(10895 nm) | 30m \[1\] |
+| BQA |  Quality Assessment band (QA) | 30m |
+| QA_RADSAT | Radiometric Saturation and Terrain Occlusion QA Band | 30m |
+| SR_QA_AEROSOL | SR Aerosol QA | 30m |
+| ST_QA | Surface Temperature Uncertainty | 30m |
+| ST_TRAD | Level-1 thermal band converted to thermal surface radiance | 30m |
+| ST_URAD | Upwelled Radiance | 30m |
+| ST_DRAD | Downwelled Radiance | 30m |
+| ST_ATRAN | Atmospheric Transmittance | 30m |
+| ST_EMIS | Emissivity of Band 10 estimated from ASTER GED | 30m |
+| ST_EMSD | Emissivity standard deviation | 30m |
+| ST_CDIST | Pixel distance to cloud | 30m |
+| dataMask | The mask of data/no data pixels ([more](/APIs/SentinelHub/UserGuides/Datamask.qmd)).| N/A \[2\] |
+
+\[1\]: TIRS bands are acquired at 100 meter resolution, but are resampled to 30 meter in delivered data product ([source](https://www.usgs.gov/faqs/what-are-band-designations-landsat-satellites)). <br/>
+\[2\]: dataMask has no source resolution as it is calculated for each output pixel.
+
+### Units
+
+The data values for each band in your custom script are presented in the units as specified here. In case more than one unit is available for a given band, you may optionally set the value of `input.units` in your evalscript `setup` function to one of the values in the `Sentinel Hub Units` column. Doing so will present data in that unit. The Sentinel Hub `units` parameter combines the physical quantity and corresponding units of measurement values. As such, some names more closely resemble physical quantities, others resemble units of measurement.
+
+The `Source Format` specifies how and with what precision the digital numbers (`DN`) from which the unit is derived are encoded. Bands requested in `DN` units contain exactly the pixel values of the source data. Note that resampling may produce interpolated values. `DN` is also used whenever a band is derived computationally (like dataMask); such bands can be identified by having `DN` units and `N/A` source format. `DN` values are typically not offered if they do not simply represent any physical quantity, in particular, when `DN` values require source-specific (i.e. non-global) conversion to physical quantities.
+
+Values in non-`DN` units are computed from the source (`DN`) values with at least float32 precision. Note that the conversion might be nonlinear, therefore the full value range and quantization step size of such a band can be hard to predict. Band values in evalscripts always behave as floating point numbers, regardless of the actual precision.
+
+The `Typical Range` indicates what values are common for a given band and unit, however outliers can be expected.
+
+| Band | Physical Quantity (units) | Sentinel Hub Units | Source Format | Typical Range | Notes |
+| ---- | ---- | ---- | ---- | ---- | ---- |
+| Optical bands <br/>B01 - B07 | Surface reflectance (unitless) | REFLECTANCE | UINT16 | 0 - 0.4 | Higher values in infrared bands. Reflectance values can easily be above 1. |
+| Thermal infrared band <br/>B10 | Surface temperature (kelvin) | SURFACE_TEMPERATURE | UINT16 | 250 - 320 | Surface temperature of roughly -20 to +50 C. Can reach outside this range in extreme environments. |
+| BQA | Pixel quality assessment (unitless) | DN |  UINT16 | bit-packed combination | Use the function named *decodeL8C2Qa* ([see](/APIs/SentinelHub/Evalscript/Utilities.qmd#decodel8c2qa)). | |
+| QA_RADSAT | Radiometric saturation quality assessment (unitless) | DN | UINT16 | bit-packed combination ([info here](https://www.usgs.gov/core-science-systems/nli/landsat/landsat-collection-2-quality-assessment-bands)) | |
+| SR_QA_AEROSOL | Surface reflectance quality assessment (unitless) | DN | UINT8 | bit-packed combination ([info here](https://www.usgs.gov/core-science-systems/nli/landsat/landsat-collection-2-quality-assessment-bands)) | |
+| ST_QA | Surface temperature uncertainty (Kelvin) | KELVIN | INT16 | | |
+| ST_TRAD | Radiance (W / m^2 / sr / μm) | RADIANCE | INT16 | | |
+| ST_URAD | Radiance (W / m^2 / sr / μm) | RADIANCE | INT16 | | |
+| ST_DRAD | Radiance (W / m^2 / sr / μm) | RADIANCE | INT16 | | |
+| ST_ATRAN | Atmospheric transmittance (unitless) | FRACTION | INT16 | 0 - 1 | |
+| ST_EMIS | Emissivity (unitless) | FRACTION | INT16 | 0 - 1 | |
+| ST_EMSD | Emissivity standard deviation (unitless) | FRACTION | INT16 | 0 - 1 | |
+| ST_CDIST | Pixel distance (kilometers) | KILOMETERS | INT16 | | |
+| dataMask | N/A | DN | N/A | 0 - no data<br/> 1 - data | |
+
+### Scenes Object
+[`scenes`](/APIs/SentinelHub/Evalscript/Functions.qmd#scenes) object stores metadata, for an example see [`scenes` object for Landsat-8-9 L1.](/APIs/SentinelHub/Data/Landsat8-9.qmd#scenes-object)
+
+
+## Catalog API Capabilities
+
+To access Landsat 8-9 product metadata you need to send search request to our [Catalog API](/APIs/SentinelHub/Catalog.qmd). The requested metadata will be returned as JSON formatted response to your request.
+
+### Collection identifier: landsat-ot-l2
+
+### Filter extension
+
+* `eo:cloud_cover` cloud cover percentage
+* `landsat:scene_id` scene identifier
+* `landsat:collection_category` collection tier. `T1` for tier 1 (scenes with the highest radiometric and positional quality) and `T2` for tier 2 (scenes not meeting tier 1 criteria)
+
+### Distinct extension
+
+* `date`
