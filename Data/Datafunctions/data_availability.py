@@ -614,8 +614,8 @@ def CLMSOffer(c):
                     headers = ["Product Type","Products","Specific Products","Spatial Extent","S3 path","OData","Product Detail"]
                     note += footnotes
                 elif product_id == "Global Dynamic Land Cover":
-                    t.append([product_type,dataset,temporal,spatial,resolution,ds_frequency,catalogue,odata])
-                    headers = ["Product Type","Dataset","Temporal Extent","Spatial Extent","Spatial. resol.","Frequency","S3 path","OData"]
+                    t.append([product_type,dataset,temporal,spatial,resolution,ds_frequency,catalogue,data_access])
+                    headers = ["Product Type","Dataset","Temporal Extent","Spatial Extent","Spatial. resol.","Frequency","S3 path","Data Access"]
                     note += footnotes
                 elif product_id == "Coastal Zones Land Cover / Land Use":
                     t.append([product_type,dataset,temporal,spatial,resolution,ds_frequency,catalogue,odata,product_link])
