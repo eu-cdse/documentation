@@ -596,6 +596,10 @@ def CLMSOffer(c):
                     odata = c['summaries']['DataAvailability'][i-1]['OData']
                 except Exception:
                     odata = ''
+                try:
+                    data_access = c['summaries']['DataAvailability'][i-1]['DataAccess']
+                except Exception:
+                    data_access = ''    
 
                 if product_id == "HIGH RESOLUTION LAYERS (HRL)":
                     t.append([product_type,product,sub_product,specific_product,catalogue,odata,product_link])
@@ -618,24 +622,24 @@ def CLMSOffer(c):
                     headers = ["Product Type","Dataset","Temporal Extent","Spatial Extent","Spatial. resol.","Frequency","S3 path","OData","Product Detail"]
                     note += footnotes
                 elif product_id == "Soil Moisture":
-                    t.append([product_type,dataset,temporal,spatial,resolution,ds_frequency,catalogue,odata])
-                    headers = ["Product Type","Dataset","Temporal Extent","Spatial Extent","Spatial. resol.","Frequency","S3 path","OData"]
+                    t.append([product_type,dataset,temporal,spatial,resolution,ds_frequency,catalogue,data_access])
+                    headers = ["Product Type","Dataset","Temporal Extent","Spatial Extent","Spatial. resol.","Frequency","S3 path","Data Access"]
                     note += footnotes
                 elif product_id == "Snow":
-                    t.append([product_type,dataset,temporal,spatial,resolution,ds_frequency,catalogue,odata])
-                    headers = ["Product Type","Dataset","Temporal Extent","Spatial Extent","Spatial. resol.","Frequency","S3 path","OData"]
+                    t.append([product_type,dataset,temporal,spatial,resolution,ds_frequency,catalogue,data_access])
+                    headers = ["Product Type","Dataset","Temporal Extent","Spatial Extent","Spatial. resol.","Frequency","S3 path","Data Access"]
                     note += footnotes
                 elif product_id == "Temperature and Reflectance":
-                    t.append([product_type,dataset,temporal,spatial,resolution,ds_frequency,catalogue,odata])
-                    headers = ["Product Type","Dataset","Temporal Extent","Spatial Extent","Spatial. resol.","Frequency","S3 path","OData"]
+                    t.append([product_type,dataset,temporal,spatial,resolution,ds_frequency,catalogue,data_access])
+                    headers = ["Product Type","Dataset","Temporal Extent","Spatial Extent","Spatial. resol.","Frequency","S3 path","Data Access"]
                     note += footnotes
                 elif product_id == "Vegetation":
-                    t.append([product_type,dataset,temporal,spatial,resolution,ds_frequency,catalogue,odata])
-                    headers = ["Product Type","Dataset","Temporal Extent","Spatial Extent","Spatial. resol.","Frequency","S3 path","OData"]
+                    t.append([product_type,dataset,temporal,spatial,resolution,ds_frequency,catalogue,data_access])
+                    headers = ["Product Type","Dataset","Temporal Extent","Spatial Extent","Spatial. resol.","Frequency","S3 path","Data Access"]
                     note += footnotes        
                 elif product_id == "Water Bodies":
-                    t.append([product_type,dataset,temporal,spatial,resolution,ds_frequency,catalogue,odata])
-                    headers = ["Product Type","Dataset","Temporal Extent","Spatial Extent","Spatial. resol.","Frequency","S3 path","OData"]
+                    t.append([product_type,dataset,temporal,spatial,resolution,ds_frequency,catalogue,data_access])
+                    headers = ["Product Type","Dataset","Temporal Extent","Spatial Extent","Spatial. resol.","Frequency","S3 path","Data Access"]
                     note += footnotes
                 else:
                     t.append([product_type,specific_product,spatial,temporal,catalogue,odata,product_link])
