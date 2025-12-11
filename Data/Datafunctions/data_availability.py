@@ -633,6 +633,10 @@ def CLMSOffer(c):
                     t.append([product_type,dataset,temporal,spatial,resolution,ds_frequency,catalogue,data_access])
                     headers = ["Product Type","Dataset","Temporal Extent","Spatial Extent","Spatial. resol.","Frequency","S3 path","Data Access"]
                     note += footnotes
+                elif product_id == "Evapotranspiration":
+                    t.append([product_type,dataset,temporal,spatial,resolution,ds_frequency,catalogue,data_access])
+                    headers = ["Product Type","Dataset","Temporal Extent","Spatial Extent","Spatial. resol.","Frequency","S3 path","Data Access"]
+                    note += footnotes    
                 elif product_id == "Vegetation":
                     t.append([product_type,dataset,temporal,spatial,resolution,ds_frequency,catalogue,data_access])
                     headers = ["Product Type","Dataset","Temporal Extent","Spatial Extent","Spatial. resol.","Frequency","S3 path","Data Access"]
