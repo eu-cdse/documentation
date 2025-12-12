@@ -2000,84 +2000,6 @@ components:
                 - PREVIEW
                 - EXTENDED_PREVIEW
               default: DETAIL
-    LandsatFiltering:
-      type: object
-      properties:
-        timeRange:
-          $ref: '#/components/schemas/TimeRange'
-        mosaickingOrder:
-          description: >-
-            The order in which tiles are overlapped from which the output result
-            is mosaicked.
-          type: string
-          enum:
-            - mostRecent
-            - leastRecent
-            - leastCC
-          default: mostRecent
-        maxCloudCoverage:
-          $ref: '#/components/schemas/MaxCloudCoverage'
-    LandsatTierFilteringWithRt:
-      type: object
-      properties:
-        tiers:
-          type: string
-          default: ALL_TIERS
-          enum:
-            - TIER_1
-            - TIER_1_AND_RT
-            - ALL_TIERS
-    LandsatTierFilteringWithoutRt:
-      type: object
-      properties:
-        tiers:
-          type: string
-          default: ALL_TIERS
-          enum:
-            - TIER_1
-            - ALL_TIERS
-    HLSFiltering:
-      type: object
-      properties:
-        timeRange:
-          $ref: '#/components/schemas/TimeRange'
-        mosaickingOrder:
-          description: >-
-            The order in which tiles are overlapped from which the output result
-            is mosaicked.
-          type: string
-          enum:
-            - mostRecent
-            - leastRecent
-            - leastCC
-          default: mostRecent
-        maxCloudCoverage:
-          $ref: '#/components/schemas/MaxCloudCoverage'
-        constellation:
-          type: string
-          description: >
-            The selected constellation. "SENTINEL" selects only Sentinel
-            products, while "LANDSAT" selects only Landsat products.
-
-
-            By default, products of both constellations are selected.
-          enum:
-            - SENTINEL
-            - LANDSAT
-    ModisFiltering:
-      type: object
-      properties:
-        timeRange:
-          $ref: '#/components/schemas/TimeRange'
-        mosaickingOrder:
-          description: >-
-            The order in which tiles are overlapped from which the output result
-            is mosaicked.
-          type: string
-          enum:
-            - mostRecent
-            - leastRecent
-          default: mostRecent
     S1Filtering:
       type: object
       properties:
@@ -2481,24 +2403,14 @@ components:
       minItems: 1
       items:
         oneOf:
+          - $ref: '#/components/schemas/S1Dataset'
           - $ref: '#/components/schemas/S2L1CDataset'
           - $ref: '#/components/schemas/S2L2ADataset'
-          - $ref: '#/components/schemas/Ls8Dataset'
-          - $ref: '#/components/schemas/L8L1Dataset'
-          - $ref: '#/components/schemas/L8L2Dataset'
-          - $ref: '#/components/schemas/LETML1Dataset'
-          - $ref: '#/components/schemas/LETML2Dataset'
-          - $ref: '#/components/schemas/LTML1Dataset'
-          - $ref: '#/components/schemas/LTML2Dataset'
-          - $ref: '#/components/schemas/LMSSL1Dataset'
-          - $ref: '#/components/schemas/ModisDataset'
-          - $ref: '#/components/schemas/DEMDataset'
-          - $ref: '#/components/schemas/S1Dataset'
           - $ref: '#/components/schemas/S3OlciDataset'
           - $ref: '#/components/schemas/S3OlciL2Dataset'
           - $ref: '#/components/schemas/S3SlstrDataset'
           - $ref: '#/components/schemas/S5PDataset'
-          - $ref: '#/components/schemas/HLSDataset'
+          - $ref: '#/components/schemas/DEMDataset'
           - $ref: '#/components/schemas/BYOCDataset'
     ProcessRequestInputBounds:
       title: Bounds
@@ -9178,7 +9090,7 @@ paths:
       tags:
         - batch_v2_process
       parameters:
-        - $ref: '#/components/parameters/BatchV2RequestId'
+        - $ref: '#/components/parameters/BatchV2TaskId'
       requestBody:
         content:
           application/json:
