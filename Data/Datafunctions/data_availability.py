@@ -357,7 +357,7 @@ def Additional(c):
             type,status,access,product_type,specific_product,spatial,temporal,product_link,catalogue,footnotes,provider,satellite,resolution,opensearch,odata,Origin = DataFetch(c,i)
             t.append([specific_product, spatial, temporal,catalogue])
             note += footnotes
-            headers = ["Specific Products", "Spatial Extext","Temporal Extent","Catalogue"]
+            headers = ["Specific Products", "Spatial Extent","Temporal Extent","Catalogue"]
 
         # Find and remove empty columns
         t,headers=removeempty(t,headers)
@@ -385,7 +385,7 @@ def CAMSOffer(c):
             type,status,access,product_type,specific_product,spatial,temporal,product_link,catalogue,footnotes,provider,satellite,resolution,opensearch,odata,Origin = DataFetch(c,i)
             t.append([product_type, specific_product, spatial, temporal, catalogue,product_link])
             note += footnotes
-            headers = ["Product Type", "Specific Products", "Spatial Extext","Temporal Extent","Catalogue","Product Detail"]
+            headers = ["Product Type", "Specific Products", "Spatial Extent","Temporal Extent","Catalogue","Product Detail"]
 
         # Find and remove empty columns
         t,headers=removeempty(t,headers)
