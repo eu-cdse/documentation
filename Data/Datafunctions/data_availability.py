@@ -16,8 +16,9 @@ def main(c):
         "Landsat-7": ComplementaryOffer,
         "Landsat-8": ComplementaryOffer,
         "Landsat-9": ComplementaryOffer,
+        "SRTM": ComplementaryOffer,
         "Commercial data": VHROffer,            
-        "AdditionalComplementaryData": Additional,      
+        #"AdditionalComplementaryData": Additional,      
         "CAMS": CAMSOffer,
         "CLMS_LEGACY": CLMSOffer,
         "CLMStoCDSE_bio": CLMSOffer,
@@ -345,33 +346,33 @@ def SMOSOffer(c):
     return table
 
 ########################## DEFINE FUNCTION TO CREATE DATA AVAILABILITY TABLE FOR ADDITIONAL ########################
-def Additional(c):
-    
-    try: 
-        data_offer = len(c['summaries']['DataAvailability'])
-        t = []
-        note = ""
-        empty_columns = []  # Track empty columns
-
-        for i in range(0, data_offer):
-            type,status,access,product_type,specific_product,spatial,temporal,product_link,catalogue,footnotes,provider,satellite,resolution,opensearch,odata,Origin = DataFetch(c,i)
-            t.append([specific_product, spatial, temporal,catalogue])
-            note += footnotes
-            headers = ["Specific Products", "Spatial Extent","Temporal Extent","Catalogue"]
-
-        # Find and remove empty columns
-        t,headers=removeempty(t,headers)
-
-        table = tabulate(t, headers=headers, tablefmt='html', floatfmt=".4f", stralign="left", numalign="left")
-        # Set the minimum width of each column to 100 pixels
-        table = table.replace("<table>", '<table class="table">')
-        # call the merge cell function
-        table=mergecells(table)
-        table = f"""<h5>{tabletitle}</h5>{table}{note}"""
-    except Exception:
-        table = " "
-    
-    return table
+#def Additional(c):
+#    
+#    try: 
+#        data_offer = len(c['summaries']['DataAvailability'])
+#        t = []
+#        note = ""
+#        empty_columns = []  # Track empty columns
+#
+#        for i in range(0, data_offer):
+#            type,status,access,product_type,specific_product,spatial,temporal,product_link,catalogue,footnotes,provider,satellite,resolution,opensearch,odata,Origin = DataFetch(c,i)
+#            t.append([specific_product, spatial, temporal,catalogue])
+#            note += footnotes
+#            headers = ["Specific Products", "Spatial Extent","Temporal Extent","Catalogue"]
+#
+#        # Find and remove empty columns
+#        t,headers=removeempty(t,headers)
+#
+#        table = tabulate(t, headers=headers, tablefmt='html', floatfmt=".4f", stralign="left", numalign="left")
+#        # Set the minimum width of each column to 100 pixels
+#        table = table.replace("<table>", '<table class="table">')
+#        # call the merge cell function
+#        table=mergecells(table)
+#        table = f"""<h5>{tabletitle}</h5>{table}{note}"""
+#    except Exception:
+#        table = " "
+#    
+#    return table
 
 ########################## DEFINE FUNCTION TO CREATE DATA AVAILABILITY TABLE FOR CAMS ########################
 def CAMSOffer(c):    
