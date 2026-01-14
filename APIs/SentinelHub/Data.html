@@ -190,6 +190,65 @@ window.onload = function() {
   });
 </script>
 
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        function setupS3Links() {
+            let s3Links = document.querySelectorAll('a[data-s3-path]');
+            s3Links.forEach(link => {
+                // Create S3 link wrapper
+                const wrapper = document.createElement('div');
+                wrapper.className = 's3-link-wrapper';
+
+                const s3Link = document.createElement('a');
+                s3Link.className = 's3-link';
+                s3Link.textContent = link.textContent;
+                s3Link.href = '#';
+                s3Link.title = 'Click to copy S3 path';
+
+                const tooltip = document.createElement('div');
+                tooltip.className = 's3-tooltip';
+                tooltip.textContent = link.dataset.s3Path;
+
+                wrapper.appendChild(s3Link);
+                wrapper.appendChild(tooltip);
+
+                link.replaceWith(wrapper);
+
+                // Add click to copy functionality
+                s3Link.addEventListener('click', function(e) {
+                    e.preventDefault();
+
+                    // Copy to clipboard
+                    navigator.clipboard.writeText(tooltip.textContent).then(function() {
+                        // Show feedback
+                        const feedback = document.createElement('div');
+                        feedback.className = 's3-copy-feedback';
+                        feedback.textContent = 'Copied!';
+
+                        wrapper.appendChild(feedback);
+                        feedback.style.opacity = '1';
+                        feedback.style.visibility = 'visible';
+
+                        // Remove feedback after 2 seconds
+                        setTimeout(function() {
+                            feedback.style.opacity = '0';
+                            feedback.style.visibility = 'hidden';
+                            setTimeout(function() {
+                                feedback.remove();
+                            }, 300);
+                        }, 1500);
+                    }).catch(function(err) {
+                        console.error('Failed to copy:', err);
+                    });
+                });
+            });
+        }
+
+        setupS3Links();
+    });
+
+</script>
+
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
@@ -2074,7 +2133,7 @@ window.Quarto = {
 <p>Some of the data collections available in the Copernicus Data Space Ecosystem are indexed (or we could say “imported”) in Sentinel Hub, which means you can use Sentinel Hub APIs to work with these data collections. Each of the data collections available in Sentinel Hub has its own subchapter below, which describes how the data is pre-processed and how you can access it with Sentinel Hub. For a general description of these data collections and related satellite missions, please refer to the general <a href="../../Data.html">Copernicus Data Space Ecosystem Data chapter</a>.</p>
 <div id="listing-Sentinelhub_data" class="quarto-listing quarto-listing-container-grid">
 <div class="list grid quarto-listing-cols-3">
-<div class="g-col-1" data-index="0" data-listing-file-modified-sort="1767973865342" data-listing-reading-time-sort="7" data-listing-word-count-sort="1380">
+<div class="g-col-1" data-index="0" data-listing-file-modified-sort="1768375481360" data-listing-reading-time-sort="7" data-listing-word-count-sort="1380">
 <a href="../../APIs/SentinelHub/Data/Byoc.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <div class="card-body post-contents">
@@ -2088,7 +2147,7 @@ Bring Your Own COG (BYOC) and Batch data is data ingested by Sentinel Hub users 
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="1" data-listing-file-modified-sort="1767973865342" data-listing-reading-time-sort="1" data-listing-word-count-sort="55">
+<div class="g-col-1" data-index="1" data-listing-file-modified-sort="1768375481360" data-listing-reading-time-sort="1" data-listing-word-count-sort="55">
 <a href="../../APIs/SentinelHub/Data/CLMS.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <div class="card-body post-contents">
@@ -2102,7 +2161,7 @@ The Copernicus Land Monitoring Service (CLMS), which is part of the Copernicus p
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="2" data-listing-file-modified-sort="1767973865343" data-listing-reading-time-sort="7" data-listing-word-count-sort="1228">
+<div class="g-col-1" data-index="2" data-listing-file-modified-sort="1768375481361" data-listing-reading-time-sort="7" data-listing-word-count-sort="1228">
 <a href="../../APIs/SentinelHub/Data/DataFusion.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <div class="card-body post-contents">
@@ -2116,7 +2175,7 @@ Sentinel Hub (SH) allows you to combine the data from various data sources in th
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="3" data-listing-file-modified-sort="1767973865343" data-listing-reading-time-sort="18" data-listing-word-count-sort="3571">
+<div class="g-col-1" data-index="3" data-listing-file-modified-sort="1768375481360" data-listing-reading-time-sort="18" data-listing-word-count-sort="3571">
 <a href="../../APIs/SentinelHub/Data/DEM.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <div class="card-body post-contents">
@@ -2130,7 +2189,7 @@ A <strong>DEM</strong> is a digital model or 3D<sup>1</sup> representation of a 
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="4" data-listing-file-modified-sort="1767973865343" data-listing-reading-time-sort="9" data-listing-word-count-sort="1625">
+<div class="g-col-1" data-index="4" data-listing-file-modified-sort="1768375481361" data-listing-reading-time-sort="9" data-listing-word-count-sort="1625">
 <a href="../../APIs/SentinelHub/Data/Landsat8-9.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <div class="card-body post-contents">
@@ -2144,7 +2203,7 @@ Landsat 8-9 OLI-TIRS Collection 2 Level 1 Data includes both Landsat 8 and the m
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="5" data-listing-file-modified-sort="1767973865343" data-listing-reading-time-sort="33" data-listing-word-count-sort="6427">
+<div class="g-col-1" data-index="5" data-listing-file-modified-sort="1768375481361" data-listing-reading-time-sort="33" data-listing-word-count-sort="6427">
 <a href="../../APIs/SentinelHub/Data/S1GRD.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <div class="card-body post-contents">
@@ -2158,7 +2217,7 @@ General information about Sentinel-1 mission can be found here. Sentinel Hub off
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="6" data-listing-file-modified-sort="1767973865343" data-listing-reading-time-sort="20" data-listing-word-count-sort="3979">
+<div class="g-col-1" data-index="6" data-listing-file-modified-sort="1768375481361" data-listing-reading-time-sort="20" data-listing-word-count-sort="3979">
 <a href="../../APIs/SentinelHub/Data/S2L1C.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <div class="card-body post-contents">
@@ -2172,7 +2231,7 @@ General information about Sentinel-2 mission can be found here. Sentinel Hub off
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="7" data-listing-file-modified-sort="1767973865343" data-listing-reading-time-sort="23" data-listing-word-count-sort="4430">
+<div class="g-col-1" data-index="7" data-listing-file-modified-sort="1768375481361" data-listing-reading-time-sort="23" data-listing-word-count-sort="4430">
 <a href="../../APIs/SentinelHub/Data/S2L2A.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <div class="card-body post-contents">
@@ -2186,7 +2245,7 @@ General information about Sentinel-2 mission can be found here. Sentinel Hub off
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="8" data-listing-file-modified-sort="1767973865343" data-listing-reading-time-sort="33" data-listing-word-count-sort="6463">
+<div class="g-col-1" data-index="8" data-listing-file-modified-sort="1768375481361" data-listing-reading-time-sort="33" data-listing-word-count-sort="6463">
 <a href="../../APIs/SentinelHub/Data/S3OLCI.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <div class="card-body post-contents">
@@ -2200,7 +2259,7 @@ General information about Sentinel-3 mission can be found here. Sentinel Hub off
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="9" data-listing-file-modified-sort="1767973865343" data-listing-reading-time-sort="18" data-listing-word-count-sort="3497">
+<div class="g-col-1" data-index="9" data-listing-file-modified-sort="1768375481361" data-listing-reading-time-sort="18" data-listing-word-count-sort="3497">
 <a href="../../APIs/SentinelHub/Data/S3OLCIL2.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <div class="card-body post-contents">
@@ -2214,7 +2273,7 @@ General information about Sentinel-3 mission can be found here. Sentinel Hub off
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="10" data-listing-file-modified-sort="1767973865344" data-listing-reading-time-sort="20" data-listing-word-count-sort="3845">
+<div class="g-col-1" data-index="10" data-listing-file-modified-sort="1768375481361" data-listing-reading-time-sort="20" data-listing-word-count-sort="3845">
 <a href="../../APIs/SentinelHub/Data/S3SLSTR.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <div class="card-body post-contents">
@@ -2228,7 +2287,7 @@ General information about Sentinel-3 mission can be found here. Sentinel Hub off
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="11" data-listing-file-modified-sort="1767973865344" data-listing-reading-time-sort="52" data-listing-word-count-sort="10222">
+<div class="g-col-1" data-index="11" data-listing-file-modified-sort="1768375481361" data-listing-reading-time-sort="52" data-listing-word-count-sort="10222">
 <a href="../../APIs/SentinelHub/Data/S3SYNL2.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <div class="card-body post-contents">
@@ -2242,7 +2301,7 @@ General information about Sentinel-3 mission can be found here. Sentinel Hub off
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="12" data-listing-file-modified-sort="1767973865344" data-listing-reading-time-sort="23" data-listing-word-count-sort="4479">
+<div class="g-col-1" data-index="12" data-listing-file-modified-sort="1768375481361" data-listing-reading-time-sort="23" data-listing-word-count-sort="4479">
 <a href="../../APIs/SentinelHub/Data/S5PL2.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <div class="card-body post-contents">

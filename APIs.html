@@ -245,6 +245,65 @@ window.onload = function() {
   });
 </script>
 
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        function setupS3Links() {
+            let s3Links = document.querySelectorAll('a[data-s3-path]');
+            s3Links.forEach(link => {
+                // Create S3 link wrapper
+                const wrapper = document.createElement('div');
+                wrapper.className = 's3-link-wrapper';
+
+                const s3Link = document.createElement('a');
+                s3Link.className = 's3-link';
+                s3Link.textContent = link.textContent;
+                s3Link.href = '#';
+                s3Link.title = 'Click to copy S3 path';
+
+                const tooltip = document.createElement('div');
+                tooltip.className = 's3-tooltip';
+                tooltip.textContent = link.dataset.s3Path;
+
+                wrapper.appendChild(s3Link);
+                wrapper.appendChild(tooltip);
+
+                link.replaceWith(wrapper);
+
+                // Add click to copy functionality
+                s3Link.addEventListener('click', function(e) {
+                    e.preventDefault();
+
+                    // Copy to clipboard
+                    navigator.clipboard.writeText(tooltip.textContent).then(function() {
+                        // Show feedback
+                        const feedback = document.createElement('div');
+                        feedback.className = 's3-copy-feedback';
+                        feedback.textContent = 'Copied!';
+
+                        wrapper.appendChild(feedback);
+                        feedback.style.opacity = '1';
+                        feedback.style.visibility = 'visible';
+
+                        // Remove feedback after 2 seconds
+                        setTimeout(function() {
+                            feedback.style.opacity = '0';
+                            feedback.style.visibility = 'hidden';
+                            setTimeout(function() {
+                                feedback.remove();
+                            }, 300);
+                        }, 1500);
+                    }).catch(function(err) {
+                        console.error('Failed to copy:', err);
+                    });
+                });
+            });
+        }
+
+        setupS3Links();
+    });
+
+</script>
+
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
@@ -2141,7 +2200,7 @@ window.Quarto = {
 <p>There are various interfaces providing capability to search the catalog, to serve various users’ needs and to ensure continuity over the existing Copernicus Hubs. All interfaces are connected to the same database to guarantee consistency.</p>
 <div id="listing-CatalogAPIs" class="quarto-listing quarto-listing-container-grid">
 <div class="list grid quarto-listing-cols-3">
-<div class="g-col-1" data-index="0" data-listing-file-modified-sort="1767973865336" data-listing-reading-time-sort="22" data-listing-word-count-sort="4362">
+<div class="g-col-1" data-index="0" data-listing-file-modified-sort="1768375481354" data-listing-reading-time-sort="22" data-listing-word-count-sort="4362">
 <a href="./APIs/OData.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <div class="card-body post-contents">
@@ -2155,7 +2214,7 @@ OData is an SO/IEC approved, OASIS standard , which is based on https RESTful Ap
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="1" data-listing-file-modified-sort="1767973865337" data-listing-reading-time-sort="8" data-listing-word-count-sort="1446">
+<div class="g-col-1" data-index="1" data-listing-file-modified-sort="1768375481354" data-listing-reading-time-sort="8" data-listing-word-count-sort="1446">
 <a href="./APIs/OpenSearch.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <div class="card-body post-contents">
@@ -2169,7 +2228,7 @@ We would like to inform you of the scheduled decommissioning of our OpenSearch C
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="2" data-listing-file-modified-sort="1767973865337" data-listing-reading-time-sort="28" data-listing-word-count-sort="5594">
+<div class="g-col-1" data-index="2" data-listing-file-modified-sort="1768375481355" data-listing-reading-time-sort="28" data-listing-word-count-sort="5594">
 <a href="./APIs/STAC.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <div class="card-body post-contents">
@@ -2207,7 +2266,7 @@ No matching items
 <p>By including processing capabilities, they avoid having to download and manage huge volumes of data locally.</p>
 <div id="listing-StreamlinedDataAccess" class="quarto-listing quarto-listing-container-grid">
 <div class="list grid quarto-listing-cols-3">
-<div class="g-col-1" data-index="0" data-listing-file-modified-sort="1767973865338" data-listing-reading-time-sort="1" data-listing-word-count-sort="51">
+<div class="g-col-1" data-index="0" data-listing-file-modified-sort="1768375481355" data-listing-reading-time-sort="1" data-listing-word-count-sort="51">
 <a href="./APIs/SentinelHub.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <div class="card-body post-contents">
@@ -2221,7 +2280,7 @@ Sentinel Hub is a multi-spectral and multi-temporal big data satellite imagery s
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="1" data-listing-file-modified-sort="1767973865421" data-listing-reading-time-sort="5" data-listing-word-count-sort="802">
+<div class="g-col-1" data-index="1" data-listing-file-modified-sort="1768375481438" data-listing-reading-time-sort="5" data-listing-word-count-sort="802">
 <a href="./APIs/openEO/openEO.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <div class="card-body post-contents">
@@ -2247,7 +2306,7 @@ No matching items
 <p>Additional in Copernicus Data Space Ecosystem, we provide you with the S3 API, Traceability API and On-Demand Production API. The S3 API is one of the main access methods for EO data. Whereas, the Traceability API allows you to verify and register traces for user level data available in the Copernicus Data Space. Similarly, the On-Demand Production API provides you with on-demand processing capability for CARD-BS, CARD-COH6/12.</p>
 <div id="listing-AdditionalAPIs" class="quarto-listing quarto-listing-container-grid">
 <div class="list grid quarto-listing-cols-3">
-<div class="g-col-1" data-index="0" data-listing-file-modified-sort="1767973865337" data-listing-reading-time-sort="14" data-listing-word-count-sort="2743">
+<div class="g-col-1" data-index="0" data-listing-file-modified-sort="1768375481355" data-listing-reading-time-sort="14" data-listing-word-count-sort="2743">
 <a href="./APIs/S3.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <div class="card-body post-contents">
@@ -2261,7 +2320,7 @@ S3 API is one of the main access methods for EO data. It is suitable for Third P
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="1" data-listing-file-modified-sort="1767973865336" data-listing-reading-time-sort="17" data-listing-word-count-sort="3233">
+<div class="g-col-1" data-index="1" data-listing-file-modified-sort="1768375481354" data-listing-reading-time-sort="17" data-listing-word-count-sort="3233">
 <a href="./APIs/On-Demand Production API.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <div class="card-body post-contents">
@@ -2275,7 +2334,7 @@ On-Demand Production API provides access to two sets of data processing workflow
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="2" data-listing-file-modified-sort="1767973865392" data-listing-reading-time-sort="3" data-listing-word-count-sort="408">
+<div class="g-col-1" data-index="2" data-listing-file-modified-sort="1768375481409" data-listing-reading-time-sort="3" data-listing-word-count-sort="408">
 <a href="./APIs/Traceability.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <div class="card-body post-contents">
