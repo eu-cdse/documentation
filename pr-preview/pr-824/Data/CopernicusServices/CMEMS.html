@@ -156,6 +156,65 @@ window.onload = function() {
   });
 </script>
 
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        function setupS3Links() {
+            let s3Links = document.querySelectorAll('a[data-s3-path]');
+            s3Links.forEach(link => {
+                // Create S3 link wrapper
+                const wrapper = document.createElement('div');
+                wrapper.className = 's3-link-wrapper';
+
+                const s3Link = document.createElement('a');
+                s3Link.className = 's3-link';
+                s3Link.textContent = link.textContent;
+                s3Link.href = '#';
+                s3Link.title = 'Click to copy S3 path';
+
+                const tooltip = document.createElement('div');
+                tooltip.className = 's3-tooltip';
+                tooltip.textContent = link.dataset.s3Path;
+
+                wrapper.appendChild(s3Link);
+                wrapper.appendChild(tooltip);
+
+                link.replaceWith(wrapper);
+
+                // Add click to copy functionality
+                s3Link.addEventListener('click', function(e) {
+                    e.preventDefault();
+
+                    // Copy to clipboard
+                    navigator.clipboard.writeText(tooltip.textContent).then(function() {
+                        // Show feedback
+                        const feedback = document.createElement('div');
+                        feedback.className = 's3-copy-feedback';
+                        feedback.textContent = 'Copied!';
+
+                        wrapper.appendChild(feedback);
+                        feedback.style.opacity = '1';
+                        feedback.style.visibility = 'visible';
+
+                        // Remove feedback after 2 seconds
+                        setTimeout(function() {
+                            feedback.style.opacity = '0';
+                            feedback.style.visibility = 'hidden';
+                            setTimeout(function() {
+                                feedback.remove();
+                            }, 300);
+                        }, 1500);
+                    }).catch(function(err) {
+                        console.error('Failed to copy:', err);
+                    });
+                });
+            });
+        }
+
+        setupS3Links();
+    });
+
+</script>
+
 
 <link rel="stylesheet" href="../../custom.css">
 </head>
@@ -377,8 +436,8 @@ window.onload = function() {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../Data/ComplementaryData/Additional.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Additional Complementary Data</span></a>
+  <a href="../../Data/ComplementaryData/SRTM.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">SRTM</span></a>
   </div>
 </li>
       </ul>
@@ -2012,7 +2071,7 @@ image: https://avatars.githubusercontent.com/u/51791874?v=4
 ---
 
 
-::: {#c4c289c2 .cell tags='["parameters"]' execution_count=1}
+::: {#4a74df5a .cell tags='["parameters"]' execution_count=1}
 ``` {.python .cell-code}
 constellation = "CMEMS"
 ```
@@ -2031,7 +2090,7 @@ Please be advised that access to this collection is exclusively available throug
 
 :::
 
-::: {#6e98680c .cell execution_count=2}
+::: {#cef3cfd7 .cell execution_count=2}
 ``` {.python .cell-code}
 import json
 from IPython.display import display, Markdown, Latex,HTML
@@ -2044,7 +2103,7 @@ from Datafunctions import data_availability, filter_levels
 :::
 
 
-::: {#c663fbc0 .cell execution_count=3}
+::: {#2a5a59b5 .cell execution_count=3}
 ``` {.python .cell-code}
 #load the json metadata file
 
@@ -2057,7 +2116,7 @@ meta = [ c for c in meta if constellation in c["constellation"] ]
 :::
 
 
-::: {#34c6120d .cell execution_count=4}
+::: {#92ec4e39 .cell execution_count=4}
 ``` {.python .cell-code}
 # function to fetch thumbnail url
 
@@ -2068,7 +2127,7 @@ def get_thumbnail():
 :::
 
 
-::: {#d3a93864 .cell execution_count=5}
+::: {#24242d6a .cell execution_count=5}
 ``` {.python .cell-code}
 #function to fetch the stac url for the dataset
 def get_stac():
@@ -2087,7 +2146,7 @@ def get_stac():
 :::
 
 
-::: {#4ea0c3a0 .cell execution_count=6}
+::: {#995aa922 .cell execution_count=6}
 ``` {.python .cell-code}
 # function to search for finding links within the metadata based on specific keyword
 
@@ -2101,7 +2160,7 @@ def find_link(rel=None,href_contains=None, title_contains=None):
 :::
 
 
-::: {#d98691a4 .cell execution_count=7}
+::: {#0a85987d .cell execution_count=7}
 ``` {.python .cell-code}
 #get link for wmts
 def get_wmts():
@@ -2117,7 +2176,7 @@ def get_wmts():
 :::
 
 
-::: {#f197a396 .cell execution_count=8}
+::: {#05bb6654 .cell execution_count=8}
 ``` {.python .cell-code}
 #get link for source
 def get_source():
@@ -2133,7 +2192,7 @@ def get_source():
 :::
 
 
-::: {#29641db7 .cell execution_count=9}
+::: {#d95764cb .cell execution_count=9}
 ``` {.python .cell-code}
 #get link for more information of the collection
 def get_moreinfo():
@@ -2149,7 +2208,7 @@ def get_moreinfo():
 :::
 
 
-::: {#5a82084a .cell execution_count=10}
+::: {#4c075004 .cell execution_count=10}
 ``` {.python .cell-code}
 #function to combine all the fetched links under the detailed block
 
@@ -2171,7 +2230,7 @@ def necessary_links():
 :::
 
 
-::: {#b7c84222 .cell execution_count=11}
+::: {#55ecf49d .cell execution_count=11}
 ``` {.python .cell-code}
 # function enclosing thumbnail block 
 
@@ -2189,7 +2248,7 @@ def thumbblock(src,userguide, moreinfo, opensearch, stac, odata, gsd,revisit_tim
 :::
 
 
-::: {#88e80508 .cell execution_count=12}
+::: {#5087c4c6 .cell execution_count=12}
 ``` {.python .cell-code}
 # get extension detail
 def get_extent():
@@ -2209,7 +2268,7 @@ def get_extent():
 :::
 
 
-::: {#bac49070 .cell execution_count=13}
+::: {#8ca53a79 .cell execution_count=13}
 ``` {.python .cell-code}
 def get_bandtable():
     tabletitle = "Spectral Bands"
@@ -2254,7 +2313,7 @@ def get_bandtable():
 :::
 
 
-::: {#127bc7b9 .cell execution_count=14}
+::: {#d6214259 .cell execution_count=14}
 ``` {.python .cell-code}
 #function encloding detail block (block under **Further details about the collection**)
 
@@ -2281,7 +2340,7 @@ def detailblock(ID,license_button,cite):
 :::
 
 
-::: {#983a8b5f .cell execution_count=15}
+::: {#f83f1b93 .cell execution_count=15}
 ``` {.python .cell-code}
 # Display the baseline details of the collections
 def baselineinfo(filename): 
@@ -2294,7 +2353,7 @@ def baselineinfo(filename):
 :::
 
 
-::: {#ed59da94 .cell execution_count=16}
+::: {#cafb0702 .cell execution_count=16}
 ``` {.python .cell-code}
 # function to toggle detail block
 
@@ -2305,7 +2364,7 @@ def togglescript():
 :::
 
 
-::: {#8cfd0f27 .cell execution_count=17}
+::: {#495d0e5c .cell execution_count=17}
 ``` {.python .cell-code}
 # for loop to display the content
 text = ''
@@ -2468,7 +2527,7 @@ for c in meta:
 :::
 
 
-::: {#56088680 .cell execution_count=18}
+::: {#86255f3a .cell execution_count=18}
 ``` {.python .cell-code}
 text = filter_levels.createcheckboxes(sorted(set(categories))) +text + togglescript()
 

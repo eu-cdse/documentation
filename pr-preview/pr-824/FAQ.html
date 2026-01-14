@@ -191,6 +191,65 @@ window.onload = function() {
   });
 </script>
 
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        function setupS3Links() {
+            let s3Links = document.querySelectorAll('a[data-s3-path]');
+            s3Links.forEach(link => {
+                // Create S3 link wrapper
+                const wrapper = document.createElement('div');
+                wrapper.className = 's3-link-wrapper';
+
+                const s3Link = document.createElement('a');
+                s3Link.className = 's3-link';
+                s3Link.textContent = link.textContent;
+                s3Link.href = '#';
+                s3Link.title = 'Click to copy S3 path';
+
+                const tooltip = document.createElement('div');
+                tooltip.className = 's3-tooltip';
+                tooltip.textContent = link.dataset.s3Path;
+
+                wrapper.appendChild(s3Link);
+                wrapper.appendChild(tooltip);
+
+                link.replaceWith(wrapper);
+
+                // Add click to copy functionality
+                s3Link.addEventListener('click', function(e) {
+                    e.preventDefault();
+
+                    // Copy to clipboard
+                    navigator.clipboard.writeText(tooltip.textContent).then(function() {
+                        // Show feedback
+                        const feedback = document.createElement('div');
+                        feedback.className = 's3-copy-feedback';
+                        feedback.textContent = 'Copied!';
+
+                        wrapper.appendChild(feedback);
+                        feedback.style.opacity = '1';
+                        feedback.style.visibility = 'visible';
+
+                        // Remove feedback after 2 seconds
+                        setTimeout(function() {
+                            feedback.style.opacity = '0';
+                            feedback.style.visibility = 'hidden';
+                            setTimeout(function() {
+                                feedback.remove();
+                            }, 300);
+                        }, 1500);
+                    }).catch(function(err) {
+                        console.error('Failed to copy:', err);
+                    });
+                });
+            });
+        }
+
+        setupS3Links();
+    });
+
+</script>
+
 
 <link rel="stylesheet" href="custom.css">
 </head>
@@ -412,8 +471,8 @@ window.onload = function() {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./Data/ComplementaryData/Additional.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Additional Complementary Data</span></a>
+  <a href="./Data/ComplementaryData/SRTM.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">SRTM</span></a>
   </div>
 </li>
       </ul>
@@ -2072,7 +2131,7 @@ window.onload = function() {
 In comparison to the existing legacy Copernicus Data Hub, what will be the free services other than stac/cog?
 </summary>
 <p>
-Compared to the previously existed Copernicus Data Hub, there will be additional APIs - OGC interfaces (WMS, WMTS, WCS), OpenEO, Sentinel Hub API, S3, and others. Please refer to the <a href="./Roadmap.html">Roadmap</a> for more information on the timing of these interfaces.
+Compared to the previously existed Copernicus Data Hub, there will be additional APIs - OGC interfaces (WMS, WMTS, WCS), OpenEO, Sentinel Hub API, S3, and others. Please refer to the <a href="https://dataspace.copernicus.eu/#roadmap">Roadmap</a> for more information on the timing of these interfaces.
 </p>
 </details>
 <details id="is-there-an-end-user-document-that-describes-specific-data-products-and-specific-services-that-are-available">
@@ -2228,7 +2287,7 @@ Then our teams will facilitate the processing of your request.
 What data will be offered online and what is the timeline for the following months?
 </summary>
 <p>
-For the details on the data offer and timing, please refer to the <a href="./Roadmap.html">Roadmap</a>
+For the details on the data offer and timing, please refer to the <a href="https://dataspace.copernicus.eu/#roadmap">Roadmap</a>
 </p>
 </details>
 <details id="how-can-i-download-copenicus-data-in-bulk-mode">
@@ -2326,7 +2385,7 @@ The Online data (or Immediate Access Data (IAD)) are not on the tapes. Online da
 Can we download the data acquired by all Sentinel missions (1, 2, 3, 5P, 6) and the other satellites (e.g.&nbsp;Meteosat) via the CDSE? Considering some missions are not managed by ESA, but by EUMETSAT for example.
 </summary>
 <p>
-The <a href="./Roadmap.html">Roadmap</a> shows how the Copernicus Data Space Ecosystem will be continously enhanced in terms of available data.
+The <a href="Rhttps://dataspace.copernicus.eu/#roadmap">Roadmap</a> shows how the Copernicus Data Space Ecosystem will be continously enhanced in terms of available data.
 </p>
 </details>
 <details id="will-the-cdse-offer-eo-ready-to-use-products-or-just-l0-and-l1-data">
@@ -2334,7 +2393,7 @@ The <a href="./Roadmap.html">Roadmap</a> shows how the Copernicus Data Space Eco
 Will the CDSE offer EO ready-to-use products or just L0 and L1 data?
 </summary>
 <p>
-Up to L3 products will be available. Please see the <a href="./Roadmap.html">Roadmap</a>.
+Up to L3 products will be available. Please see the <a href="https://dataspace.copernicus.eu/#roadmap">Roadmap</a>.
 </p>
 </details>
 <details id="can-i-access-landsat-data-in-copernicus-data-space-ecosystem">
@@ -3374,7 +3433,7 @@ The access token is valid for 10 minutes, after 10 minutes, it expires. When Acc
 Will Long Term Archive (LTA) process be discontinued when all archived data become Online?
 </summary>
 <p>
-There will still be services available for so called “deferred data access” : data collections that are not commonly used. That said, all of the most relevant collections will be available Online. The <a href="./Roadmap.html">Roadmap</a> shows how the Copernicus Data Space Ecosystem will be continously upgraded and how more data become available.
+There will still be services available for so called “deferred data access” : data collections that are not commonly used. That said, all of the most relevant collections will be available Online. The <a href="https://dataspace.copernicus.eu/#roadmap">Roadmap</a> shows how the Copernicus Data Space Ecosystem will be continously upgraded and how more data become available.
 </p>
 </details>
 <details id="will-the-platform-use-stac-standards">
