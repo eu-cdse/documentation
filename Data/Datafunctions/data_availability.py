@@ -20,7 +20,6 @@ def main(c):
         "Commercial data": VHROffer,            
         #"AdditionalComplementaryData": Additional,      
         "CAMS": CAMSOffer,
-        "CLMS_LEGACY": CLMSOffer,
         "CLMStoCDSE_bio": CLMSOffer,
         "CLMStoCDSE_land": CLMSOffer,
         "CLMStoCDSE_priority": CLMSOffer,     
@@ -602,54 +601,9 @@ def CLMSOffer(c):
                 except Exception:
                     data_access = ''    
 
-                if product_id == "HIGH RESOLUTION LAYERS (HRL)":
-                    t.append([product_type,product,sub_product,specific_product,catalogue,odata,product_link])
-                    headers = ["Product Type","Products","Sub-Product","Specific Products","S3 path","Odata","Product Detail"]
-                    note += footnotes
-                elif product_id == "CORINE LAND COVER (CLC)":
-                    t.append([product_type,specific_product,spatial,catalogue,odata,product_link])
-                    headers = ["Product Type","Specific Products","Spatial Extent","S3 path","OData","Product Detail"]
-                    note += footnotes
-                elif product_id == "Priority Area Monitoring":
-                    t.append([product_type,product,specific_product,spatial,catalogue,odata,product_link])
-                    headers = ["Product Type","Products","Specific Products","Spatial Extent","S3 path","OData","Product Detail"]
-                    note += footnotes
-                elif product_id == "Global Dynamic Land Cover":
-                    t.append([product_type,dataset,temporal,spatial,resolution,ds_frequency,catalogue,data_access])
-                    headers = ["Product Type","Dataset","Temporal Extent","Spatial Extent","Spatial. resol.","Frequency","S3 path","Data Access"]
-                    note += footnotes
-                elif product_id == "Coastal Zones Land Cover / Land Use":
-                    t.append([product_type,dataset,temporal,spatial,resolution,ds_frequency,catalogue,odata,product_link])
-                    headers = ["Product Type","Dataset","Temporal Extent","Spatial Extent","Spatial. resol.","Frequency","S3 path","OData","Product Detail"]
-                    note += footnotes
-                elif product_id == "Soil Moisture":
-                    t.append([product_type,dataset,temporal,spatial,resolution,ds_frequency,catalogue,data_access])
-                    headers = ["Product Type","Dataset","Temporal Extent","Spatial Extent","Spatial. resol.","Frequency","S3 path","Data Access"]
-                    note += footnotes
-                elif product_id == "Snow":
-                    t.append([product_type,dataset,temporal,spatial,resolution,ds_frequency,catalogue,data_access])
-                    headers = ["Product Type","Dataset","Temporal Extent","Spatial Extent","Spatial. resol.","Frequency","S3 path","Data Access"]
-                    note += footnotes
-                elif product_id == "Temperature and Reflectance":
-                    t.append([product_type,dataset,temporal,spatial,resolution,ds_frequency,catalogue,data_access])
-                    headers = ["Product Type","Dataset","Temporal Extent","Spatial Extent","Spatial. resol.","Frequency","S3 path","Data Access"]
-                    note += footnotes
-                elif product_id == "Evapotranspiration":
-                    t.append([product_type,dataset,temporal,spatial,resolution,ds_frequency,catalogue,data_access])
-                    headers = ["Product Type","Dataset","Temporal Extent","Spatial Extent","Spatial. resol.","Frequency","S3 path","Data Access"]
-                    note += footnotes    
-                elif product_id == "Vegetation":
-                    t.append([product_type,dataset,temporal,spatial,resolution,ds_frequency,catalogue,data_access])
-                    headers = ["Product Type","Dataset","Temporal Extent","Spatial Extent","Spatial. resol.","Frequency","S3 path","Data Access"]
-                    note += footnotes        
-                elif product_id == "Water Bodies":
-                    t.append([product_type,dataset,temporal,spatial,resolution,ds_frequency,catalogue,data_access])
-                    headers = ["Product Type","Dataset","Temporal Extent","Spatial Extent","Spatial. resol.","Frequency","S3 path","Data Access"]
-                    note += footnotes
-                else:
-                    t.append([product_type,specific_product,spatial,temporal,catalogue,odata,product_link])
-                    headers = ["Product Type","Specific Products","Spatial Extent","Temporal Extent","S3 path","OData","Product Detail"]
-                    note += footnotes
+                t.append([product_type,dataset,temporal,spatial,resolution,ds_frequency,catalogue,data_access])
+                headers = ["Product Type","Dataset","Temporal Extent","Spatial Extent","Spatial. resol.","Frequency","S3 path","Data Access"]
+                note += footnotes
                 
             # Find and remove empty columns
             t,headers=removeempty(t,headers)
