@@ -16,8 +16,7 @@ Sentinel Hub. For information on how to set processing parameters, see
 [Processing Options](#processing-options).
 
 1.  Original or multilooked source chosen (depending on the resolution
-    level; multilooking is done in ground range. Also
-    [see](#differences-in-capabilities).)
+    level; multilooking is done in ground range.
 2.  Calibration to the chosen backscatter coefficient and thermal noise
     removal applied.
 3.  (Optional) [Speckle filtering](#speckle-filtering) on the source
@@ -25,12 +24,10 @@ Sentinel Hub. For information on how to set processing parameters, see
     [example](/APIs/SentinelHub/Process/Examples/S1GRD.qmd#s1grd-non-orthorectified-lee-speckle-filtered-decibel-gamma0-hh-between--20-db-and-10-db-png)).
 4.  (Optional) Radiometric terrain correction using [area
     integration](https://doi.org/10.1109/TGRS.2011.2120616){target="_blank"}
-    is performed. The [Mapzen or Copernicus
-    DEM](/APIs/SentinelHub/Data/DEM.qmd) is used (see the
+    is performed. [Copernicus DEM](/APIs/SentinelHub/Data/DEM.qmd) is used (see the
     [example](/APIs/SentinelHub/Process/Examples/S1GRD.qmd#s1grd-radiometrically-terrain-corrected-linear-gamma0-vv-between-0-and-05-png)).
 5.  (Optional) Orthorectification using Range-Doppler terrain correction
-    using the [Mapzen or Copernicus
-    DEM](/APIs/SentinelHub/Data/DEM.qmd).
+    using [Copernicus DEM](/APIs/SentinelHub/Data/DEM.qmd).
 
 Notes:
 
@@ -75,8 +72,14 @@ This chapter will explain the `input.data.dataFilter` object of the
 
 #### mosaickingOrder
 
-[The same as for
-S2L1C.](/APIs/SentinelHub/Data/S2L1C.qmd#mosaickingorder)
+Sets the order of overlapping tiles from which the output result is
+mosaicked. Note that tiles will in most cases come from the same
+orbit/acquisition. The tiling is done by ESA for easier distribution.
+
+  Value             Description                                                                                       Notes
+  ----------------- ------------------------------------------------------------------------------------------------- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  **mostRecent**    selected by default. The pixel will be selected from the tile, which was acquired most recently   in case there are more tiles available with the same timestamp (some tiles are processed by many ground stations, some are reprocessed, etc.), the one, which was downloaded from SciHub later will be used.
+  **leastRecent**   similar to **mostRecent** but in reverse order
 
 #### resolution (pixel spacing)
 
@@ -143,7 +146,7 @@ This chapter will explain the `input.data.processing` object of the
   downsampling                     Not used, use `upsampling` instead                                                                    N/A                                                                                                                                                                                                                                                                                                                                                                                       Ignored
   backCoeff \[1\]                  Backscatter coefficient                                                                               **BETA0**`<br/>`{=html}**SIGMA0_ELLIPSOID** `<br/>`{=html}**GAMMA0_ELLIPSOID**`<br/>`{=html} **GAMMA0_TERRAIN**                                                                                                                                                                                                                                                                           **GAMMA0_ELLIPSOID**
   orthorectify \[2\]               Enables/disables orthorectification                                                                   **TRUE** - Orthorectified`<br/>`{=html}**FALSE** - non-Orthorectified`<br/>`{=html}                                                                                                                                                                                                                                                                                                       **FALSE**
-  demInstance                      The DEM used for orthorectification                                                                   \- Copernicus DEM 10m and 30m \[3\]\[4\] `<br/>`{=html} **COPERNICUS_30** - Copernicus DEM 30m \[4\] `<br/>`{=html} **COPERNICUS_90** - Copernicus DEM 90m                                                                                                                                                                                                                                **MAPZEN**
+  demInstance                      The DEM used for orthorectification                                                                   \- Copernicus DEM 10m and 30m \[3\]\[4\] `<br/>`{=html} **COPERNICUS_30** - Copernicus DEM 30m \[4\] `<br/>`{=html} **COPERNICUS_90** - Copernicus DEM 90m                                                                                                                                                                                                                                **COPERNICUS_30**
   radiometricTerrainOversampling   Sets the DEM oversampling parameter for radiometric terrain correction. Integer values recommended.   1 to 4                                                                                                                                                                                                                                                                                                                                                                                    2
   speckleFilter                    Defines the speckle filtering method and parameters to use.                                           See [Speckle Filtering](#speckle-filtering)                                                                                                                                                                                                                                                                                                                                               NONE
 
