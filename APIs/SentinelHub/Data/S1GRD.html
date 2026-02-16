@@ -74,7 +74,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-549806ee2085284f45b00abea8c6df48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../../site_libs/bootstrap/bootstrap-75ceb37ddb300c33ede8ea4f5ada363e.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../../site_libs/bootstrap/bootstrap-9d2355f2ff8f862dcdbc46021f35147c.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": true,
@@ -2212,11 +2212,11 @@ window.onload = function() {
 <h2 class="anchored" data-anchor-id="processing-chain">Processing Chain</h2>
 <p>The following describes the way Sentinel-1 GRD data is processed in Sentinel Hub. For information on how to set processing parameters, see <a href="#processing-options">Processing Options</a>.</p>
 <ol type="1">
-<li>Original or multilooked source chosen (depending on the resolution level; multilooking is done in ground range. Also <a href="#differences-in-capabilities">see</a>.)</li>
+<li>Original or multilooked source chosen (depending on the resolution level; multilooking is done in ground range.</li>
 <li>Calibration to the chosen backscatter coefficient and thermal noise removal applied.</li>
 <li>(Optional) <a href="#speckle-filtering">Speckle filtering</a> on the source data (see the <a href="../../../APIs/SentinelHub/Process/Examples/S1GRD.html#s1grd-non-orthorectified-lee-speckle-filtered-decibel-gamma0-hh-between--20-db-and-10-db-png">example</a>).</li>
-<li>(Optional) Radiometric terrain correction using <a href="https://doi.org/10.1109/TGRS.2011.2120616" target="_blank">area integration</a> is performed. The <a href="../../../APIs/SentinelHub/Data/DEM.html">Mapzen or Copernicus DEM</a> is used (see the <a href="../../../APIs/SentinelHub/Process/Examples/S1GRD.html#s1grd-radiometrically-terrain-corrected-linear-gamma0-vv-between-0-and-05-png">example</a>).</li>
-<li>(Optional) Orthorectification using Range-Doppler terrain correction using the <a href="../../../APIs/SentinelHub/Data/DEM.html">Mapzen or Copernicus DEM</a>.</li>
+<li>(Optional) Radiometric terrain correction using <a href="https://doi.org/10.1109/TGRS.2011.2120616" target="_blank">area integration</a> is performed. <a href="../../../APIs/SentinelHub/Data/DEM.html">Copernicus DEM</a> is used (see the <a href="../../../APIs/SentinelHub/Process/Examples/S1GRD.html#s1grd-radiometrically-terrain-corrected-linear-gamma0-vv-between-0-and-05-png">example</a>).</li>
+<li>(Optional) Orthorectification using Range-Doppler terrain correction using <a href="../../../APIs/SentinelHub/Data/DEM.html">Copernicus DEM</a>.</li>
 </ol>
 <p>Notes:</p>
 <ul>
@@ -2238,7 +2238,28 @@ window.onload = function() {
 <p>This chapter will explain the <code>input.data.dataFilter</code> object of the <code>S1GRD</code> <code>process</code> API.</p>
 <section id="mosaickingorder" class="level4">
 <h4 class="anchored" data-anchor-id="mosaickingorder">mosaickingOrder</h4>
-<p><a href="../../../APIs/SentinelHub/Data/S2L1C.html#mosaickingorder">The same as for S2L1C.</a></p>
+<p>Sets the order of overlapping tiles from which the output result is mosaicked. Note that tiles will in most cases come from the same orbit/acquisition. The tiling is done by ESA for easier distribution.</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Value</th>
+<th style="text-align: left;">Description</th>
+<th style="text-align: left;">Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>mostRecent</strong></td>
+<td style="text-align: left;">selected by default. The pixel will be selected from the tile, which was acquired most recently</td>
+<td style="text-align: left;">in case there are more tiles available with the same timestamp (some tiles are processed by many ground stations, some are reprocessed, etc.), the one, which was downloaded from SciHub later will be used.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>leastRecent</strong></td>
+<td style="text-align: left;">similar to <strong>mostRecent</strong> but in reverse order</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
 </section>
 <section id="resolution-pixel-spacing" class="level4">
 <h4 class="anchored" data-anchor-id="resolution-pixel-spacing">resolution (pixel spacing)</h4>
@@ -2447,7 +2468,7 @@ window.onload = function() {
 <td style="text-align: left;">demInstance</td>
 <td style="text-align: left;">The DEM used for orthorectification</td>
 <td style="text-align: left;">- Copernicus DEM 10m and 30m [3][4] <br> <strong>COPERNICUS_30</strong> - Copernicus DEM 30m [4] <br> <strong>COPERNICUS_90</strong> - Copernicus DEM 90m</td>
-<td style="text-align: left;"><strong>MAPZEN</strong></td>
+<td style="text-align: left;"><strong>COPERNICUS_30</strong></td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">radiometricTerrainOversampling</td>
