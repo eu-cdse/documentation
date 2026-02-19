@@ -1,0 +1,54 @@
+---
+title: "EOAP CWL"
+execute:
+  echo: false
+jupyter: python3
+aliases:
+  - /EOAP-CWL.html
+---
+
+With openEO, it is now possible to run CWL workflows. On the CDSE backend, this has some extra features, which are described on this page.
+Backend agnostic information can be found here: https://github.com/Open-EO/openeo-geopyspark-driver/pull/1548/changes (TODO: Update URL once merged).
+
+
+## S3 access
+
+CWL code running on this backend will receive short-lived S3 credentials to access the `eodata` bucket.
+Those credentials can be accessed through the following environment variables:
+
+- `AWS_ENDPOINT_URL_S3`
+- `AWS_ACCESS_KEY_ID`
+- `AWS_SECRET_ACCESS_KEY`
+
+They won't work outside the cluster, and are only temporarily valid.
+You can use these instead of your own credentials. This way, your Docker images can remain public.
+
+## Docker images
+
+Only whitelisted Docker images can be used in the cluster. Contact us through the forum or support to get your image prefix whitelisted.
+
+
+## Memory limits
+
+At the time of writing (February 2026), the memory limit is set to 15GB.
+
+## Debugging locally
+
+You might want to test your CWL workflow locally before running it on the cluster.
+To do this, you can use [cwltool](https://pypi.org/project/cwltool/) locally.
+You might need to provide your own S3 credentials. You can request them
+here: https://documentation.dataspace.copernicus.eu/APIs/S3.html
+
+```bash
+cwltool \
+  --tmpdir-prefix=$HOME/tmp/ \
+  --force-docker-pull \
+  --leave-container \
+  --leave-tmpdir \
+  --no-read-only \
+  --parallel \
+  --preserve-environment=AWS_ENDPOINT_URL_S3 \
+  --preserve-environment=AWS_ACCESS_KEY_ID \
+  --preserve-environment=AWS_SECRET_ACCESS_KEY \
+  example_workflow.cwl example_parameters.json
+```
