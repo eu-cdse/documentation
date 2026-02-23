@@ -63,8 +63,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../../">
-<link href="../../APIs/openEO/File_formats.html" rel="next">
-<link href="../../APIs/openEO/Processes.html" rel="prev">
+<link href="../../APIs/SentinelHub.html" rel="next">
+<link href="../../APIs/openEO/fair.html" rel="prev">
 <link href="../../_images/logos/favicon.png" rel="icon" type="image/png">
 <script src="../../site_libs/quarto-html/quarto.js"></script>
 <script src="../../site_libs/quarto-html/popper.min.js"></script>
@@ -623,12 +623,6 @@ window.onload = function() {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../APIs/openEO/EOAP-CWL.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">EOAP CWL</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="../../APIs/openEO/File_formats.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">File Formats</span></a>
   </div>
@@ -742,6 +736,12 @@ window.onload = function() {
   <div class="sidebar-item-container"> 
   <a href="../../APIs/openEO/fair.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">FAIR &amp; open science</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../APIs/openEO/EOAP-CWL.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">EOAP CWL</span></a>
   </div>
 </li>
       </ul>
@@ -2183,10 +2183,10 @@ window.onload = function() {
 </header>
 
 
-<p>With openEO, it is now possible to run CWL (<a href="https://www.commonwl.org/">Common Workflow Language</a>) in the <code>run_udf</code> process. This is executed on Calrissian On the CDSE backend, this has some extra features, which are described on this page. More information can be found here: <a href="https://github.com/Open-EO/openeo-geopyspark-driver/blob/master/docs/udf-eoap-cwl.md">udf-eoap-cwl.md</a></p>
+<p>With openEO, it is now possible to run CWL (<a href="https://www.commonwl.org/">Common Workflow Language</a>) in the <code>run_udf</code> process. This is executed on Calrissian First read the general CWl documentation from <code>openeo-geopyspark-driver</code>: <a href="https://github.com/Open-EO/openeo-geopyspark-driver/blob/master/docs/udf-eoap-cwl.md">udf-eoap-cwl.md</a> On the CDSE backend, there are some extra features, which are described on this page.</p>
 <section id="s3-access" class="level2">
 <h2 class="anchored" data-anchor-id="s3-access">S3 access</h2>
-<p>CWL workflows running on this backend will receive short-lived S3 credentials with read-only access to the <code>eodata</code> bucket. Those credentials can be accessed through the following environment variables:</p>
+<p>CWL workflows running on this backend will receive short-lived S3 credentials with read-only access to the <code>eodata</code> bucket. Those credentials will be available in the following environment variables:</p>
 <ul>
 <li><code>AWS_ENDPOINT_URL_S3</code></li>
 <li><code>AWS_ACCESS_KEY_ID</code></li>
@@ -2196,7 +2196,11 @@ window.onload = function() {
 </section>
 <section id="docker-images" class="level2">
 <h2 class="anchored" data-anchor-id="docker-images">Docker images</h2>
-<p>Only whitelisted Docker images can be used in the cluster. Contact us through <a href="https://helpcenter.dataspace.copernicus.eu/hc/en-gb/requests/new">support</a> (You might need to create an account) As of February 2026, only public Docker images are used.</p>
+<p>CWL allows to use docker images to run code. For example:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">requirements</span><span class="kw">:</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">class</span><span class="kw">:</span><span class="at"> DockerRequirement</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">dockerPull</span><span class="kw">:</span><span class="at"> ghcr.io/cloudinsar/openeo_insar:20260219T1446</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Only whitelisted Docker images can be used in the cluster. Contact us through <a href="https://helpcenter.dataspace.copernicus.eu/hc/en-gb/requests/new">support</a> (You might need to create an account) As of February 2026, only Docker images that can be requested without credentials are used.</p>
 </section>
 <section id="memory-limits" class="level2">
 <h2 class="anchored" data-anchor-id="memory-limits">Memory limits</h2>
@@ -2205,17 +2209,15 @@ window.onload = function() {
 <section id="debugging-locally" class="level2">
 <h2 class="anchored" data-anchor-id="debugging-locally">Debugging locally</h2>
 <p>To test your CWL workflow locally before running it on the cluster, you can use <a href="https://pypi.org/project/cwltool/">cwltool</a> locally. You might need to provide your own S3 credentials. You can request them here: https://documentation.dataspace.copernicus.eu/APIs/S3.html</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">cwltool</span> <span class="dt">\</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">--tmpdir-prefix</span><span class="op">=</span><span class="va">$HOME</span>/tmp/ <span class="dt">\</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">--force-docker-pull</span> <span class="dt">\</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--leave-container</span> <span class="dt">\</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">--leave-tmpdir</span> <span class="dt">\</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">--no-read-only</span> <span class="dt">\</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">--parallel</span> <span class="dt">\</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">--preserve-environment</span><span class="op">=</span>AWS_ENDPOINT_URL_S3 <span class="dt">\</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">--preserve-environment</span><span class="op">=</span>AWS_ACCESS_KEY_ID <span class="dt">\</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">--preserve-environment</span><span class="op">=</span>AWS_SECRET_ACCESS_KEY <span class="dt">\</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  example_workflow.cwl example_parameters.json</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">cwltool</span> <span class="dt">\</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">--tmpdir-prefix</span><span class="op">=</span><span class="va">$HOME</span>/tmp/ <span class="dt">\</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">--force-docker-pull</span> <span class="dt">\</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--no-read-only</span> <span class="dt">\</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">--parallel</span> <span class="dt">\</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">--preserve-environment</span><span class="op">=</span>AWS_ENDPOINT_URL_S3 <span class="dt">\</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">--preserve-environment</span><span class="op">=</span>AWS_ACCESS_KEY_ID <span class="dt">\</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">--preserve-environment</span><span class="op">=</span>AWS_SECRET_ACCESS_KEY <span class="dt">\</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  example_workflow.cwl example_parameters.json</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 
 </section>
@@ -2647,13 +2649,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation column-body">
   <div class="nav-page nav-page-previous">
-      <a href="../../APIs/openEO/Processes.html" class="pagination-link" aria-label="openEO Processes">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">openEO Processes</span>
+      <a href="../../APIs/openEO/fair.html" class="pagination-link" aria-label="FAIR &amp; open science">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">FAIR &amp; open science</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../../APIs/openEO/File_formats.html" class="pagination-link" aria-label="File Formats">
-        <span class="nav-page-text">File Formats</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../../APIs/SentinelHub.html" class="pagination-link" aria-label="Sentinel Hub">
+        <span class="nav-page-text">Sentinel Hub</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
