@@ -40,20 +40,5 @@ jobs:
         run: quarto render --output-dir _build
       - name: Commit
         run: git add _build && git commit -m "build - staging deploy" && git subtree push --prefix _build origin docportal-staging
-  trigger-search-index:
-    needs: build-deploy
-    runs-on: ubuntu-latest
-    steps:
-      - name: Trigger search index generation
-        uses: peter-evans/workflow-dispatch@v1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          repository: ${{ github.repository }}
-          workflow: generate-search-index.yml
-          ref: publish
-          inputs: |
-            start_url: https://documentation.dataspace.copernicus.eu/
-            max_minutes: 15
-
       
 
