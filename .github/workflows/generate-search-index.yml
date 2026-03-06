@@ -1,0 +1,39 @@
+name: Generate CDSE Documentation Search Index
+on:
+    pull_request:
+    workflow_dispatch:
+        inputs:
+            start_url:
+                description: 'Starting URL for crawling (default: https://documentation.dataspace.copernicus.eu/)'
+                required: false
+                default: 'https://documentation.dataspace.copernicus.eu/'
+            max_minutes:
+                description: 'Maximum crawling time in minutes (default: 15)'
+                required: false
+                default: '15'
+concurrency: generate-search-index
+jobs:
+    generate-index:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Check out repository
+              uses: actions/checkout@v3
+            - name: Set Git config
+              run: |
+                git config --local user.email "actions@github.com"
+                git config --local user.name "Github Actions"
+            - name: Set up Python
+              uses: actions/setup-python@v4
+              with:
+                python-version: '3.14'
+                cache: 'pip'
+            - name: Install dependencies
+              run: pip install -r .github/scripts/requirements.txt
+            - name: Generate search index
+              run: |
+                python .github/scripts/run.py scrape
+            # - name: Generate search index
+            #   run: |
+            #     python .github/scripts/run.py scrape --start-url "${{ github.event.inputs.start_url }}" --max-minutes "${{ github.event.inputs.max_minutes }}"
+            - name: Commit
+              run: git add search_index && git commit -m "search - update of index" && git subtree push --prefix search_index origin docportal-search-index
