@@ -33,7 +33,10 @@ jobs:
             - name: Install dependencies
               run: pip install -r .github/scripts/requirements.txt
             - name: Generate search index
+              env:
+                START_URL: ${{ github.event.inputs.start_url || 'https://documentation.dataspace.copernicus.eu/' }}
+                MAX_MINUTES: ${{ github.event.inputs.max_minutes || '15' }}
               run: |
-                python .github/scripts/run.py scrape --start-url "${{ github.event.inputs.start_url }}" --max-minutes "${{ github.event.inputs.max_minutes }}"
+                python .github/scripts/run.py scrape --start-url "$START_URL" --max-minutes "$MAX_MINUTES"
             - name: Commit
               run: git add search_index && git commit -m "search - update of index" && git subtree push --prefix search_index origin docportal-search-index
