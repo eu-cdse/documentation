@@ -18,7 +18,7 @@ def main(c):
         "Landsat-9": ComplementaryOffer,
         "Terra": ComplementaryOffer,
         "Aqua": ComplementaryOffer,
-        "TerraAqua": ComplementaryOffer,
+        "MCD": ComplementaryOffer,
         "SRTM": ComplementaryOffer,
         "Commercial data": VHROffer,            
         #"AdditionalComplementaryData": Additional,      
