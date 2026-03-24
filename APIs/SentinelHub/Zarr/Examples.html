@@ -2182,7 +2182,7 @@ window.onload = function() {
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"crs"</span>:<span class="st">"http://www.opengis.net/def/crs/EPSG/0/4326"</span></span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>response <span class="op">=</span> oauth.post(<span class="st">'https://sh.dataspace.copernicus.eu/api/v1/zarr/collections'</span>, json<span class="op">=</span>collection)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>response <span class="op">=</span> oauth.post(<span class="st">'https://sh.dataspace.copernicus.eu/zarr/v1/collections'</span>, json<span class="op">=</span>collection)</span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>response.raise_for_status()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Extracting the collection id and status from the response:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>collection <span class="op">=</span> response.json()[<span class="st">'data'</span>]</span>
@@ -2196,23 +2196,23 @@ window.onload = function() {
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>new_col_name <span class="op">=</span> {</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  name: <span class="st">'My modified collection name'</span></span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>response <span class="op">=</span> oauth.put(<span class="ss">f'https://sh.dataspace.copernicus.eu/api/v1/zarr/collections/</span><span class="sc">{</span>collection_id<span class="sc">}</span><span class="ss">'</span>, json<span class="op">=</span>new_col_name)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>response <span class="op">=</span> oauth.put(<span class="ss">f'https://sh.dataspace.copernicus.eu/zarr/v1/collections/</span><span class="sc">{</span>collection_id<span class="sc">}</span><span class="ss">'</span>, json<span class="op">=</span>new_col_name)</span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>response.raise_for_status()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>To delete the collection:</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Delete the collection</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>response <span class="op">=</span> oauth.delete(<span class="ss">f'https://sh.dataspace.copernicus.eu/api/v1/zarr/collections/</span><span class="sc">{</span>collection_id<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>response <span class="op">=</span> oauth.delete(<span class="ss">f'https://sh.dataspace.copernicus.eu/zarr/v1/collections/</span><span class="sc">{</span>collection_id<span class="sc">}</span><span class="ss">'</span>)</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>response.raise_for_status()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="listing-arrays" class="level3">
 <h3 class="anchored" data-anchor-id="listing-arrays">Listing arrays</h3>
 <p>If the ingestion was successful, you can query all ingested arrays and their properties. Arrays are paginated, that is, if there are more than 100 arrays you will only get the first 100 by default. All pages can be traversed in the same way as with other paged Sentinel Hub endpoints (see e.g.&nbsp;the example under <a href="../../../APIs/SentinelHub/Byoc/Examples.html#listing-tiles">listing tiles</a> on BYOC). Retrieving the first page is shown in the following snippet:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>response <span class="op">=</span> oauth.get(<span class="ss">f'https://sh.dataspace.copernicus.eu/api/v1/zarr/collections/</span><span class="sc">{</span>collection_id<span class="sc">}</span><span class="ss">/arrays'</span>)</span>
+<div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>response <span class="op">=</span> oauth.get(<span class="ss">f'https://sh.dataspace.copernicus.eu/zarr/v1/collections/</span><span class="sc">{</span>collection_id<span class="sc">}</span><span class="ss">/arrays'</span>)</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>response.raise_for_status()</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>arrays <span class="op">=</span> response.json()[<span class="st">'data'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>You can also get a single array by adding the array name to the URL path. For example, to get the array named <code>B1</code> of the above collection:</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>b1_array_response <span class="op">=</span> oauth.get(<span class="ss">f'https://sh.dataspace.copernicus.eu/api/v1/zarr/collections/</span><span class="sc">{</span>collection_id<span class="sc">}</span><span class="ss">/arrays/B1'</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>b1_array_response <span class="op">=</span> oauth.get(<span class="ss">f'https://sh.dataspace.copernicus.eu/zarr/v1/collections/</span><span class="sc">{</span>collection_id<span class="sc">}</span><span class="ss">/arrays/B1'</span>)</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>b1_array_response.raise_for_status()</span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>b1_array <span class="op">=</span> b1_array_response.json()[<span class="st">'data'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>

@@ -2182,7 +2182,7 @@ window.onload = function() {
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">'s3Bucket'</span>: <span class="st">'&lt;MyBucket&gt;'</span></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>response <span class="op">=</span> oauth.post(<span class="st">'https://sh.dataspace.copernicus.eu/api/v1/byoc/collections'</span>, json<span class="op">=</span>collection)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>response <span class="op">=</span> oauth.post(<span class="st">'https://sh.dataspace.copernicus.eu/byoc/v1/collections'</span>, json<span class="op">=</span>collection)</span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>response.raise_for_status()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Extracting the collection id from the response:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json</span>
@@ -2197,7 +2197,7 @@ window.onload = function() {
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">'path'</span>: <span class="st">'&lt;MyTile&gt;'</span>,</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>response <span class="op">=</span> oauth.post(<span class="ss">f'https://sh.dataspace.copernicus.eu/api/v1/byoc/collections/</span><span class="sc">{</span>collection_id<span class="sc">}</span><span class="ss">/tiles'</span>, json<span class="op">=</span>tile)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>response <span class="op">=</span> oauth.post(<span class="ss">f'https://sh.dataspace.copernicus.eu/byoc/v1/collections/</span><span class="sc">{</span>collection_id<span class="sc">}</span><span class="ss">/tiles'</span>, json<span class="op">=</span>tile)</span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>response.raise_for_status()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>If your tile has a known sensing time, e.g.&nbsp;October 21, 2019 at 14:51 by UTC time, add this information by using the following payload:</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>tile <span class="op">=</span> {</span>
@@ -2241,7 +2241,7 @@ window.onload = function() {
 <section id="checking-the-tile-ingestion-status" class="level3">
 <h3 class="anchored" data-anchor-id="checking-the-tile-ingestion-status">Checking the tile ingestion status</h3>
 <p>To check the ingestion status of the tile, first get the tile:</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>response <span class="op">=</span> oauth.get(<span class="ss">f'https://sh.dataspace.copernicus.eu/api/v1/byoc/collections/</span><span class="sc">{</span>collection_id<span class="sc">}</span><span class="ss">/tiles/</span><span class="sc">{</span>tile_id<span class="sc">}</span><span class="ss">'</span>)</span>
+<div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>response <span class="op">=</span> oauth.get(<span class="ss">f'https://sh.dataspace.copernicus.eu/byoc/v1/collections/</span><span class="sc">{</span>collection_id<span class="sc">}</span><span class="ss">/tiles/</span><span class="sc">{</span>tile_id<span class="sc">}</span><span class="ss">'</span>)</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>response.raise_for_status()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Then extract its status from the response:</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json</span>
@@ -2263,7 +2263,7 @@ window.onload = function() {
 <p>Tiles are paginated and to traverse all pages use the link from response that points to the next page, which is located at <code>links.next</code>. By default, you get back 100 tiles per page, but you can change this using the query parameter <code>count</code>, however it cannot be more than 100.</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> time</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>url <span class="op">=</span> <span class="ss">f'https://sh.dataspace.copernicus.eu/api/v1/byoc/collections/</span><span class="sc">{</span>collection_id<span class="sc">}</span><span class="ss">/tiles'</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>url <span class="op">=</span> <span class="ss">f'https://sh.dataspace.copernicus.eu/byoc/v1/collections/</span><span class="sc">{</span>collection_id<span class="sc">}</span><span class="ss">/tiles'</span></span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> url <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span>:</span>
 <span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  response <span class="op">=</span> oauth.get(url)</span>
