@@ -39,6 +39,24 @@ class CrawlResult:
     elapsed_seconds: float = 0.0
 
 
+def _decode_html_response(resp: requests.Response) -> str:
+    """
+    Decode response body as UTF-8 first to avoid mojibake (e.g. â...â).
+    Falls back to declared/apparent encoding if UTF-8 is not valid.
+    """
+    raw = resp.content
+    try:
+        return raw.decode("utf-8-sig")
+    except UnicodeDecodeError:
+        fallback_encoding = resp.encoding or resp.apparent_encoding or "latin-1"
+        logger.warning(
+            "Non-UTF-8 page at %s; decoding with fallback encoding: %s",
+            resp.url,
+            fallback_encoding,
+        )
+        return raw.decode(fallback_encoding, errors="replace")
+
+
 def _build_session() -> requests.Session:
     """Build a requests Session with retry policy."""
     session = requests.Session()
@@ -54,6 +72,7 @@ def _build_session() -> requests.Session:
     session.headers.update(
         {
             "User-Agent": "CopernicusDocsScraper/1.0 (+https://github.com/eu-cdse/documentation)",
+            "Accept-Charset": "utf-8",
         }
     )
     return session
@@ -108,7 +127,7 @@ def crawl(
                 logger.debug("Skipping non-HTML content-type: %s", content_type)
                 continue
 
-            html = resp.text
+            html = _decode_html_response(resp)
 
             # Extract page data
             page_data = extract_page(html, url)
