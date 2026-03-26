@@ -39,4 +39,11 @@ jobs:
               run: |
                 python .github/scripts/run.py scrape --start-url "$START_URL" --max-minutes "$MAX_MINUTES"
             - name: Commit
-              run: git add search_index && git commit -m "search - update of index" && git subtree push --prefix search_index origin docportal-search-index
+              run: |
+                git add search_index
+                if git diff --cached --quiet; then
+                  echo "No changes in search_index to commit"
+                else
+                  git commit -m "search - update of index"
+                  git subtree push --prefix search_index origin docportal-search-index
+                fi
