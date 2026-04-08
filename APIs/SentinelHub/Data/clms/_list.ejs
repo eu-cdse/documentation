@@ -1,17 +1,17 @@
 ```{=html}
 <ul class="clms-index">
 <%
-const contents =items[0].website.sidebar.contents
-const apis = contents.find(item=>item.section==="APIs").contents
-const sh = apis.find(item=>item.section==="Sentinel Hub").contents
-const data = sh.find(item=>item.section==="Data").contents
-const clms = data.find(item=>item.section==="CLMS").contents
+const sectionKeys = ["APIs", "Sentinel Hub", "Data", "CLMS"]
+let sections = items[0].website.sidebar.contents
+for (const key of sectionKeys) {
+    sections = sections.find(item => item.section === key).contents
+}
 const getUrl = (path)=>{
     const fixedPath = "/"+path
     const href = items.find(item=> item.path === fixedPath)?.outputHref
     return "/"+href
 }
-for (const item of clms) { %>
+for (const item of sections) { %>
     <li>
         <details open>
             <summary>
@@ -19,7 +19,7 @@ for (const item of clms) { %>
                     <%= item.section %>
                 </a>
             </summary>
-            <ul>
+            <ul class="level-2">
                 <% for (const item2 of item.contents) { %>
                     <li>
                         <details name="<%= item.section %>">
@@ -28,30 +28,49 @@ for (const item of clms) { %>
                                     <%= item2.section %>
                                 </a>
                             </summary>
-                            <ul>
+                            <ul class="level-3">
                                 <% for (const item3 of item2.contents) { %>
                                     <li>
-                                        <% if(item3.contents) { %>
+                                        <% if(!item3.contents) { %>
+                                            <a href="<%- getUrl(item3.href) %>">
+                                                <%= item3.text %>
+                                            </a>
+                                        <% } else { %>
                                             <details name="<%= item2.section %>">
                                                 <summary>
                                                     <a href="<%- getUrl(item3.href) %>">
                                                         <%= item3.section %>
                                                     </a>
                                                 </summary>
-                                                <ul>
+                                                <ul class="level-4">
                                                     <% for (const item4 of item3.contents) { %>
                                                         <li>
-                                                            <a href="<%- getUrl(item4.href) %>">
-                                                                <%= item4.text %>
-                                                            </a>
+                                                            <% if(!item4.contents) { %>
+                                                                <a href="<%- getUrl(item4.href) %>">
+                                                                    <%= item4.text %>
+                                                                </a>
+                                                            <% } else { %>
+                                                                <details name="<% item3.section %>">
+                                                                    <summary>
+                                                                        <a href="<%- getUrl(item4.href) %>">
+                                                                            <%= item4.section %>
+                                                                        </a>
+                                                                    </summary>
+                                                                    <ul class="level-5">
+                                                                        <% for (const item5 of item4.contents) { %>
+                                                                            <li>
+                                                                                <a href="<%- getUrl(item5.href) %>">
+                                                                                    <%= item5.text %>
+                                                                                </a>
+                                                                            </li>
+                                                                        <% } %>
+                                                                    </ul>
+                                                                </details>
+                                                            <% } %>
                                                         </li>
-                                                        <% } %>
+                                                    <% } %>
                                                 </ul>
                                             </details>
-                                        <% } else { %>
-                                            <a href="<%- getUrl(item3.href) %>">
-                                                <%= item3.text %>
-                                            </a>
                                         <% } %>
                                     </li>
                                 <% } %>
