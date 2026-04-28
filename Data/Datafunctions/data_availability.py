@@ -412,7 +412,7 @@ def CEMSOffer(c):
 
         for i in range(0, data_offer):
             type,status,access,product_type,specific_product,spatial,temporal,product_link,catalogue,footnotes,provider,satellite,resolution,opensearch,odata,Origin = DataFetch(c,i)
-            t.append([product_type, catalogue])
+            t.append([Product_type, Catalogue])
             note += footnotes
             headers = ["Product Type", "Catalogue"]
 
