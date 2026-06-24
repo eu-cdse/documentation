@@ -304,10 +304,10 @@ def ComplementaryOffer(c):
         empty_columns = []  # Track empty columns
 
         for i in range(0, data_offer):
-            type,status,access,product_type,specific_product,spatial,temporal,product_link,catalogue,footnotes,provider,satellite,resolution,opensearch,odata,Origin,Collection = DataFetch(c,i)
-            t.append([type,status, access, spatial, temporal,catalogue,Origin,Collection])
+            type,status,access,product_type,specific_product,spatial,temporal,product_link,catalogue,footnotes,provider,satellite,resolution,opensearch,odata,Origin = DataFetch(c,i)
+            t.append([type,status, access, spatial, temporal,catalogue,Origin])
             note += footnotes
-            headers = ["Product","Archive Status", "Access Type", "Spatial Extent", "Temporal Extent","Catalogue","Origin","Collection"]
+            headers = ["Product","Archive Status", "Access Type", "Spatial Extent", "Temporal Extent","Catalogue","Origin"]
 
         # Find and remove empty columns
         t,headers=removeempty(t,headers)
