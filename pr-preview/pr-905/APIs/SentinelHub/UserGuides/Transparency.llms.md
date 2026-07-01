@@ -1,0 +1,109 @@
+# Transparency
+
+## Transparency and Background Color
+
+Parts of the image can be made fully or partially transparent by including the fourth output channel, also known as the [*alpha* channel](https://en.wikipedia.org/wiki/Alpha_compositing). The value 0 in the alpha channel makes a pixel fully transparent, while the maximum value in the alpha channel makes it fully opaque (not transparent). Values in between will make the pixel proportionally transparent. Maximum value in alpha channel depends on an image bit depth which is in SH specified by [sampleType](../../../APIs/SentinelHub/Evalscript/Functions.llms.md#sampletype):
+
+- for sampleType AUTO or FLOAT32: values in alpha channel should be from the interval \[0, 1\]
+- for sampleType UINT8: values in alpha channel should be from the interval \[0, 255\]
+- for sampleType UINT16: values in alpha channel should be from the interval \[0, 65535\]
+
+Output file formats which support transparency are PNG and TIFF. Note that the JPEG format does not support alpha channel.
+
+### Transparent no-data pixels
+
+No-data pixels are marked by the value 0 in the `dataMask` band. In the evalscript below, we return value 0 in the fourth band for such pixels, which made them transparent. This evalscript can be used as part of any request for Sentinel-2 data and it will display a true color image with transparent background.
+
+``` javascript
+//VERSION=3
+function setup () {
+    return {
+        input: ["B04", "B03", "B02", "dataMask"],
+        output: {bands: 4}
+    }
+}
+
+function evaluatePixel(samples, scenes) {
+    if (samples.dataMask == 1){
+        return [samples.B04 * 3.5, samples.B03 * 3.5, samples.B02 * 3.5, 1]
+    } else if (samples.dataMask == 0) {
+        return [samples.B04 * 3.5, samples.B03 * 3.5, samples.B02 * 3.5, 0]
+    }
+}
+```
+
+In the example above we see that the value of `dataMask` band is exactly the value we want to use for the alpha channel (i.e. fourth channel) of the output. We can thus simplify the evalscript and return `dataMask` as the fourth band for all pixels.
+
+``` javascript
+//VERSION=3
+function setup () {
+    return {
+        input: ["B04", "B03", "B02", "dataMask"],
+        output: {bands: 4}
+    }
+}
+
+function evaluatePixel(samples, scenes) {
+    return [samples.B04 * 3.5, samples.B03 * 3.5, samples.B02 * 3.5, samples.dataMask]
+}
+```
+
+[Examine in Copernicus Browser](https://browser.dataspace.copernicus.eu/?zoom=10&lat=45.7097&lng=13.4258&themeId=DEFAULT-THEME&evalscript=Ly9WRVJTSU9OPTMKZnVuY3Rpb24gc2V0dXAgKCkgewoJcmV0dXJuewoJCWlucHV0OlsiQjA0IiwgIkIwMyIsICJCMDIiLCAiZGF0YU1hc2siXSwKCQlvdXRwdXQ6e2JhbmRzOiA0fQoJfQkJCn0KCgpmdW5jdGlvbiBldmFsdWF0ZVBpeGVsKHNhbXBsZXMsc2NlbmVzKSB7ICAKCiAgCiAgcmV0dXJuIFtzYW1wbGVzLkIwNCozLjUsIHNhbXBsZXMuQjAzKjMuNSwgc2FtcGxlcy5CMDIqMy41LCBzYW1wbGVzLmRhdGFNYXNrXQp9&datasetId=S2L2A&fromTime=2020-03-19T00%3A00%3A00.000Z&toTime=2020-03-19T23%3A59%3A59.999Z&layerId=CUSTOM&demSource3D=%22MAPZEN%22&cloudCoverage=30&dateMode=SINGLE)
+
+Elegant! This will work whenever you request sampleType AUTO or FLOAT32. However, for other sampleTypes, you will have to scale the output values to achieve the same transparency. Let us check how to do this in the examples below.
+
+#### Transparent no-data pixels and sampleType: UINT16
+
+When using sampleType UINT16 the range of output values in an image becomes \[0, 65535\] and we must return value 65535 in the alpha channel for pixels which should not be transparent. The above example, if using sampleType UINT16, would be:
+
+``` javascript
+//VERSION=3
+function setup () {
+    return {
+        input: ["B04", "B03", "B02", "dataMask"],
+        output: {bands: 4, sampleType: "UINT16"}
+    }
+}
+
+function evaluatePixel(samples, scenes) {
+    return [samples.B04 * 3.5 * 65535, samples.B03 * 3.5 * 65535, samples.B02 * 3.5 * 65535, samples.dataMask * 65535]
+}
+```
+
+#### Transparent no-data pixels and sampleType: UINT8
+
+The same logic applies also for sampleType UINT8 except that the range of output values in this case is \[0, 255\]. The same evalscript as above but for sampleType UINT8 is:
+
+``` javascript
+//VERSION=3
+function setup () {
+    return {
+        input: ["B04", "B03", "B02", "dataMask"],
+        output: {bands: 4, sampleType: "UINT8"}
+    }
+}
+
+function evaluatePixel(samples, scenes) {
+    return [samples.B04 * 3.5 * 255, samples.B03 * 3.5 * 255, samples.B02 * 3.5 * 255, samples.dataMask * 255]
+}
+```
+
+### Transparent data pixels
+
+To use some other condition for turning pixels transparent, simply return the condition in the fourth channel, while also outputting four bands in the `function setup()`. In the example below, we are returning the Sentinel-2 L1C [NDVI index](https://custom-scripts.sentinel-hub.com/sentinel-2/ndvi/) larger than 0.6 as transparent. We also leave the no-data pixels non-transparent and thus do not need to use the the `dataMask` input band.
+
+``` javascript
+//VERSION=3
+function setup () {
+  return {
+    input: ["B02", "B03", "B04", "B08"],
+    output: {bands: 4}
+  }
+}
+function evaluatePixel(samples, scenes) {
+  var NDVI = (samples.B08 - samples.B04) / (samples.B08 + samples.B04)
+  return [samples.B04 * 2.5, samples.B03 * 2.5, samples.B02 * 2.5, NDVI < 0.6]
+}
+```
+
+[Examine in Copernicus Browser](https://browser.dataspace.copernicus.eu/?zoom=15&lat=42.42366&lng=11.2791&themeId=DEFAULT-THEME&evalscript=Ly9WRVJTSU9OPTMKZnVuY3Rpb24gc2V0dXAgKCkgewogICAgcmV0dXJuewogICAgICAgIGlucHV0OlsiQjAyIiwgIkIwMyIsICJCMDQiLCAiQjA4Il0sCiAgICAgICAgb3V0cHV0OntiYW5kczogNH0KICAgIH0gICAgICAgIAp9CmZ1bmN0aW9uIGV2YWx1YXRlUGl4ZWwoc2FtcGxlcyxzY2VuZXMpIHsgCiAgdmFyIE5EVkkgPSAoc2FtcGxlcy5CMDggLSBzYW1wbGVzLkIwNCkvKHNhbXBsZXMuQjA4ICsgc2FtcGxlcy5CMDQpCiAgcmV0dXJuIFtzYW1wbGVzLkIwNCoyLjUsIHNhbXBsZXMuQjAzKjIuNSwgc2FtcGxlcy5CMDIqMi41LCBORFZJPDAuNl07Cn0%3D&datasetId=S2L1C&fromTime=2020-05-10T00%3A00%3A00.000Z&toTime=2020-05-10T23%3A59%3A59.999Z&demSource3D=%22MAPZEN%22&cloudCoverage=30&dateMode=SINGLE)

@@ -1,0 +1,92 @@
+# Execute a service
+
+Users can use the services offered in the openEO Algorithm Plaza to analyse their data. These services consist of openEO-based User Defined Processes (UDP). Here is a concise overview of the tools used to implement and use these available services:
+
+| Tool | Description |
+|----|----|
+| openEO Web Editor | A web-based interface for executing openEO processes. |
+| Command Line Interface (CLI) | Allows execution of openEO processes through the command line. |
+| Python Client | A Python library, facilitating programmatic interaction with openEO services. |
+| R Client | An R library for integrating openEO services into R scripts. |
+
+Users have the flexibility to use their preferred tool to execute the services. Each service has a `Get Started` button within the plaza. This button offers available execution options for the service, such as:
+
+- “Execute in Web Editor”: Allows users to run the service in the online user interface.
+- “See client examples”: Provides code examples for programmatically executing the service using Python, R, or JavaScript.
+
+> **IMPORTANT:**
+>
+> A limitation of executing a service (User Defined Processes) in the Copernicus Data Space Ecosystem is that it only works with collections from 2017 onwards. Therefore, it is recommended to test it over multiple consecutive years.
+
+## Online user interface
+
+A new window opens when a user chooses to run a service in the web editor using the `Execute in Web Editor` option. Here, users can execute services directly in a [web editor](https://openeo.dataspace.copernicus.eu/) by simply providing the required parameters and running them.
+
+The full web editor documentation can be found [in this section](../../Applications/WebEditor.llms.md). Moreover, below are some additional resources to help users get started with the web editor:
+
+| openEO |
+|----|
+| [Access](https://openeo.dataspace.copernicus.eu) |
+| [Documentation](https://documentation.dataspace.copernicus.eu/APIs/openEO/openEO.html) |
+
+## Client libraries
+
+Most of the openEO Algorithm Plaza services can be executed programmatically using the openEO client libraries. When publishing the service, the developer is requested to provide code examples for running the service using Python, R, or JavaScript. When service users select the `See client examples` option, they are directed to the provided example.
+
+For detailed documentation on how to use the client libraries, please refer to the official in the following links:
+
+- [JavaScript](https://documentation.dataspace.copernicus.eu/APIs/openEO/JavaScript_Client/JavaScript.html)
+- [Python](https://documentation.dataspace.copernicus.eu/APIs/openEO/Python_Client/Python.html)
+- [R](https://documentation.dataspace.copernicus.eu/APIs/openEO/R_Client/R.html)
+
+The following example shows a code sample on how to execute a service through the openEO Python Client.
+
+``` python
+import openeo
+
+# Setup parameters
+aoi = {
+    "type": "Polygon",
+    "coordinates": [
+        [
+            [
+                5.179324150085449,
+                51.2498689148547
+            ],
+            [
+                5.178744792938232,
+                51.24672597710759
+            ],
+            [
+                5.185289382934569,
+                51.24504696935156
+            ],
+            [
+                5.18676996231079,
+                51.245342479161295
+            ],
+            [
+                5.187370777130127,
+                51.24918393390799
+            ],
+            [
+                5.179324150085449,
+                51.2498689148547
+            ]
+        ]
+    ]
+}
+date = '2020-06-01'
+
+# Setup connection with OpenEO
+eoconn = openeo.connect("https://openeo.dataspace.copernicus.eu").authenticate_oidc("egi")
+
+# Create a processing graph from the BIOMASS process using an active openEO connection
+taskmap = eoconn.datacube_from_process("taskmap_generate", namespace="https://openeo.dataspace.copernicus.eu/openeo/1.0/processes/u:123456/taskmap_generate", aoi=aoi,
+                                       date=date)
+
+# Execute the openEO request as a batch job
+taskmap_job = taskmap.download('task.nc')
+```
+
+If any issues are encountered when executing a service, please feel free to raise questions in the [forum](https://forum.dataspace.copernicus.eu/) directly.

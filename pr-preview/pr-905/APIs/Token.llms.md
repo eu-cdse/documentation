@@ -1,0 +1,62 @@
+# Copernicus Data Space Ecosystem Token Generation
+
+Users must have an access token to download products from the CDSE catalogue using OData API. This token can be generated in Linux and Windows OS using cURL or Python script.
+
+> **TIP:**
+>
+> Username and password are for one-time use in the command. Please do not hardcode the username and password in the application code. Otherwise you risk a potential account takeover.
+
+## By query with cURL
+
+CURL is a tool to send data to the server using several protocols, such as HTTPS.
+
+*On Linux*:
+
+In this example, the output is filtered by grep and awk commands to obtain a token. In the Linux operating system, it’s seen as an environmental variable **ACCESS_TOKEN**.
+
+## cURL
+
+``` {bash}
+export ACCESS_TOKEN=$(curl -d 'client_id=cdse-public' \
+                    -d 'username=<username>' \
+                    -d 'password=<password>' \
+                    -d 'grant_type=password' \
+                    'https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token' | \
+                    python3 -m json.tool | grep "access_token" | awk -F\" '{print $4}')
+```
+
+## cURL with 2FA
+
+``` {bash}
+export ACCESS_TOKEN=$(curl -d 'client_id=cdse-public' \
+                    -d 'username=<username>' \
+                    -d 'password=<password>' \
+                    -d 'grant_type=password' \
+                    -d 'totp=<2FA_token>' \
+                    'https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token' | \
+                    python3 -m json.tool | grep "access_token" | awk -F\" '{print $4}')
+```
+
+You can use following command to print the token:
+
+``` {bash}
+printenv ACCESS_TOKEN
+```
+
+*On Windows*:
+
+## cURL
+
+``` {bash}
+curl -s -X POST https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token -H "Content-Type: application/x-www-form-urlencoded" -d "username=<username>" -d "password=<password>" -d "grant_type=password" -d "client_id=cdse-public"
+```
+
+## cURL with 2FA
+
+``` {bash}
+curl -s -X POST https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token -H "Content-Type: application/x-www-form-urlencoded" -d "username=<username>" -d "password=<password>" -d "totp=<2FA_token>" -d "grant_type=password" -d "client_id=cdse-public"
+```
+
+*For commands to work you need to replace “\<username\>” and “\<password\>” with your Copernicus Data Space Ecosystem login credentials*
+
+If you have any questions, please contact our [support](https://helpcenter.dataspace.copernicus.eu/hc/en-gb).

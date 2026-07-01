@@ -1,0 +1,21 @@
+# Credit Consumption
+
+The following are among the popular services available in OpenEO Algorithm Plaza. Here, we have presented an average credit strength for these services. Please note that the credits can vary depending on the time interval and area of interest.
+
+The purpose of this document is to solely provide users with an assumption on how these credits work and their strength for varying services.
+
+##### NDVI
+
+The Normalized Difference Vegetation Index (NDVI) is a key indicator of vegetation health. It is calculated by comparing the difference between near-infrared (which vegetation strongly reflects) and red light (which vegetation absorbs) in satellite imagery. Using the openEO Algorithm Plaza, NDVI service costs 3-5 credits per hectare.
+
+##### NDII
+
+The Normalized Difference Infrared Index (NDII) computation offers insight into plant canopies’ water content. Using the openEO Algorithm Plaza, NDII service costs 4-8 credits per hectare.
+
+##### BIOPAR
+
+The BIOPAR service provided by the openEO Algorithm Plaza calculates various biophysical parameters for an area defined by a polygon. The result is a GeoTiff file containing the parameter values. Using the openEO Algorithm Plaza, Biomass service costs 20-40 credits per hectare.
+
+> **NOTE:**
+>
+> Though the required credit for direct download of the output data is two credits for all the services, it has a time limitation of 10 seconds to run the entire process. Otherwise, the download process will fail.

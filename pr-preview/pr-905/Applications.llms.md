@@ -1,0 +1,49 @@
+# Applications
+
+The Copernicus Data Space Ecosystem provides a wide range of applications that can be used to access, process, and visualize Copernicus data. These applications are designed for users of different skill level to be used for various applications.
+
+For users, new to the Copernicus Data Space Ecosystem, we advise to explore the [Browser](Applications/Browser.llms.md) as starting point. In this platform users can explore various datasets and discover intuitive tools for visualizing, comparing and downloading data.
+
+![](Applications/_images/SearchResult.png)
+
+Advanced users, interested in designing custom EO processing workflows, can explore the [JupyterLab environment](Applications/JupyterHub.llms.md) for a more interactive analysis. Within the Jupyterlab environment, users can execute Python code and access data interactively.
+
+![](Applications/_images/JupyterLab_welcome.png)
+
+Moreover, these jupyterlab environments support the use of openEO to access and process the data interactively. More information on the openEO API can be found [here](APIs/openEO/openEO.llms.md). Nevertheless, for users interested in using openEO API in a GUI environment, we recommend exploring the [openEO Web Editor](Applications/WebEditor.llms.md) documentation. This tool allows users to interact with the openEO API more visually.
+
+![](Applications/_images/webeditor/webeditor_result.PNG)
+
+The Copernicus Data Space Ecosystem supports FAIR and Open Science principles through sharing EO algorithms. The [openEO Algorithm Plaza](Applications/AlgorithmPlaza.llms.md) documentation introduces the plaza. It explains how one can use the platform to share and use EO algorithms.
+
+![](Applications/_images/PlazaOverview.png)
+
+Furthermore, the ecosystem encompasses a [QGIS Plugin](Applications/QGIS.llms.md) designed to view satellite data from the Copernicus Data Space Ecosystem or from Sentinel Hub directly within a QGIS workspace.
+
+From the [Copernicus Data Space Browser](Applications/Browser.llms.md) it is possible to access the [Data workspace](Applications/DataWorkspace.llms.md), which is a tool to manage and order satellite products. These products can then be further processed and downloaded for various purposes.
+
+Additionally, the [Catalogue CSV](Applications/Catalogue-csv.llms.md) documentation provides access to additional information on Sentinel product lists in CSV format.
+
+Among the array of applications, there is also the Copernicus Dashboard. This public platform helps users to monitor activities within the ecosystem and keep track of ongoing updates.
+
+------------------------------------------------------------------------
+
+Below is the comprehensive list of applications available within the Copernicus Data Space Ecosystem:
+
+##### About Data Workspace
+
+##### About the Browser
+
+##### Catalogue CSV
+
+##### Copernicus Data Space Ecosystem Dashboard
+
+##### Display Wall
+
+##### JupyterLab
+
+##### Sentinel Hub QGIS Plugin
+
+##### openEO Algorithm Plaza
+
+##### openEO Web Editor

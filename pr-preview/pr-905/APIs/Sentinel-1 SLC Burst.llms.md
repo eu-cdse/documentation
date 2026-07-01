@@ -1,0 +1,354 @@
+# Sentinel-1 SLC Bursts
+
+Sentinel-1 satellites, operating in a near-polar sun-synchronous orbit with a 6-day repeat cycle, utilize TOPSAR (Terrain Observation with Progressive Scans SAR) modes for SAR imaging. The SLC (Single Look Complex) Burst products capture data in bursts, which are segments of radar echoes acquired by cyclically switching the antenna beam across multiple sub-swaths. A burst cycle comprises three consecutive subswaths in IW mode (IW1, IW2, IW3) or five consecutive bursts in EW mode (EW1, EW2, EW3, EW4, EW5).
+
+SLC Burst products maintain both amplitude and phase information, making them ideal for applications such as interferometry, land deformation studies, and ocean monitoring, providing high-resolution, repeatable observations essential for detailed environmental and land surface analysis.
+
+The Copernicus Data Space Ecosystem provides access to Sentinel-1 SLC Bursts products which are extracted from the following Sentinel-1 product types:
+
+- IW_SLC\_\_1S
+- EW_SLC\_\_1S
+
+To access the Sentinel-1 SLC Bursts, users are invited to:
+
+- search for Bursts of their interest via [Sentinel-1 SLC Bursts endpoint](https://documentation.dataspace.copernicus.eu/APIs/Sentinel-1%20SLC%20Burst.html#sentinel-1-slc-bursts-endpointt)
+- download Bursts using the dedicated [Bursts extracting tool](https://github.com/eu-cdse/utilities#copernicus-data-space-ecosystem-cdse-utilities)
+- consult the [SLC Bursts documentation](https://documentation.dataspace.copernicus.eu/APIs/Sentinel-1%20SLC%20Burst.html#downloading-bursts)
+
+## Sentinel-1 SLC Bursts endpoint
+
+The Copernicus Data Space Ecosystem OData API for searching Sentinel-1 SLC Bursts products can be accessed using the following URL:
+
+## OData SLC Burst endpoint
+
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/Bursts`](https://catalogue.dataspace.copernicus.eu/odata/v1/Bursts)
+
+Users can access the Bursts by their unique Id assigned within Copernicus Data Space Ecosystem Catalogue:
+
+## HTTPS Request
+
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/Bursts(46577370-83b3-4410-89de-09b4bb23e5dd)`](https://catalogue.dataspace.copernicus.eu/odata/v1/Bursts(46577370-83b3-4410-89de-09b4bb23e5dd))
+
+## OData SLC Bursts API Response
+
+``` {json}
+{
+    "@odata.context": "$metadata#Bursts/$entity",
+    "@odata.mediaContentType": "application/octet-stream",
+    "Id": "46577370-83b3-4410-89de-09b4bb23e5dd",
+    "Name": "S1A-SLC-20240802T060723-15805-IW1-VH-040352",
+    "ContentType": "application/octet-stream",
+    "S3Path": "/eodata/Sentinel-1/SAR/IW_SLC__1S/2024/08/02/S1A_IW_SLC__1SDV_20240802T060719_20240802T060746_055030_06B44E_E7CC.SAFE/measurement/s1a-iw1-slc-vh-20240802t060719-20240802t060744-055030-06b44e-001.tiff",
+    "ContentDate": {
+        "Start": "2024-08-02T06:07:23.426535Z",
+        "End": "2024-08-02T06:07:26.616535Z"
+    },
+    "Footprint": "geography'SRID=4326;POLYGON ((3.393735 51.141248, 2.762036 51.221625, 2.174971 51.293199, 2.114652 51.089904, 2.700475 51.022923, 3.330851 50.947163, 3.393735 51.141248))'",
+    "GeoFootprint": {
+        "type": "Polygon",
+        "coordinates": [
+            [
+                [
+                    3.393735,
+                    51.141248
+                ],
+                [
+                    2.762036,
+                    51.221625
+                ],
+                [
+                    2.174971,
+                    51.293199
+                ],
+                [
+                    2.114652,
+                    51.089904
+                ],
+                [
+                    2.700475,
+                    51.022923
+                ],
+                [
+                    3.330851,
+                    50.947163
+                ],
+                [
+                    3.393735,
+                    51.141248
+                ]
+            ]
+        ]
+    },
+    "ParentProductId": "e463365f-728b-4890-b123-97c76941c878",
+    "ParentProductName": "S1A_IW_SLC__1SDV_20240802T060719_20240802T060746_055030_06B44E_E7CC.SAFE",
+    "ByteOffset": 138832827,
+    "BurstId": 15805,
+    "AbsoluteBurstId": 118199091,
+    "AzimuthTime": "2024-08-02T06:07:22.288930Z",
+    "AzimuthAnxTime": 2120.883319884,
+    "ParentProductType": "IW_SLC__1S",
+    "SwathIdentifier": "IW1",
+    "RelativeOrbitNumber": 8,
+    "OrbitDirection": "DESCENDING",
+    "PlatformSerialIdentifier": "A",
+    "PolarisationChannels": "VH",
+    "OperationalMode": "IW",
+    "DatatakeID": 40352,
+    "Lines": 1508,
+    "LinesPerBurst": 1508,
+    "SamplesPerBurst": 22998,
+    "BeginningDateTime": "2024-08-02T06:07:23.426535Z",
+    "EndingDateTime": "2024-08-02T06:07:26.616535Z"
+}
+```
+
+### Sentinel-1 SLC Bursts search
+
+OData SLC Bursts endpoint supports the following searching options:
+
+- filter
+- orderby
+- top
+- skip
+- count
+
+Search options should always be preceded with `$` and consecutive options should be separated with `&`.
+
+Consecutive filters within filter option should be separated with `and` or `or`.
+
+To search for Bursts:
+
+## HTTPS Request
+
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/Bursts?$filter=BurstId eq 15804 and SwathIdentifier eq 'IW2' and ContentDate/Start gt 2024-08-01 and ContentDate/Start lt 2024-08-15 and ParentProductType eq 'IW_SLC__1S' and PolarisationChannels eq 'VV' and OrbitDirection eq 'DESCENDING'&$orderby=ContentDate/Start&$count=True`](https://catalogue.dataspace.copernicus.eu/odata/v1/Bursts?$filter=BurstId%20eq%2015804%20and%20SwathIdentifier%20eq%20'IW2'%20and%20ContentDate/Start%20gt%202024-08-01%20and%20ContentDate/Start%20lt%202024-08-15%20and%20ParentProductType%20eq%20'IW_SLC__1S'%20and%20PolarisationChannels%20eq%20'VV'%20and%20OrbitDirection%20eq%20'DESCENDING'&$orderby=ContentDate/Start&$count=True)
+
+### Filter option
+
+Sentinel-1 SLC Bursts endpoint provide users the option to search for specific SLC Bursts by filtering them by:
+
+- ContentDate Start/End (date-time)
+- Geographic Criteria (string)
+- ParentProductName (string) - Name of the original product from which the Burst is extracted
+- ParentProductType (string) - Product type of the original product from which the Burst is extracted
+- ParentProductId (string) - Id of the original product from which the Burst is extracted
+- BurstId (integer)
+- AbsoluteBurstID (integer)
+- PolarisationChannels (string)
+- OperationalMode (string)
+- SwathIdentifier (string)
+- OrbitDirection (string)
+- PlatformSerialIdentifier (string)
+- RelativeOrbitNumber (integer)
+- DatatakeID (integer)
+
+#### Query by Sensing Date
+
+To search for Bursts products acquired between two dates:
+
+## HTTPS Request
+
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/Bursts?$filter=ContentDate/Start ge 2024-08-01T00:00:00.000Z and ContentDate/Start le 2024-08-03T00:00:00.000Z`](https://catalogue.dataspace.copernicus.eu/odata/v1/Bursts?$filter=ContentDate/Start%20ge%202024-08-01T00:00:00.000Z%20and%20ContentDate/Start%20le%202024-08-03T00:00:00.000Z)
+
+#### Query by Geographic Criteria
+
+To search for Bursts products intersecting the specified polygon:
+
+## HTTPS Request
+
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/Bursts?$filter=OData.CSC.Intersects(area=geography'SRID=4326;POLYGON((12.655118166047592 47.44667197521409,21.39065656328509 48.347694733853245,28.334291357162826 41.877123516783655,17.47086198383573 40.35854475076158,12.655118166047592 47.44667197521409))')`](https://catalogue.dataspace.copernicus.eu/odata/v1/Bursts?$filter=OData.CSC.Intersects(area=geography'SRID=4326;POLYGON((12.655118166047592%2047.44667197521409,21.39065656328509%2048.347694733853245,28.334291357162826%2041.877123516783655,17.47086198383573%2040.35854475076158,12.655118166047592%2047.44667197521409))'))
+
+#### Query by Source Product Name
+
+To search for Bursts products by source product name:
+
+## HTTPS Request
+
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/Bursts?$filter=ParentProductName eq 'S1A_IW_SLC__1SDV_20240802T060719_20240802T060746_055030_06B44E_E7CC.SAFE'`](https://catalogue.dataspace.copernicus.eu/odata/v1/Bursts?$filter=ParentProductName%20eq%20'S1A_IW_SLC__1SDV_20240802T060719_20240802T060746_055030_06B44E_E7CC.SAFE')
+
+#### Query by Source Product Type
+
+To search for Bursts products by source product type:
+
+## HTTPS Request
+
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/Bursts?$filter=ParentProductType eq 'IW_SLC__1S'`](https://catalogue.dataspace.copernicus.eu/odata/v1/Bursts?$filter=ParentProductType%20eq%20'IW_SLC__1S')
+
+#### Query by Source Product Id
+
+To search for Bursts products by source product id:
+
+## HTTPS Request
+
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/Bursts?$filter=ParentProductId eq 'e463365f-728b-4890-b123-97c76941c878'`](https://catalogue.dataspace.copernicus.eu/odata/v1/Bursts?$filter=ParentProductId%20eq%20'e463365f-728b-4890-b123-97c76941c878')
+
+#### Query by Burst Id
+
+To search for Bursts products by Burst Id:
+
+## HTTPS Request
+
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/Bursts?$filter=BurstId eq 15804`](https://catalogue.dataspace.copernicus.eu/odata/v1/Bursts?$filter=BurstId%20eq%2015804)
+
+#### Query by Absolute Burst Id
+
+To search for Bursts products by Absolute Burst Id:
+
+## HTTPS Request
+
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/Bursts?$filter=AbsoluteBurstId eq 118199090`](https://catalogue.dataspace.copernicus.eu/odata/v1/Bursts?$filter=AbsoluteBurstId%20eq%20118199090)
+
+#### Query by Polarisation
+
+To search for Bursts products by Polarisation:
+
+## HTTPS Request
+
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/Bursts?$filter=PolarisationChannels eq 'VV'`](https://catalogue.dataspace.copernicus.eu/odata/v1/Bursts?$filter=PolarisationChannels%20eq%20'VV')
+
+#### Query by Mode
+
+To search for Bursts products by Operational Mode:
+
+## HTTPS Request
+
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/Bursts?$filter=OperationalMode eq 'IW'`](https://catalogue.dataspace.copernicus.eu/odata/v1/Bursts?$filter=OperationalMode%20eq%20'IW')
+
+#### Query by Subswath
+
+To search for Bursts products by Subswath:
+
+## HTTPS Request
+
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/Bursts?$filter=SwathIdentifier eq 'IW1'`](https://catalogue.dataspace.copernicus.eu/odata/v1/Bursts?$filter=SwathIdentifier%20eq%20'IW1')
+
+#### Query by Orbit Direction
+
+To search for Bursts products by Orbit Direction:
+
+## HTTPS Request
+
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/Bursts?$filter=OrbitDirection eq 'ASCENDING'`](https://catalogue.dataspace.copernicus.eu/odata/v1/Bursts?$filter=OrbitDirection%20eq%20'ASCENDING')
+
+#### Query by Platform Serial Identifier
+
+To search for Bursts products by satellite Platfrom Serial Identifier:
+
+## HTTPS Request
+
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/Bursts?$filter=PlatformSerialIdentifier eq 'A'`](https://catalogue.dataspace.copernicus.eu/odata/v1/Bursts?$filter=PlatformSerialIdentifier%20eq%20'A')
+
+#### Query by Relative Orbit Number
+
+To search for Bursts products by Relative Orbit Number:
+
+## HTTPS Request
+
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/Bursts?$filter=RelativeOrbitNumber eq 8`](https://catalogue.dataspace.copernicus.eu/odata/v1/Bursts?$filter=RelativeOrbitNumber%20eq%208)
+
+#### Query by Relative DatatakeID
+
+To search for Bursts products by DatatkeID:
+
+## HTTPS Request
+
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/Bursts?$filter=DatatakeID eq 40352`](https://catalogue.dataspace.copernicus.eu/odata/v1/Bursts?$filter=DatatakeID%20eq%2040352)
+
+### Orderby option
+
+Orderby option can be used to order the Bursts products in an ascending (asc) or descending (desc) direction. If asc or desc is not specified, then the resources will be ordered in ascending order.
+
+> **TIP:**
+>
+> Using the orderby option will exclude potential duplicates from the search results.
+
+To order Bursts products by ContentDate/Start in a descending direction:
+
+## HTTPS Request
+
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/Bursts?$filter=ContentDate/Start gt 2024-08-01T00:00:00.000Z and ContentDate/Start lt 2024-08-03T00:00:00.000Z and OrbitDirection eq 'DESCENDING' and PolarisationChannels eq 'VV'&$orderby=ContentDate/Start desc`](https://catalogue.dataspace.copernicus.eu/odata/v1/Bursts?$filter=ContentDate/Start%20gt%202024-08-01T00:00:00.000Z%20and%20ContentDate/Start%20lt%202024-08-03T00:00:00.000Z%20and%20OrbitDirection%20eq%20'DESCENDING'%20and%20PolarisationChannels%20eq%20'VV'&$orderby=ContentDate/Start%20desc)
+
+By default, if the orderby option is not used, the results are not ordered. If orderby option is used, additional orderby by id is also used, so that the results are fully ordered, and no products are lost while paginating through the results.
+
+The acceptable arguments for this option: *ContentDate/Start*, *ContentDate/End* in directions: *asc, desc.*
+
+### Top option
+
+Top option specifies the maximum number of Bursts items returned from a query.
+
+To limit the number of results:
+
+## HTTPS Request
+
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/Bursts?$filter=ContentDate/Start gt 2024-08-01T00:00:00.000Z and ContentDate/Start lt 2024-08-03T00:00:00.000Z and OrbitDirection eq 'DESCENDING' and PolarisationChannels eq 'VV'&$orderby=ContentDate/Start desc&$top=5`](https://catalogue.dataspace.copernicus.eu/odata/v1/Bursts?$filter=ContentDate/Start%20gt%202024-08-01T00:00:00.000Z%20and%20ContentDate/Start%20lt%202024-08-03T00:00:00.000Z%20and%20OrbitDirection%20eq%20'DESCENDING'%20and%20PolarisationChannels%20eq%20'VV'&$orderby=ContentDate/Start%20desc&$top=5)
+
+The default value is set to 20.
+
+The acceptable arguments for this option: *Integer \<0,1000\>.*
+
+### Skip option
+
+The skip option can be used to skip a specific number of results. Exemplary application of this option would be paginating through the results, however, for performance reasons, we recommend limiting queries with small time intervals as a substitute for skipping in a more generic query.
+
+To skip a specific number of results:
+
+## HTTPS Request
+
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/Bursts?$filter=ContentDate/Start gt 2024-08-01T00:00:00.000Z and ContentDate/Start lt 2024-08-03T00:00:00.000Z and OrbitDirection eq 'DESCENDING' and PolarisationChannels eq 'VV'&$orderby=ContentDate/Start desc&$skip=5`](https://catalogue.dataspace.copernicus.eu/odata/v1/Bursts?$filter=ContentDate/Start%20gt%202024-08-01T00:00:00.000Z%20and%20ContentDate/Start%20lt%202024-08-03T00:00:00.000Z%20and%20OrbitDirection%20eq%20'DESCENDING'%20and%20PolarisationChannels%20eq%20'VV'&$orderby=ContentDate/Start%20desc&$skip=5)
+
+The default value is set to 0.
+
+Whenever a query results in more products than 20 (default top value), the API provides a nextLink at the bottom of the page: “@OData.nextLink”
+
+The acceptable arguments for this option: *Integer \<0,10000\>.*
+
+### Count option
+
+The count option lets users get the exact number of Bursts products matching the query. This option is disabled by default to accelerate the query performance.
+
+> **TIP:**
+>
+> Don’t use count option if not necessary, it slows down the execution of the request.
+
+To get the exact number of products for a given query:
+
+## HTTPS Request
+
+[`https://catalogue.dataspace.copernicus.eu/odata/v1/Bursts?$filter=ContentDate/Start gt 2024-08-01T00:00:00.000Z and ContentDate/Start lt 2024-08-03T00:00:00.000Z and OrbitDirection eq 'DESCENDING' and PolarisationChannels eq 'VV'&$orderby=ContentDate/Start desc&$count=True`](https://catalogue.dataspace.copernicus.eu/odata/v1/Bursts?$filter=ContentDate/Start%20gt%202024-08-01T00:00:00.000Z%20and%20ContentDate/Start%20lt%202024-08-03T00:00:00.000Z%20and%20OrbitDirection%20eq%20'DESCENDING'%20and%20PolarisationChannels%20eq%20'VV'&$orderby=ContentDate/Start%20desc&$count=True)
+
+## Downloading Bursts
+
+### Bursts Download API
+
+The Sentinel-1 SLC Bursts downloading tool is provided as a Jupyter Notebook, which guides users step by step through the process with detailed instructions. It utilizes on-demand processing, meaning that data is processed only when requested, optimizing resource usage. As the final output, users receive a `.zip` file containing the processed data.
+
+To run the script locally or in a Jupyter Lab environment, users need the following information:
+
+- Copernicus Data Space Ecosystem Portal credentials: username and password
+- Burst Id, which can be found in the `Id` field using the [Copernicus Data Space Ecosystem OData API Bursts endpoint](https://catalogue.dataspace.copernicus.eu/odata/v1/Bursts)
+- (Optional) A custom output directory path where the resulting file should be saved.
+
+Jupyter Notebook is available on [GitHub](https://github.com/eu-cdse/notebook-samples/blob/main/geo/bursts_processing_on_demand.ipynb).
+
+### GitLab Repository
+
+> **NOTE:**
+>
+> The method described in the [Bursts Download API](https://documentation.dataspace.copernicus.eu/APIs/Sentinel-1%20SLC%20Burst.html#bursts-download-api) section is the recommended approach for acquiring bursts.
+
+[The GitLab repository](https://github.com/eu-cdse/utilities#copernicus-data-space-ecosystem-cdse-utilities) provides the description how to download Sentinel-1 SLC Bursts on a client side using GDAL version \> 3.9 and [CDSE S3 Credentials](https://eodata-s3keysmanager.dataspace.copernicus.eu/panel/s3-credentials).
+
+The tool enables extraction of:
+
+- a single Sentinel-1 SLC Burst given the:
+  - Copernicus Data Space Ecosystem S3 credentials
+  - Sentinel-1 SLC TOPSAR product name e.g. S1A_IW_SLC\_\_1SDH_20240201T085352_20240201T085422_052363_0654EE_5132.SAFE
+  - SAR polarization e.g. vv
+  - subswath ID e.g. iw3
+  - realtive burst ID e.g. 202680
+- multiple Sentinel-1 SLC bursts given the:
+  - Copernicus Data Space Ecosystem S3 credentials
+  - Latitude of a Point of Interest (POI)
+  - Longitude of a Point of Interest (POI)
+  - SAR polarization e.g. vv
+  - Content Start Date in format YYYY-MM-DD
+  - Content End Date in format YYYY-MM-DD

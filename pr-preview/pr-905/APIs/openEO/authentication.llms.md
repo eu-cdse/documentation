@@ -1,0 +1,99 @@
+# Authentication in openEO
+
+While basic discovery of openEO collections and processes is possible without authentication, executing openEO workflows requires user authentication. This is necessary to manage user quotas, resources, and credit consumption effectively. User authentication in openEO is handled with the OpenID Connect protocol (often abbreviated as “OIDC”).
+
+The openEO endpoint of the Copernicus Data Space Ecosystem is configured to use the identity provider service of the Copernicus Data Space Ecosystem. It is therefore recommended to complete the [Copernicus Data Space Ecosystem registration](../../Registration.llms.md) before attempting to authenticate with openEO.
+
+## Authentication Essentials With The openEO Python Client
+
+A typical Copernicus Data Space Ecosystem openEO workflow, using the openEO Python client library, starts with setting up a connection like this:
+
+``` python
+import openeo
+
+connection = openeo.connect(url="openeo.dataspace.copernicus.eu")
+connection.authenticate_oidc()
+```
+
+After connecting to the Copernicus Data Space Ecosystem openEO endpoint, [`Connection.authenticate_oidc()`](https://open-eo.github.io/openeo-python-client/api.html#openeo.rest.connection.Connection.authenticate_oidc) initiates the OpenID Connect authentication flow:
+
+- By default, the first time `authenticate_oidc()` is called, instructions to visit a certain URL will be printed, e.g.:
+
+      Visit https://auth.example/?user_code=EAXD-RQXV to authenticate.
+
+  Visit this URL (click or copy-paste it into a web browser) and follow the login flow using Copernicus Data Space Ecosystem credentials.
+
+  > **TIP:**
+  > Visit this URL using any preferred browser to complete the login procedure (e.g., on a laptop or smartphone). It does *not* need to be a browser on the same machine or network as the Python script/application.
+
+  Once authentication is complete, the Python script will receive the necessary authentication tokens and print
+
+      Authorized successfully.
+
+- Other times, when valid (refresh) tokens are still present on the system, the openEO Python client library will automatically use these tokens. As no manual login interaction is involved here, the following will be printed immediately on successful authentication:
+
+      Authenticated using refresh token.
+
+In any case, `connection` is now authenticated and ready to make download or processing requests.
+
+## Alternative Authentication Methods
+
+The [openEO Python client library documentation](https://open-eo.github.io/openeo-python-client/auth.html) has a more in-depth information of various authentication concepts, and discusses alternative authentication methods.
+
+## Non-interactive And Machine-to-Machine Authentication
+
+[Section 1](#sec-typical-authentication-flow) describes the typical authentication flow for interactive use cases, e.g. when working in a Jupyter Notebook or manually running a script on a local machine. This section will discuss authentication approaches that are more fitting for *non-interactive* and *machine-to-machine* use cases.
+
+> **NOTE:**
+>
+> The practical aspects will be based on the openEO Python client library, but the concepts are also generally applicable to other openEO client libraries.
+
+### Refresh Tokens
+
+Refresh tokens are long-lived tokens (order of weeks or months) that can be used to obtain new access tokens without the need for the user to re-authenticate.
+
+As mentioned in [Section 1](#sec-typical-authentication-flow), [`Connection.authenticate_oidc()`](https://open-eo.github.io/openeo-python-client/api.html#openeo.rest.connection.Connection.authenticate_oidc) will require the user to go through an interactive login flow in a browser, when there is no (valid) refresh token available. But when the openEO Python client library can find a valid refresh token on their system, this will be a non-interactive operation. This makes it a viable option for non-interactive and machine-to-machine authentication, if it is feasible to produce a new refresh token once in a while using an interactive login flow.
+
+To get this working, there are basically two aspects to cover (both of which have built-in support in the openEO Python client library):
+
+1.  Obtain and store a new refresh token.
+
+    There are several authentication methods on the `Connection` object (e.g. the often used `authenticate_oidc()` method) and most these have an option `store_refresh_token` to enable storing of the refresh token obtained during the authentication process. Note that this is enabled by default in `authenticate_oidc()`, but not in `authenticate_oidc_device()`.
+
+    The refresh token is stored in a private JSON file, by default, in a folder within the user’s personal data directory (typically determined by environment variables such as `XDG_DATA_HOME` on Linux or `APPDATA` on Windows). The folder can also be configured directly using the `OPENEO_CONFIG_HOME` environment variable. The actual location can be verified with the [`openeo-auth` command line tool](https://open-eo.github.io/openeo-python-client/auth.html#auth-config-files-and-openeo-auth-helper-tool).
+
+2.  Load and use the refresh token
+
+    When a valid refresh token is stored in a location accessible to the openEO Python client library, the user can authenticate directly with:
+
+    ``` python
+    connection.authenticate_oidc_refresh_token()
+    ```
+
+    Alternatively:
+
+    - If a user wants to keep their authentication logic generic, the following can also be used
+
+      ``` python
+      connection.authenticate_oidc()
+      ```
+
+      This method will first try to use a refresh token if available, and fall back on other methods (e.g. device code flow) otherwise.
+
+    - If a user wants to manage their refresh token themselves, it can be passed explicitly:
+
+      ``` python
+      connection.authenticate_oidc_refresh_token(
+          refresh_token=your_refresh_token,
+      )
+      ```
+
+> **TIP:**
+>
+> For advanced use cases, it is also possible to override the file-based refresh token storage with a custom implementation through the `refresh_token_store` parameter of [`Connection`](https://open-eo.github.io/openeo-python-client/api.html#openeo.rest.connection.Connection).
+
+### Client Credentials Flow
+
+OpenID Connect also provides the so-called “client credentials flow”, which is a *non-interactive* flow, based on a static client id and a client secret, making it suitable for machine-to-machine authentication.
+
+See the documentation page on [client credentials](../../APIs/openEO/authentication/client_credentials.llms.md) for more information on client credentials usage in the context of the Copernicus Data Space Ecosystem, how to obtain them, pitfalls, and other considerations.

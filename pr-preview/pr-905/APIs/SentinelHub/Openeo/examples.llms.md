@@ -1,0 +1,1543 @@
+# Request examples of Synchronous OpenEO API
+
+Below are some examples of the process requests for Synchronous OpenEO API.
+
+## Sentinel 1
+
+Loading VH band for Sentinel1 GRD (png result)
+
+``` json
+{
+  "process": {
+  "process_graph": {
+    "loadco1": {
+      "process_id": "load_collection",
+      "arguments": {
+        "id": "sentinel-1-grd",
+        "spatial_extent": {
+          "west": 14.484593380564213,
+          "east": 14.548331019104793,
+          "south": 46.0179687147191,
+          "north": 46.047099242091406
+        },
+        "temporal_extent": [
+          "2014-10-03T00:00:00Z",
+          "2025-01-03"
+        ],
+        "bands": [
+          "VH"
+        ]
+      }
+    },
+    "savere1": {
+      "process_id": "save_result",
+      "arguments": {
+        "data": {
+          "from_node": "loadco1"
+        },
+        "format": "PNG"
+      },
+      "result": true
+    }
+  }
+}
+}
+```
+
+## Sentinel 2
+
+RGB image for L2A products (tiff result)
+
+``` json
+
+{
+  "loadcollection": {
+    "process_id": "load_collection",
+    "arguments": {
+      "id": "sentinel-2-l2a",
+      "spatial_extent": {
+        "west": 14.503132250376241,
+        "south": 45.98989222284457,
+        "east": 14.578437275398317,
+        "north": 46.04381770188389,
+        "width": 1022,
+        "height": 1022
+      },
+      "temporal_extent": [
+        "2022-03-26T00:00:00Z",
+        "2022-03-26T23:59:59Z"
+      ],
+      "bands": [
+        "B04",
+        "B03",
+        "B02"
+      ]
+    }
+  },
+  "save": {
+    "process_id": "save_result",
+    "arguments": {
+      "data": {
+        "from_node": "product1"
+      },
+      "format": "GTIFF"
+    },
+    "result": true
+  },
+  "product1": {
+    "process_id": "product",
+    "arguments": {
+      "data": [
+        2.3,
+        {
+          "from_node": "loadcollection"
+        }
+      ]
+    }
+  }
+}
+```
+
+Simple NDVI for L2A products (jpeg result):
+
+``` json
+{
+  "process": {
+    "process_graph": {
+       "loadcollection":{
+          "process_id":"load_collection",
+          "arguments":{
+             "id": "sentinel-2-l2a",
+             "spatial_extent":{
+                "west":14.503132250376241,
+                "south":45.98989222284457,
+                "east":14.578437275398317,
+                "north":46.04381770188389,
+                "width":512,
+                "height":512
+             },
+             "temporal_extent":[
+                "2022-03-26T00:00:00Z",
+                "2022-03-26T23:59:59Z"
+             ],
+             "bands":[
+                "B04",
+                "B08"
+             ]
+          }
+       },
+       "save": {
+          "process_id":"save_result",
+          "arguments":{
+             "data":{
+                "from_node":"ndvi4"
+             },
+             "format":"jpeg"
+          },
+          "result":true
+       },
+       "ndvi4":{
+          "process_id":"ndvi",
+          "arguments":{
+             "data":{
+                "from_node":"loadcollection"
+             },
+             "target_band":"NDVI",
+             "nir":"B08",
+             "red":"B04"
+          }
+       }
+   },
+    "parameters": []
+  }
+}
+```
+
+[Optimized true color for L1C products](https://custom-scripts.sentinel-hub.com/sentinel-2/l1c_optimized/) (tiff result)
+
+``` json
+{
+  "load2": {
+    "process_id": "load_collection",
+    "arguments": {
+      "id": "S2L1C",
+      "spatial_extent": {
+        "west": 14.503132250376241,
+        "south": 45.98989222284457,
+        "east": 14.578437275398317,
+        "north": 46.04381770188389,
+        "width": 512,
+        "height": 512
+      },
+      "temporal_extent": [
+        "2022-03-26T00:00:00Z",
+        "2022-03-26T23:59:59Z"
+      ],
+      "bands": [
+        "B02",
+        "B03",
+        "B04"
+      ]
+    }
+  },
+  "apply3": {
+    "process_id": "apply_dimension",
+    "arguments": {
+      "data": {
+        "from_node": "load2"
+      },
+      "dimension": "bands",
+      "process": {
+        "process_graph": {
+          "arrayB2": {
+            "process_id": "array_element",
+            "arguments": {
+              "data": {
+                "from_parameter": "data"
+              },
+              "label": "B04"
+            }
+          },
+          "arrayB3": {
+            "process_id": "array_element",
+            "arguments": {
+              "data": {
+                "from_parameter": "data"
+              },
+              "label": "B03"
+            }
+          },
+          "arrayB4": {
+            "process_id": "array_element",
+            "arguments": {
+              "data": {
+                "from_parameter": "data"
+              },
+              "label": "B02"
+            }
+          },
+          "subtractB2": {
+            "process_id": "subtract",
+            "arguments": {
+              "x": {
+                "from_node": "arrayB2"
+              },
+              "y": 0.041
+            }
+          },
+          "subtractB3": {
+            "process_id": "subtract",
+            "arguments": {
+              "x": {
+                "from_node": "arrayB3"
+              },
+              "y": 0.024
+            }
+          },
+          "subtractB4": {
+            "process_id": "subtract",
+            "arguments": {
+              "x": {
+                "from_node": "arrayB4"
+              },
+              "y": 0.013
+            }
+          },
+          "array1": {
+            "process_id": "array_create",
+            "arguments": {
+              "data": [
+                {
+                  "from_node": "subtractB2"
+                },
+                {
+                  "from_node": "subtractB3"
+                },
+                {
+                  "from_node": "subtractB4"
+                }
+              ]
+            },
+            "result": true
+          }
+        }
+      }
+    }
+  },
+  "apply4": {
+    "process_id": "apply",
+    "arguments": {
+      "data": {
+        "from_node": "apply3"
+      },
+      "process": {
+        "process_graph": {
+          "constant1": {
+            "process_id": "constant",
+            "arguments": {
+              "x": 3
+            },
+            "description": "maxR"
+          },
+          "constant4": {
+            "process_id": "constant",
+            "arguments": {
+              "x": 0.01
+            },
+            "description": "gOff"
+          },
+          "constant5": {
+            "process_id": "constant",
+            "arguments": {
+              "x": 0.13
+            },
+            "description": "midR"
+          },
+          "constant6": {
+            "process_id": "constant",
+            "arguments": {
+              "x": 2.3
+            },
+            "description": "gamma"
+          },
+          "divide12": {
+            "process_id": "divide",
+            "arguments": {
+              "x": {
+                "from_node": "constant5"
+              },
+              "y": {
+                "from_node": "constant1"
+              }
+            },
+            "description": "midR/maxR"
+          },
+          "divide2": {
+            "process_id": "divide",
+            "arguments": {
+              "x": {
+                "from_parameter": "x"
+              },
+              "y": {
+                "from_node": "constant1"
+              }
+            }
+          },
+          "power7": {
+            "process_id": "power",
+            "arguments": {
+              "p": {
+                "from_node": "constant6"
+              },
+              "base": {
+                "from_node": "constant4"
+              }
+            },
+            "description": "gOffPow"
+          },
+          "sum10": {
+            "process_id": "sum",
+            "arguments": {
+              "data": [
+                1,
+                {
+                  "from_node": "constant4"
+                }
+              ]
+            }
+          },
+          "power8": {
+            "process_id": "power",
+            "arguments": {
+              "p": {
+                "from_node": "constant6"
+              },
+              "base": {
+                "from_node": "sum10"
+              }
+            }
+          },
+          "clip1": {
+            "process_id": "clip",
+            "arguments": {
+              "x": {
+                "from_node": "divide2"
+              },
+              "min": 0,
+              "max": 1
+            },
+            "description": "ar"
+          },
+          "subtract11": {
+            "process_id": "subtract",
+            "arguments": {
+              "x": {
+                "from_node": "power8"
+              },
+              "y": {
+                "from_node": "power7"
+              }
+            },
+            "description": "gOffRange"
+          },
+          "multiply4": {
+            "process_id": "multiply",
+            "arguments": {
+              "x": {
+                "from_node": "clip1"
+              },
+              "y": {
+                "from_node": "divide12"
+              }
+            },
+            "description": "ar * (midR/maxR)"
+          },
+          "multiply5": {
+            "process_id": "multiply",
+            "arguments": {
+              "x": {
+                "from_node": "divide12"
+              },
+              "y": 2
+            },
+            "description": "2*midR/maxR"
+          },
+          "subtract13": {
+            "process_id": "subtract",
+            "arguments": {
+              "x": {
+                "from_node": "multiply4"
+              },
+              "y": 1
+            }
+          },
+          "subtract7": {
+            "process_id": "subtract",
+            "arguments": {
+              "x": {
+                "from_node": "multiply5"
+              },
+              "y": 1
+            },
+            "description": "2*midR/maxR-1"
+          },
+          "multiply14": {
+            "process_id": "multiply",
+            "arguments": {
+              "x": {
+                "from_node": "clip1"
+              },
+              "y": {
+                "from_node": "subtract13"
+              }
+            },
+            "description": "ar * (ar * (midR/maxR) - 1)"
+          },
+          "multiply15": {
+            "process_id": "multiply",
+            "arguments": {
+              "x": {
+                "from_node": "clip1"
+              },
+              "y": {
+                "from_node": "subtract7"
+              }
+            },
+            "description": "(ar * (2 * midR/maxR - 1)"
+          },
+          "subtract16": {
+            "process_id": "subtract",
+            "arguments": {
+              "x": {
+                "from_node": "multiply15"
+              },
+              "y": {
+                "from_node": "divide12"
+              }
+            },
+            "description": "(ar * (2 * midR/maxR - 1) - midR/maxR)"
+          },
+          "divide3": {
+            "process_id": "divide",
+            "arguments": {
+              "y": {
+                "from_node": "subtract16"
+              },
+              "x": {
+                "from_node": "multiply14"
+              }
+            },
+            "description": "adj"
+          },
+          "sum17": {
+            "process_id": "sum",
+            "arguments": {
+              "data": [
+                {
+                  "from_node": "divide3"
+                },
+                {
+                  "from_node": "constant4"
+                }
+              ]
+            }
+          },
+          "power1": {
+            "process_id": "power",
+            "arguments": {
+              "base": {
+                "from_node": "sum17"
+              },
+              "p": {
+                "from_node": "constant6"
+              }
+            },
+            "description": "Math.pow((b + gOff), gamma)"
+          },
+          "subtract3": {
+            "process_id": "subtract",
+            "arguments": {
+              "x": {
+                "from_node": "power1"
+              },
+              "y": {
+                "from_node": "power7"
+              }
+            }
+          },
+          "adjGamma": {
+            "process_id": "divide",
+            "arguments": {
+              "x": {
+                "from_node": "subtract3"
+              },
+              "y": {
+                "from_node": "subtract11"
+              }
+            },
+            "description": "sAdj",
+            "result": true
+          }
+        }
+      }
+    },
+    "description": "sAdj"
+  },
+  "apply1": {
+    "process_id": "apply_dimension",
+    "arguments": {
+      "data": {
+        "from_node": "apply4"
+      },
+      "dimension": "bands",
+      "process": {
+        "process_graph": {
+          "arrayB2": {
+            "process_id": "array_element",
+            "arguments": {
+              "data": {
+                "from_parameter": "data"
+              },
+              "label": "B02"
+            },
+            "description": "b"
+          },
+          "arrayB3": {
+            "process_id": "array_element",
+            "arguments": {
+              "data": {
+                "from_parameter": "data"
+              },
+              "label": "B03"
+            },
+            "description": "g"
+          },
+          "arrayB4": {
+            "process_id": "array_element",
+            "arguments": {
+              "data": {
+                "from_parameter": "data"
+              },
+              "label": "B04"
+            },
+            "description": "r"
+          },
+          "constant1": {
+            "process_id": "constant",
+            "arguments": {
+              "x": 1.3
+            },
+            "description": "sat"
+          },
+          "multiply12": {
+            "process_id": "multiply",
+            "arguments": {
+              "x": {
+                "from_node": "arrayB2"
+              },
+              "y": {
+                "from_node": "constant1"
+              }
+            },
+            "description": "b* sat"
+          },
+          "sum2": {
+            "process_id": "sum",
+            "arguments": {
+              "data": [
+                {
+                  "from_node": "arrayB4"
+                },
+                {
+                  "from_node": "arrayB3"
+                },
+                {
+                  "from_node": "arrayB2"
+                }
+              ]
+            },
+            "description": "(r + g + b)"
+          },
+          "multiply9": {
+            "process_id": "multiply",
+            "arguments": {
+              "x": {
+                "from_node": "arrayB3"
+              },
+              "y": {
+                "from_node": "constant1"
+              }
+            },
+            "description": "g * sat"
+          },
+          "multiply7": {
+            "process_id": "multiply",
+            "arguments": {
+              "x": {
+                "from_node": "arrayB4"
+              },
+              "y": {
+                "from_node": "constant1"
+              }
+            },
+            "description": "r * sat"
+          },
+          "subtract3": {
+            "process_id": "subtract",
+            "arguments": {
+              "y": {
+                "from_node": "constant1"
+              },
+              "x": 1
+            },
+            "description": "(1 - sat)"
+          },
+          "divide4": {
+            "process_id": "divide",
+            "arguments": {
+              "x": {
+                "from_node": "sum2"
+              },
+              "y": 3
+            },
+            "description": "(r + g + b)/3"
+          },
+          "multiply5": {
+            "process_id": "multiply",
+            "arguments": {
+              "x": {
+                "from_node": "subtract3"
+              },
+              "y": {
+                "from_node": "divide4"
+              }
+            },
+            "description": "avgS"
+          },
+          "sum10": {
+            "process_id": "sum",
+            "arguments": {
+              "data": [
+                {
+                  "from_node": "multiply5"
+                },
+                {
+                  "from_node": "multiply9"
+                }
+              ]
+            }
+          },
+          "sum13": {
+            "process_id": "sum",
+            "arguments": {
+              "data": [
+                {
+                  "from_node": "multiply5"
+                },
+                {
+                  "from_node": "multiply12"
+                }
+              ]
+            }
+          },
+          "sum8": {
+            "process_id": "sum",
+            "arguments": {
+              "data": [
+                {
+                  "from_node": "multiply7"
+                },
+                {
+                  "from_node": "multiply5"
+                }
+              ]
+            },
+            "description": "avgS + r * sat"
+          },
+          "clip11": {
+            "process_id": "clip",
+            "arguments": {
+              "x": {
+                "from_node": "sum10"
+              },
+              "min": 0,
+              "max": 1
+            }
+          },
+          "clip14": {
+            "process_id": "clip",
+            "arguments": {
+              "x": {
+                "from_node": "sum13"
+              },
+              "min": 0,
+              "max": 1
+            }
+          },
+          "clip6": {
+            "process_id": "clip",
+            "arguments": {
+              "x": {
+                "from_node": "sum8"
+              },
+              "min": 0,
+              "max": 1
+            },
+            "description": "clip(avgS + r * sat)"
+          },
+          "array1": {
+            "process_id": "array_create",
+            "arguments": {
+              "data": [
+                {
+                  "from_node": "clip6"
+                },
+                {
+                  "from_node": "clip11"
+                },
+                {
+                  "from_node": "clip14"
+                }
+              ]
+            },
+            "description": "satEnh(sAdj(smp.B04), sAdj(smp.B03), sAdj(smp.B02))",
+            "result": true
+          }
+        }
+      }
+    },
+    "description": "satEnh"
+  },
+  "apply2": {
+    "process_id": "apply",
+    "arguments": {
+      "data": {
+        "from_node": "apply1"
+      },
+      "process": {
+        "process_graph": {
+          "constant1": {
+            "process_id": "constant",
+            "arguments": {
+              "x": 0.0031308
+            },
+            "description": "trashold"
+          },
+          "multiply4": {
+            "process_id": "multiply",
+            "arguments": {
+              "x": {
+                "from_parameter": "x"
+              },
+              "y": 12.92
+            },
+            "description": "(12.92 * x)"
+          },
+          "power8": {
+            "process_id": "power",
+            "arguments": {
+              "p": 0.41666666666,
+              "base": {
+                "from_parameter": "x"
+              }
+            }
+          },
+          "lte2": {
+            "process_id": "lte",
+            "arguments": {
+              "x": {
+                "from_parameter": "x"
+              },
+              "y": {
+                "from_node": "constant1"
+              }
+            },
+            "description": "c <= 0.0031308"
+          },
+          "subtract13": {
+            "process_id": "subtract",
+            "arguments": {
+              "x": {
+                "from_node": "multiply5"
+              },
+              "y": 0.055
+            },
+            "description": "(1.055 * Math.pow(c, 0.41666666666) - 0.055)"
+          },
+          "multiply5": {
+            "process_id": "multiply",
+            "arguments": {
+              "x": {
+                "from_node": "power8"
+              },
+              "y": 1.055
+            }
+          },
+          "if1": {
+            "process_id": "if",
+            "arguments": {
+              "value": {
+                "from_node": "lte2"
+              },
+              "accept": {
+                "from_node": "multiply4"
+              },
+              "reject": {
+                "from_node": "subtract13"
+              }
+            },
+            "result": true
+          }
+        }
+      }
+    },
+    "description": "sRGB"
+  },
+  "save5": {
+    "process_id": "save_result",
+    "arguments": {
+      "format": "GTIFF",
+      "data": {
+        "from_node": "apply2"
+      }
+    },
+    "result": true
+  }
+}
+```
+
+[Optimized true color for L2A products](https://custom-scripts.sentinel-hub.com/sentinel-2/l2a_optimized/) (jpeg result)
+
+``` json
+{
+  "process": {
+    "process_graph": {
+  "load2": {
+    "process_id": "load_collection",
+    "arguments": {
+      "id": "sentinel-2-l2a",
+      "spatial_extent": {
+        "west": 14.503132250376241,
+        "south": 45.98989222284457,
+        "east": 14.578437275398317,
+        "north": 46.04381770188389,
+        "width": 512,
+        "height": 512
+      },
+      "temporal_extent": [
+        "2022-03-26T00:00:00Z",
+        "2022-03-26T23:59:59Z"
+      ],
+      "bands": [
+        "B04",
+        "B03",
+        "B02"
+      ]
+    }
+  },
+  "apply4": {
+    "process_id": "apply",
+    "arguments": {
+      "data": {
+        "from_node": "load2"
+      },
+      "process": {
+        "process_graph": {
+          "constant1": {
+            "process_id": "constant",
+            "arguments": {
+              "x": 3
+            },
+            "description": "maxR"
+          },
+          "constant4": {
+            "process_id": "constant",
+            "arguments": {
+              "x": 0.01
+            },
+            "description": "gOff"
+          },
+          "constant5": {
+            "process_id": "constant",
+            "arguments": {
+              "x": 0.13
+            },
+            "description": "midR"
+          },
+          "constant6": {
+            "process_id": "constant",
+            "arguments": {
+              "x": 2.3
+            },
+            "description": "gamma"
+          },
+          "divide12": {
+            "process_id": "divide",
+            "arguments": {
+              "x": {
+                "from_node": "constant5"
+              },
+              "y": {
+                "from_node": "constant1"
+              }
+            },
+            "description": "midR/maxR"
+          },
+          "divide2": {
+            "process_id": "divide",
+            "arguments": {
+              "x": {
+                "from_parameter": "x"
+              },
+              "y": {
+                "from_node": "constant1"
+              }
+            }
+          },
+          "power7": {
+            "process_id": "power",
+            "arguments": {
+              "p": {
+                "from_node": "constant6"
+              },
+              "base": {
+                "from_node": "constant4"
+              }
+            },
+            "description": "gOffPow"
+          },
+          "sum10": {
+            "process_id": "sum",
+            "arguments": {
+              "data": [
+                1,
+                {
+                  "from_node": "constant4"
+                }
+              ]
+            }
+          },
+          "power8": {
+            "process_id": "power",
+            "arguments": {
+              "p": {
+                "from_node": "constant6"
+              },
+              "base": {
+                "from_node": "sum10"
+              }
+            }
+          },
+          "clip1": {
+            "process_id": "clip",
+            "arguments": {
+              "x": {
+                "from_node": "divide2"
+              },
+              "min": 0,
+              "max": 1
+            },
+            "description": "ar"
+          },
+          "subtract11": {
+            "process_id": "subtract",
+            "arguments": {
+              "x": {
+                "from_node": "power8"
+              },
+              "y": {
+                "from_node": "power7"
+              }
+            },
+            "description": "gOffRange"
+          },
+          "multiply4": {
+            "process_id": "multiply",
+            "arguments": {
+              "x": {
+                "from_node": "clip1"
+              },
+              "y": {
+                "from_node": "divide12"
+              }
+            },
+            "description": "ar * (midR/maxR)"
+          },
+          "multiply5": {
+            "process_id": "multiply",
+            "arguments": {
+              "x": {
+                "from_node": "divide12"
+              },
+              "y": 2
+            },
+            "description": "2*midR/maxR"
+          },
+          "subtract13": {
+            "process_id": "subtract",
+            "arguments": {
+              "x": {
+                "from_node": "multiply4"
+              },
+              "y": 1
+            }
+          },
+          "subtract7": {
+            "process_id": "subtract",
+            "arguments": {
+              "x": {
+                "from_node": "multiply5"
+              },
+              "y": 1
+            },
+            "description": "2*midR/maxR-1"
+          },
+          "multiply14": {
+            "process_id": "multiply",
+            "arguments": {
+              "x": {
+                "from_node": "clip1"
+              },
+              "y": {
+                "from_node": "subtract13"
+              }
+            },
+            "description": "ar * (ar * (midR/maxR) - 1)"
+          },
+          "multiply15": {
+            "process_id": "multiply",
+            "arguments": {
+              "x": {
+                "from_node": "clip1"
+              },
+              "y": {
+                "from_node": "subtract7"
+              }
+            },
+            "description": "(ar * (2 * midR/maxR - 1)"
+          },
+          "subtract16": {
+            "process_id": "subtract",
+            "arguments": {
+              "x": {
+                "from_node": "multiply15"
+              },
+              "y": {
+                "from_node": "divide12"
+              }
+            },
+            "description": "(ar * (2 * midR/maxR - 1) - midR/maxR)"
+          },
+          "divide3": {
+            "process_id": "divide",
+            "arguments": {
+              "y": {
+                "from_node": "subtract16"
+              },
+              "x": {
+                "from_node": "multiply14"
+              }
+            },
+            "description": "adj"
+          },
+          "sum17": {
+            "process_id": "sum",
+            "arguments": {
+              "data": [
+                {
+                  "from_node": "divide3"
+                },
+                {
+                  "from_node": "constant4"
+                }
+              ]
+            }
+          },
+          "power1": {
+            "process_id": "power",
+            "arguments": {
+              "base": {
+                "from_node": "sum17"
+              },
+              "p": {
+                "from_node": "constant6"
+              }
+            },
+            "description": "Math.pow((b + gOff), gamma)"
+          },
+          "subtract3": {
+            "process_id": "subtract",
+            "arguments": {
+              "x": {
+                "from_node": "power1"
+              },
+              "y": {
+                "from_node": "power7"
+              }
+            }
+          },
+          "adjGamma": {
+            "process_id": "divide",
+            "arguments": {
+              "x": {
+                "from_node": "subtract3"
+              },
+              "y": {
+                "from_node": "subtract11"
+              }
+            },
+            "description": "sAdj",
+            "result": true
+          }
+        }
+      }
+    },
+    "description": "sAdj"
+  },
+  "apply1": {
+    "process_id": "apply_dimension",
+    "arguments": {
+      "data": {
+        "from_node": "apply4"
+      },
+      "dimension": "bands",
+      "process": {
+        "process_graph": {
+          "arrayB2": {
+            "process_id": "array_element",
+            "arguments": {
+              "data": [
+                "data"
+              ],
+              "label": "B02"
+            },
+            "description": "b"
+          },
+          "arrayB3": {
+            "process_id": "array_element",
+            "arguments": {
+              "data": {
+                "from_parameter": "data"
+              },
+              "label": "B03"
+            },
+            "description": "g"
+          },
+          "arrayB4": {
+            "process_id": "array_element",
+            "arguments": {
+              "data": {
+                "from_parameter": "data"
+              },
+              "label": "B04"
+            },
+            "description": "r"
+          },
+          "constant1": {
+            "process_id": "constant",
+            "arguments": {
+              "x": 1.2
+            },
+            "description": "sat"
+          },
+          "multiply12": {
+            "process_id": "multiply",
+            "arguments": {
+              "x": {
+                "from_node": "arrayB2"
+              },
+              "y": {
+                "from_node": "constant1"
+              }
+            },
+            "description": "b* sat"
+          },
+          "sum2": {
+            "process_id": "sum",
+            "arguments": {
+              "data": [
+                {
+                  "from_node": "arrayB4"
+                },
+                {
+                  "from_node": "arrayB3"
+                },
+                {
+                  "from_node": "arrayB2"
+                }
+              ]
+            },
+            "description": "(r + g + b)"
+          },
+          "multiply9": {
+            "process_id": "multiply",
+            "arguments": {
+              "x": {
+                "from_node": "arrayB3"
+              },
+              "y": {
+                "from_node": "constant1"
+              }
+            },
+            "description": "g * sat"
+          },
+          "multiply7": {
+            "process_id": "multiply",
+            "arguments": {
+              "x": {
+                "from_node": "arrayB4"
+              },
+              "y": {
+                "from_node": "constant1"
+              }
+            },
+            "description": "r * sat"
+          },
+          "subtract3": {
+            "process_id": "subtract",
+            "arguments": {
+              "y": {
+                "from_node": "constant1"
+              },
+              "x": 1
+            },
+            "description": "(1 - sat)"
+          },
+          "divide4": {
+            "process_id": "divide",
+            "arguments": {
+              "x": {
+                "from_node": "sum2"
+              },
+              "y": 3
+            },
+            "description": "(r + g + b)/3"
+          },
+          "multiply5": {
+            "process_id": "multiply",
+            "arguments": {
+              "x": {
+                "from_node": "subtract3"
+              },
+              "y": {
+                "from_node": "divide4"
+              }
+            },
+            "description": "avgS"
+          },
+          "sum10": {
+            "process_id": "sum",
+            "arguments": {
+              "data": [
+                {
+                  "from_node": "multiply5"
+                },
+                {
+                  "from_node": "multiply9"
+                }
+              ]
+            }
+          },
+          "sum13": {
+            "process_id": "sum",
+            "arguments": {
+              "data": [
+                {
+                  "from_node": "multiply5"
+                },
+                {
+                  "from_node": "multiply12"
+                }
+              ]
+            }
+          },
+          "sum8": {
+            "process_id": "sum",
+            "arguments": {
+              "data": [
+                {
+                  "from_node": "multiply7"
+                },
+                {
+                  "from_node": "multiply5"
+                }
+              ]
+            },
+            "description": "avgS + r * sat"
+          },
+          "clip11": {
+            "process_id": "clip",
+            "arguments": {
+              "x": {
+                "from_node": "sum10"
+              },
+              "min": 0,
+              "max": 1
+            }
+          },
+          "clip14": {
+            "process_id": "clip",
+            "arguments": {
+              "x": {
+                "from_node": "sum13"
+              },
+              "min": 0,
+              "max": 1
+            }
+          },
+          "clip6": {
+            "process_id": "clip",
+            "arguments": {
+              "x": {
+                "from_node": "sum8"
+              },
+              "min": 0,
+              "max": 1
+            },
+            "description": "clip(avgS + r * sat)"
+          },
+          "array1": {
+            "process_id": "array_create",
+            "arguments": {
+              "data": [
+                {
+                  "from_node": "clip6"
+                },
+                {
+                  "from_node": "clip11"
+                },
+                {
+                  "from_node": "clip14"
+                }
+              ]
+            },
+            "description": "satEnh(sAdj(smp.B04), sAdj(smp.B03), sAdj(smp.B02))",
+            "result": true
+          }
+        }
+      }
+    },
+    "description": "satEnh"
+  },
+  "apply2": {
+    "process_id": "apply",
+    "arguments": {
+      "data": {
+        "from_node": "apply1"
+      },
+      "process": {
+        "process_graph": {
+          "constant1": {
+            "process_id": "constant",
+            "arguments": {
+              "x": 0.0031308
+            },
+            "description": "trashold"
+          },
+          "multiply4": {
+            "process_id": "multiply",
+            "arguments": {
+              "x": {
+                "from_parameter": "x"
+              },
+              "y": 12.92
+            },
+            "description": "(12.92 * x)"
+          },
+          "power8": {
+            "process_id": "power",
+            "arguments": {
+              "p": 0.41666666666,
+              "base": {
+                "from_parameter": "x"
+              }
+            }
+          },
+          "lte2": {
+            "process_id": "lte",
+            "arguments": {
+              "x": {
+                "from_parameter": "x"
+              },
+              "y": {
+                "from_node": "constant1"
+              }
+            },
+            "description": "c <= 0.0031308"
+          },
+          "subtract13": {
+            "process_id": "subtract",
+            "arguments": {
+              "x": {
+                "from_node": "multiply5"
+              },
+              "y": 0.055
+            },
+            "description": "(1.055 * Math.pow(c, 0.41666666666) - 0.055)"
+          },
+          "multiply5": {
+            "process_id": "multiply",
+            "arguments": {
+              "x": {
+                "from_node": "power8"
+              },
+              "y": 1.055
+            }
+          },
+          "if1": {
+            "process_id": "if",
+            "arguments": {
+              "value": {
+                "from_node": "lte2"
+              },
+              "accept": {
+                "from_node": "multiply4"
+              },
+              "reject": {
+                "from_node": "subtract13"
+              }
+            },
+            "result": true
+          }
+        }
+      }
+    },
+    "description": "sRGB"
+  },
+  "save5": {
+    "process_id": "save_result",
+    "arguments": {
+      "format": "jpeg",
+      "data": {
+        "from_node": "apply2"
+      }
+    },
+    "result": true
+  }
+}
+  }
+}
+```
+
+### [Normalized difference moisture index with visualization function](https://custom-scripts.sentinel-hub.com/sentinel-2/ndmi/) (tiff result)
+
+``` json
+{
+  "loadcollection": {
+    "process_id": "load_collection",
+    "arguments": {
+      "id": "sentinel-2-l2a",
+      "spatial_extent": {
+        "west": 14.503132250376241,
+        "south": 45.98989222284457,
+        "east": 14.578437275398317,
+        "north": 46.04381770188389,
+        "width": 512,
+        "height": 512
+      },
+      "temporal_extent": [
+        "2022-03-26T00:00:00Z",
+        "2022-03-26T23:59:59Z"
+      ]
+    }
+  },
+  "index": {
+    "process_id": "ndvi",
+    "arguments": {
+      "data": {
+        "from_node": "loadcollection"
+      },
+      "target_band": "NDVI",
+      "nir": "B08",
+      "red": "B11"
+    }
+  },
+  "highlight": {
+    "process_id": "color_ramp",
+    "arguments": {
+      "data": {
+        "from_node": "index"
+      },
+      "minValue": -1,
+      "maxValue": 1,
+      "colorRamps": [
+        [
+          -0.8,
+          "0x800000"
+        ],
+        [
+          -0.24,
+          "0xff0000"
+        ],
+        [
+          -0.032,
+          "0xffff00"
+        ],
+        [
+          0.032,
+          "0x00ffff"
+        ],
+        [
+          0.24,
+          "0x0000ff"
+        ],
+        [
+          0.8,
+          "0x000080"
+        ]
+      ],
+      "rampType": "redTemperature"
+    }
+  },
+  "save": {
+    "process_id": "save_result",
+    "arguments": {
+      "format": "GTIFF",
+      "data": {
+        "from_node": "highlight"
+      }
+    },
+    "result": true
+  }
+}
+```

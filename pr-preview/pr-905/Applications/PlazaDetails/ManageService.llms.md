@@ -1,0 +1,36 @@
+# Manage your services
+
+In this section, we aim to address the key aspects of managing services on the openEO Algorithm Plaza.
+
+## Upgrade your Service
+
+Each service is given a maturity level based on the quality of the service. To upgrade the level of service, the developer should improve their services and documentation so that they meet the [criteria](../../Applications/PlazaDetails/ServiceMaturity.llms.md) for the desired levels. Then a request can be made at our [help center](https://helpcenter.dataspace.copernicus.eu/hc/en-gb) for upgrading the service.
+
+## Changing a service visibility to private
+
+Changing the visibility of a service to private, ensures that the service is not visible in the openEO Algorithm Plaza. This can be useful for fixing bugs, developing, and testing before publishing it to the marketplace.
+
+To change the visibility of a service, scroll down in the details section and set the visibility to private.
+
+![](../_images/service_private.png)
+
+## Remove a service
+
+To remove a service from the openEO Algorithm Plaza, users can follow the steps below:
+
+- Navigate to the service details page by clicking on the service card from the **Services** page.
+- Scroll down to the bottom of the service details page.
+- Click on the `REMOVE` button.
+- Confirm the deletion by clicking **YES** in the popup window.
+
+It is important to note that removing the service from the marketplace does not remove it from the orchestrators. Users are still able to execute the service through the orchestrators. To remove the service from the orchestrators, please follow the instructions below.
+
+### Removing a service in the orchestrators
+
+Removing a service from the orchestrators deactivates its use. openEO provides two ways to remove a service (also known as a user-defined process in openEO):
+
+- **Using the OpenEO API**  
+  The process_graphs endpoint allows users to remove a service based on its ID. More information is available in the [official API documentation](https://openeo.org/documentation/1.0/developers/api/reference.html#operation/delete-custom-process).
+
+- **Using the openEO Python Client**  
+  The openEO Python Client provides a delete function that can be used for any User Defined Process the authenticated user manages. More information is available in the [official Python Client documentation](https://open-eo.github.io/openeo-python-client/api.html#openeo.rest.udp.RESTUserDefinedProcess.delete).

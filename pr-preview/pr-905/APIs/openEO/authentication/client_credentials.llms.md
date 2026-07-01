@@ -1,0 +1,78 @@
+# Authentication With Client Credentials in openEO
+
+OpenID Connect provides the so-called “*client credentials flow*”, which is a *non-interactive* flow, based on a static client ID and a client secret, making it suitable for machine-to-machine authentication. Often, this is also referred to as “*service account*” authentication.
+
+The openEO Python client library has built-in support for service accounts and the client credentials flow, with the [`authenticate_oidc_client_credentials()` method](https://open-eo.github.io/openeo-python-client/auth.html#oidc-authentication-client-credentials-flow) as follows:
+
+``` python
+connection.authenticate_oidc_client_credentials(
+    client_id=...,
+    client_secret=...,  # Note: Do not hardcode the secret here!
+)
+```
+
+> **WARNING:**
+>
+> The use of service accounts and client credentials in openEO is an experimental feature. It is not widely supported across openEO backends, and the setup procedure is not yet fully standardized or streamlined.
+
+## Caveats And Considerations
+
+- Treat the client secret securely, like a password. Take extra care to not leak it accidentally. For example, given the simplicity of the `authenticate_oidc_client_credentials()` example snippet above, it might be tempting to hard-code the client secret in scripts or notebooks, potentially leading to its permanent storage in version control repositories.
+
+  Instead, read the client secret from a secure location (e.g. a private file outside the reach of the version control repositories), or leverage environment variables (e.g as directly [supported by the openEO Python client library](https://open-eo.github.io/openeo-python-client/auth.html#oidc-client-credentials-using-environment-variables)).
+
+- The client credentials only identify an OAuth *client* or *service account*, not a personal *user* account.
+
+  - This means that openEO resources such as openEO batch jobs, their results, UDP’s, etc from one identity are not available to the other. For example, batch jobs originally created with a service account cannot be listed when using a personal account.
+  - Likewise, the balances of processing credits are separate. However, it is possible to link the balance of the service account to a personal account. To enable this, contact support and provide the client ID and user ID.
+
+- The client credentials flow is not supported on the [Copernicus Data Space Ecosystem openEO web editor](https://openeo.dataspace.copernicus.eu/). As mentioned above, this practically means that it can not be used to track the progress and status of batch jobs created with a service account. However, it is still possible to approximate the batch job overview of the web editor with a Jupyter Notebook using the openEO Python client library.
+
+## How To Create Service Accounts And Obtain Client Credentials
+
+There are several options to create or request a service account with client credentials. Which one to choose depends on the particular use case, and both cases are further explained below. For simple, personal use cases and initial testing, the self-service feature of the [Sentinel Hub Dashboard](https://shapps.dataspace.copernicus.eu/dashboard) is the easiest option.  
+For larger use cases or projects that should not be tied to a single developer, it is recommended to request a client through the CDSE Account management service.
+
+### Obtain Client Credentials With The Sentinel Hub Dashboard
+
+The Sentinel Hub service in the Copernicus Data Space Ecosystem has a [dashboard web app](https://shapps.dataspace.copernicus.eu/dashboard), which includes a self-service feature to register personal OAuth clients. Find more detailed instructions in the [documentation on Sentinel Hub Authentication](../../../APIs/SentinelHub/Overview/Authentication.llms.md#registering-oauth-client).
+
+The client ID and client secret obtained with this dashboard can also be used for the client credentials flow with the openEO service of Copernicus Data Space Ecosystem.
+
+### Request A Service Account From The CDSE Account Management Service
+
+The Copernicus Data Space Ecosystem help center will help you setup an OIDC/OAuth clients, to get a service account based on these client credentials. You should file a request through the [help center](https://helpcenter.dataspace.copernicus.eu/hc/en-gb/requests/new).
+
+Make sure to include the following information in the description of the request:
+
+- A short, but descriptive *project name*. It can be a couple of words or a project acronym, but it should be descriptive enough to be unique within the Copernicus Data Space Ecosystem.
+- A short description of the project, preferably with some pointers to the project website, contact info, involved parties, …
+
+## Obtain The OIDC Identifier Of A Service Account
+
+When you request a service account through the help center, other services (like an openEO backend) are not in the loop and don’t automatically get insights into how service accounts are linked to personal accounts or higher level projects.
+
+When you are in the process of linking a service account to another entity, for example for openEO credit accounting purposes, you will be required to provide the “OIDC subject identifier” (the OIDC “sub” claim) associated with the service account. Note that this is different from the client ID of the service account.
+
+This “sub” claim can be obtained for example with the following Python code snippet, using the openEO Python client library:
+
+``` python
+import getpass
+import openeo
+
+connection = openeo.connect(url="openeo.dataspace.copernicus.eu")
+
+client_id = getpass.getpass("Client ID: ")
+client_secret = getpass.getpass("Client secret: ")
+connection.authenticate_oidc_client_credentials(
+    client_id=client_id,
+    client_secret=client_secret,
+)
+
+client_sub_id = connection.describe_account()["user_id"]
+print(client_sub_id)
+```
+
+> **IMPORTANT:**
+>
+> To avoid the bad practice of hardcoding the client secret in scripts or notebooks, this snippet uses the `getpass` module from Python’s standard library to interactively and securely prompt the user for the client ID and secret, in a way that is compatible with both standard CLI usage and Jupyter notebook contexts.

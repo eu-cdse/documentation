@@ -1,0 +1,12 @@
+# API Overview
+
+## About Sentinel Hub API
+
+The Sentinel Hub API is a RESTful API interface to [various satellite imagery archives](../../APIs/SentinelHub/Data.llms.md). It provides access to raw satellite data, rendered images, statistical analysis and much more.
+
+## Sentinel Hub API reference
+
+The Sentinel Hub API is annotated via OpenAPI. You can browse reference docs here:
+
+- [Web preview](../../APIs/SentinelHub/ApiReference.llms.md)
+- [YAML](../../APIs/SentinelHub/ApiReference/openapi.v1.yaml)

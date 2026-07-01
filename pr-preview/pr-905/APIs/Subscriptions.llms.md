@@ -1,0 +1,2033 @@
+# Subscriptions
+
+This section provides a detailed description of PUSH and PULL subscriptions within the Copernicus Data Space Ecosystem Catalogue, including its workflows and exemplary requests.
+
+**Subscription** services allow users to receive notifications in an automated way about events that have taken place in the Copernicus Data Space Ecosystem Catalogue. They inform users about newly added, modified, or deleted products, according to the set of filter parameters supplied within the subscription request.
+
+There are two types of Subscriptions available for users:
+
+1.  PULL Subscription - for PULL subscription the service sends the notification to the individual user queue every time the product is added, modified, or deleted in the Copernicus Data Space Ecosystem Catalogue, based on the filter parameters defined in the subscription request. Incoming notifications are stored in the queue until they are acknowledged by the user or until the user’s queue size limit is exceeded. **The maximum queue length is 100 000 notifications.** To avoid exceeding this limit, it is crucial to read and acknowledge notifications regularly.
+
+2.  PUSH Subscription - for PUSH subscription the service sends the notification directly to the user’s endpoint every time the product is added, modified or deleted in the Copernicus Data Space Ecosystem Catalogue, based on the filter parameters defined in the subscription request. It is mandatory to provide an endpoint for notifications delivery.
+
+> **NOTE:**
+>
+> Please note that the Subscription Service has usage limits. The maximum number of **running subscriptions** (PUSH and PULL) per user is **2**. The total number of subscriptions (running and paused) cannot exceed 10.
+
+Users are encouraged to explore examples of processing scripts for Subscriptions which can be found at the following links:
+
+- [PULL Subscription example](https://gitlab.cloudferro.com/cat_public/pull_subscription_processing_example)
+- [PUSH Subscription example](https://gitlab.cloudferro.com/cat_public/push_subscription_endpoint_example)
+
+### List of Terms
+
+The terms used within the Subscriptions documentation are defined below.
+
+**Subscription Service** - an HTTP API for managing subscriptions.
+
+**PULL subscription** - a request to receive PULL notifications about events occuring in the Copernicus Data Space Ecosystem Catalogue.
+
+**PUSH subscription** - a request to receive PUSH notifications about events occuring in the Copernicus Data Space Ecosystem Catalogue.
+
+**Notification** - an OData message automatically sent to the endpoint (for PUSH subscriptions) or individual queue (for PULL notifications) upon occurrence of events in the Copernicus Data Space Ecosystem Catalogue.
+
+### User Authorization
+
+To use the Subscription Service, an authorization token is required, as only authenticated users are permitted to create subscriptions and access the service endpoints. All Subscription Service endpoints enforce token-based authentication.
+
+The token may be obtained using the following scripts:
+
+## cURL
+
+    curl --location --request POST 'https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token' \
+      --header 'Content-Type: application/x-www-form-urlencoded' \
+      --data-urlencode 'grant_type=password' \
+      --data-urlencode 'username=<LOGIN>' \
+      --data-urlencode 'password=<PASSWORD>' \
+      --data-urlencode 'client_id=cdse-public'
+
+or
+
+## cURL
+
+    curl -d 'client_id=cdse-public' -d 'username=<LOGIN>' -d 'password=<PASSWORD>' -d 'grant_type=password' 'https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token' | python3 -m json.tool | grep "access_token" | awk -F\" '{print $4}'
+
+Along with the Access Token, a Refresh Token will be returned. It can be used to obtain a new Access Token without providing a username or password, reducing the risk of exposing credentials during requests.
+
+To re-generate the Access Token from the Refresh Token, user can use the following request :
+
+## cURL
+
+    curl --location --request POST 'https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token' \
+      --header 'Content-Type: application/x-www-form-urlencoded' \
+      --data-urlencode 'grant_type=refresh_token' \
+      --data-urlencode 'refresh_token=<REFRESH_TOKEN>' \
+      --data-urlencode 'client_id=cdse-public'
+
+## PULL Subscriptions
+
+For PULL subscriptions, the nominal scenario can be described as follows:
+
+1.  Creation of the subscription
+
+The user submits a subscription creation request to Subscription Service. In the request, users may specify stage order, filtering parameters, priority, status, subscription type and event to be monitored. All parameters, except for the subscription type, are optional. If not provided, default values are assigned. The Subscription Service then processes the request and returns a response containing the stage order, filtering parameters, priority, status, type, and event, along with a unique identifier (subscription’s Id) and submission date.
+
+2.  Product Notification
+
+After a specific event occurs in the Copernicus Data Space Ecosystem Catalogue, the Subscription Service sends a notification to the users’s queue. Users should regularly read and acknowledge notifications in the queue. If the maximum queue size is exceeded, the oldest notifications will be automatically removed with no possibility to be retrieved. If the subscription status is paused, notifications will not be sent to the queue.
+
+### PULL Subscription Entity Description
+
+Below please find the description of the PULL Subscription Entity.
+
+[TABLE]
+
+### Create Subscription
+
+To create a PULL subscription, users must submit a subscription creation request to the Subscriptions endpoint.
+
+When creating a subscription, users may specify the event to receive notifications for. Currently, the following events, or their combination, are supported:
+
+- `created`
+- `modified`
+- `created`, `modified`
+- `deleted`
+
+Within the subscription creation request, users can also provide the filtering parameters (e.g., productType, collection, geofootprint). The Subscription Service will then provide notifications about newly added, modified, or deleted products, according to the set of filter parameters supplied in the request. If `FilterParam` is not provided, it is automatically set to empty, and notifications for all products are generated.
+
+> **TIP:**
+>
+> All filters should be provided in `FilterParam` field.
+>
+> To ensure efficient filtering when using the `created` and `modified` events, it is recommended to review the [OData Products Endpoint Filter Option](https://documentation.dataspace.copernicus.eu/APIs/OData.html#filter-option).
+>
+> For the `deleted` event, it is beneficial to explore the [OData DeletedProducts Endpoint Filter Option](https://documentation.dataspace.copernicus.eu/APIs/OData.html#filter-option-1).
+
+In case of deleted products, a notification will be sent when one of the following values of the `DeletionCause` parameter is met:
+
+- Duplicated product
+- Missing checksum
+- Corrupted product
+- Obsolete product or Other
+
+To create a PULL subscription, the following request to the service should be submitted:
+
+## HTTP request
+
+``` {json}
+POST \
+https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions
+ 
+{
+    "FilterParam": "Collection/Name eq 'SENTINEL-1' and Attributes/OData.CSC.StringAttribute/any(att:att/Name eq 'productType' and att/OData.CSC.StringAttribute/Value eq 'IW_SLC__1S')",
+    "StageOrder": true,
+    "Priority": 1,
+    "Status": "running",
+    "SubscriptionEvent": [
+        "created"
+    ],
+    "SubscriptionType": "pull"
+}
+```
+
+## Example response
+
+``` {json}
+201 Created
+ 
+{
+    "Id": "5bff14e2-9d9b-41b3-b2a9-9051b58fff4d",
+    "FilterParam": "Collection/Name eq 'SENTINEL-1' and Attributes/OData.CSC.StringAttribute/any(att:att/Name eq 'productType' and att/OData.CSC.StringAttribute/Value eq 'IW_SLC__1S')",
+    "StageOrder": true,
+    "Priority": 1,
+    "Status": "running",
+    "SubscriptionEvent": [
+        "created"
+    ],
+    "SubmissionDate": "2025-08-27T08:49:42.752554Z",
+    "SubscriptionType": "pull",
+    "@odata.context": "$metadata#OData.CSC.Subscription"
+}
+```
+
+To create a PULL subscription with a combination of two events, `created` and `modified`, they should be listed separated by a comma.
+
+## HTTP request
+
+``` {json}
+POST \
+https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions
+ 
+{
+    "FilterParam": "Collection/Name eq 'SENTINEL-1' and Attributes/OData.CSC.StringAttribute/any(att:att/Name eq 'productType' and att/OData.CSC.StringAttribute/Value eq 'IW_SLC__1S')",
+    "StageOrder": true,
+    "Priority": 1,
+    "Status": "running",
+    "SubscriptionEvent": [
+        "created",
+        "modified"
+    ],
+    "SubscriptionType": "pull"
+}
+```
+
+## Response example
+
+``` {json}
+201 Created
+ 
+{
+    "Id": "4be60c5f-7687-4a1b-a392-d53685717047",
+    "FilterParam": "Collection/Name eq 'SENTINEL-1' and Attributes/OData.CSC.StringAttribute/any(att:att/Name eq 'productType' and att/OData.CSC.StringAttribute/Value eq 'IW_SLC__1S')",
+    "StageOrder": true,
+    "Priority": 1,
+    "Status": "running",
+    "SubscriptionEvent": [
+        "created",
+        "modified"
+    ],
+    "SubmissionDate": "2025-08-27T08:52:29.991541Z",
+    "SubscriptionType": "pull",
+    "@odata.context": "$metadata#OData.CSC.Subscription"
+}
+```
+
+### Read Subscription
+
+To read subscription notifications from the user’s queue, the request to Subscriptions Read endpoint should be submitted:
+
+## HTTP request
+
+``` {json}
+GET \
+https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions(subscription_Id)/Read
+```
+
+## Example request
+
+``` {json}
+GET \
+https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions(9ed7b6c2-8b0d-489c-818b-deabb3cfa248)/Read
+```
+
+By default, a request to the Subscription Read endpoint retrieves top one notifications. Users can specify up to **20** top notifications by adding the \$top parameter to their request.
+
+The returned response differs according to the subscription’s status.
+
+- If subscription status is `running` or `paused`
+
+The whole response from the Subscripton Read endpoint is kept on the indivdual user’s queue for three days. After three days, only the endpoint response without `value` and `ProductName` is available (as provided below).
+
+## Example response (created)
+
+``` {json}
+200 OK
+ 
+[
+    {
+        "@odata.context": "$metadata#Notification/$entity",
+        "SubscriptionEvent": "created",
+        "ProductId": "6d4fbb7f-c6b6-45af-957c-32aa1cf2e320",
+        "ProductName": "S2B_OPER_MSI_L2A_TC_2BPS_20250827T082849_A044262_T38QNH_N05.11.jp2",
+        "SubscriptionId": "9ed7b6c2-8b0d-489c-818b-deabb3cfa248",
+        "NotificationDate": "2025-08-27T09:08:26.000000Z",
+        "AckId": "MTc1NjI4NTcwNjU4MS0wOjllZDdiNmMyLThiMGQtNDg5Yy04MThiLWRlYWJiM2NmYTI0OA==",
+        "value": {
+            "@odata.context": "$metadata#Products(Attributes(),Assets(),Locations())/$entity",
+            "@odata.mediaContentType": "application/octet-stream",
+            "Id": "6d4fbb7f-c6b6-45af-957c-32aa1cf2e320",
+            "Name": "S2B_OPER_MSI_L2A_TC_2BPS_20250827T082849_A044262_T38QNH_N05.11.jp2",
+            "ContentType": "application/octet-stream",
+            "ContentLength": 119038701,
+            "OriginDate": "2025-08-27T09:06:41.962000Z",
+            "PublicationDate": "2025-08-27T09:08:26.156845Z",
+            "ModificationDate": "2025-08-27T09:08:26.156845Z",
+            "Online": true,
+            "EvictionDate": "2025-09-10T09:07:43.854790Z",
+            "S3Path": "/eodata/Sentinel-2/MSI/MSI_L2A_TC/2025/08/27/S2B_OPER_MSI_L2A_TC_2BPS_20250827T082849_A044262_T38QNH_N05.11.jp2",
+            "Checksum": [
+                {}
+            ],
+            "ContentDate": {
+                "Start": "2025-08-27T07:44:11.657745Z",
+                "End": "2025-08-27T07:44:11.657745Z"
+            },
+            "Footprint": "geography'SRID=4326;POLYGON ((46.050626562610624 20.17345952519306, 46.054835370206746 20.796998473789053, 44.99980781512397 20.800240811673614, 44.99980903537852 19.80804684930169, 45.958491451307744 19.805235029655115, 45.980167467763074 19.8922037094298, 46.01715462951199 20.04028194687304, 46.050626562610624 20.17345952519306))'",
+            "GeoFootprint": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            46.050626562610624,
+                            20.17345952519306
+                        ],
+                        [
+                            46.054835370206746,
+                            20.796998473789053
+                        ],
+                        [
+                            44.99980781512397,
+                            20.800240811673614
+                        ],
+                        [
+                            44.99980903537852,
+                            19.80804684930169
+                        ],
+                        [
+                            45.958491451307744,
+                            19.805235029655115
+                        ],
+                        [
+                            45.980167467763074,
+                            19.8922037094298
+                        ],
+                        [
+                            46.01715462951199,
+                            20.04028194687304
+                        ],
+                        [
+                            46.050626562610624,
+                            20.17345952519306
+                        ]
+                    ]
+                ]
+            },
+            "Attributes": [
+                {
+                    "@odata.type": "#OData.CSC.StringAttribute",
+                    "Name": "origin",
+                    "Value": "ESA",
+                    "ValueType": "String"
+                },
+                {
+                    "@odata.type": "#OData.CSC.StringAttribute",
+                    "Name": "tileId",
+                    "Value": "38QNH",
+                    "ValueType": "String"
+                },
+                {
+                    "@odata.type": "#OData.CSC.DoubleAttribute",
+                    "Name": "cloudCover",
+                    "Value": 19.876318,
+                    "ValueType": "Double"
+                },
+                {
+                    "@odata.type": "#OData.CSC.IntegerAttribute",
+                    "Name": "orbitNumber",
+                    "Value": 44262,
+                    "ValueType": "Integer"
+                },
+                {
+                    "@odata.type": "#OData.CSC.IntegerAttribute",
+                    "Name": "qualityInfo",
+                    "Value": 100,
+                    "ValueType": "Integer"
+                },
+                {
+                    "@odata.type": "#OData.CSC.StringAttribute",
+                    "Name": "qualityStatus",
+                    "Value": "NOMINAL",
+                    "ValueType": "String"
+                },
+                {
+                    "@odata.type": "#OData.CSC.DateTimeOffsetAttribute",
+                    "Name": "processingDate",
+                    "Value": "2025-08-27T08:28:49.000000Z",
+                    "ValueType": "DateTimeOffset"
+                },
+                {
+                    "@odata.type": "#OData.CSC.StringAttribute",
+                    "Name": "productGroupId",
+                    "Value": "GS2B_20250827T072619_044262_N05.11",
+                    "ValueType": "String"
+                },
+                {
+                    "@odata.type": "#OData.CSC.IntegerAttribute",
+                    "Name": "lastOrbitNumber",
+                    "Value": 44262,
+                    "ValueType": "Integer"
+                },
+                {
+                    "@odata.type": "#OData.CSC.StringAttribute",
+                    "Name": "processingCenter",
+                    "Value": "2BPS",
+                    "ValueType": "String"
+                },
+                {
+                    "@odata.type": "#OData.CSC.StringAttribute",
+                    "Name": "processorVersion",
+                    "Value": "05.11",
+                    "ValueType": "String"
+                },
+                {
+                    "@odata.type": "#OData.CSC.StringAttribute",
+                    "Name": "platformShortName",
+                    "Value": "SENTINEL-2",
+                    "ValueType": "String"
+                },
+                {
+                    "@odata.type": "#OData.CSC.StringAttribute",
+                    "Name": "instrumentShortName",
+                    "Value": "MSI",
+                    "ValueType": "String"
+                },
+                {
+                    "@odata.type": "#OData.CSC.StringAttribute",
+                    "Name": "platformSerialIdentifier",
+                    "Value": "B",
+                    "ValueType": "String"
+                },
+                {
+                    "@odata.type": "#OData.CSC.StringAttribute",
+                    "Name": "productType",
+                    "Value": "MSI_L2A_TC",
+                    "ValueType": "String"
+                },
+                {
+                    "@odata.type": "#OData.CSC.DateTimeOffsetAttribute",
+                    "Name": "beginningDateTime",
+                    "Value": "2025-08-27T07:44:11.657745Z",
+                    "ValueType": "DateTimeOffset"
+                },
+                {
+                    "@odata.type": "#OData.CSC.DateTimeOffsetAttribute",
+                    "Name": "endingDateTime",
+                    "Value": "2025-08-27T07:44:11.657745Z",
+                    "ValueType": "DateTimeOffset"
+                }
+            ],
+            "Assets": [],
+            "Locations": [
+                {
+                    "FormatType": "Compressed",
+                    "DownloadLink": "https://catalogue.dataspace.copernicus.eu/odata/v1/Products(6d4fbb7f-c6b6-45af-957c-32aa1cf2e320)/$value",
+                    "ContentLength": 119038701,
+                    "Checksum": [],
+                    "EvictionDate": "2025-09-10T09:07:43.854790Z"
+                }
+            ]
+        }
+    }
+]
+```
+
+## Example response after 3 days (created)
+
+``` {json}
+200 OK
+ 
+[
+    {
+        "@odata.context": "$metadata#Notification/$entity",
+        "SubscriptionEvent": "created",
+        "ProductId": "6d4fbb7f-c6b6-45af-957c-32aa1cf2e320",
+        "SubscriptionId": "9ed7b6c2-8b0d-489c-818b-deabb3cfa248",
+        "NotificationDate": "2025-08-27T09:08:26.000000Z",
+        "AckId": "MTc1NjI4NTcwNjU4MS0wOjllZDdiNmMyLThiMGQtNDg5Yy04MThiLWRlYWJiM2NmYTI0OA=="
+    }
+]
+```
+
+## Example response (modified)
+
+``` {json}
+200 OK
+
+[
+    {
+        "@odata.context": "$metadata#Notification/$entity",
+        "SubscriptionEvent": "modified",
+        "ProductId": "4df7c5ab-846b-47d1-a95b-704b284f4573",
+        "ProductName": "S2C_MSIL1C_20250826T103051_N0511_R108_T32VNL_20250827T074254.SAFE",
+        "SubscriptionId": "0566a134-94b0-4dc7-88d9-b992b106d5de",
+        "NotificationDate": "2025-08-27T09:17:18.000000Z",
+        "AckId": "MTc1NjI4NjIzODA4NC0wOjA1NjZhMTM0LTk0YjAtNGRjNy04OGQ5LWI5OTJiMTA2ZDVkZQ==",
+        "value": {
+            "@odata.context": "$metadata#Products(Attributes(),Assets(),Locations())/$entity",
+            "@odata.mediaContentType": "application/octet-stream",
+            "Id": "4df7c5ab-846b-47d1-a95b-704b284f4573",
+            "Name": "S2C_MSIL1C_20250826T103051_N0511_R108_T32VNL_20250827T074254.SAFE",
+            "ContentType": "application/octet-stream",
+            "ContentLength": 105326258,
+            "OriginDate": "2025-08-27T09:11:05.000000Z",
+            "PublicationDate": "2025-08-27T09:16:10.685488Z",
+            "ModificationDate": "2025-08-27T09:17:25.656875Z",
+            "Online": true,
+            "EvictionDate": "9999-12-31T23:59:59.999999Z",
+            "S3Path": "/eodata/Sentinel-2/MSI/L1C/2025/08/26/S2C_MSIL1C_20250826T103051_N0511_R108_T32VNL_20250827T074254.SAFE",
+            "Checksum": [
+                {
+                    "Value": "da6b27509eccfe0d0ebba2dc93a55b86",
+                    "Algorithm": "MD5",
+                    "ChecksumDate": "2025-08-27T09:16:09.282752Z"
+                },
+                {
+                    "Value": "a1286bfbfa0e9ab1595ca7f1e934e0ccca8558efc21158013f0c65efdff42246",
+                    "Algorithm": "BLAKE3",
+                    "ChecksumDate": "2025-08-27T09:16:09.516322Z"
+                }
+            ],
+            "ContentDate": {
+                "Start": "2025-08-26T10:30:51.025000Z",
+                "End": "2025-08-26T10:30:51.025000Z"
+            },
+            "Footprint": "geography'SRID=4326;POLYGON ((10.36407813666528 58.54226762466132, 10.88578373873368 58.53843884615826, 10.940542721648812 59.52395928805147, 10.926469618868895 59.52406362628708, 10.88774136620667 59.45840655131194, 10.803457071930652 59.31436455179082, 10.719796111130018 59.17023050138044, 10.637002613250472 59.02604910382912, 10.554922479031688 58.88186101068735, 10.473471615940957 58.737652031256445, 10.393098340002808 58.59441856344776, 10.387859088240669 58.585010491915696, 10.36407813666528 58.54226762466132))'",
+            "GeoFootprint": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            10.36407813666528,
+                            58.54226762466132
+                        ],
+                        [
+                            10.88578373873368,
+                            58.53843884615826
+                        ],
+                        [
+                            10.940542721648812,
+                            59.52395928805147
+                        ],
+                        [
+                            10.926469618868895,
+                            59.52406362628708
+                        ],
+                        [
+                            10.88774136620667,
+                            59.45840655131194
+                        ],
+                        [
+                            10.803457071930652,
+                            59.31436455179082
+                        ],
+                        [
+                            10.719796111130018,
+                            59.17023050138044
+                        ],
+                        [
+                            10.637002613250472,
+                            59.02604910382912
+                        ],
+                        [
+                            10.554922479031688,
+                            58.88186101068735
+                        ],
+                        [
+                            10.473471615940957,
+                            58.737652031256445
+                        ],
+                        [
+                            10.393098340002808,
+                            58.59441856344776
+                        ],
+                        [
+                            10.387859088240669,
+                            58.585010491915696
+                        ],
+                        [
+                            10.36407813666528,
+                            58.54226762466132
+                        ]
+                    ]
+                ]
+            },
+            "Attributes": [
+                {
+                    "@odata.type": "#OData.CSC.StringAttribute",
+                    "Name": "origin",
+                    "Value": "ESA",
+                    "ValueType": "String"
+                },
+                {
+                    "@odata.type": "#OData.CSC.StringAttribute",
+                    "Name": "tileId",
+                    "Value": "32VNL",
+                    "ValueType": "String"
+                },
+                {
+                    "@odata.type": "#OData.CSC.DoubleAttribute",
+                    "Name": "cloudCover",
+                    "Value": 60.323514732204,
+                    "ValueType": "Double"
+                },
+                {
+                    "@odata.type": "#OData.CSC.StringAttribute",
+                    "Name": "datastripId",
+                    "Value": "S2C_OPER_MSI_L1C_DS_2CPS_20250827T074254_S20250826T103045_N05.11",
+                    "ValueType": "String"
+                },
+                {
+                    "@odata.type": "#OData.CSC.IntegerAttribute",
+                    "Name": "orbitNumber",
+                    "Value": 5083,
+                    "ValueType": "Integer"
+                },
+                {
+                    "@odata.type": "#OData.CSC.StringAttribute",
+                    "Name": "sourceProduct",
+                    "Value": "S2C_OPER_MSI_L1C_TL_2CPS_20250827T074254_A005083_T32VNL_N05.11,S2C_OPER_MSI_L1C_DS_2CPS_20250827T074254_S20250826T103045_N05.11,S2C_OPER_MSI_L1C_TC_2CPS_20250827T074254_A005083_T32VNL_N05.11.jp2",
+                    "ValueType": "String"
+                },
+                {
+                    "@odata.type": "#OData.CSC.DateTimeOffsetAttribute",
+                    "Name": "processingDate",
+                    "Value": "2025-08-27T07:42:54.000000Z",
+                    "ValueType": "DateTimeOffset"
+                },
+                {
+                    "@odata.type": "#OData.CSC.StringAttribute",
+                    "Name": "productGroupId",
+                    "Value": "GS2C_20250826T103051_005083_N05.11",
+                    "ValueType": "String"
+                },
+                {
+                    "@odata.type": "#OData.CSC.StringAttribute",
+                    "Name": "operationalMode",
+                    "Value": "INS-NOBS",
+                    "ValueType": "String"
+                },
+                {
+                    "@odata.type": "#OData.CSC.StringAttribute",
+                    "Name": "processingLevel",
+                    "Value": "S2MSI1C",
+                    "ValueType": "String"
+                },
+                {
+                    "@odata.type": "#OData.CSC.StringAttribute",
+                    "Name": "processorVersion",
+                    "Value": "05.11",
+                    "ValueType": "String"
+                },
+                {
+                    "@odata.type": "#OData.CSC.StringAttribute",
+                    "Name": "granuleIdentifier",
+                    "Value": "S2C_OPER_MSI_L1C_TL_2CPS_20250827T074254_A005083_T32VNL_N05.11",
+                    "ValueType": "String"
+                },
+                {
+                    "@odata.type": "#OData.CSC.StringAttribute",
+                    "Name": "platformShortName",
+                    "Value": "SENTINEL-2",
+                    "ValueType": "String"
+                },
+                {
+                    "@odata.type": "#OData.CSC.StringAttribute",
+                    "Name": "instrumentShortName",
+                    "Value": "MSI",
+                    "ValueType": "String"
+                },
+                {
+                    "@odata.type": "#OData.CSC.IntegerAttribute",
+                    "Name": "relativeOrbitNumber",
+                    "Value": 108,
+                    "ValueType": "Integer"
+                },
+                {
+                    "@odata.type": "#OData.CSC.StringAttribute",
+                    "Name": "sourceProductOriginDate",
+                    "Value": "2025-08-27T09:10:51Z,2025-08-27T09:11:05Z,2025-08-27T09:10:51Z",
+                    "ValueType": "String"
+                },
+                {
+                    "@odata.type": "#OData.CSC.StringAttribute",
+                    "Name": "platformSerialIdentifier",
+                    "Value": "C",
+                    "ValueType": "String"
+                },
+                {
+                    "@odata.type": "#OData.CSC.StringAttribute",
+                    "Name": "productType",
+                    "Value": "S2MSI1C",
+                    "ValueType": "String"
+                },
+                {
+                    "@odata.type": "#OData.CSC.DateTimeOffsetAttribute",
+                    "Name": "beginningDateTime",
+                    "Value": "2025-08-26T10:30:51.025000Z",
+                    "ValueType": "DateTimeOffset"
+                },
+                {
+                    "@odata.type": "#OData.CSC.DateTimeOffsetAttribute",
+                    "Name": "endingDateTime",
+                    "Value": "2025-08-26T10:30:51.025000Z",
+                    "ValueType": "DateTimeOffset"
+                }
+            ],
+            "Assets": [
+                {
+                    "Type": "QUICKLOOK",
+                    "Id": "d2243613-187a-4aec-9d54-860573ad9bb7",
+                    "DownloadLink": "https://catalogue.dataspace.copernicus.eu/odata/v1/Assets(d2243613-187a-4aec-9d54-860573ad9bb7)/$value",
+                    "S3Path": "/eodata/Sentinel-2/MSI/L1C/2025/08/26/S2C_MSIL1C_20250826T103051_N0511_R108_T32VNL_20250827T074254.SAFE"
+                }
+            ],
+            "Locations": [
+                {
+                    "FormatType": "Extracted",
+                    "DownloadLink": "https://catalogue.dataspace.copernicus.eu/odata/v1/Products(4df7c5ab-846b-47d1-a95b-704b284f4573)/$value",
+                    "ContentLength": 105326258,
+                    "Checksum": [
+                        {
+                            "Value": "da6b27509eccfe0d0ebba2dc93a55b86",
+                            "Algorithm": "MD5",
+                            "ChecksumDate": "2025-08-27T09:16:09.282752Z"
+                        },
+                        {
+                            "Value": "a1286bfbfa0e9ab1595ca7f1e934e0ccca8558efc21158013f0c65efdff42246",
+                            "Algorithm": "BLAKE3",
+                            "ChecksumDate": "2025-08-27T09:16:09.516322Z"
+                        }
+                    ],
+                    "S3Path": "/eodata/Sentinel-2/MSI/L1C/2025/08/26/S2C_MSIL1C_20250826T103051_N0511_R108_T32VNL_20250827T074254.SAFE"
+                }
+            ]
+        }
+    }
+]
+```
+
+## Example response (deleted)
+
+``` {json}
+200 OK
+
+[
+    {
+        "@odata.context": "$metadata#Notification/$entity",
+        "SubscriptionEvent": "deleted",
+        "ProductId": "c40cbf72-86c1-416d-8d95-136f09286427",
+        "ProductName": "S2A_OPER_MSI_L1B_GR_2APS_20250810T225704_S20250810T164551_D02_N05.11",
+        "SubscriptionId": "30689aaa-2959-4cd2-84fe-75969704add2",
+        "NotificationDate": "2025-08-27T09:20:00.000000Z",
+        "AckId": "MTc1NjI4NjQwMDUyNS0wOjMwNjg5YWFhLTI5NTktNGNkMi04NGZlLTc1OTY5NzA0YWRkMg==",
+        "value": {
+            "@odata.context": "$metadata#DeletedProducts(Attributes())/$entity",
+            "@odata.mediaContentType": "application/octet-stream",
+            "Id": "c40cbf72-86c1-416d-8d95-136f09286427",
+            "Name": "S2A_OPER_MSI_L1B_GR_2APS_20250810T225704_S20250810T164551_D02_N05.11",
+            "ContentType": "application/octet-stream",
+            "ContentLength": 16220160,
+            "OriginDate": "2025-08-10T23:30:55.929000Z",
+            "DeletionDate": "2025-08-27T09:20:00.485847Z",
+            "DeletionCause": "Automatic eviction",
+            "Checksum": [
+                {}
+            ],
+            "ContentDate": {
+                "Start": "2025-08-10T16:45:51.265000Z",
+                "End": "2025-08-10T16:45:51.265000Z"
+            },
+            "Footprint": "geography'SRID=4326;POLYGON ((-103.316585648753 -42.5168816847444, -103.395771007664 -42.7263733571598, -103.076376136002 -42.7811836841604, -102.998249573048 -42.5715363409759, -103.316585648753 -42.5168816847444))'",
+            "GeoFootprint": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -103.316585648753,
+                            -42.5168816847444
+                        ],
+                        [
+                            -103.395771007664,
+                            -42.7263733571598
+                        ],
+                        [
+                            -103.076376136002,
+                            -42.7811836841604
+                        ],
+                        [
+                            -102.998249573048,
+                            -42.5715363409759
+                        ],
+                        [
+                            -103.316585648753,
+                            -42.5168816847444
+                        ]
+                    ]
+                ]
+            },
+            "Attributes": [
+                {
+                    "@odata.type": "#OData.CSC.StringAttribute",
+                    "Name": "origin",
+                    "Value": "ESA",
+                    "ValueType": "String"
+                },
+                {
+                    "@odata.type": "#OData.CSC.DoubleAttribute",
+                    "Name": "cloudCover",
+                    "Value": 91.8857214385232,
+                    "ValueType": "Double"
+                },
+                {
+                    "@odata.type": "#OData.CSC.StringAttribute",
+                    "Name": "datastripId",
+                    "Value": "S2A_OPER_MSI_L1B_DS_2APS_20250810T225704_S20250810T164339_N05.11",
+                    "ValueType": "String"
+                },
+                {
+                    "@odata.type": "#OData.CSC.IntegerAttribute",
+                    "Name": "orbitNumber",
+                    "Value": 52933,
+                    "ValueType": "Integer"
+                },
+                {
+                    "@odata.type": "#OData.CSC.IntegerAttribute",
+                    "Name": "qualityInfo",
+                    "Value": 100,
+                    "ValueType": "Integer"
+                },
+                {
+                    "@odata.type": "#OData.CSC.StringAttribute",
+                    "Name": "qualityStatus",
+                    "Value": "NOMINAL",
+                    "ValueType": "String"
+                },
+                {
+                    "@odata.type": "#OData.CSC.DateTimeOffsetAttribute",
+                    "Name": "processingDate",
+                    "Value": "2025-08-10T22:57:04.000000Z",
+                    "ValueType": "DateTimeOffset"
+                },
+                {
+                    "@odata.type": "#OData.CSC.StringAttribute",
+                    "Name": "productGroupId",
+                    "Value": "GS2A_20250810T164341_052933_N05.11",
+                    "ValueType": "String"
+                },
+                {
+                    "@odata.type": "#OData.CSC.StringAttribute",
+                    "Name": "processingCenter",
+                    "Value": "2APS",
+                    "ValueType": "String"
+                },
+                {
+                    "@odata.type": "#OData.CSC.StringAttribute",
+                    "Name": "processorVersion",
+                    "Value": "05.11",
+                    "ValueType": "String"
+                },
+                {
+                    "@odata.type": "#OData.CSC.StringAttribute",
+                    "Name": "platformShortName",
+                    "Value": "SENTINEL-2",
+                    "ValueType": "String"
+                },
+                {
+                    "@odata.type": "#OData.CSC.StringAttribute",
+                    "Name": "instrumentShortName",
+                    "Value": "MSI",
+                    "ValueType": "String"
+                },
+                {
+                    "@odata.type": "#OData.CSC.StringAttribute",
+                    "Name": "platformSerialIdentifier",
+                    "Value": "A",
+                    "ValueType": "String"
+                },
+                {
+                    "@odata.type": "#OData.CSC.StringAttribute",
+                    "Name": "productType",
+                    "Value": "MSI_L1B_GR",
+                    "ValueType": "String"
+                },
+                {
+                    "@odata.type": "#OData.CSC.DateTimeOffsetAttribute",
+                    "Name": "beginningDateTime",
+                    "Value": "2025-08-10T16:45:51.265000Z",
+                    "ValueType": "DateTimeOffset"
+                },
+                {
+                    "@odata.type": "#OData.CSC.DateTimeOffsetAttribute",
+                    "Name": "endingDateTime",
+                    "Value": "2025-08-10T16:45:51.265000Z",
+                    "ValueType": "DateTimeOffset"
+                }
+            ]
+        }
+    }
+]
+```
+
+- If subscription status is `cancelled`
+
+## Example response
+
+``` {json}
+404 Not Found
+ 
+{
+    "detail": {
+        "message": "Subscription with id 30689aaa-2959-4cd2-84fe-75969704add2 not found.",
+        "request_id": "0dc1ab97-6571-4ea4-8501-f55086809b0c"
+    }
+}
+```
+
+### Ack Subscription
+
+All notifications must be acknowledged after being read to prevent exceeding the queue limit. Each notification includes an assigned parameter, `AckId`, which is used to acknowledge messages in the user’s queue. **Using the ‘AckId’ for a specific notification means acknowledging receipt of that notification, along with all preceding notifications.** For example, if user uses Subscriptions Read endpoint with the \$top parameter set to 10, and then provides the AckID of the 10th notification to the Ack endpoint, all 10 notifications will be acknowledged and removed from the queue.
+
+To acknowledge (ack) notifications in the queue:
+
+## HTTP request
+
+``` {json}
+POST \
+https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions(subscription_Id)/Ack?$ackid=AckId
+```
+
+## Example request
+
+``` {json}
+POST \
+https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions(subscription_Id)/Ack?$ackid=AckId
+```
+
+The returned response differs according to the subscription’s status.
+
+- If subscription status is `running` or `paused`
+
+## Example response
+
+``` {json}
+200 OK
+ 
+{
+    "@odata.context": "$metadata#Notification/$entity",
+    "AckMessagesNum": 1,
+    "CurrentQueueLength": 3363,
+    "MaxQueueLength": 100000
+}
+```
+
+- If subscription status is `cancelled`
+
+## Example response
+
+``` {json}
+404 Not Found
+ 
+{
+    "detail": {
+        "message": "Subscription with id d907db03-e368-4f5e-8b08-fcb0ab2cab99 not found.",
+        "request_id": "ec6b56cd-db47-4df6-a529-e8f8b0203872"
+    }
+}
+```
+
+## PUSH Subscriptions
+
+For PUSH notifications, the nominal scenario can be described as follows:
+
+1.  Creation of the subscription
+
+The user submits a subscription creation request to Subscription Service. They may specify stage order, filtering parameters, priority, status, subscription type and event to be monitored. The request must include an endpoint URL for sending notifications, along with the endpoint’s credentials (if users’s endpoint requires authentication). Credentials are stored safely in the dedicated vault. All parameters, except for the subscription type and the endpoint URL, are optional. If not provided, default values are assigned. The Subscription Service then processes the request and returns a response containing the endpoint URL, stage order, filtering parameters, priority, status, type, and event, along with a unique identifier (subscription’s Id) and submission date.
+
+If user’s notification endpoint is not submitted, then the [PULL subscription](https://documentation.dataspace.copernicus.eu/APIs/Subscriptions.html#pull-subscriptions) will be created.
+
+2.  Product Notification
+
+After a specific event occurs in the Copernicus Data Space Ecosystem Catalogue, the Subscription Service sends a notification to the user’s endpoint. In case of its unavailability, the notification is retried three times before failing. Notifications continue to be sent to the endpoint until the subscription is paused or cancelled.
+
+### PUSH Subscription Entity Description
+
+Below please find the description of the PUSH Subscription Entity.
+
+[TABLE]
+
+### Create Subscription
+
+To create a PUSH subscription, a notification endpoint must be specified. All PUSH notifications from the Subscription Service will be delivered to this endpoint.
+
+When creating a subscription, users may define the event to receive notifications for. Currently, the following events, or their combination, are supported:
+
+- `created`
+- `modified`
+- `created`, `modified`
+- `deleted`
+
+Within the subscription creation request, users can also provide the filtering parameters (e.g. productType, collection, geofootprint). The Subscription Service will then provide notifications about newly added, modified, or deleted products, according to the set of filter parameters supplied in the request. If `FilterParam` is not provided, it is automatically set to empty, and notifications for all products are generated.
+
+> **TIP:**
+>
+> All filters should be provided in `FilterParam` field.
+>
+> To ensure efficient filtering when using the “created” and “modified” events, it is recommended to review the [OData Products Endpoint](https://documentation.dataspace.copernicus.eu/APIs/OData.html#odata-products-endpoint).
+>
+> For the “deleted” event, it is beneficial to explore the [OData DeletedProducts Endpoint](https://documentation.dataspace.copernicus.eu/APIs/OData.html#odata-deletedproducts-endpoint).
+
+In case of deleted products, a notification will be sent when one of the following values of the `DeletionCause` parameter is met:
+
+- Duplicated product
+- Missing checksum
+- Corrupted product
+- Obsolete product or Other
+
+To create a PUSH Subscription, the following request to the service should be submitted:
+
+## HTTP request
+
+``` {json}
+POST \
+https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions
+ 
+{
+    "FilterParam": "Collection/Name eq 'SENTINEL-1' and Attributes/OData.CSC.StringAttribute/any(att:att/Name eq 'productType' and att/OData.CSC.StringAttribute/Value eq 'IW_SLC__1S')",
+    "StageOrder": true,
+    "Priority": 1,
+    "NotificationEndpoint": "https://userservice/notification",
+    "NotificationEpUsername": "serviceusername",
+    "NotificationEpPassword": "********",
+    "Status": "running",
+    "SubscriptionEvent": [
+        "created"
+    ],
+    "SubscriptionType": "push"
+}
+```
+
+## Example response
+
+``` {json}
+201 Created
+ 
+{
+    "Id": "4e3a3402-c96b-495d-86d9-456c21201cd1",
+    "FilterParam": "Collection/Name eq 'SENTINEL-1' and Attributes/OData.CSC.StringAttribute/any(att:att/Name eq 'productType' and att/OData.CSC.StringAttribute/Value eq 'IW_SLC__1S')",
+    "StageOrder": true,
+    "Priority": 1,
+    "Status": "running",
+    "NotificationEndpoint": "https://userservice/notification",
+    "SubscriptionEvent": [
+        "created"
+    ],
+    "SubmissionDate": "2025-08-29T08:56:44.617471Z",
+    "SubscriptionType": "push",
+    "@odata.context": "$metadata#OData.CSC.Subscription"
+}
+```
+
+### Notification sender
+
+After creating the subscription, notifications about newly added, modified or deleted products, according to the set of subscription filter parameters, will be automatically sent to the user’s endpoint:
+
+## Example response (created)
+
+``` {json}
+200 OK
+
+{
+  "@odata.context": "$metadata#Notification/$entity",
+  "SubscriptionEvent": "created",
+  "ProductId": "111b58f4-9d42-452c-91f8-312bcd129678",
+  "ProductName": "S1A_IW_SLC__1SDV_20250828T204450_20250828T204517_060741_078F54_6818.SAFE",
+  "SubscriptionId": "ef408164-1328-4970-976f-68b292bf784c",
+  "NotificationDate": "2025-08-29T09:07:12.866271Z",
+  "value": {
+    "@odata.context": "$metadata#Products(Attributes(),Assets(),Locations())/$entity",
+    "@odata.mediaContentType": "application/octet-stream",
+    "Id": "111b58f4-9d42-452c-91f8-312bcd129678",
+    "Name": "S1A_IW_SLC__1SDV_20250828T204450_20250828T204517_060741_078F54_6818.SAFE",
+    "ContentType": "application/octet-stream",
+    "ContentLength": 7581450099,
+    "OriginDate": "2025-08-29T09:00:41.155000Z",
+    "Checksum": [
+      {
+        "Value": "6ab1cd3543525f5879d79375ca3e10ef",
+        "Algorithm": "MD5",
+        "ChecksumDate": "2025-08-29T09:06:53.114284Z"
+      },
+      {
+        "Value": "2389be684da4d7b8d3cbb89ce7d8a18cb649dd01eb8747ec74ee7e2d092e340f",
+        "Algorithm": "BLAKE3",
+        "ChecksumDate": "2025-08-29T09:07:04.789514Z"
+      }
+    ],
+    "Footprint": "geography'SRID=4326;POLYGON ((146.414246 59.668201, 147.151443 61.267277, 142.496414 61.691483, 141.985916 60.083462, 146.414246 59.668201))'",
+    "GeoFootprint": {
+      "type": "Polygon",
+      "coordinates": [
+        [
+          [
+            146.414246,
+            59.668201
+          ],
+          [
+            147.151443,
+            61.267277
+          ],
+          [
+            142.496414,
+            61.691483
+          ],
+          [
+            141.985916,
+            60.083462
+          ],
+          [
+            146.414246,
+            59.668201
+          ]
+        ]
+      ]
+    },
+    "ContentDate": {
+      "Start": "2025-08-28T20:44:50.709508Z",
+      "End": "2025-08-28T20:45:17.682518Z"
+    },
+    "Attributes": [
+      {
+        "@odata.type": "#OData.CSC.StringAttribute",
+        "Name": "origin",
+        "Value": "ESA",
+        "ValueType": "String"
+      },
+      {
+        "@odata.type": "#OData.CSC.IntegerAttribute",
+        "Name": "datatakeID",
+        "Value": 495444,
+        "ValueType": "Integer"
+      },
+      {
+        "@odata.type": "#OData.CSC.StringAttribute",
+        "Name": "timeliness",
+        "Value": "Fast-24h",
+        "ValueType": "String"
+      },
+      {
+        "@odata.type": "#OData.CSC.IntegerAttribute",
+        "Name": "cycleNumber",
+        "Value": 361,
+        "ValueType": "Integer"
+      },
+      {
+        "@odata.type": "#OData.CSC.IntegerAttribute",
+        "Name": "orbitNumber",
+        "Value": 60741,
+        "ValueType": "Integer"
+      },
+      {
+        "@odata.type": "#OData.CSC.IntegerAttribute",
+        "Name": "sliceNumber",
+        "Value": 5,
+        "ValueType": "Integer"
+      },
+      {
+        "@odata.type": "#OData.CSC.IntegerAttribute",
+        "Name": "totalSlices",
+        "Value": 6,
+        "ValueType": "Integer"
+      },
+      {
+        "@odata.type": "#OData.CSC.StringAttribute",
+        "Name": "productClass",
+        "Value": "S",
+        "ValueType": "String"
+      },
+      {
+        "@odata.type": "#OData.CSC.StringAttribute",
+        "Name": "processorName",
+        "Value": "Sentinel-1 IPF",
+        "ValueType": "String"
+      },
+      {
+        "@odata.type": "#OData.CSC.StringAttribute",
+        "Name": "orbitDirection",
+        "Value": "DESCENDING",
+        "ValueType": "String"
+      },
+      {
+        "@odata.type": "#OData.CSC.DateTimeOffsetAttribute",
+        "Name": "processingDate",
+        "Value": "2025-08-29T08:46:23.363931Z",
+        "ValueType": "DateTimeOffset"
+      },
+      {
+        "@odata.type": "#OData.CSC.StringAttribute",
+        "Name": "operationalMode",
+        "Value": "IW",
+        "ValueType": "String"
+      },
+      {
+        "@odata.type": "#OData.CSC.StringAttribute",
+        "Name": "processingLevel",
+        "Value": "LEVEL1",
+        "ValueType": "String"
+      },
+      {
+        "@odata.type": "#OData.CSC.StringAttribute",
+        "Name": "swathIdentifier",
+        "Value": "IW1,IW2,IW3",
+        "ValueType": "String"
+      },
+      {
+        "@odata.type": "#OData.CSC.StringAttribute",
+        "Name": "processingCenter",
+        "Value": "S1 Production Service-SERCO",
+        "ValueType": "String"
+      },
+      {
+        "@odata.type": "#OData.CSC.StringAttribute",
+        "Name": "processorVersion",
+        "Value": "003.92",
+        "ValueType": "String"
+      },
+      {
+        "@odata.type": "#OData.CSC.DateTimeOffsetAttribute",
+        "Name": "segmentStartTime",
+        "Value": "2025-08-28T20:43:08.055000Z",
+        "ValueType": "DateTimeOffset"
+      },
+      {
+        "@odata.type": "#OData.CSC.BooleanAttribute",
+        "Name": "sliceProductFlag",
+        "Value": false,
+        "ValueType": "Boolean"
+      },
+      {
+        "@odata.type": "#OData.CSC.StringAttribute",
+        "Name": "platformShortName",
+        "Value": "SENTINEL-1",
+        "ValueType": "String"
+      },
+      {
+        "@odata.type": "#OData.CSC.StringAttribute",
+        "Name": "productComposition",
+        "Value": "Slice",
+        "ValueType": "String"
+      },
+      {
+        "@odata.type": "#OData.CSC.StringAttribute",
+        "Name": "instrumentShortName",
+        "Value": "SAR",
+        "ValueType": "String"
+      },
+      {
+        "@odata.type": "#OData.CSC.IntegerAttribute",
+        "Name": "relativeOrbitNumber",
+        "Value": 119,
+        "ValueType": "Integer"
+      },
+      {
+        "@odata.type": "#OData.CSC.StringAttribute",
+        "Name": "polarisationChannels",
+        "Value": "VV&VH",
+        "ValueType": "String"
+      },
+      {
+        "@odata.type": "#OData.CSC.StringAttribute",
+        "Name": "platformSerialIdentifier",
+        "Value": "A",
+        "ValueType": "String"
+      },
+      {
+        "@odata.type": "#OData.CSC.IntegerAttribute",
+        "Name": "instrumentConfigurationID",
+        "Value": 7,
+        "ValueType": "Integer"
+      },
+      {
+        "@odata.type": "#OData.CSC.DoubleAttribute",
+        "Name": "startTimeFromAscendingNode",
+        "Value": 1950827,
+        "ValueType": "Double"
+      },
+      {
+        "@odata.type": "#OData.CSC.DoubleAttribute",
+        "Name": "completionTimeFromAscendingNode",
+        "Value": 1977800,
+        "ValueType": "Double"
+      },
+      {
+        "@odata.type": "#OData.CSC.StringAttribute",
+        "Name": "productType",
+        "Value": "IW_SLC__1S",
+        "ValueType": "String"
+      },
+      {
+        "@odata.type": "#OData.CSC.DateTimeOffsetAttribute",
+        "Name": "beginningDateTime",
+        "Value": "2025-08-28T20:44:50.709508Z",
+        "ValueType": "DateTimeOffset"
+      },
+      {
+        "@odata.type": "#OData.CSC.DateTimeOffsetAttribute",
+        "Name": "endingDateTime",
+        "Value": "2025-08-28T20:45:17.682518Z",
+        "ValueType": "DateTimeOffset"
+      }
+    ],
+    "ModificationDate": "2025-08-29T09:07:11.456603Z",
+    "PublicationDate": "2025-08-29T09:07:11.456603Z",
+    "Online": true,
+    "EvictionDate": "9999-12-31T23:59:59.999999Z",
+    "S3Path": "/eodata/Sentinel-1/SAR/IW_SLC__1S/2025/08/28/S1A_IW_SLC__1SDV_20250828T204450_20250828T204517_060741_078F54_6818.SAFE",
+    "Assets": [
+      {
+        "Type": "QUICKLOOK",
+        "Id": "1d891617-13df-4a03-81a4-906340531098",
+        "DownloadLink": "https://catalogue.dataspace.copernicus.eu/odata/v1/Assets(1d891617-13df-4a03-81a4-906340531098)/$value",
+        "S3Path": "/eodata/Sentinel-1/SAR/IW_SLC__1S/2025/08/28/S1A_IW_SLC__1SDV_20250828T204450_20250828T204517_060741_078F54_6818.SAFE"
+      }
+    ],
+    "Locations": [
+      {
+        "FormatType": "Compressed",
+        "DownloadLink": "https://catalogue.dataspace.copernicus.eu/odata/v1/Products(111b58f4-9d42-452c-91f8-312bcd129678)/$zip",
+        "ContentLength": 4661661576,
+        "Checksum": [
+          {
+            "Value": "32b9fc828c41f9bead940db412870062",
+            "Algorithm": "MD5",
+            "ChecksumDate": "2025-08-29T09:00:41.415000Z"
+          }
+        ],
+        "EvictionDate": "2025-09-28T09:02:11.382501Z"
+      },
+      {
+        "FormatType": "Extracted",
+        "DownloadLink": "https://catalogue.dataspace.copernicus.eu/odata/v1/Products(111b58f4-9d42-452c-91f8-312bcd129678)/$value",
+        "ContentLength": 7581450099,
+        "Checksum": [
+          {
+            "Value": "6ab1cd3543525f5879d79375ca3e10ef",
+            "Algorithm": "MD5",
+            "ChecksumDate": "2025-08-29T09:06:53.114284Z"
+          },
+          {
+            "Value": "2389be684da4d7b8d3cbb89ce7d8a18cb649dd01eb8747ec74ee7e2d092e340f",
+            "Algorithm": "BLAKE3",
+            "ChecksumDate": "2025-08-29T09:07:04.789514Z"
+          }
+        ],
+        "S3Path": "/eodata/Sentinel-1/SAR/IW_SLC__1S/2025/08/28/S1A_IW_SLC__1SDV_20250828T204450_20250828T204517_060741_078F54_6818.SAFE"
+      }
+    ]
+  }
+}
+```
+
+## Example response (modified)
+
+``` {json}
+200 OK
+
+{
+  "@odata.context": "$metadata#Notification/$entity",
+  "SubscriptionEvent": "modified",
+  "ProductId": "a35d6538-4297-477f-89e7-c0328587954b",
+  "ProductName": "S1C_IW_SLC__1SSH_20250829T080610_20250829T080637_003884_007BD1_296F.SAFE",
+  "SubscriptionId": "4ac2a380-1f87-4d20-bdc6-265964f3af2c",
+  "NotificationDate": "2025-08-29T09:40:28.361686Z",
+  "value": {
+    "@odata.context": "$metadata#Products(Attributes(),Assets(),Locations())/$entity",
+    "@odata.mediaContentType": "application/octet-stream",
+    "Id": "a35d6538-4297-477f-89e7-c0328587954b",
+    "Name": "S1C_IW_SLC__1SSH_20250829T080610_20250829T080637_003884_007BD1_296F.SAFE",
+    "ContentType": "application/octet-stream",
+    "ContentLength": 3838114581,
+    "OriginDate": "2025-08-29T09:21:47.017000Z",
+    "Checksum": [
+      {
+        "Value": "f46c0f958743fe61a1cabcc738cb3f2c",
+        "Algorithm": "MD5",
+        "ChecksumDate": "2025-08-29T09:40:20.199176Z"
+      },
+      {
+        "Value": "d02e00ce763b66d22a421417da21c0196540892a90e6d0161e865f2b86c9c81d",
+        "Algorithm": "BLAKE3",
+        "ChecksumDate": "2025-08-29T09:40:27.786164Z"
+      }
+    ],
+    "Footprint": "geography'SRID=4326;POLYGON ((-112.393936 -78.558304, -104.41011 -78.189636, -107.141586 -75.965485, -113.915222 -76.275787, -112.393936 -78.558304))'",
+    "GeoFootprint": {
+      "type": "Polygon",
+      "coordinates": [
+        [
+          [
+            -112.393936,
+            -78.558304
+          ],
+          [
+            -104.41011,
+            -78.189636
+          ],
+          [
+            -107.141586,
+            -75.965485
+          ],
+          [
+            -113.915222,
+            -76.275787
+          ],
+          [
+            -112.393936,
+            -78.558304
+          ]
+        ]
+      ]
+    },
+    "ContentDate": {
+      "Start": "2025-08-29T08:06:10.323000Z",
+      "End": "2025-08-29T08:06:37.285000Z"
+    },
+    "Attributes": [
+      {
+        "@odata.type": "#OData.CSC.StringAttribute",
+        "Name": "origin",
+        "Value": "ESA",
+        "ValueType": "String"
+      },
+      {
+        "@odata.type": "#OData.CSC.IntegerAttribute",
+        "Name": "datatakeID",
+        "Value": 31697,
+        "ValueType": "Integer"
+      },
+      {
+        "@odata.type": "#OData.CSC.StringAttribute",
+        "Name": "timeliness",
+        "Value": "Fast-24h",
+        "ValueType": "String"
+      },
+      {
+        "@odata.type": "#OData.CSC.IntegerAttribute",
+        "Name": "cycleNumber",
+        "Value": 26,
+        "ValueType": "Integer"
+      },
+      {
+        "@odata.type": "#OData.CSC.IntegerAttribute",
+        "Name": "orbitNumber",
+        "Value": 3884,
+        "ValueType": "Integer"
+      },
+      {
+        "@odata.type": "#OData.CSC.IntegerAttribute",
+        "Name": "sliceNumber",
+        "Value": 17,
+        "ValueType": "Integer"
+      },
+      {
+        "@odata.type": "#OData.CSC.IntegerAttribute",
+        "Name": "totalSlices",
+        "Value": 23,
+        "ValueType": "Integer"
+      },
+      {
+        "@odata.type": "#OData.CSC.StringAttribute",
+        "Name": "productClass",
+        "Value": "S",
+        "ValueType": "String"
+      },
+      {
+        "@odata.type": "#OData.CSC.StringAttribute",
+        "Name": "processorName",
+        "Value": "Sentinel-1 IPF",
+        "ValueType": "String"
+      },
+      {
+        "@odata.type": "#OData.CSC.StringAttribute",
+        "Name": "orbitDirection",
+        "Value": "DESCENDING",
+        "ValueType": "String"
+      },
+      {
+        "@odata.type": "#OData.CSC.DateTimeOffsetAttribute",
+        "Name": "processingDate",
+        "Value": "2025-08-29T09:15:01.375000Z",
+        "ValueType": "DateTimeOffset"
+      },
+      {
+        "@odata.type": "#OData.CSC.StringAttribute",
+        "Name": "operationalMode",
+        "Value": "IW",
+        "ValueType": "String"
+      },
+      {
+        "@odata.type": "#OData.CSC.StringAttribute",
+        "Name": "processingLevel",
+        "Value": "LEVEL1",
+        "ValueType": "String"
+      },
+      {
+        "@odata.type": "#OData.CSC.StringAttribute",
+        "Name": "swathIdentifier",
+        "Value": "IW1,IW2,IW3",
+        "ValueType": "String"
+      },
+      {
+        "@odata.type": "#OData.CSC.StringAttribute",
+        "Name": "processingCenter",
+        "Value": "S1 Production Service-WERUM",
+        "ValueType": "String"
+      },
+      {
+        "@odata.type": "#OData.CSC.StringAttribute",
+        "Name": "processorVersion",
+        "Value": "003.92",
+        "ValueType": "String"
+      },
+      {
+        "@odata.type": "#OData.CSC.DateTimeOffsetAttribute",
+        "Name": "segmentStartTime",
+        "Value": "2025-08-29T07:59:27.278000Z",
+        "ValueType": "DateTimeOffset"
+      },
+      {
+        "@odata.type": "#OData.CSC.BooleanAttribute",
+        "Name": "sliceProductFlag",
+        "Value": false,
+        "ValueType": "Boolean"
+      },
+      {
+        "@odata.type": "#OData.CSC.StringAttribute",
+        "Name": "platformShortName",
+        "Value": "SENTINEL-1",
+        "ValueType": "String"
+      },
+      {
+        "@odata.type": "#OData.CSC.StringAttribute",
+        "Name": "productComposition",
+        "Value": "Slice",
+        "ValueType": "String"
+      },
+      {
+        "@odata.type": "#OData.CSC.StringAttribute",
+        "Name": "instrumentShortName",
+        "Value": "SAR",
+        "ValueType": "String"
+      },
+      {
+        "@odata.type": "#OData.CSC.IntegerAttribute",
+        "Name": "relativeOrbitNumber",
+        "Value": 38,
+        "ValueType": "Integer"
+      },
+      {
+        "@odata.type": "#OData.CSC.StringAttribute",
+        "Name": "polarisationChannels",
+        "Value": "HH",
+        "ValueType": "String"
+      },
+      {
+        "@odata.type": "#OData.CSC.StringAttribute",
+        "Name": "platformSerialIdentifier",
+        "Value": "C",
+        "ValueType": "String"
+      },
+      {
+        "@odata.type": "#OData.CSC.IntegerAttribute",
+        "Name": "instrumentConfigurationID",
+        "Value": 5,
+        "ValueType": "Integer"
+      },
+      {
+        "@odata.type": "#OData.CSC.DoubleAttribute",
+        "Name": "startTimeFromAscendingNode",
+        "Value": 4384032,
+        "ValueType": "Double"
+      },
+      {
+        "@odata.type": "#OData.CSC.DoubleAttribute",
+        "Name": "completionTimeFromAscendingNode",
+        "Value": 4410994,
+        "ValueType": "Double"
+      },
+      {
+        "@odata.type": "#OData.CSC.StringAttribute",
+        "Name": "productType",
+        "Value": "IW_SLC__1S",
+        "ValueType": "String"
+      },
+      {
+        "@odata.type": "#OData.CSC.DateTimeOffsetAttribute",
+        "Name": "beginningDateTime",
+        "Value": "2025-08-29T08:06:10.323000Z",
+        "ValueType": "DateTimeOffset"
+      },
+      {
+        "@odata.type": "#OData.CSC.DateTimeOffsetAttribute",
+        "Name": "endingDateTime",
+        "Value": "2025-08-29T08:06:37.285000Z",
+        "ValueType": "DateTimeOffset"
+      }
+    ],
+    "ModificationDate": "2025-08-29T09:40:28.171154Z",
+    "PublicationDate": "2025-08-29T09:38:34.862704Z",
+    "Online": true,
+    "EvictionDate": "9999-12-31T23:59:59.999999Z",
+    "S3Path": "/eodata/Sentinel-1/SAR/IW_SLC__1S/2025/08/29/S1C_IW_SLC__1SSH_20250829T080610_20250829T080637_003884_007BD1_296F.SAFE",
+    "Assets": [
+      {
+        "Type": "QUICKLOOK",
+        "Id": "4323a393-4040-4f68-9cdf-e43f1c166890",
+        "DownloadLink": "https://catalogue.dataspace.copernicus.eu/odata/v1/Assets(4323a393-4040-4f68-9cdf-e43f1c166890)/$value",
+        "S3Path": "/eodata/Sentinel-1/SAR/IW_SLC__1S/2025/08/29/S1C_IW_SLC__1SSH_20250829T080610_20250829T080637_003884_007BD1_296F.SAFE"
+      }
+    ],
+    "Locations": [
+      {
+        "FormatType": "Compressed",
+        "DownloadLink": "https://catalogue.dataspace.copernicus.eu/odata/v1/Products(a35d6538-4297-477f-89e7-c0328587954b)/$zip",
+        "ContentLength": 1931267633,
+        "Checksum": [
+          {
+            "Value": "b2e574044a93389c54f8a6d4d5a6a24a",
+            "Algorithm": "MD5",
+            "ChecksumDate": "2025-08-29T09:21:46.622000Z"
+          }
+        ],
+        "EvictionDate": "2025-09-28T09:23:27.740944Z"
+      },
+      {
+        "FormatType": "Extracted",
+        "DownloadLink": "https://catalogue.dataspace.copernicus.eu/odata/v1/Products(a35d6538-4297-477f-89e7-c0328587954b)/$value",
+        "ContentLength": 3838114581,
+        "Checksum": [
+          {
+            "Value": "f46c0f958743fe61a1cabcc738cb3f2c",
+            "Algorithm": "MD5",
+            "ChecksumDate": "2025-08-29T09:38:27.687583Z"
+          },
+          {
+            "Value": "d02e00ce763b66d22a421417da21c0196540892a90e6d0161e865f2b86c9c81d",
+            "Algorithm": "BLAKE3",
+            "ChecksumDate": "2025-08-29T09:38:33.281738Z"
+          }
+        ],
+        "S3Path": "/eodata/Sentinel-1/SAR/IW_SLC__1S/2025/08/29/S1C_IW_SLC__1SSH_20250829T080610_20250829T080637_003884_007BD1_296F.SAFE"
+      }
+    ]
+  }
+}
+```
+
+## Example response (deleted)
+
+``` {json}
+200 OK
+
+{
+  "@odata.context": "$metadata#Notification/$entity",
+  "SubscriptionEvent": "deleted",
+  "ProductId": "681e6f13-2ce1-48d0-aabd-66cc24bc76db",
+  "ProductName": "S2C_OPER_MSI_L2A_TC_2CPS_20250815T092212_A004923_T43VFC_N05.11.jp2",
+  "SubscriptionId": "02b0a52c-85c0-4ccb-94ae-1b4ac4150c76",
+  "NotificationDate": "2025-08-29T10:13:33.177076Z",
+  "value": {
+    "@odata.context": "$metadata#DeletedProducts(Attributes())/$entity",
+    "@odata.mediaContentType": "application/octet-stream",
+    "Id": "681e6f13-2ce1-48d0-aabd-66cc24bc76db",
+    "Name": "S2C_OPER_MSI_L2A_TC_2CPS_20250815T092212_A004923_T43VFC_N05.11.jp2",
+    "ContentType": "application/octet-stream",
+    "ContentLength": 25160838,
+    "OriginDate": "2025-08-15T10:12:05.209000Z",
+    "Checksum": [
+      {}
+    ],
+    "Footprint": "geography'SRID=4326;POLYGON ((78.3876071795676 56.2541619467186, 78.435716349472 56.7965051521052, 77.4149135870499 56.8172699955162, 77.3905528836647 56.7698945973985, 77.3163219597789 56.6251441904419, 77.2429187957341 56.4803058656134, 77.2118802291786 56.4188318404281, 77.2848125158697 56.4089962197167, 77.6048112944489 56.365935940333, 77.6047445295874 56.365805952606, 77.6049507480406 56.36577827965, 77.604885869001 56.3656522631594, 78.0213837174355 56.3096960894719, 78.0215282126831 56.3099707627153, 78.3825139999602 56.2557377773187, 78.3823834505294 56.2554936761473, 78.3825401394405 56.2554701580024, 78.3823587237761 56.2551301899279, 78.3823835398639 56.255126472061, 78.3823021561266 56.2549744480609, 78.3876071795676 56.2541619467186))'",
+    "GeoFootprint": {
+      "type": "Polygon",
+      "coordinates": [
+        [
+          [
+            78.3876071795676,
+            56.2541619467186
+          ],
+          [
+            78.435716349472,
+            56.7965051521052
+          ],
+          [
+            77.4149135870499,
+            56.8172699955162
+          ],
+          [
+            77.3905528836647,
+            56.7698945973985
+          ],
+          [
+            77.3163219597789,
+            56.6251441904419
+          ],
+          [
+            77.2429187957341,
+            56.4803058656134
+          ],
+          [
+            77.2118802291786,
+            56.4188318404281
+          ],
+          [
+            77.2848125158697,
+            56.4089962197167
+          ],
+          [
+            77.6048112944489,
+            56.365935940333
+          ],
+          [
+            77.6047445295874,
+            56.365805952606
+          ],
+          [
+            77.6049507480406,
+            56.36577827965
+          ],
+          [
+            77.604885869001,
+            56.3656522631594
+          ],
+          [
+            78.0213837174355,
+            56.3096960894719
+          ],
+          [
+            78.0215282126831,
+            56.3099707627153
+          ],
+          [
+            78.3825139999602,
+            56.2557377773187
+          ],
+          [
+            78.3823834505294,
+            56.2554936761473
+          ],
+          [
+            78.3825401394405,
+            56.2554701580024
+          ],
+          [
+            78.3823587237761,
+            56.2551301899279
+          ],
+          [
+            78.3823835398639,
+            56.255126472061
+          ],
+          [
+            78.3823021561266,
+            56.2549744480609
+          ],
+          [
+            78.3876071795676,
+            56.2541619467186
+          ]
+        ]
+      ]
+    },
+    "ContentDate": {
+      "Start": "2025-08-15T06:03:40.779000Z",
+      "End": "2025-08-15T06:03:40.779000Z"
+    },
+    "Attributes": [
+      {
+        "@odata.type": "#OData.CSC.StringAttribute",
+        "Name": "origin",
+        "Value": "ESA",
+        "ValueType": "String"
+      },
+      {
+        "@odata.type": "#OData.CSC.StringAttribute",
+        "Name": "tileId",
+        "Value": "43VFC",
+        "ValueType": "String"
+      },
+      {
+        "@odata.type": "#OData.CSC.DoubleAttribute",
+        "Name": "cloudCover",
+        "Value": 85.390157,
+        "ValueType": "Double"
+      },
+      {
+        "@odata.type": "#OData.CSC.IntegerAttribute",
+        "Name": "orbitNumber",
+        "Value": 4923,
+        "ValueType": "Integer"
+      },
+      {
+        "@odata.type": "#OData.CSC.IntegerAttribute",
+        "Name": "qualityInfo",
+        "Value": 100,
+        "ValueType": "Integer"
+      },
+      {
+        "@odata.type": "#OData.CSC.StringAttribute",
+        "Name": "qualityStatus",
+        "Value": "NOMINAL",
+        "ValueType": "String"
+      },
+      {
+        "@odata.type": "#OData.CSC.DateTimeOffsetAttribute",
+        "Name": "processingDate",
+        "Value": "2025-08-15T09:22:12.000000Z",
+        "ValueType": "DateTimeOffset"
+      },
+      {
+        "@odata.type": "#OData.CSC.StringAttribute",
+        "Name": "productGroupId",
+        "Value": "GS2C_20250815T055651_004923_N05.11",
+        "ValueType": "String"
+      },
+      {
+        "@odata.type": "#OData.CSC.StringAttribute",
+        "Name": "processingCenter",
+        "Value": "2CPS",
+        "ValueType": "String"
+      },
+      {
+        "@odata.type": "#OData.CSC.StringAttribute",
+        "Name": "processorVersion",
+        "Value": "05.11",
+        "ValueType": "String"
+      },
+      {
+        "@odata.type": "#OData.CSC.StringAttribute",
+        "Name": "platformShortName",
+        "Value": "SENTINEL-2",
+        "ValueType": "String"
+      },
+      {
+        "@odata.type": "#OData.CSC.StringAttribute",
+        "Name": "instrumentShortName",
+        "Value": "MSI",
+        "ValueType": "String"
+      },
+      {
+        "@odata.type": "#OData.CSC.DoubleAttribute",
+        "Name": "illuminationZenithAngle",
+        "Value": 43.4785353949426,
+        "ValueType": "Double"
+      },
+      {
+        "@odata.type": "#OData.CSC.StringAttribute",
+        "Name": "platformSerialIdentifier",
+        "Value": "C",
+        "ValueType": "String"
+      },
+      {
+        "@odata.type": "#OData.CSC.StringAttribute",
+        "Name": "productType",
+        "Value": "MSI_L2A_TC",
+        "ValueType": "String"
+      },
+      {
+        "@odata.type": "#OData.CSC.DateTimeOffsetAttribute",
+        "Name": "beginningDateTime",
+        "Value": "2025-08-15T06:03:40.779000Z",
+        "ValueType": "DateTimeOffset"
+      },
+      {
+        "@odata.type": "#OData.CSC.DateTimeOffsetAttribute",
+        "Name": "endingDateTime",
+        "Value": "2025-08-15T06:03:40.779000Z",
+        "ValueType": "DateTimeOffset"
+      }
+    ],
+    "DeletionDate": "2025-08-29T10:13:32.816989Z",
+    "DeletionCause": "Automatic eviction"
+  }
+}
+```
+
+## PULL and PUSH Subscriptions Operations
+
+### Subscriptions Info
+
+#### List current subscriptions
+
+Users are able to check their existing subscriptions. To retrieve information about PUSH and PULL subscriptions, the following endpoint should be used:
+
+## HTTP request
+
+``` {json}
+GET \
+https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions/Info
+```
+
+## Example response
+
+``` {json}
+200 OK
+
+{
+        "Id": "4be60c5f-7687-4a1b-a392-d53685717047",
+        "FilterParam": "Collection/Name eq 'SENTINEL-1' and Attributes/OData.CSC.StringAttribute/any(att:att/Name eq 'productType' and att/OData.CSC.StringAttribute/Value eq 'IW_SLC__1S')",
+        "StageOrder": true,
+        "Priority": 1,
+        "Status": "running",
+        "SubscriptionEvent": [
+            "created",
+            "modified"
+        ],
+        "SubmissionDate": "2025-08-27T08:52:29.991541Z",
+        "SubscriptionType": "pull",
+        "@odata.context": "$metadata#OData.CSC.Subscription"
+    },
+    {
+        "Id": "02b0a52c-85c0-4ccb-94ae-1b4ac4150c76",
+        "FilterParam": "",
+        "StageOrder": true,
+        "Priority": 1,
+        "Status": "running",
+        "NotificationEndpoint": "https://userservice/notification",
+        "LastNotificationDate": "2025-08-29T10:13:35.988251Z",
+        "SubscriptionEvent": [
+            "deleted"
+        ],
+        "SubmissionDate": "2025-08-29T10:11:46.969194Z",
+        "SubscriptionType": "push",
+        "@odata.context": "$metadata#OData.CSC.Subscription"
+    }
+]
+```
+
+#### Get a specific subscription
+
+Users are also retrive information about a specific subscription by its Id. To get information about a specific PUSH or PULL subscriptions, the following endpoint should be used:
+
+## HTTP request
+
+``` {json}
+GET \
+https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions(subscription_id)
+```
+
+## Example request
+
+``` {json}
+GET \  
+https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions(02b0a52c-85c0-4ccb-94ae-1b4ac4150c76)
+```
+
+## Example response
+
+``` {json}
+200 OK
+
+{
+    "Id": "02b0a52c-85c0-4ccb-94ae-1b4ac4150c76",
+    "FilterParam": "",
+    "StageOrder": true,
+    "Priority": 1,
+    "Status": "running",
+    "NotificationEndpoint": "https://userservice/notification",
+    "LastNotificationDate": "2025-08-29T10:13:35.988251Z",
+    "SubscriptionEvent": [
+        "deleted"
+    ],
+    "SubmissionDate": "2025-08-29T10:11:46.969194Z",
+    "SubscriptionType": "push",
+    "@odata.context": "$metadata#OData.CSC.Subscription"
+}
+```
+
+### Update Subscription
+
+Within a PULL subscription update, the following parameter can be modified:
+
+- Status
+
+Within a PUSH subscription update, the following parameters can be modified:
+
+- Status
+- NotificationEndpoint
+- NotificationEpUsername
+- NotificationEpPassword
+
+The subscription status can be changed to:
+
+- `running` - the subscription is active. For PUSH subscriptions, notifications will be sent to the user’s endpoint. For PULL subscriptions, notifications will be sent to user’s queue.
+- `paused` - the subscription is temporarily stopped and notifications will not be sent. Notifications sent before the status was changed to `paused` will remain available.
+- `cancelled` - the subscription is permanently deleted.
+
+To update an existing subscription, the following endpoit should be used:
+
+## HTTP request
+
+``` {json}
+PATCH \
+https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions(subscription_id)
+```
+
+To change the status of the subscription (`running`→`paused` or `paused`→`running`):
+
+## Example request
+
+``` {json}
+PATCH \
+https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions(02b0a52c-85c0-4ccb-94ae-1b4ac4150c76)
+
+{
+  "Status": "paused"
+}
+```
+
+## Example response
+
+``` {json}
+200 OK
+ 
+{
+    "Id": "02b0a52c-85c0-4ccb-94ae-1b4ac4150c76",
+    "FilterParam": "",
+    "StageOrder": true,
+    "Priority": 1,
+    "Status": "paused",
+    "NotificationEndpoint": "https://userservice/notification",
+    "LastNotificationDate": "2025-08-29T10:13:35.988251Z",
+    "SubscriptionEvent": [
+        "deleted"
+    ],
+    "SubmissionDate": "2025-08-29T10:11:46.969194Z",
+    "SubscriptionType": "push",
+    "@odata.context": "$metadata#OData.CSC.Subscription"
+}
+```
+
+To change the subscription status from `running`/`paused` to `cancelled` **(note that this is equivalent to the deletion of the subscription)**:
+
+## Example request
+
+``` {json}
+PATCH \
+https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions(02b0a52c-85c0-4ccb-94ae-1b4ac4150c76)
+
+{
+  "Status": "cancelled"
+}
+```
+
+## Example response
+
+``` {json}
+204 No Content
+```
+
+### Delete Subscription
+
+When deleting a PULL or PUSH subscription, the subscription Id must be provided. To delete an existing subscription, the following endpoind should be used:
+
+## HTTP request
+
+``` {json}
+DELETE \
+https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions(subscription_id)
+```
+
+## Example request
+
+``` {json}
+DELETE \
+https://catalogue.dataspace.copernicus.eu/odata/v1/Subscriptions(4be60c5f-7687-4a1b-a392-d53685717047)
+```
+
+## Example response
+
+``` {json}
+204 No Content
+```
+
+An alternative way to delete a subscription is by updating its status to `cancelled` via [Update Subscription](https://documentation.dataspace.copernicus.eu/APIs/Subscriptions.html#update-subscription).

@@ -1,0 +1,90 @@
+# LSP 300m Yearly V2
+
+## About
+
+[Official documentation](https://land.copernicus.eu/en/products/vegetation/land-surface-phenology-2014-present-raster-300m-global-yearly-version-2)
+
+Describes the seasonal growth patterns of vegetated land surface. Provides 13 phenology metrics for up to two growing seasons per year. Annual estimates are available globally at a spatial resolution of about 300 m, from 2014 to the present. More information here.
+
+[View this dataset in Copernicus Browser](https://browser.dataspace.copernicus.eu/?zoom=10&lat=41.82019&lng=12.57866&themeId=DEFAULT-THEME&datasetId=COPERNICUS_CLMS_LSP_GLOBAL_300M_YEARLY_V2&clmsSelectedPath=Vegetation%20Phenology%20and%20Productivity%20Parameters&clmsSelectedCollection=COPERNICUS_CLMS_LSP_GLOBAL_300M_YEARLY_V2) (Click on ‘Show latest date’ after the page loads.)
+
+## Attribution and use
+
+The service is implemented by the Joint Research Centre (JRC) and the European Environment Agency (EEA) on behalf of the European Commission. All products are free of charge and can be used for any purpose.
+
+## Accessing CLMS data
+
+CLMS products are provided as Bring Your Own COG (BYOC) collections ([BYOC API](../../../../../../../APIs/SentinelHub/Byoc.llms.md)) and are accessed like any other data using Sentinel Hub APIs. In all cases, a `collectionId` and a product-specific `evalscript` is needed, which can be obtained from the respective sections below.
+
+### Data type identifier
+
+#### API requests
+
+For direct use of the APIs with e.g. oauthlib or cURL requests, use `byoc-<collectionId>` as the value of the `input.data.type` parameter in your API requests. For example, set it to `byoc-e96968cf-34f9-42e4-993e-ed312cd6ca05` for the BYOC collection with id `e96968cf-34f9-42e4-993e-ed312cd6ca05`.
+
+[Check out this example request](../../../../../../../APIs/SentinelHub/Process/Examples/BYOC.llms.md)
+
+#### sentinelhub Python package
+
+For using the [sentinelhub Python package](https://sentinelhub-py.readthedocs.io/en/latest/index.html), please provide the `collectionId` as follows:
+
+``` python
+byoc_collection = DataCollection.define_byoc(
+    collection_id="<collectionId>"
+)
+```
+
+[Check out this Jupyter Notebook example](../../../../../../../notebook-samples/sentinelhub/cloudless_process_api.llms.md)
+
+[Click here](../../../../../../../APIs/SentinelHub/Byoc.llms.md) for more information about the BYOC API.
+
+### Collection ID
+
+`e96968cf-34f9-42e4-993e-ed312cd6ca05`
+
+## Date range
+
+2014 - present
+
+## Bands
+
+| Name | Description | Units | Source format | Range | Scaling | Offset |
+|----|----|----|----|----|----|----|
+| TPROD_S1 | Growing season integral computed as the time-integrated Plant Phenology Index values between the dates of the season start and end. | \[m². day/m²\] | INT16 | 0.0-2000.0 | 1 | 0 |
+| TPROD_S2 | Growing season integral computed as the time-integrated Plant Phenology Index values between the dates of the season start and end. | \[m².day/m²\] | INT16 | 0.0-730.0 | 1 | 0 |
+| SPROD_S1 | Growing season integral computed as the time-integrated Plant Phenology Index values between the dates of the season start and end minus their base level value. | \[m².day/m²\] | INT16 | 0.0-2000.0 | 1 | 0 |
+| SPROD_S2 | Growing season integral computed as the time-integrated Plant Phenology Index values between the dates of the season start and end minus their base level value. | \[m².day/m²\] | INT16 | 0.0-2000.0 | 1 | 0 |
+| SOSD_S1 | Day of the year when the vegetation growing season starts in the time profile of the Plant Phenology Index. | \[Day-Of-Year\] | INT16 | -365.0-365.0 | 1 | 0 |
+| SOSD_S2 | Day of the year when the vegetation growing season starts in the time profile of the Plant Phenology Index. | \[Day-Of-Year\] | INT16 | -365.0-365.0 | 1 | 0 |
+| EOSD_S1 | Day of the year when the vegetation growing season ends in the time profile of the Plant Phenology Index. | \[Day-Of-Year\] | INT16 | 0.0-730.0 | 1 | 0 |
+| EOSD_S2 | Day of the year when the vegetation growing season ends in the time profile of the Plant Phenology Index. | \[Day-Of-Year\] | INT16 | 0.0-730.0 | 1 | 0 |
+| MAXD_S1 | Day of the year in the vegetation growing season when the Plant Phenology Index reaches its maximum value. | \[Day-Of-Year\] | INT16 | 0.0-366.0 | 1 | 0 |
+| MAXD_S2 | Day of the year in the vegetation growing season when the Plant Phenology Index reaches its maximum value. | \[Day-Of-Year\] | INT16 | 0.0-366.0 | 1 | 0 |
+| SOSV_S1 | Value of the Plant Phenology Index at the start of the vegetation growing season. | \[m² / m²\] | INT16 | 0.0-5000.0 | 0.0001 | 0 |
+| SOSV_S2 | Value of the Plant Phenology Index at the start of the vegetation growing season. | \[m² / m²\] | INT16 | 0.0-5000.0 | 0.0001 | 0 |
+| EOSV_S1 | Value of the Plant Phenology Index at the end of the vegetation growing season. | \[m² / m²\] | INT16 | 0.0-5000.0 | 0.0001 | 0 |
+| EOSV_S2 | Value of the Plant Phenology Index at the end of the vegetation growing season. | \[m² / m²\] | INT16 | 0.0-5000.0 | 0.0001 | 0 |
+| MINV_S1 | The average of the Plant Phenology Index value of the minima on left and right sides of the season. | \[m² / m²\] | INT16 | 0.0-5000.0 | 0.0001 | 0 |
+| MINV_S2 | The average of the Plant Phenology Index value of the minima on left and right sides of the season. | \[m² / m²\] | INT16 | 0.0-5000.0 | 0.0001 | 0 |
+| MAXV_S1 | Maximum value that the Plant Phenology Index reaches during the vegetation growing season i.e. value of the Plant Phenology Index at the maximum season date. | \[m² / m²\] | INT16 | 0.0-5000.0 | 0.0001 | 0 |
+| MAXV_S2 | Maximum value that the Plant Phenology Index reaches during the vegetation growing season i.e. value of the Plant Phenology Index at the maximum season date. | \[m² / m²\] | INT16 | 0.0-5000.0 | 0.0001 | 0 |
+| AMPL_S1 | Difference between the Season Maximum value and the Season Minimum Value. | \[m² / m²\] | INT16 | 0.0-5000.0 | 0.0001 | 0 |
+| AMPL_S2 | Difference between the Season Maximum value and the Season Minimum Value. | \[m² / m²\] | INT16 | 0.0-5000.0 | 0.0001 | 0 |
+| LENGTH_S1 | Number of days between the start and the end of the growing season. | \[days\] | INT16 | 0.0-730.0 | 1 | 0 |
+| LENGTH_S2 | Number of days between the start and the end of the growing season. | \[days\] | INT16 | 0.0-730.0 | 1 | 0 |
+| LSLOPE_S1 | Value of the increasing rate of Plant Phenology Index during vegetation green-up. | \[m² / m² /day\] | INT16 | -1000.0-1000.0 | 1 | 0 |
+| LSLOPE_S2 | Value of the increasing rate of Plant Phenology Index during vegetation green-up. | \[m² / m² /day\] | INT16 | -1000.0-1000.0 | 1 | 0 |
+| RSLOPE_S1 | Absolute value of the decreasing rate of Plant Phenology Index during vegetation green-down. | \[m² / m² /day\] | INT16 | -1000.0-1000.0 | 1 | 0 |
+| RSLOPE_S2 | Absolute value of the decreasing rate of Plant Phenology Index during vegetation green-down. | \[m² / m² /day\] | INT16 | -1000.0-1000.0 | 1 | 0 |
+| QA_S1 | Indicate the quality of the start, peak and end of the growing season, as well as the overall quality of the three phases, in a form of a certainty level. |  | UINT8 | — | 1 | 0 |
+| QA_S2 | Indicate the quality of the start, peak and end of the growing season, as well as the overall quality of the three phases, in a form of a certainty level. |  | UINT8 | — | 1 | 0 |
+
+## Evalscript
+
+**[Example scripts for this product.](https://github.com/eu-cdse/sentinel-hub-custom-scripts/tree/main/clms/bio-geophysical-parameters/vegetation/vegetation-phenology-and-productivity-parameters/lsp_global_300m_yearly_v2)**
+
+Use the link above to access dedicated Evalscript examples for this product in the Copernicus Data Space Ecosystem Sentinel Hub Custom Scripts repository.
+
+An Evalscript (or “custom script”) is a piece of Javascript code which defines how the data shall be processed by Sentinel Hub and what values the service shall return. It is a required part of any [process](../../../../../../../APIs/SentinelHub/Process.llms.md), [batch processing](../../../../../../../APIs/SentinelHub/BatchV2.llms.md) or [OGC request](../../../../../../../APIs/SentinelHub/OGC.llms.md).
+
+Evalscripts can use any JavaScript function or language structures, along with certain [utility functions](../../../../../../../APIs/SentinelHub/Evalscript/Functions.llms.md) we provide for your convenience. For running evalscripts we use the [Chrome V8](https://v8.dev/) JavaScript engine.

@@ -1,0 +1,84 @@
+# Publish a Service
+
+The openEO Algorithm Plaza provides a self-service onboarding wizard that enables developers to publish their services effortlessly. It assigns a [service maturity](../../Applications/PlazaDetails/ServiceMaturity.llms.md) label to each onboarded service.
+
+Developers can publish their algorithms as services on openEO Algorithm Plaza. These algorithms must be implemented as openEO User Defined Processes, focusing on Earth Observation solutions and utilizing openEO standards. When set to public, the service is made available to all external users.
+
+![](../_images/PlazaManageService.png)
+
+Developers are directed to the described page when “Services” is selected from the sub-menu options under the “Dashboard”. If no services have been published yet, an option to “REGISTER YOUR FIRST SERVICE” is displayed. However, when a service has already been published within the organization, a list of the relevant registered services is shown.
+
+> **NOTE:**
+>
+> Developers who are members of multiple organisations and intend to publish an algorithm from a specific organisation must ensure they are logged in to that particular organisation. This can be verified by navigating to the [profile page](https://marketplace-portal.dataspace.copernicus.eu/profile) and, if needed, [switching](../../Applications/PlazaDetails/ManageOrg.llms.md#switch-between-organisatio) the ‘Linked Organization’
+
+![](../_images/services_list.png)
+
+Developers can click on the avatar or the service name to load its detail page. Additionally, clicking the `REGISTER NEW SERVICE` CTA button allows users to add/create a new service.
+
+## Develop an openEO algorithm
+
+In openEO, a ‘datacube’ concept is used, which hides a lot of the complexity when working with huge EO data archives. It provides full archive access to the most popular datasets. To integrate existing code, the concept of ‘User Defined Functions’ ([UDFs](https://open-eo.github.io/openeo-python-client/udf.html)) can be used. Furthermore, Parallelization and scalability are taken care of.
+
+#### Working with openEO
+
+To get familiar with openEO, it is recommended to begin with the [basic introduction](https://documentation.dataspace.copernicus.eu/APIs/openEO/openEO.html) of openEO. Developers can then share their algorithms as services on the openEO Algorithm Plaza. For deploying an openEO algorithm as a service, developers can utilize the [‘user defined process’](https://open-eo.github.io/openeo-python-client/udp.html) functionality.
+
+## Register and publish your service
+
+Once an algorithm is ready, a developer can register and publish it.
+
+Clicking the **Register your first service** button presents a wizard to enter the necessary information regarding the service. The following sections provide a guide through the publishing process:
+
+##### Step 1: Register your service
+
+The first step involves selecting the type of service to publish. Currently, only those services integrated with openEO as an orchestrator are supported.
+
+![](../_images/select_service.png)
+
+##### Step 2: Input general information
+
+The following table outlines the basic information required for the service at this step:
+
+| Field | Required | Description |
+|----|----|----|
+| Service name | Yes | Title of the service to be displayed in the catalogue. |
+| Summary | No | Short description of the service. |
+| Description | No | The service description starts |
+| with an overview and a brief methodology. It is helpful to list required parameters and include examples and output images for user guidance. |  |  |
+| Avatar | No | URL to an image that can be used as an avatar of your service. |
+
+##### Step 3: Additional Sections
+
+In addition to the basic information mentioned above, a developer can provide the necessary details about their service. The following sections are available:
+
+- Parameters: A list of all the parameters that should be provided to the service to execute it. Their name, type, description, and default value are specified.
+- Usage example(Python code): A Python code example to demonstrate how to use the service. The example should include the input parameters and the expected output.
+- Results: Service results and it is supported output format.
+- Cost Estimation: Estimating the resource consumption and time required to run the service for a given input.
+- References: A list of references to publications, websites, or other resources relevant to the service.
+
+##### Step 4: Add labels
+
+Multiple labels can be added for a service to help users find the service within the platform. These labels serve as filters within the marketplace and indicate its category.
+
+##### Step 5: Select service visibility
+
+The service can be designated as either public or private. If set to public, it will be visible to all users in the openEO Algorithm Plaza. However, only the developer and organization members have access to the service if set to private.
+
+Click on `REGISTER SERVICE` to finish the basic registration. Finishing the basic registration enables the developer to provide more details on the service by either clicking the `NEXT` button or `REMOVE` to delete the service or even `BACK TO SERVICE` to exit the editing of the service.
+
+##### Step 6: Add Media Files and Links
+
+Images uploaded in the **Media Files and Links** section are displayed as the avatar on the catalogue. Additionally, multiple URLs can be specified and shown in the detailed information of the service.
+
+##### Step 7: Add openEO Settings
+
+In the **openEO Settings** the openEO namespace and service ID should be filled in Entering this information enables the `Access Service` button, allowing visitors of openEO Algorithm Plaza to execute the service through the [openEO Web Editor](https://openeo.dataspace.copernicus.eu/). The required information is represented in the following table:
+
+| Field | Required | Description |
+|----|----|----|
+| Namespace | Yes | Namespace of openEO service. When the service was created through a [User Defined Process (UDP)](https://open-eo.github.io/openeo-python-client/cookbook/udp_sharing.html), the namespace is formatted as `u:<publisher username/id>`. This information can be extracted from the public URL when creating and sharing the UDP through openEO. |
+| Service name | Yes | Name of the service as shared within openEO. For a [User Defined Process (UDP)](https://open-eo.github.io/openeo-python-client/cookbook/udp_sharing.html), the service name corresponds with the ID of the service. |
+
+Congratulations! The service has been successfully published in the openEO Algorithm Plaza. It can now be viewed and shared with others. Furthermore, it is recommended that developers go through the [Manage a Service](../../Applications/PlazaDetails/ManageService.llms.md) documentation to learn how to manage the service.

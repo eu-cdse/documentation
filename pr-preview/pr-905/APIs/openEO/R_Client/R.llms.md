@@ -1,0 +1,325 @@
+# Getting started with R client
+
+This Getting Started guide provides a simple overview of the capabilities offered by the openEO R client library.
+
+## Installation
+
+Before installing the openEO R-client module, ensure to have atleast R of 3.6 version. Older versions might also work, but have not been tested.
+
+Stable releases can be installed from CRAN:
+
+``` r
+install.packages("openeo")
+```
+
+> **TIP:**
+>
+> To install the development version, follow the GitHub installation instructions. This version might include additional features but could be less stable.
+>
+> Ensure ‘devtools’ is installed; if not, use `install.packages("devtools")`.
+>
+> Now, `install_github` from the devtools package can be used to install the development version:
+>
+> ``` r
+>
+> devtools::install_github(repo="Open-EO/openeo-r-client", dependencies=TRUE, ref="develop")
+> ```
+>
+> If an error occurs, there may have been an issue during the installation process. Please review the requirements to troubleshoot the problem.
+
+If problems are encountered when installing, [create a ticket, post in forum](https://helpcenter.dataspace.copernicus.eu/hc/en-gb/requests/new) or raise an issue on the [GitHub project page](https://github.com/Open-EO/openeo-r-client/issues).
+
+With the successful completion of the installation, import it to use openEO-compliant back-ends. The following section provides a simple overview of the R client.
+
+## Exploring a back-end
+
+First, establish a connection to the Copernicus Data Space Ecosystem [openEO federation backend](../../../APIs/openEO/federation/openeo_federation.llms.md). The endpoint is `https://openeofed.dataspace.copernicus.eu`. Use `https://openeo.dataspace.copernicus.eu` to limit yourself to the core CDSE offering.
+
+``` r
+
+library(openeo)
+connection = connect(host = "https://openeofed.dataspace.copernicus.eu")
+```
+
+### Collections
+
+Collections are the data offered by the backend (e.g., Sentinel 1 collection) for further processing and analysis. For additional information on collections, please refer to the glossary entry [here](../../../APIs/openEO/Glossary.llms.md#eo-data-collections).
+
+The code snippet below lists available collection names and their descriptions. To use a specific collection in a workflow, its Collection ID can access it. For a more detailed overview of any collection, utilize the `describe_collection` function.
+
+``` r
+
+# Dictionary of the full metadata of the "COPERNICUS/S2" collection (dict)
+describe_collection("SENTINEL2_L2A")
+```
+
+Generally, all metadata objects are structured as lists. Users can use `str()` to examine the structure of the list and access fields using the `$` operator.
+
+> **TIP:**
+>
+> When using RStudio, metadata can be readily displayed as a web page in the viewer panel by executing `collection_viewer(x="SENTINEL2_L2A")`.
+
+### Processes
+
+Processes in openEO are operations applied to (EO) data (see [here](../../../APIs/openEO/Glossary.llms.md#processes)), such as calculating the mean, pixel masking, spatial aggregations, etc. Furthermore, a process’s output can be another’s input in a workflow.
+
+``` r
+# List of available openEO processes with full metadata
+processes = list_processes()
+print(processes)
+
+# print metadata of the process with ID "load_collection"
+print(processes$load_collection)
+```
+
+The `list_processes()` used above returns a list of available processes. Each process includes a unique identifier and additional metadata, such as expected arguments and return types.
+
+> **TIP:**
+>
+> Like collections, processes can also be displayed as a web page in the viewer panel when using RStudio. To open the viewer, use `process_viewer()` with either a specific process (e.g., `process_viewer("load_collection")`) or all processes (`process_viewer(processes)`).
+
+## Authentication
+
+Basic metadata about collection and processes, as discussed above is publicly available and does not require being logged in. However, for downloading EO data or running processing workflows, it is necessary to authenticate so that permissions, resource usage, etc. can be managed properly.
+
+> **IMPORTANT:**
+>
+> Make sure to complete [Copernicus Data Space Ecosystem registration](../../../Registration.llms.md) before authentication.
+
+Once registered, user can authenticate as shown below:
+
+``` r
+
+login()
+```
+
+Calling this method opens the system’s web browser for user authentication. Upon successful authentication, a message confirming the login success will appear on the R console.
+
+## Creating a datacube
+
+Now, let us create, fetch and process EO data using openEO. This involves working with “Datacubes,” which are fundamental in openEO for representing EO data. For more information on datacubes, refer to the glossary [here](../../../APIs/openEO/Glossary.llms.md#spatial-datacubes).
+
+First we need to create a process builder object that carries all the available predefined openEO processes of the connected back-end as attached R functions with the parameters stated in the process metadata.
+
+``` r
+
+p = processes()
+```
+
+A process builder is initialised. This object encapsulates all available predefined openEO processes from the CDSE backend as R functions, each with parameters defined in the process metadata.
+
+``` r
+datacube = p$load_collection(
+  id = "SENTINEL1_GRD",
+  spatial_extent=list(west = 16.06, south = 48.06, east = 16.65, north = 48.35),
+  temporal_extent=c("2017-03-01", "2017-04-01"),
+  bands=c("VV", "VH")
+)
+```
+
+This creates a process node representing a [`datacube`](../../../APIs/openEO/Glossary.llms.md#spatial-datacubes) with “SENTINEL1_GRD” data for the specified spatial extent, temporal extent, and bands.
+
+> **TIP:**
+>
+> It is useful to check the actual data occasionally to understand the processing mechanisms and data structures used in the openEO Platform. The function [`get_sample`](https://open-eo.github.io/openeo-r-client/reference/get_sample.html) helps in downloading data for a small spatial extent. This data is automatically loaded into R, for direct inspection with `stars`.
+
+A process can now be applied to the input datacube.
+
+``` r
+
+# apply sar backscatter 
+
+datacube_sar = p$sar_backscatter(data = datacube, coefficient = "sigma0-ellipsoid")
+
+min_reducer = function(data,context) { 
+  return(p$min(data = data))
+}
+
+reduced = p$reduce_dimension(data = datacube_sar, reducer = min_reducer, dimension="t")
+```
+
+A SAR backscatter process is applied to the input datacube. The datacube is then reduced by the time dimension using `min_reducer` function.
+
+> **NOTE:**
+>
+> It is important to note that all processes applied so far have not yet been run locally or on the backend. An abstract representation of the algorithm (input data and processing chain) has been created and encapsulated in a local `reduced` object. To run the workflow, it must be explicitly sent to the backend.
+
+After applying all processes you want to execute, we need to tell the back-end to export the datacube, for example as GeoTiff:
+
+``` r
+
+formats = list_file_formats()
+
+result = p$save_result(data = reduced, format = formats$output$`GTIFF-ZIP`)
+```
+
+The initial line in the above snippet fetches the supported format backends. The following line creates the result node, which stores the data as a zipped GeoTiff.
+
+## Batch Job Management
+
+Simple openEO usage examples demonstrate synchronous downloading of results. This approach is preferred to a smaller extent or for a simple workflow. However, batch jobs are necessary for more demanding tasks, such as processing larger extents or intensive computations. For more information on these approaches visit [here](../../../APIs/openEO/Glossary.llms.md#data-processing-modes).
+
+``` r
+# create a job at the back-end using our datacube, giving it the title `Example Title`
+
+job = create_job(graph=result,title = "Example Title")
+```
+
+The `create_job` method sends all required information to the backend and registers a new job. However, the job is created at this stage and to start, it must be explicitly queued for processing:
+
+``` r
+
+start_job(job = job)
+```
+
+The status updates can be obtained using the `list_jobs()` function. This function provides a list of jobs submitted to the backend. However, it is important to note that only `list_jobs()` refreshes this list. Therefore, to monitor a job, you need to iteratively call either `describe_job()` or update the job list using `list_jobs()`.
+
+``` r
+
+jobs = list_jobs()
+jobs # printed as a tibble or data.frame, but the object is a list
+
+# or use the job id (in this example 'cZ2ND0Z5nhBFNQFq') as index to get a particular job overview
+jobs$cZ2ND0Z5nhBFNQFq
+
+# alternatively request detailed information about the job
+describe_job(job = job)
+```
+
+Once completed, `download_results()` allows the result to be retrieved. Alternatively, `list_results()` provides an overview of the created files, including download links and encountered error messages.
+
+``` r
+
+# list the processed results
+list_results(job = job)
+
+# download all the files into a folder on the file system
+download_results(job = job, folder = "/some/folder/on/filesystem")
+```
+
+This summarizes the complete openEO workflow using the R-client.
+
+## Full Example
+
+Therefore, a complete example of an earth observation use case using the R client is outlined in this chapter.
+
+The objective is to get a monthly RGB composite of Sentinel 1 backscatter data across Vienna, Austria for three months in 2017. This composite can support tasks like classification and crop monitoring.
+
+The code example below includes inline comments explaining each step of the process:
+
+``` r
+library(openeo)
+
+# connect to the backend and authenticate
+connection = connect(host = "https://openeofed.dataspace.copernicus.eu")
+login()
+# get the process collection to use the predefined processes of the back-end
+p = processes()
+
+# get the collection list to get easier access to the collection ids, via auto completion
+collections = list_collections()
+
+# get the formats
+formats = list_file_formats()
+
+# load the initial data collection and limit the amount of data loaded
+# note: for the collection id and later the format you can also use the its character value
+data = p$load_collection(id = collections$`SENTINEL1_GRD`,
+                         spatial_extent = list(west=16.06, 
+                                               south=48.06,
+                                               east=16.65,
+                                               north=48.35),
+                         temporal_extent = c("2017-03-01", "2017-06-01"),
+                         bands = c("VV"))
+
+# apply the SAR backscatter process to the data
+datacube_sar = p$sar_backscatter(data = data, coefficient = "sigma0-ellipsoid")
+
+
+# create three monthly sub-datasets, which will later be combined back into a single data cube
+march = p$filter_temporal(data = datacube_sar,
+                          extent = c("2017-03-01", "2017-04-01"))
+
+april = p$filter_temporal(data = datacube_sar,
+                          extent = c("2017-04-01", "2017-05-01"))
+
+may = p$filter_temporal(data = datacube_sar,
+                        extent = c("2017-05-01", "2017-06-01"))
+
+# The aggregation function for the following temporal reducer
+agg_fun_mean = function(data, context) {
+  mean(data)
+}
+
+march_reduced = p$reduce_dimension(data = march,
+                                   reducer = agg_fun_mean,
+                                   dimension = "t")
+
+april_reduced = p$reduce_dimension(data = april,
+                                   reducer = agg_fun_mean,
+                                   dimension = "t")
+
+may_reduced = p$reduce_dimension(data = may,
+                                 reducer = agg_fun_mean,
+                                 dimension = "t")
+
+# Each band is currently called VV. We need to rename at least the label of one dimension, 
+# because otherwise identity of the data cubes is assumed. The bands dimension consists 
+# only of one label, so we can rename this to be able to merge those data cubes.
+march_renamed = p$rename_labels(data = march_reduced,
+                                dimension = "bands",
+                                target = c("R"),
+                                source = c("VV"))
+
+april_renamed = p$rename_labels(data = april_reduced,
+                                dimension = "bands",
+                                target = c("G"),
+                                source = c("VV"))
+
+may_renamed = p$rename_labels(data = may_reduced,
+                              dimension = "bands",
+                              target = c("B"),
+                              source = c("VV"))
+
+# combine the individual data cubes into one
+# this is done one by one, since the dimensionalities have to match between each of the data cubes
+merge_1 = p$merge_cubes(cube1 = march_renamed,cube2 = april_renamed)
+merge_2 = p$merge_cubes(cube1 = merge_1, cube2 = may_renamed)
+
+# rescale the the back scatter measurements into 8Bit integer to view the results as PNG
+rescaled = p$apply(data = merge_2,
+        process = function(data,context) {
+          p$linear_scale_range(x=data, inputMin = -20,inputMax = -5, outputMin = 0, outputMax = 255)
+        })
+
+
+# store the results using the png format and set the create a job options
+result = p$save_result(data = rescaled,format = formats$output$PNG, options = list(red="R",green="G",blue="B"))
+
+# create a job
+job = create_job(graph = result, title = "S1 Example R", description = "Getting Started example on openeo.org for R-client")
+
+# then start the processing of the job and turn on logging (messages that are captured on the back-end during the process execution)
+start_job(job = job, log = TRUE)
+```
+
+The resulting PNG file of the RGB backscatter composite is stored in the current working directory. Here is how it looks:
+
+![](../_images/getting-started-result-example.jpg)
+
+## User Defined Functions
+
+If a usecase cannot be defined using the default openEO processes, user can define them as a [user defined function](../../../APIs/openEO/Glossary.llms.md#user-defined-function-udf).
+
+The workflow involves uploading a Python or R script to the user’s directory. Reference it by URL or name (e.g., `/scripts/script1.R`) in the `run_udf` function of openEO.
+
+Find out more about UDFs in the respective [Python UDF](https://github.com/Open-EO/openeo-udf) and [R UDF](https://github.com/Open-EO/openeo-r-udf) repositories with their documentation and examples.
+
+## Useful links
+
+Additional information and resources about the openEO R Client Library:
+
+- [Documentation](https://open-eo.github.io/openeo-r-client/index.html)
+- [Vignettes](https://open-eo.github.io/openeo-r-client/articles/)
+- [Code Repository](https://github.com/Open-EO/openeo-r-client)
+- for function documentation, use R’s `?` function or see the [online documentation](https://open-eo.github.io/openeo-r-client/index.html)

@@ -1,0 +1,483 @@
+# Evalscript
+
+An evalscript (or custom script) is a piece of Javascript code that defines how the platform processes satellite data and what values the service returns. It is a required part of any [Processing](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Process.html), [Batch processing](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/BatchV2.html) or [OGC API request](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/OGC.html).
+
+The evalscript [functions](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Evalscript/Functions.html) section contains detailed explanations of parameters and functions that can be used in evalscripts. Evalscripts can use any JavaScript function or language structure and include certain [utility functions](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Evalscript/Utilities.html) specific to the platform. Evalscripts run the [Chrome V8](https://v8.dev/) JavaScript engine.
+
+Evalscripts can be used to calculate a spectral index, create visualizations, do multi-temporal analysis and visualization, use data fusion, and do statistical analysis. Other things, such as setting the resolution of output, setting the projection of output, and defining the time range of requests, are set as [request parameters](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/ApiReference.html) for the various APIs.
+
+## Transparency
+
+Parts of the image can be made fully or partially transparent by including the fourth output channel, the [alpha channel](https://en.wikipedia.org/wiki/Alpha_compositing). The value 0 in the alpha channel makes a pixel fully transparent, while the maximum value in the alpha channel makes it fully opaque (not transparent). The values in between will make the pixel proportionally transparent. The maximum value in the alpha channel depends on an image bit depth as specified by [sampleType](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Evalscript/Functions.html#sampletype):
+
+- for `sampleType` `AUTO` or `FLOAT32`: values in the alpha channel should be from the interval \[0, 1\]
+- for `sampleType` `UINT8`: values in the alpha channel should be from the interval \[0, 255\]
+- for `sampleType` `UINT16`: values in the alpha channel should be from the interval \[0, 65535\]
+
+PNG and TIFF are output file formats that support transparency, while JPEG does not.
+
+### Transparent `NoData` Pixels
+
+`NoData` pixels are identified by the value 0 in the `dataMask` band. In the following evalscript, if the wetness index (NDWI) is positive, the returned value will be 0, making water areas transparent and only land visible in the returned image.
+
+``` js
+//VERSION=3
+
+function setup() {
+  return {
+    input: ['B02', 'B03', 'B04', 'B08'],
+    output: { bands: 4 },
+  };
+}
+
+function evaluatePixel(sample) {
+  let NDWI = (sample.B03 - sample.B08) / (sample.B03 + sample.B08);
+
+  let transparency = 0;
+  if (NDWI < 0) {
+    transparency = 1;
+  }
+  return [2.5 * sample.B04, 2.5 * sample.B03, 2.5 * sample.B02, transparency];
+}
+```
+
+[Explore in Copernicus Browser](https://browser.dataspace.copernicus.eu/?zoom=9&lat=42.79339&lng=11.27884&themeId=DEFAULT-THEME&visualizationUrl=U2FsdGVkX197%2BXX6HgflbXbu1I7iR7%2BhYa8ANkhinFSbbzK8NfhIEzCiuXOrvuvWReaYwlISmjJYHX8cZPunVnedWnKqdK1c3%2F9jop3WhxG0lS5xx5OUzYlMJHu4ktcC&evalscripturl=https%3A%2F%2Fcustom-scripts.sentinel-hub.com%2Fcustom-scripts%2Fsentinel-2%2Fndvi%2Feob.js&datasetId=S2_L2A_CDAS&fromTime=2020-07-12T00%3A00%3A00.000Z&toTime=2020-07-12T23%3A59%3A59.999Z&demSource3D=%22MAPZEN%22&cloudCoverage=30&dateMode=SINGLE#custom-script)
+
+This approach works when the `AUTO` or `FLOAT32` sample types are being requested. To achieve the same transparency, scale the output values for other sample types. See the examples below for guidance.
+
+#### Transparent `NoData` pixels and sampleType: `UINT16`
+
+When using `sampleType` `UINT16`, the range of output values in an image becomes \[0, 65535\]. The value 65535 must be returned in the alpha channel for pixels that should not be transparent, as shown in the example below.
+
+``` js
+//VERSION=3
+function setup() {
+  return {
+    input: ['B04', 'B03', 'B02', 'dataMask'],
+    output: { bands: 4, sampleType: 'UINT16' },
+  };
+}
+
+function evaluatePixel(samples, scenes) {
+  return [
+    samples.B04 * 3.5 * 65535,
+    samples.B03 * 3.5 * 65535,
+    samples.B02 * 3.5 * 65535,
+    samples.dataMask * 65535,
+  ];
+}
+```
+
+#### Transparent `NoData` pixels and sampleType: `UINT8`
+
+The same logic applies to `sampleType` `UINT8`, except that the range of output values in this case is \[0, 255\]. The same evalscript as above but for `UINT8`:
+
+``` js
+//VERSION=3
+function setup() {
+  return {
+    input: ['B04', 'B03', 'B02', 'dataMask'],
+    output: { bands: 4, sampleType: 'UINT8' },
+  };
+}
+
+function evaluatePixel(samples, scenes) {
+  return [
+    samples.B04 * 3.5 * 255,
+    samples.B03 * 3.5 * 255,
+    samples.B02 * 3.5 * 255,
+    samples.dataMask * 255,
+  ];
+}
+```
+
+### Transparent Data Pixels
+
+To use some other condition for turning pixels transparent, return the condition in the fourth channel and output four bands in the `setup()` function. The example below shows how to return the Sentinel-2 L1C [NDVI index](https://custom-scripts.sentinel-hub.com/sentinel-2/ndvi/) and values larger than 0.6 as transparent. This example also leaves the `NoData` pixels non-transparent and thus does not need to use the `dataMask` input band.
+
+``` js
+//VERSION=3
+function setup() {
+  return {
+    input: ['B02', 'B03', 'B04', 'B08'],
+    output: { bands: 4 },
+  };
+}
+function evaluatePixel(samples, scenes) {
+  var NDVI = (samples.B08 - samples.B04) / (samples.B08 + samples.B04);
+  return [samples.B04 * 2.5, samples.B03 * 2.5, samples.B02 * 2.5, NDVI < 0.6];
+}
+```
+
+## Data Mask
+
+Evalscripts allow control over which parts (pixels) of the image to return. This way, parts with `NoData` can be removed. The setup function allows a user to request `dataMask` as an input array element and then use it in the `evaluatePixel` function in the same manner as any other input band.
+
+#### General notes
+
+`dataMask` has a value of 0 for `NoData` pixels and 1 elsewhere.
+
+What `NoData` means:
+
+- All pixels that lie outside of the requested polygon (if specified).
+- All pixels where no source data was found.
+- All pixels where there is data explicitly set to the `NoData` value.
+
+All `NoData` pixels, as defined above, have a `dataMask` value of 0. All band values for these pixels are also 0, except for Landsat data collections, where band values for `NoData` pixels are NaN.
+
+`NoData` pixels are treated like any other in the evalscript. Their value is applied to the evalscript like any other pixel. For example, `return [sample.B04*sample.B03]` returns 0 for `NoData` pixels, while `return [sample.B04/sample.B03]` would return “Infinity” (if `sampleType` is `FLOAT32`) due to division by zero or “NaN.” To treat `NoData` pixels differently, they should be handled explicitly in evalscripts. See the examples below.
+
+#### Example 1: Assign an arbitrary value (99) to `NoData` pixels
+
+``` js
+//VERSION=3
+function setup() {
+  return {
+    input: ['B02', 'B03', 'B04', 'dataMask'],
+    output: { bands: 3 },
+  };
+}
+
+function evaluatePixel(sample) {
+  if (sample.dataMask == 1) {
+    return [2.5 * sample.B04, 2.5 * sample.B03, 2.5 * sample.B02];
+  } else {
+    return [99, 99, 99];
+  }
+}
+```
+
+#### Example 2: Use values in `dataMask` as the transparency band
+
+> **NOTE:**
+>
+> To use this example, set the `output.responses.format.type` parameter of your processing API request to `image/png` or `image/tiff`. The PNG format will automatically interpret the fourth band as transparency.
+
+``` js
+//VERSION=3
+function setup() {
+  return {
+    input: ['B02', 'B03', 'B04', 'dataMask'],
+    output: { bands: 4 },
+  };
+}
+
+function evaluatePixel(sample) {
+  return [
+    2.5 * sample.B04,
+    2.5 * sample.B03,
+    2.5 * sample.B02,
+    sample.dataMask,
+  ];
+}
+```
+
+## Working with Metadata in Evalscripts
+
+Metadata provided in raster format is available as additional bands in the collection. Like any other input band, this metadata can be accessed and processed in evalscripts. Basic examples and metadata are listed in the [data section](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Data.html) for each data collection (e.g., [sunAzimuthAngles](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Data/S2L1C.html#available-bands-and-data)).
+
+### Check Which Metadata is Available
+
+Metadata is stored in two objects, which are called [`inputMetadata`](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Evalscript/Functions.html#inputmetadata) and [`scenes`](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Evalscript/Functions.html#scenes). The properties of the `scenes` object can be different depending on the selection of:
+
+- mosaicking (e.g., `ORBIT` or `TILE`)
+- data collection (e.g., Sentinel-2 L2A, Sentinel-1, Sentinel-5p)
+- function in the evalscript (e.g., `evaluatePixel`, `preProcessScenes`, `updateOutputMetadata`)
+
+A convenient way to check which metadata is available to be requested in scenes is to write all object properties to the userdata.json file. This basic [example](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Process/Examples/S2L1C.html#true-color-and-metadata-multi-part-response-geotiff-and-json) shows how to do this with the Processing API.
+
+### Properties of Scenes Object and Mosaicking `ORBIT`
+
+This example shows:
+
+- Accessing metadata when mosaicking is `ORBIT` using `scenes.orbits`
+- Passing metadata from `scenes` to the userdata.json file using `outputMetadata.userData` in `updateOutputMetadata`function
+
+``` js
+evalscript = """
+//VERSION=3
+function setup() {
+ return {
+   input: ["B02", "dataMask"],
+   mosaicking: Mosaicking.ORBIT,
+   output: {
+     id: "default",
+     bands: 1
+   }
+ }
+}
+
+
+
+function evaluatePixel(samples, scenes, inputMetadata, customData, outputMetadata) {
+ //Average value of band B02 based on the requested scenes
+ var sumOfValidSamplesB02 = 0
+ var numberOfValidSamples = 0
+ for (i = 0; i < samples.length; i++) {
+   var sample = samples[i]
+   if (sample.dataMask == 1){
+       sumOfValidSamplesB02 += sample.B02
+       numberOfValidSamples += 1
+   }
+ }
+ return [sumOfValidSamplesB02 / numberOfValidSamples]
+}
+
+
+function updateOutputMetadata(scenes, inputMetadata, outputMetadata) {
+ outputMetadata.userData = {
+   "inputMetadata": inputMetadata
+ }
+ outputMetadata.userData["orbits"] = scenes.orbits
+}
+"""
+
+request = {
+ "input": {
+   "bounds": {
+     "bbox": [13.8, 45.8, 13.9, 45.9]
+   },
+   "data": [{
+     "type": "sentinel-2-l1c",
+     "dataFilter": {
+       "timeRange": {
+         "from": "2020-12-01T00:00:00Z",
+         "to": "2020-12-06T23:59:59Z"
+       }
+     }
+   }]
+ },
+ "output": {
+   "responses": [{
+       "identifier": "default",
+       "format": {
+         "type": "image/tiff"
+       }
+     },
+     {
+       "identifier": "userdata",
+       "format": {
+         "type": "application/json"
+       }
+     }
+   ]
+ },
+ "evalscript": evalscript
+}
+```
+
+### Properties of Scenes Object and Mosaicking `TILE`
+
+This example shows how to:
+
+- Access scenes metadata when mosaicking is `TILE` using `scenes.tiles` and writing it to the userdata.json file
+- Calculate a maximum value of band B02 and writing it to the userdata.json file.
+
+> **NOTE:**
+>
+> Note that a global variable `maxValueB02` is used to assign a value to it in the `evaluatePixel` function but not to write its value to metadata in the `updateOutputMetadata` function. The advantage of this approach is that `maxValueB02` is written to metadata only once and not for each output pixel.
+
+``` js
+evalscript = """
+//VERSION=3
+function setup() {
+ return {
+   input: ["B02", "dataMask"],
+   mosaicking: Mosaicking.TILE,
+   output: {
+     id: "default",
+     bands: 1
+   }
+ }
+}
+
+var maxValueB02 = 0
+
+function evaluatePixel(samples, scenes, inputMetadata, customData, outputMetadata) {
+ //Average value of band B02 based on the requested tiles
+ var sumOfValidSamplesB02 = 0
+ var numberOfValidSamples = 0
+ for (i = 0; i < samples.length; i++) {
+   var sample = samples[i]
+   if (sample.dataMask == 1){
+       sumOfValidSamplesB02 += sample.B02
+       numberOfValidSamples += 1
+       if (sample.B02 > maxValueB02){
+           maxValueB02 = sample.B02
+       }
+   }
+ }
+ return [sumOfValidSamplesB02 / numberOfValidSamples]
+}
+
+function updateOutputMetadata(scenes, inputMetadata, outputMetadata) {
+ outputMetadata.userData = { "tiles":  scenes.tiles }
+ outputMetadata.userData.maxValueB02 = maxValueB02
+}
+"""
+
+request = {
+ "input": {
+   "bounds": {
+     "bbox": [13.8, 45.8, 13.9, 45.9]
+   },
+   "data": [{
+     "type": "sentinel-2-l1c",
+     "dataFilter": {
+       "timeRange": {
+         "from": "2020-12-01T00:00:00Z",
+         "to": "2020-12-06T23:59:59Z"
+       }
+     }
+   }]
+ },
+ "output": {
+   "responses": [{
+       "identifier": "default",
+       "format": {
+         "type": "image/tiff"
+       }
+     },
+     {
+       "identifier": "userdata",
+       "format": {
+         "type": "application/json"
+       }
+     }
+   ]
+ },
+ "evalscript": evalscript
+}
+```
+
+### Output Metadata into `userdata.json` file
+
+This example shows how to write several pieces of information to the `userdata.json` file:
+
+- A version of the software used to process the data. This information comes from `inputMetadata`.
+- Dates when the data used for processing were acquired. This information comes from `scene.tiles`.
+- Values set by the user and used for processing, such as thresholds (e.g., `ndviThreshold`) and an array of values (e.g., `notAllowedDates`).
+- Dates of all available tiles before filtering out those acquired on dates given in the notAllowedDates array. These dates are listed in the `tilesPPSDates` property of `userData`. Note how to use the global variable tilesPPS: assign it a value in `preProcessScenes` and output it in the `updateOutputMetadata` function.
+- Dates of all tiles available after the filtering. These dates are listed in the `tilesDates` property of `userData`.
+- Description of the processing implemented in the evalscript and links to external resources.
+
+``` js
+evalscript = """
+//VERSION=3
+function setup() {
+ return {
+   input: ["B08", "B04", "dataMask"],
+   mosaicking: Mosaicking.TILE,
+   output: {
+     id: "default",
+     bands: 1
+   }
+ }
+}
+
+// User's inputs
+var notAllowedDates = ["2020-12-06", "2020-12-09"]
+var ndviThreshold = 0.2
+var tilesPPS = []
+function preProcessScenes(collections) {
+ tilesPPS = collections.scenes.tiles
+ collections.scenes.tiles = collections.scenes.tiles.filter(function(tile) {
+   var tileDate = tile.date.split("T")[0];
+   return !notAllowedDates.includes(tileDate);
+ })
+ return collections
+}
+
+function evaluatePixel(samples, scenes, inputMetadata, customData, outputMetadata) {
+ var valid_ndvi_sum = 0
+ var numberOfValidSamples = 0
+ for (i = 0; i < samples.length; i++) {
+   var sample = samples[i]
+   if (sample.dataMask == 1){
+       var ndvi = (sample.B08 - sample.B04)/(sample.B08 + sample.B04)
+       if (ndvi <= ndviThreshold){
+         valid_ndvi_sum += ndvi
+         numberOfValidSamples += 1
+       }
+   }
+ }
+ return [valid_ndvi_sum / numberOfValidSamples]
+}
+
+function updateOutputMetadata(scenes, inputMetadata, outputMetadata) {
+ outputMetadata.userData = {
+   "inputMetadata.serviceVersion": inputMetadata.serviceVersion
+ }
+
+ outputMetadata.userData.description = "The evalscript calculates average ndvi " +
+ "in a requested time period. Data collected on notAllowedDates is excluded. " +
+ "ndvi values greater than ndviThreshold are excluded. " +
+ "More about ndvi: https://www.indexdatabase.de/db/i-single.php?id=58."
+
+ // Extract dates for all available tiles (before filtering)
+ var tilePPSDates = []
+ for (i = 0; i < tilesPPS.length; i++){
+   tilePPSDates.push(tilesPPS[i].date)
+ }
+ outputMetadata.userData.tilesPPSDates = tilePPSDates
+
+ // Extract dates for tiles after filtering out tiles with "notAllowedDates"
+ var tileDates = []
+ for (i = 0; i < scenes.tiles.length; i++){
+   tileDates.push(scenes.tiles[i].date)
+ }
+ outputMetadata.userData.tilesDates = tileDates
+ outputMetadata.userData.notAllowedDates = notAllowedDates
+ outputMetadata.userData.ndviThreshold = ndviThreshold
+}
+"""
+
+request = {
+ "input": {
+   "bounds": {
+     "bbox": [13.8, 45.8, 13.9, 45.9]
+   },
+   "data": [{
+     "type": "sentinel-2-l1c",
+     "dataFilter": {
+       "timeRange": {
+         "from": "2020-12-01T00:00:00Z",
+         "to": "2020-12-15T23:59:59Z"
+       }
+     }
+   }]
+ },
+ "output": {
+   "responses": [{
+       "identifier": "default",
+       "format": {
+         "type": "image/tiff"
+       }
+     },
+     {
+       "identifier": "userdata",
+       "format": {
+         "type": "application/json"
+       }
+     }
+   ]
+ },
+ "evalscript": evalscript
+}
+```
+
+> **NOTE:**
+>
+> A Jupyter Notebook with all the examples may be downloaded [here](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Evalscript/resources/metadata_sh_docs.ipynb).
+
+## Tutorials and Other Related Materials
+
+- [Interactive Intro to Evalscripts](https://github.com/eu-cdse/notebook-samples/tree/main/sentinelhub/custom_scripts#interactive-intro-to-evalscripts)
+- [Webinar - An Introduction to Working with Custom Scripts with the Sentinel Hub APIs in CDSE](https://www.youtube.com/watch?v=7mkEVukGQ4o&t=36s), October 14, 2025
+- Explore a blog on good scripting practices: [Custom Scripts: Faster, Cheaper, Better!](https://medium.com/sentinel-hub/custom-scripts-faster-cheaper-better-83f73894658a), November 18, 2019
+- Explore a blog post on sampleType: [SampleType: what’s all the fuss about?](https://medium.com/sentinel-hub/sampletype-whats-all-the-fuss-about-d7348b4de647), February 15, 2022
+- Explore a PDF tutorial on writing simple evalscripts for beginners: [Custom scripts tutorial](https://www.sentinel-hub.com/explore/education/custom-scripts-tutorial/)
+- Explore a webinar on writing evalscripts for beginners: [Custom Scripts](https://www.youtube.com/watch?v=cgAH2beNYoU), September 28, 2020
+- Explore a webinar on multi-temporal scripts and data fusion: [Multi-temporal Scripts and Data Fusion](https://www.youtube.com/watch?v=kbw3OyYkbA4), March 3, 2021
+- Explore a blog post on color maps: [PUCK - Perceptually Uniform Color Maps in Satellite Imagery](https://medium.com/sentinel-hub/perceptually-uniform-color-maps-in-satellite-imagery-3e3e24e30af5), January 28, 2021
+- [Custom Scripts Repository](https://custom-scripts.sentinel-hub.com/).

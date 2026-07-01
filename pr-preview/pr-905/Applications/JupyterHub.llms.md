@@ -1,0 +1,94 @@
+# JupyterLab
+
+JupyterLab is a user-friendly tool for working with data and code. Users can customize it by adding extra features and connecting it with other software packages. This makes organizing work and interacting with data more manageable. For more detailed information, please visit the [JupyterLab documentation](https://jupyterlab.readthedocs.io/en/stable/).
+
+Within the Copernicus Data Space ecosystem, a free JupyterLab service is offered. It allows users to access and analyze Earth observation data effectively.
+
+> **IMPORTANT:**
+>
+> To access this service you’ll be asked to make a one-time request to access the JupyterLab service in the Copernicus Data Space Ecosystem. User requests will be processed within 2 business days.
+
+## Notebooks
+
+Within JupyterLab, Python notebooks can be used for those who want to prototype their EO data processing programmatically. Additionally, example notebooks are available to help users get started with their analysis.
+
+Access to this service is available by clicking in: [https://jupyterhub.dataspace.copernicus.eu/](https://jupyterhub.dataspace.copernicus.eu/)
+
+![](_images/JupyterLab_welcome.png)
+
+Upon clicking the “ACCESS JUPYTERLAB” button, users are directed to the login window. Please use the Copernicus Data Space Ecosystem credentials to log in.
+
+## Server Options
+
+Once logged into JupyterLab, users are presented with three Jupyter instance flavours: Small, Medium, and Large. The instance size determines the allocation of resources such as CPU cores and memory to the notebook kernels. All flavours are capable of handling simple tasks and running all the samples provided in the samples folder. For fair resource usage, it is suggested to start with the “Small” flavour. Consider upgrading to a larger server to ensure smooth performance when analysing larger regions or conducting memory-intensive processing.
+
+![](_images/Flavors_captcha.png)
+
+## JupyterLab User Interface
+
+After signing in, users will see a launcher with Python environments such as Python 3, Geo Science, OpenEO, and Sentinel Hub. Each environment is equipped with specific Python packages tailored to various requirements. Users can run their code in a notebook or a console, depending on their preference. Additionally, options are provided to create text files, markdown files, or Python files, allowing users to work with different types of documents as needed.
+
+![](_images/FirstLook_jupyter.png)
+
+For a more detailed overview of the JupyterLab user interface, refer to the [datacamp tutorial](https://www.datacamp.com/tutorial/installing-jupyter-notebook).
+
+## Creating and Managing Notebooks
+
+By default, sample notebooks are located in the “samples” folder.
+
+To create a notebook in JupyterLab, users can select their desired kernel from the Notebook section in the launcher. Clicking on the kernel of choice will generate a new notebook named “Untitled.ipynb”.
+
+## Installing additional packages
+
+Additional Python packages can be installed if needed. This can be accomplished either from the Notebook Terminal, accessible in the Launcher tab, or directly within a Notebook cell, as shown below:
+
+## Terminal
+
+`pip install required_package`
+
+## Notebook
+
+`!pip install required_package`
+
+## Collaboration and Sharing
+
+JupyterLab facilitates collaborative work by allowing multiple users to edit and view the same notebooks or projects in real time. It also offers various sharing options, including exporting notebooks to different formats (HTML, PDF, Markdown) and publishing them on platforms like GitHub or JupyterHub. These features empower users to easily [share their work, communicate findings, and collaborate](https://www.go-fair.org/fair-principles/) with a broader audience, promoting efficient collaboration and seamless knowledge dissemination.
+
+## Storage
+
+When starting the notebook, in the file navigation pane (the sidebar - \#2), two folders will be visible:
+
+- `mystorage`
+- `samples`
+
+> Additional folders or files created by the user outside `mystorage` will be deleted after the session ends.
+
+### `mystorage`
+
+Each JupyterLab instance includes 10GB of storage provided by CloudFerro’s cloud infrastructure. This storage can be used to save notebooks between sessions, store results, or upload data files.
+
+The storage area remains intact when the user logs out or when the Jupyter kernel shuts down. It is preserved to 30 days from the last login. Users receive a notification prompting them to log back into JupyterLab to reset the timer and ensure their data remains preserved. If no action is taken within this period, the files will be deleted from CloudFerro cloud storage after 30 days.
+
+> **IMPORTANT:**
+>
+> Suppose the `mystorage` folder was lost due to inactivity for several weeks. In that case, the user can request restoration from the support team (though it is not guaranteed). If the folder disappeared while still active in the past few days, try restarting the server by going to File -\> Hub Control Panel -\> Stop My Server, then Start My Server. If the issue persists, reach out to our support team.
+
+### `samples`
+
+These folders are recreated with every start of the Jupyter kernel. The `samples` folder is always up-to-date with the latest version of notebooks. If changes are made to the samples, please ensure to save the updated notebook in the `mystorage` area to ensure it can be accessed when returning after a period of inactivity.
+
+## Session persistence
+
+The Jupyterlab instance remains running as long as there is interaction, and it is kept alive for an additional 8 hours after the last activity. After this period, the instance will shut off, requiring relaunching during the next login.
+
+All data saved in `mystorage` is preserved, but all other files will be deleted. Additionally, any packages (dependencies) installed using pip must be reinstalled.
+
+Ports/TCP are available within JupyterLab service as follows: 80, 443, 8786, 8787, 8501, 7860, 6006, 5000, 9000, 9001, 9002, 9003, 9042, 9080, 9090, 9091, 9100, 8000, 8001, 8002, 8003, 8004, 8005, 8006, 8007, 8008, 8009, 8010, 8011, 8012, 8013, 8014, 8050, 8060, 8080, 8081, 8082, 8090, 8091, 8100.
+
+## Resources and References:
+
+Here are some helpful links for effectively using JupyterLab in the Copernicus Data Space Ecosystem:
+
+- [JupyterLab Documentation](https://jupyterlab.readthedocs.io/en/stable/)
+- [Notebook Documentation](https://jupyter-notebook.readthedocs.io/en/stable/)
+- [Basic Notebook Tutorials](https://jupyter-notebook.readthedocs.io/en/stable/examples/Notebook/Notebook%20Basics.html)

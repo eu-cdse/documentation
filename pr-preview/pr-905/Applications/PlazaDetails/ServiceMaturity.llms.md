@@ -1,0 +1,67 @@
+# Service Maturity
+
+Each service in the openEO algorithm plaza is assigned a maturity level that indicates its qualitative documentation and performance. Currently, five different maturity levels for each service are available. The prototype is the primary and default level, followed by incubating, verifying, validating, and operating as advanced services. These levels are determined solely based on software readiness and user documentation criteria. These criteria are generally designed to ensure that the service meets specific standards and provides customers with a certain level of quality.
+
+## Level 1: Prototype
+
+By default, every published service has a prototype level. It is expected that users consider the following points when publishing a service:
+
+- The service is executable, and basic logging information is supported.
+
+- A possible reference or a general overview of what it tries to implement is provided as service metadata.
+
+> **NOTE:**
+>
+> Suppose a service meets the criteria for a higher level. In that case, an upgrade can be requested anytime after publication. It’s essential to ensure that all requirements are satisfied before the upgrade can be approved.
+
+## Level 2: Incubating
+
+In addition to the criteria for prototype level, a service needs to meet the following requirements to become an incubating service:
+
+- Service metadata should include an example along with the expected output format.
+
+- An approximate assumption on how much user credit is required to execute a service should be provided.
+
+> **NOTE:**
+>
+> Note that no added value is associated with services on a prototype or incubating levels. In other words, added value costs are included in services that are either verified, validated or operational.
+
+## Level 3: Verified or Validated
+
+When a service is labelled as either verified or validated, they mark the same level of maturity. Users can expect the same level of performance from them, but the naming difference is due to its irrelevance/relevance to software validation reports as a part of user documentation.
+
+### Level 3a: Verified
+
+- A comprehensive functional and integration test should be possible.  
+
+- Advanced logging should help while debugging.  
+
+- Service metadata should include information on detailed descriptions of the services, their parameters and a link to a publication that supports the methodology adopted. An example of the expected outcome from the service should be provided.
+
+- Approximate cost estimation on a larger scale should be presented.
+
+> **NOTE:**
+>
+> Please mention or provide a report to the support team if any constraints/limitations with the published service exist that should be considered.
+
+### Level 3b: Validated
+
+- All the criteria mentioned for the verified level apply to this level. Additionally, the validation report must be provided either as a separate document to the support team or as a non-expiring link.
+
+## Level 4: Operational
+
+A highly improved service can only be marked with the highest level of maturity, i.e. operational. It must satisfy the following criteria:
+
+- All the conditions to be either verified or validated should be satisfied.
+
+- The service has been shown to fit large-scale production and integration in an operating system.
+
+- Rules and constraints for estimating resource usage should be provided as a document to the support team.
+
+- The service lifecycle management policy should be available to end users.
+
+- An article summarising the process used for the service should be available on a peer-reviewed website or journal or a conference article (There is no limitation to a specific journal, but proof that the article was peer-reviewed should be provided to the openEO algorithm plaza support service).
+
+## Requesting a change of the maturity level
+
+Based on the fulfilment of the above criteria, developers can request an advancing the maturity level via [submitting a request](https://helpcenter.dataspace.copernicus.eu/hc/en-gb/requests/new). In your request please mention the page [Requesting a change of the maturity level](https://documentation.dataspace.copernicus.eu/Applications/PlazaDetails/ServiceMaturity.html#requesting-a-change-of-the-maturity-level) and provide explanation based on abovementioned criteria.

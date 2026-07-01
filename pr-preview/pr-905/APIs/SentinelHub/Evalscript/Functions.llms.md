@@ -1,0 +1,555 @@
+# Functions
+
+## How to Create an Evalscript
+
+Start the evalscript with `//VERSION=3` so the system will interpret it as such.
+
+For evalscripts, two functions must be specified (described in detail below):
+
+- `setup` - where you specify inputs and outputs.
+- `evaluatePixel` - which calculates the output values for each pixel.
+
+Below is an example of a simple evalscript that returns a true color image:
+
+``` js
+//VERSION=3
+function setup() {
+  return {
+    input: ['B02', 'B03', 'B04'],
+    output: { bands: 3 },
+  };
+}
+
+function evaluatePixel(sample) {
+  return [2.5 * sample.B04, 2.5 * sample.B03, 2.5 * sample.B02];
+}
+```
+
+For more simple examples, please visit the [Evalscripts Examples page](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Evalscript/Examples.html).
+
+## `setup` Function
+
+This function is required as it sets up the input and output settings.
+
+The `setup` function needs to return a javascript [object](https://developer.mozilla.org/en-US/docs/Web/javascript/Reference/Global_Objects/Object) with the following properties:
+
+- `input` - an [array](https://developer.mozilla.org/en-US/docs/Web/javascript/Reference/Global_Objects/Array) of [strings](https://developer.mozilla.org/en-US/docs/Web/javascript/Reference/Global_Objects/String) representing band names or an array of [input objects](#input-object-properties).
+- `output` - a single [output](#output-object-properties) object or an array of [output objects](#output-object-properties).
+- `mosaicking` (optional) - defines input sample preparation; see [mosaicking](#mosaicking)—defaults to `SIMPLE`.
+
+### Input Object Properties
+
+- `bands` - an array of strings representing band names.
+- `units` (optional) - a string (all bands will use this unit) or an array of strings listing the units of each band. For a description of units, see the documentation for the collection being queried — it defaults to the default units for each band.
+- `metadata` (optional) - an array of strings representing properties that can be added to the metadata. Options:
+  - `bounds` - specifying this will add `dataGeometry` and `dataEnvelope` to tiles.
+
+### Output Object Properties
+
+- `id` (optional) - any string of your choosing. It must be unique if multiple output objects are defined — defaults to `default`.
+- `bands` - the number of bands in this output.
+- `sampleType` (optional) - sets the [SampleType](#sampletype) constant, defining the returned raster sample type — defaults to `AUTO`.
+- `nodataValue` (optional) - sets the GDAL nodata metadata tag to the specified value. It is only applicable for tiff files.
+
+The number of the returned array elements represents the number of the components in the output image (e.g., 1 for grayscale results or 3 for a colorful RGB composite, such as return \[B04, B03, B02\]). If set, JPEG and PNG can only support 1 or 3 color components (plus an alpha channel). The sampleType also needs to be compatible with the output raster format.
+
+### Mosaicking
+
+Mosaicking defines how the source data is mosaicked. Not all collections support all these mosaicking types, as it depends on how the source data is distributed. See the collection information pages to determine which ones are supported. It is a constant which is specified by a string. For example, set: `mosaicking: "SIMPLE"`.
+
+- `SIMPLE` (default) is the simplest method. It flattens the mosaicked image so that only a single sample is passed for evaluation.
+- `ORBIT` - the mosaicked image is flattened for each orbit, so there is only one sample per pixel per orbit. Multiple samples can, therefore, be present if there is more than one orbit for the selected time range at the pixel location.
+- `TILE` - this is essentially the unflattened mosaic. It contains all data available for the selected time range. Multiple samples can be present, as each sample comes from a single scene, which is defined by the data source.
+
+> **WARNING:**
+>
+> `ORBIT` mosaicking currently does not work exactly as described but generates a single scene for each day containing satellite data. For most requests, this should not be an issue; however, high-latitude regions may have more than one acquisition per day. For these, consider using `TILE` mosaicking if getting all available data is paramount. This will be corrected in future releases.
+
+### `SampleType`
+
+`SampleType` defines the sample type of the output raster. The `SampleType` needs to be compatible with the raster format (e.g., JPEG cannot be `FLOAT32`). It is a constant which is specified by a string. For example, set: `sampleType: "AUTO"`.
+
+- `INT8` - signed 8-bit integer (values should range from -128 to 127)
+- `UINT8` - unsigned 8-bit integer (values should range from 0 to 255)
+- `INT16` - signed 16-bit integer (values should range from -32768 to 32767)
+- `UINT16` - unsigned 16-bit integer (values should range from 0 to 65535)
+- `FLOAT32` - 32-bit floating point (values have effectively no limits)
+- `AUTO` (default) - values should range from 0-1, which will then automatically be stretched from the interval \[0, 1\] to \[0, 255\] and written into a `UINT8` raster. Values below 0 and above 1 will be clamped to 0 and 255, respectively. `AUTO` is the default if `sampleType` is not set in the [output object](#output-object-properties).
+
+**Handling `SampleType` in an Evalscript**
+
+The evalscript is responsible for returning the values in the interval expected for the chosen `sampleType`. For integer `sampleType`, any floating point values will be rounded to the nearest integer and clamped to the value range of the `sampleType`. There is no need to do this yourself. For example, in the case of `UINT8` output, 40.6 will be saved as 41, and 310 will be saved as 255. `AUTO` is selected if no `sampleType` is specified, and the evalscript should return values ranging from 0-1. This is convenient as handling reflectance (e.g., Sentinel-2) data can be more intuitive.
+
+### Examples
+
+This simple Sentinel-2 `setup()` function gets bands B02, B03, and B04 and returns (`UINT16`) 16-bit unsigned raster values.
+
+``` js
+function setup() {
+  return {
+    input: [
+      {
+        bands: ['B02', 'B03', 'B04'], // this sets which bands to use
+        units: 'DN', // here you optionally set the units. All bands will be in this unit (in this case Digital numbers)
+      },
+    ],
+    output: {
+      // this defines the output image type
+      bands: 3, // the output of this evalscript will have RGB colors
+      sampleType: 'UINT16', // raster format will be UINT16
+    },
+  };
+}
+```
+
+This Sentinel-2 `setup()` function gets bands B02, B03, and B04 and returns a single raster with 8-bit integer values. To return values in the correct interval for the `UINT8` sampleType, the `evaluatePixel()` function multiplies the reflectance values by 255, and a true-color image is returned.
+
+``` js
+function setup() {
+  return {
+    input: [
+      {
+        bands: ['B02', 'B03', 'B04'], // this sets which bands to use
+      },
+    ],
+    output: {
+      bands: 3,
+      sampleType: 'UINT8', // raster format will be UINT8
+    },
+  };
+}
+function evaluatePixel(sample) {
+  return [sample.B04 * 255, sample.B03 * 255, sample.B02 * 255]; // bands need to be multiplied by 255
+}
+```
+
+In the case of UINT16, the multiplication factor in `evaluatePixel()` would be 65535 instead of 255.
+
+The following example uses bands with different units and produces two rasters.
+
+``` js
+function setup() {
+    return {
+      input: [{
+          bands: ["B02", "B03", "B04", "B08"],
+          units: ["reflectance", "reflectance", "reflectance", "DN"] // B08 will be in digital numbers, the rest reflectance
+      }],
+      output: [{ // this is now an array since there are multiple output objects
+          id: "rgb"
+          bands: 3
+      }, {
+          id: "falseColor"
+          bands: 3
+      }]
+    }
+}
+```
+
+## `evaluatePixel`
+
+The `evaluatePixel` function is a mapping that maps the input bands in their input units to the values in the output raster(s). The function is executed once for each output pixel.
+
+### Parameters
+
+The `evaluatePixel` function has five positional parameters:
+
+``` js
+function evaluatePixel(samples, scenes, inputMetadata, customData, outputMetadata)
+```
+
+As explained below, the first two parameters can be objects or arrays depending on the requested [mosaicking](#mosaicking). They are additionally changed for data fusion requests, which are documented separately [here](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Data/DataFusion.html). The remaining parameters are always objects.
+
+#### Samples
+
+- When mosaicking is `SIMPLE`:
+  - `samples` - an [object](https://developer.mozilla.org/en-US/docs/Web/javascript/Reference/Global_Objects/Object) containing the band values of the single mosaicked sample in the specified units as its [properties](https://developer.mozilla.org/en-US/docs/Web/javascript/Guide/Working_with_objects#objects_and_properties). The property names equal the names of all the input bands; pixel values of a band can be accessed in the samples object (e.g., `samples.B02`).
+
+> **NOTE:**
+>
+> When using mosaicking `SIMPLE`, you usually call this parameter sample in our examples to emphasize that it is an object, not an array.
+
+- When mosaicking is `TILE` or `ORBIT`:
+  - `samples` - an [array](https://developer.mozilla.org/en-US/docs/Web/javascript/Reference/Global_Objects/Array) of samples as defined in the `SIMPLE` case. None[^1], one or multiple samples can, therefore, be present depending on how many orbits/tiles there are for the selected time range and area of interest. Pixel values of a band can be accessed for each sample as an item of the array(e.g., `samples[0].B02`).
+
+#### Scenes
+
+- When mosaicking is `SIMPLE`:
+
+  - `scenes` object is empty.
+
+- When mosaicking is `ORBIT`:
+
+  - `scenes` - an object containing a property `orbits`. `scenes.orbits` is an array of objects, each containing metadata for one orbit (day). The length of `scenes.orbits` array is always the same as the length of the `samples` array. A property like `dateFrom` can be accessed as `scenes.orbits[0].dateFrom`. Each object’s properties include:
+  - `dateFrom` (string)—ISO date and time in “YYYY-MM-DDTHH:MM:SSZ” format, together with `orbits.dateTo` represents the time interval of one day. All tiles acquired on this day are mosaicked into this scene.
+  - `dateTo` (string)—ISO date and time in “YYYY-MM-DDTHH:MM:SSZ” format, together with `orbits.dateFrom` represents the time interval of one day. All tiles acquired on this day are mosaicked into this scene.
+  - `tiles` (array) - an array of metadata for each tile used for mosaicking this orbit. Each element has the same properties as elements of `scenes.tiles` (listed just below for mosaicking `TILE`).
+
+- When mosaicking is `TILE`:
+
+  - scenes - an object containing a property `tiles`. `scenes.tiles` is an array of objects, each containing metadata for one tile. The length of `scenes.tiles` array is always the same as the length of the `samples` array. A property, for example, `cloudCoverage`, can be accessed as `scenes.tiles[0].cloudCoverage`. The properties available for each `tiles` element depends on requested data and are documented in the “Scenes Object” chapter for each data collection, e.g., [here](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Data/S2L1C.html#scenes-object) for Sentinel-2 L1C. All possible properties are:
+    - `date` (string) — ISO date and time in “YYYY-MM-DDTHH:MM:SSZ” format. It represents the date the tile was acquired.
+    - `cloudCoverage` (number) - Estimated percentage of pixels covered by clouds in the tile. This field is not available for all data collections. A value of `2.09` means that 2.09% of pixels in the tile are cloudy.
+    - `dataPath` (string) - Path to where the tile is stored on a cloud. For example `"s3://sentinel-s2-l2a/tiles/33/T/VM/2020/9/15/0"`.
+    - `dataGeometry` (GeoJSON-like object, see example) - an optional property, added only when requested. Represents a geometry of data coverage within the tile.
+    - `dataEnvelope` (GeoJSON-like object, see example) - an optional property, added only when requested. Represents a bbox of `dataGeometry`.
+    - `shId` (number) - Sentinel Hub internal identifier of the tile. For example, `11583048`.
+
+> **NOTE:**
+>
+> Objects may also contain fields prefixed by `__` (double underscore). Such fields are used internally by Sentinel Hub services. Evalscripts should not use these fields because they can be changed or removed at any time, and such fields **must never be modified or deleted**. Doing so may cause your request to fail or return incorrect results.
+
+> **NOTE:**
+>
+> In the first implementation, `scenes` was an array of objects, where each of them contained metadata for one `orbit` or `tile` (depending on selected mosaicking). It was possible to access metadata in the following way: `scenes[0].date`. This approach is now deprecated and it is strongly advised to use `scenes` as described above.
+
+#### `inputMetadata`
+
+`inputMetadata` is an object containing metadata used for processing. Its properties are:
+
+- `serviceVersion` - the version of the platform which was used for processing.
+- `normalizationFactor` - the factor used by the platform to convert digital numbers (DN) to reflectance using `REFLECTANCE = DN * normalizationFactor`. This is useful when requesting bands for which both [units](#input-object-properties) - DN and REFLECTANCE - are supported.
+
+#### `customData`
+
+`customData` is an object reserved for possible future use.
+
+#### `outputMetadata`
+
+`outputMetadata` is an object that can be used to output any user-defined metadata, including passing `scenes` objects, user-defined thresholds, or IDs of original tiles used for processing. It contains:
+
+- `userData` - is a property which can be assigned a generic object containing any data. This can be pushed to the API response by adding a `userdata` identified output response object to an API request (see [this](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/ApiReference.html#tag/process) for details or an example [here](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Process/Examples/S2L2A.html#true-color-and-metadata-multi-part-response-geotiff-and-json)).
+
+### Returns
+
+The `evaluatePixel` function can return:
+
+- An object whose keys are the [output](#output-object-properties) IDs and its values are arrays of numbers. The array length is bound by the [output object](#output-object-properties) bands number and the values by [sampleType](#sampletype).
+- An array of numbers with the same rules as above. This option can be used only when a single image [output](#output-object-properties) is defined.
+- Nothing; the return statement is not specified. This is useful when only information in `outputMetadata.userData` is needed.
+
+#### Input Units and Output Values
+
+The values of each `sample` are the units specified in the [input object](#input-object-properties). See the input object [documentation](#input-object-properties) for more information. The way the output values are written to the output raster depends on the [sample type](#sampletype). `AUTO` will stretch values in the interval \[0, 1\] to \[0, 255\] and then write those values into an `UINT8` raster. The remaining sample types expect values within the range of the sample format.
+
+### Examples
+
+Example `evaluatePixel` script returns a simple True Color image based on bands B04, B03, B02:
+
+``` js
+function evaluatePixel(sample) {
+  return [2.5 * sample.B04, 2.5 * sample.B03, 2.5 * sample.B02];
+}
+```
+
+When there are multiple outputs in the setup function, they can be provided in this way:
+
+``` js
+function evaluatePixel(sample) {
+  return {
+    trueColor: [2.5 * sample.B04, 2.5 * sample.B03, 2.5 * sample.B02],
+    falseColor: [2.5 * sample.B08, 2.5 * sample.B04, 2.5 * sample.B03],
+  };
+}
+```
+
+Calculate the average value of band B04 when using `ORBIT` or `TILE` mosaicking:
+
+``` js
+function evaluatePixel(samples) {
+  var sum = 0;
+  var nonZeroSamples = 0;
+  for (var i = 0; i < samples.length; i++) {
+    var value = samples[i].B04;
+    if (value != 0) {
+      sum += value;
+      nonZeroSamples++;
+    }
+  }
+  return [sum / nonZeroSamples];
+}
+```
+
+## `updateOutput` Function (Optional)
+
+This function can be used to adjust the number of output bands. This is useful, for example, to request all observations in a given time period as bands of an output file. The function is executed after the `setup` and `preProcessScenes` functions but before the `evaluatePixel`.
+
+### Parameters
+
+- `output` - an object containing IDs of all outputs and their number of bands as specified in the `setup` function (Note: This is not the same object as `output` in the `setup` function.). The number of bands of each output is stored under `output.<output id>.bands` where `<output id>` is equal to values in the `setup.output` object. For example:
+
+``` js
+{
+    "default": {
+        "bands": 2
+    },
+    "my_output": {
+        "bands": 3
+    }
+}
+```
+
+- `collection` - an object containing one array per requested data collection. The length of each array equals the number of scenes available for processing. If only one data collection is requested, use `collection.scenes.length` to get the number of available scenes. For data fusion requests, use `collection.<data collection identifier>.scenes.length`. Each element in an array has a property:
+  - `date` (type Date) - the date when the corresponding scene was acquired.
+
+### Returns
+
+This function updates the number of output bands and does not return anything.
+
+### Example
+
+This example shows a request from sentinel-2-l1c data from January 2020 with a maximum of 50% cloud coverage. All of this is specified in the body of a request which should return all available scenes as bands of an output file. Since the number of scenes available is unknown, the number of output bands cannot be set directly in a `setup` function. Using the `updateOutput` function, the number of available scenes can be found from the `collection` and assigned as the value of `output.<output id>.bands`:
+
+``` js
+//VERSION=3
+function setup() {
+  return {
+    input: [
+      {
+        bands: ['B02'],
+      },
+    ],
+    output: [
+      {
+        id: 'my_output',
+        bands: 1,
+        sampleType: SampleType.UINT16,
+      },
+    ],
+    mosaicking: Mosaicking.ORBIT,
+  };
+}
+
+function updateOutput(output, collection) {
+  output.my_output.bands = collection.scenes.length;
+}
+
+function evaluatePixel(samples) {
+  var n_scenes = samples.length;
+  let band_b02 = new Array(n_scenes);
+
+  // Arrange values of band B02 in an array
+  for (var i = 0; i < n_scenes; i++) {
+    band_b02[i] = samples[i].B02;
+  }
+
+  return {
+    my_output: band_b02,
+  };
+}
+```
+
+## `updateOutputMetadata` function (Optional)
+
+This function is optional and, if present, is called at the end of evalscript evaluation. It provides a convenient way to forward information pertaining to the returned data as a whole (as opposed to `evaluatePixel`, which is run for each pixel) into an output object. Do this by assigning any object required to the `userData` property of the `outputMetadata` parameter.
+
+### Parameters
+
+These are the full parameters of the `updateOutputMetadata` function:
+
+``` js
+function updateOutputMetadata(scenes, inputMetadata, outputMetadata)
+```
+
+See the description of parameters in the `evaluatePixel` function chapter:
+
+- [`scenes`](#scenes)
+- [`inputMetadata`](#inputmetadata)
+- [`outputMetadata`](#outputmetadata)
+
+## `preProcessScenes` function (Optional)
+
+This function is optional, and if present, it is called at the beginning of the script evaluation before the actual satellite data is processed. Use it when [mosaicking](#mosaicking) is set to `ORBIT` or `TILE`. It provides additional filtering functionality for scenes after the constraints set in the request parameters have been applied. This is useful, for example, to reduce the number of scenes needed, thereby reducing processing time and the number of processing units for the request.
+
+### Parameters
+
+These are the full parameters of the `preProcessScenes` function:
+
+``` js
+function preProcessScenes(collections)
+```
+
+#### `collections`
+
+`collections` is an object, which contains different properties depending on which mosaicking option is selected.
+
+- If mosaicking is `ORBIT`, `collections` contains:
+
+  - `from` (type Date) - the value given as `timeRange.from` in the body of the request, representing the start of the search interval
+  - `to` (type Date) - the value given as `timeRange.to` in the body of the request, representing the end of the search interval
+  - `scenes.orbits` - corresponds to `scenes.orbits` as described for `evaluatePixel` function and mosaicking `ORBIT` [here](#scenes), but it doesn’t contain `tiles`.
+
+- If mosaicking is TILE, `collections` contains:
+
+  - `scenes.tiles` - corresponds to `scenes.tiles` as described for `evaluatePixel` function and mosaicking `TILE` [here](#scenes).
+
+### Returns
+
+The `preProcessScenes` function must return objects of the same type as `collections`. Most often, a subset of the input `collections` will be returned, for example, to keep only the data acquired before 2019-02-01:
+
+``` js
+function preProcessScenes(collections) {
+  collections.scenes.orbits = collections.scenes.orbits.filter(
+    function (scene) {
+      return new Date(scene.dateFrom) < new Date('2019-02-01T00:00:00Z');
+    },
+  );
+  return collections;
+}
+```
+
+### Examples
+
+#### Filter scenes by particular days
+
+This example uses the `preProcessScenes` function to select images acquired on two particular dates within the requested `timeRange`. This example was taken (and adopted) from the evalscript for delineation of [burned areas](https://github.com/sentinel-hub/custom-scripts/blob/11b967f8c8ea10211160e53f43be7fa9b7805c3d/sentinel-2/burned_area/script.js), based on the comparison of Sentinel-2 images acquired before (i.e., on “2017-05-15”) and after (i.e., on “2017-06-24”) the event.
+
+##### If mosaicking is `ORBIT`:
+
+``` js
+function preProcessScenes(collections) {
+  var allowedDates = ['2017-05-15', '2017-06-24']; //before and after Knysna fires
+  collections.scenes.orbits = collections.scenes.orbits.filter(
+    function (orbit) {
+      var orbitDateFrom = orbit.dateFrom.split('T')[0];
+      return allowedDates.includes(orbitDateFrom);
+    },
+  );
+  return collections;
+}
+```
+
+##### If mosaicking is `TILE`:
+
+``` js
+function preProcessScenes(collections) {
+  var allowedDates = ['2017-05-15', '2017-06-24']; //before and after Knysna fires
+  collections.scenes.tiles = collections.scenes.tiles.filter(function (tile) {
+    var tileDate = tile.date.split('T')[0];
+    return allowedDates.includes(tileDate);
+  });
+  return collections;
+}
+```
+
+#### Filter scenes by time interval
+
+Filter out (remove) all the scenes acquired between the two selected dates, which both fall within the requested time range.
+
+##### If mosaicking is `ORBIT`:
+
+``` js
+function preProcessScenes(collections) {
+  collections.scenes.orbits = collections.scenes.orbits.filter(
+    function (orbit) {
+      return (
+        new Date(orbit.dateFrom) < new Date('2019-01-31T00:00:00Z') ||
+        new Date(orbit.dateFrom) >= new Date('2019-06-01T00:00:00Z')
+      );
+    },
+  );
+  return collections;
+}
+```
+
+##### If mosaicking is `TILE`:
+
+``` js
+function preProcessScenes(collections) {
+  collections.scenes.tiles = collections.scenes.tiles.filter(function (tile) {
+    return (
+      new Date(tile.date) < new Date('2019-01-31T00:00:00Z') ||
+      new Date(tile.date) >= new Date('2019-06-01T00:00:00Z')
+    );
+  });
+  return collections;
+}
+```
+
+#### Specify the number of months taken into account
+
+Values of `timeRange.from` and `timeRange.to` parameters as given in the request, are available in the `preProcessScenes` function as `collections.to` and `collections.from`, respectively. Mosaicking must be `ORBIT` to use these parameters. They can be used to filter out scenes acquired more than 3 months before the given `to` date and time.
+
+``` js
+function preProcessScenes(collections) {
+  collections.scenes.orbits = collections.scenes.orbits.filter(
+    function (orbit) {
+      var orbitDateFrom = new Date(orbit.dateFrom);
+      return (
+        orbitDateFrom.getTime() >=
+        collections.to.getTime() - 3 * 31 * 24 * 3600 * 1000
+      );
+    },
+  );
+  return collections;
+}
+```
+
+The `3*31*24*3600*1000` represents the 3 months converted to milliseconds. This is needed so that a 3-month time span can be compared to `scene.dateFrom` and `collections.to`, which are all returned as milliseconds since 1970-1-1 by the [`getTime()` function](https://developer.mozilla.org/en-US/docs/Web/javascript/Reference/Global_Objects/Date/getTime).
+
+> **NOTE:**
+>
+> The result is the same as if the `timeRange.from` parameter in the body of the request is set to 3 months prior to the `timeRange.to`.
+
+#### Select one image per month
+
+In this example, the available scenes are filtered so that only the first scene acquired in each month is sent to the `evaluatePixel` function:
+
+##### If mosaicking is `ORBIT`:
+
+``` js
+function preProcessScenes(collections) {
+  collections.scenes.orbits.sort(function (s1, s2) {
+    var date1 = new Date(s1.dateFrom);
+    var date2 = new Date(s2.dateFrom);
+    return date1 - date2;
+  }); // sort the scenes by dateFrom in ascending order
+
+  firstOrbitDate = new Date(collections.scenes.orbits[0].dateFrom);
+  var previousOrbitMonth = firstOrbitDate.getMonth() - 1;
+  collections.scenes.orbits = collections.scenes.orbits.filter(
+    function (orbit) {
+      var currentOrbitDate = new Date(orbit.dateFrom);
+      if (currentOrbitDate.getMonth() != previousOrbitMonth) {
+        previousOrbitMonth = currentOrbitDate.getMonth();
+        return true;
+      } else return false;
+    },
+  );
+  return collections;
+}
+```
+
+##### If mosaicking is `TILE`:
+
+``` js
+function preProcessScenes(collections) {
+  collections.scenes.tiles.sort(function (s1, s2) {
+    var date1 = new Date(s1.date);
+    var date2 = new Date(s2.date);
+    return date1 - date2;
+  }); // sort the scenes by dateFrom in ascending order
+
+  firstTileDate = new Date(collections.scenes.tiles[0].date);
+  var previousTileMonth = firstTileDate.getMonth() - 1;
+  collections.scenes.tiles = collections.scenes.tiles.filter(function (scene) {
+    var currentTileDate = new Date(scene.date);
+    if (currentTileDate.getMonth() != previousTileMonth) {
+      previousTileMonth = currentTileDate.getMonth();
+      return true;
+    } else return false;
+  });
+  return collections;
+}
+```
+
+## OGC Services Specifics
+
+There are some specifics when using evalscript with WMS, WTS, and WCS services:
+
+- These services return only the default [output](#output-object-properties). Only one image can be returned with each request and it is not possible to request metadata in JSON format.
+- `TRANSPARENCY` and `BGCOLOR` parameters are ignored. Use the [`dataMask`](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/UserGuides/Datamask.html) band in evalscript to handle transparency, as described [here](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/UserGuides/Transparency.html).
+- Bit depth, which is given as the part of a `FORMAT` parameter (e.g., `FORMAT=image/tiff;depth=8`), is ignored. Use [`sampleType`](#sampletype) in evalscript to specify the bit depth desired.
+
+## Footnotes
+
+[^1]: In case `samples` is an empty array, calling `samples[0].B02` will raise an error and it is up to users to handle this in their evalscript.

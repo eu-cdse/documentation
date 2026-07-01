@@ -1,0 +1,155 @@
+# openEO Web Editor
+
+The openEO Web Editor is a web-based graphical user interface (GUI) designed to interact with the openEO API visually. It offers a user-friendly platform for performing various Earth Observation data processing tasks. These tasks include querying available data, defining processing workflows, executing processes, and visualizing results.
+
+Users can create intricate processing chains by linking different processing steps as building blocks. The interface allows for specifying parameters and input data for each step, facilitating the creation of customized and detailed processing workflows.
+
+In other words, the openEO Web Editor can act as a simple interface for:
+
+- Data Discovery: Users can explore and discover available Earth observation datasets.
+- Workflow Creation: The user can create an openEO processing workflow from basic building blocks in a drag-and-drop interface.
+- Workflow Execution: Once the User has defined their processing workflow and configured the parameters, they can execute the workflow using the Web Editor.
+- Result Visualization: The user can explore the output data on interactive maps, generate charts and graphs
+- Job Management: In the web editor, the users can monitor processing jobs, view job histories, and access the generated results.
+
+The openEO Web Editor can be accessed via [https://openeo.dataspace.copernicus.eu/](https://openeo.dataspace.copernicus.eu/). Even without logging in, users can explore information on available collections, processes, User Defined Functions(UDF) Runtimes, and the options for exporting files. Additionally, users can create openEO process graphs; however, logging in is necessary to run them.
+
+## Getting Started
+
+Upon initial access to the provided link, users are presented with the following screen, which is further explained below in reference to the given numbering:
+
+![](_images/webeditor/webeditor.png)
+
+1.  **Service Offering**
+
+    The sidebar allows users to navigate the available collections, processes, UDF Runtimes and Export file formats. A search feature at the top of the sidebar allows for direct searching.
+
+    Within the *Collections* section, users can access a comprehensive list of data collections available in the backend through openEO. Clicking on any of these collections will bring up a detailed metadata window.
+
+    Under the *Processes* section, users can find a comprehensive list of openEO processes designed explicitly for Earth Observation processing. These processes operate on individual values within an array, accepting and returning a single value.
+
+    The *UDF Runtimes* section provides information on the available environments or platforms where User Defined Functions (UDFs) can be executed. Currently, the Python runtime is available during this stage of development.
+
+    In the *Export File Formats* section, users are guided on the supported output formats within openEO. Clicking on each format provides a detailed summary of its associated parameters.
+
+2.  **Help**
+
+    The *Help* icon at the top of the screen provides a short tour of the main sections of the editor.
+
+3.  **Wizard**
+
+    The *Wizard* is an experimental feature designed to simplify the creation of openEO processes for common use cases.
+
+4.  **Server**
+
+    The Server icon will pop up a window giving the user detailed information on the server used for processing the created processes.
+
+5.  **Guest**
+
+    When a user clicks on *Guest*, the dropdown will provide an option to log in. The profile will be updated with the username when logged in.
+
+6.  **Features**
+
+    The basic functionalities that can be handy when creating the processes in openEO Web Editor are available in this row. These functionalities include creating a new script, importing processes from external sources, exporting in another programming language, validating processes on the server side, editing process metadata, adding parameters, etc.
+
+7.  **Process Editor**
+
+    The *Process Editor* features both “**Visual Model**” and “**Code**” modes. In “**Visual Model**,” users can create processing chains by adding collections and processes and then connecting them. This mode simplifies the creation of workflows using a graphical interface. The “**Code**” tab lets users view the generated JSON workflow process as a process graph. This provides a detailed view of the workflow structure in a machine-readable format.
+
+    The area on the right will later be used for previewing collections or inspecting the results of batch jobs, web services or other computations. It will also display log messages for a batch job.
+
+8.  **Log in**
+
+    As previously mentioned, it is necessary to log in to interact with the server. As demonstrated below, a new window will appear when attempting to log in. While other options are sometimes available, the “Copernicus Data Space Ecosystem” is recommended authentication. For further information regarding various authentication methods or to seek assistance, click on the “help” option at the top or contact us.
+
+    ![](_images/webeditor/editor_login.PNG)
+
+## Create a workflow
+
+Users can build their models using a simple drag-and-drop method based on their applications. Some processes may necessitate input parameters, which must be carefully considered. As an illustration, we present a simple case of creating a workflow to calculate NDVI using the Sentinel 2 L2A collection. Three main steps in using openEO for Earth Observation data processing are shown below:
+
+1.  Load Collection
+
+    1.  The first step is to search for the required collections for analysis. Therefore, verifying that the necessary collections exist within the openEO database is important. This can be done by exploring or searching the list of available collections from the sidebar of the interface. In our example, we want to calculate the Normalized Difference Vegetation Index (NDVI), so the Sentinel 2 L2A collection will be used. So, the next step is to drag and drop it into the Process Editor for further operations.
+
+    ![](_images/webeditor/drag_collection.png)
+
+    2.  Once a collection is loaded, several parameters must be specified, including the area of interest, temporal extent, and selection of bands. Clicking on `load_collection` opens a window where these parameters can be defined for subsequent processing.     Users can choose between generating a bounding box or importing their spatial extent by dragging and dropping GeoJSON or KML files onto the map view to specify the area of interest. While this example demonstrates the use of a bounding box, it is suggested to experiment with a suitably compact area for testing purposes.
+
+    ![](_images/webeditor/define_bbox.png)
+
+    Another parameter to consider is the temporal extent, which allows users to restrict the loaded data to a specified time window. It is encouraged to choose a timeframe of 1-2 weeks for testing purposes.
+
+    ![](_images/webeditor/define_temporal.png)
+
+    In our case, for NDVI calculation, we have specifically chosen the Red band (B04) and the Near-Infrared (NIR) band (B08).
+
+    ![](_images/webeditor/define_bands.png)
+
+2.  Apply Processes
+
+    The next step involves applying essential openEO processes, ranging from straightforward mathematical operations to more complex tasks.
+
+    In this task, we will use a specific openEO process called `reduce_dimension` two times to simplify our data cube. First, we deal with the various bands and then reduce the temporal dimension.
+
+![](_images/webeditor/reduce_dimension.png)
+
+In the initial process, the `reduce_dimension` algorithm is utilised to reduce the band dimension after executing a series of addition, subtraction, and division operations necessary for the NDVI calculation.
+
+![](_images/webeditor/reduce_bands.png)
+
+Following this, with the same `reduce_dimension` process, we eliminate the temporal dimension by selecting the maximum value using the max function.
+
+![](_images/webeditor/temporal_reducer.png)
+
+3.  Select a format
+
+The user needs to select the output format as a final step in the workflow creation.
+
+![](_images/webeditor/save_process.png)
+
+Since this workflow eliminated the temporal dimension, we can keep things simple and save the result as a GeoTiff.
+
+![](_images/webeditor/save_as_gtiff.png)
+
+## Execute the workflow
+
+The final step involves running the created workflow to complete the data analysis process. This can be done in two ways: synchronously or through batch job-based method. The synchronous method allows the user to download the data directly. In contrast, the batch job-based method enables the user to run the process as a batch. The choice of method depends on the user’s preference and the dataset size.
+
+![](_images/webeditor/execute_jobs.png)
+
+In the figure above, the red box includes the two methods possible for running the process. In this example, we used the synchronous method by directly clicking on *Run now*, which popped up a box in the bottom right corner.
+
+Once the execution process is completed, the result is automatically saved locally. It can also be visualised in the parallel window, as shown in the image below:
+
+![](_images/webeditor/webeditor_result.PNG)
+
+Furthermore, if a Batch Job is created, its actions can be monitored from the same window.
+
+## Data Download using Wizard
+
+The Wizard feature at the top navigation bar allows easy creation of process graphs for basic use cases without dragging and dropping processes as done earlier.
+
+> **WARNING:**
+>
+> This feature is experimental and it is not guaranteed that the generated process graphs are fully functional.
+
+At the time of this documentation release, two cases are available through the Wizard feature: direct downloading of data for a selected area and downloading computed spectral indices as shown in the figure below:
+
+![](_images/webeditor/wizard.png)
+
+Users can select their preferred task and click the *Next* button to proceed. The following window will allow the user to define the area of interest, temporal extent, and required collection. This method makes the task considerably more straightforward than the previously mentioned workflow creation approach.
+
+## Monitor the workflow
+
+When a batch job is created, openEO’s logs feature can help with *monitoring and debugging* of workflows. The backend typically uses this to dump information during data processing that may be relevant for the user (e.g. warnings, resource stats, …). Job logs can be visualized programmatically and in the web editor like many other processes.
+
+As shown in the following figure, users can access the job logs by clicking on the icon next to the job ID at the bottom of the interface.
+
+![](./_images/webeditor/joblist.png)
+
+When clicking on it, a pane emerges on the right, as shown below:
+
+![](./_images/webeditor/joblogs.png)
+
+Moreover, users can utilize openEO processes like `inspect`. This allows logging of custom information to be displayed in the job logs.

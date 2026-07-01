@@ -1,0 +1,59 @@
+# Credit Usage
+
+To access and use openEO functionalities, users must log in with a CDSE account. The API is a publicly accessible service that is available free of charge, but it is backed by a limited amount of cloud resources. To ensure fair distribution of these free cloud resources, each user is allocated a set of ‘credits’ on a monthly basis.
+
+> **NOTE:**
+>
+> A Copernicus General user\*\* receives 10,000(¹) free openEO credits automatically on the first of every month to explore and start using the openEO API.  
+> Users can check their current credit balance in the [openEO Algorithm Plaza](https://marketplace-portal.dataspace.copernicus.eu/billing) under the ‘Billing’ tab.  
+> *(¹)Boost of monthly openEO Credits to 10,000. [Read our news item](https://dataspace.copernicus.eu/news/2024-9-3-temporary-boost-monthly-openeo-credits-10000-granted-user) published on September 3, 2024.*
+
+> **NOTE:**
+>
+> When the provided credits are insufficient, you can purchase extra openEO Cloud Credits through CREODIAS. Discover openEO Credit Packages here: [Visit CREODIAS](https://ecommerce.creodias.eu/vito). Other options for extra credits are discussed [here](https://marketplace-portal.dataspace.copernicus.eu/pages/pricing).
+
+\*\*Every registered CDSE user by default has the Copernicus General user type. Users can check the typology of their account under the Account info in [Copernicus Data Space Ecosystem Dashboard](https://shapps.dataspace.copernicus.eu/dashboard/#/) .
+
+Higher quota (credits) is granted for [Collaborative Ground Segment](https://sentinels.copernicus.eu/web/sentinel/missions/collaborative) users or Copernicus Service users based on their specific usage needs. They receive a total of 20,000 credits per month that is replenished at the beginning of each month.
+
+Copernicus General Account type users can request an upgrade to other user Account types by taking into account the user Account type definitions and eligibility criteria explained in [Which users are eligible for which account types (Quotas)?](https://documentation.dataspace.copernicus.eu/FAQ.html#which-users-are-eligible-for-which-account-types).
+
+## Factors affecting credit usage
+
+Credits will deducted based on the chosen openEO services or processes. The amount varies depending on the processing complexity of the used services. Important parameters to take into consideration are:
+
+- CPU usage (cores/second)
+- Memory usage (GB/second)
+- Storage (GB/day)
+- Data access to specific layers (e.g. Sentinel Hub or commercial)
+- Usage of services contributed by third parties through an ‘added value’ cost (e.g. per hectare)
+- Usage of synchronous requests, which currently have a fixed cost of 7 credits per request.
+- Startup & storage cost of batch jobs is currently two credits.
+
+For example, consider a scenario where we compute a Sentinel-2 based NDWI for 10 hectares, resulting in a series of GeoTiffs (one for each observation). When running this example, the batch job reports its usage, which can be monitored in the [OpenEO Web Editor](https://openeo.dataspace.copernicus.eu/) by clicking the ![](./_images/batch_info.png) button for an individual batch job:
+
+![](./_images/batchjob_metrics.png)
+
+Usage metrics are shown in the OpenEO Web Editor for an example batch job, with conversion factors for CDSE backend on March 2026:
+
+- 13,400,773 mb-seconds corresponds to 3.64 GB hours or 3.9 credits
+- 5099 CPU seconds corresponds to 1.4 CPU hour, which translates to 2.3 credits
+- A fixed cost of 2 credits is charged per batch job for management overhead and storage.
+
+Summing this up, the total comes to 8.2 credits. With the current free tier offering 10,000 credits(¹), quite a few jobs like this can be run! However, it is important to note that resource consumption (CPU and memory in this case) is not fixed over time. Performance characteristics of a particular cloud can fluctuate depending on the overall load. Cloud providers try to avoid this, but generally, they only manage to do so within the limits of a given SLA. The conversion factor from resource usage to credits is subject to change, as it is determined by the backend.
+
+*(¹)Boost of monthly openEO Credits to 10,000. [Read our news item](https://dataspace.copernicus.eu/news/2024-9-3-temporary-boost-monthly-openeo-credits-10000-granted-user) published on September 3, 2024.*
+
+## Estimating resource usage
+
+Often, users want to know in advance the costs incurred by using openEO, especially when generating larger results or running the same job at scheduled times. This is not trivial to determine without running the job, as resource consumption heavily depends on the specific combination of processes used.
+
+Therefore, to estimate job usage, it is advisable to start small. For instance, for a query at a 10m resolution, begin with a 10ha area and simply run that job. As shown above, this will usually incur a cost of only a few cents. In the worst case, it might cost a few euros, but this would also indicate that the job takes multiple hours to run.
+
+Once an initial cost for a small area is established, it is possible to extrapolate to a larger area. If simple linear extrapolation shows that a larger job is affordable, proceed with a job on larger areas, like 50ha or up to 100x100km. This will show how the job scales and the associated cost. The relative cost most likely decreases for increasing job sizes. If at any point the cost appears unreasonable, do not hesitate to reach out via [posting to CDSE Forum](https://forum.dataspace.copernicus.eu/) or via [submitting a request](https://helpcenter.dataspace.copernicus.eu/hc/en-gb/requests/new)!
+
+For more comprehensive guidelines on large-scale processing, please refer to our documentation [here](../../APIs/openEO/large_scale_processing.llms.md).
+
+## Failing jobs and credit refunds
+
+If jobs fail due to an error on the provider side, the user can be refunded for the credits used by these jobs. A user can fill in a [refund request form](https://dataspace.copernicus.eu/openeo-refund-request). The form requires the user to provide details about the job(s), such as the job ID, the error message received, and any relevant logs or screenshots. The request will be reviewed by the support team, and if approved, the credits used for that job and similar jobs in the same timeframe will be refunded to the user’s account. This is possible for all types of credits except for the free tier credits, which are not refundable.

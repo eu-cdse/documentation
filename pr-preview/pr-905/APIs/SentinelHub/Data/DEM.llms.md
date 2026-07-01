@@ -1,0 +1,104 @@
+# Digital Elevation Model (DEM) Data
+
+## About DEM Data
+
+## Mission information
+
+A **DEM** is a digital model or 3D[^1] representation of a terrain's surface. With a DEM you are able to obtain and analayse heights within your area of interest, and integrate the data in 3D applications. The data can also be used for the **orthorectification** of satellite imagery (e.g., Sentinel 1).
+
+**Copernicus DEM** is based on WorldDEM that is infilled on a local basis with the following DEMs: ASTER, SRTM90, SRTM30, SRTM30plus, GMTED2010, TerraSAR-X Radargrammetric DEM, ALOS World 3D-30m. We provide two instances named COPERNICUS_30 and COPERNICUS_90, with worldwide coverage. COPERNICUS_90 uses COP-DEM GLO-90, which has 90 meters resolution. COPERNICUS_30 uses COP-DEM GLO-30 Public, which has 30 meters resolution, where it's available, and for the rest is uses GLO-90. Tiles that are missing from GLO-30 Public are not yet released to the public by Copernicus Programme. Both instances are static and do not depend on the date. We return a homogeneous DEM with zeros in regions where there are no source tiles (e.g. in ocean areas). More information [here](https://spacedata.copernicus.eu/collections/copernicus-digital-elevation-model).
+
+## Attribution and use
+
+For Copernicus DEM GLO-90, check the [terms](https://spacedata.copernicus.eu/documents/20123/121286/CSCDA_ESA_Mission-specific+Annex_31_Oct_22.pdf) on page 15, where it says "Licence for COP-DEM-GLO-90-F Global 90m Full, Free & Open. Licence for the use of the Copernicus WorldDEM™-90".
+
+For Copernicus DEM GLO-30 Public, check the license and terms [here](DEM/resources/license/License-COPDEM-30.pdf).
+
+## Accessing DEM Data
+
+To access data you need to send a POST request to our `process` API. The requested data will be returned as the response to your request. Each POST request can be tailored to get you exactly the data you require. To do this requires setting various parameters which depend on the collection you are querying. This chapter will help you understand the parameters for DEM data. To see examples of such requests go [here](../../../APIs/SentinelHub/Process/Examples/DEM.llms.md), and for an overview of all API parameters see the [API Reference](../../../APIs/SentinelHub/ApiReference.llms.md).
+
+### Data type identifier: dem
+
+Use `dem` (previously `DEM`) as the value of the `input.data.type` parameter in your API requests. This is mandatory and will ensure you get DEM data.
+
+### Filtering Options
+
+This chapter will explain the `input.data.dataFilter` object of the `DEM` `process` API.
+
+#### demInstance
+
+Sets the DEM to use. Will return the default DEM (COPERNICUS_30) if no parameter is set.
+
+| Identifier | DEM | Notes |
+|:---|:---|:---|
+| COPERNICUS_30 | Copernicus DEM GLO-30 Public and GLO-90 | 30m is infilled with 90m where 30m tiles are not released |
+| COPERNICUS_90 | Copernicus DEM GLO-90 | Global |
+
+### Processing Options
+
+This chapter will explain the `input.data.processing` object of the `DEM` `process` API.
+
+[TABLE]
+
+### Available Bands and Data
+
+Information in this chapter is useful when defining [`input` object](../../../APIs/SentinelHub/Evalscript/Functions.llms.md#input-object-properties) in evalscript. A string listed in the column **Name** can be an element of the `input.bands` array in your evalscript.
+
+[TABLE]
+
+### Units
+
+The data values for each band in your custom script are presented in the units as specified here. In case more than one unit is available for a given band, you may optionally set the value of `input.units` in your evalscript `setup` function to one of the values in the `Sentinel Hub Units` column. Doing so will present data in that unit. The Sentinel Hub `units` parameter combines the physical quantity and corresponding units of measurement values. As such, some names more closely resemble physical quantities, others resemble units of measurement.
+
+The `Source Format` specifies how and with what precision the digital numbers (`DN`) from which the unit is derived are encoded. Bands requested in `DN` units contain exactly the pixel values of the source data. Note that resampling may produce interpolated values. `DN` is also used whenever a band is derived computationally (like dataMask); such bands can be identified by having `DN` units and `N/A` source format. `DN` values are typically not offered if they do not simply represent any physical quantity, in particular, when `DN` values require source-specific (i.e. non-global) conversion to physical quantities.
+
+Values in non-`DN` units are computed from the source (`DN`) values with at least float32 precision. Note that the conversion might be nonlinear, therefore the full value range and quantization step size of such a band can be hard to predict. Band values in evalscripts always behave as floating point numbers, regardless of the actual precision.
+
+The `Typical Range` indicates what values are common for a given band and unit, however outliers can be expected.
+
+For DEM, `DN` (digital numbers) are the default and only unit. `DN` values equal elevation.
+
+[TABLE]
+
+### Scene Object
+
+The [evalscript evaluatePixel scene object](../../../APIs/SentinelHub/Evalscript/Functions.llms.md#parameters) is not returned/is null when requesting DEM.
+
+### Collection specific constraints
+
+DEM values are in meters and can be negative for areas which lie below sea level (e.g. ocean areas or much of the Netherlands). When requesting a DEM a simple way to mitigate this is to set the output format in your evalscript to **`sampleType: SampleType.FLOAT32`** or **`sampleType: SampleType.INT16`** if this provides sufficient precision for your use. More about output formats can be found [here](../../../APIs/SentinelHub/Evalscript/Functions.llms.md#sampletype).
+
+For output formats `sampleType: SampleType.UINT8` and `sampleType: SampleType.UINT16` be careful as negative values can be misinterpreted due to signedness issues as well as potential problems due to [integer overflow](https://en.wikipedia.org/wiki/Integer_overflow). For example:
+
+- `sampleType: SampleType.UINT8` - a height of 256 meters will be encoded as 0 in such a file due to overflow. A height of -1 meter will be encoded as 255.
+- `sampleType: SampleType.UINT16`- a height of -15 meters for instance will be encoded as 65520.
+
+One way to handle this adjustment is to ensure there are no negative values in the output by adding a constant to DEM values, e.g. 12000 (the minimum value in DEM is not smaller than -11000 m). If you need actual DEM values (i.e. heights), the constant 12000 must be subtracted from the output values outside of Sentinel Hub.
+
+``` javascript
+//VERSION=3
+
+function setup() {
+  return {
+    input: ["DEM"],
+    output:{
+        id: "default",
+        bands: 1,
+        sampleType: SampleType.UINT16
+    }
+  }
+}
+
+function evaluatePixel(sample) {
+  return [sample.DEM + 12000]
+}
+```
+
+## Examples
+
+[DEM examples](../../../APIs/SentinelHub/Process/Examples/DEM.llms.md)
+
+## Footnotes
+
+[^1]: Actually, we should say "2.5D" to be more precise. The terrain surface embedded in 3D space is modeled in a way that precisely one height is assigned to each pixel. This brings limitations as not all 3D shapes (e.g., overhangs, vertical walls, caves) can be fully modeled.

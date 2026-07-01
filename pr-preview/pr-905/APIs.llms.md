@@ -1,0 +1,45 @@
+# APIs
+
+This section gives an overview on the APIs provided by Copernicus Data Space Ecosystem. This is a set of HTTP endpoints and libraries in Python that allow developers and data scientists to interact with the Copernicus Data Space Ecosystem from their own applications.
+
+## Catalog APIs
+
+The Copernicus programme generates a vast amount of data, which at its lowest level is available in the form of (raster) files. These files are referred to as ‘products’ or ‘items’ in the earth observation world. Products are grouped in ‘collections’ of homogeneous data streams (e.g. Sentinel-2 Level-1C, Sentinel-2 Level-2A, etc.). Collections are further grouped in ‘catalogs’.
+
+There are various interfaces providing capability to search the catalog, to serve various users’ needs and to ensure continuity over the existing Copernicus Hubs. All interfaces are connected to the same database to guarantee consistency.
+
+##### OData
+
+##### STAC product catalogue
+
+##### Catalog APIs news
+
+This section provides detailed information about upcoming changes and the changelog of the implemented updates. The releases include all Catalog APIs interfaces. To avoid disruption to your scripts or apps, we recommend reviewing the upcoming changes and the latest release notes described below:
+
+###### 1.[Upcoming Changes](APIs/Others/UpcomingChanges.llms.md)
+
+We’ve put together a list of potential updates related to Catalog APIs as of September 2023. You can find a detailed comparison of these changes [here](APIs/Others/UpcomingChanges.llms.md).
+
+###### 2. [Release notes](APIs/Others/ReleaseNotes.llms.md)
+
+The [release notes document](APIs/Others/ReleaseNotes.llms.md) provides you with a comprehensive list of modifications made to the Catalog APIs for every release.
+
+## Streamlined data access
+
+The Streamlined Data Access APIs (SDA) provide the most intuitive option to access and retrieve Earth observation (EO) data from the Copernicus Data Space Ecosystem. These APIs provide access to the most commonly used data in a unified manner, reducing the need to learn the specifics of each collection.
+
+By including processing capabilities, they avoid having to download and manage huge volumes of data locally.
+
+##### Sentinel Hub
+
+##### openEO
+
+## Additionally
+
+Additional in Copernicus Data Space Ecosystem, we provide you with the S3 API, Traceability API and On-Demand Production API. The S3 API is one of the main access methods for EO data. Whereas, the Traceability API allows you to verify and register traces for user level data available in the Copernicus Data Space. Similarly, the On-Demand Production API provides you with on-demand processing capability for CARD-BS, CARD-COH6/12.
+
+##### Access to EO data via S3
+
+##### On-Demand Production API
+
+##### Traceability Service

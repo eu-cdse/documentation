@@ -1,0 +1,329 @@
+# Synchronous OpenEO API
+
+OpenEO service offers the API access to the standardized openEO [graph processing](https://openeo.org/about.html#openeo) with the Sentinel Hub data. The service is based on the openEO API standard and provides the capabilities to run the openEO process graphs on top of the Sentinel HUB raster processor results. The service is available for the Sentinel Hub users with the Sentinel Hub account and the access token.
+
+***Disclaimer:*** Current version of the service is in beta release. It currently only supports the load and operations on single temporal slices regardless of the temporal extent used in the process graph. The initial temporal slice is obtained from Sentinel Hub and is calculated based on the availability of data (e.g. actual availability and cloud cover) prioritizing the most recent data available for the selected temporal extent. The service is still in development and the version might change in the future.
+
+### Service base URL
+
+Production version of the service is available at **<https://openeosh.dataspace.copernicus.eu/>**
+
+### Supported endpoints
+
+OpenEO service supports two processing endpoints:
+
+- **Validation endpoint `/validate`** validates a user-defined process without executing it. A user-defined process is considered valid unless the errors array in the response contains at least one error.
+- **Process endpoint `/result`** executes a user-defined process directly (synchronously) and the result is downloaded in the format specified in the process graph. This endpoint can be used to generate small tiles up to 2500x2500 px. Timeouts on either client- or server-side are to be expected for complex computations.
+
+Additionally, some supporting endpoints are provided that provide the service capabilities and graph structure information and are required by the openEO standard:
+
+- **Capabilities `/`** lists general information about the back-end, including which version and endpoints of the openEO API are supported. Also includes billing information.
+- **Collections `/collections`** lists basic collections information.
+- **Collection details `/collections/{collectionId}`** provides the details of a particular collection by the identifier collection_id.
+- **Service versions `/versions`** provides the information about the service versions.
+- **File formats `/file_formats`** provides the formats that are supported when processing/downloading data.
+- **Supported processes `/processes`** lists all supported graph processes and returns detailed process descriptions, including parameters and return values.
+
+The list of supported collections, process nodes or file formats can be obtained with the following commands
+
+All supported collections:
+
+``` curl
+    curl {baseUrl}/1.2/collections
+```
+
+Collection details:
+
+``` curl
+    curl {baseUrl}/1.2/collections/SENTINEL1_GRD
+```
+
+Supported processes and their descriptions:
+
+``` curl
+    curl {baseUrl}/1.2/processes
+```
+
+Supported export file formats:
+
+``` curl
+    curl {baseUrl}/1.2/file_formats
+```
+
+## Processing graphs and query examples
+
+Processing graphs can be built in several ways. The most common ones are using Python [client](https://openeo.org/documentation/1.0/python/) or [OpenEO Editor](https://editor.openeo.org/?server=https%3A%2F%2Fopeneosh.dataspace.copernicus.eu%2F1.2%2F). More on the creation of the graph, data formats and services can be found [here](https://documentation.dataspace.copernicus.eu/APIs/openEO/openEO.html).
+
+### Authentication
+
+Authentication is done using tokens as described [here](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Overview/Authentication.html). The token has to be passed as an authentication header of the request (`authorization: 'Bearer: {access_token}'`).
+
+Service also supports OIDC authentication using the `/credentials/oidc` endpoint. When using the python client, you can authenticate with the following code:
+
+``` python
+
+import openeo
+from openeo.processes import process
+
+connection = openeo.connect("https://openeosh.dataspace.copernicus.eu/")
+connection.authenticate_oidc()
+```
+
+Full python code example is available in [jupyter notebook](../../APIs/SentinelHub/Openeo/resources/notebooks/basic_example.llms.md).
+
+### Building process graphs
+
+In order to build graphs using the sentinel hub service definitions, you can use the [OpenEO Editor](https://editor.openeo.org/?server=https%3A%2F%2Fopeneosh.dataspace.copernicus.eu%2F1.2%2F). You will be able to observe the list of supported collections and processes and create custom graphs.
+
+Additionally, you can build the processing graph using the python client and print the process graph structure using the following command `print(save5.to_json())` as shown in the [jupyter notebook](../../APIs/SentinelHub/Openeo/resources/notebooks/basic_example.llms.md).
+
+Once you build the graph using the GUI, switch to “Code” tab where you can find the full example of the processing request. For example, the process graph for NDVI for Sentinel S2 should look something like this:
+
+``` json
+{
+  "process_graph": {
+    "loadcollection":{
+      "process_id":"load_collection",
+      "arguments":{
+        "id": "sentinel-2-l2a",
+        "spatial_extent":{
+          "west":14.503132250376241,
+          "south":45.98989222284457,
+          "east":14.578437275398317,
+          "north":46.04381770188389,
+          "width":512,
+          "height":512
+        },
+        "temporal_extent":[
+          "2022-03-26T00:00:00Z",
+          "2022-03-26T23:59:59Z"
+        ],
+        "bands":[
+          "B04",
+          "B08"
+        ]
+      }
+    },
+    "save": {
+      "process_id":"save_result",
+      "arguments":{
+        "data":{
+          "from_node":"ndvi4"
+        },
+        "format":"jpeg"
+      },
+      "result":true
+    },
+    "ndvi4":{
+      "process_id":"ndvi",
+      "arguments":{
+        "data":{
+          "from_node":"loadcollection"
+        },
+        "target_band":"NDVI",
+        "nir":"B08",
+        "red":"B04"
+      }
+    }
+  },
+  "parameters": []
+}
+```
+
+### Validating process graph
+
+Once the full request structure is created, you can check if the structure and node parameters of the processing graph are defined correctly as displayed below:
+
+``` curl
+curl --location '{base url}/1.2/verify' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer {access_token}' \
+--data '{
+  "process_graph": {
+   "loadcollection":{
+      "process_id":"load_collection",
+      "arguments":{
+         "id": "sentinel-2-l2a",
+         "spatial_extent":{
+            "west":14.503132250376241,
+            "south":45.98989222284457,
+            "east":14.578437275398317,
+            "north":46.04381770188389,
+            "width":512,
+            "height":512
+         },
+         "temporal_extent":[
+            "2022-03-26T00:00:00Z",
+            "2022-03-26T23:59:59Z"
+         ],
+         "bands":[
+            "B04",
+            "B08"
+         ]
+      }
+   },
+   "save": {
+      "process_id":"save_result",
+      "arguments":{
+         "data":{
+            "from_node":"ndvi4"
+         },
+         "format":"jpeg"
+      },
+      "result":true
+   },
+   "ndvi4":{
+      "process_id":"ndvi",
+      "arguments":{
+         "data":{
+            "from_node":"loadcollection"
+         },
+         "target_band":"NDVI",
+         "nir":"B08",
+         "red":"B04"
+      }
+   }
+  }
+}'
+```
+
+If the graph is valid, an object with an empty errors list will be returned:
+
+``` json
+{
+    "errors": []
+}
+```
+
+If there are some problems with the graph structure, the list will include the description of the errors and key of the node with the error:
+
+``` json
+{
+  "errors": [
+    {
+      "code": "ValidationError",
+      "message": "Node save - Save format not set"
+    }
+  ]
+}
+```
+
+### Execution of processing graph
+
+Once the graph is validated\*, you can execute the actual processing of the graph by calling the `/result` endpoint
+
+*\* Validation is also performed during the processing call, so you can skipp the stand-alone validation step all together, but in this case you might get the validation errors during the processing.*
+
+To create the full request body, you need to wrap this process graph json with an additional `process: { ... }` tag:
+
+``` json
+{
+  "process": {
+    "process_graph": {
+       "loadcollection":{
+          "process_id":"load_collection",
+          "arguments":{
+             "id": "sentinel-2-l2a",
+             "spatial_extent":{
+                "west":14.503132250376241,
+                "south":45.98989222284457,
+                "east":14.578437275398317,
+                "north":46.04381770188389,
+                "width":512,
+                "height":512
+             },
+             "temporal_extent":[
+                "2022-03-26T00:00:00Z",
+                "2022-03-26T23:59:59Z"
+             ],
+             "bands":[
+                "B04",
+                "B08"
+             ]
+          }
+       },
+       "save": {
+          "process_id":"save_result",
+          "arguments":{
+             "data":{
+                "from_node":"ndvi4"
+             },
+             "format":"jpeg"
+          },
+          "result":true
+       },
+       "ndvi4":{
+          "process_id":"ndvi",
+          "arguments":{
+             "data":{
+                "from_node":"loadcollection"
+             },
+             "target_band":"NDVI",
+             "nir":"B08",
+             "red":"B04"
+          }
+       }
+   },
+    "parameters": []
+  }
+}
+```
+
+To execute the processing graph command, you need to use the following curl command:
+
+``` curl
+curl --location '{base url}/1.2/result' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer {access_token}' \
+--data '{
+  "process": {
+    "process_graph": {
+   "loadcollection":{
+      "process_id":"load_collection",
+      "arguments":{
+         "id": "sentinel-2-l2a",
+         "spatial_extent":{
+            "west":14.503132250376241,
+            "south":45.98989222284457,
+            "east":14.578437275398317,
+            "north":46.04381770188389,
+            "width":512,
+            "height":512
+         },
+         "temporal_extent":[
+            "2022-03-26T00:00:00Z",
+            "2022-03-26T23:59:59Z"
+         ],
+         "bands":[
+            "B04",
+            "B08"
+         ]
+      }
+   },
+   "save": {
+      "process_id":"save_result",
+      "arguments":{
+         "data":{
+            "from_node":"ndvi4"
+         },
+         "format":"jpeg"
+      },
+      "result":true
+   },
+   "ndvi4":{
+      "process_id":"ndvi",
+      "arguments":{
+         "data":{
+            "from_node":"loadcollection"
+         },
+         "target_band":"NDVI",
+         "nir":"B08",
+         "red":"B04"
+      }
+   }
+   }
+  }
+}'
+```
+
+Additional example of the processing requests can be found [here](../../APIs/SentinelHub/Openeo/examples.llms.md)

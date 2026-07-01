@@ -1,0 +1,23 @@
+# Annual Reports
+
+The Copernicus Data Space Ecosystem (CDSE) proudly presents its Annual Reports, showcasing the ecosystem’s growth, key achievements, and impact each year.
+
+[![](_images/CDSE_Annual_Report_2024.png)](https://s3.waw3-1.cloudferro.com/swift/v1/portal_uploads_prod/Copernicus_Annual_Report_2024.pdf)
+
+[![](_images/CDSE_Annual_Report_2023.png)](https://s3.waw3-1.cloudferro.com/swift/v1/portal_uploads_prod/Copernicus_Annual_Report_2023.pdf)
+
+## Past Data Access Annual Reports
+
+Sentinel Data Access Annual Reports have been published yearly since the start of Copernicus operations in October 2014 and are listed below with links to the documents.
+
+| Year | Document ID | Title | Format | Link |
+|----|----|----|----|----|
+| 2023 | COPE-SRCO-RP-2400521 | Sentinel Data Access Annual Report 2023 | PDF | [View](https://sentiwiki.copernicus.eu/__attachments/1673407/COPE-SRCO-RP-2400521%20-%20Sentinel%20Data%20Access%20Annual%20Report%202023%20-%201.1.pdf?inst-v=1dcdf0ad-f6da-4386-86fa-d8e5c1a6cc36) |
+| 2022 | COPE-SERCO-RP-23-1493 | Sentinel Data Access Annual Report 2022 | PDF | [View](https://sentiwiki.copernicus.eu/__attachments/1673407/COPE-SERCO-RP-23-1493%20-%20Sentinel%20Data%20Access%20Annual%20Report%202022%20-%201.0.pdf?inst-v=1dcdf0ad-f6da-4386-86fa-d8e5c1a6cc36) |
+| 2021 | COPE-SERCO-RP-22-1312 | Sentinel Data Access Annual Report 2021 | PDF | [View](https://sentiwiki.copernicus.eu/__attachments/1673407/COPE-SERCO-RP-22-1312%20-%20Sentinel%20Data%20Access%20Annual%20Report%202021%20-%201.1.pdf?inst-v=1dcdf0ad-f6da-4386-86fa-d8e5c1a6cc36) |
+| 2020 | COPE-SERCO-RP-21-1141 | Sentinel Data Access Annual Report 2020 | PDF | [View](https://sentiwiki.copernicus.eu/__attachments/1673407/COPE-SERCO-RP-21-1141%20-%20Sentinel%20Data%20Access%20Annual%20Report%202020%20-%202.3.pdf?inst-v=1dcdf0ad-f6da-4386-86fa-d8e5c1a6cc36) |
+| 2019 | COPE-SERCO-RP-20-0570 | Sentinel Data Access Annual Report 2019 | PDF | [View](https://sentiwiki.copernicus.eu/__attachments/1673407/COPE-SERCO-RP-20-0570%20-%20Sentinel%20Data%20Access%20Annual%20Report%202019%20-%201.0.pdf?inst-v=1dcdf0ad-f6da-4386-86fa-d8e5c1a6cc36) |
+| 2018 | COPE-SERCO-RP-19-0389 | Sentinel Data Access Annual Report 2018 | PDF | [View](https://sentiwiki.copernicus.eu/__attachments/1673407/COPE-SERCO-RP-19-0389%20-%20Sentinel%20Data%20Access%20Annual%20Report%202018%20-%201.0.pdf?inst-v=1dcdf0ad-f6da-4386-86fa-d8e5c1a6cc36) |
+| 2017 | COPE-SERCO-RP-17-0186 | Sentinel Data Access Annual Report 2017 | PDF | [View](https://sentiwiki.copernicus.eu/__attachments/1673407/COPE-SERCO-RP-17-0186%20-%20Sentinel%20Data%20Access%20Annual%20Report%202017%20-%201.4.pdf?inst-v=1dcdf0ad-f6da-4386-86fa-d8e5c1a6cc36) |
+| 2016 | COPE-SERCO-RP-17-0071 | Sentinel Data Access Annual Report 2016 | PDF | [View](https://sentiwiki.copernicus.eu/__attachments/1673407/COPE-SERCO-RP-17-0071%20-%20Sentinel%20Data%20Access%20Annual%20Report%202016%20-%201.1.pdf?inst-v=1dcdf0ad-f6da-4386-86fa-d8e5c1a6cc36) |
+| 2015 | SPA-COPE-ENG-RP-066 | Sentinel Data Access Annual Report 2015 | PDF | [View](https://sentiwiki.copernicus.eu/__attachments/1673407/SPA-COPE-ENG-RP-066%20-%20Sentinels%20Data%20Access%20Annual%20Report%202015%20-%201.1.pdf?inst-v=1dcdf0ad-f6da-4386-86fa-d8e5c1a6cc36) |
