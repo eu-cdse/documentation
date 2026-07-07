@@ -2977,7 +2977,7 @@ window.onload = function() {
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># openeo version</span></span>
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>openeo.client_version()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="1">
-<pre><code>'0.40.0'</code></pre>
+<pre><code>'0.45.0'</code></pre>
 </div>
 </div>
 <div id="84244e02" class="cell" data-execution_count="2">
@@ -3051,17 +3051,17 @@ window.onload = function() {
 <section id="calculate-ndvi" class="level2">
 <h2 class="anchored" data-anchor-id="calculate-ndvi">Calculate NDVI</h2>
 <p>The delineation will be estimated based on the NDVI. The <code>ndvi</code> process can be used for these calculations.</p>
-<div id="d4af75cd-c2c0-4953-93b6-81572539650f" class="cell" data-execution_count="35">
+<div id="d4af75cd-c2c0-4953-93b6-81572539650f" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>ndviband <span class="op">=</span> s2_bands_masked.ndvi(red<span class="op">=</span><span class="st">"B04"</span>, nir<span class="op">=</span><span class="st">"B08"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Note that the openEO Python clients generates an openEO process graph, which is then sent to one of the backends selected by the platform based on the operations that you are using. This process graph is then executed on selected platform. However, if you want to inspect intermediate results, you can, for example using <code>ndviband.download(...)</code> like below. Executing this line will allow you to inspect the NDVI images.</p>
-<div id="d1c6077a-d215-4ec3-a30f-d68b37037d7a" class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>ndviband.download(base_path <span class="op">/</span> <span class="st">"ndvi.nc"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="d1c6077a-d215-4ec3-a30f-d68b37037d7a" class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>ndviband.download(base_path <span class="op">/</span> <span class="st">"ndviband.nc"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The intermediate result (here only 3 of them are ploted) of the NDVI looks as shown below:</p>
 <div id="653080b7-ca87-4132-943f-5d1d69189303" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co">## Load your dataset</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>ndvi_data <span class="op">=</span> xr.open_dataset(base_path <span class="op">/</span> <span class="st">"ndvi.nc"</span>)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>ndvi_data <span class="op">=</span> xr.open_dataset(base_path <span class="op">/</span> <span class="st">"ndviband.nc"</span>)</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co">## Access the "var" variable</span></span>
 <span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>var <span class="op">=</span> ndvi_data[<span class="st">"var"</span>]</span>
@@ -3092,25 +3092,28 @@ window.onload = function() {
 <p>Further preprocessing of the data and the inference logic of the models is coded in an UDF. UDF’s are used to implement any custom code. It can therefore be used to quickly transfer code that you already wrote outside of openEO, or it can be used to implement features that are not present in openEO yet. It does however come at a cost of being slower than using openEO functionalities, due to optimization reasons. UDF’s are explained here: https://open-eo.github.io/openeo-python-client/udf.html</p>
 <p>The pretrained models are converted to onnx models to allow for interoperability between different AI tools. More information on onnx and how to conveert your models from a specific framework can be found on <a href="https://onnx.ai/">their website</a>. The onnxruntime package and other dependencies, used in <code>udf_segmentation.py</code>, have to be passed to the backend. This is done by passing a dependency archive as a job option, alongside the models.</p>
 <p><strong>Important note</strong>: The memory job options have been set to make make sure that the back-end has sufficient memory to perform the inference. Larger spatial/temporal extants might require higher memory settings.</p>
-<div id="b08b7194-ea10-4db8-895e-356fdfa65028" class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>dependencies_url <span class="op">=</span> (</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"https://artifactory.vgt.vito.be:443/auxdata-public/openeo/onnx_dependencies.zip"</span></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>models_url <span class="op">=</span> <span class="st">"https://artifactory.vgt.vito.be:443/artifactory/auxdata-public/openeo/parcelDelination/BelgiumCropMap_unet_3BandsGenerator_Models.zip"</span></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>job_options <span class="op">=</span> {</span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">'udf-dependency-archives'</span>: [</span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f"</span><span class="sc">{</span>dependencies_url<span class="sc">}</span><span class="ss">#onnx_deps"</span>,</span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f"</span><span class="sc">{</span>models_url<span class="sc">}</span><span class="ss">#onnx_models"</span>],</span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"driver-memory"</span>: <span class="st">"4G"</span>,</span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">"driver-memoryOverhead"</span>: <span class="st">"4G"</span>,</span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">"driver-cores"</span>: <span class="st">"1"</span>,</span>
-<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">"executor-memory"</span>: <span class="st">"2000m"</span>,</span>
-<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">"executor-memoryOverhead"</span>: <span class="st">"256m"</span>,</span>
-<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">"python-memory"</span>: <span class="st">"4G"</span>,</span>
-<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>    <span class="st">"executor-cores"</span>: <span class="st">"1"</span>,</span>
-<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">"max-executors"</span>: <span class="st">"20"</span>,</span>
-<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>    <span class="st">"logging-threshold"</span>: <span class="st">"info"</span></span>
-<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a> }</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="b08b7194-ea10-4db8-895e-356fdfa65028" class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># This will be required to import onnxruntime in the UDF.</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>onnx_dependencies_url <span class="op">=</span> (</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">" https://s3.waw3-1.cloudferro.com/swift/v1/project_dependencies/onnx_deps_python311.zip"</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="co"># You can upload your own model to a public download link and paste the url here. An example of a public storage is github, or you can set up a public S3 bucket.</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>models_url <span class="op">=</span> <span class="st">"https://artifactory.vgt.vito.be:443/artifactory/auxdata-public/openeo/parcelDelination/BelgiumCropMap_unet_3BandsGenerator_Models.zip"</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>job_options <span class="op">=</span> {</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">'udf-dependency-archives'</span>: [</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f"</span><span class="sc">{</span>onnx_dependencies_url<span class="sc">}</span><span class="ss">#onnx_deps"</span>,</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f"</span><span class="sc">{</span>models_url<span class="sc">}</span><span class="ss">#onnx_models"</span>,],</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">"driver-memory"</span>: <span class="st">"4G"</span>,</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">"driver-memoryOverhead"</span>: <span class="st">"4G"</span>,</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">"driver-cores"</span>: <span class="st">"1"</span>,</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>    <span class="st">"executor-memory"</span>: <span class="st">"2000m"</span>,</span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">"executor-memoryOverhead"</span>: <span class="st">"256m"</span>,</span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>    <span class="st">"python-memory"</span>: <span class="st">"4G"</span>,</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>    <span class="st">"executor-cores"</span>: <span class="st">"1"</span>,</span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>    <span class="st">"max-executors"</span>: <span class="st">"20"</span>,</span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>    <span class="st">"logging-threshold"</span>: <span class="st">"info"</span></span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a> }</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div id="49e47c0d-9b19-4168-bbf4-50e1314c4770" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co">## Apply the segmentation UDF using `apply_neighborhood`</span></span>
@@ -3118,7 +3121,7 @@ window.onload = function() {
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co"># specify the udf to use</span></span>
 <span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>segment_udf <span class="op">=</span> openeo.UDF.from_file(<span class="st">'udf_segmentation.py'</span>)</span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="co"># segment_udf = openeo.UDF.from_url("https://raw.githubusercontent.com/Open-EO/openeo-community-examples/main/python/ParcelDelineation/udf_segmentation.py")</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="co"># segment_udf = openeo.UDF.from_url("https://raw.githubusercontent.com/Open-EO/openeo-community-examples/main/python/ParcelDelineation/udf_segmentation.py")$</span></span>
 <span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>segmentationband <span class="op">=</span> ndviband.apply_neighborhood(</span>
 <span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    process<span class="op">=</span>segment_udf,</span>
 <span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>    size<span class="op">=</span>[</span>
@@ -3138,22 +3141,21 @@ window.onload = function() {
 <span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>segmentation_job.start_and_wait()</span>
 <span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>segmentation_job.download_result(base_path <span class="op">/</span> <span class="st">"delineation.nc"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>0:00:00 Job 'j-250610202940469388cfcd19998f595f': send 'start'
-0:00:14 Job 'j-250610202940469388cfcd19998f595f': created (progress 0%)
-0:00:19 Job 'j-250610202940469388cfcd19998f595f': created (progress 0%)
-0:00:26 Job 'j-250610202940469388cfcd19998f595f': created (progress 0%)
-0:00:34 Job 'j-250610202940469388cfcd19998f595f': running (progress N/A)
-0:00:44 Job 'j-250610202940469388cfcd19998f595f': running (progress N/A)
-0:00:56 Job 'j-250610202940469388cfcd19998f595f': running (progress N/A)
-0:01:12 Job 'j-250610202940469388cfcd19998f595f': running (progress N/A)
-0:01:31 Job 'j-250610202940469388cfcd19998f595f': running (progress N/A)
-0:01:55 Job 'j-250610202940469388cfcd19998f595f': running (progress N/A)
-0:02:25 Job 'j-250610202940469388cfcd19998f595f': running (progress N/A)
-0:03:02 Job 'j-250610202940469388cfcd19998f595f': running (progress N/A)
-0:03:49 Job 'j-250610202940469388cfcd19998f595f': running (progress N/A)
-0:04:48 Job 'j-250610202940469388cfcd19998f595f': running (progress N/A)
-0:05:48 Job 'j-250610202940469388cfcd19998f595f': running (progress N/A)
-0:06:48 Job 'j-250610202940469388cfcd19998f595f': finished (progress 100%)</code></pre>
+<pre><code>0:00:00 Job 'j-25110309214440169dcab42d32ae0081': send 'start'
+0:00:13 Job 'j-25110309214440169dcab42d32ae0081': created (progress 0%)
+0:00:19 Job 'j-25110309214440169dcab42d32ae0081': created (progress 0%)
+0:00:27 Job 'j-25110309214440169dcab42d32ae0081': queued (progress 0%)
+0:00:36 Job 'j-25110309214440169dcab42d32ae0081': queued (progress 0%)
+0:00:46 Job 'j-25110309214440169dcab42d32ae0081': queued (progress 0%)
+0:00:59 Job 'j-25110309214440169dcab42d32ae0081': queued (progress 0%)
+0:01:14 Job 'j-25110309214440169dcab42d32ae0081': queued (progress 0%)
+0:01:33 Job 'j-25110309214440169dcab42d32ae0081': running (progress N/A)
+0:01:57 Job 'j-25110309214440169dcab42d32ae0081': running (progress N/A)
+0:02:28 Job 'j-25110309214440169dcab42d32ae0081': running (progress N/A)
+0:03:06 Job 'j-25110309214440169dcab42d32ae0081': running (progress N/A)
+0:03:53 Job 'j-25110309214440169dcab42d32ae0081': running (progress N/A)
+0:04:51 Job 'j-25110309214440169dcab42d32ae0081': running (progress N/A)
+0:05:51 Job 'j-25110309214440169dcab42d32ae0081': finished (progress 100%)</code></pre>
 </div>
 <div class="cell-output cell-output-display" data-execution_count="12">
 <pre><code>WindowsPath('results/delineation.nc')</code></pre>
@@ -3186,7 +3188,7 @@ window.onload = function() {
 <section id="segmentation-postprocessing" class="level2">
 <h2 class="anchored" data-anchor-id="segmentation-postprocessing">Segmentation postprocessing</h2>
 <p>We postprocess the output from the neural network using a sobel filter and Felzenszwalb’s algorithm, which are then merged. This time, we work on larger chunks, to reduce the need for stitching the vector output.</p>
-<div id="b4dfd26c-3160-438d-b489-7e7832d41bd2" class="cell" data-execution_count="28">
+<div id="b4dfd26c-3160-438d-b489-7e7832d41bd2" class="cell" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co">## Apply the sobel felzenszwalb UDF using `apply_neighborhood`</span></span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>segment_udf1 <span class="op">=</span> openeo.UDF.from_file(<span class="st">'udf_sobel_felzenszwalb.py'</span>)</span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="co"># segment_udf1 = openeo.UDF.from_url("https://raw.githubusercontent.com/Open-EO/openeo-community-examples/refs/heads/main/python/ParcelDelineation/udf_sobel_felzenszwalb.py")</span></span>
@@ -3202,38 +3204,36 @@ window.onload = function() {
 <span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>    ],</span>
 <span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="59d5b35d-e2a5-4a22-ab9f-2df12d8f996a" class="cell" data-execution_count="50">
+<div id="59d5b35d-e2a5-4a22-ab9f-2df12d8f996a" class="cell" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>sobel_felzenszwalb_job <span class="op">=</span> sobel_felzenszwalb.create_job(</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>    title<span class="op">=</span><span class="st">"sobel_felzenszwalb"</span>, out_format<span class="op">=</span><span class="st">"NetCDF"</span>, job_options<span class="op">=</span>job_options</span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>sobel_felzenszwalb_job.start_and_wait()</span>
 <span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>sobel_felzenszwalb_job.download_result(base_path <span class="op">/</span> <span class="st">"delineation_filtered.nc"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>0:00:00 Job 'j-2506110813354bb4b7e35369f19a949b': send 'start'
-0:00:14 Job 'j-2506110813354bb4b7e35369f19a949b': created (progress 0%)
-0:00:19 Job 'j-2506110813354bb4b7e35369f19a949b': created (progress 0%)
-0:00:26 Job 'j-2506110813354bb4b7e35369f19a949b': created (progress 0%)
-0:00:33 Job 'j-2506110813354bb4b7e35369f19a949b': running (progress N/A)
-0:00:43 Job 'j-2506110813354bb4b7e35369f19a949b': running (progress N/A)
-0:00:56 Job 'j-2506110813354bb4b7e35369f19a949b': running (progress N/A)
-0:01:11 Job 'j-2506110813354bb4b7e35369f19a949b': running (progress N/A)
-0:01:31 Job 'j-2506110813354bb4b7e35369f19a949b': running (progress N/A)
-0:01:55 Job 'j-2506110813354bb4b7e35369f19a949b': running (progress N/A)
-0:02:25 Job 'j-2506110813354bb4b7e35369f19a949b': running (progress N/A)
-0:03:02 Job 'j-2506110813354bb4b7e35369f19a949b': running (progress N/A)
-0:03:49 Job 'j-2506110813354bb4b7e35369f19a949b': running (progress N/A)
-0:04:47 Job 'j-2506110813354bb4b7e35369f19a949b': running (progress N/A)
-0:05:48 Job 'j-2506110813354bb4b7e35369f19a949b': running (progress N/A)
-0:06:48 Job 'j-2506110813354bb4b7e35369f19a949b': running (progress N/A)
-0:07:48 Job 'j-2506110813354bb4b7e35369f19a949b': running (progress N/A)
-0:08:48 Job 'j-2506110813354bb4b7e35369f19a949b': running (progress N/A)
-0:09:49 Job 'j-2506110813354bb4b7e35369f19a949b': finished (progress 100%)</code></pre>
+<pre><code>0:00:00 Job 'j-251103092740429c8a4d0f06286dd31e': send 'start'
+0:00:17 Job 'j-251103092740429c8a4d0f06286dd31e': created (progress 0%)
+0:00:22 Job 'j-251103092740429c8a4d0f06286dd31e': created (progress 0%)
+0:00:28 Job 'j-251103092740429c8a4d0f06286dd31e': created (progress 0%)
+0:00:37 Job 'j-251103092740429c8a4d0f06286dd31e': running (progress N/A)
+0:00:47 Job 'j-251103092740429c8a4d0f06286dd31e': running (progress N/A)
+0:01:00 Job 'j-251103092740429c8a4d0f06286dd31e': running (progress N/A)
+0:01:15 Job 'j-251103092740429c8a4d0f06286dd31e': running (progress N/A)
+0:01:34 Job 'j-251103092740429c8a4d0f06286dd31e': running (progress N/A)
+0:01:58 Job 'j-251103092740429c8a4d0f06286dd31e': running (progress N/A)
+0:02:28 Job 'j-251103092740429c8a4d0f06286dd31e': running (progress N/A)
+0:03:06 Job 'j-251103092740429c8a4d0f06286dd31e': running (progress N/A)
+0:03:53 Job 'j-251103092740429c8a4d0f06286dd31e': running (progress N/A)
+0:04:51 Job 'j-251103092740429c8a4d0f06286dd31e': running (progress N/A)
+0:05:51 Job 'j-251103092740429c8a4d0f06286dd31e': running (progress N/A)
+0:06:51 Job 'j-251103092740429c8a4d0f06286dd31e': running (progress N/A)
+0:07:52 Job 'j-251103092740429c8a4d0f06286dd31e': finished (progress 100%)</code></pre>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="50">
+<div class="cell-output cell-output-display" data-execution_count="15">
 <pre><code>WindowsPath('results/delineation_filtered.nc')</code></pre>
 </div>
 </div>
-<div id="360f9ba0-41d9-429d-b9e6-e5a42214419b" class="cell" data-execution_count="51">
+<div id="360f9ba0-41d9-429d-b9e6-e5a42214419b" class="cell" data-execution_count="16">
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co">## Load your dataset</span></span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>ds <span class="op">=</span> xr.open_dataset(base_path <span class="op">/</span> <span class="st">"delineation_filtered.nc"</span>)</span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a></span>

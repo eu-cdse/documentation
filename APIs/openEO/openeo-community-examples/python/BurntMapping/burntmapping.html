@@ -2939,7 +2939,7 @@ window.onload = function() {
 
 
 <p>The classical Normalized Burnt Ratio(NBR) difference is performed on a chunk of polygons in this notebook. You can find ways to develop your process and use chunk_polygon in a use case. The method followed in this notebook to compute DNBR is inspired by <a href="https://github.com/UN-SPIDER/burn-severity-mapping-EO">UN SPIDER’s</a> recommended practices.</p>
-<div id="d27ae706" class="cell" data-execution_count="12">
+<div id="d27ae706" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># import necessary packages</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> openeo</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json</span>
@@ -2949,7 +2949,7 @@ window.onload = function() {
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.colors</span>
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># connect with the backend</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>eoconn <span class="op">=</span> openeo.<span class="ex">connect</span>(<span class="st">"openeo.vito.be"</span>).authenticate_oidc()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>eoconn <span class="op">=</span> openeo.<span class="ex">connect</span>(<span class="st">"openeo.terrascope.be"</span>).authenticate_oidc()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Authenticated using refresh token.</code></pre>
 </div>
@@ -2964,23 +2964,23 @@ window.onload = function() {
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> field</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>To use the data collection, a user must use the correct backend with the data collection. Then, using <a href="https://open-eo.github.io/openeo-python-client/datacube_construction.html#the-load-collection-process">load_collection</a>, they can specify bands, temporal extent (i.e.&nbsp;interested time interval) and even spatial extent. In this example, we have loaded the entire collection so that the process (including UDF) can later be applied to spatial chunks.</p>
-<div id="182bd521" class="cell" data-execution_count="3">
+<div id="182bd521" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># load datacube for beforeand after fire</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>before_date <span class="op">=</span> [<span class="st">"2021-01-12"</span>, <span class="st">"2021-03-12"</span>]</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>after_date <span class="op">=</span> [<span class="st">"2021-05-18"</span>, <span class="st">"2021-07-18"</span>]</span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>before_cube <span class="op">=</span> eoconn.load_collection(</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"SENTINEL2_L1C_SENTINELHUB"</span>, temporal_extent<span class="op">=</span>before_date, bands<span class="op">=</span>[<span class="st">"B08"</span>, <span class="st">"B12"</span>]</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"SENTINEL2_L2A_SENTINELHUB"</span>, temporal_extent<span class="op">=</span>before_date, bands<span class="op">=</span>[<span class="st">"B08"</span>, <span class="st">"B12"</span>]</span>
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>after_cube <span class="op">=</span> eoconn.load_collection(</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"SENTINEL2_L1C_SENTINELHUB"</span>,</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"SENTINEL2_L2A_SENTINELHUB"</span>,</span>
 <span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    temporal_extent<span class="op">=</span>after_date,</span>
 <span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    bands<span class="op">=</span>[<span class="st">"B08"</span>, <span class="st">"B12"</span>],</span>
 <span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Here, we presented a method to create and use UDF as an openEO feature. Similarly, user can create their UDF as needed to apply to their data cube. More information on <a href="https://open-eo.github.io/openeo-python-client/udf.html">UDF</a>. The reason to create a UDF openEO is similar to creating a function in general Python, i.e.&nbsp;to avoid recursive script.</p>
 <p>Our UDF computes the Normalised Burnt Ratio (NBR) from the selected band by performing simple band computation and returns an NBR datacube.</p>
-<div id="afb8e851" class="cell" data-execution_count="4">
+<div id="afb8e851" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a UDF object from inline source code for computing nbr</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>my_code <span class="op">=</span> <span class="st">"""</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="st">from openeo.udf import XarrayDataCube</span></span>
@@ -3004,16 +3004,16 @@ window.onload = function() {
 <span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>udf_process <span class="op">=</span> <span class="kw">lambda</span> data: data.run_udf(udf<span class="op">=</span>my_code, runtime<span class="op">=</span><span class="st">"python"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We used the chunk_polygon method to apply our UDF over a spatial chunk of the datacube. In the case of a simple process that does not require UDF, you can directly load your spatial extent in the dataset.</p>
-<div id="56f22958" class="cell" data-execution_count="8">
+<div id="56f22958" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># specify aoi chunks</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>spatial_param <span class="op">=</span> read_json(<span class="st">"cal_aoi_v2.geojson"</span>)</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co"># compute nbr for pre and post datacube</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>pre_nbr <span class="op">=</span> before_cube.apply_polygon(polygons<span class="op">=</span>spatial_param, process<span class="op">=</span>udf_process)</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>post_nbr <span class="op">=</span> after_cube.apply_polygon(polygons<span class="op">=</span>spatial_param, process<span class="op">=</span>udf_process)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>pre_nbr <span class="op">=</span> before_cube.apply_polygon(geometries<span class="op">=</span>spatial_param, process<span class="op">=</span>udf_process)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>post_nbr <span class="op">=</span> after_cube.apply_polygon(geometries<span class="op">=</span>spatial_param, process<span class="op">=</span>udf_process)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Furthermore, since we loaded our collection for specific time intervals, it can include multiple time dimensions. Thus, <a href="https://processes.openeo.org/#reduce_dimension">reduce_dimension</a> applies a reducer to a data cube dimension by collapsing all the pixel values along the time dimension into an output value computed by the reducer.</p>
-<div id="e2f21657" class="cell" data-execution_count="9">
+<div id="e2f21657" class="cell" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># perform time dimension reduction</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>pre_n <span class="op">=</span> pre_nbr.reduce_dimension(dimension<span class="op">=</span><span class="st">"t"</span>, reducer<span class="op">=</span><span class="st">"mean"</span>)</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>post_n <span class="op">=</span> post_nbr.reduce_dimension(dimension<span class="op">=</span><span class="st">"t"</span>, reducer<span class="op">=</span><span class="st">"mean"</span>)</span>
@@ -3022,11 +3022,11 @@ window.onload = function() {
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>sub <span class="op">=</span> post_n <span class="op">-</span> pre_n</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Users can select from various backends available <a href="https://hub.openeo.org/">here</a> to connect to their preferred backend. While OpenID Connect (OIDC) is recommended for authentication, it may sometimes be complicated. If you encounter issues connecting with OIDC, you can use the primary authentication method explained <a href="https://openeo.org/documentation/1.0/authentication.html#openid-connect">here</a>.</p>
-<div id="5e97af4e" class="cell" data-execution_count="10">
+<div id="5e97af4e" class="cell" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># download your output</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>sub.download(<span class="st">"sub_nbr_udf.tiff"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="c986a009" class="cell" data-execution_count="14">
+<div id="c986a009" class="cell" data-execution_count="16">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># set colors for plotting and classes based on UN SPIDER recommended practices</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Read the image</span></span>
