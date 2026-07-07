@@ -102,6 +102,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
 
 <script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+<script src="https://unpkg.com/@jupyter-widgets/html-manager@*/dist/embed-amd.js" crossorigin="anonymous"></script>
 <meta name="zd-site-verification" content="xj9koofr1crilmoclgxsjd">
 <script type="text/javascript">
 
@@ -2967,25 +2968,21 @@ window.onload = function() {
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> geopandas <span class="im">as</span> gpd</span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> rasterio</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> rasterio.plot</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> rasterio <span class="im">import</span> features</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> rasterio.plot <span class="im">import</span> show</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> rasterio.features <span class="im">import</span> rasterize</span>
 <span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sentinelhub <span class="im">import</span> (</span>
 <span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    SHConfig,</span>
 <span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    CRS,</span>
 <span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    BBox,</span>
 <span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    DataCollection,</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    DownloadRequest,</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    MimeType,</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    MosaickingOrder,</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    SentinelHubDownloadClient,</span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    SentinelHubStatisticalDownloadClient,</span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    SentinelHubRequest,</span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    bbox_to_dimensions,</span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    SentinelHubStatistical,</span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    Geometry,</span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>    parse_time,</span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    MimeType,</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    SentinelHubStatisticalDownloadClient,</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    SentinelHubRequest,</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    SentinelHubStatistical,</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    Geometry,</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    parse_time,</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <section id="measuring-no2-concentrations" class="level1">
 <h1>Measuring NO2 concentrations</h1>
@@ -3022,11 +3019,13 @@ window.onload = function() {
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># config.sh_client_secret = getpass.getpass("Enter your SentinelHub client secret")</span></span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>config.sh_token_url <span class="op">=</span> <span class="st">"https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token"</span></span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>config.sh_base_url <span class="op">=</span> <span class="st">"https://sh.dataspace.copernicus.eu"</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># config.save("cdse")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>config.download_timeout_seconds <span class="op">=</span> <span class="dv">600</span>  <span class="co"># Set 10-minute timeout for large requests</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co"># config.save("cdse")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>However, if you have already configured a profile in Sentinel Hub Python for the Copernicus Data Space Ecosystem, then you can run the below cell entering the profile name as a string replacing <code>profile_name</code>.</p>
-<div id="cell-7" class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># config = SHConfig("profile_name")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="cell-7" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># config = SHConfig("profile_name")</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># config.download_timeout_seconds = 600  # Set 10-minute timeout for large requests</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="analysing-spatial-distribution" class="level3">
@@ -3052,7 +3051,7 @@ window.onload = function() {
 <span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    <span class="co">// but for now let's just return the value </span></span>
 <span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>   <span class="cf">return</span> [samples<span class="op">.</span><span class="at">NO2</span>] </span>
 <span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div id="cell-9" class="cell" data-execution_count="6">
+<div id="cell-9" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># We also need to define the evalscript as a Python variable</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>evalscript_raw <span class="op">=</span> <span class="st">"""</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="st">//VERSION=3</span></span>
@@ -3078,7 +3077,7 @@ window.onload = function() {
 </div>
 <p>With the evalscript we can now make a request for data.</p>
 <p>The request will take care of a lot of things for us. It will return our the data in our specified resolution and bounding box, for our specified time range and it will automatically mosaic multiple tiles together to fill the entire bounding box.</p>
-<div id="cell-11" class="cell" data-execution_count="10">
+<div id="cell-11" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>bbox_europe <span class="op">=</span> BBox([<span class="op">-</span><span class="fl">12.30</span>, <span class="fl">34.59</span>, <span class="fl">32.52</span>, <span class="fl">63.15</span>], crs<span class="op">=</span>CRS.WGS84).transform(CRS(<span class="dv">3857</span>))</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co"># This is defining the data we will use.</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># You can list all available data collections with `DataCollection.get_available_collections()`.</span></span>
@@ -3102,11 +3101,11 @@ window.onload = function() {
 <span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>After we’ve defined the request, we can get the data:</p>
-<div id="cell-13" class="cell" data-execution_count="11">
+<div id="cell-13" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>raw_data <span class="op">=</span> request_raw.get_data(save_data<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Now we define a function which plots the data of the request together with the borders of the European countries, taken from the natural earth dataset.</p>
-<div id="cell-15" class="cell" data-execution_count="20">
+<div id="cell-15" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>countries <span class="op">=</span> (</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    gpd.read_file(<span class="st">"./data/ne_50m_admin_0_countries/ne_50m_admin_0_countries.shp"</span>)</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    .to_crs(<span class="dv">3857</span>)</span>
@@ -3122,10 +3121,10 @@ window.onload = function() {
 <span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>        fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">10</span>))</span>
 <span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>        ax.set_xlim([bbox.min_x, bbox.max_x])</span>
 <span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>        ax.set_ylim([bbox.min_y, bbox.max_y])</span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>        rasterio.plot.show(raster, ax<span class="op">=</span>ax)</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>        show(raster, ax<span class="op">=</span>ax)</span>
 <span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>        countries.plot(ax<span class="op">=</span>ax, facecolor<span class="op">=</span><span class="st">"none"</span>, edgecolor<span class="op">=</span><span class="st">"black"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="cell-16" class="cell" data-execution_count="21">
+<div id="cell-16" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>plot_request(request_raw, bbox_europe)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
@@ -3170,7 +3169,7 @@ window.onload = function() {
 <span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> mean <span class="op">=</span> <span class="fu">sum</span>(clearTs) <span class="op">/</span> clearTs<span class="op">.</span><span class="at">length</span></span>
 <span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> [mean]</span>
 <span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div id="cell-18" class="cell" data-execution_count="16">
+<div id="cell-18" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>evalscript_mean_mosaic <span class="op">=</span> <span class="st">"""</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="st">//VERSION=3</span></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="st">function setup() {</span></span>
@@ -3203,7 +3202,7 @@ window.onload = function() {
 <span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
 <span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="cell-19" class="cell" data-execution_count="17">
+<div id="cell-19" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>request_monthly <span class="op">=</span> SentinelHubRequest(</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    evalscript<span class="op">=</span>evalscript_mean_mosaic,</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    input_data<span class="op">=</span>[</span>
@@ -3220,10 +3219,10 @@ window.onload = function() {
 <span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We now made a request for an entire month of data, for December of 2022. Other than that nothing much changed in the request.</p>
-<div id="cell-21" class="cell" data-execution_count="18">
+<div id="cell-21" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>mean_data <span class="op">=</span> request_monthly.get_data(save_data<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="cell-22" class="cell" data-execution_count="22">
+<div id="cell-22" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>plot_request(request_monthly, bbox_europe)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
@@ -3236,8 +3235,8 @@ window.onload = function() {
 <p>This looks much better, since it is Winter the northern latitudes and the alps still do not have much data due to snow cover and low sun angles, however most of the rest of Europe is now covered by data.</p>
 <p>We can clearly see NO2 hot spots around developed areas, like the Po Valley in Italy and the Ruhr area in Germany. You can also clearly make out the effect of some cities, like Istanbul and Madrid.</p>
 <p>In general the distribution of values is around the lower end though. Only few pixels have much higher values.</p>
-<div id="cell-24" class="cell" data-execution_count="37">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>plt.stairs(<span class="op">*</span>np.histogram(mean_data[<span class="dv">0</span>], <span class="bu">range</span><span class="op">=</span>(<span class="dv">0</span>, <span class="fl">0.00015</span>), bins<span class="op">=</span><span class="dv">25</span>), fill<span class="op">=</span><span class="va">True</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="cell-24" class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>plt.stairs(<span class="op">*</span>np.histogram(mean_data[<span class="dv">0</span>], <span class="bu">range</span><span class="op">=</span>(<span class="dv">0</span>, <span class="fl">0.00015</span>), bins<span class="op">=</span><span class="dv">25</span>), fill<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -3251,7 +3250,7 @@ window.onload = function() {
 <h3 class="anchored" data-anchor-id="analysing-european-countries">Analysing European countries</h3>
 <p>Now let’s look at the distribution of values per country to see which countries had the highest average NO2 values in the month.</p>
 <p>To do this we rasterize all countries in our area of interest. We do this so that we can select all array values which are covered by a certain country.</p>
-<div id="cell-26" class="cell" data-execution_count="122">
+<div id="cell-26" class="cell" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>countries[<span class="st">"ID"</span>] <span class="op">=</span> countries.index</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>image_path <span class="op">=</span> Path(request_monthly.data_folder) <span class="op">/</span> request_monthly.get_filename_list()[<span class="dv">0</span>]</span>
@@ -3260,12 +3259,12 @@ window.onload = function() {
 <span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="co"># convert gpd Dataframe to format accepted by rasterize</span></span>
 <span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>geo_iter <span class="op">=</span> <span class="bu">list</span>(countries[[<span class="st">"geometry"</span>, <span class="st">"ID"</span>]].itertuples(index<span class="op">=</span><span class="va">False</span>, name<span class="op">=</span><span class="va">None</span>))</span>
 <span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="co"># This call is converting the array into a raster with the same size as our NO2 raster</span></span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>country_array <span class="op">=</span> features.rasterize(</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>country_array <span class="op">=</span> rasterize(</span>
 <span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>    geo_iter, transform<span class="op">=</span>affine, out_shape<span class="op">=</span>mean_data[<span class="dv">0</span>].shape, fill<span class="op">=-</span><span class="dv">1</span></span>
 <span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Now we define two helper functions which get all NO2 values in a country and another function which calcuates the mean of those values.</p>
-<div id="cell-28" class="cell" data-execution_count="123">
+<div id="cell-28" class="cell" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_array(country_id):</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> mean_data[<span class="dv">0</span>][country_array <span class="op">==</span> country_id]</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -3274,18 +3273,18 @@ window.onload = function() {
 <span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> np.nanmean(get_array(country_id))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>This function is then applied to the countries dataframe, to fill a new column <code>mean</code> which holds the mean NO2 values per country.</p>
-<div id="cell-30" class="cell" data-execution_count="124">
+<div id="cell-30" class="cell" data-execution_count="16">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>countries[<span class="st">"mean"</span>] <span class="op">=</span> countries.<span class="bu">apply</span>(<span class="kw">lambda</span> x: get_mean(x[<span class="st">"ID"</span>]), axis<span class="op">=</span><span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>/tmp/ipykernel_5069/2776634825.py:5: RuntimeWarning: Mean of empty slice
+<pre><code>/var/folders/4g/m5s2xh1122z756m4mm9wwww80000gn/T/ipykernel_54959/2868920507.py:6: RuntimeWarning: Mean of empty slice
   return np.nanmean(get_array(country_id))</code></pre>
 </div>
 </div>
 <p>We can then sort by that mean value and have a look at the countries with the highest mean.</p>
-<div id="cell-32" class="cell" data-execution_count="125">
+<div id="cell-32" class="cell" data-execution_count="17">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>sorted_df <span class="op">=</span> countries.sort_values(<span class="st">"mean"</span>, ascending<span class="op">=</span><span class="va">False</span>)</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>sorted_df.head(<span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="125">
+<div class="cell-output cell-output-display" data-execution_count="17">
 <div>
 
 
@@ -3303,7 +3302,7 @@ window.onload = function() {
 <tr class="odd">
 <td data-quarto-table-cell-role="th">20</td>
 <td>Netherlands</td>
-<td>MULTIPOLYGON (((667242.940 6577267.510, 655945...</td>
+<td>MULTIPOLYGON (((667242.94 6577267.51, 655945.7...</td>
 <td>20</td>
 <td>0.000108</td>
 </tr>
@@ -3331,14 +3330,14 @@ window.onload = function() {
 <tr class="odd">
 <td data-quarto-table-cell-role="th">27</td>
 <td>Luxembourg</td>
-<td>POLYGON ((680886.100 6467256.661, 679972.933 6...</td>
+<td>POLYGON ((680886.1 6467256.661, 679972.933 646...</td>
 <td>27</td>
 <td>0.000063</td>
 </tr>
 <tr class="even">
 <td data-quarto-table-cell-role="th">32</td>
 <td>Italy</td>
-<td>MULTIPOLYGON (((781584.581 5768463.580, 785443...</td>
+<td>MULTIPOLYGON (((781584.581 5768463.58, 785443....</td>
 <td>32</td>
 <td>0.000054</td>
 </tr>
@@ -3377,19 +3376,30 @@ window.onload = function() {
 </div>
 </div>
 <p>For the 5 countries with the highest mean we are then plotting a boxplot of NO2 values.</p>
-<div id="cell-34" class="cell" data-execution_count="131">
+<div id="cell-34" class="cell" data-execution_count="18">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get the country ids with the 5 highest mean values</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>n_countries <span class="op">=</span> <span class="dv">5</span></span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>country_ids <span class="op">=</span> <span class="bu">list</span>(sorted_df[<span class="st">"ID"</span>][:n_countries])</span>
 <span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>country_names <span class="op">=</span> <span class="bu">list</span>(sorted_df[<span class="st">"ADMIN"</span>][:n_countries])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="cell-35" class="cell" data-execution_count="132">
+<div id="cell-35" class="cell" data-execution_count="19">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> sns.boxplot(data<span class="op">=</span>[get_array(country_id) <span class="cf">for</span> country_id <span class="kw">in</span> country_ids])</span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>ax.set_xticklabels(country_names)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>ax.set_xticklabels(country_names)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/var/folders/4g/m5s2xh1122z756m4mm9wwww80000gn/T/ipykernel_54959/3750330139.py:2: UserWarning: set_ticklabels() should only be used with a fixed number of ticks, i.e. after set_ticks() or using a FixedLocator.
+  ax.set_xticklabels(country_names)</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="19">
+<pre><code>[Text(0, 0, 'Netherlands'),
+ Text(1, 0, 'Belgium'),
+ Text(2, 0, 'Estonia'),
+ Text(3, 0, 'Germany'),
+ Text(4, 0, 'Luxembourg')]</code></pre>
+</div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="air_pollution_statistics_files/figure-html/cell-20-output-1.png" class="img-fluid figure-img"></p>
+<p><img src="air_pollution_statistics_files/figure-html/cell-20-output-3.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -3402,128 +3412,133 @@ window.onload = function() {
 <p>Even for the previous analysis of European countries, if we were not interested at all in the spatial distribution of data and only interested in statistics for certain geometries, the statistical API would have been the perfect fit. It removes the need to download a lot of data to calculate statistics for areas. Instead it does all of the calculation of statistics like mean, max, min and standard deviation in the cloud and in the end only sends those values.</p>
 <p>Another capability of the API is the easy chunking in regular intervals, which we will be using to make the time series.</p>
 <p>But let’s first import the EU capitals:</p>
-<div id="cell-37" class="cell" data-execution_count="25">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># load capitals</span></span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>capitals <span class="op">=</span> gpd.read_file(<span class="st">"./data/eu_capitals.geojson"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="cell-37" class="cell" data-execution_count="20">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># load capitals</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>capitals <span class="op">=</span> gpd.read_file(<span class="st">"./data/eu_capitals.geojson"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The evalscript for the Statistical API is quite similar to the evalscript for the Processing API. However for the statistical API to work we need to add one more output named <code>dataMask</code>. This provides a binary mask for the API, telling it which pixels should be included in the statistical request.</p>
 <p>Other than that not much changed compared to our previous request.</p>
-<div id="cell-39" class="cell" data-execution_count="26">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>evalscript_stat <span class="op">=</span> <span class="st">"""</span></span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="st">//VERSION=3</span></span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="st">function setup() {</span></span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="st">    return {</span></span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="st">        input: ["NO2", "dataMask"],</span></span>
-<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a><span class="st">        output: [{ </span></span>
-<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="st">          id: "default",</span></span>
-<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="st">          bands: ["NO2"],</span></span>
-<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a><span class="st">          sampleType: "FLOAT32" </span></span>
-<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a><span class="st">        },</span></span>
-<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a><span class="st">        { </span></span>
-<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a><span class="st">          id: "dataMask",</span></span>
-<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a><span class="st">          bands: 1,</span></span>
-<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a><span class="st">        }],</span></span>
-<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a><span class="st">        mosaicking: "ORBIT"</span></span>
-<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a><span class="st">    };</span></span>
-<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
-<span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-19"><a href="#cb24-19" aria-hidden="true" tabindex="-1"></a><span class="st">function isClear(sample) {</span></span>
-<span id="cb24-20"><a href="#cb24-20" aria-hidden="true" tabindex="-1"></a><span class="st">    return sample.dataMask == 1;</span></span>
-<span id="cb24-21"><a href="#cb24-21" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
-<span id="cb24-22"><a href="#cb24-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-23"><a href="#cb24-23" aria-hidden="true" tabindex="-1"></a><span class="st">function sum(array) {</span></span>
-<span id="cb24-24"><a href="#cb24-24" aria-hidden="true" tabindex="-1"></a><span class="st">    let sum = 0;</span></span>
-<span id="cb24-25"><a href="#cb24-25" aria-hidden="true" tabindex="-1"></a><span class="st">    for (let i = 0; i &lt; array.length; i++) {</span></span>
-<span id="cb24-26"><a href="#cb24-26" aria-hidden="true" tabindex="-1"></a><span class="st">        sum += array[i].NO2;</span></span>
-<span id="cb24-27"><a href="#cb24-27" aria-hidden="true" tabindex="-1"></a><span class="st">    }</span></span>
-<span id="cb24-28"><a href="#cb24-28" aria-hidden="true" tabindex="-1"></a><span class="st">    return sum;</span></span>
-<span id="cb24-29"><a href="#cb24-29" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
-<span id="cb24-30"><a href="#cb24-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-31"><a href="#cb24-31" aria-hidden="true" tabindex="-1"></a><span class="st">function evaluatePixel(samples) {</span></span>
-<span id="cb24-32"><a href="#cb24-32" aria-hidden="true" tabindex="-1"></a><span class="st">    const clearTs = samples.filter(isClear)</span></span>
-<span id="cb24-33"><a href="#cb24-33" aria-hidden="true" tabindex="-1"></a><span class="st">    const mean = sum(clearTs) / clearTs.length</span></span>
-<span id="cb24-34"><a href="#cb24-34" aria-hidden="true" tabindex="-1"></a><span class="st">    return {default: [mean], dataMask: [clearTs.length]}</span></span>
-<span id="cb24-35"><a href="#cb24-35" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
-<span id="cb24-36"><a href="#cb24-36" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="cell-39" class="cell" data-execution_count="21">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>evalscript_stat <span class="op">=</span> <span class="st">"""</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="st">//VERSION=3</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="st">function setup() {</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="st">    return {</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="st">        input: ["NO2", "dataMask"],</span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a><span class="st">        output: [{ </span></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a><span class="st">          id: "default",</span></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a><span class="st">          bands: ["NO2"],</span></span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a><span class="st">          sampleType: "FLOAT32" </span></span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a><span class="st">        },</span></span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a><span class="st">        { </span></span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a><span class="st">          id: "dataMask",</span></span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a><span class="st">          bands: 1,</span></span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a><span class="st">        }],</span></span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a><span class="st">        mosaicking: "ORBIT"</span></span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a><span class="st">    };</span></span>
+<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-19"><a href="#cb26-19" aria-hidden="true" tabindex="-1"></a><span class="st">function isClear(sample) {</span></span>
+<span id="cb26-20"><a href="#cb26-20" aria-hidden="true" tabindex="-1"></a><span class="st">    return sample.dataMask == 1;</span></span>
+<span id="cb26-21"><a href="#cb26-21" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb26-22"><a href="#cb26-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-23"><a href="#cb26-23" aria-hidden="true" tabindex="-1"></a><span class="st">function sum(array) {</span></span>
+<span id="cb26-24"><a href="#cb26-24" aria-hidden="true" tabindex="-1"></a><span class="st">    let sum = 0;</span></span>
+<span id="cb26-25"><a href="#cb26-25" aria-hidden="true" tabindex="-1"></a><span class="st">    for (let i = 0; i &lt; array.length; i++) {</span></span>
+<span id="cb26-26"><a href="#cb26-26" aria-hidden="true" tabindex="-1"></a><span class="st">        sum += array[i].NO2;</span></span>
+<span id="cb26-27"><a href="#cb26-27" aria-hidden="true" tabindex="-1"></a><span class="st">    }</span></span>
+<span id="cb26-28"><a href="#cb26-28" aria-hidden="true" tabindex="-1"></a><span class="st">    return sum;</span></span>
+<span id="cb26-29"><a href="#cb26-29" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb26-30"><a href="#cb26-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-31"><a href="#cb26-31" aria-hidden="true" tabindex="-1"></a><span class="st">function evaluatePixel(samples) {</span></span>
+<span id="cb26-32"><a href="#cb26-32" aria-hidden="true" tabindex="-1"></a><span class="st">    const clearTs = samples.filter(isClear)</span></span>
+<span id="cb26-33"><a href="#cb26-33" aria-hidden="true" tabindex="-1"></a><span class="st">    const mean = sum(clearTs) / clearTs.length</span></span>
+<span id="cb26-34"><a href="#cb26-34" aria-hidden="true" tabindex="-1"></a><span class="st">    return {default: [mean], dataMask: [clearTs.length]}</span></span>
+<span id="cb26-35"><a href="#cb26-35" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb26-36"><a href="#cb26-36" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Now we define the Statistical API request, for that we first define an aggregation. Here we define the time range we are interesed in. In this case it is one year of data, all of 2022. We then define the aggregation interval, this defines how many days are aggregated. Since Sentinel 5P has a very high revisit rate we can define a temporal resolution of one day. However we could just as easily make a time series of weekly or monthly values just by changing the aggregation interval to <code>P1W</code> or <code>P1M</code> respectively.</p>
 <p>The size is set to 1 by 1 pixel since Sentinel 5P pixels are quite large and we are only intersted in point data for the capitals.</p>
-<div id="cell-41" class="cell" data-execution_count="184">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>aggregation <span class="op">=</span> SentinelHubStatistical.aggregation(</span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>    evalscript<span class="op">=</span>evalscript_stat,</span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>    time_interval<span class="op">=</span>(<span class="st">"2022-01-01"</span>, <span class="st">"2023-01-01"</span>),</span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>    aggregation_interval<span class="op">=</span><span class="st">"P1D"</span>,</span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>    size<span class="op">=</span>(<span class="dv">1</span>, <span class="dv">1</span>),</span>
-<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>input_data <span class="op">=</span> SentinelHubStatistical.input_data(</span>
-<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>    DataCollection.SENTINEL5P.define_from(<span class="st">"5p"</span>, service_url<span class="op">=</span>config.sh_base_url)</span>
-<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>requests <span class="op">=</span> []</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="cell-41" class="cell" data-execution_count="22">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>aggregation <span class="op">=</span> SentinelHubStatistical.aggregation(</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>    evalscript<span class="op">=</span>evalscript_stat,</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>    time_interval<span class="op">=</span>(<span class="st">"2022-01-01"</span>, <span class="st">"2023-01-01"</span>),</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>    aggregation_interval<span class="op">=</span><span class="st">"P1D"</span>,</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>    size<span class="op">=</span>(<span class="dv">1</span>, <span class="dv">1</span>),</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>input_data <span class="op">=</span> SentinelHubStatistical.input_data(</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>    DataCollection.SENTINEL5P.define_from(<span class="st">"5p"</span>, service_url<span class="op">=</span>config.sh_base_url)</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>requests <span class="op">=</span> []</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>We then create one request for each capital city. Instead of doing it like this we could also use the Batch Statistical API which is designed to calculate statistics for many polygons efficiently. Batch Statistical API will also be available on the Copernicus Browser later in 2023.</p>
+<p>We then create one request for each capital city. Instead of doing it like this we could also use the <a href="https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/BatchStatistical.html">Batch Statistical API</a> which is designed to calculate statistics for many polygons efficiently.</p>
 <p>This list of requests is then downloaded in parallel</p>
-<div id="cell-43" class="cell" data-execution_count="185">
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> geo_shape <span class="kw">in</span> capitals.geometry.values:</span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>    request <span class="op">=</span> SentinelHubStatistical(</span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>        aggregation<span class="op">=</span>aggregation,</span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>        input_data<span class="op">=</span>[input_data],</span>
-<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>        geometry<span class="op">=</span>Geometry(geo_shape, crs<span class="op">=</span>CRS(capitals.crs)),</span>
-<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>        config<span class="op">=</span>config,</span>
-<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>    requests.append(request)</span>
-<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>download_requests <span class="op">=</span> [request.download_list[<span class="dv">0</span>] <span class="cf">for</span> request <span class="kw">in</span> requests]</span>
-<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>client <span class="op">=</span> SentinelHubStatisticalDownloadClient(config<span class="op">=</span>config)</span>
-<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>pollution_stats <span class="op">=</span> client.download(download_requests, max_threads<span class="op">=</span><span class="dv">5</span>, show_progress<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="cell-43" class="cell" data-execution_count="23">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> geo_shape <span class="kw">in</span> capitals.geometry.values:</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>    request <span class="op">=</span> SentinelHubStatistical(</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>        aggregation<span class="op">=</span>aggregation,</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>        input_data<span class="op">=</span>[input_data],</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>        geometry<span class="op">=</span>Geometry(geo_shape, crs<span class="op">=</span>CRS(capitals.crs)),</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>        config<span class="op">=</span>config,</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>    requests.append(request)</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>download_requests <span class="op">=</span> [request.download_list[<span class="dv">0</span>] <span class="cf">for</span> request <span class="kw">in</span> requests]</span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>client <span class="op">=</span> SentinelHubStatisticalDownloadClient(config<span class="op">=</span>config)</span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>pollution_stats <span class="op">=</span> client.download(download_requests, max_threads<span class="op">=</span><span class="dv">5</span>, show_progress<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"e1d595dd9bf2423db76a80f79050ae28","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
 </div>
 <p>This is a helper function to convert the output of the statistical API to a pandas dataframe.</p>
-<div id="cell-45" class="cell" data-execution_count="188">
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> stats_to_df(stats_data):</span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Transform Statistical API response into a pandas.DataFrame"""</span></span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>    df_data <span class="op">=</span> []</span>
-<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> single_data <span class="kw">in</span> stats_data[<span class="st">"data"</span>]:</span>
-<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>        df_entry <span class="op">=</span> {}</span>
-<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>        is_valid_entry <span class="op">=</span> <span class="va">True</span></span>
-<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>        df_entry[<span class="st">"interval_from"</span>] <span class="op">=</span> parse_time(single_data[<span class="st">"interval"</span>][<span class="st">"from"</span>]).date()</span>
-<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>        df_entry[<span class="st">"interval_to"</span>] <span class="op">=</span> parse_time(single_data[<span class="st">"interval"</span>][<span class="st">"to"</span>]).date()</span>
-<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> output_name, output_data <span class="kw">in</span> single_data[<span class="st">"outputs"</span>].items():</span>
-<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> band_name, band_values <span class="kw">in</span> output_data[<span class="st">"bands"</span>].items():</span>
-<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>                band_stats <span class="op">=</span> band_values[<span class="st">"stats"</span>]</span>
-<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> band_stats[<span class="st">"sampleCount"</span>] <span class="op">==</span> band_stats[<span class="st">"noDataCount"</span>]:</span>
-<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>                    is_valid_entry <span class="op">=</span> <span class="va">False</span></span>
-<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">break</span></span>
-<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a>                <span class="cf">for</span> stat_name, value <span class="kw">in</span> band_stats.items():</span>
-<span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a>                    col_name <span class="op">=</span> <span class="ss">f"</span><span class="sc">{</span>output_name<span class="sc">}</span><span class="ss">_</span><span class="sc">{</span>band_name<span class="sc">}</span><span class="ss">_</span><span class="sc">{</span>stat_name<span class="sc">}</span><span class="ss">"</span></span>
-<span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">if</span> stat_name <span class="op">==</span> <span class="st">"percentiles"</span>:</span>
-<span id="cb27-22"><a href="#cb27-22" aria-hidden="true" tabindex="-1"></a>                        <span class="cf">for</span> perc, perc_val <span class="kw">in</span> value.items():</span>
-<span id="cb27-23"><a href="#cb27-23" aria-hidden="true" tabindex="-1"></a>                            perc_col_name <span class="op">=</span> <span class="ss">f"</span><span class="sc">{</span>col_name<span class="sc">}</span><span class="ss">_</span><span class="sc">{</span>perc<span class="sc">}</span><span class="ss">"</span></span>
-<span id="cb27-24"><a href="#cb27-24" aria-hidden="true" tabindex="-1"></a>                            df_entry[perc_col_name] <span class="op">=</span> perc_val</span>
-<span id="cb27-25"><a href="#cb27-25" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">else</span>:</span>
-<span id="cb27-26"><a href="#cb27-26" aria-hidden="true" tabindex="-1"></a>                        df_entry[col_name] <span class="op">=</span> value</span>
-<span id="cb27-27"><a href="#cb27-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-28"><a href="#cb27-28" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> is_valid_entry:</span>
-<span id="cb27-29"><a href="#cb27-29" aria-hidden="true" tabindex="-1"></a>            df_data.append(df_entry)</span>
-<span id="cb27-30"><a href="#cb27-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-31"><a href="#cb27-31" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> pd.DataFrame(df_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="cell-45" class="cell" data-execution_count="24">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> stats_to_df(stats_data):</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Transform Statistical API response into a pandas.DataFrame"""</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>    df_data <span class="op">=</span> []</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> single_data <span class="kw">in</span> stats_data[<span class="st">"data"</span>]:</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>        df_entry <span class="op">=</span> {}</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>        is_valid_entry <span class="op">=</span> <span class="va">True</span></span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>        df_entry[<span class="st">"interval_from"</span>] <span class="op">=</span> parse_time(single_data[<span class="st">"interval"</span>][<span class="st">"from"</span>]).date()</span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>        df_entry[<span class="st">"interval_to"</span>] <span class="op">=</span> parse_time(single_data[<span class="st">"interval"</span>][<span class="st">"to"</span>]).date()</span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> output_name, output_data <span class="kw">in</span> single_data[<span class="st">"outputs"</span>].items():</span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> band_name, band_values <span class="kw">in</span> output_data[<span class="st">"bands"</span>].items():</span>
+<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a>                band_stats <span class="op">=</span> band_values[<span class="st">"stats"</span>]</span>
+<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> band_stats[<span class="st">"sampleCount"</span>] <span class="op">==</span> band_stats[<span class="st">"noDataCount"</span>]:</span>
+<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a>                    is_valid_entry <span class="op">=</span> <span class="va">False</span></span>
+<span id="cb29-17"><a href="#cb29-17" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">break</span></span>
+<span id="cb29-18"><a href="#cb29-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-19"><a href="#cb29-19" aria-hidden="true" tabindex="-1"></a>                <span class="cf">for</span> stat_name, value <span class="kw">in</span> band_stats.items():</span>
+<span id="cb29-20"><a href="#cb29-20" aria-hidden="true" tabindex="-1"></a>                    col_name <span class="op">=</span> <span class="ss">f"</span><span class="sc">{</span>output_name<span class="sc">}</span><span class="ss">_</span><span class="sc">{</span>band_name<span class="sc">}</span><span class="ss">_</span><span class="sc">{</span>stat_name<span class="sc">}</span><span class="ss">"</span></span>
+<span id="cb29-21"><a href="#cb29-21" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">if</span> stat_name <span class="op">==</span> <span class="st">"percentiles"</span>:</span>
+<span id="cb29-22"><a href="#cb29-22" aria-hidden="true" tabindex="-1"></a>                        <span class="cf">for</span> perc, perc_val <span class="kw">in</span> value.items():</span>
+<span id="cb29-23"><a href="#cb29-23" aria-hidden="true" tabindex="-1"></a>                            perc_col_name <span class="op">=</span> <span class="ss">f"</span><span class="sc">{</span>col_name<span class="sc">}</span><span class="ss">_</span><span class="sc">{</span>perc<span class="sc">}</span><span class="ss">"</span></span>
+<span id="cb29-24"><a href="#cb29-24" aria-hidden="true" tabindex="-1"></a>                            df_entry[perc_col_name] <span class="op">=</span> perc_val</span>
+<span id="cb29-25"><a href="#cb29-25" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">else</span>:</span>
+<span id="cb29-26"><a href="#cb29-26" aria-hidden="true" tabindex="-1"></a>                        df_entry[col_name] <span class="op">=</span> value</span>
+<span id="cb29-27"><a href="#cb29-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-28"><a href="#cb29-28" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> is_valid_entry:</span>
+<span id="cb29-29"><a href="#cb29-29" aria-hidden="true" tabindex="-1"></a>            df_data.append(df_entry)</span>
+<span id="cb29-30"><a href="#cb29-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-31"><a href="#cb29-31" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> pd.DataFrame(df_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Here we build the dataframe from the request output.</p>
-<div id="cell-47" class="cell" data-execution_count="189">
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>no2_dfs <span class="op">=</span> [stats_to_df(polygon_stats) <span class="cf">for</span> polygon_stats <span class="kw">in</span> pollution_stats]</span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> df, capital <span class="kw">in</span> <span class="bu">zip</span>(no2_dfs, capitals[<span class="st">"name"</span>].values):</span>
-<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>    df[<span class="st">"name"</span>] <span class="op">=</span> capital</span>
-<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>no2_df <span class="op">=</span> pd.concat(no2_dfs)</span>
-<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>no2_df[<span class="st">"month"</span>] <span class="op">=</span> no2_df[<span class="st">"interval_from"</span>].astype(<span class="st">"datetime64[ns]"</span>).dt.month</span>
-<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>no2_df.to_csv(<span class="st">"./data/no2_capitals_timeseries.csv"</span>)</span>
-<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>no2_df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="189">
+<div id="cell-47" class="cell" data-execution_count="25">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>no2_dfs <span class="op">=</span> [stats_to_df(polygon_stats) <span class="cf">for</span> polygon_stats <span class="kw">in</span> pollution_stats]</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> df, capital <span class="kw">in</span> <span class="bu">zip</span>(no2_dfs, capitals[<span class="st">"name"</span>].values):</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>    df[<span class="st">"name"</span>] <span class="op">=</span> capital</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>no2_df <span class="op">=</span> pd.concat(no2_dfs)</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>no2_df[<span class="st">"month"</span>] <span class="op">=</span> no2_df[<span class="st">"interval_from"</span>].astype(<span class="st">"datetime64[ns]"</span>).dt.month</span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>no2_df.to_csv(<span class="st">"./data/no2_capitals_timeseries.csv"</span>)</span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>no2_df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="25">
 <div>
 
 
@@ -3540,6 +3555,7 @@ window.onload = function() {
 <th data-quarto-table-cell-role="th">default_NO2_sampleCount</th>
 <th data-quarto-table-cell-role="th">default_NO2_noDataCount</th>
 <th data-quarto-table-cell-role="th">name</th>
+<th data-quarto-table-cell-role="th">month</th>
 </tr>
 </thead>
 <tbody>
@@ -3551,9 +3567,10 @@ window.onload = function() {
 <td>0.000047</td>
 <td>0.000047</td>
 <td>0.0</td>
-<td>1</td>
-<td>0</td>
+<td>1.0</td>
+<td>0.0</td>
 <td>Vilnius</td>
+<td>3</td>
 </tr>
 <tr class="even">
 <td data-quarto-table-cell-role="th">1</td>
@@ -3563,9 +3580,10 @@ window.onload = function() {
 <td>0.000020</td>
 <td>0.000020</td>
 <td>0.0</td>
-<td>1</td>
-<td>0</td>
+<td>1.0</td>
+<td>0.0</td>
 <td>Vilnius</td>
+<td>4</td>
 </tr>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">2</td>
@@ -3575,9 +3593,10 @@ window.onload = function() {
 <td>0.000018</td>
 <td>0.000018</td>
 <td>0.0</td>
-<td>1</td>
-<td>0</td>
+<td>1.0</td>
+<td>0.0</td>
 <td>Vilnius</td>
+<td>4</td>
 </tr>
 <tr class="even">
 <td data-quarto-table-cell-role="th">3</td>
@@ -3587,9 +3606,10 @@ window.onload = function() {
 <td>0.000039</td>
 <td>0.000039</td>
 <td>0.0</td>
-<td>1</td>
-<td>0</td>
+<td>1.0</td>
+<td>0.0</td>
 <td>Vilnius</td>
+<td>4</td>
 </tr>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">4</td>
@@ -3599,12 +3619,14 @@ window.onload = function() {
 <td>0.000035</td>
 <td>0.000035</td>
 <td>0.0</td>
-<td>1</td>
-<td>0</td>
+<td>1.0</td>
+<td>0.0</td>
 <td>Vilnius</td>
+<td>4</td>
 </tr>
 <tr class="even">
 <td data-quarto-table-cell-role="th">...</td>
+<td>...</td>
 <td>...</td>
 <td>...</td>
 <td>...</td>
@@ -3623,9 +3645,10 @@ window.onload = function() {
 <td>0.000103</td>
 <td>0.000103</td>
 <td>0.0</td>
-<td>1</td>
-<td>0</td>
+<td>1.0</td>
+<td>0.0</td>
 <td>Vienna</td>
+<td>12</td>
 </tr>
 <tr class="even">
 <td data-quarto-table-cell-role="th">171</td>
@@ -3635,9 +3658,10 @@ window.onload = function() {
 <td>0.000034</td>
 <td>0.000034</td>
 <td>0.0</td>
-<td>1</td>
-<td>0</td>
+<td>1.0</td>
+<td>0.0</td>
 <td>Vienna</td>
+<td>12</td>
 </tr>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">172</td>
@@ -3647,9 +3671,10 @@ window.onload = function() {
 <td>0.000047</td>
 <td>0.000047</td>
 <td>0.0</td>
-<td>1</td>
-<td>0</td>
+<td>1.0</td>
+<td>0.0</td>
 <td>Vienna</td>
+<td>12</td>
 </tr>
 <tr class="even">
 <td data-quarto-table-cell-role="th">173</td>
@@ -3659,9 +3684,10 @@ window.onload = function() {
 <td>0.000163</td>
 <td>0.000163</td>
 <td>0.0</td>
-<td>1</td>
-<td>0</td>
+<td>1.0</td>
+<td>0.0</td>
 <td>Vienna</td>
+<td>12</td>
 </tr>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">174</td>
@@ -3671,26 +3697,27 @@ window.onload = function() {
 <td>0.000015</td>
 <td>0.000015</td>
 <td>0.0</td>
-<td>1</td>
-<td>0</td>
+<td>1.0</td>
+<td>0.0</td>
 <td>Vienna</td>
+<td>12</td>
 </tr>
 </tbody>
 </table>
 
-<p>2870 rows × 9 columns</p>
+<p>2864 rows × 10 columns</p>
 </div>
 </div>
 </div>
 <p>With this dataframe we can now do analysis. To give an example we are looking at the time series for a few different capital cities.</p>
-<div id="cell-49" class="cell" data-execution_count="29">
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>sel_capitals <span class="op">=</span> [<span class="st">"Tallinn"</span>, <span class="st">"Berlin"</span>, <span class="st">"Rome"</span>, <span class="st">"Madrid"</span>]</span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>sns.lineplot(</span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>    data<span class="op">=</span>no2_df.loc[no2_df[<span class="st">"name"</span>].isin(sel_capitals)],</span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>    x<span class="op">=</span><span class="st">"month"</span>,</span>
-<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>    y<span class="op">=</span><span class="st">"default_NO2_mean"</span>,</span>
-<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>    hue<span class="op">=</span><span class="st">"name"</span>,</span>
-<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="cell-49" class="cell" data-execution_count="26">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>sel_capitals <span class="op">=</span> [<span class="st">"Tallinn"</span>, <span class="st">"Berlin"</span>, <span class="st">"Rome"</span>, <span class="st">"Madrid"</span>]</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>sns.lineplot(</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>    data<span class="op">=</span>no2_df.loc[no2_df[<span class="st">"name"</span>].isin(sel_capitals)],</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>    x<span class="op">=</span><span class="st">"month"</span>,</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>    y<span class="op">=</span><span class="st">"default_NO2_mean"</span>,</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>    hue<span class="op">=</span><span class="st">"name"</span>,</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">

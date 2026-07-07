@@ -2946,9 +2946,32 @@ window.onload = function() {
 <h3 class="anchored" data-anchor-id="minimal-stac-requirement-summary">Minimal STAC requirement summary</h3>
 <ul>
 <li>Use STAC version 1.1 or higher</li>
-<li>The collection metadata has to list the available ‘bands’. If bands are not available, openEO will try using asset keys.</li>
-<li>Assets have to list the bands they contain, or only contain a single band that corresponds to the asset key.</li>
-<li>Items have to include <code>proj:code</code>, <code>proj:bbox</code> and <code>proj:shape</code> properties from the projection extension.</li>
+<li>The STAC resource passed to <code>load_stac</code> must allow discovery of available band names:
+<ul>
+<li>for an individual STAC item, the following places are consulted and first match is used:
+<ul>
+<li>using item property <code>eo:bands</code> (<code>eo</code> extension style) or <code>bands</code> (STAC 1.1 style)</li>
+<li>bands discovered from visiting the linked parent collection (if available)</li>
+<li>bands discovered from iterating over the assets included in the STAC item and merge the band info under their properties <code>eo:bands</code> (<code>eo</code> extension style) or <code>bands</code> (STAC 1.1 style)</li>
+</ul></li>
+<li>for STAC collections, the following places are consulted and first match is used:
+<ul>
+<li>under the collection <code>summaries</code>, at field <code>eo:bands</code> (<code>eo</code> extension style) or <code>bands</code> (STAC 1.1 style)</li>
+<li>under <code>item_assets</code>: iterate over the listed assets and combining the band info under their properties <code>eo:bands</code> (<code>eo</code> extension style) or <code>bands</code> (STAC 1.1 style)</li>
+<li>(worst case): visiting the linked STAC items, extract band information as discussed above for individual items and merge the results</li>
+</ul></li>
+</ul></li>
+<li>The STAC assets that will be considered for loading:
+<ul>
+<li>have a supported media type (field <code>type</code>), including but not limited to: <code>image/tiff</code>, <code>image/vnd.stac.geotiff</code>, <code>image/jp2</code>, <code>application/netcdf</code>, <code>application/x-netcdf</code></li>
+<li>list the bands they contain under properties <code>eo:bands</code> (<code>eo</code> extension style) or <code>bands</code> (STAC 1.1 style)</li>
+<li>have at least one role out of “data”, “data-mask”, “snow-ice”, “land-water”, “water-mask”</li>
+</ul></li>
+<li>Items have to include projection metadata (following the <a href="https://github.com/stac-extensions/projection">STAC projection extension</a>):
+<ul>
+<li><code>proj:code</code></li>
+<li>at least two out of <code>proj:bbox</code>, <code>proj:shape</code>, and <code>proj:transform</code> (make sure to double check the item order of <code>proj:transform</code> array)</li>
+</ul></li>
 </ul>
 <p>On top of these minimal requirements, we recommend:</p>
 <ul>

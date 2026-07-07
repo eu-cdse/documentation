@@ -2926,7 +2926,11 @@ window.onload = function() {
   <li><a href="#json-structure" id="toc-json-structure" class="nav-link" data-scroll-target="#json-structure">JSON structure</a></li>
   <li><a href="#data-source-type" id="toc-data-source-type" class="nav-link" data-scroll-target="#data-source-type">Data source type</a></li>
   </ul></li>
+  <li><a href="#stac-source-type" id="toc-stac-source-type" class="nav-link" data-scroll-target="#stac-source-type">STAC source type</a>
+  <ul class="collapse">
   <li><a href="#minimal-stac-based-example" id="toc-minimal-stac-based-example" class="nav-link" data-scroll-target="#minimal-stac-based-example">Minimal STAC based example</a></li>
+  <li><a href="#additional-configuration-options-for-the-stac-data-source-type" id="toc-additional-configuration-options-for-the-stac-data-source-type" class="nav-link" data-scroll-target="#additional-configuration-options-for-the-stac-data-source-type">Additional configuration options for the “stac” data source type</a></li>
+  </ul></li>
   <li><a href="#more-advanced-data-source-types" id="toc-more-advanced-data-source-types" class="nav-link" data-scroll-target="#more-advanced-data-source-types">More advanced data source types</a></li>
   </ul></li>
   </ul>
@@ -2994,9 +2998,12 @@ window.onload = function() {
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>        <span class="er">...</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 </section>
-<section id="minimal-stac-based-example" class="level2">
-<h2 class="anchored" data-anchor-id="minimal-stac-based-example">Minimal STAC based example</h2>
-<p>The easiest data source type is the “stac” type, which just requires a URL pointing to a STAC catalog or collection. For example, using the <a href="https://raw.githubusercontent.com/Open-EO/openeo-geopyspark-driver/refs/heads/master/docker/local_batch_job/example_stac_catalog/collection.json">example_stac_catalog</a> included in the <code>openeo-geopyspark-driver</code> repository:</p>
+<section id="stac-source-type" class="level2">
+<h2 class="anchored" data-anchor-id="stac-source-type">STAC source type</h2>
+<p>The easiest data source type is the “stac” type, which just requires a URL pointing to a STAC catalog or collection. Internally, a <code>load_collection</code> call of a collection of this type will roughly be dispatched to a <code>load_stac</code> with this URL.</p>
+<section id="minimal-stac-based-example" class="level3">
+<h3 class="anchored" data-anchor-id="minimal-stac-based-example">Minimal STAC based example</h3>
+<p>For example, using the <a href="https://raw.githubusercontent.com/Open-EO/openeo-geopyspark-driver/refs/heads/master/docker/local_batch_job/example_stac_catalog/collection.json">example_stac_catalog</a> included in the <code>openeo-geopyspark-driver</code> repository:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ot">[</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">{</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"id"</span><span class="fu">:</span> <span class="st">"EXAMPLE_STAC_CATALOG"</span><span class="fu">,</span></span>
@@ -3037,6 +3044,48 @@ window.onload = function() {
 <span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
 <span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
 <span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a><span class="ot">]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="additional-configuration-options-for-the-stac-data-source-type" class="level3">
+<h3 class="anchored" data-anchor-id="additional-configuration-options-for-the-stac-data-source-type">Additional configuration options for the “stac” data source type</h3>
+<p>Additional configuration or feature flags to fine-tune the behavior of the “stac” data source type can be provided under the <code>load_stac_feature_flags</code> field:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>  <span class="fu">{</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"id"</span><span class="fu">:</span> <span class="st">"SENTINEL2_L2A_STAC"</span><span class="fu">,</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"_vito"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"data_source"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"stac"</span><span class="fu">,</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"url"</span><span class="fu">:</span> <span class="st">"https://stac.example/sentinel-2-l2a"</span><span class="fu">,</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"load_stac_feature_flags"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>          <span class="er">...</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Some of the supported feature flags are:</p>
+<ul>
+<li><p><code>asset_id_to_bands_map</code>. Discovering the band name from STAC assets is usually done based on <code>bands</code> or <code>eo:bands</code> STAC metadata in the assets. When this metadata is missing/incomplete, the <code>asset_id_to_bands_map</code> config can provide a mapping from asset IDs to a list of corresponding band names. for example:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>  <span class="er">"load_stac_feature_flags":</span> <span class="fu">{</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"asset_id_to_bands_map"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"AOT_10m"</span><span class="fu">:</span> <span class="ot">[</span><span class="st">"AOT"</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"AOT_20m"</span><span class="fu">:</span> <span class="ot">[</span><span class="st">"AOT"</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"SCL_20m"</span><span class="fu">:</span> <span class="ot">[</span><span class="st">"SCL"</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"SCL_60m"</span><span class="fu">:</span> <span class="ot">[</span><span class="st">"SCL"</span><span class="ot">]</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li><p><code>granule_metadata_band_map</code>. Sentinel2 collections can contain metadata about sun/view azimuth and zenith angles in a “granule_metadata” XML metadata asset. How to extract these angles can be configured through the <code>granule_metadata_band_map</code> config, for example:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>  <span class="er">"load_stac_feature_flags":</span> <span class="fu">{</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"granule_metadata_band_map"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"sunAzimuthAngles"</span><span class="fu">:</span> <span class="st">"granule_metadata##0"</span><span class="fu">,</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"sunZenithAngles"</span><span class="fu">:</span> <span class="st">"granule_metadata##1"</span><span class="fu">,</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"viewAzimuthMean"</span><span class="fu">:</span> <span class="st">"granule_metadata##2"</span><span class="fu">,</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"viewZenithMean"</span><span class="fu">:</span> <span class="st">"granule_metadata##3"</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li><p><code>property_filter_adaptations</code>. To support legacy property filtering (originating from usage patterns when the collection was backed by another source type), it is possible to define adaptations of property filters, to translate/drop legacy property filters to filters that are compatible with the STAC source. For example:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>  <span class="er">"load_stac_feature_flags":</span> <span class="fu">{</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"property_filter_adaptations"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"productType"</span><span class="fu">:</span> <span class="st">"drop"</span><span class="fu">,</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"tileId"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"rename"</span><span class="fu">:</span> <span class="st">"grid:code"</span><span class="fu">,</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"value_mapping"</span><span class="fu">:</span> <span class="st">"add-MGRS-prefix"</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li><p><code>apply_raster_scale_and_offset</code> (boolean toggle) to enable pixel value scaling based on <code>raster:scale</code> and <code>raster:offset</code> STAC metadata, e.g.&nbsp;to convert digital numbers to physical values. For historic reasons, the current default is no scaling.</p></li>
+</ul>
+</section>
 </section>
 <section id="more-advanced-data-source-types" class="level2">
 <h2 class="anchored" data-anchor-id="more-advanced-data-source-types">More advanced data source types</h2>

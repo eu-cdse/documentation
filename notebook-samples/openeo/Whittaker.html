@@ -2944,7 +2944,7 @@ window.onload = function() {
 
 <p>In this notebook, we use Whittaker algorithm is available in the FuseTS toolbox as a user-defined-function (UDF) to create a smoothed time series. It employs a discrete penalized least squares algorithm that fits a smooth series, denoted as z, to the original data series, denoted as y.</p>
 <p>Please note that FuseTS library used here is compatible with Python 3.8 - 3.10.</p>
-<div id="780df664-b1e6-4d1d-8f0d-160a2ec54a11" class="cell" data-execution_count="12">
+<div id="780df664-b1e6-4d1d-8f0d-160a2ec54a11" class="cell" data-executetime="{&quot;end_time&quot;:&quot;2026-02-25T10:55:07.462100Z&quot;,&quot;start_time&quot;:&quot;2026-02-25T10:55:03.882058Z&quot;}" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> itertools</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> warnings</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> datetime <span class="im">import</span> datetime, timedelta</span>
@@ -2963,14 +2963,20 @@ window.onload = function() {
 <span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>warnings.filterwarnings(<span class="st">"ignore"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The first step is to connect to an openEO backend and authenticate with the Copernicus Dataspace Ecosystem’s credentials.</p>
-<div id="b44d6796-9b42-4781-a3ed-93eea7e44af9" class="cell" data-outputid="7bce0427-3705-42bf-947b-e2c44aeaa1d8" data-execution_count="13">
+<div id="b44d6796-9b42-4781-a3ed-93eea7e44af9" class="cell" data-executetime="{&quot;start_time&quot;:&quot;2026-02-25T10:55:46.739921Z&quot;}" data-jupyter="{&quot;is_executing&quot;:true}" data-outputid="7bce0427-3705-42bf-947b-e2c44aeaa1d8" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>connection <span class="op">=</span> openeo.<span class="ex">connect</span>(<span class="st">"openeo.dataspace.copernicus.eu"</span>).authenticate_oidc()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+Visit <a href="https://identity.dataspace.copernicus.eu/auth/realms/CDSE/device?user_code=WBLU-ODJV" title="Authenticate at https://identity.dataspace.copernicus.eu/auth/realms/CDSE/device?user_code=WBLU-ODJV" target="_blank" rel="noopener noreferrer">https://identity.dataspace.copernicus.eu/auth/realms/CDSE/device?user_code=WBLU-ODJV</a> <a href="#" onclick="navigator.clipboard.writeText('https://identity.dataspace.copernicus.eu/auth/realms/CDSE/device?user_code=WBLU-ODJV');return false;" title="Copy authentication URL to clipboard">📋</a> to authenticate.
+</div>
+<div class="cell-output cell-output-display">
+✅ Authorized successfully
+</div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Authenticated using refresh token.</code></pre>
+<pre><code>Authenticated using device code flow.</code></pre>
 </div>
 </div>
 <p>Next we define the area of interest, in this case an extent, for which we would like to fetch time series data.</p>
-<div id="5ebb9104-b0d2-4cdb-be50-6100924a7a46" class="cell" data-execution_count="14">
+<div id="5ebb9104-b0d2-4cdb-be50-6100924a7a46" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>year <span class="op">=</span> <span class="dv">2019</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>spat_ext <span class="op">=</span> {</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"coordinates"</span>: [</span>
@@ -2986,7 +2992,7 @@ window.onload = function() {
 <span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>temp_ext <span class="op">=</span> [<span class="ss">f"</span><span class="sc">{</span>year<span class="sc">}</span><span class="ss">-01-01"</span>, <span class="ss">f"</span><span class="sc">{</span>year<span class="sc">}</span><span class="ss">-12-30"</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="eeda4b17-9562-4543-af5a-19869f83aacb" class="cell" data-outputid="1ecea6ef-c64c-45fb-8ab2-86f2a8536ac8" data-execution_count="15">
+<div id="eeda4b17-9562-4543-af5a-19869f83aacb" class="cell" data-outputid="1ecea6ef-c64c-45fb-8ab2-86f2a8536ac8" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>center <span class="op">=</span> np.mean(spat_ext[<span class="st">"coordinates"</span>][<span class="dv">0</span>], axis<span class="op">=</span><span class="dv">0</span>).tolist()[::<span class="op">-</span><span class="dv">1</span>]</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>zoom <span class="op">=</span> <span class="dv">16</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -3003,50 +3009,66 @@ window.onload = function() {
 <span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>m.add(g)</span>
 <span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>m</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display">
+<div class="cell-output cell-output-display" data-execution_count="4">
 <script type="application/vnd.jupyter.widget-view+json">
-{"model_id":"b83aadc1711245a6968490b15027d780","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+{"model_id":"754cd8c43b694583a7eec428121445f7","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
 </script>
 </div>
 </div>
 <p>We will be working with with the rapeseed from 2019, located in the Nothern Spain.</p>
 <p>We will create an openEO process to calculate the NDVI time series for our area of interest. First we begin by using the <code>SENTINEL2_L2A</code> collection, and apply a <code>Sen2Cor</code> cloud masking algorithm to remove any interfering clouds before calculating the NDVI values.</p>
-<div id="oqmsvSDmFRZv" class="cell" data-execution_count="16">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>s2 <span class="op">=</span> connection.load_collection(</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"SENTINEL2_L2A"</span>,</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    spatial_extent<span class="op">=</span>spat_ext,</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    temporal_extent<span class="op">=</span>temp_ext,</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    bands<span class="op">=</span>[<span class="st">"B04"</span>, <span class="st">"B08"</span>, <span class="st">"SCL"</span>],</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>s2 <span class="op">=</span> s2.process(<span class="st">"mask_scl_dilation"</span>, data<span class="op">=</span>s2, scl_band_name<span class="op">=</span><span class="st">"SCL"</span>)</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>s2 <span class="op">=</span> s2.mask_polygon(spat_ext)</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>ndvi_cube <span class="op">=</span> s2.ndvi(red<span class="op">=</span><span class="st">"B04"</span>, nir<span class="op">=</span><span class="st">"B08"</span>, target_band<span class="op">=</span><span class="st">"NDVI"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="2475a669-7a5c-4636-a23c-732a4cc04530" class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>scl <span class="op">=</span> connection.load_collection(</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"SENTINEL2_L2A"</span>, temporal_extent<span class="op">=</span>temp_ext, bands<span class="op">=</span>[<span class="st">"SCL"</span>], max_cloud_cover<span class="op">=</span><span class="dv">95</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>cloud_mask <span class="op">=</span> scl.process(</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"to_scl_dilation_mask"</span>,</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    data<span class="op">=</span>scl,</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    kernel1_size<span class="op">=</span><span class="dv">17</span>,</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    kernel2_size<span class="op">=</span><span class="dv">77</span>,</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    mask1_values<span class="op">=</span>[<span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>, <span class="dv">7</span>],</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    mask2_values<span class="op">=</span>[<span class="dv">3</span>, <span class="dv">8</span>, <span class="dv">9</span>, <span class="dv">10</span>, <span class="dv">11</span>],</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    erosion_kernel_size<span class="op">=</span><span class="dv">3</span>,</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="oqmsvSDmFRZv" class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>s2 <span class="op">=</span> connection.load_collection(</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"SENTINEL2_L2A"</span>,</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    temporal_extent<span class="op">=</span>temp_ext,</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    bands<span class="op">=</span>[<span class="st">"B04"</span>, <span class="st">"B08"</span>],</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>s2 <span class="op">=</span> s2.mask(cloud_mask)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>s2 <span class="op">=</span> s2.mask_polygon(spat_ext)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>ndvi_cube <span class="op">=</span> s2.ndvi(red<span class="op">=</span><span class="st">"B04"</span>, nir<span class="op">=</span><span class="st">"B08"</span>, target_band<span class="op">=</span><span class="st">"NDVI"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Now that we have calculated the NDVI time series for our area of interest, we can request openEO to download the result to our local storage. This will allow us to access the file and use it for further analysis in this notebook.</p>
-<div id="oYmWKG2GFilg" class="cell" data-outputid="e64e9256-dcc7-45f3-ad55-540e2e0cdc51" data-execution_count="17">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>ndvi_output_file <span class="op">=</span> <span class="st">"raw_s2_ndvi_field.nc"</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># batch job</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>ndvi_job <span class="op">=</span> ndvi_cube.execute_batch(ndvi_output_file, title<span class="op">=</span><span class="ss">f"FUSETS-Raw NDVI"</span>)</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co"># load the dataset and check it's structure</span></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>raw_ndvi_ds <span class="op">=</span> xarray.load_dataset(ndvi_output_file)</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>raw_ndvi_ds</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="oYmWKG2GFilg" class="cell" data-outputid="e64e9256-dcc7-45f3-ad55-540e2e0cdc51" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>ndvi_output_file <span class="op">=</span> <span class="st">"raw_s2_ndvi_field.nc"</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co"># batch job</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>ndvi_job <span class="op">=</span> ndvi_cube.execute_batch(ndvi_output_file, title<span class="op">=</span><span class="ss">f"FUSETS-Raw NDVI"</span>)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="co"># load the dataset and check it's structure</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>raw_ndvi_ds <span class="op">=</span> xarray.load_dataset(ndvi_output_file)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>raw_ndvi_ds</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>0:00:00 Job 'j-2310308bb89149cf8106aabb55eba553': send 'start'
-0:00:12 Job 'j-2310308bb89149cf8106aabb55eba553': created (progress N/A)
-0:00:18 Job 'j-2310308bb89149cf8106aabb55eba553': created (progress N/A)
-0:00:24 Job 'j-2310308bb89149cf8106aabb55eba553': created (progress N/A)
-0:00:33 Job 'j-2310308bb89149cf8106aabb55eba553': created (progress N/A)
-0:00:43 Job 'j-2310308bb89149cf8106aabb55eba553': created (progress N/A)
-0:00:56 Job 'j-2310308bb89149cf8106aabb55eba553': created (progress N/A)
-0:01:12 Job 'j-2310308bb89149cf8106aabb55eba553': running (progress N/A)
-0:01:32 Job 'j-2310308bb89149cf8106aabb55eba553': running (progress N/A)
-0:01:56 Job 'j-2310308bb89149cf8106aabb55eba553': running (progress N/A)
-0:02:27 Job 'j-2310308bb89149cf8106aabb55eba553': finished (progress N/A)</code></pre>
+<pre><code>0:00:00 Job 'j-2602251100044d6a9bff3382281a38c8': send 'start'
+0:00:14 Job 'j-2602251100044d6a9bff3382281a38c8': created (progress 0%)
+0:00:19 Job 'j-2602251100044d6a9bff3382281a38c8': created (progress 0%)
+0:00:26 Job 'j-2602251100044d6a9bff3382281a38c8': created (progress 0%)
+0:00:34 Job 'j-2602251100044d6a9bff3382281a38c8': created (progress 0%)
+0:00:44 Job 'j-2602251100044d6a9bff3382281a38c8': created (progress 0%)
+0:00:56 Job 'j-2602251100044d6a9bff3382281a38c8': created (progress 0%)
+0:01:11 Job 'j-2602251100044d6a9bff3382281a38c8': running (progress N/A)
+0:01:35 Job 'j-2602251100044d6a9bff3382281a38c8': running (progress N/A)
+0:01:59 Job 'j-2602251100044d6a9bff3382281a38c8': running (progress N/A)
+0:02:29 Job 'j-2602251100044d6a9bff3382281a38c8': running (progress N/A)
+0:03:07 Job 'j-2602251100044d6a9bff3382281a38c8': running (progress N/A)
+0:03:54 Job 'j-2602251100044d6a9bff3382281a38c8': finished (progress 100%)</code></pre>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="17">
+<div class="cell-output cell-output-display" data-execution_count="10">
 <div><svg style="position: absolute; width: 0; height: 0; overflow: hidden">
 <defs>
 <symbol id="icon-database" viewbox="0 0 32 32">
@@ -3078,6 +3100,7 @@ window.onload = function() {
 }
 
 html[theme=dark],
+html[data-theme=dark],
 body[data-theme=dark],
 body.vscode-dark {
   --xr-font-color0: rgba(255, 255, 255, 1);
@@ -3410,29 +3433,29 @@ dl.xr-attrs {
   stroke: currentColor;
   fill: currentColor;
 }
-</style><pre class="xr-text-repr-fallback">&lt;xarray.Dataset&gt;
-Dimensions:  (t: 31, x: 21, y: 19)
+</style><pre class="xr-text-repr-fallback">&lt;xarray.Dataset&gt; Size: 159kB
+Dimensions:  (t: 33, x: 21, y: 19)
 Coordinates:
-  * t        (t) datetime64[ns] 2019-01-27 2019-02-11 ... 2019-12-18 2019-12-28
-  * x        (x) float64 3.442e+05 3.442e+05 3.442e+05 ... 3.443e+05 3.444e+05
-  * y        (y) float64 4.626e+06 4.626e+06 4.626e+06 ... 4.626e+06 4.626e+06
+  * t        (t) datetime64[ns] 264B 2019-01-07 2019-01-27 ... 2019-12-28
+  * x        (x) float64 168B 3.442e+05 3.442e+05 ... 3.443e+05 3.444e+05
+  * y        (y) float64 152B 4.626e+06 4.626e+06 ... 4.626e+06 4.626e+06
 Data variables:
-    crs      |S1 b''
-    B04      (t, y, x) float32 nan 1.212e+03 1.226e+03 1.236e+03 ... nan nan nan
-    B08      (t, y, x) float32 nan 1.934e+03 1.964e+03 1.982e+03 ... nan nan nan
-    SCL      (t, y, x) float32 nan 5.0 5.0 5.0 5.0 5.0 ... nan nan nan nan nan
-    NDVI     (t, y, x) float32 nan 0.2295 0.2313 0.2318 ... nan nan nan nan
+    crs      |S1 1B b''
+    B04      (t, y, x) float32 53kB nan 1.152e+03 1.122e+03 ... nan nan nan
+    B08      (t, y, x) float32 53kB nan 1.952e+03 1.928e+03 ... nan nan nan
+    NDVI     (t, y, x) float32 53kB nan 0.2577 0.2643 0.2767 ... nan nan nan nan
 Attributes:
     Conventions:  CF-1.9
-    institution:  openEO platform - Geotrellis backend: 0.18.0a1
+    institution:  Copernicus Data Space Ecosystem openEO API - 0.71.0a12.dev2...
     description:  
-    title:        </pre><div class="xr-wrap" style="display:none"><div class="xr-header"><div class="xr-obj-type">xarray.Dataset</div></div><ul class="xr-sections"><li class="xr-section-item"><input id="section-a9e87130-0514-4891-807f-7ff89cc1e91d" class="xr-section-summary-in" type="checkbox" disabled=""><label for="section-a9e87130-0514-4891-807f-7ff89cc1e91d" class="xr-section-summary" title="Expand/collapse section">Dimensions:</label><div class="xr-section-inline-details"><ul class="xr-dim-list"><li><span class="xr-has-index">t</span>: 31</li><li><span class="xr-has-index">x</span>: 21</li><li><span class="xr-has-index">y</span>: 19</li></ul></div><div class="xr-section-details"></div></li><li class="xr-section-item"><input id="section-f2c45298-ff98-416a-bcef-15d4395db9d5" class="xr-section-summary-in" type="checkbox" checked=""><label for="section-f2c45298-ff98-416a-bcef-15d4395db9d5" class="xr-section-summary">Coordinates: <span>(3)</span></label><div class="xr-section-inline-details"></div><div class="xr-section-details"><ul class="xr-var-list"><li class="xr-var-item"><div class="xr-var-name"><span class="xr-has-index">t</span></div><div class="xr-var-dims">(t)</div><div class="xr-var-dtype">datetime64[ns]</div><div class="xr-var-preview xr-preview">2019-01-27 ... 2019-12-28</div><input id="attrs-00bc0d73-3764-41d3-ad0e-1ab3008f8126" class="xr-var-attrs-in" type="checkbox"><label for="attrs-00bc0d73-3764-41d3-ad0e-1ab3008f8126" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use href="#icon-file-text2"></use></svg></label><input id="data-862d5394-4761-44c9-8799-26dcf27925c2" class="xr-var-data-in" type="checkbox"><label for="data-862d5394-4761-44c9-8799-26dcf27925c2" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"><dt><span>standard_name :</span></dt><dd>t</dd><dt><span>long_name :</span></dt><dd>t</dd><dt><span>axis :</span></dt><dd>T</dd></dl></div><div class="xr-var-data"><pre>array(['2019-01-27T00:00:00.000000000', '2019-02-11T00:00:00.000000000',
-       '2019-02-21T00:00:00.000000000', '2019-02-26T00:00:00.000000000',
-       '2019-03-03T00:00:00.000000000', '2019-03-13T00:00:00.000000000',
-       '2019-03-23T00:00:00.000000000', '2019-03-28T00:00:00.000000000',
-       '2019-04-07T00:00:00.000000000', '2019-04-12T00:00:00.000000000',
-       '2019-04-27T00:00:00.000000000', '2019-05-02T00:00:00.000000000',
-       '2019-05-27T00:00:00.000000000', '2019-06-01T00:00:00.000000000',
+    title:        </pre><div class="xr-wrap" style="display:none"><div class="xr-header"><div class="xr-obj-type">xarray.Dataset</div></div><ul class="xr-sections"><li class="xr-section-item"><input id="section-1249ff26-41de-4225-bae3-692b37bb9608" class="xr-section-summary-in" type="checkbox" disabled=""><label for="section-1249ff26-41de-4225-bae3-692b37bb9608" class="xr-section-summary" title="Expand/collapse section">Dimensions:</label><div class="xr-section-inline-details"><ul class="xr-dim-list"><li><span class="xr-has-index">t</span>: 33</li><li><span class="xr-has-index">x</span>: 21</li><li><span class="xr-has-index">y</span>: 19</li></ul></div><div class="xr-section-details"></div></li><li class="xr-section-item"><input id="section-e95ddac0-d731-4493-9e19-71a555fab825" class="xr-section-summary-in" type="checkbox" checked=""><label for="section-e95ddac0-d731-4493-9e19-71a555fab825" class="xr-section-summary">Coordinates: <span>(3)</span></label><div class="xr-section-inline-details"></div><div class="xr-section-details"><ul class="xr-var-list"><li class="xr-var-item"><div class="xr-var-name"><span class="xr-has-index">t</span></div><div class="xr-var-dims">(t)</div><div class="xr-var-dtype">datetime64[ns]</div><div class="xr-var-preview xr-preview">2019-01-07 ... 2019-12-28</div><input id="attrs-a2bde328-79ac-4d56-bb78-8d4588255a93" class="xr-var-attrs-in" type="checkbox"><label for="attrs-a2bde328-79ac-4d56-bb78-8d4588255a93" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use href="#icon-file-text2"></use></svg></label><input id="data-9dc4fc72-6cdc-47ba-80eb-4adab4fb2088" class="xr-var-data-in" type="checkbox"><label for="data-9dc4fc72-6cdc-47ba-80eb-4adab4fb2088" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"><dt><span>standard_name :</span></dt><dd>t</dd><dt><span>long_name :</span></dt><dd>t</dd><dt><span>axis :</span></dt><dd>T</dd></dl></div><div class="xr-var-data"><pre>array(['2019-01-07T00:00:00.000000000', '2019-01-27T00:00:00.000000000',
+       '2019-02-11T00:00:00.000000000', '2019-02-21T00:00:00.000000000',
+       '2019-02-26T00:00:00.000000000', '2019-03-03T00:00:00.000000000',
+       '2019-03-13T00:00:00.000000000', '2019-03-23T00:00:00.000000000',
+       '2019-03-28T00:00:00.000000000', '2019-04-07T00:00:00.000000000',
+       '2019-04-12T00:00:00.000000000', '2019-04-27T00:00:00.000000000',
+       '2019-05-02T00:00:00.000000000', '2019-05-27T00:00:00.000000000',
+       '2019-06-01T00:00:00.000000000', '2019-06-21T00:00:00.000000000',
        '2019-06-26T00:00:00.000000000', '2019-07-01T00:00:00.000000000',
        '2019-07-11T00:00:00.000000000', '2019-07-16T00:00:00.000000000',
        '2019-07-21T00:00:00.000000000', '2019-08-05T00:00:00.000000000',
@@ -3441,29 +3464,29 @@ Attributes:
        '2019-09-19T00:00:00.000000000', '2019-09-29T00:00:00.000000000',
        '2019-10-09T00:00:00.000000000', '2019-11-18T00:00:00.000000000',
        '2019-11-23T00:00:00.000000000', '2019-12-18T00:00:00.000000000',
-       '2019-12-28T00:00:00.000000000'], dtype='datetime64[ns]')</pre></div></li><li class="xr-var-item"><div class="xr-var-name"><span class="xr-has-index">x</span></div><div class="xr-var-dims">(x)</div><div class="xr-var-dtype">float64</div><div class="xr-var-preview xr-preview">3.442e+05 3.442e+05 ... 3.444e+05</div><input id="attrs-300d6905-a431-4b4e-a14b-62a8273a92bb" class="xr-var-attrs-in" type="checkbox"><label for="attrs-300d6905-a431-4b4e-a14b-62a8273a92bb" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use href="#icon-file-text2"></use></svg></label><input id="data-69034bcb-9758-4687-8eec-c808817f265c" class="xr-var-data-in" type="checkbox"><label for="data-69034bcb-9758-4687-8eec-c808817f265c" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"><dt><span>standard_name :</span></dt><dd>projection_x_coordinate</dd><dt><span>long_name :</span></dt><dd>x coordinate of projection</dd><dt><span>units :</span></dt><dd>m</dd></dl></div><div class="xr-var-data"><pre>array([344155., 344165., 344175., 344185., 344195., 344205., 344215., 344225.,
+       '2019-12-28T00:00:00.000000000'], dtype='datetime64[ns]')</pre></div></li><li class="xr-var-item"><div class="xr-var-name"><span class="xr-has-index">x</span></div><div class="xr-var-dims">(x)</div><div class="xr-var-dtype">float64</div><div class="xr-var-preview xr-preview">3.442e+05 3.442e+05 ... 3.444e+05</div><input id="attrs-0e5962d6-da5f-4a8e-88b8-b3990012ae3f" class="xr-var-attrs-in" type="checkbox"><label for="attrs-0e5962d6-da5f-4a8e-88b8-b3990012ae3f" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use href="#icon-file-text2"></use></svg></label><input id="data-0fc3790d-2213-4581-a399-4da1994012ab" class="xr-var-data-in" type="checkbox"><label for="data-0fc3790d-2213-4581-a399-4da1994012ab" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"><dt><span>standard_name :</span></dt><dd>projection_x_coordinate</dd><dt><span>long_name :</span></dt><dd>x coordinate of projection</dd><dt><span>units :</span></dt><dd>m</dd></dl></div><div class="xr-var-data"><pre>array([344155., 344165., 344175., 344185., 344195., 344205., 344215., 344225.,
        344235., 344245., 344255., 344265., 344275., 344285., 344295., 344305.,
-       344315., 344325., 344335., 344345., 344355.])</pre></div></li><li class="xr-var-item"><div class="xr-var-name"><span class="xr-has-index">y</span></div><div class="xr-var-dims">(y)</div><div class="xr-var-dtype">float64</div><div class="xr-var-preview xr-preview">4.626e+06 4.626e+06 ... 4.626e+06</div><input id="attrs-04bf7b41-1d6f-447c-a3c9-0dc4f0fc388a" class="xr-var-attrs-in" type="checkbox"><label for="attrs-04bf7b41-1d6f-447c-a3c9-0dc4f0fc388a" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use href="#icon-file-text2"></use></svg></label><input id="data-c536d43e-72b5-4758-96ec-1f54cf5dde30" class="xr-var-data-in" type="checkbox"><label for="data-c536d43e-72b5-4758-96ec-1f54cf5dde30" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"><dt><span>standard_name :</span></dt><dd>projection_y_coordinate</dd><dt><span>long_name :</span></dt><dd>y coordinate of projection</dd><dt><span>units :</span></dt><dd>m</dd></dl></div><div class="xr-var-data"><pre>array([4626435., 4626425., 4626415., 4626405., 4626395., 4626385., 4626375.,
+       344315., 344325., 344335., 344345., 344355.])</pre></div></li><li class="xr-var-item"><div class="xr-var-name"><span class="xr-has-index">y</span></div><div class="xr-var-dims">(y)</div><div class="xr-var-dtype">float64</div><div class="xr-var-preview xr-preview">4.626e+06 4.626e+06 ... 4.626e+06</div><input id="attrs-a3f1f38f-38be-43aa-8d51-8d24e0b5538e" class="xr-var-attrs-in" type="checkbox"><label for="attrs-a3f1f38f-38be-43aa-8d51-8d24e0b5538e" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use href="#icon-file-text2"></use></svg></label><input id="data-94c0e498-10bf-42ed-bc2f-34b3d9800993" class="xr-var-data-in" type="checkbox"><label for="data-94c0e498-10bf-42ed-bc2f-34b3d9800993" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"><dt><span>standard_name :</span></dt><dd>projection_y_coordinate</dd><dt><span>long_name :</span></dt><dd>y coordinate of projection</dd><dt><span>units :</span></dt><dd>m</dd></dl></div><div class="xr-var-data"><pre>array([4626435., 4626425., 4626415., 4626405., 4626395., 4626385., 4626375.,
        4626365., 4626355., 4626345., 4626335., 4626325., 4626315., 4626305.,
-       4626295., 4626285., 4626275., 4626265., 4626255.])</pre></div></li></ul></div></li><li class="xr-section-item"><input id="section-35a7105c-bbd1-46e3-83ae-e1c6eecbcc92" class="xr-section-summary-in" type="checkbox" checked=""><label for="section-35a7105c-bbd1-46e3-83ae-e1c6eecbcc92" class="xr-section-summary">Data variables: <span>(5)</span></label><div class="xr-section-inline-details"></div><div class="xr-section-details"><ul class="xr-var-list"><li class="xr-var-item"><div class="xr-var-name"><span>crs</span></div><div class="xr-var-dims">()</div><div class="xr-var-dtype">|S1</div><div class="xr-var-preview xr-preview">b''</div><input id="attrs-c753680a-a765-4175-b4ad-2373b368860d" class="xr-var-attrs-in" type="checkbox"><label for="attrs-c753680a-a765-4175-b4ad-2373b368860d" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use href="#icon-file-text2"></use></svg></label><input id="data-6b4dd2f4-e326-4e0f-9640-1193c547a406" class="xr-var-data-in" type="checkbox"><label for="data-6b4dd2f4-e326-4e0f-9640-1193c547a406" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"><dt><span>crs_wkt :</span></dt><dd>PROJCS["WGS 84 / UTM zone 30N", GEOGCS["WGS 84", DATUM["World Geodetic System 1984", SPHEROID["WGS 84", 6378137.0, 298.257223563, AUTHORITY["EPSG","7030"]], AUTHORITY["EPSG","6326"]], PRIMEM["Greenwich", 0.0, AUTHORITY["EPSG","8901"]], UNIT["degree", 0.017453292519943295], AXIS["Geodetic longitude", EAST], AXIS["Geodetic latitude", NORTH], AUTHORITY["EPSG","4326"]], PROJECTION["Transverse_Mercator", AUTHORITY["EPSG","9807"]], PARAMETER["central_meridian", -3.0], PARAMETER["latitude_of_origin", 0.0], PARAMETER["scale_factor", 0.9996], PARAMETER["false_easting", 500000.0], PARAMETER["false_northing", 0.0], UNIT["m", 1.0], AXIS["Easting", EAST], AXIS["Northing", NORTH], AUTHORITY["EPSG","32630"]]</dd><dt><span>spatial_ref :</span></dt><dd>PROJCS["WGS 84 / UTM zone 30N", GEOGCS["WGS 84", DATUM["World Geodetic System 1984", SPHEROID["WGS 84", 6378137.0, 298.257223563, AUTHORITY["EPSG","7030"]], AUTHORITY["EPSG","6326"]], PRIMEM["Greenwich", 0.0, AUTHORITY["EPSG","8901"]], UNIT["degree", 0.017453292519943295], AXIS["Geodetic longitude", EAST], AXIS["Geodetic latitude", NORTH], AUTHORITY["EPSG","4326"]], PROJECTION["Transverse_Mercator", AUTHORITY["EPSG","9807"]], PARAMETER["central_meridian", -3.0], PARAMETER["latitude_of_origin", 0.0], PARAMETER["scale_factor", 0.9996], PARAMETER["false_easting", 500000.0], PARAMETER["false_northing", 0.0], UNIT["m", 1.0], AXIS["Easting", EAST], AXIS["Northing", NORTH], AUTHORITY["EPSG","32630"]]</dd></dl></div><div class="xr-var-data"><pre>array(b'', dtype='|S1')</pre></div></li><li class="xr-var-item"><div class="xr-var-name"><span>B04</span></div><div class="xr-var-dims">(t, y, x)</div><div class="xr-var-dtype">float32</div><div class="xr-var-preview xr-preview">nan 1.212e+03 1.226e+03 ... nan nan</div><input id="attrs-3940b8f5-a71f-46e5-8fe5-422b929b78f7" class="xr-var-attrs-in" type="checkbox"><label for="attrs-3940b8f5-a71f-46e5-8fe5-422b929b78f7" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use href="#icon-file-text2"></use></svg></label><input id="data-23340414-2e79-4090-85e5-08c82813635b" class="xr-var-data-in" type="checkbox"><label for="data-23340414-2e79-4090-85e5-08c82813635b" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"><dt><span>long_name :</span></dt><dd>B04</dd><dt><span>units :</span></dt><dd></dd><dt><span>grid_mapping :</span></dt><dd>crs</dd></dl></div><div class="xr-var-data"><pre>array([[[  nan, 1212., 1226., ..., 1064., 1040.,   nan],
-        [  nan, 1214., 1224., ..., 1096., 1054.,   nan],
-        [  nan, 1232., 1222., ..., 1082., 1052.,   nan],
+       4626295., 4626285., 4626275., 4626265., 4626255.])</pre></div></li></ul></div></li><li class="xr-section-item"><input id="section-00a457d8-2802-461f-b9c0-c0d09599505f" class="xr-section-summary-in" type="checkbox" checked=""><label for="section-00a457d8-2802-461f-b9c0-c0d09599505f" class="xr-section-summary">Data variables: <span>(4)</span></label><div class="xr-section-inline-details"></div><div class="xr-section-details"><ul class="xr-var-list"><li class="xr-var-item"><div class="xr-var-name"><span>crs</span></div><div class="xr-var-dims">()</div><div class="xr-var-dtype">|S1</div><div class="xr-var-preview xr-preview">b''</div><input id="attrs-4729fd18-4b5d-4da6-ade0-df6d6bf91020" class="xr-var-attrs-in" type="checkbox"><label for="attrs-4729fd18-4b5d-4da6-ade0-df6d6bf91020" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use href="#icon-file-text2"></use></svg></label><input id="data-bcda6fa5-c3b2-4353-b6c2-aa3717a7a45b" class="xr-var-data-in" type="checkbox"><label for="data-bcda6fa5-c3b2-4353-b6c2-aa3717a7a45b" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"><dt><span>crs_wkt :</span></dt><dd>PROJCS["WGS 84 / UTM zone 30N", GEOGCS["WGS 84", DATUM["World Geodetic System 1984", SPHEROID["WGS 84", 6378137.0, 298.257223563, AUTHORITY["EPSG","7030"]], AUTHORITY["EPSG","6326"]], PRIMEM["Greenwich", 0.0, AUTHORITY["EPSG","8901"]], UNIT["degree", 0.017453292519943295], AXIS["Geodetic longitude", EAST], AXIS["Geodetic latitude", NORTH], AUTHORITY["EPSG","4326"]], PROJECTION["Transverse_Mercator", AUTHORITY["EPSG","9807"]], PARAMETER["central_meridian", -3.0], PARAMETER["latitude_of_origin", 0.0], PARAMETER["scale_factor", 0.9996], PARAMETER["false_easting", 500000.0], PARAMETER["false_northing", 0.0], UNIT["m", 1.0], AXIS["Easting", EAST], AXIS["Northing", NORTH], AUTHORITY["EPSG","32630"]]</dd><dt><span>spatial_ref :</span></dt><dd>PROJCS["WGS 84 / UTM zone 30N", GEOGCS["WGS 84", DATUM["World Geodetic System 1984", SPHEROID["WGS 84", 6378137.0, 298.257223563, AUTHORITY["EPSG","7030"]], AUTHORITY["EPSG","6326"]], PRIMEM["Greenwich", 0.0, AUTHORITY["EPSG","8901"]], UNIT["degree", 0.017453292519943295], AXIS["Geodetic longitude", EAST], AXIS["Geodetic latitude", NORTH], AUTHORITY["EPSG","4326"]], PROJECTION["Transverse_Mercator", AUTHORITY["EPSG","9807"]], PARAMETER["central_meridian", -3.0], PARAMETER["latitude_of_origin", 0.0], PARAMETER["scale_factor", 0.9996], PARAMETER["false_easting", 500000.0], PARAMETER["false_northing", 0.0], UNIT["m", 1.0], AXIS["Easting", EAST], AXIS["Northing", NORTH], AUTHORITY["EPSG","32630"]]</dd></dl></div><div class="xr-var-data"><pre>array(b'', dtype='|S1')</pre></div></li><li class="xr-var-item"><div class="xr-var-name"><span>B04</span></div><div class="xr-var-dims">(t, y, x)</div><div class="xr-var-dtype">float32</div><div class="xr-var-preview xr-preview">nan 1.152e+03 1.122e+03 ... nan nan</div><input id="attrs-5ab285d3-8e1e-4839-a7d5-b4d920dc2b18" class="xr-var-attrs-in" type="checkbox"><label for="attrs-5ab285d3-8e1e-4839-a7d5-b4d920dc2b18" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use href="#icon-file-text2"></use></svg></label><input id="data-a1d9da03-f697-4671-b6a3-ed9f69c693f6" class="xr-var-data-in" type="checkbox"><label for="data-a1d9da03-f697-4671-b6a3-ed9f69c693f6" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"><dt><span>long_name :</span></dt><dd>B04</dd><dt><span>units :</span></dt><dd></dd><dt><span>grid_mapping :</span></dt><dd>crs</dd></dl></div><div class="xr-var-data"><pre>array([[[  nan, 1152., 1122., ..., 1030., 1014.,   nan],
+        [  nan, 1148., 1130., ..., 1030., 1014.,   nan],
+        [  nan, 1192., 1146., ..., 1048., 1058.,   nan],
         ...,
-        [  nan, 1230., 1248., ..., 1186., 1142.,   nan],
-        [  nan, 1262., 1262., ..., 1148., 1142.,   nan],
+        [  nan, 1190., 1122., ..., 1054., 1026.,   nan],
+        [  nan, 1180., 1144., ..., 1046., 1082.,   nan],
         [  nan,   nan,   nan, ...,   nan,   nan,   nan]],
 
-       [[  nan, 1272., 1258., ..., 1102., 1060.,   nan],
-        [  nan, 1238., 1216., ..., 1094., 1052.,   nan],
-        [  nan, 1266., 1256., ..., 1112., 1096.,   nan],
+       [[  nan, 1200., 1210., ..., 1132., 1086.,   nan],
+        [  nan, 1220., 1206., ..., 1116., 1084.,   nan],
+        [  nan, 1238., 1246., ..., 1130., 1100.,   nan],
         ...,
-        [  nan, 1236., 1202., ..., 1188., 1164.,   nan],
-        [  nan, 1240., 1202., ..., 1162., 1146.,   nan],
+        [  nan, 1290., 1298., ..., 1154., 1156.,   nan],
+        [  nan, 1316., 1346., ..., 1138., 1130.,   nan],
         [  nan,   nan,   nan, ...,   nan,   nan,   nan]],
 
-       [[  nan, 1262., 1300., ..., 1130., 1124.,   nan],
-        [  nan, 1288., 1300., ..., 1152., 1118.,   nan],
-        [  nan, 1324., 1294., ..., 1146., 1132.,   nan],
+       [[  nan, 1248., 1232., ..., 1122., 1078.,   nan],
+        [  nan, 1220., 1194., ..., 1112., 1064.,   nan],
+        [  nan, 1244., 1248., ..., 1144., 1120.,   nan],
         ...,
 ...
         ...,
@@ -3471,12 +3494,12 @@ Attributes:
         [  nan, 1100., 1126., ..., 1094., 1104.,   nan],
         [  nan,   nan,   nan, ...,   nan,   nan,   nan]],
 
-       [[  nan, 1352., 1462., ..., 1332., 1304.,   nan],
-        [  nan, 1284., 1388., ..., 1298., 1250.,   nan],
-        [  nan, 1308., 1294., ..., 1266., 1240.,   nan],
+       [[  nan, 1326., 1434., ..., 1404., 1362.,   nan],
+        [  nan, 1310., 1354., ..., 1358., 1310.,   nan],
+        [  nan, 1328., 1312., ..., 1344., 1334.,   nan],
         ...,
-        [  nan, 1324., 1310., ..., 1334., 1384.,   nan],
-        [  nan, 1330., 1348., ..., 1312., 1412.,   nan],
+        [  nan, 1390., 1408., ..., 1382., 1438.,   nan],
+        [  nan, 1386., 1404., ..., 1372., 1460.,   nan],
         [  nan,   nan,   nan, ...,   nan,   nan,   nan]],
 
        [[  nan, 1118., 1102., ..., 1013., 1021.,   nan],
@@ -3485,25 +3508,25 @@ Attributes:
         ...,
         [  nan, 1062., 1106., ..., 1022., 1064.,   nan],
         [  nan, 1076., 1116., ..., 1030., 1024.,   nan],
-        [  nan,   nan,   nan, ...,   nan,   nan,   nan]]], dtype=float32)</pre></div></li><li class="xr-var-item"><div class="xr-var-name"><span>B08</span></div><div class="xr-var-dims">(t, y, x)</div><div class="xr-var-dtype">float32</div><div class="xr-var-preview xr-preview">nan 1.934e+03 1.964e+03 ... nan nan</div><input id="attrs-9b73db34-2b9f-47ac-a9a0-c472e1c21a82" class="xr-var-attrs-in" type="checkbox"><label for="attrs-9b73db34-2b9f-47ac-a9a0-c472e1c21a82" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use href="#icon-file-text2"></use></svg></label><input id="data-8209ba8f-4410-4ac9-b2b4-6a10fee4131d" class="xr-var-data-in" type="checkbox"><label for="data-8209ba8f-4410-4ac9-b2b4-6a10fee4131d" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"><dt><span>long_name :</span></dt><dd>B08</dd><dt><span>units :</span></dt><dd></dd><dt><span>grid_mapping :</span></dt><dd>crs</dd></dl></div><div class="xr-var-data"><pre>array([[[  nan, 1934., 1964., ..., 1916., 1852.,   nan],
-        [  nan, 1990., 2010., ..., 1846., 1754.,   nan],
-        [  nan, 2050., 2064., ..., 1784., 1680.,   nan],
+        [  nan,   nan,   nan, ...,   nan,   nan,   nan]]], dtype=float32)</pre></div></li><li class="xr-var-item"><div class="xr-var-name"><span>B08</span></div><div class="xr-var-dims">(t, y, x)</div><div class="xr-var-dtype">float32</div><div class="xr-var-preview xr-preview">nan 1.952e+03 1.928e+03 ... nan nan</div><input id="attrs-ae8f56e9-d9ca-4bbb-b2ba-77ada69bd43c" class="xr-var-attrs-in" type="checkbox"><label for="attrs-ae8f56e9-d9ca-4bbb-b2ba-77ada69bd43c" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use href="#icon-file-text2"></use></svg></label><input id="data-5b300b0a-90da-4efa-a043-c0152bb9c0bb" class="xr-var-data-in" type="checkbox"><label for="data-5b300b0a-90da-4efa-a043-c0152bb9c0bb" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"><dt><span>long_name :</span></dt><dd>B08</dd><dt><span>units :</span></dt><dd></dd><dt><span>grid_mapping :</span></dt><dd>crs</dd></dl></div><div class="xr-var-data"><pre>array([[[  nan, 1952., 1928., ..., 1846., 1772.,   nan],
+        [  nan, 1980., 1998., ..., 1794., 1656.,   nan],
+        [  nan, 2026., 2026., ..., 1710., 1714.,   nan],
         ...,
-        [  nan, 2046., 2032., ..., 1784., 1760.,   nan],
-        [  nan, 2078., 2042., ..., 1796., 1766.,   nan],
+        [  nan, 1968., 1908., ..., 1764., 1688.,   nan],
+        [  nan, 1962., 1890., ..., 1772., 1726.,   nan],
         [  nan,   nan,   nan, ...,   nan,   nan,   nan]],
 
-       [[  nan, 1968., 1992., ..., 1838., 1796.,   nan],
-        [  nan, 2028., 2054., ..., 1808., 1748.,   nan],
-        [  nan, 2082., 2110., ..., 1758., 1782.,   nan],
+       [[  nan, 1978., 1996., ..., 1910., 1818.,   nan],
+        [  nan, 2036., 2050., ..., 1846., 1740.,   nan],
+        [  nan, 2052., 2084., ..., 1814., 1816.,   nan],
         ...,
-        [  nan, 1958., 1888., ..., 1786., 1830.,   nan],
-        [  nan, 1926., 1882., ..., 1802., 1816.,   nan],
+        [  nan, 2142., 2102., ..., 1812., 1806.,   nan],
+        [  nan, 2100., 2140., ..., 1828., 1816.,   nan],
         [  nan,   nan,   nan, ...,   nan,   nan,   nan]],
 
-       [[  nan, 2120., 2154., ..., 1946., 1898.,   nan],
-        [  nan, 2208., 2214., ..., 1910., 1908.,   nan],
-        [  nan, 2184., 2204., ..., 1908., 1932.,   nan],
+       [[  nan, 1964., 1990., ..., 1864., 1810.,   nan],
+        [  nan, 2026., 2056., ..., 1846., 1792.,   nan],
+        [  nan, 2048., 2082., ..., 1780., 1816.,   nan],
         ...,
 ...
         ...,
@@ -3511,12 +3534,12 @@ Attributes:
         [  nan, 2082., 2080., ..., 1914., 2002.,   nan],
         [  nan,   nan,   nan, ...,   nan,   nan,   nan]],
 
-       [[  nan, 2862., 2850., ..., 2730., 2744.,   nan],
-        [  nan, 2820., 2878., ..., 2714., 2668.,   nan],
-        [  nan, 2890., 2972., ..., 2624., 2608.,   nan],
+       [[  nan, 2742., 2742., ..., 2764., 2720.,   nan],
+        [  nan, 2718., 2764., ..., 2690., 2662.,   nan],
+        [  nan, 2778., 2846., ..., 2658., 2642.,   nan],
         ...,
-        [  nan, 2686., 2742., ..., 2630., 2630.,   nan],
-        [  nan, 2674., 2740., ..., 2618., 2658.,   nan],
+        [  nan, 2670., 2746., ..., 2610., 2614.,   nan],
+        [  nan, 2658., 2708., ..., 2600., 2654.,   nan],
         [  nan,   nan,   nan, ...,   nan,   nan,   nan]],
 
        [[  nan, 2382., 2340., ..., 2248., 2274.,   nan],
@@ -3525,71 +3548,31 @@ Attributes:
         ...,
         [  nan, 2306., 2354., ..., 2152., 2136.,   nan],
         [  nan, 2302., 2336., ..., 2188., 2132.,   nan],
-        [  nan,   nan,   nan, ...,   nan,   nan,   nan]]], dtype=float32)</pre></div></li><li class="xr-var-item"><div class="xr-var-name"><span>SCL</span></div><div class="xr-var-dims">(t, y, x)</div><div class="xr-var-dtype">float32</div><div class="xr-var-preview xr-preview">nan 5.0 5.0 5.0 ... nan nan nan nan</div><input id="attrs-6ba42ad2-b53e-48c8-8bc5-5ae025260c85" class="xr-var-attrs-in" type="checkbox"><label for="attrs-6ba42ad2-b53e-48c8-8bc5-5ae025260c85" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use href="#icon-file-text2"></use></svg></label><input id="data-67d5eee5-189c-4c96-97cc-e1634f1888a1" class="xr-var-data-in" type="checkbox"><label for="data-67d5eee5-189c-4c96-97cc-e1634f1888a1" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"><dt><span>long_name :</span></dt><dd>SCL</dd><dt><span>units :</span></dt><dd></dd><dt><span>grid_mapping :</span></dt><dd>crs</dd></dl></div><div class="xr-var-data"><pre>array([[[nan,  5.,  5., ...,  5.,  5., nan],
-        [nan,  5.,  5., ...,  5.,  5., nan],
-        [nan,  5.,  5., ...,  5.,  5., nan],
+        [  nan,   nan,   nan, ...,   nan,   nan,   nan]]], dtype=float32)</pre></div></li><li class="xr-var-item"><div class="xr-var-name"><span>NDVI</span></div><div class="xr-var-dims">(t, y, x)</div><div class="xr-var-dtype">float32</div><div class="xr-var-preview xr-preview">nan 0.2577 0.2643 ... nan nan nan</div><input id="attrs-9e8deab4-e643-4777-a39a-4828a25cfb9e" class="xr-var-attrs-in" type="checkbox"><label for="attrs-9e8deab4-e643-4777-a39a-4828a25cfb9e" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use href="#icon-file-text2"></use></svg></label><input id="data-cf8fca47-318c-49fa-bb9e-4e49ed7a3dfa" class="xr-var-data-in" type="checkbox"><label for="data-cf8fca47-318c-49fa-bb9e-4e49ed7a3dfa" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"><dt><span>long_name :</span></dt><dd>NDVI</dd><dt><span>units :</span></dt><dd></dd><dt><span>grid_mapping :</span></dt><dd>crs</dd></dl></div><div class="xr-var-data"><pre>array([[[       nan, 0.25773194, 0.2642623 , ..., 0.2837274 ,
+         0.27207467,        nan],
+        [       nan, 0.26598465, 0.2774936 , ..., 0.27053824,
+         0.24044944,        nan],
+        [       nan, 0.2591672 , 0.2774275 , ..., 0.240029  ,
+         0.23665224,        nan],
         ...,
-        [nan,  5.,  5., ...,  5.,  5., nan],
-        [nan,  5.,  5., ...,  5.,  5., nan],
-        [nan, nan, nan, ..., nan, nan, nan]],
-
-       [[nan,  5.,  5., ...,  5.,  5., nan],
-        [nan,  5.,  5., ...,  5.,  5., nan],
-        [nan,  5.,  5., ...,  5.,  5., nan],
-        ...,
-        [nan,  5.,  5., ...,  5.,  5., nan],
-        [nan,  5.,  5., ...,  5.,  5., nan],
-        [nan, nan, nan, ..., nan, nan, nan]],
-
-       [[nan,  5.,  5., ...,  5.,  5., nan],
-        [nan,  5.,  5., ...,  5.,  5., nan],
-        [nan,  5.,  5., ...,  5.,  5., nan],
-        ...,
-...
-        ...,
-        [nan,  5.,  5., ...,  5.,  5., nan],
-        [nan,  5.,  5., ...,  5.,  5., nan],
-        [nan, nan, nan, ..., nan, nan, nan]],
-
-       [[nan,  5.,  5., ...,  5.,  5., nan],
-        [nan,  5.,  5., ...,  5.,  5., nan],
-        [nan,  5.,  5., ...,  5.,  5., nan],
-        ...,
-        [nan,  5.,  5., ...,  5.,  5., nan],
-        [nan,  5.,  5., ...,  5.,  5., nan],
-        [nan, nan, nan, ..., nan, nan, nan]],
-
-       [[nan,  5.,  5., ...,  5.,  5., nan],
-        [nan,  5.,  5., ...,  5.,  5., nan],
-        [nan,  5.,  5., ...,  5.,  5., nan],
-        ...,
-        [nan,  5.,  5., ...,  5.,  5., nan],
-        [nan,  5.,  5., ...,  5.,  5., nan],
-        [nan, nan, nan, ..., nan, nan, nan]]], dtype=float32)</pre></div></li><li class="xr-var-item"><div class="xr-var-name"><span>NDVI</span></div><div class="xr-var-dims">(t, y, x)</div><div class="xr-var-dtype">float32</div><div class="xr-var-preview xr-preview">nan 0.2295 0.2313 ... nan nan nan</div><input id="attrs-69baf9fa-f455-45b8-b9ff-61313988dbbd" class="xr-var-attrs-in" type="checkbox"><label for="attrs-69baf9fa-f455-45b8-b9ff-61313988dbbd" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use href="#icon-file-text2"></use></svg></label><input id="data-a6d0f8aa-45e4-40f8-b07b-989ad8023ab0" class="xr-var-data-in" type="checkbox"><label for="data-a6d0f8aa-45e4-40f8-b07b-989ad8023ab0" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"><dt><span>long_name :</span></dt><dd>NDVI</dd><dt><span>units :</span></dt><dd></dd><dt><span>grid_mapping :</span></dt><dd>crs</dd></dl></div><div class="xr-var-data"><pre>array([[[       nan, 0.22949778, 0.23134796, ..., 0.28590605,
-         0.28077456,        nan],
-        [       nan, 0.24219726, 0.24304268, ..., 0.25492862,
-         0.24928775,        nan],
-        [       nan, 0.24923827, 0.25623858, ..., 0.24494068,
-         0.22986823,        nan],
-        ...,
-        [       nan, 0.24908425, 0.23902439, ..., 0.2013468 ,
-         0.21295658,        nan],
-        [       nan, 0.24431138, 0.23607749, ..., 0.2201087 ,
-         0.21458046,        nan],
+        [       nan, 0.24635845, 0.25940594, ..., 0.25195172,
+         0.24392042,        nan],
+        [       nan, 0.24888606, 0.24588002, ..., 0.2576295 ,
+         0.22934473,        nan],
         [       nan,        nan,        nan, ...,        nan,
                 nan,        nan]],
 
-       [[       nan, 0.21481481, 0.22584616, ..., 0.25034013,
-         0.2577031 ,        nan],
-        [       nan, 0.2418861 , 0.25626913, ..., 0.24603721,
-         0.24857143,        nan],
-        [       nan, 0.2437276 , 0.2537136 , ..., 0.2250871 ,
-         0.23835997,        nan],
+       [[       nan, 0.24480805, 0.24516532, ..., 0.2557528 ,
+         0.2520661 ,        nan],
+        [       nan, 0.25061426, 0.25921375, ..., 0.2464551 ,
+         0.23229462,        nan],
+        [       nan, 0.2474164 , 0.25165164, ..., 0.23233695,
+         0.24554184,        nan],
 ...
-        [       nan, 0.33965087, 0.3534057 , ..., 0.32694247,
-         0.31041354,        nan],
-        [       nan, 0.33566433, 0.34050882, ..., 0.33231553,
-         0.3061425 ,        nan],
+        [       nan, 0.31527093, 0.32209918, ..., 0.30761522,
+         0.29022706,        nan],
+        [       nan, 0.31454006, 0.3171206 , ..., 0.30916414,
+         0.2902285 ,        nan],
         [       nan,        nan,        nan, ...,        nan,
                 nan,        nan]],
 
@@ -3605,60 +3588,60 @@ Attributes:
         [       nan, 0.36293665, 0.35341832, ..., 0.35985085,
          0.35107732,        nan],
         [       nan,        nan,        nan, ...,        nan,
-                nan,        nan]]], dtype=float32)</pre></div></li></ul></div></li><li class="xr-section-item"><input id="section-28f91afd-2fac-4973-ad2f-70da5a5693f9" class="xr-section-summary-in" type="checkbox"><label for="section-28f91afd-2fac-4973-ad2f-70da5a5693f9" class="xr-section-summary">Indexes: <span>(3)</span></label><div class="xr-section-inline-details"></div><div class="xr-section-details"><ul class="xr-var-list"><li class="xr-var-item"><div class="xr-index-name"><div>t</div></div><div class="xr-index-preview">PandasIndex</div><div></div><input id="index-5e5dc2c2-e208-482c-ad8b-8b71c97389eb" class="xr-index-data-in" type="checkbox"><label for="index-5e5dc2c2-e208-482c-ad8b-8b71c97389eb" title="Show/Hide index repr"><svg class="icon xr-icon-database"><use href="#icon-database"></use></svg></label><div class="xr-index-data"><pre>PandasIndex(DatetimeIndex(['2019-01-27', '2019-02-11', '2019-02-21', '2019-02-26',
-               '2019-03-03', '2019-03-13', '2019-03-23', '2019-03-28',
-               '2019-04-07', '2019-04-12', '2019-04-27', '2019-05-02',
-               '2019-05-27', '2019-06-01', '2019-06-26', '2019-07-01',
-               '2019-07-11', '2019-07-16', '2019-07-21', '2019-08-05',
-               '2019-08-15', '2019-08-20', '2019-08-30', '2019-09-04',
-               '2019-09-19', '2019-09-29', '2019-10-09', '2019-11-18',
-               '2019-11-23', '2019-12-18', '2019-12-28'],
-              dtype='datetime64[ns]', name='t', freq=None))</pre></div></li><li class="xr-var-item"><div class="xr-index-name"><div>x</div></div><div class="xr-index-preview">PandasIndex</div><div></div><input id="index-e08511ce-b9b5-47ae-9ed6-5c482ea656b8" class="xr-index-data-in" type="checkbox"><label for="index-e08511ce-b9b5-47ae-9ed6-5c482ea656b8" title="Show/Hide index repr"><svg class="icon xr-icon-database"><use href="#icon-database"></use></svg></label><div class="xr-index-data"><pre>PandasIndex(Float64Index([344155.0, 344165.0, 344175.0, 344185.0, 344195.0, 344205.0,
-              344215.0, 344225.0, 344235.0, 344245.0, 344255.0, 344265.0,
-              344275.0, 344285.0, 344295.0, 344305.0, 344315.0, 344325.0,
-              344335.0, 344345.0, 344355.0],
-             dtype='float64', name='x'))</pre></div></li><li class="xr-var-item"><div class="xr-index-name"><div>y</div></div><div class="xr-index-preview">PandasIndex</div><div></div><input id="index-7c87b666-12b2-4731-8771-510815e2f260" class="xr-index-data-in" type="checkbox"><label for="index-7c87b666-12b2-4731-8771-510815e2f260" title="Show/Hide index repr"><svg class="icon xr-icon-database"><use href="#icon-database"></use></svg></label><div class="xr-index-data"><pre>PandasIndex(Float64Index([4626435.0, 4626425.0, 4626415.0, 4626405.0, 4626395.0, 4626385.0,
-              4626375.0, 4626365.0, 4626355.0, 4626345.0, 4626335.0, 4626325.0,
-              4626315.0, 4626305.0, 4626295.0, 4626285.0, 4626275.0, 4626265.0,
-              4626255.0],
-             dtype='float64', name='y'))</pre></div></li></ul></div></li><li class="xr-section-item"><input id="section-e5d887ff-a900-4d1a-953b-3ff598c4702c" class="xr-section-summary-in" type="checkbox" checked=""><label for="section-e5d887ff-a900-4d1a-953b-3ff598c4702c" class="xr-section-summary">Attributes: <span>(4)</span></label><div class="xr-section-inline-details"></div><div class="xr-section-details"><dl class="xr-attrs"><dt><span>Conventions :</span></dt><dd>CF-1.9</dd><dt><span>institution :</span></dt><dd>openEO platform - Geotrellis backend: 0.18.0a1</dd><dt><span>description :</span></dt><dd></dd><dt><span>title :</span></dt><dd></dd></dl></div></li></ul></div></div>
+                nan,        nan]]], dtype=float32)</pre></div></li></ul></div></li><li class="xr-section-item"><input id="section-a77decde-2fe5-4c9c-9d3e-d98d262f3c65" class="xr-section-summary-in" type="checkbox"><label for="section-a77decde-2fe5-4c9c-9d3e-d98d262f3c65" class="xr-section-summary">Indexes: <span>(3)</span></label><div class="xr-section-inline-details"></div><div class="xr-section-details"><ul class="xr-var-list"><li class="xr-var-item"><div class="xr-index-name"><div>t</div></div><div class="xr-index-preview">PandasIndex</div><div></div><input id="index-f6e8cf86-4621-494a-802c-ed66413b7536" class="xr-index-data-in" type="checkbox"><label for="index-f6e8cf86-4621-494a-802c-ed66413b7536" title="Show/Hide index repr"><svg class="icon xr-icon-database"><use href="#icon-database"></use></svg></label><div class="xr-index-data"><pre>PandasIndex(DatetimeIndex(['2019-01-07', '2019-01-27', '2019-02-11', '2019-02-21',
+               '2019-02-26', '2019-03-03', '2019-03-13', '2019-03-23',
+               '2019-03-28', '2019-04-07', '2019-04-12', '2019-04-27',
+               '2019-05-02', '2019-05-27', '2019-06-01', '2019-06-21',
+               '2019-06-26', '2019-07-01', '2019-07-11', '2019-07-16',
+               '2019-07-21', '2019-08-05', '2019-08-15', '2019-08-20',
+               '2019-08-30', '2019-09-04', '2019-09-19', '2019-09-29',
+               '2019-10-09', '2019-11-18', '2019-11-23', '2019-12-18',
+               '2019-12-28'],
+              dtype='datetime64[ns]', name='t', freq=None))</pre></div></li><li class="xr-var-item"><div class="xr-index-name"><div>x</div></div><div class="xr-index-preview">PandasIndex</div><div></div><input id="index-88e026e3-1a71-4f11-9fe5-9d7da10fa761" class="xr-index-data-in" type="checkbox"><label for="index-88e026e3-1a71-4f11-9fe5-9d7da10fa761" title="Show/Hide index repr"><svg class="icon xr-icon-database"><use href="#icon-database"></use></svg></label><div class="xr-index-data"><pre>PandasIndex(Index([344155.0, 344165.0, 344175.0, 344185.0, 344195.0, 344205.0, 344215.0,
+       344225.0, 344235.0, 344245.0, 344255.0, 344265.0, 344275.0, 344285.0,
+       344295.0, 344305.0, 344315.0, 344325.0, 344335.0, 344345.0, 344355.0],
+      dtype='float64', name='x'))</pre></div></li><li class="xr-var-item"><div class="xr-index-name"><div>y</div></div><div class="xr-index-preview">PandasIndex</div><div></div><input id="index-f9fa6da0-d111-46f4-8446-725685e50912" class="xr-index-data-in" type="checkbox"><label for="index-f9fa6da0-d111-46f4-8446-725685e50912" title="Show/Hide index repr"><svg class="icon xr-icon-database"><use href="#icon-database"></use></svg></label><div class="xr-index-data"><pre>PandasIndex(Index([4626435.0, 4626425.0, 4626415.0, 4626405.0, 4626395.0, 4626385.0,
+       4626375.0, 4626365.0, 4626355.0, 4626345.0, 4626335.0, 4626325.0,
+       4626315.0, 4626305.0, 4626295.0, 4626285.0, 4626275.0, 4626265.0,
+       4626255.0],
+      dtype='float64', name='y'))</pre></div></li></ul></div></li><li class="xr-section-item"><input id="section-507437fe-c41b-4671-9546-14925091dada" class="xr-section-summary-in" type="checkbox" checked=""><label for="section-507437fe-c41b-4671-9546-14925091dada" class="xr-section-summary">Attributes: <span>(4)</span></label><div class="xr-section-inline-details"></div><div class="xr-section-details"><dl class="xr-attrs"><dt><span>Conventions :</span></dt><dd>CF-1.9</dd><dt><span>institution :</span></dt><dd>Copernicus Data Space Ecosystem openEO API - 0.71.0a12.dev20260206+3321</dd><dt><span>description :</span></dt><dd></dd><dt><span>title :</span></dt><dd></dd></dl></div></li></ul></div></div>
 </div>
 </div>
 <p>Plot the raw NDVI time series, averaged across the parcel</p>
-<div id="dpoTLm2XFyxu" class="cell" data-outputid="aca4ad55-08df-41ab-90cb-f95754d2a568" data-execution_count="18">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>raw_ndvi <span class="op">=</span> raw_ndvi_ds.NDVI.rename({<span class="st">"t"</span>: <span class="st">"time"</span>})</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">15</span>, <span class="dv">5</span>), dpi<span class="op">=</span><span class="dv">120</span>)</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>raw_ndvi.median(dim<span class="op">=</span>[<span class="st">"x"</span>, <span class="st">"y"</span>]).plot(ax<span class="op">=</span>ax, marker<span class="op">=</span><span class="st">"x"</span>, label<span class="op">=</span><span class="st">"Raw NDVI"</span>)</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>ax.legend()</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>ax.grid()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="dpoTLm2XFyxu" class="cell" data-outputid="aca4ad55-08df-41ab-90cb-f95754d2a568" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>raw_ndvi <span class="op">=</span> raw_ndvi_ds.NDVI.rename({<span class="st">"t"</span>: <span class="st">"time"</span>})</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">15</span>, <span class="dv">5</span>), dpi<span class="op">=</span><span class="dv">120</span>)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>raw_ndvi.median(dim<span class="op">=</span>[<span class="st">"x"</span>, <span class="st">"y"</span>]).plot(ax<span class="op">=</span>ax, marker<span class="op">=</span><span class="st">"x"</span>, label<span class="op">=</span><span class="st">"Raw NDVI"</span>)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>ax.legend()</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>ax.grid()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="Whittaker_files/figure-html/cell-8-output-1.png" class="img-fluid figure-img"></p>
+<p><img src="Whittaker_files/figure-html/cell-9-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
 </div>
-<div id="988ccfac-f533-4432-ad1e-309140f527ef" class="cell" data-execution_count="19">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Make a prediction every 5 days</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co"># to use the same dates as in the raw time series, just set the `prediction_period` to `None`</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>smoothed <span class="op">=</span> whittaker(raw_ndvi, prediction_period<span class="op">=</span><span class="st">"P5D"</span>, smoothing_lambda<span class="op">=</span><span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="988ccfac-f533-4432-ad1e-309140f527ef" class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Make a prediction every 5 days</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co"># to use the same dates as in the raw time series, just set the `prediction_period` to `None`</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>smoothed <span class="op">=</span> whittaker(raw_ndvi, prediction_period<span class="op">=</span><span class="st">"P5D"</span>, smoothing_lambda<span class="op">=</span><span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="QQGS_kqPFVY0" class="cell" data-outputid="89ce86ff-5dd9-4016-918c-5d5f87cd30e9" data-execution_count="20">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">15</span>, <span class="dv">5</span>), dpi<span class="op">=</span><span class="dv">120</span>)</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>raw_ndvi.median(dim<span class="op">=</span>[<span class="st">"x"</span>, <span class="st">"y"</span>]).plot(ax<span class="op">=</span>ax, marker<span class="op">=</span><span class="st">"x"</span>, label<span class="op">=</span><span class="st">"Raw NDVI"</span>, color<span class="op">=</span><span class="st">"C0"</span>)</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>smoothed.median(dim<span class="op">=</span>[<span class="st">"x"</span>, <span class="st">"y"</span>]).plot(</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    ax<span class="op">=</span>ax, marker<span class="op">=</span><span class="st">"x"</span>, label<span class="op">=</span><span class="st">"Smoothed NDVI"</span>, color<span class="op">=</span><span class="st">"C1"</span></span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>ax.legend()</span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>ax.grid()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="QQGS_kqPFVY0" class="cell" data-outputid="89ce86ff-5dd9-4016-918c-5d5f87cd30e9" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">15</span>, <span class="dv">5</span>), dpi<span class="op">=</span><span class="dv">120</span>)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>raw_ndvi.median(dim<span class="op">=</span>[<span class="st">"x"</span>, <span class="st">"y"</span>]).plot(ax<span class="op">=</span>ax, marker<span class="op">=</span><span class="st">"x"</span>, label<span class="op">=</span><span class="st">"Raw NDVI"</span>, color<span class="op">=</span><span class="st">"C0"</span>)</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>smoothed.median(dim<span class="op">=</span>[<span class="st">"x"</span>, <span class="st">"y"</span>]).plot(</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    ax<span class="op">=</span>ax, marker<span class="op">=</span><span class="st">"x"</span>, label<span class="op">=</span><span class="st">"Smoothed NDVI"</span>, color<span class="op">=</span><span class="st">"C1"</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>ax.legend()</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>ax.grid()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="Whittaker_files/figure-html/cell-10-output-1.png" class="img-fluid figure-img"></p>
+<p><img src="Whittaker_files/figure-html/cell-11-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
