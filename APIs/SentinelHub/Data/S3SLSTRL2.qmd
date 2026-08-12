@@ -1,0 +1,192 @@
+---
+title: Sentinel-3 SLSTR L2
+---
+
+## About Sentinel-3 SLSTR L2 Data
+
+General information about Sentinel-3 mission can be found
+[here](/Data/SentinelMissions/Sentinel3.qmd). Sentinel Hub offers
+[Sentinel-3 SLSTR Level
+2](/Data/SentinelMissions/Sentinel3.qmd#sentinel-3-slstr-level-2) products.
+
+## Accessing Sentinel-3 SLSTR L2 Data
+
+To access data you need to send a POST request to our `process` API. The
+requested data will be returned as the response to your request. Each
+POST request can be tailored to get you exactly the data you require. To
+do this requires setting various parameters which depend on the
+datasource you are querying. This chapter will help you understand the
+parameters for S3SLSTR L2 data. To see examples of such requests go
+[here](/APIs/SentinelHub/Process/Examples/S3SLSTRL2.qmd), and for an
+overview of all API parameters see the [API
+Reference](/APIs/SentinelHub/ApiReference.qmd).
+
+### Data type identifier: sentinel-3-slstr-l2
+
+Use `sentinel-3-slstr-l2` as the value of the `input.data.type` parameter
+in your API requests. This is mandatory and will ensure you get
+Sentinel-3 SLSTR L2 data.
+
+### Filtering Options
+
+This chapter will explain the `input.data.dataFilter` object of the
+`S3SLSTRL2` `process` API.
+
+#### mosaickingOrder
+
+Sets the order of overlapping tiles from which the output result is
+mosaicked. The tiling is based on ESA\'s [Product Dissemination
+Units](https://sentiwiki.copernicus.eu/web/slstr-products#Processing-Levels){target="_blank"}
+for easier distribution.
+
+  Value             Description                                                          Notes
+  ----------------- -------------------------------------------------------------------- -------------------------------------------------------------------------------------------------------
+  **mostRecent**    the pixel will be selected from the most recently acquired tile      If there are multiple products with the same timestamp then NTC will be used over NRT. Default value.
+  **leastRecent**   the pixel will be selected from the oldest acquired tile             If there are multiple products with the same timestamp then NTC will be used over NRT.
+  **leastCC**       pixel is selected from tile with the least cloud coverage metadata   Note that \"per tile\" information is used here.
+
+#### orbitDirection
+
+Filters the acquisition
+[orbit](https://sentiwiki.copernicus.eu/web/s3-mission#S3Mission-OrbitS3-Mission-Orbittrue){target="_blank"}
+direction. Unlike Sentinel-3 SLSTR L1B, the L2 LST product is derived from
+thermal infrared measurements and is available regardless of solar
+illumination, so both orbit directions provide usable data.
+
+  Value            Description
+  ---------------- ----------------------------------------------------------------------------------------------
+  **ASCENDING**    Data acquired when the satellite was traveling approximately towards the Earth\'s North pole
+  **DESCENDING**   Data acquired when the satellite was traveling approximately towards the Earth\'s South pole
+
+#### maxCloudCoverage
+
+Sets the upper limit for cloud coverage in percent based on the
+precomputed cloud coverage estimate for each Sentinel-3 tile as present
+in the tile metadata. Satellite data will therefore not be retrieved for
+tiles with a higher cloud coverage estimate. For example, by setting the
+value to `20`, only tiles with at most 20% cloud coverage will be used.
+Note that this parameter is set per tile and might not be directly
+applicable to the chosen area of interest.
+
+### Processing Options
+
+This chapter will explain the `input.data.processing` object of the
+`S3SLSTRL2` `process` API.
+
+  Parameter      Description                                                                   Values                                                                                                                                                                                                                                                                                                                                                                                    Default
+  -------------- ----------------------------------------------------------------------------- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -------------
+  upsampling     Defines the interpolation used for processing, regardless of the resolution   **NEAREST** - [nearest neighbour interpolation](https://en.wikipedia.org/wiki/Nearest-neighbor_interpolation){target="_blank"} `<br/>`{=html} **BILINEAR** - [bilinear interpolation](https://en.wikipedia.org/wiki/Bilinear_interpolation){target="_blank"} `<br/>`{=html} **BICUBIC** - [bicubic interpolation](https://en.wikipedia.org/wiki/Bicubic_interpolation){target="_blank"}   **NEAREST**
+  downsampling   Not used, use `upsampling` instead                                            N/A                                                                                                                                                                                                                                                                                                                                                                                       Ignored
+
+### Available Bands and Data
+
+This chapter will explain the bands and data which can be set in the
+[evalscript input
+object](/APIs/SentinelHub/Evalscript/Functions.qmd#input-object-properties):
+Any string listed in the column **Name** can be an element of the
+`input.bands` array in your evalscript.
+
+  Name              Description                                                                                          Resolution (m/px)
+  ----------------- ---------------------------------------------------------------------------------------------------- -------------------
+  LST               Land Surface Temperature                                                                             1000
+  LST_uncertainty   Total measurement and retrieval uncertainty of the LST estimate                                      1000
+  NDVI              Normalized Difference Vegetation Index                                                               1000
+  CLOUD             Bitmask of cloud detection test results                                                              1000
+  BAYES             Bitmask of Bayesian cloud probability flags                                                          1000
+  POINTING          Bitmask of instrument pointing/geometry quality flags                                                1000
+  CONFIDENCE        Bitmask of general per-pixel quality and classification flags (e.g. land/water, coastline, snow)     1000
+  dataMask          The mask of data/no data pixels ([more](/APIs/SentinelHub/UserGuides/Datamask.qmd)).                 N/A\*
+
+\*dataMask has no source resolution as it is calculated for each output
+pixel.
+
+For more about Sentinel-3 SLSTR L2 bands, visit this
+`<a href="https://sentiwiki.copernicus.eu/web/slstr-products#L2-Products" target="_blank">`{=html}ESA
+website`</a>`{=html}.
+
+### Units
+
+The data values for each band in your custom script are presented in the
+units as specified here. In case more than one unit is available for a
+given band, you may optionally set the value of `input.units` in your
+evalscript `setup` function to one of the values in the
+`Sentinel Hub Units` column. Doing so will present data in that unit.
+The Sentinel Hub `units` parameter combines the physical quantity and
+corresponding units of measurement values. As such, some names more
+closely resemble physical quantities, others resemble units of
+measurement.
+
+The `Source Format` specifies how and with what precision the digital
+numbers (`DN`) from which the unit is derived are encoded. Bands
+requested in `DN` units contain exactly the pixel values of the source
+data. Note that resampling may produce interpolated values. `DN` is also
+used whenever a band is derived computationally (like dataMask) or
+represents a bitmask of quality/classification flags rather than a
+physical quantity; such bands can be identified by having `DN` units and
+`N/A` source format.
+
+Values in non-`DN` units are computed from the source (`DN`) values with
+at least float32 precision. Band values in evalscripts always behave as
+floating point numbers, regardless of the actual precision.
+
+The `Typical Range` indicates what values are common for a given band
+and unit, however outliers can be expected.
+
+  Band              Physical Quantity (units)                              Sentinel Hub Units   Source Format   Typical Range                        Notes
+  ----------------- ------------------------------------------------------ -------------------- --------------- ------------------------------------ ----------------------------------------------------------------------------------------
+  LST               Land Surface Temperature                               KELVIN               INT16           223 - 323                            Roughly -50 to +50 °C. Extreme surfaces (e.g. hot deserts, ice sheets) can exceed this.
+  LST_uncertainty   Total uncertainty of the LST estimate                  KELVIN               INT16           0 - 5                                Larger uncertainties are possible over difficult-to-retrieve surfaces.
+  NDVI              Normalized Difference Vegetation Index                 INDEX                INT16           -1 – 1                               Values below 0 correspond to water, ice, or clouds.
+  CLOUD             N/A                                                     DN                   UINT16         0 – 65,535                           Bitmask of cloud test results.
+  BAYES             N/A                                                     DN                   UINT8          0 – 255                              Bitmask of Bayesian cloud probability flags.
+  POINTING          N/A                                                     DN                   UINT8          0 – 255                              Bitmask of instrument pointing and geometry quality flags.
+  CONFIDENCE        N/A                                                     DN                   UINT16         0 – 65,535                           General per-pixel quality and classification bitmask.
+  dataMask          N/A                                                     DN                   N/A            0 - no data`<br/>`{=html} 1 - data
+
+### Mosaicking
+
+All [mosaicking](/APIs/SentinelHub/Evalscript/Functions.qmd#mosaicking) types
+are supported.
+
+### Scenes Object
+
+[`scenes` object](/APIs/SentinelHub/Evalscript/Functions.qmd#scenes) stores
+metadata. An example of metadata available in `scenes` object for
+Sentinel-3 SLSTR L2 when mosaicking is `ORBIT`:
+
+  Property name                 Value
+  ----------------------------- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  tiles\[i\].sentinel3ProductId `'S3B_SL_2_LST____20260812T091944_20260812T092244_20260812T114127_0180_123_207_2160_ESA_O_NR_005.SEN3`'
+  tiles\[i\].date               `'2026-08-12T09:19:44.000Z'`
+  tiles\[i\].shId               `1873419`
+  tiles\[i\].cloudCoverage      `18.033278`
+  tiles\[i\].dataPath           `'http://eodata.dataspace.copernicus.eu/eodata/Sentinel-3/SLSTR/SL_2_LST___/2026/08/12/S3B_SL_2_LST____20260812T091944_20260812T092244_20260812T114127_0180_123_207_2160_ESA_O_NR_005.SEN3'`
+
+Properties of a `scenes` object can differ depending on the selected
+mosaicking and in which evalscript function the object is accessed.
+[Working with metadata in
+evalscript](/APIs/SentinelHub/UserGuides/Metadata.qmd) user guide
+explains all details and provides examples.
+
+## Catalog API Capabilities
+
+To access Sentinel-3 SLSTR L2 product metadata you need to send search
+request to our [Catalog API](/APIs/SentinelHub/Catalog.qmd). The
+requested metadata will be returned as JSON formatted response to your
+request.
+
+### Collection identifier: sentinel-3-slstr-l2
+
+### Filter extension
+
+-   `eo:cloud_cover` cloud cover percentage
+-   `sat:orbit_state` ([possible values](#orbitdirection))
+
+### Distinct extension
+
+-   `date`
+-   `sat:orbit_state`
+
+## Examples
+
+[S3SLSTRL2 examples](/APIs/SentinelHub/Process/Examples/S3SLSTRL2.qmd)
