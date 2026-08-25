@@ -1,0 +1,203 @@
+---
+title: Examples for S3SLSTRL2
+---
+
+The requests below are written in python. To execute them you need to
+create an OAuth client as explained
+[here](/APIs/SentinelHub/Overview/Authentication.qmd#python). It is
+named `oauth` in these examples.
+
+## Land Surface Temperature (LST) visualized
+
+```python
+evalscript = """
+//VERSION=3
+function setup() {
+  return {
+    input: ["LST"],
+    output: {
+      bands: 3,
+    },
+  }
+}
+
+// Red temperature gradient, in kelvin
+var viz = ColorGradientVisualizer.createRedTemperature(250, 330)
+
+function evaluatePixel(sample) {
+  return viz.process(sample.LST)
+}
+"""
+
+request = {
+    "input": {
+        "bounds": {
+            "bbox": [8.958382, 42.059678, 9.379525, 42.615688],
+        },
+        "data": [
+            {
+                "type": "sentinel-3-slstr-l2",
+                "dataFilter": {
+                    "timeRange": {
+                        "from": "2024-04-04T00:00:00Z",
+                        "to": "2024-04-04T23:59:59Z",
+                    },
+                },
+            }
+        ],
+    },
+    "output": {
+        "width": 512,
+        "height": 512,
+        "responses": [
+            {
+                "identifier": "default",
+                "format": {"type": "image/png"},
+            }
+        ],
+    },
+    "evalscript": evalscript,
+}
+
+url = "https://sh.dataspace.copernicus.eu/process/v1"
+
+response = oauth.post(url, json=request)
+```
+
+## Urban Heat Island Visualizer
+
+```python
+evalscript = """
+//VERSION=3
+
+function setup() {
+  return {
+    input: ["LST", "dataMask"],
+    output: { bands: 4 }
+  };
+}
+
+const colorRamp = [
+  [293.15, 0x0000ff], // 20.0°C - Blue
+  [300.65, 0x00ffff], // 27.5°C - Cyan
+  [308.15, 0xffff00], // 35.0°C - Yellow
+  [315.65, 0xff8800], // 42.5°C - Orange
+  [323.15, 0xff0000]  // 50.0°C - Red
+];;
+
+const visualizer = new ColorRampVisualizer(colorRamp);
+
+function evaluatePixel(sample) {
+  // Return transparent pixels for nodata
+  if (sample.dataMask === 0 || sample.LST === 0) {
+    return [0, 0, 0, 0];
+  }
+
+  let rgb = visualizer.process(sample.LST);
+  return rgb.concat(sample.dataMask);
+}
+"""
+
+request = {
+    "input": {
+        "bounds": {
+            "bbox": [1.842957, 48.621666, 2.817993, 49.066434],
+        },
+        "data": [
+            {
+                "type": "sentinel-3-slstr-l2",
+                "dataFilter": {
+                    "timeRange": {
+                        "from": "2026-08-01T00:00:00Z",
+                        "to": "2026-08-02T23:59:59Z",
+                    },
+                },
+            }
+        ],
+    },
+    "output": {
+        "width": 512,
+        "height": 512,
+        "responses": [
+            {
+                "identifier": "default",
+                "format": {"type": "image/png"},
+            }
+        ],
+    },
+    "evalscript": evalscript,
+}
+
+url = "https://sh.dataspace.copernicus.eu/process/v1"
+
+response = oauth.post(url, json=request)
+```
+
+## All L2 bands as a multi-band GeoTIFF (EPSG 32632)
+
+This example exports all the bands supported for Sentinel-3 SLSTR L2 —
+`LST`, `LST_uncertainty`, `NDVI`, `CLOUD`, `BAYES`, `POINTING` and
+`CONFIDENCE` — as a seven-band, single-precision GeoTIFF reprojected to
+UTM zone 32N.
+
+```python
+evalscript = """
+//VERSION=3
+function setup() {
+  return {
+    input: ["LST", "LST_uncertainty", "NDVI", "CLOUD", "BAYES", "POINTING", "CONFIDENCE"],
+    output: {
+      bands: 7,
+      sampleType: "FLOAT32",
+    },
+  }
+}
+
+function evaluatePixel(sample) {
+  return [
+    sample.LST,
+    sample.LST_uncertainty,
+    sample.NDVI,
+    sample.CLOUD,
+    sample.BAYES,
+    sample.POINTING,
+    sample.CONFIDENCE,
+  ]
+}
+"""
+
+request = {
+    "input": {
+        "bounds": {
+            "bbox": [8.558382, 41.359678, 9.579525, 43.055688],
+            "properties": {"crs": "http://www.opengis.net/def/crs/EPSG/0/4326"},
+        },
+        "data": [
+            {
+                "type": "sentinel-3-slstr-l2",
+                "dataFilter": {
+                    "timeRange": {
+                        "from": "2024-04-04T00:00:00Z",
+                        "to": "2024-04-04T23:59:59Z",
+                    },
+                },
+            }
+        ],
+    },
+    "output": {
+        "width": 512,
+        "height": 512,
+        "responses": [
+            {
+                "identifier": "default",
+                "format": {"type": "image/tiff"},
+            }
+        ],
+    },
+    "evalscript": evalscript,
+}
+
+url = "https://sh.dataspace.copernicus.eu/process/v1"
+
+response = oauth.post(url, json=request)
+```
