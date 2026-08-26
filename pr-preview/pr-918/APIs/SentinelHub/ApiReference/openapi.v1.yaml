@@ -1681,6 +1681,7 @@ components:
         - sentinel-3-olci
         - sentinel-3-olci-l2
         - sentinel-3-slstr
+        - sentinel-3-slstr-l2
         - sentinel-5p-l2
         - dem
         - s2gm
@@ -1912,6 +1913,21 @@ components:
               type: string
               enum:
                 - sentinel-3-slstr
+    S3SlstrL2Dataset:
+      title: sentinel-3-slstr-l2
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/BaseDataset'
+        - type: object
+          properties:
+            dataFilter:
+              $ref: '#/components/schemas/S3SlstrL2Filtering'
+            processing:
+              $ref: '#/components/schemas/BaseDatasetProcessing'
+            type:
+              type: string
+              enum:
+                - sentinel-3-slstr-l2
     S5PDataset:
       title: sentinel-5p-l2
       type: object
@@ -1971,17 +1987,6 @@ components:
     S2L1CFiltering:
       allOf:
         - $ref: '#/components/schemas/S2L2AFiltering'
-        - type: object
-          properties:
-            previewMode:
-              type: string
-              description: The preview mode
-              enum:
-                - DETAIL
-                - TILE_PREVIEW
-                - PREVIEW
-                - EXTENDED_PREVIEW
-              default: DETAIL
     S1Filtering:
       type: object
       properties:
@@ -2070,6 +2075,29 @@ components:
         maxCloudCoverage:
           $ref: '#/components/schemas/MaxCloudCoverage'
     S3SlstrFiltering:
+      type: object
+      properties:
+        timeRange:
+          $ref: '#/components/schemas/TimeRange'
+        mosaickingOrder:
+          description: >-
+            The order in which tiles are overlapped from which the output result
+            is mosaicked.
+          type: string
+          enum:
+            - mostRecent
+            - leastRecent
+            - leastCC
+          default: mostRecent
+        maxCloudCoverage:
+          $ref: '#/components/schemas/MaxCloudCoverage'
+        orbitDirection:
+          description: Orbit direction.
+          type: string
+          enum:
+            - ASCENDING
+            - DESCENDING
+    S3SlstrL2Filtering:
       type: object
       properties:
         timeRange:
@@ -2391,6 +2419,7 @@ components:
           - $ref: '#/components/schemas/S3OlciDataset'
           - $ref: '#/components/schemas/S3OlciL2Dataset'
           - $ref: '#/components/schemas/S3SlstrDataset'
+          - $ref: '#/components/schemas/S3SlstrL2Dataset'
           - $ref: '#/components/schemas/S5PDataset'
           - $ref: '#/components/schemas/DEMDataset'
           - $ref: '#/components/schemas/BYOCDataset'
