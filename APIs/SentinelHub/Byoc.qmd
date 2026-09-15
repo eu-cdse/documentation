@@ -84,7 +84,7 @@ These are:
 Bands can have different resolutions.
 
 For best performance we recommend the following setting for COGs:
-deflate compressed with 1024x1024 pixel internal tiling.
+ZSTD compressed with 1024x1024 pixel internal tiling.
 
 -   \[1\]: Here\'s one example of files with slightly different bounding
     boxes. One file has the bounding box `[0, 0, 10, 10]` and resolution
@@ -108,7 +108,7 @@ The input file must conform to the
 [constraints](#constraints-and-settings) regarding the projection, units
 per pixel, and pixel formats. To generate a COG from an input file:
 
-`gdal_translate -of COG -co COMPRESS=DEFLATE -co BLOCKSIZE=1024 -co RESAMPLING=AVERAGE -co OVERVIEWS=IGNORE_EXISTING input.extension output.tiff`
+`gdal_translate -of COG -co COMPRESS=ZSTD -co BLOCKSIZE=1024 -co RESAMPLING=AVERAGE -co OVERVIEWS=IGNORE_EXISTING input.extension output.tiff`
 
 Additional parameters may be needed:
 
@@ -144,7 +144,7 @@ If your input data has nodata values, add them to this command using:
 good rule of thumb is to have as many overview levels as necessary for
 the entire source image to fit on one 1024x1024 tile).
 
-`gdal_translate -co TILED=YES -co COPY_SRC_OVERVIEWS=YES --config GDAL_TIFF_OVR_BLOCKSIZE 1024 -co BLOCKXSIZE=1024 -co BLOCKYSIZE=1024 -co COMPRESS=DEFLATE intermediate.tiff output.tiff`
+`gdal_translate -co TILED=YES -co COPY_SRC_OVERVIEWS=YES --config GDAL_TIFF_OVR_BLOCKSIZE 1024 -co BLOCKXSIZE=1024 -co BLOCKYSIZE=1024 -co COMPRESS=ZSTD intermediate.tiff output.tiff`
 
 To generate a planar multi-band COG, add `-co INTERLEAVE=BAND`. For
 chunky format, you don\'t need to pass anything, as this is the default
