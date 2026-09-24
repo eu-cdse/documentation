@@ -59,9 +59,16 @@ The number of the returned array elements represents the number of the component
 
 Mosaicking defines how the source data is mosaicked. Not all collections support all these mosaicking types, as it depends on how the source data is distributed. See the collection information pages to determine which ones are supported. It is a constant which is specified by a string. For example, set: `mosaicking: "SIMPLE"`.
 
-- `SIMPLE` (default) is the simplest method. It flattens the mosaicked image so that only a single sample is passed for evaluation.
-- `ORBIT` - the mosaicked image is flattened for each orbit, so there is only one sample per pixel per orbit. Multiple samples can, therefore, be present if there is more than one orbit for the selected time range at the pixel location.
-- `TILE` - this is essentially the unflattened mosaic. It contains all data available for the selected time range. Multiple samples can be present, as each sample comes from a single scene, which is defined by the data source.
+- `SIMPLE` (default) - the simplest method. Source pixels are mosaicked into a single scene; only a single sample is available for each output pixel. Maximum source count limits are in place to protect against excessively demanding requests.
+- `ORBIT` - sources are mosaicked into one scene per orbit. One sample per orbit is available for each output pixel. Multiple scenes can therefore be present if there is more than one orbit for the provided time range and data filter.
+- `TILE` - each source is a scene. Scenes contain all data available for the provided time range and data filter.
+
+For `SIMPLE` mosaicking, the following source count limits are currently in place. This is the maximum number of products which will be mosaicked together. Requests which exceed limits will not fail, but may appear incomplete. Limits may change.
+
+- Batch API - 2000
+- Batch Statistical API - 2000
+- Asynchronous Processing API - 1000
+- Processing API, et al. - 200
 
 :::{.callout-warning}
 `ORBIT` mosaicking currently does not work exactly as described but generates a single scene for each day containing satellite data. For most requests, this should not be an issue; however, high-latitude regions may have more than one acquisition per day. For these, consider using `TILE` mosaicking if getting all available data is paramount. This will be corrected in future releases.
