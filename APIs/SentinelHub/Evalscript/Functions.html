@@ -3099,9 +3099,16 @@ window.onload = function() {
 <h3 class="anchored" data-anchor-id="mosaicking">Mosaicking</h3>
 <p>Mosaicking defines how the source data is mosaicked. Not all collections support all these mosaicking types, as it depends on how the source data is distributed. See the collection information pages to determine which ones are supported. It is a constant which is specified by a string. For example, set: <code>mosaicking: "SIMPLE"</code>.</p>
 <ul>
-<li><code>SIMPLE</code> (default) is the simplest method. It flattens the mosaicked image so that only a single sample is passed for evaluation.</li>
-<li><code>ORBIT</code> - the mosaicked image is flattened for each orbit, so there is only one sample per pixel per orbit. Multiple samples can, therefore, be present if there is more than one orbit for the selected time range at the pixel location.</li>
-<li><code>TILE</code> - this is essentially the unflattened mosaic. It contains all data available for the selected time range. Multiple samples can be present, as each sample comes from a single scene, which is defined by the data source.</li>
+<li><code>SIMPLE</code> (default) - the simplest method. Source pixels are mosaicked into a single scene; only a single sample is available for each output pixel. Maximum source count limits are in place to protect against excessively demanding requests.</li>
+<li><code>ORBIT</code> - sources are mosaicked into one scene per orbit. One sample per orbit is available for each output pixel. Multiple scenes can therefore be present if there is more than one orbit for the provided time range and data filter.</li>
+<li><code>TILE</code> - each source is a scene. Scenes contain all data available for the provided time range and data filter.</li>
+</ul>
+<p>For <code>SIMPLE</code> mosaicking, the following source count limits are currently in place. This is the maximum number of products which will be mosaicked together. Requests which exceed limits will not fail, but may appear incomplete. Limits may change.</p>
+<ul>
+<li>Batch API - 2000</li>
+<li>Batch Statistical API - 2000</li>
+<li>Asynchronous Processing API - 1000</li>
+<li>Processing API, et al.&nbsp;- 200</li>
 </ul>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
