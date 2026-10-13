@@ -2933,6 +2933,7 @@ window.onload = function() {
   <ul>
   <li><a href="#changelog" id="toc-changelog" class="nav-link active" data-scroll-target="#changelog">Changelog</a>
   <ul>
+  <li><a href="#in-progress-0.74.0" id="toc-in-progress-0.74.0" class="nav-link" data-scroll-target="#in-progress-0.74.0">In progress: 0.74.0</a></li>
   <li><a href="#section" id="toc-section" class="nav-link" data-scroll-target="#section">0.73.0</a></li>
   <li><a href="#section-1" id="toc-section-1" class="nav-link" data-scroll-target="#section-1">0.72.0</a></li>
   <li><a href="#section-2" id="toc-section-2" class="nav-link" data-scroll-target="#section-2">0.71.0</a></li>
@@ -3162,14 +3163,35 @@ window.onload = function() {
 <p>Note that the openEO API provides a way to support stable and unstable versions in the same implementation: https://openeo.org/documentation/1.0/developers/api/reference.html#operation/connect</p>
 <p>If needed, feature flags are used to allow testing unstable features in development/production, without compromising stable operations.</p>
 <!-- start-of-changelog -->
+<section id="in-progress-0.74.0" class="level2">
+<h2 class="anchored" data-anchor-id="in-progress-0.74.0">In progress: 0.74.0</h2>
+<ul>
+<li>Require at least Python 3.11 (drop support for Python 3.8, 3.9 and 3.10, <a href="https://github.com/Open-EO/openeo-geopyspark-driver/issues/1060">#1060</a>)</li>
+<li>Batch job metadata: report Spark execution metrics (<code>total_stage_runtime</code>, <code>total_executor_allocation_time</code>, <code>cpu_utilization_ratio</code>, <code>total_stage_failures</code>, <code>total_task_failures</code> and <code>peak_execution_memory</code>)</li>
+<li>Kubernetes batch jobs: also enable OpenTelemetry metrics export on the Spark driver (previously only the executors emitted these metrics), including the <code>prom-scala</code> container port used for scraping</li>
+<li>sar_backscatter: reduce default for max_processing_area_pixels to 1024, avoids to go out of memory and require increasing memory</li>
+<li>Sentinel-3 OLCI L1B: support angles and meteo bands (<a href="https://github.com/Open-EO/openeo-geopyspark-driver/issues/1848">#1848</a>)</li>
+<li><code>load_result</code>: use the file-based pyramid factory for loading result GeoTIFFs, retaining temporal filtering</li>
+<li><code>load_collection</code> of “geotiff” collections and of Sentinel Hub batch process results: use the file-based pyramid factory instead of the obsolete <code>org.openeo.geotrellis.geotiff.PyramidFactory</code>; the end of the temporal extent is now exclusive</li>
+</ul>
+</section>
 <section id="section" class="level2">
 <h2 class="anchored" data-anchor-id="section">0.73.0</h2>
 <ul>
+<li><code>merge_cubes</code>: preserve temporal metadata when merging a spatial cube with a spacetime cube (<a href="https://github.com/Open-EO/openeo-geopyspark-driver/pull/1830">#1830</a>)</li>
 <li>Starting batch jobs is made more lenient to support processes not known by the web application.</li>
+<li><code>mask</code>: clip oversized vector geometries to the raster footprint before reprojection to avoid topology errors with UTM/local CRS masking (<a href="https://github.com/Open-EO/openeo-geopyspark-driver/issues/1817">#1817</a>)</li>
 <li>Add <code>soft_error</code> feature on missing products to S1BackscatterOrfeoV2 (<a href="https://github.com/Open-EO/openeo-geopyspark-driver/pull/1719">#1719</a>)</li>
 <li><code>load_stac</code>: disable version-migration of certain properties (e.g.&nbsp;<code>proj:epsg</code>) to avoid breaking post-query property filtering, and support feature flag to disable or fine-tune post-query property filtering (<a href="https://github.com/Open-EO/openeo-geopyspark-driver/issues/1728">#1728</a>)</li>
 <li>Improved support for separate “derived_from” auxiliary links on kubernetes deployments (<a href="https://github.com/Open-EO/openeo-geopyspark-driver/issues/1618">#1618</a>)</li>
 <li>Add <code>load_stac</code> feature flag <code>use_raw_asset_href</code> to force usage of raw asset href instead of leveraging standard pystac href normalization (<a href="https://github.com/Open-EO/openeo-geopyspark-driver/issues/1748">#1748</a>)</li>
+<li><code>save_result</code>: Format option <code>retain_nodata_tiles</code> for GeoTiff and NetCDF to retain tiles with only nodata.</li>
+<li>Remove left-over traces (dead code) related to “kafka” and “async_tasks” (<a href="https://github.com/Open-EO/openeo-geopyspark-driver/issues/1804">#1804</a>)</li>
+<li>Job tracker: immediately delete the Kubernetes SparkApplication (freeing up the resources it owns) once a job’s final status and resource usage have been successfully persisted in the job registry. Configurable through <code>job_tracker_cleanup_openeo_statuses</code> (defaults to <code>["finished"]</code>, use an empty list to opt out).</li>
+<li>Kubernetes batch jobs: make the batch job config secret owned by the SparkApplication, so that it is garbage collected together with it (best effort, on top of the existing age based secret cleanup). Requires the <code>patch</code> permission on secrets.</li>
+<li>Kubernetes batch jobs: support mounting batch job results from a single shared PersistentVolumeClaim (each job using its own <code>subPath</code>) instead of creating a PersistentVolume and PersistentVolumeClaim per job, through the new <code>shared_results_pvc</code> config.</li>
+<li>Produce BigTiff GeoTiffs by default (<a href="https://github.com/Open-EO/openeo-geotrellis-extensions/issues/678">Open-EO/openeo-geotrellis-extensions#678</a>, <a href="https://github.com/Open-EO/openeo-geotrellis-extensions/issues/792">Open-EO/openeo-geotrellis-extensions#792</a>)</li>
+<li>Make <code>export_workspace</code> merge by default; its <code>merge</code> argument points to the STAC resource itself (<a href="https://github.com/Open-EO/openeo-geotrellis-extensions/issues/590">Open-EO/openeo-geotrellis-extensions#590</a>)</li>
 </ul>
 </section>
 <section id="section-1" class="level2">
