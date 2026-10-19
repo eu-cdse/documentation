@@ -1,0 +1,1163 @@
+---
+title: "Copernicus CSV Catalogue API"
+subtitle: "OData 4.0 interface for the Copernicus daily catalogue index"
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    code-overflow: wrap
+# Code cells are displayed but NOT executed by default, so that building the
+# docs never depends on the production API being reachable. To validate the
+# examples against the live service, render with:
+#     quarto render docs/user-guide.qmd --execute
+# or flip individual cells with `#| eval: true`.
+execute:
+  eval: false
+  echo: true
+  warning: false
+---
+
+## Overview
+
+The CSV Catalogue OData API provides access to daily-regenerated Copernicus satellite
+data index files hosted by the Copernicus Data Space Ecosystem. Each CSV file contains a
+complete list of available data products for one satellite platform on a given day.
+
+The API follows the OData 4.0 standard. All query options are prefixed with `$` and
+separated by `&`. **No authentication is required.**
+
+**Base URL**
+
+```
+https://api.csv.dataspace.copernicus.eu/odata/v1
+```
+
+**Typical workflow**
+
+1. Query `/Csvs` with `$filter` to find the files you need.
+2. Download individual files with `/$value`, or a batch with `POST /Csvs/Download`.
+3. Verify integrity with the `sha256_hash` field.
+
+Each step is covered below.
+
+::: {.callout-note}
+Output blocks in this guide are illustrative examples of response shape, not live
+captures. Actual IDs, sizes, and counts change daily.
+:::
+
+## Before you start
+
+The examples need `requests`. The tabular displays also use `pandas`, which is a
+convenience for this guide rather than a requirement of the API.
+
+```bash
+pip install requests pandas
+```
+
+Every Python snippet below assumes this setup cell has run:
+
+```{python}
+import requests
+import pandas as pd
+
+BASE = "https://api.csv.dataspace.copernicus.eu/odata/v1"
+```
+
+::: {.callout-warning}
+## Quote your URLs in the shell
+
+Every OData query option starts with `$`, and **bash and zsh expand `$` inside double
+quotes**. Pasting a URL into `curl "...?$filter=..."` silently sends an *unfiltered*
+request, because the shell replaces `$filter` and `$top` with empty strings before curl
+ever runs. There is no error — you just get the wrong results.
+
+Use single quotes, or let curl build the query string:
+
+```bash
+curl -sG 'https://api.csv.dataspace.copernicus.eu/odata/v1/Csvs' \
+     --data-urlencode "\$filter=Collection/Name eq 'SENTINEL-1'" \
+     --data-urlencode "\$top=3"
+```
+
+The bare `GET /Csvs?...` lines throughout this guide show the logical request. They are
+not URL-encoded and are not meant to be pasted straight into a shell.
+:::
+
+## Quickstart
+
+Find yesterday's SENTINEL-2 catalogue file, download it, and verify it:
+
+```{python}
+import hashlib
+import pathlib
+from datetime import date, timedelta
+
+BASE = "https://api.csv.dataspace.copernicus.eu/odata/v1"
+day = date.today() - timedelta(days=1)
+
+# 1. Find it
+entry = requests.get(
+    f"{BASE}/Csvs",
+    params={
+        "$filter": f"Collection/Name eq 'SENTINEL-2' and ContentDate eq {day}",
+        "$top": 1,
+    },
+).json()["value"][0]
+
+# 2. Download it
+out = pathlib.Path(entry["display_name"])
+with requests.get(f"{BASE}/Csvs({entry['id']})/$value", stream=True) as resp:
+    resp.raise_for_status()
+    with out.open("wb") as fh:
+        for chunk in resp.iter_content(chunk_size=65536):
+            fh.write(chunk)
+
+# 3. Verify it
+digest = hashlib.sha256(out.read_bytes()).hexdigest()
+assert digest == entry["sha256_hash"], "checksum mismatch"
+print(f"{out} - {out.stat().st_size} bytes, checksum OK")
+```
+
+The rest of this guide covers each step in detail.
+
+## What a catalogue file contains
+
+A catalogue file is a **semicolon-delimited** CSV listing every product available for one
+collection on one day. Data values are double-quoted, the header row is not, and dates
+are ISO 8601 with milliseconds.
+
+| Column | Description |
+|---|---|
+| `id` | Product UUID in the Copernicus Data Space catalogue |
+| `name` | Product name (for Sentinel, a `.SAFE` product) |
+| `contentlength` | Product size in bytes |
+| `ingestiondate` | When the product was ingested |
+| `contentdateend` | End of the product's acquisition window |
+| `modificationdate` | When the product record last changed |
+| `checksumalgorithm` | Checksum algorithm, `MD5` |
+| `checksumvalue` | Product checksum |
+| `s3path` | Object storage location, `s3://eodata/...` |
+| `bbox` | Product footprint as a WKT `POLYGON` |
+
+::: {.callout-important}
+## Sentinel and CLMS headers differ
+
+|  | Sentinel | CLMS |
+|---|---|---|
+| Acquisition start column | `contentdatestart` | `contentstartdate` |
+| Additional column | — | `nominaldate`, after `contentdateend` |
+
+The start-date column is spelled differently in each, and CLMS carries one extra column.
+Parse by column **name**, never by position, and do not assume a header read from one
+collection applies to another.
+:::
+
+Sentinel header:
+
+```
+id;name;contentlength;ingestiondate;contentdatestart;contentdateend;modificationdate;checksumalgorithm;checksumvalue;s3path;bbox
+```
+
+CLMS header:
+
+```
+id;name;contentlength;ingestiondate;contentstartdate;contentdateend;nominaldate;modificationdate;checksumalgorithm;checksumvalue;s3path;bbox
+```
+
+::: {.callout-note}
+`checksumvalue` is an **MD5** digest of the *product* and is unrelated to the
+`sha256_hash` field on the catalogue entry, which covers the CSV file itself.
+:::
+
+Reading a downloaded file:
+
+```{python}
+df = pd.read_csv("catalogue.csv", sep=";")
+print(df.columns.tolist())
+print(len(df), "products")
+```
+
+You can inspect the header without downloading the whole file by requesting only the
+first few kilobytes (see [Downloading files] for the full `Range` semantics):
+
+```{python}
+peek = requests.get(
+    f"{BASE}/Csvs({entry['id']})/$value", headers={"Range": "bytes=0-2047"}
+)
+print(peek.status_code)             # 206
+print(peek.text.splitlines()[0])    # header row
+```
+
+## Collections
+
+`GET /Csvs` returns catalogue CSV entries. Each entry carries metadata about one file:
+its collection, content date, file size, SHA-256 hash, and direct download link.
+
+| Collection name | Key | Collection ID | Has ContentDate |
+|---|---|---|---|
+| SENTINEL-1 | `s1` | `430fb64d-5d60-4729-b08a-eeaea0857947` | Yes |
+| SENTINEL-2 | `s2` | `d70745a1-e6b8-4331-b5bf-1fc92caa333c` | Yes |
+| SENTINEL-3 | `s3` | `0f4c3d1e-eb1a-4236-8e4e-8cc0f6e23127` | Yes |
+| SENTINEL-5P | `s5p` | `454d01c6-a588-431e-8f7f-2337915b299b` | Yes |
+| SENTINEL-6 | `s6` | `e5af6e4c-d2f7-42b5-b213-cf45eba28000` | Yes |
+| CLMS | `clms` | `ab6dc2ab-0baf-4378-8983-8d61c9ec80c7` | No |
+
+::: {.callout-tip}
+Specifying the collection name significantly improves query performance — for example
+`Collection/Name eq 'SENTINEL-1'`.
+:::
+
+## Filtering
+
+### Filterable fields
+
+Only the fields below can be used in a `$filter` expression. Any other field name is
+rejected with `422 Unprocessable Entity` and the message
+`Unknown filter field: '<name>'`.
+
+| Field | Type | Notes |
+|---|---|---|
+| `Collection/ID` | UUID string | Quoted, e.g. `'430fb64d-…'` |
+| `Collection/Name` | string | `SENTINEL-1`, `SENTINEL-2`, `SENTINEL-3`, `SENTINEL-5P`, `SENTINEL-6`, `CLMS` |
+| `ContentDate` | `Edm.Date` | Content/validity date. Null for CLMS. |
+| `CreatedDate` | `Edm.Date` | Date the file was added to the catalogue |
+| `LastModified` | `Edm.Date` | Date the CSV content was last changed |
+| `attributes/component` | string | CLMS component |
+| `attributes/product_types` | string | CLMS product type |
+| `attributes/dataset_id` | string | CLMS dataset identifier |
+| `attributes/fileformat` | string | CLMS file format |
+| `attributes/platform_id` | string | Sentinel platform: `A`, `B`, `C`, `D` |
+
+::: {.callout-important}
+`file_size`, `name`, `display_name`, and `sha256_hash` appear in responses but are
+**not** filterable. `file_size` is sortable via `$orderby` (see [Sorting]).
+:::
+
+Multiple conditions can be combined with `and` and `or`. String comparisons are
+case-sensitive.
+
+### By collection name
+
+```
+GET /Csvs?$filter=Collection/Name eq 'SENTINEL-1'&$top=3
+```
+
+```{python}
+r = requests.get(
+    f"{BASE}/Csvs",
+    params={"$filter": "Collection/Name eq 'SENTINEL-1'", "$top": 3},
+)
+r.raise_for_status()
+df = pd.DataFrame.from_dict(r.json()["value"])
+df[["id", "name", "ContentDate", "file_size"]]
+```
+
+|  | id | name | ContentDate | file_size |
+|---|---|---|---|---|
+| 0 | ca3438ff-e693-4e86-b00e-7afef3322632 | S1D_20260601_COPERNICUS_catalogue | 2026-06-01 | 1936852 |
+| 1 | f595baea-a6d9-44af-98c0-2db1ff2ae70d | S1D_20260531_COPERNICUS_catalogue | 2026-05-31 | 2125663 |
+| 2 | 3a1b8d22-0fca-41d8-9c43-3e5f6ab12c11 | S1C_20260601_COPERNICUS_catalogue | 2026-06-01 | 1821034 |
+
+::: {.callout-note}
+`Collection/Name` values are case-sensitive and uppercase: `SENTINEL-1`, `SENTINEL-2`,
+`SENTINEL-3`, `SENTINEL-5P`, `SENTINEL-6`, `CLMS`. The `collection.display_name` in
+responses is mixed-case (`Sentinel-1`) and does **not** match in a filter —
+`Collection/Name eq 'Sentinel-1'` returns no results.
+:::
+
+### By collection ID
+
+```
+GET /Csvs?$filter=Collection/ID eq '430fb64d-5d60-4729-b08a-eeaea0857947'&$top=3
+```
+
+```{python}
+r = requests.get(
+    f"{BASE}/Csvs",
+    params={
+        "$filter": "Collection/ID eq '430fb64d-5d60-4729-b08a-eeaea0857947'",
+        "$top": 3,
+    },
+)
+df = pd.DataFrame.from_dict(r.json()["value"])
+df[["id", "name", "ContentDate", "file_size"]]
+```
+
+### By content date
+
+`ContentDate` is the validity date of the catalogue file (one date per file). Sentinel
+collections always have a `ContentDate`; CLMS files do not.
+
+::: {.callout-note}
+Date values in OData filters are **unquoted** `Edm.Date` literals — for example
+`ContentDate ge 2024-01-01`. String values always use single quotes —
+`Collection/Name eq 'SENTINEL-1'`.
+:::
+
+::: {.callout-tip}
+Narrowing the date range to individual months or weeks gives the best query performance.
+:::
+
+```
+GET /Csvs?$filter=ContentDate ge 2024-01-01 and ContentDate lt 2024-02-01
+```
+
+```{python}
+r = requests.get(
+    f"{BASE}/Csvs",
+    params={"$filter": "ContentDate ge 2024-01-01 and ContentDate lt 2024-02-01"},
+)
+df = pd.DataFrame.from_dict(r.json()["value"])
+df[["id", "name", "ContentDate", "CreatedDate", "file_size"]].head(3)
+```
+
+|  | id | name | ContentDate | CreatedDate | file_size |
+|---|---|---|---|---|---|
+| 0 | b2886d95-8782-461a-b8c8-1e62e4f80413 | S6A_20240131_COPERNICUS_catalogue | 2024-01-31 | 2026-04-22 | 43284 |
+| 1 | 4f3d7c45-a92f-45a9-b166-5ba278cf39cb | S6A_20240130_COPERNICUS_catalogue | 2024-01-30 | 2026-04-22 | 43250 |
+| 2 | e91c3d10-b50a-41f7-804b-28c1f9aab3e4 | S1A_20240115_COPERNICUS_catalogue | 2024-01-15 | 2026-04-22 | 1782340 |
+
+::: {.callout-warning}
+Because CLMS entries have a null `ContentDate`, any `ContentDate` comparison excludes
+them. Combining `ContentDate` with a CLMS-only attribute such as
+`attributes/component` always returns an empty result set.
+:::
+
+### By creation date
+
+`CreatedDate` is the date the file was added to the catalogue. Use it to retrieve files
+published after a certain date.
+
+```
+GET /Csvs?$filter=CreatedDate ge 2026-06-01&$top=5
+```
+
+```{python}
+r = requests.get(
+    f"{BASE}/Csvs",
+    params={"$filter": "CreatedDate ge 2026-06-01", "$top": 5},
+)
+df = pd.DataFrame.from_dict(r.json()["value"])
+df[["id", "name", "ContentDate", "CreatedDate"]]
+```
+
+### By last modification date
+
+`LastModified` is the date the content of the CSV file was last changed. Use it to
+detect recently updated files.
+
+```
+GET /Csvs?$filter=LastModified ge 2026-06-01&$top=5
+```
+
+```{python}
+r = requests.get(
+    f"{BASE}/Csvs",
+    params={"$filter": "LastModified ge 2026-06-01", "$top": 5},
+)
+df = pd.DataFrame.from_dict(r.json()["value"])
+df[["id", "name", "LastModified", "ContentDate"]]
+```
+
+### By platform
+
+Sentinel catalogue files carry a `platform_id` attribute identifying the satellite unit.
+
+```
+GET /Csvs?$filter=Collection/Name eq 'SENTINEL-1' and attributes/platform_id eq 'A'&$top=3
+```
+
+```{python}
+r = requests.get(
+    f"{BASE}/Csvs",
+    params={
+        "$filter": (
+            "Collection/Name eq 'SENTINEL-1' and attributes/platform_id eq 'A'"
+        ),
+        "$top": 3,
+    },
+)
+df = pd.DataFrame.from_dict(r.json()["value"])
+df[["id", "name", "ContentDate", "file_size"]]
+```
+
+| Collection/Name | `platform_id` values |
+|---|---|
+| SENTINEL-1 | A, B, C, D |
+| SENTINEL-2 | A, B, C |
+| SENTINEL-3 | A, B |
+| SENTINEL-5P | — |
+| SENTINEL-6 | A |
+
+### By CLMS attributes
+
+CLMS catalogue files carry four attributes describing the dataset: `component`,
+`product_types`, `dataset_id`, and `fileformat`.
+
+```
+GET /Csvs?$filter=attributes/component eq 'bio-geophysical'&$top=3
+```
+
+```{python}
+r = requests.get(
+    f"{BASE}/Csvs",
+    params={"$filter": "attributes/component eq 'bio-geophysical'", "$top": 3},
+)
+df = pd.DataFrame.from_dict(r.json()["value"])
+df[["id", "name", "file_size"]]
+```
+
+To narrow further by product type and file format:
+
+```{python}
+r = requests.get(
+    f"{BASE}/Csvs",
+    params={
+        "$filter": (
+            "attributes/component eq 'bio-geophysical'"
+            " and attributes/product_types eq 'burnt_area'"
+            " and attributes/fileformat eq 'cog'"
+        )
+    },
+)
+df = pd.DataFrame.from_dict(r.json()["value"])
+df[["id", "name", "file_size"]]
+```
+
+| Attribute | Example values |
+|---|---|
+| `attributes/component` | `bio-geophysical`, `landcover_landuse`, `land_cover_use_in_priority_areas` |
+| `attributes/product_types` | `burnt_area`, `vegetation_properties`, `snow_cover_extent`, … |
+| `attributes/dataset_id` | `ba_global_300m_daily_v3`, `lai_global_300m_10daily_v2`, … |
+| `attributes/fileformat` | `cog`, `nc`, `geojson` |
+
+::: {.callout-note}
+Use the [Schema endpoint] to retrieve all valid attribute values and their entry counts
+for every collection.
+:::
+
+### String functions
+
+`contains()`, `startswith()`, and `endswith()` can be applied to string fields.
+
+```
+GET /Csvs?$filter=contains(Collection/Name, 'SENTINEL')&$top=3
+```
+
+```{python}
+r = requests.get(
+    f"{BASE}/Csvs",
+    params={"$filter": "contains(Collection/Name, 'SENTINEL')", "$top": 3},
+)
+df = pd.DataFrame.from_dict(r.json()["value"])
+df[["id", "name", "ContentDate"]]
+```
+
+### Supported operators
+
+| Operator / Function | Description | Example |
+|---|---|---|
+| `eq` | Equal | `Collection/Name eq 'SENTINEL-1'` |
+| `ne` | Not equal | `attributes/platform_id ne 'A'` |
+| `gt` | Greater than | `ContentDate gt 2024-01-01` |
+| `ge` | Greater than or equal | `ContentDate ge 2024-01-01` |
+| `lt` | Less than | `ContentDate lt 2025-01-01` |
+| `le` | Less than or equal | `ContentDate le 2025-01-01` |
+| `and` | Logical AND | `ContentDate ge 2024-01-01 and ContentDate lt 2024-02-01` |
+| `or` | Logical OR | `Collection/Name eq 'SENTINEL-1' or Collection/Name eq 'SENTINEL-2'` |
+| `not` | Logical NOT | `not (ContentDate gt 2024-06-01)` |
+| `contains()` | Substring match | `contains(Collection/Name, 'SENTINEL')` |
+| `startswith()` | Prefix match | `startswith(Collection/Name, 'SENTINEL')` |
+| `endswith()` | Suffix match | `endswith(Collection/Name, '-1')` |
+
+A `$filter` expression is limited to 2000 characters and 20 levels of nesting.
+Exceeding either returns `422`.
+
+## Sorting
+
+`$orderby` accepts exactly two field names:
+
+| `$orderby` field | Sorts by |
+|---|---|
+| `size` | File size |
+| `ContentDate` | Content / validity date |
+
+::: {.callout-important}
+The sort field is `size`, **not** `file_size`. Any other value returns `422 Invalid
+$orderby parameter`.
+:::
+
+Append `asc` or `desc` after the field name.
+
+::: {.callout-note}
+Unlike the OData specification, which defaults to ascending, this API defaults to
+**descending** when no direction is given.
+:::
+
+Newest first:
+
+```
+GET /Csvs?$filter=Collection/Name eq 'SENTINEL-1'&$orderby=ContentDate desc&$top=5
+```
+
+```{python}
+r = requests.get(
+    f"{BASE}/Csvs",
+    params={
+        "$filter": "Collection/Name eq 'SENTINEL-1'",
+        "$orderby": "ContentDate desc",
+        "$top": 5,
+    },
+)
+df = pd.DataFrame.from_dict(r.json()["value"])
+df[["id", "name", "ContentDate", "file_size"]]
+```
+
+Smallest file first:
+
+```
+GET /Csvs?$filter=Collection/Name eq 'SENTINEL-1'&$orderby=size asc&$top=5
+```
+
+```{python}
+r = requests.get(
+    f"{BASE}/Csvs",
+    params={
+        "$filter": "Collection/Name eq 'SENTINEL-1'",
+        "$orderby": "size asc",
+        "$top": 5,
+    },
+)
+df = pd.DataFrame.from_dict(r.json()["value"])
+df[["id", "name", "ContentDate", "file_size"]]
+```
+
+::: {.callout-tip}
+Supplying `$orderby` gives a stable sort order and eliminates potential duplicate
+entries across pages.
+:::
+
+## Pagination
+
+`$top` limits the number of results returned (1–1000, default 100). `$skip` offsets the
+starting position. Use them together to page through large result sets.
+
+```
+GET /Csvs?$filter=Collection/Name eq 'SENTINEL-1'&$top=100&$skip=100
+```
+
+::: {.callout-important}
+Page with the **largest** `$top` you can. `GET /Csvs` is limited to 100 requests per
+60 seconds, so a collection of ~15,000 entries takes 154 requests at `$top=100` — which
+exceeds the limit partway through — but only 16 at `$top=1000`. Always handle `429`
+as well; see [Rate limits].
+:::
+
+```{python}
+import time
+
+PAGE = 1000        # the $top maximum: fewest requests, least rate-limit pressure
+results = []
+skip = 0
+
+while True:
+    r = requests.get(
+        f"{BASE}/Csvs",
+        params={
+            "$filter": "Collection/Name eq 'SENTINEL-1'",
+            "$orderby": "ContentDate desc",
+            "$top": PAGE,
+            "$skip": skip,
+        },
+    )
+    if r.status_code == 429:
+        time.sleep(int(r.headers.get("Retry-After", 10)))
+        continue          # retry the same page
+    r.raise_for_status()
+
+    batch = r.json()["value"]
+    results.extend(batch)
+    if len(batch) < PAGE:
+        break
+    skip += PAGE
+
+df = pd.DataFrame.from_dict(results)
+print(len(df), "entries retrieved")
+```
+
+::: {.callout-tip}
+Pass `$orderby` when paging. Without an explicit sort the page boundaries are not
+guaranteed to be stable between requests.
+:::
+
+## Counting
+
+`$count=true` makes `@odata.count` report the total number of matching entries.
+
+```
+GET /Csvs?$filter=Collection/Name eq 'SENTINEL-2'&$count=true&$top=1
+```
+
+```{python}
+r = requests.get(
+    f"{BASE}/Csvs",
+    params={
+        "$filter": "Collection/Name eq 'SENTINEL-2'",
+        "$count": "true",
+        "$top": 1,
+    },
+)
+print("Total SENTINEL-2 entries:", r.json()["@odata.count"])
+```
+
+```
+Total SENTINEL-2 entries: 11478
+```
+
+::: {.callout-important}
+`@odata.count` is present in **every** list response. Without `$count=true` it reports
+only the number of entries in the current page, not the total. Always set
+`$count=true` before reading it as a total.
+:::
+
+## Schema endpoint
+
+The Schema endpoint returns the complete set of valid filter values for every
+collection, together with per-value entry counts.
+
+```
+GET /Csvs/Schema
+```
+
+```{python}
+schema = requests.get(f"{BASE}/Csvs/Schema").json()
+
+for coll in schema["collections"]:
+    print(coll["display_name"], "—", coll["count"], "entries")
+```
+
+```
+Sentinel-1 — 15304 entries
+Sentinel-2 — 11478 entries
+Sentinel-3 — 7652 entries
+Sentinel-5P — 3826 entries
+Sentinel-6 — 3826 entries
+CLMS — 215 entries
+```
+
+Each collection entry has the following fields:
+
+| Field | Type | Description |
+|---|---|---|
+| `id` | UUID | Collection UUID |
+| `key` | string | Short identifier, e.g. `s1`, `clms` |
+| `display_name` | string | Human-readable name, e.g. `Sentinel-1`. Not the value used in `Collection/Name` filters. |
+| `has_content_date` | boolean | Whether files in this collection carry a `ContentDate` |
+| `count` | integer | Total number of CSV entries in the collection |
+| `attributes` | object | Tree of valid attribute values with entry counts per value |
+
+The `attributes` tree is nested `component → product_types → dataset_id → fileformat`
+for CLMS. Sentinel collections expose a flat single-level tree rooted at `platform_id`.
+
+To list all CLMS components and their product types:
+
+```{python}
+clms = next(c for c in schema["collections"] if c["key"] == "clms")
+
+for comp in clms["attributes"]["values"]:
+    sub = comp.get("subattributes")
+    if sub:
+        for pt in sub["values"]:
+            print(f"{comp['value']}  →  {pt['value']}")
+```
+
+## Single entry
+
+Retrieve full metadata for one CSV entry by its UUID. The slash notation
+`/Csvs/{id}` is also accepted.
+
+```
+GET /Csvs(ca3438ff-e693-4e86-b00e-7afef3322632)
+```
+
+```{python}
+csv_id = "ca3438ff-e693-4e86-b00e-7afef3322632"
+entry = requests.get(f"{BASE}/Csvs({csv_id})").json()
+
+print(entry["display_name"])
+print("Size:   ", entry["file_size"], "bytes")
+print("SHA-256:", entry["sha256_hash"])
+```
+
+```
+S1D_20260601_COPERNICUS_catalogue_20260602.csv
+Size:    1936852 bytes
+SHA-256: 1e03475daceaced6e148b35020ee7d065ea283ded69999b49561b264f5970660
+```
+
+Full JSON response:
+
+```json
+{
+  "@odata.context": "https://api.csv.dataspace.copernicus.eu/odata/v1/$metadata#Csvs/$entity",
+  "id": "ca3438ff-e693-4e86-b00e-7afef3322632",
+  "display_name": "S1D_20260601_COPERNICUS_catalogue_20260602.csv",
+  "name": "S1D_20260601_COPERNICUS_catalogue",
+  "file_size": 1936852,
+  "ContentDate": "2026-06-01",
+  "CreatedDate": "2026-06-02",
+  "LastModified": "2026-06-02",
+  "sha256_hash": "1e03475daceaced6e148b35020ee7d065ea283ded69999b49561b264f5970660",
+  "collection": {
+    "id": "430fb64d-5d60-4729-b08a-eeaea0857947",
+    "key": "s1",
+    "display_name": "Sentinel-1"
+  },
+  "attributes": {
+    "collection_id": "430fb64d-5d60-4729-b08a-eeaea0857947",
+    "platform_id": "D",
+    "content_date": "2026-06-01"
+  },
+  "@odata.mediaContentType": "text/csv"
+}
+```
+
+| Field | OData type | Description |
+|---|---|---|
+| `@odata.context` | string | Absolute URL of the metadata document describing this entity |
+| `id` | `Edm.Guid` | Unique identifier. Stable across daily regenerations, until the file is removed (see below). |
+| `display_name` | `Edm.String` | Full file name including the generation date suffix |
+| `name` | `Edm.String` | Canonical file name without generation date suffix |
+| `file_size` | `Edm.Int64` | File size in bytes |
+| `ContentDate` | `Edm.Date` | Content/validity date `YYYY-MM-DD`. Null for CLMS. |
+| `CreatedDate` | `Edm.Date` | Date the file was added to the catalogue |
+| `LastModified` | `Edm.Date` | Date the file content was last changed |
+| `sha256_hash` | `Edm.String` | SHA-256 hex digest for integrity verification |
+| `collection` | Complex | `id`, `key`, `display_name` of the collection |
+| `attributes` | Open type | `platform_id` and `content_date` for Sentinel; `component` / `product_types` / `dataset_id` / `fileformat` for CLMS. Both also carry `collection_id`. Only the fields listed under [Filterable fields] can be filtered on. |
+| `@odata.mediaContentType` | string | Always `text/csv` |
+
+List responses (`GET /Csvs`) wrap these objects in a `value` array alongside
+`@odata.context` and `@odata.count`.
+
+::: {.callout-note}
+## Removed entries
+
+Files withdrawn from the catalogue are removed from the API, not just from listings. Their
+IDs no longer appear in `GET /Csvs` or `/Csvs/Schema` counts. `GET /Csvs({id})` and
+`/$value` return `404`, and a bulk download that names them returns `422` listing the
+missing IDs. If you store IDs between runs, look them up again rather than assuming
+they still exist. The same applies to ZIP entries.
+:::
+
+## Downloading files
+
+### Choosing a method
+
+Three endpoints deliver files, with different limits. Pick by how much you need:
+
+| You want | Use | Limits |
+|---|---|---|
+| One file | `GET /Csvs({id})/$value` | 60 requests / 60 s |
+| A handful | `POST /Csvs/Download` (one ZIP) | **50 files and 50 MB** per request |
+| More than a handful | Loop over `/$value` yourself | 60 requests / 60 s |
+| Everything | `GET /Zips(name=...)/$value` | One ~13 GB archive, 5 requests / 60 s |
+
+::: {.callout-important}
+There is a gap between the bulk endpoint and the full archive. Bulk download caps at
+**50 files**, so anything larger — a month or a year of one collection — has to be
+fetched by looping over `/$value`, one file per request, respecting the 60-per-minute
+limit. Do not reach for the 13 GB archive just because a request of a few hundred
+files exceeds the bulk cap.
+:::
+
+Looping for a mid-sized set:
+
+```{python}
+import time
+
+entries = requests.get(
+    f"{BASE}/Csvs",
+    params={
+        "$filter": (
+            "Collection/Name eq 'SENTINEL-2'"
+            " and ContentDate ge 2024-06-01 and ContentDate lt 2024-07-01"
+        ),
+        "$top": 1000,
+    },
+).json()["value"]
+
+dest = pathlib.Path("sentinel2-june2024")
+dest.mkdir(exist_ok=True)
+
+for e in entries:
+    target = dest / e["display_name"]
+    if target.exists():
+        continue                    # resumable: skip what we already have
+
+    while True:                     # wait out the rate limit, don't skip the file
+        r = requests.get(f"{BASE}/Csvs({e['id']})/$value", stream=True)
+        if r.status_code == 429:
+            time.sleep(int(r.headers.get("Retry-After", 10)))
+            continue
+        r.raise_for_status()
+        break
+
+    with target.open("wb") as fh:
+        for chunk in r.iter_content(chunk_size=65536):
+            fh.write(chunk)
+
+print(len(list(dest.iterdir())), "files in", dest)
+```
+
+### Single file
+
+```
+GET /Csvs(ca3438ff-e693-4e86-b00e-7afef3322632)/$value
+```
+
+```{python}
+import pathlib
+
+csv_id = "ca3438ff-e693-4e86-b00e-7afef3322632"
+resp = requests.get(f"{BASE}/Csvs({csv_id})/$value", stream=True)
+resp.raise_for_status()
+
+out = pathlib.Path("catalogue.csv")
+with out.open("wb") as fh:
+    for chunk in resp.iter_content(chunk_size=65536):
+        fh.write(chunk)
+
+print("Downloaded", out.stat().st_size, "bytes")
+```
+
+The response carries `Content-Disposition`, `ETag`, and `Accept-Ranges: bytes`.
+
+The endpoint supports the HTTP `Range` header for partial downloads, responding with
+`206 Partial Content` plus a `Content-Range` header:
+
+```
+Range: bytes=0-10485759   # first 10 MB
+```
+
+Both open-ended (`bytes=1024-`) and suffix (`bytes=-1024`, the last 1024 bytes) forms
+are accepted. An end offset beyond the file is clamped to the last byte.
+
+Two failure modes behave differently:
+
+| `Range` header | Response |
+|---|---|
+| Malformed syntax, or multi-range (`bytes=0-99,200-299`) | Ignored — full file with `200` |
+| Unsatisfiable: start at or beyond EOF, start greater than end (`bytes=500-100`), or `bytes=-0` | `416 Range Not Satisfiable` with `Content-Range: bytes */<file-size>` |
+
+Multi-range requests are not supported; only the first form above is honoured.
+
+### Bulk download as ZIP
+
+To download multiple CSV files as a single ZIP archive, POST to `/Csvs/Download`. The
+request body must contain **exactly one** of `ids` or `$filter` — providing both, or
+neither, returns `422`.
+
+| Body field | Type | Notes |
+|---|---|---|
+| `ids` | list of UUID | Mutually exclusive with `$filter` |
+| `$filter` | string | OData filter, same syntax as `GET /Csvs` |
+| `$top` | integer | **1–500, default 50.** Only with `$filter`. |
+| `$skip` | integer | Default 0. Only with `$filter`. |
+
+::: {.callout-important}
+`$top` accepts up to 500, but a request that resolves to more than **50 files** is
+rejected with `422`. In practice, keep `$top` at 50 or below and page with `$skip`.
+The default of 50 already matches the file limit.
+:::
+
+By ID list:
+
+```{python}
+resp = requests.post(
+    f"{BASE}/Csvs/Download",
+    json={
+        "ids": [
+            "ca3438ff-e693-4e86-b00e-7afef3322632",
+            "13f1328b-16be-4c3c-afe4-46e38c87cd8c",
+        ]
+    },
+    stream=True,
+)
+resp.raise_for_status()
+pathlib.Path("csvs.zip").write_bytes(resp.content)
+```
+
+By filter:
+
+```{python}
+resp = requests.post(
+    f"{BASE}/Csvs/Download",
+    json={
+        "$filter": "Collection/Name eq 'SENTINEL-6' and ContentDate ge 2024-06-01",
+        "$top": 20,
+    },
+    stream=True,
+)
+resp.raise_for_status()
+pathlib.Path("s6_june2024.zip").write_bytes(resp.content)
+```
+
+::: {.callout-note}
+Bulk download is limited to **50 CSV files** and a combined **50 MB** per request
+(server defaults). Exceeding either limit returns `422`, as does referencing an ID that
+does not exist — the response body names the missing IDs.
+
+The size limit is reached long before the file limit for large collections. A single
+SENTINEL-2 file can be 40 MB, so even 20 of them exceed 50 MB. Check `file_size` in
+the listing before building a bulk request.
+:::
+
+## ZIP archives
+
+A pre-built archive containing the full catalogue, `CopernicusCatalogueCSV.zip`, is
+published and regenerated daily.
+
+```
+GET /Zips
+```
+
+```{python}
+zips = requests.get(f"{BASE}/Zips").json()
+df = pd.DataFrame.from_dict(zips["value"])
+df[["id", "name", "file_size", "ContentDate", "CreatedDate"]]
+```
+
+|  | id | name | file_size | ContentDate | CreatedDate |
+|---|---|---|---|---|---|
+| 0 | 8e703db1-e370-4500-be00-ea42a89648c9 | CopernicusCatalogueCSV.zip | 12399649797 | 2026-06-02 | 2026-06-02 |
+
+ZIP entries expose the same field names as CSV entries — `id`, `name`, `file_size`,
+`ContentDate`, `CreatedDate`, `sha256_hash` — with `@odata.mediaContentType` set to
+`application/zip`. Note that ZIP entries have no `LastModified` field.
+
+Only `name` is filterable on this endpoint:
+
+```
+GET /Zips?$filter=endswith(name, '.zip')
+```
+
+### Downloading an archive
+
+By name:
+
+```
+GET /Zips(name=CopernicusCatalogueCSV.zip)/$value
+```
+
+By UUID:
+
+```
+GET /Zips(8e703db1-e370-4500-be00-ea42a89648c9)/$value
+```
+
+::: {.callout-important}
+The name in a `(name=...)` path segment is **not quoted**. Writing
+`Zips(name='CopernicusCatalogueCSV.zip')/$value` makes the quotes part of the file name
+and returns `404`. Single quotes are only used for string literals inside `$filter`
+expressions.
+:::
+
+Resumable download with a progress bar:
+
+```{python}
+import pathlib
+
+import requests
+import tqdm  # pip install tqdm
+
+url = f"{BASE}/Zips(name=CopernicusCatalogueCSV.zip)/$value"
+out = pathlib.Path("CopernicusCatalogueCSV.zip")
+
+downloaded = out.stat().st_size if out.exists() else 0
+headers = {"Range": f"bytes={downloaded}-"} if downloaded else {}
+
+resp = requests.get(url, headers=headers, stream=True)
+resp.raise_for_status()
+total = int(resp.headers.get("Content-Length", 0)) + downloaded
+
+with out.open("ab") as fh, tqdm.tqdm(
+    total=total, initial=downloaded, unit="B", unit_scale=True
+) as bar:
+    for chunk in resp.iter_content(chunk_size=1048576):
+        fh.write(chunk)
+        bar.update(len(chunk))
+```
+
+::: {.callout-tip}
+The full archive is approximately 13 GB and grows daily. Use the `Range` header or a resumable download
+tool (`curl --continue-at -`, `wget --continue`) to safely resume interrupted transfers.
+:::
+
+## Integrity verification
+
+Every CSV and ZIP entry includes a `sha256_hash` field. Verify it after downloading to
+confirm the file was not corrupted in transit.
+
+```{python}
+import hashlib
+import pathlib
+
+csv_id = "ca3438ff-e693-4e86-b00e-7afef3322632"
+expected = requests.get(f"{BASE}/Csvs({csv_id})").json()["sha256_hash"]
+actual = hashlib.sha256(pathlib.Path("catalogue.csv").read_bytes()).hexdigest()
+
+assert actual == expected, "Integrity check failed!"
+print("OK —", actual)
+```
+
+From the shell:
+
+```bash
+# Linux / macOS
+sha256sum catalogue.csv
+
+# Windows PowerShell
+Get-FileHash catalogue.csv -Algorithm SHA256
+```
+
+## Rate limits
+
+Requests are limited per IP address over a 60-second sliding window.
+
+| Endpoint | Limit (requests / 60 s) |
+|---|---|
+| `GET /Csvs` (list) | 100 |
+| `GET /Csvs({id})` (single entry) | 200 |
+| `GET /Csvs({id})/$value` (download) | 60 |
+| `GET /Csvs/Schema` | 60 |
+| `POST /Csvs/Download` (bulk ZIP) | 10 |
+| `GET /Zips` (list) | 100 |
+| `GET /Zips({id})` (single entry) | 200 |
+| `GET /Zips({id})/$value` (download) | 5 |
+
+The OData `({id})` and slash `/{id}` forms of an endpoint share a single counter.
+
+JSON responses (listings, single entries, Schema, metadata) carry the current budget,
+so clients can throttle before being rejected. File downloads (`/$value` and
+`POST /Csvs/Download`) do not — track your own request rate for those.
+
+| Header | Meaning |
+|---|---|
+| `X-RateLimit-Limit` | Requests permitted in the window |
+| `X-RateLimit-Remaining` | Requests still available |
+
+When the limit is exceeded, any endpoint returns `429 Too Many Requests`. The response
+carries a `Retry-After` header giving the number of seconds to wait, the
+`X-RateLimit-*` headers with `X-RateLimit-Remaining: 0`, and the body
+`{"detail": "Rate limit exceeded"}`.
+
+```{python}
+import time
+
+
+def get_with_retry(url, params=None, max_retries=3):
+    for _ in range(max_retries):
+        r = requests.get(url, params=params)
+        if r.status_code == 429:
+            time.sleep(int(r.headers.get("Retry-After", 10)))
+            continue
+        r.raise_for_status()
+        return r
+    raise RuntimeError(f"Failed after {max_retries} retries")
+```
+
+A more efficient client watches `X-RateLimit-Remaining` and slows down before hitting
+zero, rather than waiting for a `429`.
+
+## Error responses
+
+| Status | Meaning |
+|---|---|
+| `404 Not Found` | No CSV or ZIP matches the requested ID or name (including entries removed from the catalogue), or the file is missing from storage |
+| `406 Not Acceptable` | `$metadata` requested with a non-JSON `Accept` header |
+| `416 Range Not Satisfiable` | `Range` header valid but outside the file; carries `Content-Range: bytes */<file-size>` |
+| `422 Unprocessable Entity` | Invalid `$filter` or `$orderby`, unknown filter field, `$top` out of range, both/neither of `ids` and `$filter` in a bulk request, or a bulk request exceeding the count or size limit |
+| `429 Too Many Requests` | Rate limit exceeded; see `Retry-After` |
+| `500 Internal Server Error` | Unhandled server-side failure |
+| `503 Service Unavailable` | Object storage or the rate-limiter backend is temporarily unreachable; retry shortly |
+
+::: {.callout-important}
+The `detail` field has **two different shapes**, and a `422` can have either one.
+Client code that assumes one shape will break on the other.
+
+- **Array of objects** — invalid query or body parameters: a malformed or too long
+  `$filter`, an unknown filter field, an invalid `$orderby`, or `$top`/`$skip` out of
+  range.
+- **Plain string** — every other error, including the `422`s from
+  `POST /Csvs/Download` that check the request as a whole: both or neither of `ids`
+  and `$filter`, too many files, total size over the limit, or unknown IDs.
+:::
+
+Parameter validation `422` — array of objects, naming the offending parameter:
+
+```json
+{
+  "detail": [
+    {
+      "type": "value_error",
+      "loc": ["query", "$filter"],
+      "msg": "Unknown filter field: 'file_size'",
+      "input": "file_size le 1000000"
+    }
+  ]
+}
+```
+
+`404`, `429`, `500`, `503`, and bulk-download `422` — a plain string:
+
+```json
+{ "detail": "CSV not found" }
+```
+
+```json
+{ "detail": "Too many CSVs: 100 exceeds limit of 50" }
+```
+
+Other string values include `ZIP not found`, `File not found in storage`,
+`Rate limit exceeded`, `Storage unavailable`, `Service temporarily unavailable`,
+`Internal server error`, and for bulk download `CSVs not found: <ids>`,
+`Total size <n> MB exceeds limit of 50 MB`, and the `ids` / `$filter` exclusivity
+messages. `416` has an empty body — the information is in the
+`Content-Range` header.
+
+```{python}
+def error_detail(resp):
+    """Return a readable message for any error shape this API produces."""
+    if not resp.content:
+        return f"HTTP {resp.status_code}"
+    detail = resp.json().get("detail")
+    if isinstance(detail, list):
+        return "; ".join(d.get("msg", str(d)) for d in detail)
+    return str(detail)
+```
+
+## OData service metadata
+
+The service metadata document describes all entity types and entity sets in OData 4.0
+CSDL JSON format.
+
+```
+GET /$metadata
+```
+
+::: {.callout-note}
+The response is always CSDL **JSON**, never XML. A request is accepted when the
+`Accept` header is absent, is `*/*` (the default for `curl` and most HTTP clients), or
+includes `application/json`. A request that names only other media types — such as a
+browser sending `Accept: text/html,...` — returns `406 Not Acceptable`.
+:::
+
+```{python}
+meta = requests.get(
+    f"{BASE}/$metadata", headers={"Accept": "application/json"}
+).json()
+
+print(meta["$Version"], "—", meta["$EntityContainer"])
+```
