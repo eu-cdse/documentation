@@ -1,5 +1,5 @@
 ---
-title: "Copernicus CSV Catalogue API"
+title: "Copernicus CSV Catalogue API — User Guide"
 subtitle: "OData 4.0 interface for the Copernicus daily catalogue index"
 format:
   html:
@@ -221,7 +221,7 @@ rejected with `422 Unprocessable Entity` and the message
 | `Collection/ID` | UUID string | Quoted, e.g. `'430fb64d-…'` |
 | `Collection/Name` | string | `SENTINEL-1`, `SENTINEL-2`, `SENTINEL-3`, `SENTINEL-5P`, `SENTINEL-6`, `CLMS` |
 | `ContentDate` | `Edm.Date` | Content/validity date. Null for CLMS. |
-| `CreatedDate` | `Edm.Date` | Date the file was added to the catalogue |
+| `CreatedDate` | `Edm.Date` | Date the file was last generated. A rebuilt file takes the rebuild date |
 | `LastModified` | `Edm.Date` | Date the CSV content was last changed |
 | `attributes/component` | string | CLMS component |
 | `attributes/product_types` | string | CLMS product type |
@@ -324,10 +324,13 @@ them. Combining `ContentDate` with a CLMS-only attribute such as
 `attributes/component` always returns an empty result set.
 :::
 
-### By creation date
+### By generation date
 
-`CreatedDate` is the date the file was added to the catalogue. Use it to retrieve files
-published after a certain date.
+`CreatedDate` is the date the file was last generated. Files are rebuilt when their
+source data is reprocessed, and a rebuilt file takes the rebuild date, so
+`CreatedDate ge <date>` returns files generated **or regenerated** since that date, not
+only files new to the catalogue. To find files whose content actually changed, use
+`LastModified`.
 
 ```
 GET /Csvs?$filter=CreatedDate ge 2026-06-01&$top=5
@@ -430,7 +433,7 @@ df[["id", "name", "file_size"]]
 | `attributes/component` | `bio-geophysical`, `landcover_landuse`, `land_cover_use_in_priority_areas` |
 | `attributes/product_types` | `burnt_area`, `vegetation_properties`, `snow_cover_extent`, … |
 | `attributes/dataset_id` | `ba_global_300m_daily_v3`, `lai_global_300m_10daily_v2`, … |
-| `attributes/fileformat` | `cog`, `nc`, `geojson` |
+| `attributes/fileformat` | `cog`, `nc`, `geojson`, `flatgeobuf` |
 
 ::: {.callout-note}
 Use the [Schema endpoint] to retrieve all valid attribute values and their entry counts
@@ -471,24 +474,28 @@ df[["id", "name", "ContentDate"]]
 | `startswith()` | Prefix match | `startswith(Collection/Name, 'SENTINEL')` |
 | `endswith()` | Suffix match | `endswith(Collection/Name, '-1')` |
 
-A `$filter` expression is limited to 2000 characters and 20 levels of nesting.
-Exceeding either returns `422`.
+A `$filter` expression is limited to 2000 characters, 20 levels of nesting, and 20
+conditions (each comparison or string function counts as one). Exceeding any of these
+returns `422`.
 
 ## Sorting
 
-`$orderby` accepts exactly two field names:
+`$orderby` accepts exactly three field names:
 
 | `$orderby` field | Sorts by |
 |---|---|
 | `size` | File size |
 | `ContentDate` | Content / validity date |
+| `CreatedDate` | Date the file was last generated |
 
 ::: {.callout-important}
 The sort field is `size`, **not** `file_size`. Any other value returns `422 Invalid
 $orderby parameter`.
 :::
 
-Append `asc` or `desc` after the field name.
+Append `asc` or `desc` after the field name. Entries without a value (for example, no
+`ContentDate`) come last in either direction, and entries with equal values are ordered
+by `display_name`. Without `$orderby`, entries are returned in a fixed default order.
 
 ::: {.callout-note}
 Unlike the OData specification, which defaults to ascending, this API defaults to
@@ -533,11 +540,6 @@ df = pd.DataFrame.from_dict(r.json()["value"])
 df[["id", "name", "ContentDate", "file_size"]]
 ```
 
-::: {.callout-tip}
-Supplying `$orderby` gives a stable sort order and eliminates potential duplicate
-entries across pages.
-:::
-
 ## Pagination
 
 `$top` limits the number of results returned (1–1000, default 100). `$skip` offsets the
@@ -549,7 +551,7 @@ GET /Csvs?$filter=Collection/Name eq 'SENTINEL-1'&$top=100&$skip=100
 
 ::: {.callout-important}
 Page with the **largest** `$top` you can. `GET /Csvs` is limited to 100 requests per
-60 seconds, so a collection of ~15,000 entries takes 154 requests at `$top=100` — which
+60 seconds, so a collection of ~16,000 entries takes 160 requests at `$top=100` — which
 exceeds the limit partway through — but only 16 at `$top=1000`. Always handle `429`
 as well; see [Rate limits].
 :::
@@ -587,8 +589,10 @@ print(len(df), "entries retrieved")
 ```
 
 ::: {.callout-tip}
-Pass `$orderby` when paging. Without an explicit sort the page boundaries are not
-guaranteed to be stable between requests.
+Every listing has a fixed order, with or without `$orderby`, so paging with `$skip`
+never repeats or skips an entry. The exception is the catalogue changing while you page:
+it is regenerated daily, so entries added or removed between requests shift the later
+pages. Finish paging in one go rather than across days.
 :::
 
 ## Counting
@@ -612,7 +616,7 @@ print("Total SENTINEL-2 entries:", r.json()["@odata.count"])
 ```
 
 ```
-Total SENTINEL-2 entries: 11478
+Total SENTINEL-2 entries: 11949
 ```
 
 ::: {.callout-important}
@@ -638,12 +642,12 @@ for coll in schema["collections"]:
 ```
 
 ```
-Sentinel-1 — 15304 entries
-Sentinel-2 — 11478 entries
-Sentinel-3 — 7652 entries
-Sentinel-5P — 3826 entries
-Sentinel-6 — 3826 entries
-CLMS — 215 entries
+Sentinel-1 — 15932 entries
+Sentinel-2 — 11949 entries
+Sentinel-3 — 7966 entries
+Sentinel-5P — 3983 entries
+Sentinel-6 — 3983 entries
+CLMS — 268 entries
 ```
 
 Each collection entry has the following fields:
@@ -731,7 +735,7 @@ Full JSON response:
 | `name` | `Edm.String` | Canonical file name without generation date suffix |
 | `file_size` | `Edm.Int64` | File size in bytes |
 | `ContentDate` | `Edm.Date` | Content/validity date `YYYY-MM-DD`. Null for CLMS. |
-| `CreatedDate` | `Edm.Date` | Date the file was added to the catalogue |
+| `CreatedDate` | `Edm.Date` | Date the file was last generated. A rebuilt file takes the rebuild date |
 | `LastModified` | `Edm.Date` | Date the file content was last changed |
 | `sha256_hash` | `Edm.String` | SHA-256 hex digest for integrity verification |
 | `collection` | Complex | `id`, `key`, `display_name` of the collection |
@@ -760,16 +764,17 @@ Three endpoints deliver files, with different limits. Pick by how much you need:
 | You want | Use | Limits |
 |---|---|---|
 | One file | `GET /Csvs({id})/$value` | 60 requests / 60 s |
-| A handful | `POST /Csvs/Download` (one ZIP) | **50 files and 50 MB** per request |
-| More than a handful | Loop over `/$value` yourself | 60 requests / 60 s |
-| Everything | `GET /Zips(name=...)/$value` | One ~13 GB archive, 5 requests / 60 s |
+| Up to a few hundred | `POST /Csvs/Download` (one ZIP) | **200 files and 500 MB** per request, 10 requests / 60 s |
+| More than that | Several bulk requests, or loop over `/$value` | As above |
+| Everything | `GET /Zips(name=...)/$value` | One ~14 GB archive, 5 requests / 60 s |
 
 ::: {.callout-important}
-There is a gap between the bulk endpoint and the full archive. Bulk download caps at
-**50 files**, so anything larger — a month or a year of one collection — has to be
-fetched by looping over `/$value`, one file per request, respecting the 60-per-minute
-limit. Do not reach for the 13 GB archive just because a request of a few hundred
-files exceeds the bulk cap.
+There is a gap between the bulk endpoint and the full archive. One bulk request holds
+up to **200 files and 500 MB** — about a month of SENTINEL-2. For more, such as a year of
+one collection, send several bulk requests (page a `$filter` with `$skip`) or loop over
+`/$value`, one file per request. A single file larger than 500 MB, which some CLMS
+files are, can only be fetched with `/$value`. Do not reach for the 14 GB archive just
+because a set of files exceeds the bulk cap.
 :::
 
 Looping for a mid-sized set:
@@ -834,6 +839,15 @@ print("Downloaded", out.stat().st_size, "bytes")
 
 The response carries `Content-Disposition`, `ETag`, and `Accept-Ranges: bytes`.
 
+To read the size and `ETag` without downloading, send `HEAD` to the same URL. It returns
+the same headers as `GET`, plus `Content-Length`, and no body. It has its own rate limit,
+so it does not use up the download budget (see [Rate limits]). `HEAD` works on ZIP
+downloads too.
+
+```bash
+curl -sI 'https://api.csv.dataspace.copernicus.eu/odata/v1/Csvs(ca3438ff-e693-4e86-b00e-7afef3322632)/$value'
+```
+
 The endpoint supports the HTTP `Range` header for partial downloads, responding with
 `206 Partial Content` plus a `Content-Range` header:
 
@@ -867,9 +881,8 @@ neither, returns `422`.
 | `$skip` | integer | Default 0. Only with `$filter`. |
 
 ::: {.callout-important}
-`$top` accepts up to 500, but a request that resolves to more than **50 files** is
-rejected with `422`. In practice, keep `$top` at 50 or below and page with `$skip`.
-The default of 50 already matches the file limit.
+`$top` accepts up to 500, but a request that resolves to more than **200 files** is
+rejected with `422`. In practice, keep `$top` at 200 or below and page with `$skip`.
 :::
 
 By ID list:
@@ -905,13 +918,15 @@ pathlib.Path("s6_june2024.zip").write_bytes(resp.content)
 ```
 
 ::: {.callout-note}
-Bulk download is limited to **50 CSV files** and a combined **50 MB** per request
-(server defaults). Exceeding either limit returns `422`, as does referencing an ID that
-does not exist — the response body names the missing IDs.
+Bulk download is limited to **200 CSV files** and a combined **500 MB** per request,
+counted as the sum of `file_size` before compression (1 MB = 1,048,576 bytes here).
+Exceeding either limit returns `422`, as does referencing an ID that does not exist —
+the response body names the missing IDs.
 
-The size limit is reached long before the file limit for large collections. A single
-SENTINEL-2 file can be 40 MB, so even 20 of them exceed 50 MB. Check `file_size` in
-the listing before building a bulk request.
+For SENTINEL-2 the size limit is reached first: recent files are about 4.5 MB, so one
+request fits roughly 110 of them (a month, about 90 files, fits). For the smaller
+collections the file limit applies first. Check `file_size` in the listing before
+building a bulk request.
 :::
 
 ## ZIP archives
@@ -931,11 +946,14 @@ df[["id", "name", "file_size", "ContentDate", "CreatedDate"]]
 
 |  | id | name | file_size | ContentDate | CreatedDate |
 |---|---|---|---|---|---|
-| 0 | 8e703db1-e370-4500-be00-ea42a89648c9 | CopernicusCatalogueCSV.zip | 12399649797 | 2026-06-02 | 2026-06-02 |
+| 0 | 8e703db1-e370-4500-be00-ea42a89648c9 | CopernicusCatalogueCSV.zip | 14152594044 | 2026-06-02 | 2026-06-02 |
 
 ZIP entries expose the same field names as CSV entries — `id`, `name`, `file_size`,
 `ContentDate`, `CreatedDate`, `sha256_hash` — with `@odata.mediaContentType` set to
 `application/zip`. Note that ZIP entries have no `LastModified` field.
+
+Entries are listed newest first by `CreatedDate`, then by `name`. `$orderby` is not
+supported on this endpoint.
 
 Only `name` is filterable on this endpoint:
 
@@ -991,7 +1009,7 @@ with out.open("ab") as fh, tqdm.tqdm(
 ```
 
 ::: {.callout-tip}
-The full archive is approximately 13 GB and grows daily. Use the `Range` header or a resumable download
+The full archive is approximately 14 GB and grows daily. Use the `Range` header or a resumable download
 tool (`curl --continue-at -`, `wget --continue`) to safely resume interrupted transfers.
 :::
 
@@ -1031,16 +1049,19 @@ Requests are limited per IP address over a 60-second sliding window.
 | `GET /Csvs` (list) | 100 |
 | `GET /Csvs({id})` (single entry) | 200 |
 | `GET /Csvs({id})/$value` (download) | 60 |
+| `HEAD /Csvs({id})/$value` | 120 |
 | `GET /Csvs/Schema` | 60 |
 | `POST /Csvs/Download` (bulk ZIP) | 10 |
 | `GET /Zips` (list) | 100 |
 | `GET /Zips({id})` (single entry) | 200 |
 | `GET /Zips({id})/$value` (download) | 5 |
+| `HEAD /Zips({id})/$value` | 20 |
 
-The OData `({id})` and slash `/{id}` forms of an endpoint share a single counter.
+All forms of an endpoint share a single counter: OData `({id})`, slash `/{id}`, and for
+ZIPs `(name=...)`. `GET /$metadata` is not rate limited.
 
-JSON responses (listings, single entries, Schema, metadata) carry the current budget,
-so clients can throttle before being rejected. File downloads (`/$value` and
+JSON responses (listings, single entries, Schema) carry the current budget, so clients
+can throttle before being rejected. File downloads (`/$value`, `HEAD` on `/$value`, and
 `POST /Csvs/Download`) do not — track your own request rate for those.
 
 | Header | Meaning |
@@ -1078,18 +1099,18 @@ zero, rather than waiting for a `429`.
 | `404 Not Found` | No CSV or ZIP matches the requested ID or name (including entries removed from the catalogue), or the file is missing from storage |
 | `406 Not Acceptable` | `$metadata` requested with a non-JSON `Accept` header |
 | `416 Range Not Satisfiable` | `Range` header valid but outside the file; carries `Content-Range: bytes */<file-size>` |
-| `422 Unprocessable Entity` | Invalid `$filter` or `$orderby`, unknown filter field, `$top` out of range, both/neither of `ids` and `$filter` in a bulk request, or a bulk request exceeding the count or size limit |
+| `422 Unprocessable Entity` | Invalid `$filter` or `$orderby`, unknown filter field, `$top` out of range, an ID in the path that is not a valid UUID, both/neither of `ids` and `$filter` in a bulk request, or a bulk request exceeding the count or size limit |
 | `429 Too Many Requests` | Rate limit exceeded; see `Retry-After` |
-| `500 Internal Server Error` | Unhandled server-side failure |
+| `500 Internal Server Error` | Unhandled server-side failure, including a query cut off after running for 15 seconds; narrow the `$filter` (e.g. add `Collection/Name` or a date range) and retry |
 | `503 Service Unavailable` | Object storage or the rate-limiter backend is temporarily unreachable; retry shortly |
 
 ::: {.callout-important}
 The `detail` field has **two different shapes**, and a `422` can have either one.
 Client code that assumes one shape will break on the other.
 
-- **Array of objects** — invalid query or body parameters: a malformed or too long
-  `$filter`, an unknown filter field, an invalid `$orderby`, or `$top`/`$skip` out of
-  range.
+- **Array of objects** — invalid query, path or body parameters: a malformed or too
+  long `$filter`, an unknown filter field, an invalid `$orderby`, `$top`/`$skip` out of
+  range, or an ID that is not a valid UUID.
 - **Plain string** — every other error, including the `422`s from
   `POST /Csvs/Download` that check the request as a whole: both or neither of `ids`
   and `$filter`, too many files, total size over the limit, or unknown IDs.
@@ -1117,13 +1138,13 @@ Parameter validation `422` — array of objects, naming the offending parameter:
 ```
 
 ```json
-{ "detail": "Too many CSVs: 100 exceeds limit of 50" }
+{ "detail": "Too many CSVs: 250 exceeds limit of 200" }
 ```
 
 Other string values include `ZIP not found`, `File not found in storage`,
 `Rate limit exceeded`, `Storage unavailable`, `Service temporarily unavailable`,
-`Internal server error`, and for bulk download `CSVs not found: <ids>`,
-`Total size <n> MB exceeds limit of 50 MB`, and the `ids` / `$filter` exclusivity
+`Internal server error`, `Only application/json is supported` (`406`), and for bulk download `CSVs not found: <ids>`,
+`Total size <n> MB exceeds limit of 500 MB`, and the `ids` / `$filter` exclusivity
 messages. `416` has an empty body — the information is in the
 `Content-Range` header.
 
