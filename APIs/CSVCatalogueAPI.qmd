@@ -21,8 +21,9 @@ execute:
 ## Overview
 
 The CSV Catalogue OData API provides access to daily-regenerated Copernicus satellite
-data index files hosted by the Copernicus Data Space Ecosystem. Each CSV file contains a
-complete list of available data products for one satellite platform on a given day.
+data index files hosted by the Copernicus Data Space Ecosystem. Each Sentinel CSV file
+contains a complete list of available data products for one satellite platform on a given
+day; each CLMS file covers one dataset and has no date.
 
 The API follows the OData 4.0 standard. All query options are prefixed with `$` and
 separated by `&`. **No authentication is required.**
@@ -86,7 +87,7 @@ not URL-encoded and are not meant to be pasted straight into a shell.
 
 ## Quickstart
 
-Find yesterday's SENTINEL-2 catalogue file, download it, and verify it:
+Find yesterday's SENTINEL-2A catalogue file, download it, and verify it:
 
 ```{python}
 import hashlib
@@ -100,7 +101,10 @@ day = date.today() - timedelta(days=1)
 entry = requests.get(
     f"{BASE}/Csvs",
     params={
-        "$filter": f"Collection/Name eq 'SENTINEL-2' and ContentDate eq {day}",
+        "$filter": (
+            f"Collection/Name eq 'SENTINEL-2' and attributes/platform_id eq 'A'"
+            f" and ContentDate eq {day}"
+        ),
         "$top": 1,
     },
 ).json()["value"][0]
@@ -221,6 +225,7 @@ rejected with `422 Unprocessable Entity` and the message
 | `Collection/ID` | UUID string | Quoted, e.g. `'430fb64d-…'` |
 | `Collection/Name` | string | `SENTINEL-1`, `SENTINEL-2`, `SENTINEL-3`, `SENTINEL-5P`, `SENTINEL-6`, `CLMS` |
 | `ContentDate` | `Edm.Date` | Content/validity date. Null for CLMS. |
+| `FirstPublishedDate` | `Edm.Date` | Date the file first appeared in the catalogue. Unchanged when the file is regenerated |
 | `CreatedDate` | `Edm.Date` | Date the file was last generated. A rebuilt file takes the rebuild date |
 | `LastModified` | `Edm.Date` | Date the CSV content was last changed |
 | `attributes/component` | string | CLMS component |
@@ -324,13 +329,61 @@ them. Combining `ContentDate` with a CLMS-only attribute such as
 `attributes/component` always returns an empty result set.
 :::
 
+### By first publication date
+
+`FirstPublishedDate` is the date the file first appeared in the catalogue. It stays
+fixed when the file is regenerated, so `FirstPublishedDate ge <date>` returns only files
+that are new since that date.
+
+```
+GET /Csvs?$filter=FirstPublishedDate ge 2026-10-01&$orderby=FirstPublishedDate desc&$top=5
+```
+
+Sorting by `FirstPublishedDate` uses the full publication time, not just the date, so
+files published on the same day are ordered by when each was added.
+
+::: {.callout-note}
+The catalogue was first loaded in March and April 2026. Files that already existed then
+carry their load date as `FirstPublishedDate`, not the date they were originally
+produced. Use `ContentDate` for the period a file covers.
+:::
+
+Combined with `LastModified`, it finds files that changed **after** they were first
+published, leaving out files that are simply new. Files published before a date and
+changed on or after it:
+
+```
+GET /Csvs?$filter=FirstPublishedDate lt 2026-10-01 and LastModified ge 2026-10-01
+```
+
+```{python}
+r = requests.get(
+    f"{BASE}/Csvs",
+    params={
+        "$filter": "FirstPublishedDate lt 2026-10-01 and LastModified ge 2026-10-01",
+        "$count": "true",
+    },
+)
+print(r.json()["@odata.count"], "files changed since 2026-10-01")
+```
+
+A filter cannot compare two fields, so `LastModified gt FirstPublishedDate` is rejected.
+To find every file ever changed after publication, list the files and compare the two
+dates in your client.
+
+::: {.callout-warning}
+Content changes are tracked from 2026-06-02. Files published before then show
+`LastModified` 2026-06-02 even if their content never changed, so start any
+"changed after publication" query on or after that date.
+:::
+
 ### By generation date
 
 `CreatedDate` is the date the file was last generated. Files are rebuilt when their
 source data is reprocessed, and a rebuilt file takes the rebuild date, so
 `CreatedDate ge <date>` returns files generated **or regenerated** since that date, not
-only files new to the catalogue. To find files whose content actually changed, use
-`LastModified`.
+only files new to the catalogue. For files new to the catalogue, use
+`FirstPublishedDate`; for files whose content actually changed, use `LastModified`.
 
 ```
 GET /Csvs?$filter=CreatedDate ge 2026-06-01&$top=5
@@ -480,22 +533,24 @@ returns `422`.
 
 ## Sorting
 
-`$orderby` accepts exactly three field names:
+`$orderby` accepts exactly four field names:
 
 | `$orderby` field | Sorts by |
 |---|---|
 | `size` | File size |
 | `ContentDate` | Content / validity date |
 | `CreatedDate` | Date the file was last generated |
+| `FirstPublishedDate` | Time the file first appeared in the catalogue |
 
 ::: {.callout-important}
 The sort field is `size`, **not** `file_size`. Any other value returns `422 Invalid
 $orderby parameter`.
 :::
 
-Append `asc` or `desc` after the field name. Entries without a value (for example, no
+Append `asc` or `desc` after the field name; any other word after it, or a second sort
+field, returns `422`. Entries without a value (for example, no
 `ContentDate`) come last in either direction, and entries with equal values are ordered
-by `display_name`. Without `$orderby`, entries are returned in a fixed default order.
+by `display_name`, then `id`. Without `$orderby`, entries are returned in a fixed default order.
 
 ::: {.callout-note}
 Unlike the OData specification, which defaults to ascending, this API defaults to
@@ -710,6 +765,7 @@ Full JSON response:
   "name": "S1D_20260601_COPERNICUS_catalogue",
   "file_size": 1936852,
   "ContentDate": "2026-06-01",
+  "FirstPublishedDate": "2026-06-02",
   "CreatedDate": "2026-06-02",
   "LastModified": "2026-06-02",
   "sha256_hash": "1e03475daceaced6e148b35020ee7d065ea283ded69999b49561b264f5970660",
@@ -735,6 +791,7 @@ Full JSON response:
 | `name` | `Edm.String` | Canonical file name without generation date suffix |
 | `file_size` | `Edm.Int64` | File size in bytes |
 | `ContentDate` | `Edm.Date` | Content/validity date `YYYY-MM-DD`. Null for CLMS. |
+| `FirstPublishedDate` | `Edm.Date` | Date the file first appeared in the catalogue. Unlike `CreatedDate`, it does not change when the file is regenerated |
 | `CreatedDate` | `Edm.Date` | Date the file was last generated. A rebuilt file takes the rebuild date |
 | `LastModified` | `Edm.Date` | Date the file content was last changed |
 | `sha256_hash` | `Edm.String` | SHA-256 hex digest for integrity verification |
@@ -840,7 +897,7 @@ print("Downloaded", out.stat().st_size, "bytes")
 The response carries `Content-Disposition`, `ETag`, and `Accept-Ranges: bytes`.
 
 To read the size and `ETag` without downloading, send `HEAD` to the same URL. It returns
-the same headers as `GET`, plus `Content-Length`, and no body. It has its own rate limit,
+the same headers as `GET`, including `Content-Length`, but no body. It has its own rate limit,
 so it does not use up the download budget (see [Rate limits]). `HEAD` works on ZIP
 downloads too.
 
@@ -864,8 +921,6 @@ Two failure modes behave differently:
 |---|---|
 | Malformed syntax, or multi-range (`bytes=0-99,200-299`) | Ignored — full file with `200` |
 | Unsatisfiable: start at or beyond EOF, start greater than end (`bytes=500-100`), or `bytes=-0` | `416 Range Not Satisfiable` with `Content-Range: bytes */<file-size>` |
-
-Multi-range requests are not supported; only the first form above is honoured.
 
 ### Bulk download as ZIP
 
@@ -952,8 +1007,8 @@ ZIP entries expose the same field names as CSV entries — `id`, `name`, `file_s
 `ContentDate`, `CreatedDate`, `sha256_hash` — with `@odata.mediaContentType` set to
 `application/zip`. Note that ZIP entries have no `LastModified` field.
 
-Entries are listed newest first by `CreatedDate`, then by `name`. `$orderby` is not
-supported on this endpoint.
+Entries are listed newest first by `CreatedDate`, then by `name`. `$orderby` is ignored
+on this endpoint: the response comes back in this order regardless.
 
 Only `name` is filterable on this endpoint:
 
@@ -996,16 +1051,22 @@ out = pathlib.Path("CopernicusCatalogueCSV.zip")
 downloaded = out.stat().st_size if out.exists() else 0
 headers = {"Range": f"bytes={downloaded}-"} if downloaded else {}
 
-resp = requests.get(url, headers=headers, stream=True)
-resp.raise_for_status()
-total = int(resp.headers.get("Content-Length", 0)) + downloaded
-
-with out.open("ab") as fh, tqdm.tqdm(
-    total=total, initial=downloaded, unit="B", unit_scale=True
-) as bar:
-    for chunk in resp.iter_content(chunk_size=1048576):
-        fh.write(chunk)
-        bar.update(len(chunk))
+with requests.get(url, headers=headers, stream=True) as resp:
+    if resp.status_code == 416:
+        # Nothing left to fetch: the partial file is already the whole archive
+        print("Already complete")
+    else:
+        resp.raise_for_status()
+        if resp.status_code != 206:
+            # Full file sent (Range not honoured): start over instead of appending
+            downloaded = 0
+        total = int(resp.headers.get("Content-Length", 0)) + downloaded
+        with out.open("ab" if downloaded else "wb") as fh, tqdm.tqdm(
+            total=total, initial=downloaded, unit="B", unit_scale=True
+        ) as bar:
+            for chunk in resp.iter_content(chunk_size=1048576):
+                fh.write(chunk)
+                bar.update(len(chunk))
 ```
 
 ::: {.callout-tip}
@@ -1097,7 +1158,6 @@ zero, rather than waiting for a `429`.
 | Status | Meaning |
 |---|---|
 | `404 Not Found` | No CSV or ZIP matches the requested ID or name (including entries removed from the catalogue), or the file is missing from storage |
-| `406 Not Acceptable` | `$metadata` requested with a non-JSON `Accept` header |
 | `416 Range Not Satisfiable` | `Range` header valid but outside the file; carries `Content-Range: bytes */<file-size>` |
 | `422 Unprocessable Entity` | Invalid `$filter` or `$orderby`, unknown filter field, `$top` out of range, an ID in the path that is not a valid UUID, both/neither of `ids` and `$filter` in a bulk request, or a bulk request exceeding the count or size limit |
 | `429 Too Many Requests` | Rate limit exceeded; see `Retry-After` |
@@ -1143,7 +1203,7 @@ Parameter validation `422` — array of objects, naming the offending parameter:
 
 Other string values include `ZIP not found`, `File not found in storage`,
 `Rate limit exceeded`, `Storage unavailable`, `Service temporarily unavailable`,
-`Internal server error`, `Only application/json is supported` (`406`), and for bulk download `CSVs not found: <ids>`,
+`Internal server error`, and for bulk download `CSVs not found: <ids>`,
 `Total size <n> MB exceeds limit of 500 MB`, and the `ids` / `$filter` exclusivity
 messages. `416` has an empty body — the information is in the
 `Content-Range` header.
@@ -1170,9 +1230,10 @@ GET /$metadata
 
 ::: {.callout-note}
 The response is always CSDL **JSON**, never XML. A request is accepted when the
-`Accept` header is absent, is `*/*` (the default for `curl` and most HTTP clients), or
-includes `application/json`. A request that names only other media types — such as a
-browser sending `Accept: text/html,...` — returns `406 Not Acceptable`.
+`Accept` header is absent or includes `application/json` or `*/*`, which covers `curl`,
+most HTTP clients, and browsers. A request whose `Accept` names only other media types,
+such as `Accept: application/xml`, is rejected with an HTML "Request Rejected" page
+instead of the document.
 :::
 
 ```{python}
