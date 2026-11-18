@@ -1,0 +1,129 @@
+name: Cleanup old PR previews
+
+# Safety net: pr-publish.yml removes a preview as soon as its PR is closed.
+# This weekly job removes any preview folder left behind (e.g. a failed
+# "closed" run, or previews created before auto-removal existed) for PRs
+# that were merged or closed more than RETENTION_DAYS ago.
+
+on:
+  schedule:
+    # Every Tuesday at 08:00 UTC
+    - cron: "0 8 * * 2"
+
+  # Manual run from the Actions tab (defaults to a dry run)
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Only list what would be deleted, don't push"
+        type: boolean
+        default: true
+      retention_days:
+        description: "Delete previews of PRs closed more than N days ago"
+        type: number
+        default: 14
+
+permissions:
+  contents: write
+  pull-requests: read
+
+concurrency:
+  group: cleanup-pr-previews
+  cancel-in-progress: false
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    env:
+      RETENTION_DAYS: ${{ inputs.retention_days || 14 }}
+      DRY_RUN: ${{ inputs.dry_run || false }}
+
+    steps:
+      - name: Checkout gh-pages branch
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          fetch-depth: 1 # history isn't needed to delete folders
+
+      - name: Remove stale previews, commit and push
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+
+          remove_stale_previews() {
+            local now cutoff dir pr info state closed_at closed_ts age
+            now=$(date +%s)
+            cutoff=$(( now - RETENTION_DAYS * 86400 ))
+
+            for dir in pr-preview/pr-*/; do
+              dir=${dir%/}
+              pr=${dir##*/pr-}
+
+              if ! [[ "$pr" =~ ^[0-9]+$ ]]; then
+                echo "::warning::Skipping unexpected folder $dir"
+                continue
+              fi
+
+              # A failed lookup (deleted PR, API hiccup) must not abort the run
+              if ! info=$(gh pr view "$pr" --json state,closedAt \
+                            --jq '[.state, (.closedAt // "")] | @tsv' 2>/dev/null); then
+                echo "::warning::Could not look up PR #$pr, keeping $dir"
+                continue
+              fi
+              IFS=$'\t' read -r state closed_at <<< "$info"
+
+              if [ "$state" = "OPEN" ] || [ -z "$closed_at" ]; then
+                echo "PR #$pr is open -> keep"
+                continue
+              fi
+
+              closed_ts=$(date -d "$closed_at" +%s)
+              age=$(( (now - closed_ts) / 86400 ))
+
+              # Covers both MERGED and CLOSED-without-merge
+              if [ "$closed_ts" -le "$cutoff" ]; then
+                echo "PR #$pr $state ${age}d ago -> delete $dir"
+                rm -rf "$dir"
+              else
+                echo "PR #$pr $state ${age}d ago -> keep"
+              fi
+            done
+          }
+
+          # Preview deployments for other PRs may push to gh-pages at the same
+          # time. If our push is rejected, start again from the latest gh-pages.
+          for attempt in 1 2 3; do
+            echo "::group::Attempt $attempt"
+            remove_stale_previews
+            echo "::endgroup::"
+
+            git add -A pr-preview
+            if git diff --cached --quiet; then
+              echo "No stale previews found."
+              exit 0
+            fi
+            git diff --cached --stat | tail -n 1
+
+            if [ "$DRY_RUN" = "true" ]; then
+              echo "Dry run: not committing or pushing."
+              exit 0
+            fi
+
+            git commit -q -m "Remove previews of PRs closed more than ${RETENTION_DAYS} days ago"
+            if git push origin HEAD:gh-pages; then
+              exit 0
+            fi
+
+            echo "Push rejected, retrying on top of the latest gh-pages..."
+            sleep $(( attempt * 15 ))
+            git fetch --depth=1 origin gh-pages
+            git reset -q --hard origin/gh-pages
+          done
+
+          echo "::error::Could not push after 3 attempts"
+          exit 1

@@ -1,7 +1,7 @@
 on:
   pull_request:
     branches: [ publish, staging ]
-    types: [ opened, synchronize ]
+    types: [ opened, reopened, synchronize, closed ]
 
 concurrency: preview-${{ github.ref }}
 name: Create PR preview
@@ -19,6 +19,7 @@ jobs:
         with:
          submodules: true
       - name: Set up Quarto
+        if: github.event.action != 'closed'
         uses: quarto-dev/quarto-actions/setup@v2
         with:
           # To install LaTeX to build PDF book 
@@ -28,12 +29,15 @@ jobs:
         
       # add software dependencies here
       - name: Install Python and Dependencies
+        if: github.event.action != 'closed'
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
           cache: 'pip'
-      - run: pip install jupyter
-      - run: pip install -r requirements.txt
+      - if: github.event.action != 'closed'
+        run: pip install jupyter
+      - if: github.event.action != 'closed'
+        run: pip install -r requirements.txt
 
       # To publish to Netlify, RStudio Connect, or GitHub Pages, uncomment
       # the appropriate block below
@@ -51,8 +55,11 @@ jobs:
       #     CONNECT_SERVER: enter-the-server-url-here
       #     CONNECT_API_KEY: ${{ secrets.CONNECT_API_KEY }} 
       - name: Render
+        if: github.event.action != 'closed'
         run: quarto render --output-dir _build
-      - name: Deploy preview
+      # On opened/reopened/synchronize this deploys the preview;
+      # on closed (merged or not) it removes pr-preview/pr-<number> from gh-pages.
+      - name: Deploy or remove preview
         uses: rossjrw/pr-preview-action@v1
         with:
           source-dir: ./_build/
