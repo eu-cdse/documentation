@@ -14,7 +14,7 @@ on:
   workflow_dispatch:
     inputs:
       dry_run:
-        description: "Only list what would be deleted, don't push"
+        description: "Only list what would be deleted, don't create or update a pull request"
         type: boolean
         default: true
       retention_days:
@@ -24,7 +24,7 @@ on:
 
 permissions:
   contents: write
-  pull-requests: read
+  pull-requests: write
 
 concurrency:
   group: cleanup-pr-previews
@@ -44,7 +44,7 @@ jobs:
           ref: gh-pages
           fetch-depth: 1 # history isn't needed to delete folders
 
-      - name: Remove stale previews, commit and push
+      - name: Propose removal of stale previews
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
@@ -95,35 +95,33 @@ jobs:
             done
           }
 
-          # Preview deployments for other PRs may push to gh-pages at the same
-          # time. If our push is rejected, start again from the latest gh-pages.
-          for attempt in 1 2 3; do
-            echo "::group::Attempt $attempt"
-            remove_stale_previews
-            echo "::endgroup::"
+          remove_stale_previews
+          git add -A
 
-            git add -A pr-preview
-            if git diff --cached --quiet; then
-              echo "No stale previews found."
-              exit 0
+          branch=cleanup-pr-previews
+          if [ "$DRY_RUN" = "true" ]; then
+            git diff --cached --stat
+            echo "Dry run: not creating or updating a pull request."
+            exit 0
+          fi
+
+          pr_number=$(gh pr list --base gh-pages --head "$branch" --state open \
+                        --json number,headRepositoryOwner \
+                        --jq ".[] | select(.headRepositoryOwner.login == \"${GH_REPO%%/*}\") | .number")
+          if git diff --cached --quiet; then
+            echo "No stale previews found."
+            if [ -n "$pr_number" ]; then
+              gh pr close "$pr_number"
             fi
-            git diff --cached --stat | tail -n 1
+            exit 0
+          fi
+          git diff --cached --stat | tail -n 1
 
-            if [ "$DRY_RUN" = "true" ]; then
-              echo "Dry run: not committing or pushing."
-              exit 0
-            fi
-
-            git commit -q -m "Remove previews of PRs closed more than ${RETENTION_DAYS} days ago"
-            if git push origin HEAD:gh-pages; then
-              exit 0
-            fi
-
-            echo "Push rejected, retrying on top of the latest gh-pages..."
-            sleep $(( attempt * 15 ))
-            git fetch --depth=1 origin gh-pages
-            git reset -q --hard origin/gh-pages
-          done
-
-          echo "::error::Could not push after 3 attempts"
-          exit 1
+          git commit -q -m "Remove previews of PRs closed more than ${RETENTION_DAYS} days ago"
+          remote_sha=$(git ls-remote --heads origin "refs/heads/$branch" | cut -f1)
+          git push --force-with-lease="refs/heads/$branch:$remote_sha" origin "HEAD:refs/heads/$branch"
+          if [ -z "$pr_number" ]; then
+            gh pr create --base gh-pages --head "$branch" \
+              --title "Remove stale PR previews" \
+              --body "Remove previews of pull requests closed more than ${RETENTION_DAYS} days ago."
+          fi
