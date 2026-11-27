@@ -132,11 +132,6 @@ const BANDS = {
   RATIO: { label: "VH − VV", unit: "dB", range: [-24, 0], init: [-12, -2] },
 };
 
-const BASEMAPS = {
-  Dark: { url: "https://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}", maxZoom: 16 },
-  Satellite: { url: "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", maxZoom: 17 },
-};
-
 const hexToRgb = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
 function buildLut(name) {
   const stops = COLORMAPS[name].map(hexToRgb);
@@ -297,7 +292,7 @@ export async function createViewer(root, cfg) {
   // ---------- state ----------
   const state = {
     band: bandNames[0], cmap: "Magma", min: BANDS[bandNames[0]].init[0], max: BANDS[bandNames[0]].init[1], opacity: 0.95,
-    basemap: "Dark", date: dates[dates.length - 1], split: 0.5, globe: false, terrain: true, exaggeration: 3, lut: buildLut("Magma"), version: 0,
+    date: dates[dates.length - 1], split: 0.5, globe: false, terrain: true, exaggeration: 3, lut: buildLut("Magma"), version: 0,
   };
   const canvasCache = new WeakMap();
 
@@ -379,14 +374,13 @@ export async function createViewer(root, cfg) {
   const el = {
     band: $("[data-ctl=band]"), cmap: $("[data-ctl=cmap]"), min: $("[data-ctl=min]"), max: $("[data-ctl=max]"),
     opacity: $("[data-ctl=opacity]"), minOut: $("[data-out=min]"), maxOut: $("[data-out=max]"),
-    base: $("[data-ctl=basemap]"), proj: $("[data-ctl=projection]"), auto: $("[data-ctl=auto]"),
+    proj: $("[data-ctl=projection]"), auto: $("[data-ctl=auto]"),
     legend: $(".sar-legend-bar"), legMin: $("[data-out=legmin]"), legMax: $("[data-out=legmax]"), legTitle: $("[data-out=legtitle]"),
     fly: $("[data-ctl=fly]"), terrain: $("[data-ctl=terrain]"), exag: $("[data-ctl=exaggeration]"),
     exagRow: $("[data-row=exaggeration]"), exagOut: $("[data-out=exaggeration]"),
   };
   el.cmap.innerHTML = Object.keys(COLORMAPS).map((n) => `<option>${n}</option>`).join("");
   el.cmap.value = state.cmap;
-  el.base.innerHTML = Object.keys(BASEMAPS).map((n) => `<option>${n}</option>`).join("");
 
   function syncControls(resetRange) {
     const b = BANDS[state.band];
@@ -403,39 +397,36 @@ export async function createViewer(root, cfg) {
 
   // ---------- deck ----------
   const tooltip = $(".sar-tooltip");
-  const viewState = { longitude: cfg.center[0], latitude: 30, zoom: 1.2, minZoom: 0, maxZoom: 15, pitch: 0, bearing: 0 };
-  let currentView = viewState;
-  let loadingTimer;
+  // zoom that fits the data extent in the map, so small areas are not lost in the overview
+  const fitZoom = () => {
+    const w = Math.max(300, $(".sar-map").clientWidth);
+    const span = Math.max(extent[2] - extent[0], 1e-4);
+    return Math.min(14, Math.max(3, Math.log2(((w * 0.5) / TILE) * (360 / span))));
+  };
+  const homeView = () => ({ longitude: cfg.center[0], latitude: cfg.center[1], zoom: fitZoom(), pitch: state.terrain ? 60 : 0, bearing: 0 });
+  // starts at the home view, so it matches the poster screenshot that covers the viewer until the first tiles are drawn
+  let currentView = { ...homeView(), minZoom: 0, maxZoom: 15 };
+
+  const poster = root.querySelector(".sar-poster");
+  const pending = new Set(compare ? [0, 1] : [0]); // decks that have not drawn data yet
+  function reveal(i) {
+    pending.delete(i);
+    if (pending.size || !poster?.isConnected || poster.dataset.state === "done") return;
+    poster.dataset.state = "done";
+    poster.addEventListener("transitionend", () => poster.remove(), { once: true });
+  }
+  // a tilted view can take long to load completely, so fade in shortly after the first tile with data
+  const graceTimers = {};
+  const firstData = (i) => { graceTimers[i] ??= setTimeout(() => reveal(i), 1500); };
+  setTimeout(() => { pending.clear(); reveal(); }, 30000); // never keep a stalled viewer hidden
 
   // which = "top": only the comparison source, drawn by the second deck above the first
   function layers(which) {
-    const bm = BASEMAPS[state.basemap];
     const t3d = state.terrain;
     const exag = state.exaggeration;
-    // with relief, depth decides visibility; the SAR drape is biased slightly towards the camera to avoid z-fighting
-    const depth = t3d ? { depthCompare: "less-equal", depthWriteEnabled: true } : FLAT;
-    const cogDepth = t3d ? { ...depth, depthBias: -50, depthBiasSlopeScale: -2 } : FLAT;
+    // with relief, depth decides visibility between the SAR tiles themselves
+    const cogDepth = t3d ? { depthCompare: "less-equal", depthWriteEnabled: true } : FLAT;
     const Drape = t3d ? TerrainBitmapLayer : BitmapLayer;
-    const bmLayer = new TileLayer({
-      id: `basemap-${state.basemap}${t3d ? "-3d" : ""}`, data: bm.url, minZoom: 0, maxZoom: bm.maxZoom, tileSize: 256,
-      refinementStrategy: t3d ? "no-overlap" : "best-available",
-      ...(t3d && {
-        getTileData: async ({ url, index, signal }) => {
-          const [img, heights] = await Promise.all([
-            fetch(url, { signal }).then((r) => r.blob()).then(createImageBitmap), tileHeights(index),
-          ]);
-          return { img, heights };
-        },
-      }),
-      renderSubLayers: (p) => {
-        const { west, south, east, north } = p.tile.bbox;
-        return new Drape(p, {
-          data: null, image: t3d ? p.data?.img : p.data, heights: t3d ? p.data?.heights : null, exaggeration: exag,
-          bounds: [west, south, east, north], parameters: depth,
-        });
-      },
-      updateTriggers: { renderSubLayers: [exag] },
-    });
     const cogLayer = (i) => new TileLayer({
       id: `${t3d ? "cog-3d" : "cog"}-${i}`, minZoom: 3, maxZoom: 13, tileSize: TILE, extent,
       refinementStrategy: t3d ? "no-overlap" : "best-available",
@@ -459,7 +450,8 @@ export async function createViewer(root, cfg) {
         });
       },
       updateTriggers: { getTileData: [state.date], renderSubLayers: [state.version, exag] },
-      onViewportLoad: () => { setStatus(""); },
+      onTileLoad: (tile) => { if (tile.content) firstData(i); },
+      onViewportLoad: () => { setStatus(""); reveal(i); },
       onTileError: () => {},
     });
     if (which === "top") return [cogLayer(1)];
@@ -467,7 +459,7 @@ export async function createViewer(root, cfg) {
       id: "sphere", data: [[[-180, 90], [0, 90], [180, 90], [180, -90], [0, -90], [-180, -90]]],
       getPolygon: (d) => d, stroked: false, filled: true, getFillColor: [9, 14, 26], visible: state.globe, parameters: FLAT,
     });
-    return state.globe ? [sphere, bmLayer, cogLayer(0)] : [bmLayer, cogLayer(0)];
+    return state.globe ? [sphere, cogLayer(0)] : [cogLayer(0)];
   }
 
   const makeView = () => (state.globe ? new GlobeView({ id: "globe", resolution: 5 }) : new MapView({ id: "map", repeat: true }));
@@ -588,13 +580,7 @@ export async function createViewer(root, cfg) {
       setView(clean);
     }, duration + 100);
   }
-  // zoom that fits the data extent in the map, so small areas are not lost in the overview
-  const fitZoom = () => {
-    const w = Math.max(300, $(".sar-map").clientWidth);
-    const span = Math.max(extent[2] - extent[0], 1e-4);
-    return Math.min(14, Math.max(3, Math.log2(((w * 0.5) / TILE) * (360 / span))));
-  };
-  const home = () => flyTo({ longitude: cfg.center[0], latitude: cfg.center[1], zoom: fitZoom(), ...(state.terrain && { pitch: 60 }) });
+  const home = () => flyTo(homeView());
 
   // event wiring
   el.band.addEventListener("change", () => { state.band = el.band.value; syncControls(true); refresh(); });
@@ -608,7 +594,6 @@ export async function createViewer(root, cfg) {
   const throttled = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(onRange); };
   el.min.addEventListener("input", throttled); el.max.addEventListener("input", throttled);
   el.opacity.addEventListener("input", () => { state.opacity = +el.opacity.value; refresh(); });
-  el.base.addEventListener("change", () => { state.basemap = el.base.value; refresh(); });
   function setGlobe(on) {
     state.globe = on;
     el.proj.textContent = on ? "Switch to flat map" : "Switch to globe";
@@ -682,7 +667,6 @@ export async function createViewer(root, cfg) {
 
   syncControls(false);
   setStatus("Loading tiles…", "busy");
-  setTimeout(home, 600);
   return dk;
 }
 

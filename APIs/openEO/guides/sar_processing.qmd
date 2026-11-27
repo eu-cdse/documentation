@@ -2,11 +2,15 @@
 title: "SAR processing with openEO"
 resources:
   - sar_processing_viewer.js
+  - sar_processing_viewer.webp
 jupyter: python3
 format:
   html:
     toc: true
     page-layout: full
+execute:
+  cache: true
+  freeze: auto
 ---
 
 Sentinel-1 radar backscatter can be processed 
@@ -271,7 +275,6 @@ Be aware that data loading may take time depending on your network connection.
       </select>
     </label>
     <label>Colormap <select data-ctl="cmap"></select></label>
-    <label>Basemap <select data-ctl="basemap"></select></label>
     <label class="sar-check" title="Tilted flat map with elevation (Terrarium tiles)"><input type="checkbox" data-ctl="terrain" checked> 3D terrain</label>
     <div class="sar-hist-wrap"><canvas class="sar-hist"></canvas></div>
     <label>Min <output data-out="min"></output><input type="range" data-ctl="min"></label>
@@ -287,6 +290,11 @@ Be aware that data loading may take time depending on your network connection.
     <div class="sar-legend-labels"><span data-out="legmin"></span><span data-out="legmax"></span></div>
   </div>
   <div class="sar-hint">Drag to rotate · scroll to zoom · Ctrl/⌘ + drag to tilt · hover for pixel values</div>
+
+  <div class="sar-poster">
+    <img src="sar_processing_viewer.webp" alt="" onerror="this.remove()">
+    <div class="sar-poster-msg">Loading Sentinel-1 data…</div>
+  </div>
 </div>
 
 <script type="module">
@@ -295,6 +303,7 @@ Be aware that data loading may take time depending on your network connection.
   const root = document.getElementById("sar-viewer-compare");
   const showError = (err) => {
     console.error(err);
+    root.querySelector(".sar-poster")?.remove();
     const st = root.querySelector(".sar-status");
     st.hidden = false; st.dataset.kind = "error";
     st.textContent = "Could not open the gamma0 / sigma0 collections.";
