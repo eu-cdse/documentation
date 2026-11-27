@@ -1,0 +1,227 @@
+{
+  "id": "j-26112611262849bda4a69909efa7e898",
+  "collection": "sar_processing_sigma0.json",
+  "metadata": {
+    "costs": 12,
+    "created": "2026-11-26T11:26:28Z",
+    "id": "j-26112611262849bda4a69909efa7e898",
+    "log_level": "debug",
+    "process": {
+      "process_graph": {
+        "aggregatetemporalperiod1": {
+          "arguments": {
+            "data": {
+              "from_node": "sarbackscatter1"
+            },
+            "period": "month",
+            "reducer": {
+              "process_graph": {
+                "median1": {
+                  "arguments": {
+                    "data": {
+                      "from_parameter": "data"
+                    }
+                  },
+                  "process_id": "median",
+                  "result": true
+                }
+              }
+            }
+          },
+          "process_id": "aggregate_temporal_period"
+        },
+        "apply1": {
+          "arguments": {
+            "data": {
+              "from_node": "aggregatetemporalperiod1"
+            },
+            "process": {
+              "process_graph": {
+                "log1": {
+                  "arguments": {
+                    "base": 10,
+                    "x": {
+                      "from_parameter": "x"
+                    }
+                  },
+                  "process_id": "log"
+                },
+                "multiply1": {
+                  "arguments": {
+                    "x": 10,
+                    "y": {
+                      "from_node": "log1"
+                    }
+                  },
+                  "process_id": "multiply",
+                  "result": true
+                }
+              }
+            }
+          },
+          "process_id": "apply"
+        },
+        "exportworkspace1": {
+          "arguments": {
+            "data": {
+              "from_node": "saveresult1"
+            },
+            "merge": "sar_processing_sigma0.json",
+            "workspace": "openeo-examples-workspace"
+          },
+          "process_id": "export_workspace",
+          "result": true
+        },
+        "loadcollection1": {
+          "arguments": {
+            "bands": [
+              "VV",
+              "VH"
+            ],
+            "id": "SENTINEL1_GRD",
+            "properties": {
+              "sar:instrument_mode": {
+                "process_graph": {
+                  "eq2": {
+                    "arguments": {
+                      "x": {
+                        "from_parameter": "value"
+                      },
+                      "y": "IW"
+                    },
+                    "process_id": "eq",
+                    "result": true
+                  }
+                }
+              },
+              "sat:orbit_state": {
+                "process_graph": {
+                  "eq1": {
+                    "arguments": {
+                      "x": {
+                        "from_parameter": "value"
+                      },
+                      "y": "ascending"
+                    },
+                    "process_id": "eq",
+                    "result": true
+                  }
+                }
+              }
+            },
+            "spatial_extent": {
+              "crs": "EPSG:3857",
+              "east": 1455819.0,
+              "north": 5999236.0,
+              "south": 5935182.0,
+              "west": 1397574.0
+            },
+            "temporal_extent": [
+              "2026-05-01",
+              "2026-11-01"
+            ]
+          },
+          "process_id": "load_collection"
+        },
+        "resamplespatial1": {
+          "arguments": {
+            "align": "upper-left",
+            "data": {
+              "from_node": "apply1"
+            },
+            "method": "near",
+            "projection": 3857,
+            "resolution": 10
+          },
+          "process_id": "resample_spatial"
+        },
+        "sarbackscatter1": {
+          "arguments": {
+            "coefficient": "sigma0-ellipsoid",
+            "contributing_area": false,
+            "data": {
+              "from_node": "loadcollection1"
+            },
+            "elevation_model": null,
+            "ellipsoid_incidence_angle": false,
+            "local_incidence_angle": false,
+            "mask": false,
+            "noise_removal": true,
+            "options": {
+              "implementation_version": "3"
+            }
+          },
+          "process_id": "sar_backscatter"
+        },
+        "saveresult1": {
+          "arguments": {
+            "data": {
+              "from_node": "resamplespatial1"
+            },
+            "format": "GTiff",
+            "options": {
+              "filename_prefix": "median_composite",
+              "separate_asset_per_band": true
+            }
+          },
+          "process_id": "save_result"
+        }
+      }
+    },
+    "progress": 100,
+    "stac-version": "1.1",
+    "status": "finished",
+    "title": "SAR sigma0 monthly composites (docs)",
+    "updated": "2026-11-26T11:32:23Z",
+    "usage": {
+      "cpu": {
+        "unit": "cpu-seconds",
+        "value": 2376
+      },
+      "cpu_utilization_ratio": {
+        "unit": "fraction",
+        "value": 0.8353610145548624
+      },
+      "duration": {
+        "unit": "seconds",
+        "value": 352
+      },
+      "input_pixel": {
+        "unit": "mega-pixel",
+        "value": 2046.0378875732422
+      },
+      "max_executor_memory": {
+        "unit": "gb",
+        "value": 2.767169952392578
+      },
+      "memory": {
+        "unit": "mb-seconds",
+        "value": 21288960
+      },
+      "memory_requested": {
+        "unit": "mb-seconds",
+        "value": 26419200
+      },
+      "network_received": {
+        "unit": "b",
+        "value": 23398702097
+      },
+      "peak_execution_memory": {
+        "unit": "bytes",
+        "value": 222274533
+      },
+      "total_stage_failures": {
+        "unit": "count",
+        "value": 0
+      },
+      "total_task_failures": {
+        "unit": "count",
+        "value": 0
+      }
+    }
+  },
+  "parameters": {
+    "currency": "credits",
+    "federation": null
+  }
+}
